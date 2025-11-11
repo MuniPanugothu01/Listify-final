@@ -47,9 +47,9 @@ const WhyUs = () => {
 
         {/* Right side - Image */}
         <div className="w-[50%] flex flex-col justify-end items-end">
-          <div className="w-40 h-40 bg-[#c89a5e] rounded-full flex items-center justify-center overflow-hidden shadow-md">
+          <div className="w-70 h-70 bg-[#c89a5e] rounded-full flex items-center justify-center overflow-hidden shadow-md">
             <img
-              src="/Whyrobo.png"
+              src="/Howworks3.png"
               alt="How Listify Works"
               className="w-full h-full object-cover"
             />
@@ -61,9 +61,9 @@ const WhyUs = () => {
       <div className="flex items-center justify-between w-full px-10 py-6">
         {/* Left side - Circular image */}
         <div className="w-[50%] flex flex-col justify-start items-left">
-          <div className="w-40 h-40 bg-[#c89a5e] rounded-full flex items-center justify-center overflow-hidden shadow-md">
+          <div className="w-70 h-70 bg-[#c89a5e] rounded-full flex items-center justify-center overflow-hidden shadow-md">
             <img
-              src="/Whyrobo.png"
+              src="/Howworks3.png"
               alt="Why Choose Listify"
               className="w-full h-full object-cover"
             />
@@ -166,7 +166,7 @@ const WhyUs = () => {
 
         {/* Right side - Circular image */}
         <div className="w-[50%] flex flex-col justify-end items-end">
-          <div className="w-40 h-40 bg-[#c89a5e] rounded-full flex items-center justify-center overflow-hidden shadow-md">
+          <div className="w-70 h-70 bg-[#c89a5e] rounded-full flex items-center justify-center overflow-hidden shadow-md">
             <img
               src="/Whyrobo.png"
               alt="Listify Categories"
