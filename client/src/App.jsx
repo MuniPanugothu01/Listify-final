@@ -5,6 +5,7 @@ import TrendingCategories from './pages/Home/TrendingCategories.jsx';
 import WhyUs from './pages/Home/WhyUs.jsx';
 import Questions from './pages/Home/Questions.jsx';
 import Reviews from './pages/Reviews.jsx';
+import Footer from './pages/Home/Footer.jsx';
 
 const App = () => {
   return (
@@ -15,6 +16,7 @@ const App = () => {
       <WhyUs/>
       <Reviews/>
       <Questions/>
+      <Footer/>
     </div>
   )
 }
