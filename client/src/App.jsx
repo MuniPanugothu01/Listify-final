@@ -4,6 +4,7 @@ import Heading from './pages/Home/Heading.jsx';
 import TrendingCategories from './pages/Home/TrendingCategories.jsx';
 import WhyUs from './pages/Home/WhyUs.jsx';
 import Questions from './pages/Home/Questions.jsx';
+import Reviews from './pages/Reviews.jsx';
 
 const App = () => {
   return (
@@ -12,6 +13,7 @@ const App = () => {
       <Heading/>
       <TrendingCategories/>
       <WhyUs/>
+      <Reviews/>
       <Questions/>
     </div>
   )
