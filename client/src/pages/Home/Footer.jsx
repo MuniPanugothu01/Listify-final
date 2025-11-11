@@ -69,7 +69,7 @@ const Footer = () => {
   ];
 
   return (
-    <footer className="bg-black text-white mt-20 rounded-[10%]">
+    <footer className="bg-black text-white mt-20 rounded-t-[12%]">
       {/* Main Footer Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 relative">
         {/* Logo Circle */}
