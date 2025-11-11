@@ -17,6 +17,8 @@ const App = () => {
       <Reviews/>
       <Questions/>
       <Footer/>
+
+  
     </div>
   )
 }

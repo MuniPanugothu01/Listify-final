@@ -228,6 +228,9 @@ const Footer = () => {
 
 
 
+
+
+
         </div>
 
         {/* Listify Project Text */}
