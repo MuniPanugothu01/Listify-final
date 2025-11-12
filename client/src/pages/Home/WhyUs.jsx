@@ -49,7 +49,7 @@ const WhyUs = () => {
         <div className="w-[50%] flex flex-col justify-end items-end">
           <div className="w-70 h-70 bg-[#c89a5e] rounded-full flex items-center justify-center overflow-hidden shadow-md">
             <img
-              src="/Howworks3.png"
+              src="/Howworksgirl.png"
               alt="How Listify Works"
               className="w-full h-full object-cover"
             />
