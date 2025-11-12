@@ -1,4 +1,5 @@
 import React from 'react'
+import Navbar from './pages/Home/Navbar.jsx';
 import HeroSection from './pages/Home/HeroSection.jsx';
 import Heading from './pages/Home/Heading.jsx';
 import TrendingCategories from './pages/Home/TrendingCategories.jsx';
@@ -10,6 +11,7 @@ import Footer from './pages/Home/Footer.jsx';
 const App = () => {
   return (
     <div>
+      <Navbar/>
       <HeroSection/>
       <Heading/>
       <TrendingCategories/>
@@ -17,8 +19,6 @@ const App = () => {
       <Reviews/>
       <Questions/>
       <Footer/>
-
-  
     </div>
   )
 }
