@@ -6,12 +6,14 @@ import WhyUs from './pages/Home/WhyUs.jsx';
 import Questions from './pages/Home/Questions.jsx';
 import Reviews from './pages/Home/Reviews.jsx';
 import Footer from './pages/Home/Footer.jsx';
+import Gallery from './pages/Home/Gallery.jsx';
 
 const App = () => {
   return (
     <div>
       <HeroSection/>
       <Heading/>
+      <Gallery/>
       <TrendingCategories/>
       <WhyUs/>
       <Reviews/>
