@@ -332,7 +332,7 @@ class App {
   }
   createMedias(items, bend = 1, textColor, borderRadius, font) {
     const defaultItems = [
-      { image: `https://picsum.photos/seed/1/800/600?grayscale`, text: 'Bridge' },
+      { image: `categories-img-1.png`, text: 'Houses' },
       { image: `https://picsum.photos/seed/2/800/600?grayscale`, text: 'Desk Setup' },
       { image: `https://picsum.photos/seed/3/800/600?grayscale`, text: 'Waterfall' },
       { image: `https://picsum.photos/seed/4/800/600?grayscale`, text: 'Strawberries' },
