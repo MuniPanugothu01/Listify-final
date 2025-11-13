@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
-
+import { IoLocationOutline } from "react-icons/io5";
+import { CiLocationArrow1 } from "react-icons/ci";
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showLocationDropdown, setShowLocationDropdown] = useState(false);
@@ -571,6 +572,25 @@ const Navbar = () => {
               </div>
             </div>
 
+
+            <div className="px-7 flex items-center justify-between py-4">
+              <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2">
+               <IoLocationOutline />
+                  <p>selected location:</p>
+                </div>
+                <p className="text-blue-400">India</p>
+              </div>
+
+               <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2">
+              <CiLocationArrow1 />
+                  <p>Suggested Location:</p>
+                </div>
+                <p className="text-blue-400">New York,NY</p>
+              </div>
+            </div>
+
             <div
               className="overflow-y-auto"
               style={{ maxHeight: "calc(90vh - 140px)" }}
@@ -582,7 +602,7 @@ const Navbar = () => {
                     <h4 className="text-sm font-semibold text-gray-700 mb-3">
                       Popular Cities
                     </h4>
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="grid grid-cols-5 gap-2">
                       {popularCities.map((location, index) => (
                         <button
                           key={index}
@@ -605,7 +625,7 @@ const Navbar = () => {
                     <h4 className="text-sm font-semibold text-gray-700 mb-3">
                       Suggested for You
                     </h4>
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="grid grid-cols-5 gap-2">
                       {suggestedLocations.map((location, index) => (
                         <button
                           key={index}
@@ -628,7 +648,7 @@ const Navbar = () => {
                     <h4 className="text-sm font-semibold text-gray-700 mb-3">
                       Nearest Zip Codes
                     </h4>
-                    <div className="space-y-2">
+                    <div className="space-y-2 grid grid-cols-3 gap-4">
                       {nearestZipCodes.map((zip, index) => (
                         <button
                           key={index}
@@ -638,7 +658,7 @@ const Navbar = () => {
                               zip: zip.name,
                             })
                           }
-                          className="w-full text-left p-3 hover:bg-gray-50 rounded-lg transition-colors flex justify-between items-center"
+                          className="w-full text-left p-3 border border-gray-300  hover:bg-gray-50 rounded-lg transition-colors flex justify-between items-center"
                         >
                           <div>
                             <div className="font-medium text-gray-800 text-sm">
@@ -657,13 +677,13 @@ const Navbar = () => {
                   </div>
 
                   {/* Choose Your Location - Metro & Top Cities */}
-                  <div className="p-4 border-b border-gray-100">
+                  <div className="p-4 border-b border-gray-100 pb-7">
                     <h4 className="text-sm font-semibold text-gray-700 mb-3">
                       Choose Your Location
                     </h4>
                     <div className="grid grid-cols-2 gap-4">
                       {/* Metro Cities */}
-                      <div>
+                      <div className="bg-white p-5 rounded-lg">
                         <h5 className="text-xs font-semibold text-gray-600 mb-2">
                           Metro
                         </h5>
@@ -674,7 +694,7 @@ const Navbar = () => {
                               onClick={() =>
                                 handleLocationSelect({ name: metro.name })
                               }
-                              className="w-full text-left p-2 hover:bg-gray-50 rounded text-sm text-gray-700"
+                              className="w-full text-left p-2 hover:bg-gray-50 hover:text-red-500 rounded text-sm text-gray-700"
                             >
                               {metro.name}
                             </button>
@@ -683,7 +703,7 @@ const Navbar = () => {
                       </div>
 
                       {/* Top Cities */}
-                      <div>
+                      <div className="bg-white p-5 rounded-lg">
                         <h5 className="text-xs font-semibold text-gray-600 mb-2">
                           Top Cities
                         </h5>
@@ -692,7 +712,7 @@ const Navbar = () => {
                             <button
                               key={index}
                               onClick={() => handleLocationSelect(city)}
-                              className="w-full text-left p-2 hover:bg-gray-50 rounded text-sm text-gray-700"
+                              className="w-full text-left p-2 hover:bg-gray-50 hover:text-red-500 rounded text-sm text-gray-700"
                             >
                               {city.name}
                             </button>
@@ -739,8 +759,8 @@ const Navbar = () => {
                   )}
 
                   {/* Footer with Countries - Updated with Real Flag Images */}
-                  <div className="p-4 fixed bottom-0 bg-gray-50">
-                    <div className="flex items-center justify-between">
+                  <div className="p-4 absolute w-full bottom-0  bg-gray-50">
+                    <div className="flex items-center  justify-between">
                       <div className="flex items-center space-x-4">
                         <span className="text-sm text-gray-600">
                           Stay on Listify
@@ -767,7 +787,7 @@ const Navbar = () => {
                       </div>
                       <button
                         onClick={() => setShowTopCities(true)}
-                        className="text-blue-600 hover:text-blue-700 text-sm font-medium"
+                        className="text-blue-600 hover:text-blue-700  text-sm font-medium cursor-pointer hover:underline"
                       >
                         View top cities
                       </button>
