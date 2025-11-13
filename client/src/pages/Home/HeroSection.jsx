@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import CircularGallery from "./CircularGallery";
-import Gallery from "./Gallery";
+
 
 const HeroSection = () => {
   const [isCategoriesOpen, setIsCategoriesOpen] = useState(false);
@@ -65,10 +64,12 @@ const HeroSection = () => {
       style={{ backgroundImage: `url(/herobg.jpg)` }}
     >
       <div className="relative border-t-4 border-x-4 border-black/40 rounded-t-xl px-170 py-70 text-center">
-        {/* Title overlapping the top border */}
-        <h1 className="absolute -top-6 left-1/2 -translate-x-1/2 text-black font-bold bg-white text-3xl px-7 py-2 broder-5 rounded-md">
-          Listify
-        </h1>
+
+
+         <div className="flex items-center gap-3 absolute -top-9 left-1/2 -translate-x-1/2  font-bold bg-black  text-3xl px-7 py-2 broder-5 rounded-xl">
+        <img src="/Logo.png" alt="" className="h-15 mb-2" />
+        <img src="/LogoName.png" alt="" className="h-10" />
+       </div>
 
         {/* 🧩 Content inside border */}
         <div className="absolute top-20 left-1/2 -translate-x-1/2 flex flex-col gap-4">
@@ -166,6 +167,12 @@ const HeroSection = () => {
           )}
         </div>
       </div>
+
+
+
+
+
+
 
       {/* Gradient overlay at bottom */}
       <div className="absolute z-0 bg-gradient-to-t from-white to-transparent w-full bottom-0 h-[20%]" />
