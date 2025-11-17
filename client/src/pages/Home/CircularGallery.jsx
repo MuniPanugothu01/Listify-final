@@ -333,17 +333,14 @@ class App {
   createMedias(items, bend = 1, textColor, borderRadius, font) {
     const defaultItems = [
       { image: `categories-img-1.png`, text: 'Houses' },
-      { image: `https://picsum.photos/seed/2/800/600?grayscale`, text: 'Gigs' },
-      { image: `https://picsum.photos/seed/3/800/600?grayscale`, text: 'Jobs' },
-      { image: `https://picsum.photos/seed/4/800/600?grayscale`, text: 'Local Services' },
-      { image: `https://picsum.photos/seed/5/800/600?grayscale`, text: 'For Sale' },
-      { image: `https://picsum.photos/seed/16/800/600?grayscale`, text: 'Take Care' },
-      { image: `https://picsum.photos/seed/17/800/600?grayscale`, text: 'Community' },
-      { image: `https://picsum.photos/seed/8/800/600?grayscale`, text: 'Resumes' },
-      { image: `https://picsum.photos/seed/9/800/600?grayscale`, text: 'Travels' },
-      { image: `https://picsum.photos/seed/10/800/600?grayscale`, text: 'Cars' },
-      { image: `https://picsum.photos/seed/21/800/600?grayscale`, text: 'Pets' },
-      { image: `https://picsum.photos/seed/12/800/600?grayscale`, text: 'Electronics' }
+      { image: `categories-img-6.png`, text: 'Jobs' },
+      { image: `categories-img-8.png`, text: 'Local Services' },
+      { image: `categories-img-9.png`, text: 'For Sale' },
+      { image: `categories-img-5.png`, text: 'Take Care' },
+      { image: `categories-img-4.png`, text: 'Community' },
+      { image: `categories-img-7.png`, text: 'Resumes' },
+      { image: `categories-img-3.png`, text: 'Cars' },
+      { image: `categories-img-2.png`, text: 'Electronics' }
     ];
     const galleryItems = items && items.length ? items : defaultItems;
     this.mediasImages = galleryItems.concat(galleryItems);
