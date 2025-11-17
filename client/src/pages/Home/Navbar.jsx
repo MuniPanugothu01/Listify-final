@@ -1,6 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
 import { IoLocationOutline } from "react-icons/io5";
 import { CiLocationArrow1 } from "react-icons/ci";
+import { LuPencilLine } from "react-icons/lu";
+import { CgProfile } from "react-icons/cg";
+import { HiOutlineBars3BottomRight } from "react-icons/hi2";
+
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showLocationDropdown, setShowLocationDropdown] = useState(false);
@@ -10,9 +14,12 @@ const Navbar = () => {
   const [selectedLocation, setSelectedLocation] = useState("");
   const [showTopCities, setShowTopCities] = useState(false);
   const [selectedCountry, setSelectedCountry] = useState("United States");
+  const [showSearchModal, setShowSearchModal] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const locationDropdownRef = useRef(null);
   const navbarRef = useRef(null);
+  const searchModalRef = useRef(null);
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -32,6 +39,17 @@ const Navbar = () => {
     setShowLocationDropdown(false);
     setLocationSearch("");
     setShowTopCities(false);
+    document.body.style.overflow = "unset";
+  };
+
+  const handleSearchClick = () => {
+    setShowSearchModal(true);
+    document.body.style.overflow = "hidden";
+  };
+
+  const closeSearchModal = () => {
+    setShowSearchModal(false);
+    setSearchQuery("");
     document.body.style.overflow = "unset";
   };
 
@@ -100,6 +118,49 @@ const Navbar = () => {
     { name: "Jacksonville, FL", country: "US" },
   ];
 
+  // Sulekha-style search data
+  const trendingEventSearches = [
+    "Inder Sahani Comedy Show Tickets",
+    "Sonu Nigam Concert Tickets",
+    "Artist Concert Tour Dates 2025",
+    "Hariharan Live Concert Tickets",
+    "Ghatan Karthick",
+  ];
+
+  const searchSuggestions = {
+    ROOMMATES: ["Roommates", "Service"],
+    Events: [
+      "Events",
+      "Rentals",
+      "Jobs",
+      "Local Services",
+      "Lawyers",
+      "Wedding Services",
+    ],
+    Roommates: [
+      "Roommates",
+      "IT Training",
+      "Care Services",
+      "Astrologers",
+      "Immigration",
+      "Cars",
+    ],
+  };
+
+  const categoryItems = [
+    { name: "ALL", count: "88" },
+    { name: "Events", count: "12" },
+    { name: "Roommates", count: "15" },
+    { name: "Rentals", count: "23" },
+    { name: "Jobs", count: "34" },
+    { name: "Care Services", count: "8" },
+    { name: "IT Training", count: "5" },
+    { name: "Services", count: "45" },
+    { name: "Real Estate", count: "29" },
+    { name: "Financial & Taxation", count: "7" },
+    { name: "Lawyers", count: "11" },
+  ];
+
   // Countries for the dropdown - 3 countries as requested
   const countries = [
     { name: "United States", flag: "🇺🇸", code: "US" },
@@ -136,11 +197,12 @@ const Navbar = () => {
   ];
 
   const mainMenuItems = [
-    "Houses",
+    "Real Estate",
+    "Jobs",
     "Services",
-    "Sales",
-    "Gigs",
-    "Events",
+    "Marketplace",
+    "Vehicles",
+    "TakeCare",
     "Roommates",
   ];
 
@@ -184,8 +246,12 @@ const Navbar = () => {
 
   const handleCountryChange = (countryName) => {
     setSelectedCountry(countryName);
-    // Here you would typically filter locations based on selected country
     console.log("Selected country:", countryName);
+  };
+
+  const handleSearchSelect = (searchTerm) => {
+    setSearchQuery(searchTerm);
+    console.log("Searching for:", searchTerm);
   };
 
   // Close dropdown when clicking outside or pressing Escape
@@ -197,11 +263,18 @@ const Navbar = () => {
       ) {
         closeLocationDropdown();
       }
+      if (
+        searchModalRef.current &&
+        !searchModalRef.current.contains(event.target)
+      ) {
+        closeSearchModal();
+      }
     };
 
     const handleEscapeKey = (event) => {
       if (event.key === "Escape") {
         closeLocationDropdown();
+        closeSearchModal();
       }
     };
 
@@ -236,15 +309,47 @@ const Navbar = () => {
             opacity: 1;
           }
         }
-        
+
+        @keyframes slideInFromRight {
+          from {
+            transform: translateX(100%);
+            opacity: 0;
+          }
+          to {
+            transform: translateX(0);
+            opacity: 1;
+          }
+        }
+
+        @keyframes slideOutToRight {
+          from {
+            transform: translateX(0);
+            opacity: 1;
+          }
+          to {
+            transform: translateX(100%);
+            opacity: 0;
+          }
+        }
+
         .location-dropdown {
           animation: slideUp 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
-        
-        .backdrop {
-          animation: fadeIn 0.3s ease-out;
+
+        .search-modal-enter {
+          animation: slideInFromRight 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)
+            forwards;
         }
-        
+
+        .search-modal-exit {
+          animation: slideOutToRight 0.5s cubic-bezier(0.55, 0.085, 0.68, 0.53)
+            forwards;
+        }
+
+        .backdrop {
+          animation: fadeIn 0.4s ease-out;
+        }
+
         @keyframes fadeIn {
           from {
             opacity: 0;
@@ -253,8 +358,17 @@ const Navbar = () => {
             opacity: 1;
           }
         }
+
+        @keyframes fadeOut {
+          from {
+            opacity: 1;
+          }
+          to {
+            opacity: 0;
+          }
+        }
       `}</style>
-      
+
       <nav
         ref={navbarRef}
         className={`shadow-lg sticky top-0 z-40 transition-all duration-300 ${
@@ -274,11 +388,14 @@ const Navbar = () => {
             <div className="hidden sm:flex flex-1 justify-center max-w-md sm:max-w-lg md:max-w-2xl mx-2 sm:mx-4 md:mx-8">
               <div className="flex w-full space-x-1 sm:space-x-2">
                 {/* General Search */}
-                <div className="relative flex-1">
+                <div className="relative flex-1 left-5">
                   <input
                     type="text"
                     placeholder="Search by service or category"
-                    className="w-full pl-8 sm:pl-10 pr-2 sm:pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                    className="w-[10px] pl-8 sm:pl-10 pr-2 sm:pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#c89a5e]-300 text-sm cursor-pointer"
+                    onFocus={handleSearchClick}
+                    onClick={handleSearchClick}
+                    readOnly
                   />
                   <div className="absolute inset-y-0 left-0 pl-2 sm:pl-3 flex items-center pointer-events-none">
                     <svg
@@ -298,19 +415,19 @@ const Navbar = () => {
                 </div>
 
                 {/* Location Search */}
-                <div className="relative flex-1">
+                <div className="relative flex-1 right-8">
                   <input
                     type="text"
                     placeholder="Location"
                     value={selectedLocation}
-                    className="w-full pl-8 sm:pl-10 pr-8 sm:pr-10 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm cursor-pointer"
+                    className="w-[140px] pl-8 sm:pl-10 pr-8 sm:pr-10 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm cursor-pointer"
                     onFocus={handleLocationClick}
                     onClick={handleLocationClick}
                     readOnly
                   />
                   <div className="absolute inset-y-0 left-0 pl-2 sm:pl-3 flex items-center pointer-events-none">
                     <svg
-                      className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400"
+                      className="h-3 w-3 sm:h-5 sm:w-5 text-gray-400"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -329,7 +446,7 @@ const Navbar = () => {
                       />
                     </svg>
                   </div>
-                  <div className="absolute inset-y-0 right-0 pr-2 sm:pr-3 flex items-center pointer-events-none">
+                  <div className="absolute inset-y-0 -right-1 pr-2 sm:pr-3 flex items-center pointer-events-none">
                     <svg
                       className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400"
                       fill="none"
@@ -346,6 +463,11 @@ const Navbar = () => {
                   </div>
                 </div>
               </div>
+            </div>
+
+            {/* Vertical Line */}
+            <div className="flex items-center ">
+              <div className="h-10 border-l-2 border-gray-500"></div>
             </div>
 
             {/* Desktop Menu */}
@@ -400,13 +522,17 @@ const Navbar = () => {
                 </li>
               </ul>
               {/* Right side actions */}
-              <div className="flex items-center space-x-2 md:space-x-4 ml-4">
-                <button className="bg-black text-white px-3 py-1.5 md:px-4 md:py-2 rounded-lg hover:bg-blue-700 text-xs md:text-sm lg:text-base whitespace-nowrap">
-                  Post Now
+              <div className="flex items-center space-x-3 md:space-x-4 ml-4">
+                {/* Create Listing Button */}
+                <button className="flex items-center gap-2 bg-[#2D7A82] text-white px-4 py-3.5 md:px-4 md:py-3.5 rounded-lg text-xs md:text-sm lg:text-base whitespace-nowrap hover:bg-[#25676D] transition cursor-pointer">
+                  <LuPencilLine className="text-white text-base md:text-lg" />
+                  Create a Listing
                 </button>
-                <button className="bg-black text-white px-3 py-1.5 md:px-4 md:py-2 rounded-lg hover:bg-blue-700 text-xs md:text-sm lg:text-base whitespace-nowrap">
-                  SignIn
-                </button>
+
+                <div className="border border-gray-300 rounded-lg px-3 py-1.5 md:px-4 md:py-3 hover:shadow-md cursor-pointer flex items-center gap-2">
+                  <HiOutlineBars3BottomRight className="text-[20px] md:text-[22px] text-gray-700" />
+                  <CgProfile className="text-[20px] md:text-[22px] text-gray-700" />
+                </div>
               </div>
             </div>
 
@@ -442,7 +568,7 @@ const Navbar = () => {
         </div>
       </nav>
 
-      {/* Enhanced Bottom Sliding Location Dropdown */}
+      {/* Your Existing Location Dropdown - UNCHANGED */}
       {showLocationDropdown && (
         <div className="fixed inset-0 z-50">
           {/* Backdrop */}
@@ -572,19 +698,18 @@ const Navbar = () => {
               </div>
             </div>
 
-
             <div className="px-7 flex items-center justify-between py-4">
               <div className="flex items-center gap-2">
                 <div className="flex items-center gap-2">
-               <IoLocationOutline />
+                  <IoLocationOutline />
                   <p>selected location:</p>
                 </div>
                 <p className="text-blue-400">India</p>
               </div>
 
-               <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2">
                 <div className="flex items-center gap-2">
-              <CiLocationArrow1 />
+                  <CiLocationArrow1 />
                   <p>Suggested Location:</p>
                 </div>
                 <p className="text-blue-400">New York,NY</p>
@@ -843,6 +968,377 @@ const Navbar = () => {
                   )}
                 </div>
               )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Search Modal with Right Slide Animation */}
+      {showSearchModal && (
+        <div className="fixed inset-0 z-50">
+          <div
+            className="absolute inset-0 bg-black/40 backdrop-blur-sm backdrop"
+            onClick={closeSearchModal}
+          />
+          <div
+            ref={searchModalRef}
+            className="absolute inset-0 bg-gray-50 overflow-hidden search-modal-enter"
+          >
+            <div className="bg-white shadow-sm">
+              <div className="flex items-center justify-between px-4 py-3 bg-[#F3F3F3] border-b border-gray-200">
+                <button
+                  onClick={closeSearchModal}
+                  className="w-10 h-10 flex items-center justify-center bg-gray-200 hover:bg-gray-200  rounded-lg transition-colors"
+                >
+                  <svg
+                    className="h-5 w-5 text-gray-700"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M15 19l-7-7 7-7"
+                    />
+                  </svg>
+                </button>
+
+                <div className="flex-1 flex items-center justify-center max-w-4xl mx-4">
+                  {/* Main container with background and radius */}
+                  <div className="flex flex-col  h-[85px] sm:flex-row items-stretch sm:items-center w-full bg-white rounded-full border border-gray-200 shadow-sm overflow-hidden">
+                    {/* Location Filter */}
+                    <div className="w-[300px] border-b sm:border-b-0 sm:border-r border-gray-200">
+                      <button className="flex items-center w-full justify-between px-4 py-3  transition-colors ">
+                        <div className="flex items-center space-x-2">
+                          <svg
+                            className="h-6 w-6 text-gray-400"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                            />
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                            />
+                          </svg>
+                          <span className="text-gray-600 font-medium">
+                            New York, NY
+                          </span>
+                        </div>
+                        <svg
+                          className="h-4 w-4 text-gray-500"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M19 9l-7 7-7-7"
+                          />
+                        </svg>
+                      </button>
+                    </div>
+
+                    {/* Category Filter */}
+                    <div className="flex border-b sm:border-b-0 sm:border-r border-gray-200">
+                      <button className="flex items-center px-4 py-3  transition-colors cursor-pointer"> 
+                        <div className="flex items-center space-x-2">
+                          <svg
+                            className="h-5 w-5 text-gray-400"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M4 6h16M4 12h16M4 18h16"
+                            />
+                          </svg>
+                          <span className="text-gray-600 font-medium">ALL</span>
+                        </div>
+                        <svg
+                          className="h-4 w-4 text-gray-400"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M19 9l-7 7-7-7"
+                          />
+                        </svg>
+                      </button>
+                    </div>
+
+                    {/* Search Input and Button Container */}
+                    <div className="flex-1 flex items-center pr-7 ">
+                      <div className="flex-1">
+                        <input
+                          type="text"
+                          placeholder="Enter the Keywords to Search"
+                          value={searchQuery}
+                          onChange={(e) => setSearchQuery(e.target.value)}
+                          className="w-full px-4 py-3 border-0 focus:outline-none focus:ring-0 text-gray-700 placeholder-gray-500"
+                          autoFocus
+                        />
+                      </div>
+
+                      {/* Search Button */}
+                      <button className="px-6 py-4  bg-[#3F929A] hover:bg-[#2f9ea8] text-white rounded-2xl font-medium transition-colors cursor-pointer h-full">
+                        Search
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <button
+                  onClick={closeSearchModal}
+                  className="w-10 h-10 flex items-center justify-center hover:bg-gray-100 rounded-lg transition-colors"
+                >
+                  <svg
+                    className="h-6 w-6 text-gray-700"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </button>
+              </div>
+
+              <div className="px-4 py-4 overflow-x-auto">
+                <div className="flex items-center space-x-6 min-w-max">
+                  <button className="flex-shrink-0 w-8 h-8 flex items-center justify-center hover:bg-gray-100 rounded-full transition-colors">
+                    <svg
+                      className="h-5 w-5 text-gray-600"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M15 19l-7-7 7-7"
+                      />
+                    </svg>
+                  </button>
+
+                  {categoryItems.map((category, index) => (
+                    <button
+                      key={index}
+                      onClick={() => handleSearchSelect(category.name)}
+                      className={`flex flex-col items-center space-y-1 flex-shrink-0 group ${
+                        index === 0 ? "text-red-600" : "text-gray-600"
+                      }`}
+                    >
+                      <div
+                        className={`w-12 h-12 flex items-center justify-center rounded-lg ${
+                          index === 0
+                            ? "bg-red-50"
+                            : "bg-gray-100 group-hover:bg-gray-200"
+                        } transition-colors`}
+                      >
+                        <svg
+                          className={`h-6 w-6 ${
+                            index === 0 ? "text-red-600" : "text-gray-600"
+                          }`}
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M4 6h16M4 10h16M4 14h16M4 18h16"
+                          />
+                        </svg>
+                      </div>
+                      <span
+                        className={`text-xs font-medium ${
+                          index === 0
+                            ? "text-red-600"
+                            : "text-gray-700 group-hover:text-gray-900"
+                        }`}
+                      >
+                        {category.name}
+                      </span>
+                      {index === 0 && (
+                        <div className="w-full h-0.5 bg-red-600 rounded-full"></div>
+                      )}
+                    </button>
+                  ))}
+
+                  <button className="flex-shrink-0 w-8 h-8 flex items-center justify-center hover:bg-gray-100 rounded-full transition-colors">
+                    <svg
+                      className="h-5 w-5 text-gray-600"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 5l7 7-7 7"
+                      />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div className="h-[calc(100vh-180px)] overflow-y-auto px-4 py-6">
+              <div className="max-w-7xl mx-auto">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-900 mb-4">
+                      Trending Event Searches
+                    </h3>
+                    <div className="space-y-3">
+                      {trendingEventSearches.map((event, index) => (
+                        <div key={index}>
+                          <button
+                            onClick={() => handleSearchSelect(event)}
+                            className="w-full text-left px-4 py-3 rounded-l hover:bg-gray-200 hover:shadow-sm transition-all duration-300 ease-in-out cursor-pointer"
+                          >
+                            <span className="text-gray-800">{event}</span>
+                          </button>
+                          <p className="text-gray-300 w-full">
+                            -----------------------------------------------------------------------------------------------
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="mt-8">
+                      <h3 className="text-xl font-bold text-gray-900 mb-4">
+                        Search Suggestions
+                      </h3>
+                      <div className="space-y-3">
+                        {Object.entries(searchSuggestions).map(
+                          ([category, items], index) => (
+                            <div key={index}>
+                              {category === "EVENTS" ? (
+                                <>
+                                  <div className="flex items-center mb-2">
+                                    <h4 className="font-bold text-red-600 text-sm uppercase tracking-wide">
+                                      TAKECARE
+                                    </h4>
+                                    <span className="text-gray-300 ml-2">
+                                      |------------------------
+                                    </span>
+                                  </div>
+                                  <div className="mb-2">
+                                    <span className="text-gray-800">
+                                      Takecare
+                                    </span>
+                                  </div>
+                                </>
+                              ) : (
+                                <div className="flex items-center mb-2">
+                                  <h4 className="font-bold text-red-600 text-sm uppercase tracking-wide">
+                                    {category}
+                                  </h4>
+                                  <span className="text-gray-300 ml-2">
+                                    |------------------------------------------------------------------------------
+                                  </span>
+                                </div>
+                              )}
+                              <div className="flex flex-wrap gap-2">
+                                {items.map((item, itemIndex) => (
+                                  <div key={itemIndex}>
+                                    <button
+                                      onClick={() => handleSearchSelect(item)}
+                                      className="w-full text-left px-4 py-3 rounded-l hover:bg-gray-200 hover:shadow-sm transition-all duration-300 ease-in-out cursor-pointer"
+                                    >
+                                      <span className="text-gray-800">
+                                        {item}
+                                      </span>
+                                    </button>
+                                    <p className="text-gray-300 w-full">
+                                      -----------------------------------------------------------------------------------------------
+                                    </p>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-900 mb-4 sticky -top-2 py-2 z-10">
+                      Services
+                    </h3>
+                    <div className="rounded-lg border border-gray-600 p-6 sticky top-9 ">
+                      <div className="grid grid-cols-2 gap-x-8 gap-y-4 cursor-pointer">
+                        {[
+                          { name: "Events", icon: "/bag.png" },
+                          { name: "Roommates", icon: "/house.png" },
+                          { name: "Rentals", icon: "/house.png" },
+                          { name: "IT Training", icon: "/ittraining.jpg" },
+                          { name: "Jobs", icon: "/moble.png" },
+                          { name: "Care Services", icon: "/carservice.png" },
+                          { name: "Local Services", icon: "/carservice.png" },
+                          { name: "Travels", icon: "/moble.png" },
+                          { name: "TakeCares", icon: "/Babiessitter.jpg" },
+                          {
+                            name: "Immigration",
+                            icon: "/immigration-icon.png",
+                          },
+                          {
+                            name: "Wedding Services",
+                            icon: "/wedding-services-icon.png",
+                          },
+                          { name: "Cars", icon: "/car1.png" },
+                        ].map((service, index) => (
+                          <button
+                            key={index}
+                            onClick={() => handleSearchSelect(service.name)}
+                            className="flex items-center space-x-3 py-2 hover:text-red-600 transition-colors group cursor-pointer"
+                          >
+                            <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
+                              <img
+                                src={service.icon}
+                                alt={service.name}
+                                className="w-6 h-6 object-cover"
+                              />
+                            </div>
+                            <span className="text-gray-800 group-hover:text-red-600 font-medium">
+                              {service.name}
+                            </span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
