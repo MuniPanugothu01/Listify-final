@@ -4,6 +4,29 @@ import { CiLocationArrow1 } from "react-icons/ci";
 import { LuPencilLine } from "react-icons/lu";
 import { CgProfile } from "react-icons/cg";
 import { HiOutlineBars3BottomRight } from "react-icons/hi2";
+import { TbCategory } from "react-icons/tb";
+import {
+  MdOutlineEventAvailable,
+  MdOutlineRealEstateAgent,
+} from "react-icons/md";
+import {
+  FaMapMarkerAlt,
+  FaChevronDown,
+  FaSearch,
+  FaList,
+  FaCalendar,
+  FaUserFriends,
+  FaHome,
+  FaBriefcase,
+  FaHandHoldingHeart,
+  FaLaptopCode,
+  FaTools,
+  FaBuilding,
+  FaMoneyBillWave,
+  FaBalanceScale,
+  FaChevronLeft,
+  FaChevronRight,
+} from "react-icons/fa";
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -20,6 +43,21 @@ const Navbar = () => {
   const locationDropdownRef = useRef(null);
   const navbarRef = useRef(null);
   const searchModalRef = useRef(null);
+
+  // Category items with React Icons
+  const categoryItems = [
+    { name: "ALL", count: "88", icon: TbCategory },
+    { name: "Events", count: "12", icon: MdOutlineEventAvailable },
+    { name: "Roommates", count: "15", icon: FaUserFriends },
+    { name: "Rentals", count: "23", icon: FaHome },
+    { name: "Jobs", count: "34", icon: FaBriefcase },
+    { name: "Care Services", count: "8", icon: FaHandHoldingHeart },
+    { name: "IT Training", count: "5", icon: FaLaptopCode },
+    { name: "Services", count: "45", icon: FaTools },
+    { name: "Real Estate", count: "29", icon: MdOutlineRealEstateAgent },
+    { name: "Financial & Taxation", count: "7", icon: FaMoneyBillWave },
+    { name: "Lawyers", count: "11", icon: FaBalanceScale },
+  ];
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -147,20 +185,6 @@ const Navbar = () => {
     ],
   };
 
-  const categoryItems = [
-    { name: "ALL", count: "88" },
-    { name: "Events", count: "12" },
-    { name: "Roommates", count: "15" },
-    { name: "Rentals", count: "23" },
-    { name: "Jobs", count: "34" },
-    { name: "Care Services", count: "8" },
-    { name: "IT Training", count: "5" },
-    { name: "Services", count: "45" },
-    { name: "Real Estate", count: "29" },
-    { name: "Financial & Taxation", count: "7" },
-    { name: "Lawyers", count: "11" },
-  ];
-
   // Countries for the dropdown - 3 countries as requested
   const countries = [
     { name: "United States", flag: "🇺🇸", code: "US" },
@@ -216,7 +240,7 @@ const Navbar = () => {
   ].filter(
     (location) =>
       location.name.toLowerCase().includes(locationSearch.toLowerCase()) ||
-      location.zip?.includes(locationSearch)
+      (location.zip && location.zip.includes(locationSearch))
   );
 
   const handleLocationSelect = (location) => {
@@ -367,6 +391,14 @@ const Navbar = () => {
             opacity: 0;
           }
         }
+
+        .scrollbar-hide {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+        .scrollbar-hide::-webkit-scrollbar {
+          display: none;
+        }
       `}</style>
 
       <nav
@@ -392,25 +424,13 @@ const Navbar = () => {
                   <input
                     type="text"
                     placeholder="Search by service or category"
-                    className="w-[10px] pl-8 sm:pl-10 pr-2 sm:pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#c89a5e]-300 text-sm cursor-pointer"
+                    className="w-[10px] pl-8 sm:pl-10 pr-2 sm:pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#c89a5e] text-sm cursor-pointer"
                     onFocus={handleSearchClick}
                     onClick={handleSearchClick}
                     readOnly
                   />
                   <div className="absolute inset-y-0 left-0 pl-2 sm:pl-3 flex items-center pointer-events-none">
-                    <svg
-                      className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                      />
-                    </svg>
+                    <FaSearch className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
                   </div>
                 </div>
 
@@ -426,47 +446,17 @@ const Navbar = () => {
                     readOnly
                   />
                   <div className="absolute inset-y-0 left-0 pl-2 sm:pl-3 flex items-center pointer-events-none">
-                    <svg
-                      className="h-3 w-3 sm:h-5 sm:w-5 text-gray-400"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                      />
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                      />
-                    </svg>
+                    <FaMapMarkerAlt className="h-3 w-3 sm:h-5 sm:w-5 text-gray-400" />
                   </div>
                   <div className="absolute inset-y-0 -right-1 pr-2 sm:pr-3 flex items-center pointer-events-none">
-                    <svg
-                      className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M19 9l-7 7-7-7"
-                      />
-                    </svg>
+                    <FaChevronDown className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Vertical Line */}
-            <div className="flex items-center ">
+            <div className="flex items-center">
               <div className="h-10 border-l-2 border-gray-500"></div>
             </div>
 
@@ -491,19 +481,7 @@ const Navbar = () => {
                     className="text-xs md:text-sm lg:text-base text-gray-700 hover:text-gray-900 px-1 whitespace-nowrap flex items-center"
                   >
                     More
-                    <svg
-                      className="h-4 w-4 ml-1"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M19 9l-7 7-7-7"
-                      />
-                    </svg>
+                    <FaChevronDown className="h-4 w-4 ml-1" />
                   </a>
                   {showMoreDropdown && (
                     <div className="absolute top-full left-0 mt-1 bg-white border border-gray-300 rounded-lg shadow-lg min-w-max z-10">
@@ -559,16 +537,46 @@ const Navbar = () => {
             </div>
           </div>
 
-          {/* Mobile Menu - Remains the same */}
+          {/* Mobile Menu */}
           {isMobileMenuOpen && (
             <div className="md:hidden pb-4 border-t border-gray-200">
-              {/* Mobile content remains the same */}
+              <div className="flex flex-col space-y-4 mt-4">
+                <div className="flex space-x-2">
+                  <input
+                    type="text"
+                    placeholder="Search by service or category"
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                    onFocus={handleSearchClick}
+                  />
+                  <input
+                    type="text"
+                    placeholder="Location"
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                    onFocus={handleLocationClick}
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  {mainMenuItems.map((item) => (
+                    <a
+                      key={item}
+                      href="#"
+                      className="px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded"
+                    >
+                      {item}
+                    </a>
+                  ))}
+                </div>
+                <button className="flex items-center justify-center gap-2 bg-[#2D7A82] text-white px-4 py-2 rounded-lg text-sm">
+                  <LuPencilLine className="text-white" />
+                  Create a Listing
+                </button>
+              </div>
             </div>
           )}
         </div>
       </nav>
 
-      {/* Your Existing Location Dropdown - UNCHANGED */}
+      {/* Location Dropdown */}
       {showLocationDropdown && (
         <div className="fixed inset-0 z-50">
           {/* Backdrop */}
@@ -624,19 +632,7 @@ const Navbar = () => {
                     ))}
                   </select>
                   <div className="absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none">
-                    <svg
-                      className="h-4 w-4 text-gray-400"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M19 9l-7 7-7-7"
-                      />
-                    </svg>
+                    <FaChevronDown className="h-4 w-4 text-gray-400" />
                   </div>
                 </div>
 
@@ -651,47 +647,17 @@ const Navbar = () => {
                     autoFocus
                   />
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <svg
-                      className="h-5 w-5 text-gray-400"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                      />
-                    </svg>
+                    <FaSearch className="h-5 w-5 text-gray-400" />
                   </div>
 
                   {/* Current Location Icon - Light Red */}
-                  <div className="absolute inset-y-0 right-0 pr-3 flex items-center ">
+                  <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
                     <button
                       onClick={handleUseCurrentLocation}
                       className="p-2 rounded-full bg-red-50 hover:bg-red-100 transition-colors cursor-pointer"
                       title="Use Current Location"
                     >
-                      <svg
-                        className="h-4 w-4 text-red-400"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                        />
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                        />
-                      </svg>
+                      <FaMapMarkerAlt className="h-4 w-4 text-red-400" />
                     </button>
                   </div>
                 </div>
@@ -783,7 +749,7 @@ const Navbar = () => {
                               zip: zip.name,
                             })
                           }
-                          className="w-full text-left p-3 border border-gray-300  hover:bg-gray-50 rounded-lg transition-colors flex justify-between items-center"
+                          className="w-full text-left p-3 border border-gray-300 hover:bg-gray-50 rounded-lg transition-colors flex justify-between items-center"
                         >
                           <div>
                             <div className="font-medium text-gray-800 text-sm">
@@ -884,8 +850,8 @@ const Navbar = () => {
                   )}
 
                   {/* Footer with Countries - Updated with Real Flag Images */}
-                  <div className="p-4 absolute w-full bottom-0  bg-gray-50">
-                    <div className="flex items-center  justify-between">
+                  <div className="p-4 bg-gray-50">
+                    <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-4">
                         <span className="text-sm text-gray-600">
                           Stay on Listify
@@ -912,7 +878,7 @@ const Navbar = () => {
                       </div>
                       <button
                         onClick={() => setShowTopCities(true)}
-                        className="text-blue-600 hover:text-blue-700  text-sm font-medium cursor-pointer hover:underline"
+                        className="text-blue-600 hover:text-blue-700 text-sm font-medium cursor-pointer hover:underline"
                       >
                         View top cities
                       </button>
@@ -988,106 +954,40 @@ const Navbar = () => {
               <div className="flex items-center justify-between px-4 py-3 bg-[#F3F3F3] border-b border-gray-200">
                 <button
                   onClick={closeSearchModal}
-                  className="w-10 h-10 flex items-center justify-center bg-gray-200 hover:bg-gray-200  rounded-lg transition-colors"
+                  className="w-10 h-10 flex items-center justify-center bg-gray-200 hover:bg-gray-200 rounded-lg transition-colors"
                 >
-                  <svg
-                    className="h-5 w-5 text-gray-700"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M15 19l-7-7 7-7"
-                    />
-                  </svg>
+                  <FaChevronLeft className="h-5 w-5 text-gray-700" />
                 </button>
 
                 <div className="flex-1 flex items-center justify-center max-w-4xl mx-4">
                   {/* Main container with background and radius */}
-                  <div className="flex flex-col  h-[85px] sm:flex-row items-stretch sm:items-center w-full bg-white rounded-full border border-gray-200 shadow-sm overflow-hidden">
+                  <div className="flex flex-col h-[85px] sm:flex-row items-stretch sm:items-center w-full bg-white rounded-full border border-gray-200 shadow-sm overflow-hidden">
                     {/* Location Filter */}
                     <div className="w-[300px] border-b sm:border-b-0 sm:border-r border-gray-200">
-                      <button className="flex items-center w-full justify-between px-4 py-3  transition-colors ">
+                      <button className="flex items-center w-full justify-between px-4 py-3 transition-colors">
                         <div className="flex items-center space-x-2">
-                          <svg
-                            className="h-6 w-6 text-gray-400"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                            />
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                            />
-                          </svg>
+                          <FaMapMarkerAlt className="h-6 w-6 text-gray-400" />
                           <span className="text-gray-600 font-medium">
                             New York, NY
                           </span>
                         </div>
-                        <svg
-                          className="h-4 w-4 text-gray-500"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M19 9l-7 7-7-7"
-                          />
-                        </svg>
+                        <FaChevronDown className="h-4 w-4 text-gray-500" />
                       </button>
                     </div>
 
                     {/* Category Filter */}
                     <div className="flex border-b sm:border-b-0 sm:border-r border-gray-200">
-                      <button className="flex items-center px-4 py-3  transition-colors cursor-pointer"> 
+                      <button className="flex items-center px-4 py-3 transition-colors cursor-pointer">
                         <div className="flex items-center space-x-2">
-                          <svg
-                            className="h-5 w-5 text-gray-400"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M4 6h16M4 12h16M4 18h16"
-                            />
-                          </svg>
+                          <TbCategory className="h-5 w-5 text-gray-400" />
                           <span className="text-gray-600 font-medium">ALL</span>
                         </div>
-                        <svg
-                          className="h-4 w-4 text-gray-400"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M19 9l-7 7-7-7"
-                          />
-                        </svg>
+                        <FaChevronDown className="h-4 w-4 text-gray-400" />
                       </button>
                     </div>
 
                     {/* Search Input and Button Container */}
-                    <div className="flex-1 flex items-center pr-7 ">
+                    <div className="flex-1 flex items-center pr-7">
                       <div className="flex-1">
                         <input
                           type="text"
@@ -1100,8 +1000,9 @@ const Navbar = () => {
                       </div>
 
                       {/* Search Button */}
-                      <button className="px-6 py-4  bg-[#3F929A] hover:bg-[#2f9ea8] text-white rounded-2xl font-medium transition-colors cursor-pointer h-full">
-                        Search
+                      <button className="px-6 py-4 bg-[#3F929A] hover:bg-[#2f9ea8] text-white rounded-2xl font-medium transition-colors cursor-pointer h-full flex items-center space-x-2">
+                        <FaSearch className="h-4 w-4" />
+                        <span>Search</span>
                       </button>
                     </div>
                   </div>
@@ -1127,84 +1028,68 @@ const Navbar = () => {
                 </button>
               </div>
 
-              <div className="px-4 py-4 overflow-x-auto">
+              {/* Category Items with React Icons and Hover Effects */}
+              <div className="px-4 py-4 overflow-x-auto scrollbar-hide flex flex-col  items-center justify-center">
                 <div className="flex items-center space-x-6 min-w-max">
-                  <button className="flex-shrink-0 w-8 h-8 flex items-center justify-center hover:bg-gray-100 rounded-full transition-colors">
-                    <svg
-                      className="h-5 w-5 text-gray-600"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M15 19l-7-7 7-7"
-                      />
-                    </svg>
+                  <button className="flex-shrink-0 w-10 h-10 bg-gray-300 flex items-center justify-center hover:bg-gray-100 rounded-full transition-colors cursor-pointer">
+                    <FaChevronLeft className="h-5 w-5 text-gray-600" />
                   </button>
 
-                  {categoryItems.map((category, index) => (
-                    <button
-                      key={index}
-                      onClick={() => handleSearchSelect(category.name)}
-                      className={`flex flex-col items-center space-y-1 flex-shrink-0 group ${
-                        index === 0 ? "text-red-600" : "text-gray-600"
-                      }`}
-                    >
-                      <div
-                        className={`w-12 h-12 flex items-center justify-center rounded-lg ${
-                          index === 0
-                            ? "bg-red-50"
-                            : "bg-gray-100 group-hover:bg-gray-200"
-                        } transition-colors`}
-                      >
-                        <svg
-                          className={`h-6 w-6 ${
-                            index === 0 ? "text-red-600" : "text-gray-600"
-                          }`}
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M4 6h16M4 10h16M4 14h16M4 18h16"
-                          />
-                        </svg>
-                      </div>
-                      <span
-                        className={`text-xs font-medium ${
-                          index === 0
-                            ? "text-red-600"
-                            : "text-gray-700 group-hover:text-gray-900"
+                  {categoryItems.map((category, index) => {
+                    const IconComponent = category.icon;
+                    return (
+                      <button
+                        key={index}
+                        onClick={() => handleSearchSelect(category.name)}
+                        className={`flex flex-col items-center space-y-1 flex-shrink-0 group relative ${
+                          index === 0 ? "text-red-600" : "text-gray-600"
                         }`}
                       >
-                        {category.name}
-                      </span>
-                      {index === 0 && (
-                        <div className="w-full h-0.5 bg-red-600 rounded-full"></div>
-                      )}
-                    </button>
-                  ))}
+                        <div
+                          className={`w-12 h-12 rounded-full flex items-center justify-center cursor-pointer ${
+                            index === 0
+                              ? "bg-red-50"
+                              : " group-hover:bg-[#c89a5e]"
+                          } transition-colors`}
+                        >
+                          <IconComponent
+                            className={`h-6 w-6 ${
+                              index === 0 ? "text-red-600" : "text-gray-600 group-hover:text-white"
+                            }`}
+                          />
+                        </div>
+                        <span
+                          className={`text-xs font-medium ${
+                            index === 0
+                              ? "text-red-600"
+                              : "text-gray-700 group-hover:text-[#c89a5e]"
+                          }`}
+                        >
+                          {category.name}
+                        </span>
+                        {/* <span
+                          className={`text-xs ${
+                            index === 0 ? "text-red-500" : "text-gray-500"
+                          }`}
+                        >
+                          {category.count}
+                        </span> */}
+
+                        {/* Active indicator line (for first item) */}
+                        {index === 0 && (
+                          <div className="w-full h-0.5 bg-red-600 rounded-full absolute -bottom-2"></div>
+                        )}
+
+                        {/* Hover indicator line (for other items) */}
+                        {index !== 0 && (
+                          <div className="w-0 h-0.5 bg-[#c89a5e] rounded-full absolute -bottom-2 group-hover:w-full transition-all duration-200"></div>
+                        )}
+                      </button>
+                    );
+                  })}
 
                   <button className="flex-shrink-0 w-8 h-8 flex items-center justify-center hover:bg-gray-100 rounded-full transition-colors">
-                    <svg
-                      className="h-5 w-5 text-gray-600"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M9 5l7 7-7 7"
-                      />
-                    </svg>
+                    <FaChevronRight className="h-5 w-5 text-gray-600" />
                   </button>
                 </div>
               </div>
@@ -1222,7 +1107,7 @@ const Navbar = () => {
                         <div key={index}>
                           <button
                             onClick={() => handleSearchSelect(event)}
-                            className="w-full text-left px-4 py-3 rounded-l hover:bg-gray-200 hover:shadow-sm transition-all duration-300 ease-in-out cursor-pointer"
+                            className="w-full text-left px-4 py-3 rounded-lg hover:bg-gray-200 hover:shadow-sm transition-all duration-300 ease-in-out cursor-pointer"
                           >
                             <span className="text-gray-800">{event}</span>
                           </button>
@@ -1241,7 +1126,7 @@ const Navbar = () => {
                         {Object.entries(searchSuggestions).map(
                           ([category, items], index) => (
                             <div key={index}>
-                              {category === "EVENTS" ? (
+                              {category === "ROOMMATES" ? (
                                 <>
                                   <div className="flex items-center mb-2">
                                     <h4 className="font-bold text-red-600 text-sm uppercase tracking-wide">
@@ -1249,11 +1134,6 @@ const Navbar = () => {
                                     </h4>
                                     <span className="text-gray-300 ml-2">
                                       |------------------------
-                                    </span>
-                                  </div>
-                                  <div className="mb-2">
-                                    <span className="text-gray-800">
-                                      Takecare
                                     </span>
                                   </div>
                                 </>
@@ -1272,7 +1152,7 @@ const Navbar = () => {
                                   <div key={itemIndex}>
                                     <button
                                       onClick={() => handleSearchSelect(item)}
-                                      className="w-full text-left px-4 py-3 rounded-l hover:bg-gray-200 hover:shadow-sm transition-all duration-300 ease-in-out cursor-pointer"
+                                      className="w-full text-left px-4 py-3 rounded-lg hover:bg-gray-200 hover:shadow-sm transition-all duration-300 ease-in-out cursor-pointer"
                                     >
                                       <span className="text-gray-800">
                                         {item}
@@ -1295,7 +1175,7 @@ const Navbar = () => {
                     <h3 className="text-xl font-bold text-gray-900 mb-4 sticky -top-2 py-2 z-10">
                       Services
                     </h3>
-                    <div className="rounded-lg border border-gray-600 p-6 sticky top-9 ">
+                    <div className="rounded-lg border border-gray-600 p-6 sticky top-9">
                       <div className="grid grid-cols-2 gap-x-8 gap-y-4 cursor-pointer">
                         {[
                           { name: "Events", icon: "/bag.png" },
