@@ -446,7 +446,7 @@ const mainMenuItems = [
 
       <nav
         ref={navbarRef}
-        className={`shadow-lg sticky top-0 z-40 transition-all duration-300 ${
+        className={`border-b border-gray-300 sticky top-0 z-40 transition-all duration-300 ${
           isScrolled ? "bg-white/90 backdrop-blur-sm" : "bg-white"
         }`}
       >

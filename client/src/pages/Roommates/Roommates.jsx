@@ -1,5 +1,5 @@
 import React from "react";
-import HeroRoom from "../../components/Roommates/RoommateCard.jsx";
+import HeroRoom from "../../components/Roommates/HeroRoom.jsx";
 import RoommateSubNav from "../../components/Roommates/RoommateSubNav";
 import Footer from "../Home/Footer.jsx";
 
