@@ -13,6 +13,7 @@ import Gallery from "./pages/Home/Gallery.jsx";
 
 // ✅ Import Roommates page
 import Roommates from "./pages/Roommates/Roommates.jsx";
+import Events from "./pages/Events/Events.jsx";
 
 const App = () => {
   return (
@@ -37,6 +38,7 @@ const App = () => {
           
           {/* Roommates Route */}
           <Route path="/roommates" element={<Roommates />} />
+          <Route path="/events" element={<Events/>} />
           
           {/* Add other routes as needed */}
           <Route path="/rentals" element={<div>Rentals Page</div>} />
