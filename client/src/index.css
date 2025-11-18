@@ -29,3 +29,30 @@ html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+
+
+.nav-link:hover {
+  color: #2D7A82;
+}
+
+.nav-link::after {
+  background-color: #2D7A82;
+}
+
+.more-dropdown-link:hover {
+  color: #2D7A82;
+  background-color: #f0f9fa;
+}
+
+
+
+/* Add this to your global CSS file */
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}

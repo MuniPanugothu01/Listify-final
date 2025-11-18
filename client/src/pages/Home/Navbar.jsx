@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
 import { IoLocationOutline } from "react-icons/io5";
 import { CiLocationArrow1 } from "react-icons/ci";
 import { LuPencilLine } from "react-icons/lu";
@@ -57,6 +58,25 @@ const Navbar = () => {
     { name: "Real Estate", count: "29", icon: MdOutlineRealEstateAgent },
     { name: "Financial & Taxation", count: "7", icon: FaMoneyBillWave },
     { name: "Lawyers", count: "11", icon: FaBalanceScale },
+  ];
+
+const mainMenuItems = [
+  { name: "Roommates", path: "/roommates" },
+  { name: "Rentals", path: "/rentals" },
+  { name: "Jobs", path: "/jobs" },
+  { name: "Events", path: "/events" },
+  { name: "Services", path: "/services" },
+  { name: "Marketplace", path: "/marketplace" },
+  { name: "TakeCare", path: "/takecare" },
+];
+
+  const moreMenuItems = [
+    { name: "Jobs", path: "/jobs" },
+    { name: "Cares", path: "/cares" },
+    { name: "Blogs", path: "/blogs" },
+    { name: "Forums", path: "/forums" },
+      { name: "Community", path: "/community" },
+      
   ];
 
   const toggleMobileMenu = () => {
@@ -219,18 +239,6 @@ const Navbar = () => {
       flagImage2x: "https://flagcdn.com/w80/us.png",
     },
   ];
-
-  const mainMenuItems = [
-    "Real Estate",
-    "Jobs",
-    "Services",
-    "Marketplace",
-    "Vehicles",
-    "TakeCare",
-    "Roommates",
-  ];
-
-  const moreMenuItems = ["Jobs", "Cares", "Blogs", "Forums"];
 
   // Filter locations based on search input
   const filteredLocations = [
@@ -399,6 +407,41 @@ const Navbar = () => {
         .scrollbar-hide::-webkit-scrollbar {
           display: none;
         }
+
+        /* Navbar link hover effects */
+        .nav-link {
+          position: relative;
+          transition: color 0.3s ease;
+        }
+
+        .nav-link:hover {
+          color: #2d7a82;
+        }
+
+        .nav-link::after {
+          content: "";
+          position: absolute;
+          width: 0;
+          height: 2px;
+          bottom: -4px;
+          left: 0;
+          background-color: #2d7a82;
+          transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+          width: 100%;
+        }
+
+        /* More dropdown link styles */
+        .more-dropdown-link {
+          transition: all 0.3s ease;
+        }
+
+        .more-dropdown-link:hover {
+          color: #2d7a82;
+          background-color: #f0f9fa;
+        }
       `}</style>
 
       <nav
@@ -411,9 +454,12 @@ const Navbar = () => {
           <div className="flex justify-between items-center py-4 md:py-3">
             {/* Logo */}
             <div className="flex items-center flex-shrink-0">
-              <h1 className="text-xl sm:text-2xl font-bold text-gray-800">
+              <Link
+                to="/"
+                className="text-xl sm:text-2xl font-bold text-gray-800 hover:text-gray-900 transition-colors"
+              >
                 Listify
-              </h1>
+              </Link>
             </div>
 
             {/* Desktop Search Bars */}
@@ -455,22 +501,17 @@ const Navbar = () => {
               </div>
             </div>
 
-            {/* Vertical Line */}
-            <div className="flex items-center">
-              <div className="h-10 border-l-2 border-gray-500"></div>
-            </div>
-
             {/* Desktop Menu */}
             <div className="hidden md:flex items-center space-x-4 lg:space-x-8">
               <ul className="flex flex-wrap justify-center space-x-2 md:space-x-4 lg:space-x-6">
                 {mainMenuItems.map((item) => (
-                  <li key={item}>
-                    <a
-                      href="#"
-                      className="text-xs md:text-sm lg:text-base text-gray-700 hover:text-gray-900 px-1 whitespace-nowrap"
+                  <li key={item.name}>
+                    <Link
+                      to={item.path}
+                      className="nav-link text-xs md:text-sm lg:text-base text-gray-700 hover:text-gray-900 px-1 whitespace-nowrap"
                     >
-                      {item}
-                    </a>
+                      {item.name}
+                    </Link>
                   </li>
                 ))}
                 {/* More Dropdown */}
@@ -478,7 +519,7 @@ const Navbar = () => {
                   <a
                     href="#"
                     onClick={handleMoreClick}
-                    className="text-xs md:text-sm lg:text-base text-gray-700 hover:text-gray-900 px-1 whitespace-nowrap flex items-center"
+                    className="nav-link text-xs md:text-sm lg:text-base text-gray-700 hover:text-gray-900 px-1 whitespace-nowrap flex items-center"
                   >
                     More
                     <FaChevronDown className="h-4 w-4 ml-1" />
@@ -486,14 +527,14 @@ const Navbar = () => {
                   {showMoreDropdown && (
                     <div className="absolute top-full left-0 mt-1 bg-white border border-gray-300 rounded-lg shadow-lg min-w-max z-10">
                       {moreMenuItems.map((item, index) => (
-                        <a
+                        <Link
                           key={index}
-                          href="#"
-                          className="block px-4 py-2 hover:bg-gray-100 text-sm text-gray-700"
+                          to={item.path}
+                          className="more-dropdown-link block px-4 py-2 hover:bg-gray-100 text-sm text-gray-700"
                           onClick={() => setShowMoreDropdown(false)}
                         >
-                          {item}
-                        </a>
+                          {item.name}
+                        </Link>
                       ))}
                     </div>
                   )}
@@ -557,13 +598,14 @@ const Navbar = () => {
                 </div>
                 <div className="grid grid-cols-2 gap-2">
                   {mainMenuItems.map((item) => (
-                    <a
-                      key={item}
-                      href="#"
-                      className="px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded"
+                    <Link
+                      key={item.name}
+                      to={item.path}
+                      className="nav-link px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded"
+                      onClick={() => setIsMobileMenuOpen(false)}
                     >
-                      {item}
-                    </a>
+                      {item.name}
+                    </Link>
                   ))}
                 </div>
                 <button className="flex items-center justify-center gap-2 bg-[#2D7A82] text-white px-4 py-2 rounded-lg text-sm">
@@ -1054,7 +1096,9 @@ const Navbar = () => {
                         >
                           <IconComponent
                             className={`h-6 w-6 ${
-                              index === 0 ? "text-red-600" : "text-gray-600 group-hover:text-white"
+                              index === 0
+                                ? "text-red-600"
+                                : "text-gray-600 group-hover:text-white"
                             }`}
                           />
                         </div>
