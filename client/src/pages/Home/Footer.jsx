@@ -233,31 +233,7 @@ const Footer = () => {
 
         </div>
 
-        {/* Listify Project Text */}
-        <div className="mt-12 pt-8 border-t border-gray-700">
-          <div className="text-center">
-            <h3 className="text-lg font-semibold text-gold mb-4">Listify - Your Ultimate Classifieds Platform</h3>
-            <p className="text-gray-300 text-sm max-w-3xl mx-auto leading-relaxed">
-              Listify is a modern classifieds platform that offers a seamless experience for buying, selling, 
-              and discovering local services. With enhanced security, better categorization, and user-friendly 
-              interface, Listify revolutionizes online classifieds for the modern user.
-            </p>
-            <div className="flex justify-center gap-8 mt-6">
-              <div className="text-center">
-                <p className="text-gold font-semibold text-sm">Secure Transactions</p>
-                <p className="text-gray-400 text-xs mt-1">Safe & protected buying/selling</p>
-              </div>
-              <div className="text-center">
-                <p className="text-gold font-semibold text-sm">Smart Categorization</p>
-                <p className="text-gray-400 text-xs mt-1">Easy to find what you need</p>
-              </div>
-              <div className="text-center">
-                <p className="text-gold font-semibold text-sm">User-Friendly</p>
-                <p className="text-gray-400 text-xs mt-1">Simple and intuitive interface</p>
-              </div>
-            </div>
-          </div>
-        </div>
+       
       </div>
 
     

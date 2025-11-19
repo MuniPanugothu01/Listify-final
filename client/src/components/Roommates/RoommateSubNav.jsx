@@ -49,7 +49,7 @@ export default function RoommateSubNav() {
   const [isSubNavVisible, setIsSubNavVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
 
-  // Enhanced scroll behavior - Hide when scrolling down, show when scrolling up or at top
+  // Show navbar only when at top of page
   useEffect(() => {
     let ticking = false;
 
@@ -58,27 +58,12 @@ export default function RoommateSubNav() {
         requestAnimationFrame(() => {
           const currentScrollY = window.scrollY;
 
-          // Always show when at top of page (less than 50px scrolled)
-          if (currentScrollY < 50) {
+          // Only show when at top of page (less than 100px scrolled)
+          if (currentScrollY < 100) {
             setIsSubNavVisible(true);
-            setLastScrollY(currentScrollY);
-            ticking = false;
-            return;
-          }
-
-          // Determine scroll direction
-          const scrollingDown = currentScrollY > lastScrollY;
-          const scrollDifference = Math.abs(currentScrollY - lastScrollY);
-
-          // Only trigger hide/show if scroll difference is significant enough
-          if (scrollDifference > 10) {
-            if (scrollingDown) {
-              // Scrolling down - hide the subnav
-              setIsSubNavVisible(false);
-            } else {
-              // Scrolling up - show the subnav
-              setIsSubNavVisible(true);
-            }
+          } else {
+            // Hide when not at top
+            setIsSubNavVisible(false);
           }
 
           setLastScrollY(currentScrollY);
@@ -89,6 +74,10 @@ export default function RoommateSubNav() {
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
+    
+    // Initial check
+    handleScroll();
+    
     return () => window.removeEventListener("scroll", handleScroll);
   }, [lastScrollY]);
 
@@ -156,7 +145,7 @@ export default function RoommateSubNav() {
               );
             })}
 
-            {/* More Dropdown - Now after RainbowButton */}
+            {/* More Dropdown */}
             <div className="more-dropdown-container z-50">
               <button
                 onClick={() => setShowMoreDropdown(!showMoreDropdown)}
@@ -167,7 +156,7 @@ export default function RoommateSubNav() {
                 <FaChevronDown className={`w-3 h-3 transition-transform ${showMoreDropdown ? "rotate-180" : ""}`} />
               </button>
 
-              {/* Dropdown Menu - Fixed to show on the left side */}
+              {/* Dropdown Menu */}
               {showMoreDropdown && (
                 <div className="absolute top-full -mt-3 w-64 bg-white rounded-lg shadow-xl border border-gray-200 z-40 py-2">
                   {moreItems.map((item, index) => {
