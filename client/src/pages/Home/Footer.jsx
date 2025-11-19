@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { 
-  FaFacebook, 
-  FaTwitter, 
+import {
+  FaFacebook,
+  FaTwitter,
   FaYoutube,
   FaInstagram,
   FaGooglePlus,
-  FaEnvelope
+  FaEnvelope,
 } from "react-icons/fa";
 
 const Footer = () => {
@@ -30,7 +30,7 @@ const Footer = () => {
     "Maldives Halaveli",
     "Constance Moofushi",
     "Madagascar Tsarabanjina",
-    "Constance Tsarabanjina"
+    "Constance Tsarabanjina",
   ];
 
   const experiences = [
@@ -39,7 +39,7 @@ const Footer = () => {
     "Spa",
     "Weddings & Honeymoons",
     "Diving",
-    "Constance Kids Club"
+    "Constance Kids Club",
   ];
 
   const aboutUs = [
@@ -48,13 +48,10 @@ const Footer = () => {
     "Hospitality Training Centre",
     "Offices",
     "Press",
-    "Partners"
+    "Partners",
   ];
 
-  const gallery = [
-    "Blog",
-    "Groups & Incentives"
-  ];
+  const gallery = ["Blog", "Groups & Incentives"];
 
   const recommendations = [
     "Milan",
@@ -65,7 +62,7 @@ const Footer = () => {
     "Tuscany",
     "London",
     "France",
-    "Marrakech"
+    "Marrakech",
   ];
 
   return (
@@ -77,89 +74,98 @@ const Footer = () => {
 
         {/* Footer Links Grid */}
         <div className="flex justify-between gap-10">
-         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
-           {/* Hotels & Resorts */}
-          <div>
-            <h4 className="text-base font-semibold text-gold mb-6 uppercase tracking-wide">Hotels & Resorts</h4>
-            <ul className="space-y-3">
-              {hotelsAndResorts.map((item, index) => (
-                <li key={index}>
-                  <a 
-                    href="#" 
-                    className="text-gray-300 hover:text-gold transition-all duration-200 block text-sm leading-relaxed"
-                  >
-                    {item}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
+            {/* Hotels & Resorts */}
+            <div>
+              <h4 className="text-base font-semibold text-gold mb-6 uppercase tracking-wide">
+                Hotels & Resorts
+              </h4>
+              <ul className="space-y-3">
+                {hotelsAndResorts.map((item, index) => (
+                  <li key={index}>
+                    <a
+                      href="#"
+                      className="text-gray-300 hover:text-gold transition-all duration-200 block text-sm leading-relaxed"
+                    >
+                      {item}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
 
-          {/* Experiences */}
-          <div>
-            <h4 className="text-base font-semibold text-gold mb-6 uppercase tracking-wide">Experiences</h4>
-            <ul className="space-y-3">
-              {experiences.map((item, index) => (
-                <li key={index}>
-                  <a 
-                    href="#" 
-                    className="text-gray-300 hover:text-gold transition-all duration-200 block text-sm leading-relaxed"
-                  >
-                    {item}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
+            {/* Experiences */}
+            <div>
+              <h4 className="text-base font-semibold text-gold mb-6 uppercase tracking-wide">
+                Experiences
+              </h4>
+              <ul className="space-y-3">
+                {experiences.map((item, index) => (
+                  <li key={index}>
+                    <a
+                      href="#"
+                      className="text-gray-300 hover:text-gold transition-all duration-200 block text-sm leading-relaxed"
+                    >
+                      {item}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
 
-          {/* About Us */}
-          <div>
-            <h4 className="text-base font-semibold text-gold mb-6 uppercase tracking-wide">About Us</h4>
-            <ul className="space-y-3">
-              {aboutUs.map((item, index) => (
-                <li key={index}>
-                  <a 
-                    href="#" 
-                    className="text-gray-300 hover:text-gold transition-all duration-200 block text-sm leading-relaxed"
-                  >
-                    {item}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
+            {/* About Us */}
+            <div>
+              <h4 className="text-base font-semibold text-gold mb-6 uppercase tracking-wide">
+                About Us
+              </h4>
+              <ul className="space-y-3">
+                {aboutUs.map((item, index) => (
+                  <li key={index}>
+                    <a
+                      href="#"
+                      className="text-gray-300 hover:text-gold transition-all duration-200 block text-sm leading-relaxed"
+                    >
+                      {item}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
 
-          {/* Gallery */}
-          <div>
-            <h4 className="text-base font-semibold text-gold mb-6 uppercase tracking-wide">Gallery</h4>
-            <ul className="space-y-3">
-              {gallery.map((item, index) => (
-                <li key={index}>
-                  <a 
-                    href="#" 
-                    className="text-gray-300 hover:text-gold transition-all duration-200 block text-sm leading-relaxed"
-                  >
-                    {item}
-                  </a>
-                </li>
-              ))}
-            </ul>
+            {/* Gallery */}
+            <div>
+              <h4 className="text-base font-semibold text-gold mb-6 uppercase tracking-wide">
+                Gallery
+              </h4>
+              <ul className="space-y-3">
+                {gallery.map((item, index) => (
+                  <li key={index}>
+                    <a
+                      href="#"
+                      className="text-gray-300 hover:text-gold transition-all duration-200 block text-sm leading-relaxed"
+                    >
+                      {item}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
-         </div>
 
           {/* Vertical Line */}
 
-            <div className="h-48 w-px bg-gray-700"></div>
-
+          <div className="h-48 w-px bg-gray-700"></div>
 
           {/* Follow Us & Newsletter */}
           <div className="lg:col-span-1">
             <div className="mb-8">
-              <h4 className="text-base font-semibold text-gold mb-6 uppercase tracking-wide">Follow Us</h4>
+              <h4 className="text-base font-semibold text-gold mb-6 uppercase tracking-wide">
+                Follow Us
+              </h4>
               <div className="flex gap-3">
                 {/* Facebook */}
-                <a 
-                  href="#" 
+                <a
+                  href="#"
                   className="relative w-10 h-10 rounded-full flex items-center justify-center text-white group transition-all duration-300"
                 >
                   <div className="absolute inset-0 bg-gray-800 rounded-full group-hover:bg-[#1877F2] transition-all duration-300"></div>
@@ -167,8 +173,8 @@ const Footer = () => {
                 </a>
 
                 {/* Twitter */}
-                <a 
-                  href="#" 
+                <a
+                  href="#"
                   className="relative w-10 h-10 rounded-full flex items-center justify-center text-white group transition-all duration-300"
                 >
                   <div className="absolute inset-0 bg-gray-800 rounded-full group-hover:bg-[#1DA1F2] transition-all duration-300"></div>
@@ -176,8 +182,8 @@ const Footer = () => {
                 </a>
 
                 {/* YouTube */}
-                <a 
-                  href="#" 
+                <a
+                  href="#"
                   className="relative w-10 h-10 rounded-full flex items-center justify-center text-white group transition-all duration-300"
                 >
                   <div className="absolute inset-0 bg-gray-800 rounded-full group-hover:bg-[#FF0000] transition-all duration-300"></div>
@@ -185,8 +191,8 @@ const Footer = () => {
                 </a>
 
                 {/* Instagram */}
-                <a 
-                  href="#" 
+                <a
+                  href="#"
                   className="relative w-10 h-10 rounded-full flex items-center justify-center text-white group transition-all duration-300"
                 >
                   <div className="absolute inset-0 bg-gray-800 rounded-full group-hover:bg-[#E4405F] transition-all duration-300"></div>
@@ -194,8 +200,8 @@ const Footer = () => {
                 </a>
 
                 {/* Google Plus */}
-                <a 
-                  href="#" 
+                <a
+                  href="#"
                   className="relative w-10 h-10 rounded-full flex items-center justify-center text-white group transition-all duration-300"
                 >
                   <div className="absolute inset-0 bg-gray-800 rounded-full group-hover:bg-[#DB4437] transition-all duration-300"></div>
@@ -206,7 +212,9 @@ const Footer = () => {
 
             {/* Newsletter */}
             <div>
-              <h4 className="text-base font-semibold text-gold mb-4 uppercase tracking-wide">Newsletter</h4>
+              <h4 className="text-base font-semibold text-gold mb-4 uppercase tracking-wide">
+                Newsletter
+              </h4>
               <form onSubmit={handleSubscribe} className="flex flex-col gap-2">
                 <input
                   type="email"
@@ -225,18 +233,8 @@ const Footer = () => {
               </form>
             </div>
           </div>
-
-
-
-
-
-
         </div>
-
-       
       </div>
-
-    
     </footer>
   );
 };

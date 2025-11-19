@@ -116,7 +116,7 @@ export default function RoommateSubNav() {
 
   return (
     <div
-      className={`w-full bg-[#F3F3F3] shadow-sm border-b border-gray-300 sticky top-16 z-30 transition-all duration-300 ease-in-out ${
+      className={`w-full bg-[#F3F3F3] shadow-sm border-b border-gray-300  z-30 transition-all duration-300 ease-in-out ${
         isSubNavVisible
           ? "translate-y-0 opacity-100"
           : "-translate-y-full opacity-0 pointer-events-none"
