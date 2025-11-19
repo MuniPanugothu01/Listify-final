@@ -62,7 +62,7 @@ export default function HeroRoom() {
         <img
           src="/roommates3.jpg" 
           alt="Roommates"
-          className="w-full h-full object-cover object-center"
+          className="w-full h-full object-cover z-0 object-center"
         />
 
         {/* CONTENT OVERLAY */}
@@ -72,7 +72,7 @@ export default function HeroRoom() {
               {/* LEFT SIDE - Text & Buttons */}
               <div className="space-y-8 text-white">
                 {/* Room for Rent & Property for Rent Buttons */}
-                <div className=" bottom-2 flex-col items-center flex justify-center sm:flex-row gap-4">
+                <div className="mt-50 flex-col items-center flex justify-center sm:flex-row gap-4">
                   <div className="cursor-pointer group">
                     <div className="bg-white/10 backdrop-blur-sm group-hover:bg-white/20 border border-white/30 rounded-2xl p-6 w-full sm:w-48 flex flex-col items-center transition duration-300 shadow-lg hover:shadow-xl">
                       <DoorOpen className="w-12 h-12 mb-3 text-white drop-shadow" />
@@ -216,8 +216,8 @@ export default function HeroRoom() {
                   {/* Search Button */}
                   <div className="flex-1 min-w-[100px]">
                     <button
-                      className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-teal-500 to-cyan-600 
-                               text-white font-semibold rounded-lg px-4 py-2.5 transition-all hover:scale-[1.02] 
+                      className="w-full flex items-center justify-center gap-2 bg-[#25676D]  
+                               text-white font-semibold rounded-lg px-4 py-2.5 hover:bg-[#165157] 
                                shadow-lg hover:shadow-xl text-sm  hover:cyan-700 cursor-pointer"
                     >
                       <Search className="w-4 h-4" />

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { RainbowButton } from "../../components/ui/rainbow-button"
 import { 
   FaChevronDown, 
   FaFilter, 
@@ -10,7 +11,8 @@ import {
   FaHome, 
   FaCity, 
   FaHouseUser, 
-  FaMapMarkerAlt 
+  FaMapMarkerAlt,
+  FaEllipsisH
 } from "react-icons/fa";
 
 const subNavItems = [
@@ -18,16 +20,26 @@ const subNavItems = [
   { name: "Single Room", icon: FaBed },
   { name: "Shared Room", icon: FaUsers },
   { name: "Private Room", icon: FaUserLock },
-  { name: "PG / Co-living", icon: FaBuilding },
-  { name: "Apartments", icon: FaHome },
   { name: "Condos", icon: FaCity },
   { name: "Townhouses", icon: FaHouseUser },
   { name: "Near Me", icon: FaMapMarkerAlt },
 ];
 
+const moreItems = [
+  { name: "PG / Co-living", icon: FaBuilding },
+  { name: "Apartments", icon: FaHome },
+  { name: "Studio", icon: FaBed },
+  { name: "Villas", icon: FaHouseUser },
+  { name: "Guest Houses", icon: FaBuilding },
+  { name: "Serviced Apartments", icon: FaCity },
+  { name: "Student Housing", icon: FaUsers },
+  { name: "Senior Living", icon: FaUserLock },
+];
+
 export default function RoommateSubNav() {
   const navigate = useNavigate();
   const [showFilters, setShowFilters] = useState(false);
+  const [showMoreDropdown, setShowMoreDropdown] = useState(false);
   const [selectedFilters, setSelectedFilters] = useState({
     price: "Any Price",
     gender: "Any Gender",
@@ -37,28 +49,43 @@ export default function RoommateSubNav() {
   const [isSubNavVisible, setIsSubNavVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
 
-  // Handle scroll behavior - Hide subnav when scrolling up
+  // Enhanced scroll behavior - Hide when scrolling down, show when scrolling up or at top
   useEffect(() => {
+    let ticking = false;
+
     const handleScroll = () => {
-      const currentScrollY = window.scrollY;
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          const currentScrollY = window.scrollY;
 
-      // Always show when at top of page
-      if (currentScrollY < 100) {
-        setIsSubNavVisible(true);
-        setLastScrollY(currentScrollY);
-        return;
+          // Always show when at top of page (less than 50px scrolled)
+          if (currentScrollY < 50) {
+            setIsSubNavVisible(true);
+            setLastScrollY(currentScrollY);
+            ticking = false;
+            return;
+          }
+
+          // Determine scroll direction
+          const scrollingDown = currentScrollY > lastScrollY;
+          const scrollDifference = Math.abs(currentScrollY - lastScrollY);
+
+          // Only trigger hide/show if scroll difference is significant enough
+          if (scrollDifference > 10) {
+            if (scrollingDown) {
+              // Scrolling down - hide the subnav
+              setIsSubNavVisible(false);
+            } else {
+              // Scrolling up - show the subnav
+              setIsSubNavVisible(true);
+            }
+          }
+
+          setLastScrollY(currentScrollY);
+          ticking = false;
+        });
+        ticking = true;
       }
-
-      // Hide when scrolling up, show when scrolling down
-      if (currentScrollY < lastScrollY) {
-        // Scrolling up - hide the subnav
-        setIsSubNavVisible(false);
-      } else {
-        // Scrolling down - show the subnav
-        setIsSubNavVisible(true);
-      }
-
-      setLastScrollY(currentScrollY);
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
@@ -73,6 +100,7 @@ export default function RoommateSubNav() {
       // For other categories, use the roommates query parameter
       navigate(`/roommates?type=${encodeURIComponent(category.name)}`);
     }
+    setShowMoreDropdown(false);
   };
 
   const handleFilterChange = (filterType, value) => {
@@ -82,21 +110,24 @@ export default function RoommateSubNav() {
     }));
   };
 
-  // Close filters when clicking outside
+  // Close dropdowns when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (showFilters && !event.target.closest(".filter-container")) {
         setShowFilters(false);
       }
+      if (showMoreDropdown && !event.target.closest(".more-dropdown-container")) {
+        setShowMoreDropdown(false);
+      }
     };
 
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [showFilters]);
+  }, [showFilters, showMoreDropdown]);
 
   return (
     <div
-      className={`w-full bg-white shadow-sm border-b border-gray-300 sticky top-16 z-30 transition-all duration-300 ${
+      className={`w-full bg-[#F3F3F3] shadow-sm border-b border-gray-300 sticky top-16 z-30 transition-all duration-300 ease-in-out ${
         isSubNavVisible
           ? "translate-y-0 opacity-100"
           : "-translate-y-full opacity-0 pointer-events-none"
@@ -105,7 +136,7 @@ export default function RoommateSubNav() {
       <div className="px-4 sm:px-6 lg:px-8">
         {/* Main Navigation */}
         <div className="flex items-center justify-between py-3">
-          <div className="flex items-center gap-4 overflow-x-auto no-scrollbar flex-1">
+          <div className="flex items-center gap-3 overflow-x-auto no-scrollbar flex-1">
             {subNavItems.map((item, index) => {
               const IconComponent = item.icon;
               return (
@@ -114,7 +145,7 @@ export default function RoommateSubNav() {
                   onClick={() => handleCategoryClick(item)}
                   className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm transition-all whitespace-nowrap min-w-max cursor-pointer ${
                     item.name === "Home" 
-                      ? "bg-teal-500 text-white hover:bg-teal-600" 
+                      ? "bg-[#25676D] text-white hover:bg-teal-600" 
                       : "text-gray-700 hover:bg-teal-50 hover:text-teal-500"
                   } ${item.iconOnly ? "px-3" : "px-4"}`}
                   title={item.name}
@@ -124,6 +155,40 @@ export default function RoommateSubNav() {
                 </button>
               );
             })}
+
+            {/* More Dropdown - Now after RainbowButton */}
+            <div className="more-dropdown-container z-50">
+              <button
+                onClick={() => setShowMoreDropdown(!showMoreDropdown)}
+                className="flex items-center gap-2 px-4 py-2 rounded-full text-sm text-gray-700 hover:bg-teal-50 hover:text-teal-500 transition-all whitespace-nowrap min-w-max cursor-pointer"
+              >
+                <FaEllipsisH className="w-4 h-4" />
+                <span>More</span>
+                <FaChevronDown className={`w-3 h-3 transition-transform ${showMoreDropdown ? "rotate-180" : ""}`} />
+              </button>
+
+              {/* Dropdown Menu - Fixed to show on the left side */}
+              {showMoreDropdown && (
+                <div className="absolute top-full -mt-3 w-64 bg-white rounded-lg shadow-xl border border-gray-200 z-40 py-2">
+                  {moreItems.map((item, index) => {
+                    const IconComponent = item.icon;
+                    return (
+                      <button
+                        key={index}
+                        onClick={() => handleCategoryClick(item)}
+                        className="flex items-center gap-3 w-full px-4 py-3 text-sm text-gray-700 hover:bg-teal-50 hover:text-teal-500 transition-all cursor-pointer"
+                      >
+                        <IconComponent className="w-4 h-4" />
+                        <span>{item.name}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+            
+            <RainbowButton className="bg-red">I'm Searching</RainbowButton>
+            <RainbowButton>Invite Someone in</RainbowButton>
           </div>
         </div>
 
