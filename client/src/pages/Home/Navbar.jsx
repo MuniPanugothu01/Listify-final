@@ -320,12 +320,28 @@ const mainMenuItems = [
     };
   }, []);
 
+  // Enhanced scroll handler with smooth animation
   useEffect(() => {
+    let ticking = false;
+    
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          const scrollY = window.scrollY;
+          // Change background when scrolled more than 50px
+          setIsScrolled(scrollY > 50);
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+
+    // Use passive scroll listener for better performance
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
   }, []);
 
   return (
@@ -364,24 +380,6 @@ const mainMenuItems = [
           }
         }
 
-        .location-dropdown {
-          animation: slideUp 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        }
-
-        .search-modal-enter {
-          animation: slideInFromRight 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)
-            forwards;
-        }
-
-        .search-modal-exit {
-          animation: slideOutToRight 0.5s cubic-bezier(0.55, 0.085, 0.68, 0.53)
-            forwards;
-        }
-
-        .backdrop {
-          animation: fadeIn 0.4s ease-out;
-        }
-
         @keyframes fadeIn {
           from {
             opacity: 0;
@@ -398,6 +396,24 @@ const mainMenuItems = [
           to {
             opacity: 0;
           }
+        }
+
+        .location-dropdown {
+          animation: slideUp 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .search-modal-enter {
+          animation: slideInFromRight 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)
+            forwards;
+        }
+
+        .search-modal-exit {
+          animation: slideOutToRight 0.5s cubic-bezier(0.55, 0.085, 0.68, 0.53)
+            forwards;
+        }
+
+        .backdrop {
+          animation: fadeIn 0.4s ease-out;
         }
 
         .scrollbar-hide {
@@ -442,12 +458,61 @@ const mainMenuItems = [
           color: #2d7a82;
           background-color: #f0f9fa;
         }
+
+        /* Smooth navbar transition */
+        .navbar-transition {
+          transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Scrolled state styles */
+        .navbar-scrolled {
+          background-color: rgba(0, 0, 0, 0.95) !important;
+          backdrop-filter: blur(20px) !important;
+          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .navbar-scrolled .nav-link {
+          color: #ffffff;
+        }
+
+        .navbar-scrolled .nav-link:hover {
+          color: #2d7a82;
+        }
+
+        .navbar-scrolled .logo-text {
+          color: #ffffff;
+        }
+
+        .navbar-scrolled .search-input {
+          background-color: rgba(255, 255, 255, 0.1);
+          border-color: rgba(255, 255, 255, 0.2);
+          color: #ffffff;
+        }
+
+        .navbar-scrolled .search-input::placeholder {
+          color: rgba(255, 255, 255, 0.7);
+        }
+
+        .navbar-scrolled .search-icon {
+          color: rgba(255, 255, 255, 0.7);
+        }
+
+        .navbar-scrolled .profile-button {
+          border-color: rgba(255, 255, 255, 0.3);
+          color: #ffffff;
+        }
+
+        .navbar-scrolled .profile-button:hover {
+          background-color: rgba(255, 255, 255, 0.1);
+        }
       `}</style>
 
       <nav
         ref={navbarRef}
-        className={`border-b border-gray-300 sticky top-0 z-40 transition-all duration-300 ${
-          isScrolled ? "bg-white/90 backdrop-blur-sm" : "bg-white"
+        className={`border-b border-gray-300 sticky top-0 z-40 navbar-transition ${
+          isScrolled 
+            ? "navbar-scrolled border-gray-700" 
+            : "bg-white border-gray-300"
         }`}
       >
         <div className="px-4 sm:px-6 lg:px-8">
@@ -456,7 +521,9 @@ const mainMenuItems = [
             <div className="flex items-center flex-shrink-0">
               <Link
                 to="/"
-                className="text-xl sm:text-2xl font-bold text-gray-800 hover:text-gray-900 transition-colors"
+                className={`text-xl sm:text-2xl font-bold hover:text-gray-900 transition-colors logo-text ${
+                  isScrolled ? "text-white" : "text-gray-800"
+                }`}
               >
                 Listify
               </Link>
@@ -470,13 +537,19 @@ const mainMenuItems = [
                   <input
                     type="text"
                     placeholder="Search by service or category"
-                    className="w-[10px] pl-8 sm:pl-10 pr-2 sm:pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#c89a5e] text-sm cursor-pointer"
+                    className={`w-[10px] pl-8 sm:pl-10 pr-2 sm:pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#c89a5e] text-sm cursor-pointer search-input ${
+                      isScrolled 
+                        ? "bg-white/10 border-white/20 text-white placeholder-white/70" 
+                        : "border-gray-300 text-gray-900"
+                    }`}
                     onFocus={handleSearchClick}
                     onClick={handleSearchClick}
                     readOnly
                   />
                   <div className="absolute inset-y-0 left-0 pl-2 sm:pl-3 flex items-center pointer-events-none">
-                    <FaSearch className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
+                    <FaSearch className={`h-4 w-4 sm:h-5 sm:w-5 search-icon ${
+                      isScrolled ? "text-white/70" : "text-gray-400"
+                    }`} />
                   </div>
                 </div>
 
@@ -486,16 +559,24 @@ const mainMenuItems = [
                     type="text"
                     placeholder="Location"
                     value={selectedLocation}
-                    className="w-[140px] pl-8 sm:pl-10 pr-8 sm:pr-10 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm cursor-pointer"
+                    className={`w-[140px] pl-8 sm:pl-10 pr-8 sm:pr-10 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm cursor-pointer search-input ${
+                      isScrolled 
+                        ? "bg-white/10 border-white/20 text-white placeholder-white/70" 
+                        : "border-gray-300 text-gray-900"
+                    }`}
                     onFocus={handleLocationClick}
                     onClick={handleLocationClick}
                     readOnly
                   />
                   <div className="absolute inset-y-0 left-0 pl-2 sm:pl-3 flex items-center pointer-events-none">
-                    <FaMapMarkerAlt className="h-3 w-3 sm:h-5 sm:w-5 text-gray-400" />
+                    <FaMapMarkerAlt className={`h-3 w-3 sm:h-5 sm:w-5 search-icon ${
+                      isScrolled ? "text-white/70" : "text-gray-400"
+                    }`} />
                   </div>
                   <div className="absolute inset-y-0 -right-1 pr-2 sm:pr-3 flex items-center pointer-events-none">
-                    <FaChevronDown className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
+                    <FaChevronDown className={`h-4 w-4 sm:h-5 sm:w-5 search-icon ${
+                      isScrolled ? "text-white/70" : "text-gray-400"
+                    }`} />
                   </div>
                 </div>
               </div>
@@ -508,7 +589,9 @@ const mainMenuItems = [
                   <li key={item.name}>
                     <Link
                       to={item.path}
-                      className="nav-link text-xs md:text-sm lg:text-base text-gray-700 hover:text-gray-900 px-1 whitespace-nowrap"
+                      className={`nav-link text-xs md:text-sm lg:text-base hover:text-gray-900 px-1 whitespace-nowrap ${
+                        isScrolled ? "text-white" : "text-gray-700"
+                      }`}
                     >
                       {item.name}
                     </Link>
@@ -519,7 +602,9 @@ const mainMenuItems = [
                   <a
                     href="#"
                     onClick={handleMoreClick}
-                    className="nav-link text-xs md:text-sm lg:text-base text-gray-700 hover:text-gray-900 px-1 whitespace-nowrap flex items-center"
+                    className={`nav-link text-xs md:text-sm lg:text-base hover:text-gray-900 px-1 whitespace-nowrap flex items-center ${
+                      isScrolled ? "text-white" : "text-gray-700"
+                    }`}
                   >
                     More
                     <FaChevronDown className="h-4 w-4 ml-1" />
@@ -548,9 +633,13 @@ const mainMenuItems = [
                   Create a Listing
                 </button>
 
-                <div className="border border-gray-300 rounded-lg px-3 py-1.5 md:px-4 md:py-3 hover:shadow-md cursor-pointer flex items-center gap-2">
-                  <HiOutlineBars3BottomRight className="text-[20px] md:text-[22px] text-gray-700" />
-                  <CgProfile className="text-[20px] md:text-[22px] text-gray-700" />
+                <div className={`border rounded-lg px-3 py-1.5 md:px-4 md:py-3 hover:shadow-md cursor-pointer flex items-center gap-2 profile-button ${
+                  isScrolled 
+                    ? "border-white/30 text-white hover:bg-white/10" 
+                    : "border-gray-300 text-gray-700"
+                }`}>
+                  <HiOutlineBars3BottomRight className="text-[20px] md:text-[22px]" />
+                  <CgProfile className="text-[20px] md:text-[22px]" />
                 </div>
               </div>
             </div>
@@ -559,7 +648,7 @@ const mainMenuItems = [
             <div className="md:hidden flex-shrink-0">
               <button
                 onClick={toggleMobileMenu}
-                className="text-gray-700 hover:text-gray-900"
+                className={isScrolled ? "text-white" : "text-gray-700"}
               >
                 <svg
                   className="h-6 w-6"
@@ -580,19 +669,29 @@ const mainMenuItems = [
 
           {/* Mobile Menu */}
           {isMobileMenuOpen && (
-            <div className="md:hidden pb-4 border-t border-gray-200">
+            <div className={`md:hidden pb-4 border-t ${
+              isScrolled ? "border-gray-600" : "border-gray-200"
+            }`}>
               <div className="flex flex-col space-y-4 mt-4">
                 <div className="flex space-x-2">
                   <input
                     type="text"
                     placeholder="Search by service or category"
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                    className={`flex-1 px-3 py-2 border rounded-lg text-sm ${
+                      isScrolled 
+                        ? "bg-white/10 border-white/20 text-white placeholder-white/70" 
+                        : "border-gray-300"
+                    }`}
                     onFocus={handleSearchClick}
                   />
                   <input
                     type="text"
                     placeholder="Location"
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                    className={`flex-1 px-3 py-2 border rounded-lg text-sm ${
+                      isScrolled 
+                        ? "bg-white/10 border-white/20 text-white placeholder-white/70" 
+                        : "border-gray-300"
+                    }`}
                     onFocus={handleLocationClick}
                   />
                 </div>
@@ -601,7 +700,11 @@ const mainMenuItems = [
                     <Link
                       key={item.name}
                       to={item.path}
-                      className="nav-link px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded"
+                      className={`nav-link px-3 py-2 text-sm hover:bg-gray-100 rounded ${
+                        isScrolled 
+                          ? "text-white hover:bg-white/10" 
+                          : "text-gray-700"
+                      }`}
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       {item.name}
@@ -618,6 +721,7 @@ const mainMenuItems = [
         </div>
       </nav>
 
+      {/* Rest of your existing code for Location Dropdown and Search Modal remains the same */}
       {/* Location Dropdown */}
       {showLocationDropdown && (
         <div className="fixed inset-0 z-50">
