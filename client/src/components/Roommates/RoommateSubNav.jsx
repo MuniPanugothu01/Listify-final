@@ -1,20 +1,29 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaChevronDown, FaFilter } from "react-icons/fa";
+import { 
+  FaChevronDown, 
+  FaFilter, 
+  FaBed, 
+  FaUsers, 
+  FaUserLock, 
+  FaBuilding, 
+  FaHome, 
+  FaCity, 
+  FaHouseUser, 
+  FaMapMarkerAlt 
+} from "react-icons/fa";
 
 const subNavItems = [
-  { name: "Single Room", icon: "🛏️" },
-  { name: "Shared Room", icon: "👥" },
-  { name: "Private Room", icon: "🔒" },
-  { name: "PG / Co-living", icon: "🏢" },
-  { name: "Apartments", icon: "🏠" },
-  { name: "Condos", icon: "🏘️" },
-  { name: "Townhouses", icon: "🏡" },
-  { name: "Near Me", icon: "📍" },
-
+  { name: "Home", icon: FaHome, path: "/", iconOnly: true },
+  { name: "Single Room", icon: FaBed },
+  { name: "Shared Room", icon: FaUsers },
+  { name: "Private Room", icon: FaUserLock },
+  { name: "PG / Co-living", icon: FaBuilding },
+  { name: "Apartments", icon: FaHome },
+  { name: "Condos", icon: FaCity },
+  { name: "Townhouses", icon: FaHouseUser },
+  { name: "Near Me", icon: FaMapMarkerAlt },
 ];
-
-
 
 export default function RoommateSubNav() {
   const navigate = useNavigate();
@@ -57,7 +66,13 @@ export default function RoommateSubNav() {
   }, [lastScrollY]);
 
   const handleCategoryClick = (category) => {
-    navigate(`/roommates?type=${encodeURIComponent(category.name)}`);
+    if (category.path) {
+      // If category has a specific path (like Home), navigate to that path
+      navigate(category.path);
+    } else {
+      // For other categories, use the roommates query parameter
+      navigate(`/roommates?type=${encodeURIComponent(category.name)}`);
+    }
   };
 
   const handleFilterChange = (filterType, value) => {
@@ -87,23 +102,29 @@ export default function RoommateSubNav() {
           : "-translate-y-full opacity-0 pointer-events-none"
       }`}
     >
-      <div className=" px-4 sm:px-6 lg:px-8">
+      <div className="px-4 sm:px-6 lg:px-8">
         {/* Main Navigation */}
         <div className="flex items-center justify-between py-3">
           <div className="flex items-center gap-4 overflow-x-auto no-scrollbar flex-1">
-            {subNavItems.map((item, index) => (
-              <button
-                key={index}
-                onClick={() => handleCategoryClick(item)}
-                className="flex items-center gap-2 px-4 py-2 rounded-full  text-sm text-gray-700  hover:bg-teal-50 hover:text-teal-500 transition-all whitespace-nowrap min-w-max cursor-pointer "
-              >
-                <span>{item.icon}</span>
-                <span>{item.name}</span>
-              </button>
-            ))}
+            {subNavItems.map((item, index) => {
+              const IconComponent = item.icon;
+              return (
+                <button
+                  key={index}
+                  onClick={() => handleCategoryClick(item)}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm transition-all whitespace-nowrap min-w-max cursor-pointer ${
+                    item.name === "Home" 
+                      ? "bg-teal-500 text-white hover:bg-teal-600" 
+                      : "text-gray-700 hover:bg-teal-50 hover:text-teal-500"
+                  } ${item.iconOnly ? "px-3" : "px-4"}`}
+                  title={item.name}
+                >
+                  <IconComponent className={`${item.iconOnly ? "w-5 h-5" : "w-4 h-4"}`} />
+                  {!item.iconOnly && <span>{item.name}</span>}
+                </button>
+              );
+            })}
           </div>
-
-        
         </div>
 
         {/* Active Filters Display */}
