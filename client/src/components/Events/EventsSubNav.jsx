@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { RainbowButton } from "../../components/ui/rainbow-button";
 import {
   FaHome,
   FaCalendarAlt,
@@ -10,25 +11,33 @@ import {
   FaMapMarkerAlt,
   FaFilter,
   FaChevronDown,
-
+  FaEllipsisH
 } from "react-icons/fa";
 
 const navItems = [
   { name: "Home", icon: FaHome, path: "/", iconOnly: true },
   { name: "Upcoming", icon: FaCalendarAlt },
   { name: "Popular", icon: FaTicketAlt },
-  {name: "Group Events", icon: FaUsers },
+  { name: "Group Events", icon: FaUsers },
   { name: "Nearby", icon: FaMapMarkerAlt },
   { name: "This Weekend", icon: FaCalendarAlt },
+];
+
+const moreItems = [
   { name: "Free Events", icon: FaTicketAlt },
   { name: "Past Events", icon: FaClock },
   { name: "My Events", icon: FaUsers },
   { name: "Favorites", icon: FaHeart },
-  
+  { name: "Workshops", icon: FaCalendarAlt },
+  { name: "Concerts", icon: FaTicketAlt },
+  { name: "Conferences", icon: FaUsers },
+  { name: "Sports Events", icon: FaMapMarkerAlt },
 ];
 
 export default function EventsSubNav() {
   const navigate = useNavigate();
+  const [showFilters, setShowFilters] = useState(false);
+  const [showMoreDropdown, setShowMoreDropdown] = useState(false);
   const [selectedFilters, setSelectedFilters] = useState({
     city: "All Cities",
     date: "All Dates",
@@ -38,35 +47,83 @@ export default function EventsSubNav() {
   const [isSubNavVisible, setIsSubNavVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
 
-  // Scroll hide/show (exact same behavior as roommate version)
+  // Enhanced scroll behavior - Hide when scrolling down, show when scrolling up or at top
   useEffect(() => {
+    let ticking = false;
+
     const handleScroll = () => {
-      const currentScrollY = window.scrollY;
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          const currentScrollY = window.scrollY;
 
-      if (currentScrollY < 100) {
-        setIsSubNavVisible(true);
-        setLastScrollY(currentScrollY);
-        return;
+          // Always show when at top of page (less than 50px scrolled)
+          if (currentScrollY < 50) {
+            setIsSubNavVisible(true);
+            setLastScrollY(currentScrollY);
+            ticking = false;
+            return;
+          }
+
+          // Determine scroll direction
+          const scrollingDown = currentScrollY > lastScrollY;
+          const scrollDifference = Math.abs(currentScrollY - lastScrollY);
+
+          // Only trigger hide/show if scroll difference is significant enough
+          if (scrollDifference > 10) {
+            if (scrollingDown) {
+              // Scrolling down - hide the subnav
+              setIsSubNavVisible(false);
+            } else {
+              // Scrolling up - show the subnav
+              setIsSubNavVisible(true);
+            }
+          }
+
+          setLastScrollY(currentScrollY);
+          ticking = false;
+        });
+        ticking = true;
       }
-
-      if (currentScrollY < lastScrollY) {
-        setIsSubNavVisible(false); // scrolling up → hide
-      } else {
-        setIsSubNavVisible(true);  // scrolling down → show
-      }
-
-      setLastScrollY(currentScrollY);
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, [lastScrollY]);
 
- 
+  const handleCategoryClick = (category) => {
+    if (category.path) {
+      // If category has a specific path (like Home), navigate to that path
+      navigate(category.path);
+    } else {
+      // For other categories, use the events query parameter
+      navigate(`/events?type=${encodeURIComponent(category.name)}`);
+    }
+    setShowMoreDropdown(false);
+  };
+
+  const handleFilterChange = (filterType, value) => {
+    setSelectedFilters((prev) => ({
+      ...prev,
+      [filterType]: value,
+    }));
+  };
+
+  const resetFilter = (filterType) => {
+    setSelectedFilters((prev) => ({
+      ...prev,
+      [filterType]: 
+        filterType === "city" ? "All Cities" :
+        filterType === "date" ? "All Dates" :
+        filterType === "category" ? "All Categories" :
+        "Any Language"
+    }));
+  };
+
+  
 
   return (
     <div
-      className={`w-full bg-white shadow-sm border-b border-gray-300 sticky top-16 z-30 transition-all duration-300 ${
+      className={`w-full bg-white shadow-sm border-b border-gray-300  z-30 transition-all duration-300 ease-in-out ${
         isSubNavVisible
           ? "translate-y-0 opacity-100"
           : "-translate-y-full opacity-0 pointer-events-none"
@@ -74,52 +131,90 @@ export default function EventsSubNav() {
     >
       <div className="px-4 sm:px-6 lg:px-8">
         {/* Main Navigation */}
-        <div className="flex items-center justify-between py-3 ">
-          {/* Pill Buttons - exact same style as roommate nav */}
-          <div className="flex items-center gap-4 overflow-x-auto no-scrollbar flex-1 ">
-            {navItems.map((item, idx) => {
-              const Icon = item.icon;
+        <div className="flex items-center justify-between py-3">
+          {/* FIXED: Added overflow-visible to allow dropdown to break out */}
+          <div className="flex items-center gap-3 overflow-x-auto overflow-visible no-scrollbar flex-1 relative">
+            {navItems.map((item, index) => {
+              const IconComponent = item.icon;
               return (
                 <button
-                  key={idx}
+                  key={index}
                   onClick={() => handleCategoryClick(item)}
                   className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm transition-all whitespace-nowrap min-w-max cursor-pointer ${
-                    item.name === "Home"
-                      ? "bg-teal-500 text-white hover:bg-teal-600"
+                    item.name === "Home" 
+                      ? "bg-teal-500 text-white hover:bg-teal-600" 
                       : "text-gray-700 hover:bg-teal-50 hover:text-teal-500"
                   } ${item.iconOnly ? "px-3" : "px-4"}`}
                   title={item.name}
                 >
-                  <Icon className={`${item.iconOnly ? "w-5 h-5" : "w-4 h-4"}`} />
+                  <IconComponent className={`${item.iconOnly ? "w-5 h-5" : "w-4 h-4"}`} />
                   {!item.iconOnly && <span>{item.name}</span>}
                 </button>
               );
             })}
-          </div>         
+
+            {/* More Dropdown - Fixed positioning */}
+            <div className="more-dropdown-container relative z-50">
+              <button
+                onClick={() => setShowMoreDropdown(!showMoreDropdown)}
+                className="flex items-center gap-2 px-4 py-2 rounded-full text-sm text-gray-700 hover:bg-teal-50 hover:text-teal-500 transition-all whitespace-nowrap min-w-max cursor-pointer"
+              >
+                <FaEllipsisH className="w-4 h-4" />
+                <span>More</span>
+                <FaChevronDown className={`w-3 h-3 transition-transform ${showMoreDropdown ? "rotate-180" : ""}`} />
+              </button>
+
+              {/* Dropdown Menu - Fixed to appear outside scrollable container */}
+              {showMoreDropdown && (
+                <div className="fixed top-15 left-1/2 transform -translate-x-1/2 w-64 bg-white rounded-lg shadow-xl border border-gray-200 z-50 py-2">
+                  {moreItems.map((item, index) => {
+                    const IconComponent = item.icon;
+                    return (
+                      <button
+                        key={index}
+                        onClick={() => handleCategoryClick(item)}
+                        className="flex items-center gap-3 w-full px-4 py-3 text-sm text-gray-700 hover:bg-teal-50 hover:text-teal-500 transition-all cursor-pointer"
+                      >
+                        <IconComponent className="w-4 h-4" />
+                        <span>{item.name}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+            
+            {/* Rainbow Buttons */}
+            <RainbowButton className="ml-2">Create Event</RainbowButton>
+          </div>
+
+        
         </div>
 
-        {/* Active Filter Chips */}
+        {/* Active Filters Display */}
         {Object.values(selectedFilters).some(
-          (v) => !v.includes("All") && !v.includes("Any")
+          (filter) => !filter.includes("All") && !filter.includes("Any")
         ) && (
-          <div className="flex items-center gap-2 py-2 border-t border-gray-200 flex-wrap  ">
+          <div className="flex items-center gap-2 py-2 border-t border-gray-200">
             <span className="text-sm text-gray-600">Active filters:</span>
             {Object.entries(selectedFilters).map(([key, value]) => {
-              if (value.includes("All") || value.includes("Any")) return null;
-              return (
-                <span
-                  key={key}
-                  className="inline-flex items-center gap-1 px-2 py-1 bg-teal-100 text-teal-800 rounded-full text-xs "
-                >
-                  {value}
-                  <button
-                    onClick={() => resetFilter(key)}
-                    className="hover:text-teal-900 ml-1"
+              if (!value.includes("All") && !value.includes("Any")) {
+                return (
+                  <span
+                    key={key}
+                    className="inline-flex items-center gap-1 px-2 py-1 bg-teal-100 text-teal-800 rounded-full text-xs"
                   >
-                    ×
-                  </button>
-                </span>
-              );
+                    {value}
+                    <button
+                      onClick={() => resetFilter(key)}
+                      className="hover:text-teal-900 ml-1"
+                    >
+                      ×
+                    </button>
+                  </span>
+                );
+              }
+              return null;
             })}
           </div>
         )}
