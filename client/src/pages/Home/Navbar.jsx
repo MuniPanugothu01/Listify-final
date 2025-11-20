@@ -516,7 +516,7 @@ const mainMenuItems = [
         }`}
       >
         <div className="px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4 md:py-3">
+          <div className="flex justify-start  items-center py-4 md:py-3">
             {/* Logo */}
             <div className="flex items-center flex-shrink-0">
               <Link
@@ -530,10 +530,10 @@ const mainMenuItems = [
             </div>
 
             {/* Desktop Search Bars */}
-            <div className="hidden sm:flex flex-1 justify-center max-w-md sm:max-w-lg md:max-w-2xl mx-2 sm:mx-4 md:mx-8">
-              <div className="flex w-full space-x-1 sm:space-x-2">
+            <div className="hidden sm:flex flex-0 justify-center max-w-md sm:max-w-lg md:max-w-2xl mx-2 sm:mx-4 md:mx-8 ">
+              <div className="flex space-x-1 sm:space-x-2">
                 {/* General Search */}
-                <div className="relative flex-1 left-5">
+                <div className="relative flex-1 ">
                   <input
                     type="text"
                     placeholder="Search by service or category"
@@ -554,7 +554,7 @@ const mainMenuItems = [
                 </div>
 
                 {/* Location Search */}
-                <div className="relative flex-1 right-8">
+                <div className="relative flex-1">
                   <input
                     type="text"
                     placeholder="Location"
@@ -573,12 +573,15 @@ const mainMenuItems = [
                       isScrolled ? "text-white/70" : "text-gray-400"
                     }`} />
                   </div>
-                  <div className="absolute inset-y-0 -right-1 pr-2 sm:pr-3 flex items-center pointer-events-none">
+                  <div className="absolute inset-y-0 right-2 pr-2 sm:pr-3 flex items-center pointer-events-none">
                     <FaChevronDown className={`h-4 w-4 sm:h-5 sm:w-5 search-icon ${
                       isScrolled ? "text-white/70" : "text-gray-400"
                     }`} />
                   </div>
                 </div>
+
+
+                
               </div>
             </div>
 
@@ -626,7 +629,7 @@ const mainMenuItems = [
                 </li>
               </ul>
               {/* Right side actions */}
-              <div className="flex items-center space-x-3 md:space-x-4 ml-4">
+              <div className="flex items-center space-x-3 md:space-x-4 ml-28">
                 {/* Create Listing Button */}
                 <button className="flex items-center gap-2 bg-[#2D7A82] text-white px-4 py-3.5 md:px-4 md:py-3.5 rounded-lg text-xs md:text-sm lg:text-base whitespace-nowrap hover:bg-[#25676D] transition cursor-pointer">
                   <LuPencilLine className="text-white text-base md:text-lg" />

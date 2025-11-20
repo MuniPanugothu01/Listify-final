@@ -65,7 +65,7 @@ export default function EventsHero() {
 
       {/* 🌟 Floating Search Bar Here */}
       <div className="absolute left-1/2 bottom-[-60px] transform -translate-x-1/2 w-full px-6 z-20">
-        <div className=" rounded-2xl shadow-lg p-6 max-w-5xl mx-auto bg-gray-50">
+        <div className=" rounded-2xl shadow-lg p-6 max-w-7xl mx-auto bg-gray-50">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 ">
             
             {/* Event Type */}

@@ -119,7 +119,7 @@ const App = () => {
         </Routes>
 
         {/* Floating Action Buttons Container */}
-        <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end space-y-4">
+        <div className="fixed bottom-6 right-8 z-50 flex flex-col items-end space-y-4">
           
           {/* Scroll to Top Button */}
           {showScrollTop && (
@@ -128,7 +128,8 @@ const App = () => {
               disabled={isScrolling}
               className={`
                 group relative
-                w-14 h-14
+                w-12 h-12
+                bottom-24 
                 bg-gradient-to-br from-[#25676D] to-[#1a4d52]
                 text-white
                 rounded-2xl

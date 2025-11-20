@@ -221,7 +221,7 @@ const ChatBot = () => {
 
   return (
     <div
-      className="fixed bottom-4 right-4 md:bottom-6 md:right-6 z-50"
+      className="fixed bottom-4 right-2 md:bottom-6  z-50  "
       ref={chatContainerRef}
     >
       {/* Chat Window - Responsive positioning and sizing */}
@@ -229,7 +229,7 @@ const ChatBot = () => {
         <div
           className={`bg-white rounded-2xl shadow-2xl border border-gray-100 transition-all duration-300 ${
             isMinimized
-              ? "w-72 md:w-80 h-14 md:h-16 opacity-95"
+              ? "w-72 md:w-80 h-14 md:h-16 opacity-95" 
               : "w-[95vw] max-w-sm md:max-w-md lg:w-96 h-[85vh] max-h-[32rem] md:h-[32rem] opacity-100"
           }`}
           style={{
@@ -468,12 +468,12 @@ const ChatBot = () => {
 
       {/* Enhanced Floating Icon */}
       <div
-        className="cursor-pointer transform hover:scale-105 transition-all duration-300 relative group"
+        className=" bg-white rounded-full cursor-pointer transform hover:scale-105 transition-all duration-300 relative group left-4"
         onClick={handleToggleChat}
       >
         <div className="relative">
           {/* Main Lottie Animation */}
-          <div className="relative bg-white rounded-full shadow-2xl border border-gray-200 p-1.5 md:p-2">
+          <div className="relative  rounded-full shadow-2xl border border-gray-200   ">
             <Lottie
               lottieRef={lottieRef}
               animationData={chatIconAnimation}
