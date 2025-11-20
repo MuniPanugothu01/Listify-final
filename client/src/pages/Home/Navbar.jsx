@@ -515,8 +515,8 @@ const mainMenuItems = [
             : "bg-white border-gray-300"
         }`}
       >
-        <div className="px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-start  items-center py-4 md:py-3">
+        <div className="px-4 sm:px-6 lg:px-7">
+          <div className="flex justify-between items-center py-4 md:py-3">
             {/* Logo */}
             <div className="flex items-center flex-shrink-0">
               <Link
@@ -586,7 +586,7 @@ const mainMenuItems = [
             </div>
 
             {/* Desktop Menu */}
-            <div className="hidden md:flex items-center space-x-4 lg:space-x-8">
+            <div className="hidden md:flex items-center justify-between flex-1">
               <ul className="flex flex-wrap justify-center space-x-2 md:space-x-4 lg:space-x-6">
                 {mainMenuItems.map((item) => (
                   <li key={item.name}>
@@ -629,7 +629,7 @@ const mainMenuItems = [
                 </li>
               </ul>
               {/* Right side actions */}
-              <div className="flex items-center space-x-3 md:space-x-4 ml-28">
+              <div className="flex items-center space-x-3 md:space-x-4 ml-20">
                 {/* Create Listing Button */}
                 <button className="flex items-center gap-2 bg-[#2D7A82] text-white px-4 py-3.5 md:px-4 md:py-3.5 rounded-lg text-xs md:text-sm lg:text-base whitespace-nowrap hover:bg-[#25676D] transition cursor-pointer">
                   <LuPencilLine className="text-white text-base md:text-lg" />
@@ -645,6 +645,8 @@ const mainMenuItems = [
                   <CgProfile className="text-[20px] md:text-[22px]" />
                 </div>
               </div>
+
+              
             </div>
 
             {/* Mobile menu button */}
