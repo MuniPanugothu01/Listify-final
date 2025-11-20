@@ -116,7 +116,7 @@ export default function RoommateSubNav() {
 
   return (
     <div
-      className={`w-full bg-[#F3F3F3] shadow-sm border-b border-gray-300  z-30 transition-all duration-300 ease-in-out ${
+      className={`w-full z-50 bg-[#F3F3F3] shadow-sm border-b border-gray-300   transition-all duration-300 ease-in-out ${
         isSubNavVisible
           ? "translate-y-0 opacity-100"
           : "-translate-y-full opacity-0 pointer-events-none"
@@ -146,7 +146,7 @@ export default function RoommateSubNav() {
             })}
 
             {/* More Dropdown */}
-            <div className="more-dropdown-container z-50">
+            <div className="">
               <button
                 onClick={() => setShowMoreDropdown(!showMoreDropdown)}
                 className="flex items-center gap-2 px-4 py-2 rounded-full text-sm text-gray-700 hover:bg-teal-50 hover:text-teal-500 transition-all whitespace-nowrap min-w-max cursor-pointer"
@@ -158,7 +158,7 @@ export default function RoommateSubNav() {
 
               {/* Dropdown Menu */}
               {showMoreDropdown && (
-                <div className="absolute top-full z-[50] -mt-3 w-64 bg-white rounded-lg shadow-xl border border-gray-200 py-2">
+                <div className="absolute top-full z-50 -mt-3 w-64 bg-white rounded-lg shadow-xl border border-gray-200 py-2">
                   {moreItems.map((item, index) => {
                     const IconComponent = item.icon;
                     return (

@@ -56,9 +56,9 @@ export default function HeroRoom() {
   ];
 
   return (
-    <div className="relative bg-white">
+    <div className=" z-0">
       {/* FULL WIDTH IMAGE WITH 50% HEIGHT */}
-      <div className="relative w-full h-[50vh] min-h-[500px] max-h-[600px]">
+      <div className=" w-full h-[50vh] min-h-[500px] max-h-[600px]">
         <img
           src="/roommates3.jpg" 
           alt="Roommates"
@@ -66,14 +66,14 @@ export default function HeroRoom() {
         />
 
         {/* CONTENT OVERLAY */}
-        <div className="absolute inset-0">
+        <div>
           <div className="container mx-auto px-6 h-full flex items-center">
             <div className="grid grid-cols-1 lg:grid-cols-1 gap-12 w-full">
               {/* LEFT SIDE - Text & Buttons */}
               <div className="space-y-8 text-white">
                 {/* Room for Rent & Property for Rent Buttons */}
-                <div className="mt-50 flex-col items-center flex justify-center sm:flex-row gap-4">
-                  <div className="cursor-pointer group">
+                <div className="mt-50 absolute top-62 right-130 flex-col items-center flex justify-center sm:flex-row gap-4">
+                  <div className="cursor-pointer group ">
                     <div className="bg-white/10 backdrop-blur-sm group-hover:bg-white/20 border border-white/30 rounded-2xl p-6 w-full sm:w-48 flex flex-col items-center transition duration-300 shadow-lg hover:shadow-xl">
                       <DoorOpen className="w-12 h-12 mb-3 text-white drop-shadow" />
                       <p className="font-medium text-white text-lg">
@@ -94,7 +94,7 @@ export default function HeroRoom() {
               </div>
 
               {/* COMPACT SINGLE ROW SEARCH BAR */}
-              <div className="bg-white absolute -bottom-12 right-30 rounded-3xl shadow-2xl p-6 border border-gray-200 w-full max-w-7xl mx-auto">
+              <div className="bg-white absolute top-150 right-30 rounded-3xl shadow-2xl p-6 border border-gray-200 w-full max-w-7xl mx-auto">
                 <div className="flex flex-col lg:flex-row items-end gap-3">
                   {/* Search Type */}
                   <div className="flex-1 min-w-[140px]">

@@ -1,8 +1,11 @@
 import React, { useState } from "react";
 import { Home, Bath, Maximize2, MapPin } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const FeaturedData = () => {
   const [activeFilter, setActiveFilter] = useState("all");
+  const [showAll, setShowAll] = useState(false);
+  const navigate = useNavigate();
 
   const properties = [
     {
@@ -164,6 +167,13 @@ const FeaturedData = () => {
     return true;
   });
 
+  // Show only first 6 properties initially, then all when "View More" is clicked
+  const displayedProperties = showAll ? filteredProperties : filteredProperties.slice(0, 6);
+
+  const handleBrowseMore = () => {
+    navigate("/properties");
+  };
+
   return (
     <div className="mt-20 px-4 md:px-8 lg:px-16">
       <div>
@@ -177,8 +187,8 @@ const FeaturedData = () => {
         </p>
 
         {/* Property Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-7xl mx-auto">
-          {filteredProperties.map((property) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-7xl mx-auto cursor-pointer mt-10">
+          {displayedProperties.map((property) => (
             <div
               key={property.id}
               className="bg-white rounded-xl shadow-sm hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-100"
@@ -197,9 +207,14 @@ const FeaturedData = () => {
                 <div className="sm:w-3/5 p-5 flex flex-col justify-between">
                   {/* Title and Rating */}
                   <div>
-                    <h3 className="text-lg font-bold text-gray-800 mb-2">
-                      {property.title}
-                    </h3>
+                    <div className="flex items-center justify-between w-full">
+                      <h3 className="text-lg font-bold text-gray-800 mb-2">
+                        {property.title}
+                      </h3>
+                      <div className="text-blue-600 px-3 py-1 font-bold text-[20px]">
+                        ${property.price.toLocaleString()}
+                      </div>
+                    </div>
                     <div className="flex items-center gap-2 mb-3">
                       <div className="flex text-yellow-400">
                         {[...Array(5)].map((_, i) => (
@@ -217,10 +232,6 @@ const FeaturedData = () => {
                         <span className="inline-block px-3 py-1 bg-orange-100 text-orange-600 text-xs font-semibold rounded-full">
                           {property.type}
                         </span>
-                      </div>
-                      {/* Price tag moved to top right */}
-                      <div className="text-blue-600 px-3 py-1 font-bold text-[20px]">
-                        ${property.price.toLocaleString()}
                       </div>
                     </div>
 
@@ -240,6 +251,9 @@ const FeaturedData = () => {
                       </div>
                     </div>
 
+                    {/* Horizontal Line */}
+                    <div className="border-t border-gray-200 mb-4"></div>
+
                     {/* Location and Button */}
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-1 text-gray-500 text-sm">
@@ -257,11 +271,23 @@ const FeaturedData = () => {
           ))}
         </div>
 
-        {/* Browse More Button */}
+        {/* View More / Browse More Button */}
         <div className="flex justify-center mt-12">
-          <button className="bg-blue-100 hover:bg-blue-200 text-blue-600 px-8 py-3 rounded-lg font-medium transition-colors">
-            Browse More Properties
-          </button>
+          {!showAll ? (
+            <button
+              onClick={() => setShowAll(true)}
+              className="bg-blue-100 hover:bg-blue-200 text-blue-600 px-8 py-3 rounded-lg font-medium transition-colors cursor-pointer"
+            >
+              View More
+            </button>
+          ) : (
+            <button 
+              onClick={handleBrowseMore}
+              className="bg-blue-100 hover:bg-blue-200 text-blue-600 px-8 py-3 rounded-lg font-medium transition-colors cursor-pointer"
+            >
+              Browse More Properties in London
+            </button>
+          )}
         </div>
       </div>
     </div>
