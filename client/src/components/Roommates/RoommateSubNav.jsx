@@ -158,7 +158,7 @@ export default function RoommateSubNav() {
 
               {/* Dropdown Menu */}
               {showMoreDropdown && (
-                <div className="absolute top-full -mt-3 w-64 bg-white rounded-lg shadow-xl border border-gray-200 z-40 py-2">
+                <div className="absolute top-full z-[50] -mt-3 w-64 bg-white rounded-lg shadow-xl border border-gray-200 py-2">
                   {moreItems.map((item, index) => {
                     const IconComponent = item.icon;
                     return (
