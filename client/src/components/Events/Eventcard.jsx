@@ -4,6 +4,9 @@ import React, { useState, useRef } from "react";
 import { FaCalendarAlt, FaMapMarkerAlt, FaUsers, FaHeart, FaChevronLeft, FaChevronRight, FaTicketAlt } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
+// import EventDetails from '../../components/Events/EventDetails';
+
+
 const eventsData = {
   popular: [
     {
@@ -18,13 +21,13 @@ const eventsData = {
     },
     {
       id: 2,
-      title: "Diwali Night Market",
+      title: "Rangoli Night Market",
       date: "Nov 2",
       location: "DLF CyberHub, Gurgaon",
       price: "Free Entry",
       attendees: "9.2k",
       isFree: true,
-      image: "https://images.unsplash.com/photo-1607799279861-4dd421047e5f?w=800&q=80",
+      image: "https://demo.dawnthemes.com/ticketbox/wp-content/uploads/2017/03/Holi-Festival.png",
       tag: "Festival",
     },
     {
@@ -34,7 +37,7 @@ const eventsData = {
       location: "The Comedy Club, Mumbai",
       price: "₹599",
       attendees: "1.8k",
-      image: "https://images.unsplash.com/photo-1618434289958-72a17d5b4e0e?w=800&q=80",
+      image: "https://demo.dawnthemes.com/ticketbox/wp-content/uploads/2017/03/ticketbox-unlike-dummy-1110x600.jpg",
       tag: "Comedy",
     },
     {
@@ -147,7 +150,7 @@ const eventsData = {
       location: "Snow Valley, Manali",
       price: "₹3,299",
       attendees: "22.1k",
-      image: "https://images.unsplash.com/photo-1571266028243-43d4c99b0f5b?w=800&q=80",
+      image: "https://demo.dawnthemes.com/ticketbox/wp-content/uploads/2016/12/78459379.jpg",
       tag: "Music",
     },
     {
@@ -188,7 +191,7 @@ const eventsData = {
       location: "JW Marriott, Mumbai",
       price: "₹5,999",
       attendees: "3.2k",
-      image: "https://images.unsplash.com/photo-1489599809505-7c7f6b4d1d8c?w=800&q=80",
+      image: "https://demo.dawnthemes.com/ticketbox/wp-content/uploads/2016/12/events-category-bg-dark.jpg?id=893",
       tag: "Awards",
     },
     {
@@ -236,7 +239,7 @@ const ticketData = {
 const EventCard = ({ event }) => {
   return (
     <Link to={`/events/${event.id}`} className="block">
-      <div className="bg-white rounded-2xl overflow-hidden border border-gray-200 hover:border-gray-300 hover:shadow-lg transition-all duration-300">
+      <div className="bg-gray-200 z-0 rounded-2xl overflow-hidden border border-gray-200 hover:border-gray-300 hover:shadow-lg transition-all duration-300">
         {/* Image */}
         <div className="relative h-48">
           <img
@@ -458,6 +461,13 @@ const EventsShowcase = () => {
             </div>
           </div>
         </section>
+
+{/* 
+                <div className="w-full h-full">
+                                     <EventDetails/>
+
+                </div> */}
+        
 
         {/* 3. UPCOMING EVENTS Section */}
         <section>
