@@ -15,8 +15,8 @@ const Events = () => {
            <div className='pt-30'>
              <Eventcard />
            </div>
-           <EventDetails/>
-            <Eventcard />
+           {/* <EventDetails/> */}
+            {/* <Eventcard /> */}
         </div>
     );
 }

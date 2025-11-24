@@ -1,7 +1,6 @@
 import React from "react";
 import HeroRoom from "../../components/Roommates/HeroRoom.jsx";
 import RoommateSubNav from "../../components/Roommates/RoommateSubNav";
-import Footer from "../Home/Footer.jsx";
 import RecentData from "../../components/Roommates/RecentData.jsx"; // Fixed import
 import FeaturedData from '../../components/Roommates/FeaturedData.jsx';
 export default function Roommates() {
@@ -12,7 +11,7 @@ export default function Roommates() {
       <HeroRoom />
       <RecentData /> {/* Fixed component name */}
       <FeaturedData/>
-      <Footer />
+  
     </div>
   );
 }

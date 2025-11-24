@@ -36,7 +36,6 @@ export default function EventsHero() {
   const [category, setCategory] = useState("All Categories");
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
-  const [direction, setDirection] = useState('down'); // 'up' or 'down'
 
   const searchTypes = [
     "All Events",
@@ -79,7 +78,6 @@ export default function EventsHero() {
   const nextSlide = () => {
     if (isAnimating) return;
     setIsAnimating(true);
-    setDirection('down');
     setCurrentSlide((prev) => (prev + 1) % carouselItems.length);
     setTimeout(() => setIsAnimating(false), 800);
   };
@@ -87,7 +85,6 @@ export default function EventsHero() {
   const prevSlide = () => {
     if (isAnimating) return;
     setIsAnimating(true);
-    setDirection('up');
     setCurrentSlide((prev) => (prev - 1 + carouselItems.length) % carouselItems.length);
     setTimeout(() => setIsAnimating(false), 800);
   };
@@ -95,45 +92,38 @@ export default function EventsHero() {
   const goToSlide = (index) => {
     if (isAnimating || index === currentSlide) return;
     setIsAnimating(true);
-    setDirection(index > currentSlide ? 'down' : 'up');
     setCurrentSlide(index);
     setTimeout(() => setIsAnimating(false), 800);
   };
 
-  const getSlidePosition = (index) => {
-    const totalSlides = carouselItems.length;
-    const diff = (index - currentSlide + totalSlides) % totalSlides;
-    
-    if (index === currentSlide) return 'active';
-    if (diff === 1) return direction === 'down' ? 'next' : 'prev-out';
-    if (diff === totalSlides - 1) return direction === 'up' ? 'prev' : 'next-out';
-    return 'hidden';
-  };
-
   return (
-    <div className="relative h-[50vh] z-50 ">
+    <div className="relative h-[50vh] ">
       {/* Carousel Container */}
-      <div className="relative w-full h-[55vh] min-h-[500px] ">
+      <div className="relative w-full h-[60vh] min-h-[500px] overflow-hidden ">
         {carouselItems.map((item, index) => {
-          const position = getSlidePosition(index);
+          const isActive = index === currentSlide;
+          const isPrevious = index === (currentSlide - 1 + carouselItems.length) % carouselItems.length;
+          const isNext = index === (currentSlide + 1) % carouselItems.length;
+
+          let transformClass = '';
+          if (isActive) {
+            transformClass = 'translate-y-0 opacity-100 scale-100 z-20';
+          } else if (isPrevious) {
+            transformClass = '-translate-y-full opacity-0 scale-95 z-10';
+          } else if (isNext) {
+            transformClass = 'translate-y-full opacity-0 scale-95 z-10';
+          } else {
+            transformClass = 'translate-y-full opacity-0 scale-95 z-0';
+          }
 
           return (
             <div
               key={item.id}
-              className={`absolute inset-0 transition-all duration-800 ease-in-out transform ${
-                position === 'active'
-                  ? 'translate-y-0 opacity-100 scale-100 z-20'
-                  : position === 'next'
-                  ? 'translate-y-full opacity-0 scale-95 z-10'
-                  : position === 'prev'
-                  ? '-translate-y-full opacity-0 scale-95 z-10'
-                  : position === 'next-out'
-                  ? 'translate-y-full opacity-0 scale-95 z-0'
-                  : position === 'prev-out'
-                  ? '-translate-y-full opacity-0 scale-95 z-0'
-                  : 'translate-y-full opacity-0 scale-95 z-0'
-              }`}
-              style={{ transition: 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)' }}
+              className={`absolute inset-0 transition-all duration-800 ease-in-out transform ${transformClass}`}
+              style={{ 
+                transition: 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)',
+                transformStyle: 'preserve-3d'
+              }}
             >
               {/* Background Image */}
               <img
@@ -208,9 +198,9 @@ export default function EventsHero() {
         </div>
       </div>
 
-      {/* 🌟 Floating Search Bar */}
-      <div className="absolute left-1/2 -bottom-45 transform -translate-x-1/2 w-full px-6 z-50">
-        <div className="rounded-2xl shadow-lg p-6 max-w-7xl mx-auto bg-gray-50 z-50">
+      {/* 🌟 Floating Search Bar - Fixed position to stay below carousel */}
+      <div className="absolute left-1/2 -bottom-50 transform -translate-x-1/2 w-full px-6 z-30">
+        <div className="rounded-2xl shadow-lg p-6 max-w-7xl mx-auto bg-gray-50 border border-gray-200">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
             
             {/* Event Type */}
@@ -290,7 +280,7 @@ export default function EventsHero() {
 
             {/* Search Button */}
             <div className="flex items-end">
-              <button className="w-full bg-[#25676D] text-white font-medium px-8 py-3.5 rounded-lg hover:bg-gray-800 transition flex items-center justify-center gap-2">
+              <button className="w-full bg-[#25676D] text-white font-medium px-8 py-3.5 rounded-lg hover:bg-[#1e555a] transition flex items-center justify-center gap-2">
                 <Search className="w-5 h-5" />
                 Search
               </button>
@@ -300,9 +290,9 @@ export default function EventsHero() {
         </div>
       </div>
 
-      {/* Custom CSS for vertical wheel animation */}
+      {/* Custom CSS for upward wheel animation only */}
       <style jsx>{`
-        @keyframes rollDown {
+        @keyframes rollInFromTop {
           0% {
             transform: translateY(-100%) rotateX(90deg);
             opacity: 0;
@@ -317,65 +307,27 @@ export default function EventsHero() {
           }
         }
 
-        @keyframes rollUp {
-          0% {
-            transform: translateY(100%) rotateX(-90deg);
-            opacity: 0;
-          }
-          50% {
-            transform: translateY(50%) rotateX(-45deg);
-            opacity: 0.5;
-          }
-          100% {
-            transform: translateY(0) rotateX(0deg);
-            opacity: 1;
-          }
-        }
-
-        @keyframes rollOutDown {
+        @keyframes rollOutToTop {
           0% {
             transform: translateY(0) rotateX(0deg);
             opacity: 1;
           }
           50% {
-            transform: translateY(50%) rotateX(45deg);
+            transform: translateY(-50%) rotateX(45deg);
             opacity: 0.5;
           }
           100% {
-            transform: translateY(100%) rotateX(90deg);
+            transform: translateY(-100%) rotateX(90deg);
             opacity: 0;
           }
         }
 
-        @keyframes rollOutUp {
-          0% {
-            transform: translateY(0) rotateX(0deg);
-            opacity: 1;
-          }
-          50% {
-            transform: translateY(-50%) rotateX(-45deg);
-            opacity: 0.5;
-          }
-          100% {
-            transform: translateY(-100%) rotateX(-90deg);
-            opacity: 0;
-          }
+        .slide-enter {
+          animation: rollInFromTop 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
         }
 
-        .roll-enter-down {
-          animation: rollDown 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-        }
-
-        .roll-enter-up {
-          animation: rollUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-        }
-
-        .roll-exit-down {
-          animation: rollOutDown 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-        }
-
-        .roll-exit-up {
-          animation: rollOutUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        .slide-exit {
+          animation: rollOutToTop 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
         }
       `}</style>
     </div>

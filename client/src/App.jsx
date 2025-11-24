@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 
 import Navbar from "./pages/Home/Navbar.jsx";
 import HeroSection from "./pages/Home/HeroSection.jsx";
@@ -17,6 +17,37 @@ import RoomMateDetails from "./components/Roommates/RoomMateDetails.jsx";
 import DetailsPage from "./components/Roommates/DetailsPage.jsx"
 import Events from "./pages/Events/Events.jsx";
 import ChatBot from "./components/ChatBot.jsx";
+
+import EventDetailPage from "./components/Events/EventDetailPage.jsx";
+
+
+
+// Component to conditionally render Footer
+const Layout = ({ children }) => {
+  const location = useLocation();
+  
+  // List of paths where footer should NOT be shown
+  const noFooterPaths = [
+    '/login',
+    '/signup',
+    '/profile',
+    '/auth/login',
+    '/auth/signup',
+    '/user/profile'
+  ];
+
+  // Check if current path should hide footer
+  const shouldShowFooter = !noFooterPaths.some(path => 
+    location.pathname.startsWith(path)
+  );
+
+  return (
+    <>
+      {children}
+      {shouldShowFooter && <Footer />}
+    </>
+  );
+};
 
 const App = () => {
   const [showScrollTop, setShowScrollTop] = useState(false);
@@ -89,39 +120,45 @@ const App = () => {
       <div className="relative">
         <Navbar />
 
-        <Routes>
-          {/* Home Route */}
-          <Route
-            path="/"
-            element={
-              <>
-                <HeroSection />
-                <Heading />
-                <Gallery />
-                <TrendingCategories />
-                <WhyUs />
-                <Reviews />
-                <Questions />
-                <Footer />
-              </>
-            }
-          />
+        {/* Wrap all routes with Layout component */}
+        <Layout>
+          <Routes>
+            {/* Home Route */}
+            <Route
+              path="/"
+              element={
+                <>
+                  <HeroSection />
+                  <Heading />
+                  <Gallery />
+                  <TrendingCategories />
+                  <WhyUs />
+                  <Reviews />
+                  <Questions />
+                </>
+              }
+            />
 
-          {/* Roommates Routes */}
-          <Route path="/roommates" element={<Roommates />} />
-          <Route path="/roommate-details" element={<RoomMateDetails />} />
-          <Route path="/details" element={<DetailsPage />} /> {/* Add this route */}
+            {/* Roommates Routes */}
+            <Route path="/roommates" element={<Roommates />} />
+            <Route path="/roommate-details" element={<RoomMateDetails />} />
+            <Route path="/details" element={<DetailsPage />} />
+            
+            {/* Events Routes */}
+            <Route path="/events" element={<Events />} />
+            <Route path="/events/:eventId" element={<EventDetailPage />} />
+
           
-          <Route path="/events" element={<Events />} />
 
-          {/* Add other routes as needed */}
-          <Route path="/rentals" element={<div>Rentals Page</div>} />
-          <Route path="/jobs" element={<div>Jobs Page</div>} />
-          <Route path="/services" element={<div>Services Page</div>} />
-          <Route path="/marketplace" element={<div>Marketplace Page</div>} />
-          <Route path="/vehicles" element={<div>Vehicles Page</div>} />
-          <Route path="/takecare" element={<div>TakeCare Page</div>} />
-        </Routes>
+            {/* Add other routes as needed */}
+            <Route path="/rentals" element={<div>Rentals Page</div>} />
+            <Route path="/jobs" element={<div>Jobs Page</div>} />
+            <Route path="/services" element={<div>Services Page</div>} />
+            <Route path="/marketplace" element={<div>Marketplace Page</div>} />
+            <Route path="/vehicles" element={<div>Vehicles Page</div>} />
+            <Route path="/takecare" element={<div>TakeCare Page</div>} />
+          </Routes>
+        </Layout>
 
         {/* Floating Action Buttons Container */}
         <div className="fixed bottom-6 right-8 z-50 flex flex-col items-end space-y-4">
