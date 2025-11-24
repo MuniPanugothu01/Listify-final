@@ -171,7 +171,7 @@ const FeaturedData = () => {
   const displayedProperties = showAll ? filteredProperties : filteredProperties.slice(0, 6);
 
   const handleBrowseMore = () => {
-    navigate("/properties");
+    navigate("/roommate-details");
   };
 
   return (

@@ -8,6 +8,9 @@
 
 @custom-variant dark (&:is(.dark *));
 
+
+
+
 /* Add this to your global CSS */
 html.lenis, html.lenis body {
   height: auto;

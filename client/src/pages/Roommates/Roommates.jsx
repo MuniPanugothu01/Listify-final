@@ -6,7 +6,7 @@ import RecentData from "../../components/Roommates/RecentData.jsx"; // Fixed imp
 import FeaturedData from '../../components/Roommates/FeaturedData.jsx';
 export default function Roommates() {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen ">
       {/* SubNav will automatically handle its visibility */}
       <RoommateSubNav />
       <HeroRoom />

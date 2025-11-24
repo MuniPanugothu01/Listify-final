@@ -1,22 +1,22 @@
 // tailwind.config.js
-module.exports = {
+export default {
   theme: {
     extend: {
       animation: {
-        slideUp: 'slideUp 0.3s ease-out',
+        slideUp: "slideUp 0.3s ease-out",
       },
       keyframes: {
         slideUp: {
-          from: { 
-            opacity: '0', 
-            transform: 'translateY(20px)' 
+          from: {
+            opacity: "0",
+            transform: "translateY(20px)",
           },
-          to: { 
-            opacity: '1', 
-            transform: 'translateY(0)' 
+          to: {
+            opacity: "1",
+            transform: "translateY(0)",
           },
-        }
-      }
-    }
-  }
-}
+        },
+      },
+    },
+  },
+};

@@ -11,8 +11,10 @@ import Reviews from "./pages/Home/Reviews.jsx";
 import Footer from "./pages/Home/Footer.jsx";
 import Gallery from "./pages/Home/Gallery.jsx";
 
-// ✅ Import Roommates page
+// Import Roommates pages
 import Roommates from "./pages/Roommates/Roommates.jsx";
+import RoomMateDetails from "./components/Roommates/RoomMateDetails.jsx";
+import DetailsPage from "./components/Roommates/DetailsPage.jsx"
 import Events from "./pages/Events/Events.jsx";
 import ChatBot from "./components/ChatBot.jsx";
 
@@ -105,8 +107,11 @@ const App = () => {
             }
           />
 
-          {/* Roommates Route */}
+          {/* Roommates Routes */}
           <Route path="/roommates" element={<Roommates />} />
+          <Route path="/roommate-details" element={<RoomMateDetails />} />
+          <Route path="/details" element={<DetailsPage />} /> {/* Add this route */}
+          
           <Route path="/events" element={<Events />} />
 
           {/* Add other routes as needed */}
@@ -129,7 +134,6 @@ const App = () => {
               className={`
                 group relative
                 w-12 h-12
-                bottom-24 
                 bg-gradient-to-br from-[#25676D] to-[#1a4d52]
                 text-white
                 rounded-2xl
