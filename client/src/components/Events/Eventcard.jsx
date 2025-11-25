@@ -253,22 +253,22 @@ const EventCard = ({ event, onEventClick }) => {
 
         {/* Content */}
         <div className="p-5">
-          <h3 className="font-semibold text-gray-800 text-lg line-clamp-2 mb-3 group-hover:text-[#27bb97] transition-colors">
+          <h3 className="font-semibold text-gray-800 text-lg line-clamp-2 mb-3  transition-colors">
             {event.title}
           </h3>
 
           {/* Event Details */}
           <div className="space-y-2 text-sm text-gray-600 mb-4">
             <div className="flex items-center gap-2">
-              <FaCalendarAlt className="w-4 h-4 text-[#27bb97]" />
+              <FaCalendarAlt className="w-4 h-4 " />
               <span>{event.displayDate}</span>
             </div>
             <div className="flex items-center gap-2">
-              <FaClock className="w-4 h-4 text-[#27bb97]" />
+              <FaClock className="w-4 h-4 " />
               <span>{event.time}</span>
             </div>
             <div className="flex items-center gap-2">
-              <FaMapMarkerAlt className="w-4 h-4 text-[#27bb97]" />
+              <FaMapMarkerAlt className="w-4 h-4 " />
               <span className="truncate">{event.location}</span>
             </div>
           </div>
@@ -280,7 +280,7 @@ const EventCard = ({ event, onEventClick }) => {
               <span className="text-sm text-gray-600">{event.rating}</span>
             </div>
             <div className="flex items-center gap-1">
-              <FaTicketAlt className="w-4 h-4 text-[#27bb97]" />
+              <FaTicketAlt className="w-4 h-4 " />
               <span className="text-sm text-gray-600">{event.ticketsLeft} left</span>
             </div>
             <div className="flex items-center gap-1.5 text-sm text-gray-600">
@@ -331,21 +331,21 @@ const DiscoverEventCard = ({ event, onEventClick }) => {
         <div className="p-4">
           {/* Title and Date */}
           <div className="mb-3">
-            <h3 className="font-bold text-gray-800 text-lg line-clamp-2 mb-2 group-hover:text-[#27bb97] transition-colors">
+            <h3 className="font-bold text-gray-800 text-lg line-clamp-2 mb-2  transition-colors">
               {event.title}
             </h3>
             <div className="flex items-center gap-2 text-sm text-gray-600">
-              <FaCalendarAlt className="w-3 h-3 text-[#27bb97]" />
+              <FaCalendarAlt className="w-3 h-3 " />
               <span>{event.displayDate}</span>
               <span className="mx-1">•</span>
-              <FaClock className="w-3 h-3 text-[#27bb97]" />
+              <FaClock className="w-3 h-3 " />
               <span>{event.time}</span>
             </div>
           </div>
 
           {/* Location */}
           <div className="flex items-center gap-2 text-sm text-gray-600 mb-3">
-            <FaMapMarkerAlt className="w-3 h-3 text-[#27bb97] flex-shrink-0" />
+            <FaMapMarkerAlt className="w-3 h-3  flex-shrink-0" />
             <span className="line-clamp-1">{event.location}</span>
           </div>
 
