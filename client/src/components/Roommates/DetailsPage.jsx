@@ -1,21 +1,44 @@
-import React, { useState } from 'react';
-import { ChevronLeft, ChevronRight, Heart, ShoppingCart, Search } from 'lucide-react';
-import RoommateSubNav from './RoommateSubNav';
+import React, { useState } from "react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Heart,
+  ShoppingCart,
+  Search,
+} from "lucide-react";
+import RoommateSubNav from "./RoommateSubNav";
+// react-icons
 import { FaArrowRight } from "react-icons/fa";
+import { FaShareAlt } from "react-icons/fa";
+import { MdOutlineSportsHockey } from "react-icons/md";
+// react-icons Utilities
+import { FaHandHoldingWater } from "react-icons/fa";
+import { FcWiFiLogo } from "react-icons/fc";
+import { HiOutlineTv } from "react-icons/hi2";
+import { FcElectricity } from "react-icons/fc";
+import { LuHeater } from "react-icons/lu";
+import { TbAirConditioning } from "react-icons/tb";
+import { CgSmartHomeRefrigerator } from "react-icons/cg";
+import { BiSolidWasher } from "react-icons/bi";
+import { PiHairDryer } from "react-icons/pi";
+import { GiKitchenScale } from "react-icons/gi";
+import { LuMicrowave } from "react-icons/lu";
+import { GiInnerSelf } from "react-icons/gi";
+import { MdSmokeFree } from "react-icons/md";
 
 const DetailsPage = () => {
   const [selectedImage, setSelectedImage] = useState(0);
-  const [shirtSize, setShirtSize] = useState('');
-  const [pantSize, setPantSize] = useState('');
-  const [rentalPeriod, setRentalPeriod] = useState('4DAY');
-  const [deliveryDate, setDeliveryDate] = useState('');
+  const [shirtSize, setShirtSize] = useState("");
+  const [pantSize, setPantSize] = useState("");
+  const [rentalPeriod, setRentalPeriod] = useState("4DAY");
+  const [deliveryDate, setDeliveryDate] = useState("");
 
   const images = [
-    'https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=400&h=600&fit=crop',
-    'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&h=600&fit=crop',
-    'https://images.unsplash.com/photo-1564564321837-a57b7070ac4f?w=400&h=600&fit=crop',
-    'https://images.unsplash.com/photo-1617127365659-c47fa864d8bc?w=400&h=600&fit=crop',
-    'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=400&h=600&fit=crop'
+    "https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=400&h=600&fit=crop",
+    "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&h=600&fit=crop",
+    "https://images.unsplash.com/photo-1564564321837-a57b7070ac4f?w=400&h=600&fit=crop",
+    "https://images.unsplash.com/photo-1617127365659-c47fa864d8bc?w=400&h=600&fit=crop",
+    "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=400&h=600&fit=crop",
   ];
 
   const handlePrevImage = () => {
@@ -28,63 +51,93 @@ const DetailsPage = () => {
 
   return (
     <div className="min-h-screen bg-white">
-        <RoommateSubNav/>
+      <RoommateSubNav />
+
       {/* Header */}
       <header className=" border-gray-200">
-        {/* Breadcrumb */}
         <div className="px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
           <div className="text-xs text-gray-600 flex items-center gap-2">
-            <a href="#" className="hover:text-gray-900">Indian Roommates</a>
-            <FaArrowRight className='font-bold ' />
-            <a href="#" className="hover:text-gray-900 text-gray-800 font-extrabold">Roommates in New York</a>
+            <a
+              href="#"
+              className="hover:text-gray-900 text-gray-800 font-semibold"
+            >
+              Indian Roommates
+            </a>
             <FaArrowRight />
-            <a href="#" className="hover:text-gray-900">Roommates in New York Metro Area</a>
+            <a
+              href="#"
+              className="hover:text-gray-900 text-gray-800 font-semibold"
+            >
+              Roommates in New York
+            </a>
             <FaArrowRight />
-            <a href="#" className="hover:text-gray-900">Roommates in New York</a>
+            <a
+              href="#"
+              className="hover:text-gray-900 text-gray-800 font-semibold"
+            >
+              Roommates in New York Metro Area
+            </a>
             <FaArrowRight />
-            <span className="text-gray-500">Double Sharing/Couples Wanted For Luxury Home,1 Minute Walk From/To Journal Square PATH Train Station To Go To Manhattan</span>
+            <a
+              href="#"
+              className="hover:text-gray-900 text-gray-800 font-semibold"
+            >
+              Roommates in New York
+            </a>
+            <FaArrowRight />
+            <span className="text-gray-500">
+              Double Sharing/Couples Wanted For Luxury Home,1 Minute Walk
+              From/To Journal Square PATH Train Station To Go To Manhattan
+            </span>
           </div>
+
           <div className="flex items-center space-x-4">
-            <Search className="w-5 h-5 text-gray-700 cursor-pointer" />
+            <FaShareAlt className="w-5 h-5 text-gray-700 cursor-pointer" />
             <Heart className="w-5 h-5 text-gray-700 cursor-pointer" />
-         
           </div>
         </div>
       </header>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="px-4 sm:px-6 lg:px-8 py-8 mt-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           {/* Left: Image Gallery */}
           <div className="flex gap-4">
-            {/* Thumbnail Column */}
             <div className="flex flex-col gap-3">
               {images.map((img, idx) => (
                 <div
                   key={idx}
                   onClick={() => setSelectedImage(idx)}
-                  className={`w-20 h-28 border-2 cursor-pointer overflow-hidden ${
-                    selectedImage === idx ? 'border-gray-800' : 'border-gray-200'
+                  className={`w-20 h-28 border-1 cursor-pointer overflow-hidden ${
+                    selectedImage === idx
+                      ? "border-gray-800"
+                      : "border-gray-200"
                   }`}
                 >
-                  <img src={img} alt={`Thumbnail ${idx + 1}`} className="w-full h-full object-cover" />
+                  <img
+                    src={img}
+                    alt={`Thumbnail ${idx + 1}`}
+                    className="w-full h-full object-cover"
+                  />
                 </div>
               ))}
             </div>
 
             {/* Main Image */}
-            <div className="flex-1 relative bg-gray-100">
+            <div className="flex-1 relative bg-gray-100 h-[83vh]">
               <img
                 src={images[selectedImage]}
-                alt="Black Cinzato Suit"
+                alt="Listing Image"
                 className="w-full h-full object-cover"
               />
+
               <button
                 onClick={handlePrevImage}
                 className="absolute left-4 top-1/2 -translate-y-1/2 bg-white bg-opacity-70 hover:bg-opacity-100 p-2 rounded"
               >
                 <ChevronLeft className="w-6 h-6" />
               </button>
+
               <button
                 onClick={handleNextImage}
                 className="absolute right-4 top-1/2 -translate-y-1/2 bg-white bg-opacity-70 hover:bg-opacity-100 p-2 rounded"
@@ -96,142 +149,328 @@ const DetailsPage = () => {
 
           {/* Right: Product Details */}
           <div className="space-y-6">
-            <div className="flex items-start justify-between">
-              <div>
-                <h1 className="text-2xl font-medium text-gray-900">Black Cinzato Suit</h1>
-                <p className="text-sm text-gray-600 mt-1">Black office style cinzato suit. Slim fit</p>
+            {/* Title */}
+            <h1 className="font-bold  text-[40px] uppercase">
+              Double Sharing/Couples Wanted For Luxury Home
+            </h1>
+
+            {/* Description + Price */}
+            <div className="w-full">
+              <div className="flex justify-between items-center w-full">
+                <p className="font-semibold">Description:</p>
               </div>
-              <div className="flex items-center gap-2 text-sm">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                </svg>
-                <div>
-                  <div className="font-medium">Custom Fitting</div>
-                  <div className="text-blue-600 text-xs">Available</div>
-                </div>
-              </div>
-            </div>
 
-            <div className="flex items-baseline gap-3">
-              <span className="text-3xl font-medium">₹389</span>
-              <span className="text-sm text-gray-600">/ 4 DAY</span>
-              <span className="text-xs text-gray-500">+cost of all taxes</span>
-              <span className="ml-auto text-sm text-gray-500">VALUE ₹34,000</span>
-            </div>
-
-            <div className="bg-gray-50 p-4 border border-gray-200">
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-medium">SECURITY</span>
-                <span className="text-lg font-semibold">₹6800</span>
-                <span className="text-xs text-gray-600">Refunded within 7 business days</span>
-              </div>
-            </div>
-
-            <div className="border border-gray-200 p-4">
-              <div className="flex items-start gap-3">
-                <svg className="w-5 h-5 mt-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                </svg>
-                <div className="flex-1">
-                  <div className="text-sm font-medium mb-2">IN THE BOX?</div>
-                  <p className="text-sm text-gray-600">
-                    1 Cinzato suit Jacket, 2 White Slim fit Shirt, 3 Black Cinzato Suit Pant
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Size Selection */}
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-xs font-medium text-gray-700 mb-2">SHIRT SIZE</label>
-                <select
-                  value={shirtSize}
-                  onChange={(e) => setShirtSize(e.target.value)}
-                  className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
-                >
-                  <option value="">Select size</option>
-                  <option value="S">S</option>
-                  <option value="M">M</option>
-                  <option value="L">L</option>
-                  <option value="XL">XL</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-xs font-medium text-gray-700 mb-2">PANT SIZE</label>
-                <select
-                  value={pantSize}
-                  onChange={(e) => setPantSize(e.target.value)}
-                  className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
-                >
-                  <option value="">Select size</option>
-                  <option value="30">30</option>
-                  <option value="32">32</option>
-                  <option value="34">34</option>
-                  <option value="36">36</option>
-                </select>
-              </div>
-            </div>
-
-            <div className="text-xs text-gray-600">
-              Note: Size order varies based on shirt.{' '}
-              <a href="#" className="text-blue-600 underline">View Size Guide</a>
-            </div>
-
-            {/* Rental Period */}
-            <div>
-              <label className="block text-xs font-medium text-gray-700 mb-3">SELECT A RENTAL PERIOD</label>
-              <div className="flex gap-4">
-                {['4 DAY', '6 DAY', '8 DAY'].map((period) => (
-                  <label key={period} className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="radio"
-                      name="rental"
-                      value={period}
-                      checked={rentalPeriod === period}
-                      onChange={(e) => setRentalPeriod(e.target.value)}
-                      className="w-4 h-4 text-gray-900 focus:ring-gray-900"
-                    />
-                    <span className="text-sm">{period}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
-
-            {/* Delivery Date */}
-            <div className="grid grid-cols-2 gap-4 items-end">
-              <div>
-                <label className="block text-xs font-medium text-gray-700 mb-2">DELIVERY DATE</label>
-                <input
-                  type="date"
-                  value={deliveryDate}
-                  onChange={(e) => setDeliveryDate(e.target.value)}
-                  className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
-                />
-              </div>
-              <div className="text-sm text-gray-700">Cash On Delivery</div>
-            </div>
-
-            {/* Action Buttons */}
-            <div className="grid grid-cols-2 gap-4 pt-4">
-              <button className="bg-gray-900 text-white py-3 px-6 text-sm font-medium hover:bg-gray-800 transition">
-                ADD TO CART
-              </button>
-              <button className="border border-gray-900 text-gray-900 py-3 px-6 text-sm font-medium hover:bg-gray-50 transition">
-                ADD TO WISHLIST
-              </button>
-            </div>
-
-            {/* Product Detail */}
-            <div className="pt-6 border-t border-gray-200">
-              <h3 className="text-sm font-medium mb-3">Product Detail</h3>
-              <p className="text-sm text-gray-600 leading-relaxed">
-                We have redefined a single breasted Blazer. The Sharp-Cut, Modern Design, 
-                Classic Tailoring and Balanced Proportions will take you by surprise. This 
-                Cinzato is best for...
+              <p className="text-gray-700 mt-2 w-full">
+                This is a sample detailed description of the listing. You can
+                add multiple lines here and it will take the full width below
+                the title and price. Lorem ipsum dolor sit amet consectetur
+                adipisicing elit. Consequatur aliquam officiis culpa rerum eius,
+                cum non recusandae animi? Odio, numquam?
               </p>
             </div>
+
+            {/* ⭐ Location added here correctly */}
+            <div className="flex items-center justify-between w-full">
+              <div className="w-full">
+                <p className="font-semibold">Location:</p>
+                <p className="text-gray-700 mt-1">
+                  123 Example Street, New York, NY 10001
+                </p>
+              </div>
+
+              <p className="text-[30px] font-bold text-green-600">$1200/mon</p>
+            </div>
+
+            {/* features  */}
+            <div className="my-5 grid grid-cols-3 gap-5">
+              <div className="flex items-center gap-2 ">
+                <MdOutlineSportsHockey size={35} />
+                <div>
+                  <p className="text-gray-300 text-[10px] ">Ad Type</p>
+                  <p className="text-gray-800 text-[20px]">Room Offered</p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 ">
+                <MdOutlineSportsHockey size={35} />
+                <div>
+                  <p className="text-gray-300 text-[10px] ">Ad Type</p>
+                  <p className="text-gray-800 text-[20px]">Room Offered</p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 ">
+                <MdOutlineSportsHockey size={35} />
+                <div>
+                  <p className="text-gray-300 text-[10px] ">Ad Type</p>
+                  <p className="text-gray-800 text-[20px]">Room Offered</p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 ">
+                <MdOutlineSportsHockey size={35} />
+                <div>
+                  <p className="text-gray-300 text-[10px] ">Ad Type</p>
+                  <p className="text-gray-800 text-[20px]">Room Offered</p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 ">
+                <MdOutlineSportsHockey size={35} />
+                <div>
+                  <p className="text-gray-300 text-[10px] ">Ad Type</p>
+                  <p className="text-gray-800 text-[20px]">Room Offered</p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 ">
+                <MdOutlineSportsHockey size={35} />
+                <div>
+                  <p className="text-gray-300 text-[10px] ">Ad Type</p>
+                  <p className="text-gray-800 text-[20px]">Room Offered</p>
+                </div>
+              </div>
+            </div>
+
+            {/* utilis section */}
+
+            <div className=" uppercase">
+              <p className="font-semibold">Utilities:</p>
+
+              <div className="w-full bg-gray-400 h-[1px] my-3" />
+
+              <div className="w-full  grid grid-cols-3 gap-5 mt-2 mb-3 ">
+                <div className="flex items-center gap-2">
+                  <FaHandHoldingWater />
+                  <h1 className="text-gray-600 capitalize">Water</h1>
+                </div>
+                <div className="flex items-center gap-2 capitalize">
+                  <FcWiFiLogo />
+                  <h1 className="text-gray-600 capitalize">Wi-Fi</h1>
+                </div>
+                <div className="flex items-center gap-2 capitalize">
+                  <HiOutlineTv />
+                  <h1 className="text-gray-600 capitalize">TV/cable</h1>
+                </div>
+                <div className="flex items-center gap-2 capitalize">
+                  <FcElectricity />
+                  <h1 className="text-gray-600 capitalize">Electricity</h1>
+                </div>
+                <div className="flex items-center gap-2 capitalize">
+                  <LuHeater />
+                  <h1 className="text-gray-600 capitalize">Room Heater</h1>
+                </div>
+                <div className="flex items-center gap-2 capitalize">
+                  <TbAirConditioning />
+                  <h1 className="text-gray-600 capitalize">Air Conditioner</h1>
+                </div>
+                <div className="flex items-center gap-2 capitalize">
+                  <CgSmartHomeRefrigerator />
+                  <h1 className="text-gray-600 capitalize">Refrigerator</h1>
+                </div>
+                <div className="flex items-center gap-2 capitalize">
+                  <BiSolidWasher />
+                  <h1 className="text-gray-600 capitalize">Washer</h1>
+                </div>
+                <div className="flex items-center gap-2 capitalize">
+                  <PiHairDryer />
+                  <h1 className="text-gray-600 capitalize">Dryer</h1>
+                </div>
+
+                <div className="flex items-center gap-2 capitalize">
+                  <GiKitchenScale />
+                  <h1 className="text-gray-600 capitalize">Kitchen</h1>
+                </div>
+
+                <div className="flex items-center gap-2 capitalize">
+                  <LuMicrowave />
+                  <h1 className="text-gray-600 capitalize">Microwave</h1>
+                </div>
+
+                <div className="flex items-center gap-2 capitalize">
+                  <GiInnerSelf />
+                  <h1 className="text-gray-600 capitalize">Self Catering</h1>
+                </div>
+              </div>
+            </div>
+
+            <div className=" ">
+              <p className="font-semibold uppercase ">Roommate Preferences:</p>
+              <div className="w-full bg-gray-400 h-[1px] my-3" />
+              {/* Divider line */}
+              <div className="w-full  grid grid-cols-3 gap-5 mt-2 mb-3">
+                <div className="flex items-center gap-2">
+                  <img
+                    src="/smoking1.png"
+                    alt="smoke icon"
+                    className="w-6 h-6 object-contain"
+                  />
+
+                  <h1 className="capitalize">Smoke Out Side Only</h1>
+                </div>
+                <div className="flex items-center gap-2">
+                  <img
+                    src="/nonveg2.png"
+                    alt="smoke icon"
+                    className="w-6 h-6 object-contain"
+                  />
+                  <h1 className="capitalize">Veg/Non-Veg</h1>
+                </div>
+                <div className="flex items-center gap-2">
+                  <img
+                    src="/nopets.png"
+                    alt="smoke icon"
+                    className="w-6 h-6 object-contain"
+                  />
+                  <h1 className="capitalize">No Pets</h1>
+                </div>
+                <div className="flex items-center gap-2">
+                  <img
+                    src="/fullyfurnitured.png"
+                    alt="smoke icon"
+                    className="w-6 h-6 object-contain"
+                  />
+                  <h1 className="capitalize">Fully Furnished</h1>
+                </div>
+                <div className="flex items-center gap-2">
+                  <img
+                    src="/watertap.png"
+                    alt="smoke icon"
+                    className="w-6 h-6 object-contain"
+                  />
+                  <h1 className="capitalize">Water</h1>
+                </div>
+                <div className="flex items-center gap-2">
+                  <img
+                    src="/studentfriendly.png"
+                    alt="smoke icon"
+                    className="w-6 h-6 object-contain"
+                  />
+                  <h1>Student Friendly</h1>
+                </div>
+                <div className="flex items-center gap-2">
+                  <img
+                    src="/watertap.png"
+                    alt="smoke icon"
+                    className="w-6 h-6 object-contain"
+                  />
+                  <h1>Water</h1>
+                </div>
+                <div className="flex items-center gap-2">
+                  <img
+                    src="/watertap.png"
+                    alt="smoke icon"
+                    className="w-6 h-6 object-contain"
+                  />
+                  <h1>Water</h1>
+                </div>
+                <div className="flex items-center gap-2">
+                  <img
+                    src="/watertap.png"
+                    alt="smoke icon"
+                    className="w-6 h-6 object-contain"
+                  />
+                  <h1>Water</h1>
+                </div>
+              </div>
+            </div>
+
+
+
+
+
+{/* House Rules */}
+
+  <div className=" ">
+              <p className="font-semibold uppercase ">House Rules:</p>
+              <div className="w-full bg-gray-400 h-[1px] my-3" />
+              {/* Divider line */}
+              <div className="w-full  grid grid-cols-3 gap-5 mt-2 mb-3">
+                <div className="flex items-center gap-2">
+                  <img
+                    src="/smoking1.png"
+                    alt="smoke icon"
+                    className="w-6 h-6 object-contain"
+                  />
+
+                  <h1 className="capitalize">Smoke Out Side Only</h1>
+                </div>
+                <div className="flex items-center gap-2">
+                  <img
+                    src="/nonveg2.png"
+                    alt="smoke icon"
+                    className="w-6 h-6 object-contain"
+                  />
+                  <h1 className="capitalize">Veg/Non-Veg</h1>
+                </div>
+                <div className="flex items-center gap-2">
+                  <img
+                    src="/nopets.png"
+                    alt="smoke icon"
+                    className="w-6 h-6 object-contain"
+                  />
+                  <h1 className="capitalize">No Pets</h1>
+                </div>
+                <div className="flex items-center gap-2">
+                  <img
+                    src="/fullyfurnitured.png"
+                    alt="smoke icon"
+                    className="w-6 h-6 object-contain"
+                  />
+                  <h1 className="capitalize">Fully Furnished</h1>
+                </div>
+                <div className="flex items-center gap-2">
+                  <img
+                    src="/watertap.png"
+                    alt="smoke icon"
+                    className="w-6 h-6 object-contain"
+                  />
+                  <h1 className="capitalize">Water</h1>
+                </div>
+                <div className="flex items-center gap-2">
+                  <img
+                    src="/studentfriendly.png"
+                    alt="smoke icon"
+                    className="w-6 h-6 object-contain"
+                  />
+                  <h1>Student Friendly</h1>
+                </div>
+                <div className="flex items-center gap-2">
+                  <img
+                    src="/watertap.png"
+                    alt="smoke icon"
+                    className="w-6 h-6 object-contain"
+                  />
+                  <h1>Water</h1>
+                </div>
+                <div className="flex items-center gap-2">
+                  <img
+                    src="/watertap.png"
+                    alt="smoke icon"
+                    className="w-6 h-6 object-contain"
+                  />
+                  <h1>Water</h1>
+                </div>
+                <div className="flex items-center gap-2">
+                  <img
+                    src="/watertap.png"
+                    alt="smoke icon"
+                    className="w-6 h-6 object-contain"
+                  />
+                  <h1>Water</h1>
+                </div>
+              </div>
+            </div>
+
+
+
           </div>
+        </div>
+
+        {/* Neighborhood Information */}
+
+        <div>
+          <p className="text-start">Neighborhood Information</p>
         </div>
       </div>
     </div>
