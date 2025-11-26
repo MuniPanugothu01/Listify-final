@@ -1595,7 +1595,6 @@ const RoomMateDetails = () => {
         </div>
       </div>
 
-      <Footer />
     </div>
   );
 };
