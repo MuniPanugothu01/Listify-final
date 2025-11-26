@@ -19,6 +19,7 @@ import Events from "./pages/Events/Events.jsx";
 import ChatBot from "./components/ChatBot.jsx";
 
 import EventDetailPage from "./components/Events/EventDetailPage.jsx";
+import EventDetails from "./components/Events/EventDetails.jsx";
 
 
 
@@ -147,6 +148,7 @@ const App = () => {
             {/* Events Routes */}
             <Route path="/events" element={<Events />} />
             <Route path="/events/:eventId" element={<EventDetailPage />} />
+            <Route path="/event-details" element={<EventDetails />} />
 
           
 

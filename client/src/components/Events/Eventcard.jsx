@@ -8,7 +8,7 @@ import {
   FaSearch, FaFilter, FaStar, FaClock, FaMusic,
   FaFutbol, FaUtensils, FaFilm, FaUsers as FaConference,
   FaHeartbeat, FaGlassCheers, FaTimes,
-  FaCheck, FaShareAlt
+  FaCheck, FaShareAlt, FaArrowRight
 } from "react-icons/fa";
 
 // Events Data (same as before)
@@ -387,6 +387,15 @@ const DiscoverEventCard = ({ event, onEventClick }) => {
 
 // UpcomingEventsSection Component with Routing
 const UpcomingEventsSection = ({ onEventClick }) => {
+  const navigate = useNavigate();
+
+  const handleViewMore = () => {
+    // Navigate to the first upcoming event details
+    if (eventsData.upcoming.length > 0) {
+      navigate(`/events/${eventsData.upcoming[0].id}`);
+    }
+  };
+
   return (
     <section className="mt-20 px-4 md:px-8 lg:px-16">
       <div>
@@ -496,8 +505,12 @@ const UpcomingEventsSection = ({ onEventClick }) => {
 
         {/* View More Events Button */}
         <div className="flex justify-center mt-12">
-          <button className="bg-blue-100 hover:bg-blue-200 text-blue-600 px-8 py-3 rounded-lg font-medium transition-colors cursor-pointer">
-            View All Upcoming Events
+          <button 
+            onClick={handleViewMore}
+            className="bg-[#27bb97] hover:bg-[#1fa582] text-white px-8 py-4 rounded-xl font-semibold transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg flex items-center gap-3 group cursor-pointer"
+          >
+            View More Events
+            <FaArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </button>
         </div>
       </div>
@@ -549,8 +562,32 @@ const EventsShowcase = () => {
   };
 
   const handleEventClick = (event) => {
-    // Navigate to event detail page with event ID
-    navigate(`/events/${event.id}`);
+    // Scroll to top first, then navigate
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setTimeout(() => {
+      navigate(`/events/${event.id}`);
+    }, 100);
+  };
+
+  const handleViewMorePopular = () => {
+    // Navigate to the first popular event details
+    if (eventsData.popular.length > 0) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      setTimeout(() => {
+        navigate(`/events/${eventsData.popular[0].id}`);
+      }, 100);
+    }
+  };
+
+  const handleViewMoreDiscover = () => {
+    // Navigate to the first filtered event or first popular event
+    const targetEvent = filteredEvents.length > 0 ? filteredEvents[0] : eventsData.popular[0];
+    if (targetEvent) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      setTimeout(() => {
+        navigate(`/events/${targetEvent.id}`);
+      }, 100);
+    }
   };
 
   const clearFilters = () => {
@@ -609,6 +646,17 @@ const EventsShowcase = () => {
                   <EventCard event={event} onEventClick={() => handleEventClick(event)} />
                 </div>
               ))}
+            </div>
+
+            {/* View More Button for Popular Events */}
+            <div className="flex justify-center mt-8">
+              <button 
+                onClick={handleViewMorePopular}
+                className="bg-[#27bb97] hover:bg-[#1fa582] text-white px-8 py-4 rounded-xl font-semibold transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg flex items-center gap-3 group cursor-pointer"
+              >
+                View More Popular Events
+                <FaArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </button>
             </div>
           </section>
 
@@ -746,6 +794,19 @@ const EventsShowcase = () => {
                   className="px-6 py-3 bg-[#27bb97] hover:bg-[#1fa582] text-white rounded-xl transition-colors font-medium"
                 >
                   Clear All Filters
+                </button>
+              </div>
+            )}
+
+            {/* View More Button for Discover Events */}
+            {filteredEvents.length > 0 && (
+              <div className="flex justify-center mt-8">
+                <button 
+                  onClick={handleViewMoreDiscover}
+                  className="bg-[#27bb97] hover:bg-[#1fa582] text-white px-8 py-4 rounded-xl font-semibold transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg flex items-center gap-3 group cursor-pointer"
+                >
+                  View More Events
+                  <FaArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </button>
               </div>
             )}

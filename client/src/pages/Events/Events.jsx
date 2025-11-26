@@ -4,7 +4,7 @@ import React from 'react';
 import EventsSubNav from '../../components/Events/EventsSubNav';
 import EventsHero from '../../components/Events/EventsHero';
 import Eventcard from '../../components/Events/Eventcard';
-import EventDetails from '../../components/Events/EventDetails';
+
 
 
 const Events = () => {
@@ -15,8 +15,7 @@ const Events = () => {
            <div className='pt-30'>
              <Eventcard />
            </div>
-           {/* <EventDetails/> */}
-            {/* <Eventcard /> */}
+          
         </div>
     );
 }
