@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import { FaArrowRightLong, FaArrowLeftLong } from "react-icons/fa6";
 
-const RecentData = () => {
+const RecentDataOne = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showAllProperties, setShowAllProperties] = useState(false);
 
@@ -356,4 +356,4 @@ const RecentData = () => {
   );
 };
 
-export default RecentData;
+export default RecentDataOne;
