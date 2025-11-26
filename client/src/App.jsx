@@ -166,7 +166,7 @@ const App = () => {
         <div className="fixed bottom-6 right-8 z-50 flex flex-col items-end space-y-4">
           
           {/* Scroll to Top Button */}
-          {showScrollTop && (
+          {/* {showScrollTop && (
             <button
               onClick={scrollToTop}
               disabled={isScrolling}
@@ -187,7 +187,6 @@ const App = () => {
               `}
               aria-label="Back to Top"
             >
-              {/* Main Icon */}
               <svg
                 className={`
                   w-6 h-6 transition-all duration-300
@@ -209,16 +208,16 @@ const App = () => {
                 />
               </svg>
 
-              {/* Glow Effect */}
+              
               <div className="absolute inset-0 rounded-2xl bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-sm" />
 
-              {/* Tooltip */}
-              {/* <div className="absolute bottom-full mb-3 left-1/2 transform -translate-x-1/2 px-3 py-2 bg-gray-900 text-white text-xs font-medium rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none">
+        
+              <div className="absolute bottom-full mb-3 left-1/2 transform -translate-x-1/2 px-3 py-2 bg-gray-900 text-white text-xs font-medium rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none">
                 Back to Top
                 <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-gray-900" />
-              </div> */}
+              </div>
 
-              {/* Progress Ring */}
+        
               <svg
                 className="absolute inset-0 w-full h-full transform -rotate-90"
                 viewBox="0 0 100 100"
@@ -235,7 +234,7 @@ const App = () => {
                 />
               </svg>
             </button>
-          )}
+          )} */}
 
           {/* ChatBot Component - Positioned below scroll button */}
           <div className={`transition-all duration-500 ${showScrollTop ? 'translate-y-0' : 'translate-y-2'}`}>
