@@ -6,7 +6,9 @@ import FeaturedData from "../../components/Roommates/FeaturedData.jsx";
 import TrendingWeek from "../../components/Roommates/TrendingWeek.jsx";
 import RoommateProfiles from "../../components/Roommates/RoommateProfiles.jsx";
 import PopularCities from "../../components/Roommates/PopularCities.jsx";
-import WorkingSteps from "../../components/Roommates/WorkingSteps.jsx";
+
+
+
 
 export default function Roommates() {
   return (
@@ -19,7 +21,9 @@ export default function Roommates() {
       <TrendingWeek />
       <RoommateProfiles/>
       <PopularCities/>
-      <WorkingSteps/>
+ 
+
+
     </div>
   );
 }
