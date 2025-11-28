@@ -1180,7 +1180,7 @@ const mainMenuItems = [
               </div>
 
               {/* Category Items with React Icons and Hover Effects */}
-              <div className="px-4 py-4 overflow-x-auto scrollbar-hide flex flex-col  items-center justify-center">
+              <div className="px-4 py-4 overflow-x-auto scrollbar-hide flex flex-col  items-center justify-center ">
                 <div className="flex items-center space-x-6 min-w-max">
                   <button className="flex-shrink-0 w-10 h-10 bg-gray-300 flex items-center justify-center hover:bg-gray-100 rounded-full transition-colors cursor-pointer">
                     <FaChevronLeft className="h-5 w-5 text-gray-600" />
@@ -1200,14 +1200,14 @@ const mainMenuItems = [
                           className={`w-12 h-12 rounded-full flex items-center justify-center cursor-pointer ${
                             index === 0
                               ? "bg-red-50"
-                              : " group-hover:bg-[#c89a5e]"
+                              : " group-hover:bg-red-50 "
                           } transition-colors`}
                         >
                           <IconComponent
                             className={`h-6 w-6 ${
                               index === 0
                                 ? "text-red-600"
-                                : "text-gray-600 group-hover:text-white"
+                                : "text-gray-600 group-hover:text-red-500"
                             }`}
                           />
                         </div>
@@ -1215,7 +1215,7 @@ const mainMenuItems = [
                           className={`text-xs font-medium ${
                             index === 0
                               ? "text-red-600"
-                              : "text-gray-700 group-hover:text-[#c89a5e]"
+                              : "text-gray-700 group-hover:text-[#E7000B]"
                           }`}
                         >
                           {category.name}
@@ -1235,7 +1235,7 @@ const mainMenuItems = [
 
                         {/* Hover indicator line (for other items) */}
                         {index !== 0 && (
-                          <div className="w-0 h-0.5 bg-[#c89a5e] rounded-full absolute -bottom-2 group-hover:w-full transition-all duration-200"></div>
+                          <div className="w-0 h-0.5 bg-[#E7000B] rounded-full absolute -bottom-2 group-hover:w-full transition-all duration-200"></div>
                         )}
                       </button>
                     );
