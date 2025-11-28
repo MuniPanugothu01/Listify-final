@@ -2067,6 +2067,294 @@ const RoomMateDetails = () => {
                 </div>
               </div>
 
+
+
+
+
+{/*  Room Types in New York */}
+
+<div className="bg-white rounded-lg p-6 shadow-sm mt-6">
+  <h2 className="text-lg font-semibold text-gray-900 mb-2">
+    Room Types in New York
+  </h2>
+
+  <div className="h-[1px] bg-gray-300 w-full mb-2"></div>
+
+  <div className="flex flex-col gap-2.5">
+    {[
+      "Single Rooms for Rent",
+      "Shared Rooms for Rent",
+      "Paying Guest for Rent",
+    ].map((item, index) => (
+      <a
+        key={index}
+        href="#"
+        className="text-blue-600 hover:text-blue-700 hover:underline text-sm transition-colors"
+      >
+        {item}
+      </a>
+    ))}
+  </div>
+</div>
+
+
+{/* Popular Roommates Cities in New York */}
+
+<div className="bg-white rounded-lg p-6 shadow-sm mt-6">
+  <h2 className="text-lg font-semibold text-gray-900 mb-2">
+    Popular Roommates Cities in New York
+  </h2>
+
+  <div className="h-[1px] bg-gray-300 w-full mb-2"></div>
+
+  <div className="flex flex-col gap-2.5">
+    {[
+      "Rooms in New York, NY",
+      "Rooms in Hicksville, NY",
+      "Rooms in Brooklyn, NY",
+      "Rooms in Flushing, NY",
+      "Rooms in White Plains, NY",
+    ].map((city, index) => (
+      <a
+        key={index}
+        href="#"
+        className="text-blue-600 hover:text-blue-700 hover:underline text-sm transition-colors"
+      >
+        {city}
+      </a>
+    ))}
+  </div>
+</div>
+
+
+
+{/* Student Housing near popular Universities */}
+
+<div className="bg-white rounded-lg p-6 shadow-sm mt-6">
+  <h2 className="text-lg font-semibold text-gray-900 mb-2">
+    Student Housing near popular Universities
+  </h2>
+
+  <div className="h-[1px] bg-gray-300 w-full mb-2"></div>
+
+  <div className="flex flex-col gap-2.5">
+    {[
+      { name: "New York University", count: 133 },
+      { name: "Vaughn College of Aeronautics and Technology", count: 126 },
+      { name: "Columbia University in the City of New York", count: 124 },
+      { name: "Adelphi University", count: 29 },
+      { name: "Hofstra University", count: 23 },
+    ].map((uni) => (
+      <a
+        key={uni.name}
+        href="#"
+        className="text-blue-600 hover:text-blue-700 hover:underline text-sm transition-colors"
+      >
+        {uni.name} <span className="text-gray-900">({uni.count})</span>
+      </a>
+    ))}
+  </div>
+</div>
+
+
+
+
+{/*  Nearby Neighborhoods in New York */}
+
+<div className="bg-white rounded-lg p-6 shadow-sm mt-6">
+  <h2 className="text-lg font-semibold text-gray-900 mb-2">
+    Nearby Neighborhoods in New York
+  </h2>
+
+  <div className="h-[1px] bg-gray-300 w-full mb-2"></div>
+
+  <div className="flex flex-col gap-2.5">
+    {[
+      "Rooms for Rent in 14621, Rochester, NY",
+      "Rooms for Rent in 19th Ward, Rochester, NY",
+      "Rooms for Rent in ABC Streets, Rochester, NY",
+      "Rooms for Rent in Allerton, New York, NY",
+      "Rooms for Rent in Alley Pond Park, New York, NY",
+    ].map((item, index) => (
+      <a
+        key={index}
+        href="#"
+        className="text-blue-600 hover:text-blue-700 hover:underline text-sm transition-colors"
+      >
+        {item}
+      </a>
+    ))}
+  </div>
+</div>
+
+
+{/*     Agents in New York */}
+<div className="bg-white rounded-lg p-6 shadow-sm mt-6">
+  <h2 className="text-lg font-semibold text-gray-900 mb-2">
+    Agents in New York
+  </h2>
+
+  <div className="h-[1px] bg-gray-300 w-full mb-4"></div>
+
+  <div className="flex flex-col gap-6">
+    {[
+      {
+        name: "Er",
+        agency: "Agent with None",
+        location: "New York, NY",
+        phone: "917-887-0747",
+        initialBg: "bg-red-300",
+        initial: "E"
+      },
+      {
+        name: "Guruaccounting",
+        agency: "Agent with GURU REAL ESTATE SERVICES LLC",
+        location: "Richmond Hill, NY",
+        phone: "917-805-0070",
+        initialBg: "bg-purple-300",
+        initial: "G"
+      },
+      {
+        name: "Alan",
+        agency: "Agent with American Luxury Homes",
+        location: "East Meadow, NY",
+        phone: "203-665-8431",
+        initialBg: "bg-yellow-300",
+        initial: "A"
+      },
+    ].map((agent, index) => (
+      <div
+        key={index}
+        className="border-b border-gray-200 pb-4 last:border-b-0 last:pb-0"
+      >
+        {/* Row Top */}
+        <div className="flex items-start gap-4">
+          {/* Initial Box */}
+          <div
+            className={`w-12 h-12 rounded-md flex items-center justify-center text-white font-semibold text-xl ${agent.initialBg}`}
+          >
+            {agent.initial}
+          </div>
+
+          {/* Agent Info */}
+          <div>
+            <a href="#" className="text-blue-600 font-semibold hover:underline">
+              {agent.name}
+            </a>
+            <p className="text-sm text-gray-700">{agent.agency}</p>
+          </div>
+        </div>
+
+        {/* Bottom Row */}
+        <div className="flex items-center justify-between mt-3">
+          <div className="flex flex-col gap-1 text-sm text-gray-700">
+            <div className="flex items-center gap-2">
+              <span className="text-gray-500">📍</span>
+              {agent.location}
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-gray-500">📞</span>
+              {agent.phone}
+            </div>
+          </div>
+
+          {/* Buttons */}
+          <div className="flex gap-2">
+            <button className="px-3 py-1.5 border border-gray-300 rounded-md text-sm hover:bg-gray-100 transition">
+              View More
+            </button>
+            <button className="px-3 py-1.5 border border-red-400 text-red-500 rounded-md text-sm hover:bg-red-50 transition">
+              Respond
+            </button>
+          </div>
+        </div>
+      </div>
+    ))}
+  </div>
+
+  {/* Footer Link */}
+  <div className="text-center mt-4">
+    <a
+      href="#"
+      className="text-blue-600 text-sm hover:underline flex items-center justify-center gap-1"
+    >
+      View More Agents in New York →
+    </a>
+  </div>
+</div>
+
+
+
+
+{/* open houses in new york cities */}
+
+<div className="bg-white rounded-lg shadow-sm p-5 border border-gray-200 mt-10">
+  <h2 className="text-lg font-semibold text-gray-900 mb-3">
+    Open Houses in New York
+  </h2>
+
+  <div className="space-y-5">
+    {openHouses.map((item, index) => (
+      <div key={index} className="pb-4 border-b border-gray-200 last:border-0 last:pb-0">
+        
+        {/* Property Title */}
+        <a 
+          href="#" 
+          className="text-blue-700 font-medium hover:underline text-sm leading-5 block mb-1"
+        >
+          {item.title}
+        </a>
+
+        {/* Row with Time, Location, Agent */}
+        <div className="flex flex-wrap items-center gap-3 text-sm text-gray-600 mb-2">
+          <div className="flex items-center gap-1">
+            <span>🕒</span> {item.timeAgo}
+          </div>
+          <div className="flex items-center gap-1">
+            <span>📍</span> {item.location}
+          </div>
+          <div className="flex items-center gap-1">
+            <span>👤</span> {item.agent}
+          </div>
+        </div>
+
+        {/* Price + Badges */}
+        <div className="flex flex-wrap items-center gap-2 mb-2">
+          <span className="bg-green-100 text-green-700 font-semibold px-2 py-0.5 rounded text-xs border border-green-200">
+            ${item.price}
+          </span>
+
+          <span className="bg-gray-100 text-gray-700 px-2 py-0.5 rounded text-xs border">
+            {item.roomType}
+          </span>
+
+          <span className="bg-gray-100 text-gray-700 px-2 py-0.5 rounded text-xs border">
+            {item.gender}
+          </span>
+
+          <span className="bg-gray-100 text-gray-700 px-2 py-0.5 rounded text-xs border">
+            {item.bath}
+          </span>
+        </div>
+
+        {/* Open House Time */}
+        <div className="text-sm text-gray-700">
+          <span className="font-medium">Open house:</span> {item.houseTime}
+        </div>
+      </div>
+    ))}
+  </div>
+</div>
+
+
+
+
+
+
+
+
+              
+
               {/* Rest of your right side components... */}
             </div>
           </div>
