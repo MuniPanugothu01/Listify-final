@@ -21,7 +21,7 @@ import {
   Phone,
   MessageCircle,
   Images,
-  Calendar
+  Calendar,
 } from "lucide-react";
 import {
   FaMapMarkerAlt,
@@ -329,17 +329,17 @@ const RoomMateDetails = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState({});
   const [showPropertyDropdown, setShowPropertyDropdown] = useState(false);
   const [showPlusDropdown, setShowPlusDropdown] = useState(false);
- 
+
   const [subChecks, setSubChecks] = useState({
     property: {
       "Single Family Home": false,
-      "Apartment": false,
-      "Condo": false,
+      Apartment: false,
+      Condo: false,
       "Town House": false,
-      "Homes": false,
-      "Houses": false,
-      "Hostels": false,
-      "Hotels": false,
+      Homes: false,
+      Houses: false,
+      Hostels: false,
+      Hotels: false,
       "Basement Apartment": false,
     },
     room: {
@@ -353,7 +353,7 @@ const RoomMateDetails = () => {
     commercial: {
       "Office Space": false,
       "Retail Outlet": false,
-      "Others": false,
+      Others: false,
     },
   });
 
@@ -1000,17 +1000,22 @@ const RoomMateDetails = () => {
           <div className="mb-6">
             <div className="flex flex-col lg:flex-row items-center gap-3">
               <div className="flex flex-col sm:flex-row items-center w-full lg:w-auto">
-
                 {/* Property Type Dropdown - Only show when Rooms for Rent is selected */}
                 {searchType === "Rooms for Rent" && (
                   <div className="w-full sm:w-auto">
                     <div className="relative">
                       <button
-                        onClick={() => setShowPropertyDropdown(!showPropertyDropdown)}
+                        onClick={() =>
+                          setShowPropertyDropdown(!showPropertyDropdown)
+                        }
                         className="w-full flex justify-between items-center pl-3 pr-10 py-3 text-base border lg:rounded-l-lg lg:rounded-r-none border-gray-200 rounded-lg lg:rounded-none text-gray-700 focus:outline-none bg-white"
                       >
                         <span>{propertyType}</span>
-                        <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform ${showPropertyDropdown ? 'rotate-180' : ''}`} />
+                        <ChevronDown
+                          className={`w-4 h-4 text-gray-400 transition-transform ${
+                            showPropertyDropdown ? "rotate-180" : ""
+                          }`}
+                        />
                       </button>
                       {showPropertyDropdown && (
                         <div className="absolute top-full left-0 z-20 bg-white border border-gray-200 rounded-lg shadow-lg w-[600px] p-4 max-h-96 overflow-y-auto">
@@ -1019,8 +1024,8 @@ const RoomMateDetails = () => {
                             <button
                               onClick={() => setDropdownTab("need")}
                               className={`flex-1 text-center py-2 font-medium transition-colors ${
-                                dropdownTab === "need" 
-                                  ? "text-blue-600 border-b-2 border-blue-600" 
+                                dropdownTab === "need"
+                                  ? "text-blue-600 border-b-2 border-blue-600"
                                   : "text-gray-500 hover:text-gray-700"
                               }`}
                             >
@@ -1029,15 +1034,15 @@ const RoomMateDetails = () => {
                             <button
                               onClick={() => setDropdownTab("offer")}
                               className={`flex-1 text-center py-2 font-medium transition-colors ${
-                                dropdownTab === "offer" 
-                                  ? "text-blue-600 border-b-2 border-blue-600" 
+                                dropdownTab === "offer"
+                                  ? "text-blue-600 border-b-2 border-blue-600"
                                   : "text-gray-500 hover:text-gray-700"
                               }`}
                             >
                               I Offer
                             </button>
                           </div>
-                          
+
                           {/* I Need Content */}
                           {dropdownTab === "need" && (
                             <>
@@ -1052,80 +1057,146 @@ const RoomMateDetails = () => {
                                         name="propertyType"
                                         className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 focus:ring-green-500 focus:ring-2"
                                       />
-                                      <span className="ml-2">I need a property for rent</span>
+                                      <span className="ml-2">
+                                        I need a property for rent
+                                      </span>
                                     </label>
                                     <div className="grid grid-cols-1 gap-2 ml-6">
                                       <label className="flex items-center cursor-pointer text-sm">
                                         <input
                                           type="checkbox"
-                                          checked={subChecks.property["Single Family Home"]}
-                                          onChange={() => handleSubToggle("property", "Single Family Home")}
+                                          checked={
+                                            subChecks.property[
+                                              "Single Family Home"
+                                            ]
+                                          }
+                                          onChange={() =>
+                                            handleSubToggle(
+                                              "property",
+                                              "Single Family Home"
+                                            )
+                                          }
                                           className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
                                         />
-                                        <span className="ml-2 text-gray-600">Single Family Home</span>
+                                        <span className="ml-2 text-gray-600">
+                                          Single Family Home
+                                        </span>
                                       </label>
                                       <label className="flex items-center cursor-pointer text-sm">
                                         <input
                                           type="checkbox"
-                                          checked={subChecks.property["Apartment"]}
-                                          onChange={() => handleSubToggle("property", "Apartment")}
+                                          checked={
+                                            subChecks.property["Apartment"]
+                                          }
+                                          onChange={() =>
+                                            handleSubToggle(
+                                              "property",
+                                              "Apartment"
+                                            )
+                                          }
                                           className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
                                         />
-                                        <span className="ml-2 text-gray-600">Apartment</span>
+                                        <span className="ml-2 text-gray-600">
+                                          Apartment
+                                        </span>
                                       </label>
                                       <label className="flex items-center cursor-pointer text-sm">
                                         <input
                                           type="checkbox"
                                           checked={subChecks.property["Condo"]}
-                                          onChange={() => handleSubToggle("property", "Condo")}
+                                          onChange={() =>
+                                            handleSubToggle("property", "Condo")
+                                          }
                                           className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
                                         />
-                                        <span className="ml-2 text-gray-600">Condo</span>
+                                        <span className="ml-2 text-gray-600">
+                                          Condo
+                                        </span>
                                       </label>
                                       <label className="flex items-center cursor-pointer text-sm">
                                         <input
                                           type="checkbox"
-                                          checked={subChecks.property["Town House"]}
-                                          onChange={() => handleSubToggle("property", "Town House")}
+                                          checked={
+                                            subChecks.property["Town House"]
+                                          }
+                                          onChange={() =>
+                                            handleSubToggle(
+                                              "property",
+                                              "Town House"
+                                            )
+                                          }
                                           className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
                                         />
-                                        <span className="ml-2 text-gray-600">Town House</span>
+                                        <span className="ml-2 text-gray-600">
+                                          Town House
+                                        </span>
                                       </label>
                                       <label className="flex items-center cursor-pointer text-sm">
                                         <input
                                           type="checkbox"
                                           checked={subChecks.property["Homes"]}
-                                          onChange={() => handleSubToggle("property", "Homes")}
+                                          onChange={() =>
+                                            handleSubToggle("property", "Homes")
+                                          }
                                           className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
                                         />
-                                        <span className="ml-2 text-gray-600">Homes</span>
+                                        <span className="ml-2 text-gray-600">
+                                          Homes
+                                        </span>
                                       </label>
                                       <label className="flex items-center cursor-pointer text-sm">
                                         <input
                                           type="checkbox"
                                           checked={subChecks.property["Houses"]}
-                                          onChange={() => handleSubToggle("property", "Houses")}
+                                          onChange={() =>
+                                            handleSubToggle(
+                                              "property",
+                                              "Houses"
+                                            )
+                                          }
                                           className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
                                         />
-                                        <span className="ml-2 text-gray-600">Houses</span>
+                                        <span className="ml-2 text-gray-600">
+                                          Houses
+                                        </span>
                                       </label>
                                       <label className="flex items-center cursor-pointer text-sm">
                                         <input
                                           type="checkbox"
-                                          checked={subChecks.property["Hostels"]}
-                                          onChange={() => handleSubToggle("property", "Hostels")}
+                                          checked={
+                                            subChecks.property["Hostels"]
+                                          }
+                                          onChange={() =>
+                                            handleSubToggle(
+                                              "property",
+                                              "Hostels"
+                                            )
+                                          }
                                           className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
                                         />
-                                        <span className="ml-2 text-gray-600">Hostels</span>
+                                        <span className="ml-2 text-gray-600">
+                                          Hostels
+                                        </span>
                                       </label>
                                       <label className="flex items-center cursor-pointer text-sm">
                                         <input
                                           type="checkbox"
-                                          checked={subChecks.property["Basement Apartment"]}
-                                          onChange={() => handleSubToggle("property", "Basement Apartment")}
+                                          checked={
+                                            subChecks.property[
+                                              "Basement Apartment"
+                                            ]
+                                          }
+                                          onChange={() =>
+                                            handleSubToggle(
+                                              "property",
+                                              "Basement Apartment"
+                                            )
+                                          }
                                           className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
                                         />
-                                        <span className="ml-2 text-gray-600">Basement Apartment</span>
+                                        <span className="ml-2 text-gray-600">
+                                          Basement Apartment
+                                        </span>
                                       </label>
                                     </div>
                                   </div>
@@ -1140,35 +1211,64 @@ const RoomMateDetails = () => {
                                         name="propertyType"
                                         className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 focus:ring-green-500 focus:ring-2"
                                       />
-                                      <span className="ml-2">I need a room for rent</span>
+                                      <span className="ml-2">
+                                        I need a room for rent
+                                      </span>
                                     </label>
                                     <div className="space-y-2 ml-6">
                                       <label className="flex items-center cursor-pointer text-sm">
                                         <input
                                           type="checkbox"
-                                          checked={subChecks.room["Single Room"]}
-                                          onChange={() => handleSubToggle("room", "Single Room")}
+                                          checked={
+                                            subChecks.room["Single Room"]
+                                          }
+                                          onChange={() =>
+                                            handleSubToggle(
+                                              "room",
+                                              "Single Room"
+                                            )
+                                          }
                                           className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
                                         />
-                                        <span className="ml-2 text-gray-600">Rooms for Rent</span>
+                                        <span className="ml-2 text-gray-600">
+                                          Rooms for Rent
+                                        </span>
                                       </label>
                                       <label className="flex items-center cursor-pointer text-sm">
                                         <input
                                           type="checkbox"
-                                          checked={subChecks.room["Shared Room"]}
-                                          onChange={() => handleSubToggle("room", "Shared Room")}
+                                          checked={
+                                            subChecks.room["Shared Room"]
+                                          }
+                                          onChange={() =>
+                                            handleSubToggle(
+                                              "room",
+                                              "Shared Room"
+                                            )
+                                          }
                                           className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
                                         />
-                                        <span className="ml-2 text-gray-600">Shared Room</span>
+                                        <span className="ml-2 text-gray-600">
+                                          Shared Room
+                                        </span>
                                       </label>
                                       <label className="flex items-center cursor-pointer text-sm">
                                         <input
                                           type="checkbox"
-                                          checked={subChecks.room["Paying Guest"]}
-                                          onChange={() => handleSubToggle("room", "Paying Guest")}
+                                          checked={
+                                            subChecks.room["Paying Guest"]
+                                          }
+                                          onChange={() =>
+                                            handleSubToggle(
+                                              "room",
+                                              "Paying Guest"
+                                            )
+                                          }
                                           className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
                                         />
-                                        <span className="ml-2 text-gray-600">Paying Guest</span>
+                                        <span className="ml-2 text-gray-600">
+                                          Paying Guest
+                                        </span>
                                       </label>
                                     </div>
                                   </div>
@@ -1185,17 +1285,30 @@ const RoomMateDetails = () => {
                                     name="propertyType"
                                     className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 focus:ring-green-500 focus:ring-2"
                                   />
-                                  <span className="ml-2">I need a parking garage for rent</span>
+                                  <span className="ml-2">
+                                    I need a parking garage for rent
+                                  </span>
                                 </label>
                                 <div className="space-y-1 ml-6">
                                   <label className="flex items-center cursor-pointer text-sm">
                                     <input
                                       type="checkbox"
-                                      checked={subChecks.parking["Parking garage for rent"]}
-                                      onChange={() => handleSubToggle("parking", "Parking garage for rent")}
+                                      checked={
+                                        subChecks.parking[
+                                          "Parking garage for rent"
+                                        ]
+                                      }
+                                      onChange={() =>
+                                        handleSubToggle(
+                                          "parking",
+                                          "Parking garage for rent"
+                                        )
+                                      }
                                       className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
                                     />
-                                    <span className="ml-2 text-gray-600">Parking garage for rent</span>
+                                    <span className="ml-2 text-gray-600">
+                                      Parking garage for rent
+                                    </span>
                                   </label>
                                 </div>
                               </div>
@@ -1210,35 +1323,59 @@ const RoomMateDetails = () => {
                                     name="propertyType"
                                     className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 focus:ring-green-500 focus:ring-2"
                                   />
-                                  <span className="ml-2">I need a commercial space</span>
+                                  <span className="ml-2">
+                                    I need a commercial space
+                                  </span>
                                 </label>
                                 <div className="space-y-1 ml-6">
                                   <label className="flex items-center cursor-pointer text-sm">
                                     <input
                                       type="checkbox"
-                                      checked={subChecks.commercial["Office Space"]}
-                                      onChange={() => handleSubToggle("commercial", "Office Space")}
+                                      checked={
+                                        subChecks.commercial["Office Space"]
+                                      }
+                                      onChange={() =>
+                                        handleSubToggle(
+                                          "commercial",
+                                          "Office Space"
+                                        )
+                                      }
                                       className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
                                     />
-                                    <span className="ml-2 text-gray-600">Office Space</span>
+                                    <span className="ml-2 text-gray-600">
+                                      Office Space
+                                    </span>
                                   </label>
                                   <label className="flex items-center cursor-pointer text-sm">
                                     <input
                                       type="checkbox"
-                                      checked={subChecks.commercial["Retail Outlet"]}
-                                      onChange={() => handleSubToggle("commercial", "Retail Outlet")}
+                                      checked={
+                                        subChecks.commercial["Retail Outlet"]
+                                      }
+                                      onChange={() =>
+                                        handleSubToggle(
+                                          "commercial",
+                                          "Retail Outlet"
+                                        )
+                                      }
                                       className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
                                     />
-                                    <span className="ml-2 text-gray-600">Retail Outlet</span>
+                                    <span className="ml-2 text-gray-600">
+                                      Retail Outlet
+                                    </span>
                                   </label>
                                   <label className="flex items-center cursor-pointer text-sm">
                                     <input
                                       type="checkbox"
                                       checked={subChecks.commercial["Others"]}
-                                      onChange={() => handleSubToggle("commercial", "Others")}
+                                      onChange={() =>
+                                        handleSubToggle("commercial", "Others")
+                                      }
                                       className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
                                     />
-                                    <span className="ml-2 text-gray-600">Others</span>
+                                    <span className="ml-2 text-gray-600">
+                                      Others
+                                    </span>
                                   </label>
                                 </div>
                               </div>
@@ -1259,80 +1396,146 @@ const RoomMateDetails = () => {
                                         name="propertyType"
                                         className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 focus:ring-green-500 focus:ring-2"
                                       />
-                                      <span className="ml-2">I offer a property for rent</span>
+                                      <span className="ml-2">
+                                        I offer a property for rent
+                                      </span>
                                     </label>
                                     <div className="grid grid-cols-1 gap-2 ml-6">
                                       <label className="flex items-center cursor-pointer text-sm">
                                         <input
                                           type="checkbox"
-                                          checked={subChecks.property["Single Family Home"]}
-                                          onChange={() => handleSubToggle("property", "Single Family Home")}
+                                          checked={
+                                            subChecks.property[
+                                              "Single Family Home"
+                                            ]
+                                          }
+                                          onChange={() =>
+                                            handleSubToggle(
+                                              "property",
+                                              "Single Family Home"
+                                            )
+                                          }
                                           className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
                                         />
-                                        <span className="ml-2 text-gray-600">Single Family Home</span>
+                                        <span className="ml-2 text-gray-600">
+                                          Single Family Home
+                                        </span>
                                       </label>
                                       <label className="flex items-center cursor-pointer text-sm">
                                         <input
                                           type="checkbox"
-                                          checked={subChecks.property["Apartment"]}
-                                          onChange={() => handleSubToggle("property", "Apartment")}
+                                          checked={
+                                            subChecks.property["Apartment"]
+                                          }
+                                          onChange={() =>
+                                            handleSubToggle(
+                                              "property",
+                                              "Apartment"
+                                            )
+                                          }
                                           className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
                                         />
-                                        <span className="ml-2 text-gray-600">Apartment</span>
+                                        <span className="ml-2 text-gray-600">
+                                          Apartment
+                                        </span>
                                       </label>
                                       <label className="flex items-center cursor-pointer text-sm">
                                         <input
                                           type="checkbox"
                                           checked={subChecks.property["Condo"]}
-                                          onChange={() => handleSubToggle("property", "Condo")}
+                                          onChange={() =>
+                                            handleSubToggle("property", "Condo")
+                                          }
                                           className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
                                         />
-                                        <span className="ml-2 text-gray-600">Condo</span>
+                                        <span className="ml-2 text-gray-600">
+                                          Condo
+                                        </span>
                                       </label>
                                       <label className="flex items-center cursor-pointer text-sm">
                                         <input
                                           type="checkbox"
-                                          checked={subChecks.property["Town House"]}
-                                          onChange={() => handleSubToggle("property", "Town House")}
+                                          checked={
+                                            subChecks.property["Town House"]
+                                          }
+                                          onChange={() =>
+                                            handleSubToggle(
+                                              "property",
+                                              "Town House"
+                                            )
+                                          }
                                           className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
                                         />
-                                        <span className="ml-2 text-gray-600">Town House</span>
+                                        <span className="ml-2 text-gray-600">
+                                          Town House
+                                        </span>
                                       </label>
                                       <label className="flex items-center cursor-pointer text-sm">
                                         <input
                                           type="checkbox"
                                           checked={subChecks.property["Homes"]}
-                                          onChange={() => handleSubToggle("property", "Homes")}
+                                          onChange={() =>
+                                            handleSubToggle("property", "Homes")
+                                          }
                                           className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
                                         />
-                                        <span className="ml-2 text-gray-600">Homes</span>
+                                        <span className="ml-2 text-gray-600">
+                                          Homes
+                                        </span>
                                       </label>
                                       <label className="flex items-center cursor-pointer text-sm">
                                         <input
                                           type="checkbox"
                                           checked={subChecks.property["Houses"]}
-                                          onChange={() => handleSubToggle("property", "Houses")}
+                                          onChange={() =>
+                                            handleSubToggle(
+                                              "property",
+                                              "Houses"
+                                            )
+                                          }
                                           className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
                                         />
-                                        <span className="ml-2 text-gray-600">Houses</span>
+                                        <span className="ml-2 text-gray-600">
+                                          Houses
+                                        </span>
                                       </label>
                                       <label className="flex items-center cursor-pointer text-sm">
                                         <input
                                           type="checkbox"
-                                          checked={subChecks.property["Hostels"]}
-                                          onChange={() => handleSubToggle("property", "Hostels")}
+                                          checked={
+                                            subChecks.property["Hostels"]
+                                          }
+                                          onChange={() =>
+                                            handleSubToggle(
+                                              "property",
+                                              "Hostels"
+                                            )
+                                          }
                                           className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
                                         />
-                                        <span className="ml-2 text-gray-600">Hostels</span>
+                                        <span className="ml-2 text-gray-600">
+                                          Hostels
+                                        </span>
                                       </label>
                                       <label className="flex items-center cursor-pointer text-sm">
                                         <input
                                           type="checkbox"
-                                          checked={subChecks.property["Basement Apartment"]}
-                                          onChange={() => handleSubToggle("property", "Basement Apartment")}
+                                          checked={
+                                            subChecks.property[
+                                              "Basement Apartment"
+                                            ]
+                                          }
+                                          onChange={() =>
+                                            handleSubToggle(
+                                              "property",
+                                              "Basement Apartment"
+                                            )
+                                          }
                                           className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
                                         />
-                                        <span className="ml-2 text-gray-600">Basement Apartment</span>
+                                        <span className="ml-2 text-gray-600">
+                                          Basement Apartment
+                                        </span>
                                       </label>
                                     </div>
                                   </div>
@@ -1347,35 +1550,64 @@ const RoomMateDetails = () => {
                                         name="propertyType"
                                         className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 focus:ring-green-500 focus:ring-2"
                                       />
-                                      <span className="ml-2">I offer a room for rent</span>
+                                      <span className="ml-2">
+                                        I offer a room for rent
+                                      </span>
                                     </label>
                                     <div className="space-y-2 ml-6">
                                       <label className="flex items-center cursor-pointer text-sm">
                                         <input
                                           type="checkbox"
-                                          checked={subChecks.room["Single Room"]}
-                                          onChange={() => handleSubToggle("room", "Single Room")}
+                                          checked={
+                                            subChecks.room["Single Room"]
+                                          }
+                                          onChange={() =>
+                                            handleSubToggle(
+                                              "room",
+                                              "Single Room"
+                                            )
+                                          }
                                           className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
                                         />
-                                        <span className="ml-2 text-gray-600">Single Room</span>
+                                        <span className="ml-2 text-gray-600">
+                                          Single Room
+                                        </span>
                                       </label>
                                       <label className="flex items-center cursor-pointer text-sm">
                                         <input
                                           type="checkbox"
-                                          checked={subChecks.room["Shared Room"]}
-                                          onChange={() => handleSubToggle("room", "Shared Room")}
+                                          checked={
+                                            subChecks.room["Shared Room"]
+                                          }
+                                          onChange={() =>
+                                            handleSubToggle(
+                                              "room",
+                                              "Shared Room"
+                                            )
+                                          }
                                           className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
                                         />
-                                        <span className="ml-2 text-gray-600">Shared Room</span>
+                                        <span className="ml-2 text-gray-600">
+                                          Shared Room
+                                        </span>
                                       </label>
                                       <label className="flex items-center cursor-pointer text-sm">
                                         <input
                                           type="checkbox"
-                                          checked={subChecks.room["Paying Guest"]}
-                                          onChange={() => handleSubToggle("room", "Paying Guest")}
+                                          checked={
+                                            subChecks.room["Paying Guest"]
+                                          }
+                                          onChange={() =>
+                                            handleSubToggle(
+                                              "room",
+                                              "Paying Guest"
+                                            )
+                                          }
                                           className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
                                         />
-                                        <span className="ml-2 text-gray-600">Paying Guest</span>
+                                        <span className="ml-2 text-gray-600">
+                                          Paying Guest
+                                        </span>
                                       </label>
                                     </div>
                                   </div>
@@ -1392,17 +1624,30 @@ const RoomMateDetails = () => {
                                     name="propertyType"
                                     className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 focus:ring-green-500 focus:ring-2"
                                   />
-                                  <span className="ml-2">I offer a parking garage for rent</span>
+                                  <span className="ml-2">
+                                    I offer a parking garage for rent
+                                  </span>
                                 </label>
                                 <div className="space-y-1 ml-6">
                                   <label className="flex items-center cursor-pointer text-sm">
                                     <input
                                       type="checkbox"
-                                      checked={subChecks.parking["Parking garage for rent"]}
-                                      onChange={() => handleSubToggle("parking", "Parking garage for rent")}
+                                      checked={
+                                        subChecks.parking[
+                                          "Parking garage for rent"
+                                        ]
+                                      }
+                                      onChange={() =>
+                                        handleSubToggle(
+                                          "parking",
+                                          "Parking garage for rent"
+                                        )
+                                      }
                                       className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
                                     />
-                                    <span className="ml-2 text-gray-600">Parking garage for rent</span>
+                                    <span className="ml-2 text-gray-600">
+                                      Parking garage for rent
+                                    </span>
                                   </label>
                                 </div>
                               </div>
@@ -1417,35 +1662,59 @@ const RoomMateDetails = () => {
                                     name="propertyType"
                                     className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 focus:ring-green-500 focus:ring-2"
                                   />
-                                  <span className="ml-2">I offer a commercial space</span>
+                                  <span className="ml-2">
+                                    I offer a commercial space
+                                  </span>
                                 </label>
                                 <div className="space-y-1 ml-6">
                                   <label className="flex items-center cursor-pointer text-sm">
                                     <input
                                       type="checkbox"
-                                      checked={subChecks.commercial["Office Space"]}
-                                      onChange={() => handleSubToggle("commercial", "Office Space")}
+                                      checked={
+                                        subChecks.commercial["Office Space"]
+                                      }
+                                      onChange={() =>
+                                        handleSubToggle(
+                                          "commercial",
+                                          "Office Space"
+                                        )
+                                      }
                                       className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
                                     />
-                                    <span className="ml-2 text-gray-600">Office Space</span>
+                                    <span className="ml-2 text-gray-600">
+                                      Office Space
+                                    </span>
                                   </label>
                                   <label className="flex items-center cursor-pointer text-sm">
                                     <input
                                       type="checkbox"
-                                      checked={subChecks.commercial["Retail Outlet"]}
-                                      onChange={() => handleSubToggle("commercial", "Retail Outlet")}
+                                      checked={
+                                        subChecks.commercial["Retail Outlet"]
+                                      }
+                                      onChange={() =>
+                                        handleSubToggle(
+                                          "commercial",
+                                          "Retail Outlet"
+                                        )
+                                      }
                                       className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
                                     />
-                                    <span className="ml-2 text-gray-600">Retail Outlet</span>
+                                    <span className="ml-2 text-gray-600">
+                                      Retail Outlet
+                                    </span>
                                   </label>
                                   <label className="flex items-center cursor-pointer text-sm">
                                     <input
                                       type="checkbox"
                                       checked={subChecks.commercial["Others"]}
-                                      onChange={() => handleSubToggle("commercial", "Others")}
+                                      onChange={() =>
+                                        handleSubToggle("commercial", "Others")
+                                      }
                                       className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
                                     />
-                                    <span className="ml-2 text-gray-600">Others</span>
+                                    <span className="ml-2 text-gray-600">
+                                      Others
+                                    </span>
                                   </label>
                                 </div>
                               </div>
@@ -1542,278 +1811,508 @@ const RoomMateDetails = () => {
                   ViewResults
                 </button>
 
-              {/* Plus/Minus Button with Dropdown */}
-<div className="relative w-full lg:w-auto">
-  <button
-    onClick={() => setShowPlusDropdown(!showPlusDropdown)}
-    className="w-full lg:w-auto p-4 bg-gray-200 text-gray-700 
-             rounded-lg hover:bg-gray-300 transition-all duration-200 flex items-center justify-center"
-  >
-    {showPlusDropdown ? (
-      <Minus className="w-5 h-5" />
-    ) : (
-      <Plus className="w-5 h-5" />
-    )}
-  </button>
+                {/* Enhanced Plus/Minus Filter Button with Professional Dropdown */}
+                <div className="relative w-full lg:w-auto">
+                  <button
+                    onClick={() => setShowPlusDropdown(!showPlusDropdown)}
+                    className="w-full lg:w-auto p-4 bg-white text-gray-700 border border-gray-300 
+               rounded-xl hover:bg-gray-50 hover:border-gray-400 hover:shadow-sm 
+               transition-all duration-200 flex items-center justify-center 
+               shadow-xs focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                  >
+                    {showPlusDropdown ? (
+                      <Minus className="w-5 h-5 text-gray-600" />
+                    ) : (
+                      <Plus className="w-5 h-5 text-gray-600" />
+                    )}
+                    <span className="ml-2 text-sm font-medium hidden sm:inline">
+                      {showPlusDropdown ? "" : ""}
+                    </span>
+                  </button>
 
-  {/* Dropdown Content */}
-  {showPlusDropdown && (
-    <div className="absolute left-0 right-0 lg:left-auto lg:right-0 w-full lg:w-[950px] mt-2 z-50 bg-white border border-gray-300 rounded-lg shadow-xl max-h-96 overflow-y-auto">
-      {/* Header with X button */}
-      <div className="flex justify-between items-center p-4 border-b border-gray-300">
-        <h3 className="text-lg font-semibold text-gray-900">Advanced Filters</h3>
-        <button
-          onClick={() => setShowPlusDropdown(false)}
-          className="text-gray-500 hover:text-gray-700 transition-colors"
-        >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
-      </div>
+                  {/* Enhanced Dropdown Content */}
+                  {showPlusDropdown && (
+                    <div
+                      className="absolute left-0 right-0 lg:left-auto lg:right-0 w-full lg:w-[1000px] mt-2 z-50 
+                    bg-white border border-gray-200 rounded-xl shadow-2xl max-h-[80vh] overflow-hidden"
+                    >
+                      {/* Enhanced Header */}
+                      <div className="flex justify-between items-center p-2 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-200">
+                        <div>
+                          <h3 className="text-xl font-bold text-gray-900">
+                            Advanced Filters
+                          </h3>
+                          <p className="text-sm text-gray-600 mt-1">
+                            Refine your property search with detailed
+                            preferences
+                          </p>
+                        </div>
+                        <button
+                          onClick={() => setShowPlusDropdown(false)}
+                          className="p-2 hover:bg-white rounded-lg transition-colors duration-200 
+                     focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                          <svg
+                            className="w-5 h-5 text-gray-500 hover:text-gray-700"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M6 18L18 6M6 6l12 12"
+                            />
+                          </svg>
+                        </button>
+                      </div>
 
-      <div className="flex">
-        {/* Left Column - Input fields and filters */}
-        <div className="w-1/2 p-4 border-r border-gray-300">
-          {/* Availability Section */}
-          <div className="mb-6">
-            <h3 className="text-md font-semibold text-gray-900 mb-3">Availability</h3>
-            
-            {/* Date Picker */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">Available From</label>
-              <div className="relative">
-                <input
-                  type="date"
-                  className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-                <Calendar className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-              </div>
-            </div>
+                      {/* Main Content Container */}
+                      <div className="flex flex-col lg:flex-row max-h-[60vh] overflow-hidden">
+                        {/* Left Column - Input fields and filters */}
+                        <div className="w-full lg:w-2/5 p-6 border-r border-gray-200 overflow-y-auto">
+                          {/* Availability Section */}
+                          <div className="mb-8">
+                            <div className="flex items-center mb-4">
+                              <div className="w-1.5 h-6 bg-blue-600 rounded-full mr-3"></div>
+                              <h3 className="text-lg font-semibold text-gray-900">
+                                Availability & Lease
+                              </h3>
+                            </div>
 
-            {/* Lease Type */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">Lease Type</label>
-              <select className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <option value="">Any</option>
-                <option value="short-term">Short Term (&lt;6 months)</option>
-                <option value="long-term">Long Term</option>
-                <option value="month-to-month">Month to Month</option>
-              </select>
-            </div>
+                            {/* Date Picker */}
+                            <div className="mb-5">
+                              <label className="block text-sm font-medium text-gray-700 mb-3 flex items-center">
+                                <Calendar className="w-4 h-4 mr-2 text-blue-600" />
+                                Available From
+                              </label>
+                              <div className="relative">
+                                <input
+                                  type="date"
+                                  className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm 
+                             focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+                             transition-all duration-200 bg-white"
+                                />
+                              </div>
+                            </div>
 
-            {/* Bath Type */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">Bath Type</label>
-              <div className="space-y-2">
-                <label className="flex items-center">
-                  <input
-                    type="checkbox"
-                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
-                  />
-                  <span className="ml-2 text-sm text-gray-700">Attached Bath</span>
-                </label>
-                <label className="flex items-center">
-                  <input
-                    type="checkbox"
-                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
-                  />
-                  <span className="ml-2 text-sm text-gray-700">Shared Bath</span>
-                </label>
-              </div>
-            </div>
-          </div>
+                            {/* Lease Type */}
+                            <div className="mb-5">
+                              <label className="block text-sm font-medium text-gray-700 mb-3">
+                                Lease Type
+                              </label>
+                              <select
+                                className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm 
+                                focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+                                bg-white transition-all duration-200"
+                              >
+                                <option value="">Any Lease Type</option>
+                                <option value="short-term">
+                                  Short Term (&lt;6 months)
+                                </option>
+                                <option value="long-term">Long Term</option>
+                                <option value="month-to-month">
+                                  Month to Month
+                                </option>
+                              </select>
+                            </div>
 
-          {/* Languages Known Section */}
-          <div className="mb-6">
-            <h3 className="text-md font-semibold text-gray-900 mb-3">Languages Known</h3>
-            <div className="space-y-4">
-              {/* Languages Input with Dropdown */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Languages</label>
-                <div className="relative">
-                  <input
-                    type="text"
-                    placeholder="Type to search languages..."
-                    className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                  <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                  {/* Dropdown options would appear here */}
+                            {/* Bath Type */}
+                            <div className="mb-5">
+                              <label className="block text-sm font-medium text-gray-700 mb-3">
+                                Bath Type
+                              </label>
+                              <div className="grid grid-cols-2 gap-3">
+                                <label
+                                  className="flex items-center p-3 border border-gray-200 rounded-lg 
+                                 hover:bg-blue-50 hover:border-blue-200 cursor-pointer transition-colors"
+                                >
+                                  <input
+                                    type="checkbox"
+                                    className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                                  />
+                                  <span className="ml-3 text-sm text-gray-700 font-medium">
+                                    Attached Bath
+                                  </span>
+                                </label>
+                                <label
+                                  className="flex items-center p-3 border border-gray-200 rounded-lg 
+                                 hover:bg-blue-50 hover:border-blue-200 cursor-pointer transition-colors"
+                                >
+                                  <input
+                                    type="checkbox"
+                                    className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                                  />
+                                  <span className="ml-3 text-sm text-gray-700 font-medium">
+                                    Shared Bath
+                                  </span>
+                                </label>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Languages Known Section */}
+                          <div className="mb-8">
+                            <div className="flex items-center mb-4">
+                              <div className="w-1.5 h-6 bg-green-600 rounded-full mr-3"></div>
+                              <h3 className="text-lg font-semibold text-gray-900">
+                                Languages & Preferences
+                              </h3>
+                            </div>
+
+                            {/* Languages Input */}
+                            <div className="mb-4">
+                              <label className="block text-sm font-medium text-gray-700 mb-3">
+                                Languages Spoken
+                              </label>
+                              <div className="relative">
+                                <input
+                                  type="text"
+                                  placeholder="Search languages..."
+                                  className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm 
+                             focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+                             pr-10 transition-all duration-200"
+                                />
+                                <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                              </div>
+                              {/* Selected Languages */}
+                              <div className="mt-3 flex flex-wrap gap-2">
+                                <span
+                                  className="inline-flex items-center gap-2 bg-blue-100 text-blue-800 
+                                px-3 py-1.5 rounded-full text-xs font-medium"
+                                >
+                                  English
+                                  <button
+                                    type="button"
+                                    className="text-blue-600 hover:text-blue-800 transition-colors"
+                                  >
+                                    ×
+                                  </button>
+                                </span>
+                                <span
+                                  className="inline-flex items-center gap-2 bg-green-100 text-green-800 
+                                px-3 py-1.5 rounded-full text-xs font-medium"
+                                >
+                                  Spanish
+                                  <button
+                                    type="button"
+                                    className="text-green-600 hover:text-green-800 transition-colors"
+                                  >
+                                    ×
+                                  </button>
+                                </span>
+                              </div>
+                            </div>
+
+                            {/* Seller Type */}
+                            <div className="mb-4">
+                              <label className="block text-sm font-medium text-gray-700 mb-3">
+                                Seller Type
+                              </label>
+                              <select
+                                className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm 
+                                focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                              >
+                                <option value="">Any Seller Type</option>
+                                <option value="owner">Property Owner</option>
+                                <option value="tenant">Existing Tenant</option>
+                                <option value="agent">Agent</option>
+                                <option value="builder">Builder</option>
+                              </select>
+                            </div>
+
+                            {/* Preferred Gender */}
+                            <div>
+                              <label className="block text-sm font-medium text-gray-700 mb-3">
+                                Preferred Gender
+                              </label>
+                              <div className="grid grid-cols-3 gap-3">
+                                {[
+                                  { value: "any", label: "Any", color: "gray" },
+                                  {
+                                    value: "male",
+                                    label: "Male",
+                                    color: "blue",
+                                  },
+                                  {
+                                    value: "female",
+                                    label: "Female",
+                                    color: "pink",
+                                  },
+                                ].map((option) => (
+                                  <label
+                                    key={option.value}
+                                    className={`flex items-center justify-center p-3 border-2 
+                    ${
+                      option.value === "any"
+                        ? "border-blue-200 bg-blue-50"
+                        : "border-gray-200"
+                    } 
+                    rounded-lg cursor-pointer transition-all duration-200 hover:scale-105`}
+                                  >
+                                    <input
+                                      type="radio"
+                                      name="gender"
+                                      value={option.value}
+                                      className="sr-only"
+                                      defaultChecked={option.value === "any"}
+                                    />
+                                    <span className="text-sm font-medium text-gray-700">
+                                      {option.label}
+                                    </span>
+                                  </label>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Right Column - Additional filters and actions */}
+                        <div className="w-full lg:w-3/5 p-6 bg-gray-50 overflow-y-auto">
+                          {/* Pets & Occupation Section */}
+                          <div className="mb-8">
+                            <div className="flex items-center mb-4">
+                              <div className="w-1.5 h-6 bg-purple-600 rounded-full mr-3"></div>
+                              <h3 className="text-lg font-semibold text-gray-900">
+                                Lifestyle Preferences
+                              </h3>
+                            </div>
+
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                              {/* Pets */}
+                              <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-3">
+                                  🐾 Pets Policy
+                                </label>
+                                <select
+                                  className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm 
+                                  focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+                                  bg-white transition-all duration-200"
+                                >
+                                  <option value="">Any pets allowed</option>
+                                  <option value="dogs-allowed">
+                                    Dogs allowed
+                                  </option>
+                                  <option value="cats-allowed">
+                                    Cats allowed
+                                  </option>
+                                  <option value="no-pets">No pets</option>
+                                  <option value="small-pets">
+                                    Small pets only
+                                  </option>
+                                </select>
+                              </div>
+
+                              {/* Occupation */}
+                              <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-3">
+                                  💼 Occupation
+                                </label>
+                                <select
+                                  className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm 
+                                  focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+                                  bg-white transition-all duration-200"
+                                >
+                                  <option value="">Any occupation</option>
+                                  <option value="student">Student</option>
+                                  <option value="working-professional">
+                                    Working Professional
+                                  </option>
+                                  <option value="self-employed">
+                                    Self Employed
+                                  </option>
+                                  <option value="remote-worker">
+                                    Remote Worker
+                                  </option>
+                                  <option value="other">Other</option>
+                                </select>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Age Section */}
+                          <div className="mb-8">
+                            <div className="flex items-center mb-4">
+                              <div className="w-1.5 h-6 bg-orange-600 rounded-full mr-3"></div>
+                              <h3 className="text-lg font-semibold text-gray-900">
+                                Age Preference
+                              </h3>
+                            </div>
+
+                            <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+                              {[
+                                { range: "18-25", label: "18-25 years" },
+                                { range: "26-35", label: "26-35 years" },
+                                { range: "36-45", label: "36-45 years" },
+                                { range: "46-55", label: "46-55 years" },
+                                { range: "55+", label: "55+ years" },
+                                { range: "", label: "Any age" },
+                              ].map((age) => (
+                                <label
+                                  key={age.range}
+                                  className="flex items-center p-3 border-2 border-gray-200 
+                                                 rounded-lg hover:border-blue-300 hover:bg-blue-50 
+                                                 cursor-pointer transition-all duration-200"
+                                >
+                                  <input
+                                    type="radio"
+                                    name="age-range"
+                                    value={age.range}
+                                    className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+                                    defaultChecked={age.range === ""}
+                                  />
+                                  <span className="ml-3 text-sm text-gray-700 font-medium">
+                                    {age.label}
+                                  </span>
+                                </label>
+                              ))}
+                            </div>
+                          </div>
+
+                          {/* Netofly Cities Section */}
+                          <div className="mb-8">
+                            <div className="flex items-center justify-between mb-4">
+                              <div className="flex items-center">
+                                <div className="w-1.5 h-6 bg-red-600 rounded-full mr-3"></div>
+                                <h3 className="text-lg font-semibold text-gray-900">
+                                  Netofly Cities
+                                </h3>
+                              </div>
+                              <button className="text-sm text-blue-600 hover:text-blue-800 font-medium transition-colors">
+                                Select All
+                              </button>
+                            </div>
+
+                            <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 max-h-48 overflow-y-auto p-3 bg-white rounded-lg border border-gray-200">
+                              {[
+                                "Year",
+                                "Worldside",
+                                "New York",
+                                "Brooklyn",
+                                "Rego Park",
+                                "Forest Hills",
+                                "Flushing",
+                                "Bronx",
+                                "Kew Gardens",
+                                "Fresh Meadows",
+                                "Ozone Park",
+                                "Bayside",
+                                "Jamaica",
+                                "South Ozone Park",
+                                "Queens Village",
+                                "Glen Oaks",
+                                "New Hyde Park",
+                                "Elmont",
+                                "Mineola",
+                                "Valhalla",
+                                "White Plains",
+                                "Elmsford",
+                                "Jericho",
+                                "Hicksville",
+                                "Bethpage",
+                                "Plainview",
+                                "Pleasantville",
+                                "Osalning",
+                                "Huntington",
+                                "Huntington Station",
+                              ].map((city, index) => (
+                                <label
+                                  key={index}
+                                  className="flex items-center p-2 hover:bg-gray-50 rounded-lg cursor-pointer 
+                             transition-colors duration-150 group"
+                                >
+                                  <input
+                                    type="checkbox"
+                                    className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 
+                               transition-all duration-200"
+                                  />
+                                  <span className="ml-2 text-sm text-gray-700 group-hover:text-gray-900 font-medium">
+                                    {city}
+                                  </span>
+                                </label>
+                              ))}
+                            </div>
+                          </div>
+
+                          {/* Quick Action Buttons */}
+                          <div className="space-y-4">
+                            <button
+                              className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white 
+                              py-3.5 px-4 rounded-xl hover:from-blue-700 hover:to-blue-800 
+                              transition-all duration-200 text-sm font-semibold 
+                              flex items-center justify-center gap-3 shadow-lg hover:shadow-xl"
+                            >
+                              <Search className="w-5 h-5" />
+                              Search Properties (24 matches)
+                            </button>
+                            <button
+                              className="w-full bg-white text-gray-700 py-3 px-4 rounded-xl 
+                              border border-gray-300 hover:bg-gray-50 hover:border-gray-400 
+                              transition-all duration-200 text-sm font-medium 
+                              flex items-center justify-center gap-2"
+                            >
+                              <svg
+                                className="w-4 h-4"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M19 9l-7 7-7-7"
+                                />
+                              </svg>
+                              Save Filter Preset
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Enhanced Bottom Action Bar */}
+                      <div className="flex flex-col sm:flex-row gap-3 p-6 border-t border-gray-200 bg-white">
+                        <div className="flex-1 text-sm text-gray-600 flex items-center">
+                          <svg
+                            className="w-4 h-4 mr-2 text-green-600"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                            />
+                          </svg>
+                          12 filters active • 24 properties match your criteria
+                        </div>
+                        <div className="flex gap-3">
+                          <button
+                            onClick={() => setShowPlusDropdown(false)}
+                            className="px-6 py-3 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 
+                       transition-all duration-200 text-sm font-medium min-w-[100px]"
+                          >
+                            Cancel
+                          </button>
+                          <button
+                            onClick={() => {
+                              // Handle filter application
+                              setShowPlusDropdown(false);
+                            }}
+                            className="px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 
+                       transition-all duration-200 text-sm font-semibold min-w-[120px]
+                       shadow-md hover:shadow-lg"
+                          >
+                            Apply Filters
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
-                <div className="mt-2 flex flex-wrap gap-1">
-                  <span className="inline-flex items-center gap-1 bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs">
-                    English <button type="button" className="text-blue-600 hover:text-blue-800">×</button>
-                  </span>
-                  <span className="inline-flex items-center gap-1 bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs">
-                    Spanish <button type="button" className="text-blue-600 hover:text-blue-800">×</button>
-                  </span>
-                </div>
-              </div>
-
-              {/* Seller Type */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Seller Type</label>
-                <select className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                  <option value="">Any</option>
-                  <option value="owner">Property Owner</option>
-                  <option value="tenant">Existing Tenant</option>
-                  <option value="agent">Agent</option>
-                  <option value="builder">Builder</option>
-                </select>
-              </div>
-
-              {/* Preferred Gender */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Preferred Gender</label>
-                <div className="flex gap-4">
-                  <label className="flex items-center">
-                    <input
-                      type="radio"
-                      name="gender"
-                      value="any"
-                      className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500"
-                      defaultChecked
-                    />
-                    <span className="ml-2 text-sm text-gray-700">Any</span>
-                  </label>
-                  <label className="flex items-center">
-                    <input
-                      type="radio"
-                      name="gender"
-                      value="male"
-                      className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500"
-                    />
-                    <span className="ml-2 text-sm text-gray-700">Male</span>
-                  </label>
-                  <label className="flex items-center">
-                    <input
-                      type="radio"
-                      name="gender"
-                      value="female"
-                      className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500"
-                    />
-                    <span className="ml-2 text-sm text-gray-700">Female</span>
-                  </label>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Middle Column - Vertical Line */}
-        <div className="w-px bg-gray-300"></div>
-
-        {/* Right Column - Locations and actions */}
-        <div className="w-1/2 p-4">
-          {/* Pets Section */}
-          <div className="mb-6">
-            <h3 className="text-md font-semibold text-gray-900 mb-3">Pets & Occupation</h3>
-            <div className="space-y-4">
-              {/* Pets */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Pets</label>
-                <div className="relative">
-                  <select className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <option value="">Any pets</option>
-                    <option value="dogs-allowed">Dogs allowed</option>
-                    <option value="cats-allowed">Cats allowed</option>
-                    <option value="no-pets">No pets</option>
-                    <option value="small-pets">Small pets only</option>
-                  </select>
-                </div>
-              </div>
-
-              {/* Occupation */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Occupation</label>
-                <div className="relative">
-                  <select className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <option value="">Any occupation</option>
-                    <option value="student">Student</option>
-                    <option value="working-professional">Working Professional</option>
-                    <option value="self-employed">Self Employed</option>
-                    <option value="remote-worker">Remote Worker</option>
-                    <option value="other">Other</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Age Section */}
-          <div className="mb-6">
-            <h3 className="text-md font-semibold text-gray-900 mb-3">Age Preference</h3>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Age Range</label>
-                <select className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                  <option value="">Any age</option>
-                  <option value="18-25">18-25 years</option>
-                  <option value="26-35">26-35 years</option>
-                  <option value="36-45">36-45 years</option>
-                  <option value="46-55">46-55 years</option>
-                  <option value="55+">55+ years</option>
-                </select>
-              </div>
-            </div>
-          </div>
-
-          {/* Netofly Cities Section */}
-          <div className="mb-6">
-            <h3 className="text-md font-semibold text-gray-900 mb-3">Netofly Cities</h3>
-            <div className="grid grid-cols-2 gap-2 text-sm max-h-32 overflow-y-auto p-1">
-              {[
-                "Year", "Worldside", "New York", "Brooklyn",
-                "Rego Park", "Forest Hills", "Flushing", "Bronx",
-                "Kew Gardens", "Fresh Meadows", "Ozone Park", "Bayside",
-                "Jamaica", "South Ozone Park", "Queens Village", "Glen Oaks",
-                "New Hyde Park", "Elmont", "Mineola", "Valhalla",
-                "White Plains", "Elmsford", "Jericho", "Hicksville",
-                "Bethpage", "Plainview", "Pleasantville", "Osalning",
-                "Huntington", "Huntington Station"
-              ].map((city, index) => (
-                <label key={index} className="flex items-center p-1 hover:bg-gray-50 rounded cursor-pointer">
-                  <input
-                    type="checkbox"
-                    className="w-3 h-3 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 mr-2"
-                  />
-                  <span className="text-xs text-gray-700">{city}</span>
-                </label>
-              ))}
-            </div>
-          </div>
-
-          {/* Action Buttons */}
-          <div className="space-y-3">
-            <button className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium flex items-center justify-center gap-2">
-              <Search className="w-4 h-4" />
-              Search Properties
-            </button>
-            <button className="w-full bg-gray-200 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-300 transition-colors text-sm font-medium">
-              Clear All Filters
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Bottom Action Buttons */}
-      <div className="flex gap-3 p-4 border-t border-gray-300 bg-gray-50">
-        <button
-          onClick={() => setShowPlusDropdown(false)}
-          className="flex-1 px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors text-sm font-medium"
-        >
-          Cancel
-        </button>
-        <button
-          onClick={() => setShowPlusDropdown(false)}
-          className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
-        >
-          Apply Filters
-        </button>
-      </div>
-    </div>
-  )}
-</div>
 
                 <button
                   onClick={handleSaveSearch}
@@ -2067,300 +2566,291 @@ const RoomMateDetails = () => {
                 </div>
               </div>
 
+              {/*  Room Types in New York */}
 
+              <div className="bg-white rounded-lg p-6 shadow-sm mt-6">
+                <h2 className="text-lg font-semibold text-gray-900 mb-2">
+                  Room Types in New York
+                </h2>
 
+                <div className="h-[1px] bg-gray-300 w-full mb-2"></div>
 
+                <div className="flex flex-col gap-2.5">
+                  {[
+                    "Single Rooms for Rent",
+                    "Shared Rooms for Rent",
+                    "Paying Guest for Rent",
+                  ].map((item, index) => (
+                    <a
+                      key={index}
+                      href="#"
+                      className="text-blue-600 hover:text-blue-700 hover:underline text-sm transition-colors"
+                    >
+                      {item}
+                    </a>
+                  ))}
+                </div>
+              </div>
 
-{/*  Room Types in New York */}
+              {/* Popular Roommates Cities in New York */}
 
-<div className="bg-white rounded-lg p-6 shadow-sm mt-6">
-  <h2 className="text-lg font-semibold text-gray-900 mb-2">
-    Room Types in New York
-  </h2>
+              <div className="bg-white rounded-lg p-6 shadow-sm mt-6">
+                <h2 className="text-lg font-semibold text-gray-900 mb-2">
+                  Popular Roommates Cities in New York
+                </h2>
 
-  <div className="h-[1px] bg-gray-300 w-full mb-2"></div>
+                <div className="h-[1px] bg-gray-300 w-full mb-2"></div>
 
-  <div className="flex flex-col gap-2.5">
-    {[
-      "Single Rooms for Rent",
-      "Shared Rooms for Rent",
-      "Paying Guest for Rent",
-    ].map((item, index) => (
-      <a
-        key={index}
-        href="#"
-        className="text-blue-600 hover:text-blue-700 hover:underline text-sm transition-colors"
-      >
-        {item}
-      </a>
-    ))}
-  </div>
-</div>
+                <div className="flex flex-col gap-2.5">
+                  {[
+                    "Rooms in New York, NY",
+                    "Rooms in Hicksville, NY",
+                    "Rooms in Brooklyn, NY",
+                    "Rooms in Flushing, NY",
+                    "Rooms in White Plains, NY",
+                  ].map((city, index) => (
+                    <a
+                      key={index}
+                      href="#"
+                      className="text-blue-600 hover:text-blue-700 hover:underline text-sm transition-colors"
+                    >
+                      {city}
+                    </a>
+                  ))}
+                </div>
+              </div>
 
+              {/* Student Housing near popular Universities */}
 
-{/* Popular Roommates Cities in New York */}
+              <div className="bg-white rounded-lg p-6 shadow-sm mt-6">
+                <h2 className="text-lg font-semibold text-gray-900 mb-2">
+                  Student Housing near popular Universities
+                </h2>
 
-<div className="bg-white rounded-lg p-6 shadow-sm mt-6">
-  <h2 className="text-lg font-semibold text-gray-900 mb-2">
-    Popular Roommates Cities in New York
-  </h2>
+                <div className="h-[1px] bg-gray-300 w-full mb-2"></div>
 
-  <div className="h-[1px] bg-gray-300 w-full mb-2"></div>
+                <div className="flex flex-col gap-2.5">
+                  {[
+                    { name: "New York University", count: 133 },
+                    {
+                      name: "Vaughn College of Aeronautics and Technology",
+                      count: 126,
+                    },
+                    {
+                      name: "Columbia University in the City of New York",
+                      count: 124,
+                    },
+                    { name: "Adelphi University", count: 29 },
+                    { name: "Hofstra University", count: 23 },
+                  ].map((uni) => (
+                    <a
+                      key={uni.name}
+                      href="#"
+                      className="text-blue-600 hover:text-blue-700 hover:underline text-sm transition-colors"
+                    >
+                      {uni.name}{" "}
+                      <span className="text-gray-900">({uni.count})</span>
+                    </a>
+                  ))}
+                </div>
+              </div>
 
-  <div className="flex flex-col gap-2.5">
-    {[
-      "Rooms in New York, NY",
-      "Rooms in Hicksville, NY",
-      "Rooms in Brooklyn, NY",
-      "Rooms in Flushing, NY",
-      "Rooms in White Plains, NY",
-    ].map((city, index) => (
-      <a
-        key={index}
-        href="#"
-        className="text-blue-600 hover:text-blue-700 hover:underline text-sm transition-colors"
-      >
-        {city}
-      </a>
-    ))}
-  </div>
-</div>
+              {/*  Nearby Neighborhoods in New York */}
 
+              <div className="bg-white rounded-lg p-6 shadow-sm mt-6">
+                <h2 className="text-lg font-semibold text-gray-900 mb-2">
+                  Nearby Neighborhoods in New York
+                </h2>
 
+                <div className="h-[1px] bg-gray-300 w-full mb-2"></div>
 
-{/* Student Housing near popular Universities */}
+                <div className="flex flex-col gap-2.5">
+                  {[
+                    "Rooms for Rent in 14621, Rochester, NY",
+                    "Rooms for Rent in 19th Ward, Rochester, NY",
+                    "Rooms for Rent in ABC Streets, Rochester, NY",
+                    "Rooms for Rent in Allerton, New York, NY",
+                    "Rooms for Rent in Alley Pond Park, New York, NY",
+                  ].map((item, index) => (
+                    <a
+                      key={index}
+                      href="#"
+                      className="text-blue-600 hover:text-blue-700 hover:underline text-sm transition-colors"
+                    >
+                      {item}
+                    </a>
+                  ))}
+                </div>
+              </div>
 
-<div className="bg-white rounded-lg p-6 shadow-sm mt-6">
-  <h2 className="text-lg font-semibold text-gray-900 mb-2">
-    Student Housing near popular Universities
-  </h2>
+              {/*     Agents in New York */}
+              <div className="bg-white rounded-lg p-6 shadow-sm mt-6">
+                <h2 className="text-lg font-semibold text-gray-900 mb-2">
+                  Agents in New York
+                </h2>
 
-  <div className="h-[1px] bg-gray-300 w-full mb-2"></div>
+                <div className="h-[1px] bg-gray-300 w-full mb-4"></div>
 
-  <div className="flex flex-col gap-2.5">
-    {[
-      { name: "New York University", count: 133 },
-      { name: "Vaughn College of Aeronautics and Technology", count: 126 },
-      { name: "Columbia University in the City of New York", count: 124 },
-      { name: "Adelphi University", count: 29 },
-      { name: "Hofstra University", count: 23 },
-    ].map((uni) => (
-      <a
-        key={uni.name}
-        href="#"
-        className="text-blue-600 hover:text-blue-700 hover:underline text-sm transition-colors"
-      >
-        {uni.name} <span className="text-gray-900">({uni.count})</span>
-      </a>
-    ))}
-  </div>
-</div>
+                <div className="flex flex-col gap-6">
+                  {[
+                    {
+                      name: "Er",
+                      agency: "Agent with None",
+                      location: "New York, NY",
+                      phone: "917-887-0747",
+                      initialBg: "bg-red-300",
+                      initial: "E",
+                    },
+                    {
+                      name: "Guruaccounting",
+                      agency: "Agent with GURU REAL ESTATE SERVICES LLC",
+                      location: "Richmond Hill, NY",
+                      phone: "917-805-0070",
+                      initialBg: "bg-purple-300",
+                      initial: "G",
+                    },
+                    {
+                      name: "Alan",
+                      agency: "Agent with American Luxury Homes",
+                      location: "East Meadow, NY",
+                      phone: "203-665-8431",
+                      initialBg: "bg-yellow-300",
+                      initial: "A",
+                    },
+                  ].map((agent, index) => (
+                    <div
+                      key={index}
+                      className="border-b border-gray-200 pb-4 last:border-b-0 last:pb-0"
+                    >
+                      {/* Row Top */}
+                      <div className="flex items-start gap-4">
+                        {/* Initial Box */}
+                        <div
+                          className={`w-12 h-12 rounded-md flex items-center justify-center text-white font-semibold text-xl ${agent.initialBg}`}
+                        >
+                          {agent.initial}
+                        </div>
 
+                        {/* Agent Info */}
+                        <div>
+                          <a
+                            href="#"
+                            className="text-blue-600 font-semibold hover:underline"
+                          >
+                            {agent.name}
+                          </a>
+                          <p className="text-sm text-gray-700">
+                            {agent.agency}
+                          </p>
+                        </div>
+                      </div>
 
+                      {/* Bottom Row */}
+                      <div className="flex items-center justify-between mt-3">
+                        <div className="flex flex-col gap-1 text-sm text-gray-700">
+                          <div className="flex items-center gap-2">
+                            <span className="text-gray-500">📍</span>
+                            {agent.location}
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-gray-500">📞</span>
+                            {agent.phone}
+                          </div>
+                        </div>
 
+                        {/* Buttons */}
+                        <div className="flex gap-2">
+                          <button className="px-3 py-1.5 border border-gray-300 rounded-md text-sm hover:bg-gray-100 transition">
+                            View More
+                          </button>
+                          <button className="px-3 py-1.5 border border-red-400 text-red-500 rounded-md text-sm hover:bg-red-50 transition">
+                            Respond
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
 
-{/*  Nearby Neighborhoods in New York */}
+                {/* Footer Link */}
+                <div className="text-center mt-4">
+                  <a
+                    href="#"
+                    className="text-blue-600 text-sm hover:underline flex items-center justify-center gap-1"
+                  >
+                    View More Agents in New York →
+                  </a>
+                </div>
+              </div>
 
-<div className="bg-white rounded-lg p-6 shadow-sm mt-6">
-  <h2 className="text-lg font-semibold text-gray-900 mb-2">
-    Nearby Neighborhoods in New York
-  </h2>
+              {/* open houses in new york cities */}
 
-  <div className="h-[1px] bg-gray-300 w-full mb-2"></div>
+              <div className="bg-white rounded-lg shadow-sm p-5 border border-gray-200 mt-10">
+                <h2 className="text-lg font-semibold text-gray-900 mb-3">
+                  Open Houses in New York
+                </h2>
 
-  <div className="flex flex-col gap-2.5">
-    {[
-      "Rooms for Rent in 14621, Rochester, NY",
-      "Rooms for Rent in 19th Ward, Rochester, NY",
-      "Rooms for Rent in ABC Streets, Rochester, NY",
-      "Rooms for Rent in Allerton, New York, NY",
-      "Rooms for Rent in Alley Pond Park, New York, NY",
-    ].map((item, index) => (
-      <a
-        key={index}
-        href="#"
-        className="text-blue-600 hover:text-blue-700 hover:underline text-sm transition-colors"
-      >
-        {item}
-      </a>
-    ))}
-  </div>
-</div>
+                <div className="space-y-5">
+                  {openHouses.map((item, index) => (
+                    <div
+                      key={index}
+                      className="pb-4 border-b border-gray-200 last:border-0 last:pb-0"
+                    >
+                      {/* Property Title */}
+                      <a
+                        href="#"
+                        className="text-blue-700 font-medium hover:underline text-sm leading-5 block mb-1"
+                      >
+                        {item.title}
+                      </a>
 
+                      {/* Row with Time, Location, Agent */}
+                      <div className="flex flex-wrap items-center gap-3 text-sm text-gray-600 mb-2">
+                        <div className="flex items-center gap-1">
+                          <span>🕒</span> {item.timeAgo}
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <span>📍</span> {item.location}
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <span>👤</span> {item.agent}
+                        </div>
+                      </div>
 
-{/*     Agents in New York */}
-<div className="bg-white rounded-lg p-6 shadow-sm mt-6">
-  <h2 className="text-lg font-semibold text-gray-900 mb-2">
-    Agents in New York
-  </h2>
+                      {/* Price + Badges */}
+                      <div className="flex flex-wrap items-center gap-2 mb-2">
+                        <span className="bg-green-100 text-green-700 font-semibold px-2 py-0.5 rounded text-xs border border-green-200">
+                          ${item.price}
+                        </span>
 
-  <div className="h-[1px] bg-gray-300 w-full mb-4"></div>
+                        <span className="bg-gray-100 text-gray-700 px-2 py-0.5 rounded text-xs border">
+                          {item.roomType}
+                        </span>
 
-  <div className="flex flex-col gap-6">
-    {[
-      {
-        name: "Er",
-        agency: "Agent with None",
-        location: "New York, NY",
-        phone: "917-887-0747",
-        initialBg: "bg-red-300",
-        initial: "E"
-      },
-      {
-        name: "Guruaccounting",
-        agency: "Agent with GURU REAL ESTATE SERVICES LLC",
-        location: "Richmond Hill, NY",
-        phone: "917-805-0070",
-        initialBg: "bg-purple-300",
-        initial: "G"
-      },
-      {
-        name: "Alan",
-        agency: "Agent with American Luxury Homes",
-        location: "East Meadow, NY",
-        phone: "203-665-8431",
-        initialBg: "bg-yellow-300",
-        initial: "A"
-      },
-    ].map((agent, index) => (
-      <div
-        key={index}
-        className="border-b border-gray-200 pb-4 last:border-b-0 last:pb-0"
-      >
-        {/* Row Top */}
-        <div className="flex items-start gap-4">
-          {/* Initial Box */}
-          <div
-            className={`w-12 h-12 rounded-md flex items-center justify-center text-white font-semibold text-xl ${agent.initialBg}`}
-          >
-            {agent.initial}
-          </div>
+                        <span className="bg-gray-100 text-gray-700 px-2 py-0.5 rounded text-xs border">
+                          {item.gender}
+                        </span>
 
-          {/* Agent Info */}
-          <div>
-            <a href="#" className="text-blue-600 font-semibold hover:underline">
-              {agent.name}
-            </a>
-            <p className="text-sm text-gray-700">{agent.agency}</p>
-          </div>
-        </div>
+                        <span className="bg-gray-100 text-gray-700 px-2 py-0.5 rounded text-xs border">
+                          {item.bath}
+                        </span>
+                      </div>
 
-        {/* Bottom Row */}
-        <div className="flex items-center justify-between mt-3">
-          <div className="flex flex-col gap-1 text-sm text-gray-700">
-            <div className="flex items-center gap-2">
-              <span className="text-gray-500">📍</span>
-              {agent.location}
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-gray-500">📞</span>
-              {agent.phone}
-            </div>
-          </div>
-
-          {/* Buttons */}
-          <div className="flex gap-2">
-            <button className="px-3 py-1.5 border border-gray-300 rounded-md text-sm hover:bg-gray-100 transition">
-              View More
-            </button>
-            <button className="px-3 py-1.5 border border-red-400 text-red-500 rounded-md text-sm hover:bg-red-50 transition">
-              Respond
-            </button>
-          </div>
-        </div>
-      </div>
-    ))}
-  </div>
-
-  {/* Footer Link */}
-  <div className="text-center mt-4">
-    <a
-      href="#"
-      className="text-blue-600 text-sm hover:underline flex items-center justify-center gap-1"
-    >
-      View More Agents in New York →
-    </a>
-  </div>
-</div>
-
-
-
-
-{/* open houses in new york cities */}
-
-<div className="bg-white rounded-lg shadow-sm p-5 border border-gray-200 mt-10">
-  <h2 className="text-lg font-semibold text-gray-900 mb-3">
-    Open Houses in New York
-  </h2>
-
-  <div className="space-y-5">
-    {openHouses.map((item, index) => (
-      <div key={index} className="pb-4 border-b border-gray-200 last:border-0 last:pb-0">
-        
-        {/* Property Title */}
-        <a 
-          href="#" 
-          className="text-blue-700 font-medium hover:underline text-sm leading-5 block mb-1"
-        >
-          {item.title}
-        </a>
-
-        {/* Row with Time, Location, Agent */}
-        <div className="flex flex-wrap items-center gap-3 text-sm text-gray-600 mb-2">
-          <div className="flex items-center gap-1">
-            <span>🕒</span> {item.timeAgo}
-          </div>
-          <div className="flex items-center gap-1">
-            <span>📍</span> {item.location}
-          </div>
-          <div className="flex items-center gap-1">
-            <span>👤</span> {item.agent}
-          </div>
-        </div>
-
-        {/* Price + Badges */}
-        <div className="flex flex-wrap items-center gap-2 mb-2">
-          <span className="bg-green-100 text-green-700 font-semibold px-2 py-0.5 rounded text-xs border border-green-200">
-            ${item.price}
-          </span>
-
-          <span className="bg-gray-100 text-gray-700 px-2 py-0.5 rounded text-xs border">
-            {item.roomType}
-          </span>
-
-          <span className="bg-gray-100 text-gray-700 px-2 py-0.5 rounded text-xs border">
-            {item.gender}
-          </span>
-
-          <span className="bg-gray-100 text-gray-700 px-2 py-0.5 rounded text-xs border">
-            {item.bath}
-          </span>
-        </div>
-
-        {/* Open House Time */}
-        <div className="text-sm text-gray-700">
-          <span className="font-medium">Open house:</span> {item.houseTime}
-        </div>
-      </div>
-    ))}
-  </div>
-</div>
-
-
-
-
-
-
-
-
-              
+                      {/* Open House Time */}
+                      <div className="text-sm text-gray-700">
+                        <span className="font-medium">Open house:</span>{" "}
+                        {item.houseTime}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
 
               {/* Rest of your right side components... */}
             </div>
           </div>
         </div>
       </div>
-
     </div>
   );
 };
