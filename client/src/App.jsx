@@ -11,15 +11,17 @@ import Reviews from "./pages/Home/Reviews.jsx";
 import Footer from "./pages/Home/Footer.jsx";
 import Gallery from "./pages/Home/Gallery.jsx";
 
-// Import Roommates pages
+// Import Roommates pages and components
 import Roommates from "./pages/Roommates/Roommates.jsx";
 import RoomMateDetails from "./components/Roommates/RoomMateDetails.jsx";
 import DetailsPage from "./components/Roommates/DetailsPage.jsx"
 import Events from "./pages/Events/Events.jsx";
 import ChatBot from "./components/ChatBot.jsx";
-
 import EventDetailPage from "./components/Events/EventDetailPage.jsx";
 import EventDetails from "./components/Events/EventDetails.jsx";
+
+// import Rentals pages here when available
+import Rentals from "./pages/Rentalspage/Rentals.jsx";
 
 
 
@@ -150,7 +152,8 @@ const App = () => {
             <Route path="/events/:eventId" element={<EventDetailPage />} />
             <Route path="/event-details" element={<EventDetails />} />
 
-          
+          {/* Rentals Routes */}
+        <Route path="/rentals" element={<Rentals/>}/>
 
             {/* Add other routes as needed */}
             <Route path="/rentals" element={<div>Rentals Page</div>} />
