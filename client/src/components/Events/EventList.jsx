@@ -1154,11 +1154,11 @@ const EventList = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen">
       <EventsSubNav />
 
       {/* Breadcrumb Navigation */}
-          <div className="flex items-center gap-2 text-sm pt-4 px-4 sm:px-8 lg:px-4">
+          <div className="flex items-center gap-2 text-sm pt-4 sm:px-8 lg:px-4 mt-2 ml-2">
             <span className="font-semibold text-gray-900">
               Indian Events
             </span>
@@ -1168,11 +1168,11 @@ const EventList = () => {
             </span>
           </div>
       {/* Events Section */}
-      <div className="min-h-screen sm:p-6 lg:p-4 p-4 ">
+      <div className="min-h-screen sm:p-6 lg:p-4 mt-4  ">
         <div className="">
           {/* Tabs */}
-          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between w-full lg:w-[65%] border-gray-200 gap-4">
-            <div className="flex gap-4 lg:gap-8  ">
+          <div className="flex flex-col lg:flex-row  lg:items-center w-full lg:w-[85%] border-gray-200 gap-4">
+            <div className="flex gap-4 lg:gap-8">
               <button
                 onClick={() => setMainTab("upcoming")}
                 className={` pb-4 lg:pb-5 px-3 font-medium transition-colors ${
@@ -1214,8 +1214,8 @@ const EventList = () => {
                 Free Events
               </button>
             </div>
-            <div className="lg:ml-108 lg:-mt-2">
-              <button className="flex items-center gap-2 bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded text-sm font-medium transition-colors w-full lg:w-auto justify-center">
+            <div className="lg:-mt-2 ml-65">
+              <button className="flex items-center gap-2 bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded text-sm font-medium transition-colors  justify-center">
                 <FaMap />
                 Switch to Calendar View
               </button>
