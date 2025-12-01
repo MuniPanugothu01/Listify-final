@@ -19,6 +19,7 @@ import Events from "./pages/Events/Events.jsx";
 import ChatBot from "./components/ChatBot.jsx";
 import EventDetailPage from "./components/Events/EventDetailPage.jsx";
 import EventDetails from "./components/Events/EventDetails.jsx";
+import EventList from "./components/Events/EventList.jsx";
 
 // import Rentals pages here when available
 import Rentals from "./pages/Rentalspage/Rentals.jsx";
@@ -151,6 +152,9 @@ const App = () => {
             <Route path="/events" element={<Events />} />
             <Route path="/events/:eventId" element={<EventDetailPage />} />
             <Route path="/event-details" element={<EventDetails />} />
+            <Route path="/events-list" element={<EventList />} />
+
+
 
           {/* Rentals Routes */}
         <Route path="/rentals" element={<Rentals/>}/>

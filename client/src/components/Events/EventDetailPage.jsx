@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import EventsSubNav from '../../components/Events/EventsSubNav';
+
 import {
   FaCalendarAlt,
   FaMapMarkerAlt,
@@ -254,10 +256,12 @@ const RelatedEventCard = ({ event, onCardClick }) => {
   };
 
   return (
+    
     <div
       onClick={handleClick}
       className="group relative bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 cursor-pointer border border-gray-200 transform hover:-translate-y-2"
     >
+      
       <div className="relative h-48 overflow-hidden">
         <img
           src={event.image}
@@ -544,6 +548,7 @@ Come join us for an electrifying evening with Aurthohin, Tanzir Tuhin (X-Sironam
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100">
       {/* Breadcrumb */}
+      <EventsSubNav />
       <div className="bg-white/90 backdrop-blur-lg border-b border-gray-200 sticky top-0 z-40 shadow-sm">
         <div className="container mx-auto px-6 py-4">
           <nav className="flex items-center gap-3 text-sm font-medium">
@@ -567,6 +572,7 @@ Come join us for an electrifying evening with Aurthohin, Tanzir Tuhin (X-Sironam
           </nav>
         </div>
       </div>
+
 
       {/* Hero Section */}
       <div className="relative h-96 md:h-[500px] overflow-hidden">

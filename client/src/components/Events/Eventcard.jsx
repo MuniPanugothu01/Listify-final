@@ -392,7 +392,7 @@ const UpcomingEventsSection = ({ onEventClick }) => {
   const handleViewMore = () => {
     // Navigate to the first upcoming event details
     if (eventsData.upcoming.length > 0) {
-      navigate(`/events/${eventsData.upcoming[0].id}`);
+      navigate(`/events-list`);
     }
   };
 
@@ -574,7 +574,7 @@ const EventsShowcase = () => {
     if (eventsData.popular.length > 0) {
       window.scrollTo({ top: 0, behavior: 'smooth' });
       setTimeout(() => {
-        navigate(`/events/${eventsData.popular[0].id}`);
+        navigate(`/events-list`);
       }, 100);
     }
   };
@@ -585,7 +585,7 @@ const EventsShowcase = () => {
     if (targetEvent) {
       window.scrollTo({ top: 0, behavior: 'smooth' });
       setTimeout(() => {
-        navigate(`/events/${targetEvent.id}`);
+        navigate(`/events-list`);
       }, 100);
     }
   };
