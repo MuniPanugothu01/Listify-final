@@ -6,7 +6,7 @@ import RecentRentals from '../../components/Rentals/RecentRentals';
 import FeaturedRentals from '../../components/Rentals/FeaturedRentals';
 import TrendingWeek from '../../components/Rentals/TrendingWeek';
 import RentalsByArea from '../../components/Rentals/RentalsByArea';
-
+import ExploreNearYou from '../../components/Rentals/ExploreNearYou';
 
 const Rentals = () => {
   return (
@@ -18,7 +18,7 @@ const Rentals = () => {
  <FeaturedRentals/>
  <TrendingWeek/>
 <RentalsByArea/>
-
+<ExploreNearYou/>
     </div>
   )
 }
