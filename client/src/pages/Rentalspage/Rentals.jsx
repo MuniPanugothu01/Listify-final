@@ -3,7 +3,9 @@ import React from 'react'
 import RoommateSubNav from "../../components/Roommates/RoommateSubNav";
 import HeroSection from '../../components/Rentals/HeroSection';
 import RecentRentals from '../../components/Rentals/RecentRentals';
-
+import FeaturedRentals from '../../components/Rentals/FeaturedRentals';
+import TrendingWeek from '../../components/Rentals/TrendingWeek';
+import RentalsByArea from '../../components/Rentals/RentalsByArea';
 
 
 const Rentals = () => {
@@ -13,6 +15,9 @@ const Rentals = () => {
       <RoommateSubNav />
      <HeroSection/>
  <RecentRentals/>
+ <FeaturedRentals/>
+ <TrendingWeek/>
+<RentalsByArea/>
 
     </div>
   )
