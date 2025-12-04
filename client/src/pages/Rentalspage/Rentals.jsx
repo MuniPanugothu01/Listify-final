@@ -7,6 +7,8 @@ import FeaturedRentals from '../../components/Rentals/FeaturedRentals';
 import TrendingWeek from '../../components/Rentals/TrendingWeek';
 import RentalsByArea from '../../components/Rentals/RentalsByArea';
 import ExploreNearYou from '../../components/Rentals/ExploreNearYou';
+import PropertyAgents from '../../components/Rentals/PropertyAgents';
+
 
 const Rentals = () => {
   return (
@@ -19,6 +21,7 @@ const Rentals = () => {
  <TrendingWeek/>
 <RentalsByArea/>
 <ExploreNearYou/>
+<PropertyAgents/>
     </div>
   )
 }
