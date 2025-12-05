@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
 
-
 const HeroSection = () => {
   const [isCategoriesOpen, setIsCategoriesOpen] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
@@ -64,12 +63,10 @@ const HeroSection = () => {
       style={{ backgroundImage: `url(/herobg.jpg)` }}
     >
       <div className="relative border-t-4 border-x-4 border-black/40 rounded-t-xl px-170 py-70 text-center">
-
-
-         <div className="flex items-center gap-3 absolute -top-9 left-1/2 -translate-x-1/2  font-bold bg-black  text-3xl px-7 py-2 broder-5 rounded-xl">
-        <img src="/Logo.png" alt="" className="h-15 mb-2" />
-        <img src="/LogoName.png" alt="" className="h-10" />
-       </div>
+        <div className="flex items-center gap-3 absolute -top-9 left-1/2 -translate-x-1/2  font-bold bg-black  text-3xl px-7 py-2 broder-5 rounded-xl">
+          <img src="/Logo.png" alt="" className="h-15 mb-2" />
+          <img src="/LogoName.png" alt="" className="h-10" />
+        </div>
 
         {/* 🧩 Content inside border */}
         <div className="absolute top-20 left-1/2 -translate-x-1/2 flex flex-col gap-4">
@@ -81,10 +78,16 @@ const HeroSection = () => {
           >
             <button
               onClick={handleSearchClick}
-              className="absolute right-3 z-50 top-1/2 -translate-y-1/2 bg-[#3F929A] text-white px-6 py-4 rounded-xl text-sm cursor-pointer transition-all duration-500 hover:bg-[#2d7a82]"
+              className="
+    absolute right-3 z-50 top-1/2 -translate-y-1/2 
+    bg-[#27bb97] text-white px-6 py-4 rounded-xl text-sm 
+    cursor-pointer transition-all duration-300 
+    hover:bg-[#1fa987]
+  "
             >
               Search
             </button>
+
             <input
               type="text"
               placeholder="Search for a listing..."
@@ -167,12 +170,6 @@ const HeroSection = () => {
           )}
         </div>
       </div>
-
-
-
-
-
-
 
       {/* Gradient overlay at bottom */}
       <div className="absolute z-0 bg-gradient-to-t from-white to-transparent w-full bottom-0 h-[20%]" />

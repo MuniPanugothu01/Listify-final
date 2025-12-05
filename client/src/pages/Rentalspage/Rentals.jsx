@@ -8,8 +8,8 @@ import TrendingWeek from '../../components/Rentals/TrendingWeek';
 import RentalsByArea from '../../components/Rentals/RentalsByArea';
 import ExploreNearYou from '../../components/Rentals/ExploreNearYou';
 import PropertyAgents from '../../components/Rentals/PropertyAgents';
-
-
+import ListingCard from '../../components/Rentals/ApartmentListings';
+import NeighborhoodListings from '../../components/Rentals/NeighborhoodListings';
 const Rentals = () => {
   return (
     <div className="min-h-screen ">
@@ -21,6 +21,8 @@ const Rentals = () => {
  <TrendingWeek/>
 <RentalsByArea/>
 <ExploreNearYou/>
+<ListingCard/>
+<NeighborhoodListings/>
 <PropertyAgents/>
     </div>
   )

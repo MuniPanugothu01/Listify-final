@@ -18,18 +18,18 @@ const Heading = () => {
       </div>
 
       <div className="flex items-center gap-3 mt-8">
-        <div className="bg-[#c89a5e] p-2 rounded-full w-fit">
+        <div className="bg-[#27bb97] p-2 rounded-full w-fit">
           <FaInstagram size={24} className="text-white" />
         </div>
-        <div className="bg-[#c89a5e] p-2 rounded-full w-fit">
+        <div className="bg-[#27bb97] p-2 rounded-full w-fit">
           <FaFacebookF size={24} className="text-white" />
         </div>
-        <div className="bg-[#c89a5e] p-2 rounded-full w-fit">
+        <div className="bg-[#27bb97] p-2 rounded-full w-fit">
           <FaXTwitter size={24} className="text-white" />
         </div>
       </div>
       <div className="">
-        <button className="bg-[#c89a5e] px-7 py-3 rounded-full mt-5 text-white font-semibold text-[23px] cursor-pointer">Explore Now</button>
+        <button className="bg-[#27bb97] px-7 py-3 rounded-full mt-5 text-white font-semibold text-[23px] cursor-pointer">Explore Now</button>
       </div>
     </div>
   );
