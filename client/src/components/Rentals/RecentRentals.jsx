@@ -438,7 +438,7 @@ const RecentRentals = () => {
               e.stopPropagation();
               smoothScrollToSection("contact-form");
             }}
-            className="px-4 py-2 bg-gradient-to-r from-[#25676D] to-[#2D8690] text-white text-sm font-semibold rounded-lg hover:from-[#1a4d52] hover:to-[#25676D] transition-all shadow-md hover:shadow-lg"
+            className="px-4 py-2 bg-gradient-to-r bg-[#27bb97] text-white text-sm font-semibold rounded-lg hover:bg-[#1FA987]  transition-all shadow-md hover:shadow-lg cursor-pointer"
           >
             Book Now
           </button>

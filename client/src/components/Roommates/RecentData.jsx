@@ -271,7 +271,7 @@ const RecentDataOne = () => {
               {property.availableFrom}
             </span>
           </div>
-          <button className="px-4 py-2 bg-[#25676D] text-white text-sm font-semibold rounded-lg hover:bg-[#1a4d52] transition-colors cursor-pointer">
+          <button className="px-4 py-2 bg-[#27bb97] text-white text-sm font-semibold rounded-lg hover:bg-[#1FA987] transition-colors cursor-pointer">
             View Details
           </button>
         </div>

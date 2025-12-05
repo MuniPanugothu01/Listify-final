@@ -134,7 +134,7 @@ export default function RoommateSubNav() {
                   onClick={() => handleCategoryClick(item)}
                   className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm transition-all whitespace-nowrap min-w-max cursor-pointer ${
                     item.name === "Home" 
-                      ? "bg-[#25676D] text-white hover:bg-teal-600" 
+                      ? "bg-[#27bb97] text-white hover:bg-[#1FA987]" 
                       : "text-gray-700 hover:bg-teal-50 hover:text-teal-500"
                   } ${item.iconOnly ? "px-3" : "px-4"}`}
                   title={item.name}

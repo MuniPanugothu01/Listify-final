@@ -260,7 +260,7 @@ const FeaturedData = () => {
                         <MapPin size={14} />
                         <span>{property.location}</span>
                       </div>
-                      <button className="bg-[#2D8690] hover:bg-[#25676D] text-white px-5 py-2 rounded-full text-sm font-medium transition-colors">
+                      <button className="bg-[#27bb97] hover:bg-[#1FA987] text-white px-5 py-2 rounded-full text-sm font-medium transition-colors cursor-pointer">
                         View
                       </button>
                     </div>

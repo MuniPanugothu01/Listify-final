@@ -944,7 +944,7 @@ const RoomMateDetails = () => {
                     e.stopPropagation();
                     handleMessage(property);
                   }}
-                  className="flex items-center gap-2 bg-[#2D8690] hover:bg-[#25676D] text-white px-4 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 shadow-sm hover:shadow-md"
+                  className="flex items-center gap-2 bg-[#27bb97] hover:bg-[#1FA987] text-white px-4 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 shadow-sm hover:shadow-md"
                 >
                   <MessageCircle size={16} />
                   Message
@@ -2336,7 +2336,7 @@ const RoomMateDetails = () => {
               </p>
               <div className="">
                 <button
-                  className="mt-3 outline-none inline-flex items-center justify-between bg-[#40B3A2] 
+                  className="mt-3 outline-none inline-flex items-center justify-between bg-[#27bb97] hover:bg-[#1FA987] 
                   min-w-[200px] border-0 rounded shadow-[0_4px_12px_rgba(0,0,0,0.1)] box-border 
                   px-5 py-4 text-white text-xs font-semibold tracking-[1.2px] uppercase 
                   overflow-hidden cursor-pointer hover:opacity-95 transition-opacity"
@@ -2384,7 +2384,7 @@ const RoomMateDetails = () => {
               </button>
             </div>
             <div className="lg:ml-108 lg:-mt-2">
-              <button className="flex items-center gap-2 bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded text-sm font-medium transition-colors w-full lg:w-auto justify-center">
+              <button className="flex items-center gap-2 bg-[#27bb97] hover:bg-[#1FA987] text-white px-4 py-2 rounded text-sm font-medium transition-colors w-full lg:w-auto justify-center cursor-pointer">
                 <FaMap />
                 Switch to Map View
               </button>

@@ -431,7 +431,7 @@ const mainMenuItems = [
         }
 
         .nav-link:hover {
-          color: #2d7a82;
+          color: #1FA987;
         }
 
         .nav-link::after {
@@ -441,7 +441,7 @@ const mainMenuItems = [
           height: 2px;
           bottom: -4px;
           left: 0;
-          background-color: #2d7a82;
+          background-color: #1FA987;
           transition: width 0.3s ease;
         }
 

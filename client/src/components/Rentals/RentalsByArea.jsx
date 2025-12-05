@@ -7,32 +7,38 @@ const areas = [
   {
     name: "Manhattan",
     homes: 1240,
-    image: "https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=800&q=60",
+    image:
+      "https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=800&q=60",
   },
   {
     name: "Brooklyn",
     homes: 980,
-    image: "https://images2.minutemediacdn.com/image/upload/c_fill,w_720,ar_16:9,f_auto,q_auto,g_auto/shape/cover/sport/istock-000018148947-small-5f67bc0947748894ccf340f34516c078.jpg",
+    image:
+      "https://images2.minutemediacdn.com/image/upload/c_fill,w_720,ar_16:9,f_auto,q_auto,g_auto/shape/cover/sport/istock-000018148947-small-5f67bc0947748894ccf340f34516c078.jpg",
   },
   {
     name: "Queens",
     homes: 756,
-    image: "https://qns.com/wp-content/uploads/2016/07/Glendale-by-Anthony-Giudice-1.jpg?quality=51",
+    image:
+      "https://qns.com/wp-content/uploads/2016/07/Glendale-by-Anthony-Giudice-1.jpg?quality=51",
   },
   {
     name: "Bronx",
     homes: 612,
-    image: "https://www.nyc.gov/assets/hpd/images/content/pr/2019/11-22-19-lambert-houses-988-rc.JPG",
+    image:
+      "https://www.nyc.gov/assets/hpd/images/content/pr/2019/11-22-19-lambert-houses-988-rc.JPG",
   },
   {
     name: "Jersey City",
     homes: 388,
-    image: "https://media-cdn.tripadvisor.com/media/photo-c/1280x250/14/10/2e/db/jersey-city.jpg",
+    image:
+      "https://media-cdn.tripadvisor.com/media/photo-c/1280x250/14/10/2e/db/jersey-city.jpg",
   },
   {
     name: "Staten Island",
     homes: 204,
-    image: "https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=800&q=60",
+    image:
+      "https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=800&q=60",
   },
 ];
 
@@ -46,7 +52,8 @@ export default function RentalsByArea() {
             Rentals by Area — New York
           </h2>
           <p className="text-gray-600 mt-2">
-            Explore the most popular neighborhoods with verified rental listings.
+            Explore the most popular neighborhoods with verified rental
+            listings.
           </p>
         </div>
 
@@ -66,21 +73,28 @@ export default function RentalsByArea() {
                 />
               </div>
 
-              {/* RIGHT TEXT - Now on right side for desktop */}
+              {/* RIGHT TEXT */}
               <div className="p-5 flex flex-col justify-center flex-grow">
-                {/* Location + Name */}
+                {/* Title with hover color */}
                 <div className="flex items-center gap-2">
                   <img
                     src={locationIcon}
                     alt="location"
                     className="w-4 h-4 opacity-70"
                   />
-                  <h3 className="text-xl font-semibold text-gray-900">
+
+                  <h3
+                    className="
+              text-xl font-semibold text-gray-900
+              transition-colors duration-200
+              group-hover:text-[#27bb97]
+            "
+                  >
                     {area.name}
                   </h3>
                 </div>
 
-                {/* Homes count with icon */}
+                {/* Homes count */}
                 <div className="flex items-center gap-2 mt-1">
                   <img
                     src={homeIcon}
@@ -92,9 +106,10 @@ export default function RentalsByArea() {
                   </p>
                 </div>
 
-                {/* Additional description text that was missing */}
+                {/* Description */}
                 <p className="text-gray-600 text-sm mt-3">
-                  Explore rental properties in {area.name} with verified listings and virtual tours.
+                  Explore rental properties in {area.name} with verified
+                  listings and virtual tours.
                 </p>
 
                 {/* View Rentals Button */}
@@ -112,12 +127,16 @@ export default function RentalsByArea() {
         {/* Additional text section moved to right side */}
         <div className="mt-12 flex flex-col md:flex-row items-center justify-between">
           <div className="text-gray-500 mb-4 md:mb-0 md:text-left">
-            <p className="font-medium text-gray-700">All neighborhoods are updated in real-time.</p>
-            <p className="text-sm mt-1">Average prices based on last 30 days of data.</p>
+            <p className="font-medium text-gray-700">
+              All neighborhoods are updated in real-time.
+            </p>
+            <p className="text-sm mt-1">
+              Average prices based on last 30 days of data.
+            </p>
           </div>
-          
+
           <div className="text-right">
-            <button className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+            <button className="px-6 py-2 bg-[#27bb97] text-white rounded-lg hover:bg-[#1fa987] transition-colors cursor-pointer font-medium">
               View All Areas →
             </button>
             <p className="text-xs text-gray-500 mt-2">

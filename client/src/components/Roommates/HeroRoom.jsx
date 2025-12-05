@@ -216,8 +216,8 @@ export default function HeroRoom() {
                   {/* Search Button */}
                   <div className="flex-1 min-w-[100px]">
                     <button
-                      className="w-full flex items-center justify-center gap-2 bg-[#25676D]  
-                               text-white font-semibold rounded-lg px-4 py-2.5 hover:bg-[#165157] 
+                      className="w-full flex items-center justify-center gap-2 bg-[#27bb97] hover:bg-[#1FA987] transition-colors
+                               text-white font-semibold rounded-lg px-4 py-2.5 
                                shadow-lg hover:shadow-xl text-sm  hover:cyan-700 cursor-pointer"
                     >
                       <Search className="w-4 h-4" />
