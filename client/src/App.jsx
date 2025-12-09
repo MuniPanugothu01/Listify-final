@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useLocation,
+} from "react-router-dom";
 
 import Navbar from "./pages/Home/Navbar.jsx";
 import HeroSection from "./pages/Home/HeroSection.jsx";
@@ -11,37 +16,44 @@ import Reviews from "./pages/Home/Reviews.jsx";
 import Footer from "./pages/Home/Footer.jsx";
 import Gallery from "./pages/Home/Gallery.jsx";
 
-// Import Roommates pages and components
+// Roommates
 import Roommates from "./pages/Roommates/Roommates.jsx";
 import RoomMateDetails from "./components/Roommates/RoomMateDetails.jsx";
-import DetailsPage from "./components/Roommates/DetailsPage.jsx"
+import DetailsPage from "./components/Roommates/DetailsPage.jsx";
+
+// Events
 import Events from "./pages/Events/Events.jsx";
-import ChatBot from "./components/ChatBot.jsx";
 import EventDetailPage from "./components/Events/EventDetailPage.jsx";
 import EventDetails from "./components/Events/EventDetails.jsx";
 import EventList from "./components/Events/EventList.jsx";
 
-// import Rentals pages here when available
-import Rentals from "./pages/Rentalspage/Rentals.jsx";
+// Rentals
+import RentalsListings from "./components/Rentals/RentalsListings.jsx";
+import RentalDetailsPage from "./components/Rentals/RentalDetailsPage.jsx";
 
+// Jobs
+import JobsPage from "./pages/JobsPage/JobsPage.jsx";
 
+// Profile
+import Profile from "./pages/Home/Profile.jsx";
 
-// Component to conditionally render Footer
+// ChatBot
+import ChatBot from "./components/ChatBot.jsx";
+
+// Layout wrapper for Footer visibility
 const Layout = ({ children }) => {
   const location = useLocation();
-  
-  // List of paths where footer should NOT be shown
+
   const noFooterPaths = [
-    '/login',
-    '/signup',
-    '/profile',
-    '/auth/login',
-    '/auth/signup',
-    '/user/profile'
+    "/login",
+    "/signup",
+    "/profile",
+    "/auth/login",
+    "/auth/signup",
+    "/user/profile",
   ];
 
-  // Check if current path should hide footer
-  const shouldShowFooter = !noFooterPaths.some(path => 
+  const shouldShowFooter = !noFooterPaths.some((path) =>
     location.pathname.startsWith(path)
   );
 
@@ -57,7 +69,7 @@ const App = () => {
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [isScrolling, setIsScrolling] = useState(false);
 
-  // Enhanced scroll to top function with progress tracking
+  // Smooth scroll to top
   const scrollToTop = () => {
     setIsScrolling(true);
     const startPosition = window.pageYOffset;
@@ -65,9 +77,8 @@ const App = () => {
 
     const scroll = (currentTime) => {
       const elapsed = currentTime - startTime;
-      const progress = Math.min(elapsed / 600, 1); // 600ms duration
+      const progress = Math.min(elapsed / 600, 1);
 
-      // Easing function for smooth scroll
       const easeInOutCubic =
         progress < 0.5
           ? 4 * progress * progress * progress
@@ -85,19 +96,15 @@ const App = () => {
     requestAnimationFrame(scroll);
   };
 
-  // Enhanced scroll detection with throttle
   useEffect(() => {
     let ticking = false;
-    let lastScrollY = 0;
 
     const updateScrollTop = () => {
       const scrollY = window.pageYOffset;
       const viewportHeight = window.innerHeight;
 
-      // Show after 1.5 viewport heights (earlier than before for better UX)
       const shouldShow = scrollY > viewportHeight * 1.5;
 
-      // Add fade effect based on scroll position
       if (shouldShow !== showScrollTop) {
         setShowScrollTop(shouldShow);
       }
@@ -106,14 +113,12 @@ const App = () => {
     };
 
     const handleScroll = () => {
-      lastScrollY = window.scrollY;
       if (!ticking) {
         requestAnimationFrame(updateScrollTop);
         ticking = true;
       }
     };
 
-    // Throttled scroll event
     window.addEventListener("scroll", handleScroll, { passive: true });
 
     return () => window.removeEventListener("scroll", handleScroll);
@@ -124,10 +129,9 @@ const App = () => {
       <div className="relative">
         <Navbar />
 
-        {/* Wrap all routes with Layout component */}
         <Layout>
           <Routes>
-            {/* Home Route */}
+            {/* Home */}
             <Route
               path="/"
               element={
@@ -143,108 +147,75 @@ const App = () => {
               }
             />
 
-            {/* Roommates Routes */}
+            {/* Roommates */}
             <Route path="/roommates" element={<Roommates />} />
             <Route path="/roommate-details" element={<RoomMateDetails />} />
             <Route path="/details" element={<DetailsPage />} />
-            
-            {/* Events Routes */}
+
+            {/* Rentals */}
+            <Route path="/rentals" element={<RentalsListings />} />
+            <Route path="/rental-details" element={<RentalDetailsPage />} />
+
+            {/* Jobs (FIXED ROUTE) */}
+            <Route path="/jobs" element={<JobsPage />} />
+
+            {/* Events */}
             <Route path="/events" element={<Events />} />
             <Route path="/events/:eventId" element={<EventDetailPage />} />
             <Route path="/event-details" element={<EventDetails />} />
             <Route path="/events-list" element={<EventList />} />
 
+            {/* Profile */}
+            <Route path="/profile" element={<Profile />} />
 
-
-          {/* Rentals Routes */}
-        <Route path="/rentals" element={<Rentals/>}/>
-
-            {/* Add other routes as needed */}
-            <Route path="/rentals" element={<div>Rentals Page</div>} />
-            <Route path="/jobs" element={<div>Jobs Page</div>} />
+            {/* Placeholder Pages */}
             <Route path="/services" element={<div>Services Page</div>} />
             <Route path="/marketplace" element={<div>Marketplace Page</div>} />
             <Route path="/vehicles" element={<div>Vehicles Page</div>} />
             <Route path="/takecare" element={<div>TakeCare Page</div>} />
+            <Route path="/cares" element={<div>Cares Page</div>} />
+            <Route path="/blogs" element={<div>Blogs Page</div>} />
+            <Route path="/forums" element={<div>Forums Page</div>} />
+            <Route path="/community" element={<div>Community Page</div>} />
+            <Route path="/my-listings" element={<div>My Listings Page</div>} />
+            <Route path="/messages" element={<div>Messages Page</div>} />
+            <Route
+              path="/notifications"
+              element={<div>Notifications Page</div>}
+            />
+            <Route path="/settings" element={<div>Settings Page</div>} />
           </Routes>
         </Layout>
 
-        {/* Floating Action Buttons Container */}
+        {/* Floating Buttons */}
         <div className="fixed bottom-6 right-8 z-50 flex flex-col items-end space-y-4">
-          
-          {/* Scroll to Top Button */}
-          {/* {showScrollTop && (
+          {showScrollTop && !isScrolling && (
             <button
               onClick={scrollToTop}
-              disabled={isScrolling}
-              className={`
-                group relative
-                w-12 h-12
-                bg-gradient-to-br from-[#25676D] to-[#1a4d52]
-                text-white
-                rounded-2xl
-                shadow-2xl
-                hover:shadow-3xl
-                border border-white/20
-                transition-all duration-300 ease-out
-                transform hover:scale-105 hover:-translate-y-1
-                flex items-center justify-center
-                backdrop-blur-sm
-                ${isScrolling ? "opacity-80 cursor-not-allowed" : "opacity-100"}
-              `}
-              aria-label="Back to Top"
+              className="w-12 h-12 bg-[#2D7A82] hover:bg-[#1FA987] text-white rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+              aria-label="Scroll to top"
             >
               <svg
-                className={`
-                  w-6 h-6 transition-all duration-300
-                  ${
-                    isScrolling
-                      ? "animate-bounce"
-                      : "group-hover:-translate-y-0.5"
-                  }
-                `}
+                className="w-6 h-6"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
-                strokeWidth={2}
               >
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  d="M5 15l7-7 7 7"
-                />
-              </svg>
-
-              
-              <div className="absolute inset-0 rounded-2xl bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-sm" />
-
-        
-              <div className="absolute bottom-full mb-3 left-1/2 transform -translate-x-1/2 px-3 py-2 bg-gray-900 text-white text-xs font-medium rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none">
-                Back to Top
-                <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-gray-900" />
-              </div>
-
-        
-              <svg
-                className="absolute inset-0 w-full h-full transform -rotate-90"
-                viewBox="0 0 100 100"
-              >
-                <circle
-                  cx="50"
-                  cy="50"
-                  r="48"
-                  stroke="currentColor"
-                  strokeWidth="1"
-                  fill="none"
-                  opacity="0.2"
-                  strokeLinecap="round"
+                  strokeWidth={2}
+                  d="M5 10l7-7m0 0l7 7m-7-7v18"
                 />
               </svg>
             </button>
-          )} */}
+          )}
 
-          {/* ChatBot Component - Positioned below scroll button */}
-          <div className={`transition-all duration-500 ${showScrollTop ? 'translate-y-0' : 'translate-y-2'}`}>
+          <div
+            className={`transition-all duration-500 ${
+              showScrollTop ? "translate-y-0" : "translate-y-2"
+            }`}
+          >
             <ChatBot />
           </div>
         </div>

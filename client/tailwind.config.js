@@ -17,6 +17,10 @@ export default {
           },
         },
       },
+      colors: {
+        "primary-btn": "#27bb97",
+        "primary-btn-hover": "#1fa987",
+      },
     },
   },
 };

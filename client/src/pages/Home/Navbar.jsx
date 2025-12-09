@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { IoLocationOutline } from "react-icons/io5";
 import { CiLocationArrow1 } from "react-icons/ci";
 import { LuPencilLine } from "react-icons/lu";
@@ -40,10 +40,13 @@ const Navbar = () => {
   const [selectedCountry, setSelectedCountry] = useState("United States");
   const [showSearchModal, setShowSearchModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [showProfileDropdown, setShowProfileDropdown] = useState(false);
 
   const locationDropdownRef = useRef(null);
   const navbarRef = useRef(null);
   const searchModalRef = useRef(null);
+  const profileDropdownRef = useRef(null);
+  const navigate = useNavigate();
 
   // Category items with React Icons
   const categoryItems = [
@@ -60,23 +63,31 @@ const Navbar = () => {
     { name: "Lawyers", count: "11", icon: FaBalanceScale },
   ];
 
-const mainMenuItems = [
-  { name: "Roommates", path: "/roommates" },
-  { name: "Rentals", path: "/rentals" },
-  { name: "Jobs", path: "/jobs" },
-  { name: "Events", path: "/events" },
-  { name: "Services", path: "/services" },
-  { name: "Marketplace", path: "/marketplace" },
-  { name: "TakeCare", path: "/takecare" },
-];
+  const mainMenuItems = [
+    { name: "Roommates", path: "/roommates" },
+    { name: "Rentals", path: "/rentals" },
+    { name: "Jobs", path: "/jobs" },
+    { name: "Events", path: "/events" },
+    { name: "Services", path: "/services" },
+    { name: "Marketplace", path: "/marketplace" },
+    { name: "TakeCare", path: "/takecare" },
+  ];
 
   const moreMenuItems = [
     { name: "Jobs", path: "/jobs" },
     { name: "Cares", path: "/cares" },
     { name: "Blogs", path: "/blogs" },
     { name: "Forums", path: "/forums" },
-      { name: "Community", path: "/community" },
-      
+    { name: "Community", path: "/community" },
+  ];
+
+  const profileMenuItems = [
+    { name: "Dashboard", path: "/profile", icon: CgProfile },
+    { name: "Settings", path: "/settings", icon: FaTools },
+    { name: "My Listings", path: "/my-listings", icon: FaList },
+    { name: "Messages", path: "/messages", icon: FaCalendar },
+    { name: "Notifications", path: "/notifications", icon: FaBuilding },
+    { name: "Logout", path: "/logout", icon: FaChevronRight },
   ];
 
   const toggleMobileMenu = () => {
@@ -93,11 +104,19 @@ const mainMenuItems = [
     setShowMoreDropdown(!showMoreDropdown);
   };
 
+  const handleProfileClick = () => {
+    setShowProfileDropdown(!showProfileDropdown);
+  };
+
   const closeLocationDropdown = () => {
     setShowLocationDropdown(false);
     setLocationSearch("");
     setShowTopCities(false);
     document.body.style.overflow = "unset";
+  };
+
+  const closeProfileDropdown = () => {
+    setShowProfileDropdown(false);
   };
 
   const handleSearchClick = () => {
@@ -286,6 +305,19 @@ const mainMenuItems = [
     console.log("Searching for:", searchTerm);
   };
 
+  const handleProfileMenuItemClick = (path) => {
+    if (path === "/profile") {
+      navigate("/profile");
+    } else if (path === "/logout") {
+      // Handle logout logic here
+      console.log("Logging out...");
+      navigate("/");
+    } else {
+      navigate(path);
+    }
+    closeProfileDropdown();
+  };
+
   // Close dropdown when clicking outside or pressing Escape
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -301,12 +333,20 @@ const mainMenuItems = [
       ) {
         closeSearchModal();
       }
+      if (
+        profileDropdownRef.current &&
+        !profileDropdownRef.current.contains(event.target) &&
+        !event.target.closest('.profile-button')
+      ) {
+        closeProfileDropdown();
+      }
     };
 
     const handleEscapeKey = (event) => {
       if (event.key === "Escape") {
         closeLocationDropdown();
         closeSearchModal();
+        closeProfileDropdown();
       }
     };
 
@@ -398,6 +438,17 @@ const mainMenuItems = [
           }
         }
 
+        @keyframes slideDown {
+          from {
+            transform: translateY(-10px);
+            opacity: 0;
+          }
+          to {
+            transform: translateY(0);
+            opacity: 1;
+          }
+        }
+
         .location-dropdown {
           animation: slideUp 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
@@ -410,6 +461,10 @@ const mainMenuItems = [
         .search-modal-exit {
           animation: slideOutToRight 0.5s cubic-bezier(0.55, 0.085, 0.68, 0.53)
             forwards;
+        }
+
+        .profile-dropdown {
+          animation: slideDown 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
 
         .backdrop {
@@ -457,6 +512,16 @@ const mainMenuItems = [
         .more-dropdown-link:hover {
           color: #2d7a82;
           background-color: #f0f9fa;
+        }
+
+        /* Profile dropdown link styles */
+        .profile-dropdown-link {
+          transition: all 0.2s ease;
+        }
+
+        .profile-dropdown-link:hover {
+          background-color: #f8f9fa;
+          transform: translateX(4px);
         }
 
         /* Smooth navbar transition */
@@ -579,9 +644,6 @@ const mainMenuItems = [
                     }`} />
                   </div>
                 </div>
-
-
-                
               </div>
             </div>
 
@@ -636,17 +698,67 @@ const mainMenuItems = [
                   Create a Listing
                 </button>
 
-                <div className={`border rounded-lg px-3 py-1.5 md:px-4 md:py-3 hover:shadow-md cursor-pointer flex items-center gap-2 profile-button ${
-                  isScrolled 
-                    ? "border-white/30 text-white hover:bg-white/10" 
-                    : "border-gray-300 text-gray-700"
-                }`}>
-                  <HiOutlineBars3BottomRight className="text-[20px] md:text-[22px]" />
-                  <CgProfile className="text-[20px] md:text-[22px]" />
+                {/* Profile Dropdown */}
+                <div className="relative">
+                  <button
+                    onClick={handleProfileClick}
+                    className={`border rounded-lg px-3 py-1.5 md:px-4 md:py-3 hover:shadow-md cursor-pointer flex items-center gap-2 profile-button ${
+                      isScrolled 
+                        ? "border-white/30 text-white hover:bg-white/10" 
+                        : "border-gray-300 text-gray-700"
+                    }`}
+                  >
+                    <HiOutlineBars3BottomRight className="text-[20px] md:text-[22px]" />
+                    <CgProfile className="text-[20px] md:text-[22px]" />
+                  </button>
+
+                  {/* Profile Dropdown Menu */}
+                  {showProfileDropdown && (
+                    <div
+                      ref={profileDropdownRef}
+                      className="absolute right-0 top-full mt-2 w-64 bg-white border border-gray-200 rounded-xl shadow-2xl z-50 profile-dropdown overflow-hidden"
+                    >
+                      {/* User Info Header */}
+                      <div className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-200">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                            <CgProfile className="h-5 w-5 text-blue-600" />
+                          </div>
+                          <div>
+                            <h3 className="font-semibold text-gray-900">John Doe</h3>
+                            <p className="text-sm text-gray-600">john.doe@example.com</p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Menu Items */}
+                      <div className="py-2">
+                        {profileMenuItems.map((item, index) => (
+                          <button
+                            key={index}
+                            onClick={() => handleProfileMenuItemClick(item.path)}
+                            className="profile-dropdown-link w-full flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:text-blue-600"
+                          >
+                            <item.icon className="h-4 w-4" />
+                            <span>{item.name}</span>
+                            {item.path === "/logout" && (
+                              <span className="ml-auto text-xs text-gray-400">⌘Q</span>
+                            )}
+                          </button>
+                        ))}
+                      </div>
+
+                      {/* Footer */}
+                      <div className="p-3 bg-gray-50 border-t border-gray-200">
+                        <div className="flex items-center justify-between text-xs text-gray-500">
+                          <span>Version 1.0.0</span>
+                          <span>© 2024 Listify</span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
-
-              
             </div>
 
             {/* Mobile menu button */}
@@ -720,6 +832,22 @@ const mainMenuItems = [
                   <LuPencilLine className="text-white" />
                   Create a Listing
                 </button>
+                
+                {/* Mobile Profile Link */}
+                <Link
+                  to="/profile"
+                  className={`nav-link px-3 py-2 text-sm hover:bg-gray-100 rounded ${
+                    isScrolled 
+                      ? "text-white hover:bg-white/10" 
+                      : "text-gray-700"
+                  }`}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  <div className="flex items-center gap-2">
+                    <CgProfile className="h-5 w-5" />
+                    <span>Dashboard</span>
+                  </div>
+                </Link>
               </div>
             </div>
           )}
@@ -1110,7 +1238,7 @@ const mainMenuItems = [
                   <FaChevronLeft className="h-5 w-5 text-gray-700" />
                 </button>
 
-                <div className="flex-1 flex items-center justify-center max-w-4xl mx-4">
+                <div className="flex items-center justify-center max-w-4xl mx-4">
                   {/* Main container with background and radius */}
                   <div className="flex flex-col h-[85px] sm:flex-row items-stretch sm:items-center w-full bg-white rounded-full border border-gray-200 shadow-sm overflow-hidden">
                     {/* Location Filter */}
@@ -1180,7 +1308,7 @@ const mainMenuItems = [
               </div>
 
               {/* Category Items with React Icons and Hover Effects */}
-              <div className="px-4 py-4 overflow-x-auto scrollbar-hide flex flex-col  items-center justify-center ">
+              <div className="px-4 py-4 overflow-x-auto scrollbar-hide flex flex-col items-center justify-center">
                 <div className="flex items-center space-x-6 min-w-max">
                   <button className="flex-shrink-0 w-10 h-10 bg-gray-300 flex items-center justify-center hover:bg-gray-100 rounded-full transition-colors cursor-pointer">
                     <FaChevronLeft className="h-5 w-5 text-gray-600" />
@@ -1220,13 +1348,6 @@ const mainMenuItems = [
                         >
                           {category.name}
                         </span>
-                        {/* <span
-                          className={`text-xs ${
-                            index === 0 ? "text-red-500" : "text-gray-500"
-                          }`}
-                        >
-                          {category.count}
-                        </span> */}
 
                         {/* Active indicator line (for first item) */}
                         {index === 0 && (

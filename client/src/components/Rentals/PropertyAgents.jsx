@@ -417,7 +417,7 @@ const AgentDetailsModal = ({ agent, isOpen, onClose }) => {
 
       {/* Modal Container */}
       <div className="flex items-center justify-center min-h-screen p-4">
-        <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-4xl mx-auto overflow-hidden">
+        <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-7xl mx-auto overflow-hidden">
           {/* Close Button */}
           <button
             onClick={onClose}

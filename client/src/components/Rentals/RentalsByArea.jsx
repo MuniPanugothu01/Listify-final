@@ -76,28 +76,27 @@ export default function RentalsByArea() {
               {/* RIGHT TEXT */}
               <div className="p-5 flex flex-col justify-center flex-grow">
                 {/* Title with hover color */}
-              <div className="flex items-center gap-2 group">
-  <img
-    src={locationIcon}
-    alt="location"
-    className="
+                <div className="flex items-center gap-2 group">
+                  <img
+                    src={locationIcon}
+                    alt="location"
+                    className="
       w-4 h-4 opacity-70
       transition-transform duration-300 ease-in-out
       group-hover:scale-110
     "
-  />
+                  />
 
-  <h3
-    className="
+                  <h3
+                    className="
       text-xl font-semibold text-gray-900
       transition-colors duration-300 ease-in-out
       group-hover:text-[#27bb97]
     "
-  >
-    {area.name}
-  </h3>
-</div>
-
+                  >
+                    {area.name}
+                  </h3>
+                </div>
 
                 {/* Homes count */}
                 <div className="flex items-center gap-2 mt-1">
