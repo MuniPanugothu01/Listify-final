@@ -230,64 +230,79 @@ const EventsPopular = () => {
     return !isToday(eventDate) && !isTomorrow(eventDate) && !isThisWeek(eventDate, { weekStartsOn: 1 });
   });
 
-  const EventCard = ({ event }) => (
-    <div
-      onClick={() => navigate(`/events/${event.id}`)}
-      className="bg-white rounded-lg shadow-md hover:shadow-2xl transition-all duration-300 cursor-pointer overflow-hidden group"
-    >
-      <div className="relative">
-        <img
-          src={event.image}
-          alt={event.title}
-          className="w-full h-56 object-cover group-hover:scale-110 transition-transform duration-500"
-        />
-        {event.isFree && (
-          <span className="absolute top-3 left-3 bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full">
-            FREE
-          </span>
-        )}
-        {event.ticketsLeft < 50 && (
-          <span className="absolute top-3 right-3 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full">
-            Almost Sold Out
-          </span>
-        )}
-      </div>
+  const EventCard = ({ event }) => {
+    const handleCardClick = () => {
+      navigate(`/events/${event.id}`);
+    };
 
-      <div className="p-5">
-        <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
-          <span>{format(parseISO(event.date), 'EEE, MMM d')}</span>
-          <span>•</span>
-          <span>{event.time}</span>
-        </div>
+    const handleButtonClick = (e) => {
+      e.stopPropagation();
+      navigate(`/events/${event.id}`);
+    };
 
-        <h3 className="text-lg font-bold text-gray-900 group-hover:text-blue-600 transition line-clamp-2">
-          {event.title}
-        </h3>
-        <p className="text-sm text-gray-600 mt-1 line-clamp-1">{event.location}</p>
-
-        <div className="flex justify-between items-center mt-4">
-          <div>
-            <p className="text-xl font-bold text-gray-900">{event.displayPrice}</p>
-            {event.attendees && (
-              <p className="text-xs text-gray-500">{event.attendees} interested</p>
-            )}
-          </div>
-          <button className="bg-gray-100 hover:bg-blue-600 hover:text-white text-gray-700 font-medium text-sm px-5 py-2 rounded-md transition">
-            More Info
-          </button>
-        </div>
-
-        <div className="flex flex-wrap gap-2 mt-4">
-          <span className="text-xs bg-blue-100 text-blue-700 px-3 py-1 rounded-full">#{event.tag}</span>
-          {event.category && (
-            <span className="text-xs bg-purple-100 text-purple-700 px-3 py-1 rounded-full">
-              #{event.category}
+    return (
+      <div
+        onClick={handleCardClick}
+        className="bg-white rounded-lg shadow-md hover:shadow-2xl transition-all duration-300 cursor-pointer overflow-hidden group"
+      >
+        <div className="relative overflow-hidden">
+          <img
+            src={event.image}
+            alt={event.title}
+            className="w-full h-56 object-cover group-hover:scale-110 transition-transform duration-500"
+            loading="lazy"
+          />
+          {event.isFree && (
+            <span className="absolute top-3 left-3 bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full">
+              FREE
+            </span>
+          )}
+          {event.ticketsLeft < 50 && event.ticketsLeft > 0 && (
+            <span className="absolute top-3 right-3 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full">
+              Almost Sold Out
             </span>
           )}
         </div>
+
+        <div className="p-5">
+          <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
+            <span>{format(parseISO(event.date), 'EEE, MMM d')}</span>
+            <span>•</span>
+            <span>{event.time}</span>
+          </div>
+
+          <h3 className="text-lg font-bold text-gray-900 group-hover:text-blue-600 transition line-clamp-2">
+            {event.title}
+          </h3>
+          <p className="text-sm text-gray-600 mt-1 line-clamp-1">{event.location}</p>
+
+          <div className="flex justify-between items-center mt-4">
+            <div>
+              <p className="text-xl font-bold text-gray-900">{event.displayPrice}</p>
+              {event.attendees && (
+                <p className="text-xs text-gray-500">{event.attendees} interested</p>
+              )}
+            </div>
+            <button 
+              onClick={handleButtonClick}
+              className="bg-gray-100 hover:bg-blue-600 hover:text-white text-gray-700 font-medium text-sm px-5 py-2 rounded-md transition"
+            >
+              More Info
+            </button>
+          </div>
+
+          <div className="flex flex-wrap gap-2 mt-4">
+            <span className="text-xs bg-blue-100 text-blue-700 px-3 py-1 rounded-full">#{event.tag}</span>
+            {event.category && (
+              <span className="text-xs bg-purple-100 text-purple-700 px-3 py-1 rounded-full">
+                #{event.category}
+              </span>
+            )}
+          </div>
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   const EventSection = ({ title, events, badgeColor }) => {
     if (events.length === 0) return null;
@@ -313,19 +328,27 @@ const EventsPopular = () => {
   };
 
   return (
-    <div className="min-h-screen px-10">
-      <div className="">
-        <h1 className="text-4xl font-bold text-center text-gray-900 mb-4">
-          Just Listed Events
-        </h1>
-        <p className="text-center text-lg text-pink-600 mb-12">
-          Explore events near you
-        </p>
+    <div className="min-h-screen bg-gray-50 px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto">
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+            Just Listed Events
+          </h1>
+          <p className="text-lg text-pink-600">
+            Explore events near you
+          </p>
+        </div>
 
         <EventSection title="Today" events={todayEvents} badgeColor="bg-blue-600" />
         <EventSection title="Tomorrow" events={tomorrowEvents} badgeColor="bg-green-600" />
         <EventSection title="This Weekend" events={thisWeekendEvents} badgeColor="bg-teal-600" />
         <EventSection title="Upcoming" events={upcomingEvents} badgeColor="bg-purple-600" />
+
+        {allEvents.length === 0 && (
+          <div className="text-center py-12">
+            <p className="text-gray-500 text-lg">No events found. Check back later!</p>
+          </div>
+        )}
       </div>
     </div>
   );
