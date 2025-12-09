@@ -28,6 +28,7 @@ import EventDetails from "./components/Events/EventDetails.jsx";
 import EventList from "./components/Events/EventList.jsx";
 
 // Rentals
+import Rentals from "./pages/Rentalspage/Rentals";
 import RentalsListings from "./components/Rentals/RentalsListings.jsx";
 import RentalDetailsPage from "./components/Rentals/RentalDetailsPage.jsx";
 
@@ -153,8 +154,9 @@ const App = () => {
             <Route path="/details" element={<DetailsPage />} />
 
             {/* Rentals */}
-            <Route path="/rentals" element={<RentalsListings />} />
-            <Route path="/rental-details" element={<RentalDetailsPage />} />
+            <Route path="/rentals" element={<Rentals/>} />
+            <Route path="/rentals-details" element={<RentalsListings />} />
+            <Route path="/details" element={<RentalDetailsPage />} />
 
             {/* Jobs (FIXED ROUTE) */}
             <Route path="/jobs" element={<JobsPage />} />
