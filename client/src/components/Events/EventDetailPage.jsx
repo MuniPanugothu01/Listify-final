@@ -1,420 +1,1330 @@
 // src/components/Events/EventDetailPage.jsx
-
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import EventsSubNav from '../../components/Events/EventsSubNav';
-
 import {
-  FaCalendarAlt,
+  Calendar,
+  MapPin,
+  Search,
+  Plus,
+  Minus,
+  ChevronDown,
+  Heart,
+  Share2,
+  ChevronLeft,
+  ChevronRight,
+  Star,
+  Clock,
+  User,
+  CheckCircle,
+  Eye,
+  Phone,
+  MessageCircle,
+  Images,
+  Calendar as CalendarIcon,
+  Users,
+  Ticket,
+  Music,
+  Utensils,
+  Home,
+  ChevronRight as RightArrow,
+  Car,
+  Wifi,
+  Tv,
+  Thermometer,
+  Snowflake,
+  Dumbbell,
+  Shirt,
+  Zap,
+  Coffee,
+  Gift,
+  Award,
+  Camera,
+  Headphones,
+  Gamepad2,
+  Sparkles,
+  Beer,
+} from "lucide-react";
+import {
   FaMapMarkerAlt,
-  FaUsers,
-  FaHeart,
-  FaTicketAlt,
-  FaStar,
-  FaClock,
-  FaShareAlt,
-  FaCheck,
-  FaMusic,
-  FaFutbol,
-  FaUtensils,
-  FaFilm,
-  FaUsers as FaConference,
-  FaHeartbeat,
-  FaGlassCheers,
-  FaHome,
-  FaChevronRight,
+  FaMap,
+  FaWifi,
+  FaTv,
+  FaBolt,
+  FaThermometerHalf,
+  FaSnowflake,
   FaCar,
-  FaMobileAlt,
-  FaLanguage,
+  FaUtensils,
+  FaDumbbell,
+  FaMusic,
+  FaFilm,
   FaMicrophone,
+  FaGlassCheers,
+  FaHeartbeat,
+  FaUsers,
+  FaLanguage,
+  FaQrcode,
   FaDoorOpen,
-  FaExclamationTriangle,
-  FaDirections,
+  FaParking,
+  FaSubway,
+  FaWheelchair,
+  FaCamera,
+  FaVideo,
+  FaBeer,
+  FaUtensilSpoon,
+  FaRegCalendarPlus,
+  FaFire,
+  FaCouch,
+  FaGift,
+  FaLock,
+  FaCreditCard,
+  FaShoppingCart,
+  FaTag,
+  FaPercent,
+  FaUserFriends,
+  FaCrown,
+  FaShieldAlt,
+  FaCalendarCheck,
   FaExternalLinkAlt,
+  FaDirections,
+  FaExclamationTriangle,
 } from "react-icons/fa";
+import { GiGrass, GiWashingMachine } from "react-icons/gi";
+import { IoIosWater } from "react-icons/io";
+import { TbShirt } from "react-icons/tb";
 
-// Events Data (same as in EventsShowcase)
-const eventsData = {
-  popular: [
-    {
-      id: 1,
-      title: "Sunburn Goa 2025",
-      date: "2024-12-27",
-      displayDate: "Dec 27–30",
-      location: "Vagator Beach, Goa",
-      price: 2999,
-      displayPrice: "₹2,999 onwards",
-      attendees: "15.8k",
-      image: "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=800&q=80",
-      tag: "Music Festival",
-      category: "music",
-      time: "18:00",
-      rating: 4.8,
-      ticketsLeft: 45,
-      artist: "Various Artists",
-      duration: "4 Days",
-      ageLimit: "18+",
-      organizer: "Sunburn Events"
-    },
-    {
-      id: 2,
-      title: "Rangoli Night Market",
-      date: "2024-11-02",
-      displayDate: "Nov 2",
-      location: "DLF CyberHub, Gurgaon",
-      price: 0,
-      displayPrice: "Free Entry",
-      attendees: "9.2k",
-      isFree: true,
-      image: "https://demo.dawnthemes.com/ticketbox/wp-content/uploads/2017/03/Holi-Festival.png",
-      tag: "Festival",
-      category: "food",
-      time: "17:00",
-      rating: 4.3,
-      ticketsLeft: 1000,
-      artist: "Local Vendors",
-      duration: "6 Hours",
-      ageLimit: "All Ages",
-      organizer: "DLF Events"
-    },
-    {
-      id: 3,
-      title: "Stand-up Comedy Night",
-      date: "2024-10-25",
-      displayDate: "Oct 25",
-      location: "The Comedy Club, Mumbai",
-      price: 599,
-      displayPrice: "₹599",
-      attendees: "1.8k",
-      image: "https://demo.dawnthemes.com/ticketbox/wp-content/uploads/2017/03/ticketbox-unlike-dummy-1110x600.jpg",
-      tag: "Comedy",
-      category: "entertainment",
-      time: "20:00",
-      rating: 4.6,
-      ticketsLeft: 150,
-      artist: "Comedy Collective",
-      duration: "3 Hours",
-      ageLimit: "16+",
-      organizer: "The Comedy Club"
-    },
-    {
-      id: 4,
-      title: "Yoga by the Beach",
-      date: "2024-12-01",
-      displayDate: "Every Sunday",
-      location: "Juhu Beach",
-      price: 0,
-      displayPrice: "Free",
-      attendees: "3.1k",
-      isFree: true,
-      image: "https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=800&q=80",
-      tag: "Wellness",
-      category: "wellness",
-      time: "06:00",
-      rating: 4.7,
-      ticketsLeft: 200,
-      artist: "Yoga Masters",
-      duration: "2 Hours",
-      ageLimit: "All Ages",
-      organizer: "Beach Wellness"
-    },
-    {
-      id: 5,
-      title: "Coldplay India Tour 2025",
-      date: "2025-01-18",
-      displayDate: "Jan 18–19",
-      location: "DY Patil Stadium, Mumbai",
-      price: 4500,
-      displayPrice: "₹4,500 onwards",
-      attendees: "82.5k",
-      image: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&q=80",
-      tag: "Concert",
-      category: "music",
-      time: "19:00",
-      rating: 4.9,
-      ticketsLeft: 12,
-      artist: "Coldplay",
-      duration: "3 Hours",
-      ageLimit: "12+",
-      organizer: "Live Nation"
-    },
-    {
-      id: 6,
-      title: "IPL 2025 Opening Ceremony",
-      date: "2025-03-22",
-      displayDate: "Mar 22, 2025",
-      location: "Narendra Modi Stadium",
-      price: 1200,
-      displayPrice: "₹1,200 onwards",
-      attendees: "95.3k",
-      image: "https://images.unsplash.com/photo-1621430669951-5e9e3b98ed8b?w=800&q=80",
-      tag: "Sports",
-      category: "sports",
-      time: "19:30",
-      rating: 4.8,
-      ticketsLeft: 89,
-      artist: "Various Performers",
-      duration: "4 Hours",
-      ageLimit: "All Ages",
-      organizer: "BCCI"
+// Enhanced sample events data with multiple photos
+const allEvents = [
+  {
+    id: 1,
+    images: [
+      "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&q=80",
+      "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&q=80",
+      "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=800&q=80",
+      "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=800&q=80",
+    ],
+    title: "Sunburn Goa 2025 - Asia's Biggest Music Festival",
+    description: "Vagator Beach, Goa, India",
+    category: "Music Festival",
+    date: "Dec 27-30, 2024",
+    time: "6:00 PM onwards",
+    posted: "2 days ago",
+    postedBy: "Sunburn Events",
+    eventType: "Music Festival",
+    ticketType: "Multi-Day Pass",
+    ageLimit: "18+",
+    availableFrom: "Available Now",
+    duration: "4 Days",
+    amenities: [
+      "Multiple Stages",
+      "Food Court",
+      "VIP Lounge",
+      "Parking",
+      "Camping",
+      "Merch Store",
+      "Charging Stations",
+      "Medical Aid",
+    ],
+    details: "Experience Asia's biggest music festival with top international DJs and artists. 4 days of non-stop music across 8 stages, featuring EDM, techno, house, and more. Camping options available.",
+    price: 2999,
+    ticketsAvailable: 45,
+    location: "Goa, India",
+    verified: true,
+    immediate: true,
+    discount: "Early Bird 20% Off",
+    distance: "0.5 km from Beach",
+    busStopDistance: "1 km from Bus Stop",
+    contact: "+91 9876543210",
+    views: 1280,
+    saves: 156,
+    rating: 4.8,
+    reviews: 284,
+    photos: 24,
+    responseRate: "98%",
+    responseTime: "< 1h",
+    availableForCall: true,
+    performers: [
+      { name: "Martin Garrix", type: "Headliner" },
+      { name: "Marshmello", type: "International" },
+      { name: "Nikhil Chinapa", type: "Indian" },
+    ],
+    organizers: "Sunburn Events Pvt Ltd",
+    hashtags: ["#Sunburn2025", "#GoaFestival", "#EDM"],
+    coordinates: {
+      lat: 15.5939,
+      lng: 73.7749,
+      address: "Vagator Beach, North Goa, Goa 403509"
     }
-  ],
-  upcoming: [
-    {
-      id: 13,
-      title: "New Year's Eve Party",
-      date: "2024-12-31",
-      displayDate: "Dec 31",
-      location: "Multiple Venues",
-      price: 2499,
-      displayPrice: "₹2,499 onwards",
-      attendees: "34.7k",
-      image: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&q=80",
-      tag: "Party",
-      category: "entertainment",
-      time: "21:00",
-      rating: 4.5,
-      ticketsLeft: 156,
-      artist: "Top DJs",
-      duration: "8 Hours",
-      ageLimit: "21+",
-      organizer: "Nightlife Events"
-    },
-    {
-      id: 14,
-      title: "Winter Music Festival",
-      date: "2025-01-10",
-      displayDate: "Jan 10–12",
-      location: "Snow Valley, Manali",
-      price: 3299,
-      displayPrice: "₹3,299",
-      attendees: "22.1k",
-      image: "https://demo.dawnthemes.com/ticketbox/wp-content/uploads/2016/12/78459379.jpg",
-      tag: "Music",
-      category: "music",
-      time: "16:00",
-      rating: 4.4,
-      ticketsLeft: 78,
-      artist: "Indie Artists",
-      duration: "3 Days",
-      ageLimit: "18+",
-      organizer: "Mountain Events"
-    },
-    {
-      id: 15,
-      title: "Startup Summit",
-      date: "2025-02-08",
-      displayDate: "Feb 8–9",
-      location: "Hitech City, Hyderabad",
-      price: 1999,
-      displayPrice: "₹1,999",
-      attendees: "8.9k",
-      image: "https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800&q=80",
-      tag: "Business",
-      category: "conference",
-      time: "09:00",
-      rating: 4.6,
-      ticketsLeft: 45,
-      artist: "Industry Leaders",
-      duration: "2 Days",
-      ageLimit: "18+",
-      organizer: "Tech Summit India"
-    },
-    {
-      id: 16,
-      title: "Holifest 2025",
-      date: "2025-03-14",
-      displayDate: "Mar 14",
-      location: "Multiple Cities",
-      price: 0,
-      displayPrice: "Free",
-      attendees: "120.5k",
-      isFree: true,
-      image: "https://images.unsplash.com/photo-1605001011156-cbf0b0f67a51?w=800&q=80",
-      tag: "Festival",
-      category: "festival",
-      time: "10:00",
-      rating: 4.7,
-      ticketsLeft: 5000,
-      artist: "Cultural Performers",
-      duration: "Full Day",
-      ageLimit: "All Ages",
-      organizer: "Cultural Society"
+  },
+  {
+    id: 2,
+    images: [
+      "https://images.unsplash.com/photo-1562979314-bee745e8b9b8?w=800&q=80",
+      "https://images.unsplash.com/photo-1514327605112-b887c0e61c6a?w=800&q=80",
+    ],
+    title: "Rangoli Night Market - Cultural Food Festival",
+    description: "DLF CyberHub, Gurgaon",
+    category: "Food Festival",
+    date: "Nov 2, 2024",
+    time: "5:00 PM - 11:00 PM",
+    posted: "5 hrs ago",
+    postedBy: "DLF Events",
+    eventType: "Cultural Festival",
+    ticketType: "Free Entry",
+    ageLimit: "All Ages",
+    availableFrom: "Nov 1, 2024",
+    duration: "6 Hours",
+    amenities: [
+      "Food Stalls",
+      "Cultural Performances",
+      "Shopping",
+      "Parking",
+      "Kids Zone",
+      "Photo Booths",
+    ],
+    details: "Experience the vibrant colors and flavors of India. 100+ food stalls, cultural performances, traditional crafts shopping, and family entertainment.",
+    price: 0,
+    ticketsAvailable: 1000,
+    location: "Gurgaon, India",
+    verified: true,
+    immediate: false,
+    discount: "Free Entry",
+    distance: "0.2 km from Metro",
+    busStopDistance: "0.1 km from Bus Stop",
+    contact: "+91 9876543211",
+    views: 920,
+    saves: 89,
+    rating: 4.3,
+    reviews: 156,
+    photos: 18,
+    responseRate: "95%",
+    responseTime: "< 2h",
+    availableForCall: true,
+    performers: [
+      { name: "Traditional Dance Troupes", type: "Cultural" },
+      { name: "Local Bands", type: "Music" },
+    ],
+    organizers: "DLF Events & Culture Society",
+    hashtags: ["#RangoliNight", "#FoodFestival", "#Cultural"],
+    coordinates: {
+      lat: 28.4916,
+      lng: 77.0946,
+      address: "DLF CyberHub, Cyber City, Gurugram, Haryana 122002"
     }
-  ]
-};
+  },
+  {
+    id: 3,
+    images: [
+      "https://images.unsplash.com/photo-1549576490-b0b4831ef60a?w=800&q=80",
+      "https://images.unsplash.com/photo-1577483482955-b5c36b5e807?w=800&q=80",
+    ],
+    title: "Stand-up Comedy Night with Top Indian Comedians",
+    description: "The Comedy Club, Mumbai",
+    category: "Comedy Show",
+    date: "Oct 25, 2024",
+    time: "8:00 PM - 11:00 PM",
+    posted: "1 day ago",
+    postedBy: "The Comedy Club",
+    eventType: "Entertainment",
+    ticketType: "Premium Seating",
+    ageLimit: "16+",
+    availableFrom: "Oct 20, 2024",
+    duration: "3 Hours",
+    amenities: [
+      "Premium Seating",
+      "Food & Drinks",
+      "Parking",
+      "AC Hall",
+      "Merchandise",
+    ],
+    details: "Laugh your heart out with India's top comedians. An evening of fresh jokes, hilarious observations, and non-stop entertainment.",
+    price: 599,
+    ticketsAvailable: 150,
+    location: "Mumbai, India",
+    verified: false,
+    immediate: true,
+    discount: "Group Discount",
+    distance: "0.3 km from Station",
+    busStopDistance: "0.2 km from Bus Stop",
+    contact: "+91 9876543212",
+    views: 1560,
+    saves: 203,
+    rating: 4.6,
+    reviews: 89,
+    photos: 12,
+    responseRate: "90%",
+    responseTime: "< 3h",
+    availableForCall: false,
+    performers: [
+      { name: "Zakir Khan", type: "Headliner" },
+      { name: "Kanan Gill", type: "Special Guest" },
+      { name: "Biswa Kalyan Rath", type: "Featured" },
+    ],
+    organizers: "The Comedy Club Mumbai",
+    hashtags: ["#ComedyNight", "#StandUp", "#MumbaiEvents"],
+    coordinates: {
+      lat: 19.0760,
+      lng: 72.8777,
+      address: "The Comedy Club, Bandra West, Mumbai, Maharashtra 400050"
+    }
+  },
+  {
+    id: 4,
+    images: [
+      "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=800&q=80",
+      "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=800&q=80",
+    ],
+    title: "Tech Startup Summit 2024",
+    description: "Bangalore International Center",
+    category: "Tech Conference",
+    date: "Nov 15-16, 2024",
+    time: "9:00 AM - 6:00 PM",
+    posted: "3 days ago",
+    postedBy: "TechConnect India",
+    eventType: "Conference",
+    ticketType: "Two-Day Pass",
+    ageLimit: "18+",
+    availableFrom: "Oct 25, 2024",
+    duration: "2 Days",
+    amenities: [
+      "Networking",
+      "Workshops",
+      "Startup Expo",
+      "Food Court",
+      "WiFi",
+      "Parking",
+      "Charging Stations",
+    ],
+    details: "Join India's largest tech startup gathering. Featuring keynote speakers, pitch sessions, investor meetings, and workshops on AI, Blockchain, and SaaS.",
+    price: 2499,
+    ticketsAvailable: 300,
+    location: "Bangalore, India",
+    verified: true,
+    immediate: true,
+    discount: "Early Bird 25% Off",
+    distance: "1.2 km from Metro",
+    busStopDistance: "0.5 km from Bus Stop",
+    contact: "+91 9876543213",
+    views: 2100,
+    saves: 345,
+    rating: 4.7,
+    reviews: 189,
+    photos: 32,
+    responseRate: "96%",
+    responseTime: "< 2h",
+    availableForCall: true,
+    performers: [
+      { name: "Nandan Nilekani", type: "Keynote" },
+      { name: "Kunal Shah", type: "Speaker" },
+      { name: "Falguni Nayar", type: "Panelist" },
+    ],
+    organizers: "TechConnect India Ventures",
+    hashtags: ["#TechSummit", "#StartupIndia", "#Innovation"],
+    coordinates: {
+      lat: 12.9716,
+      lng: 77.5946,
+      address: "Bangalore International Center, Domlur, Bengaluru, Karnataka 560071"
+    }
+  },
+  {
+    id: 5,
+    images: [
+      "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&q=80",
+      "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=800&q=80",
+    ],
+    title: "Yoga & Wellness Retreat",
+    description: "Rishikesh Ashram, Uttarakhand",
+    category: "Wellness",
+    date: "Dec 5-8, 2024",
+    time: "6:00 AM - 8:00 PM",
+    posted: "1 week ago",
+    postedBy: "Spiritual India",
+    eventType: "Retreat",
+    ticketType: "All Inclusive",
+    ageLimit: "16+",
+    availableFrom: "Nov 1, 2024",
+    duration: "4 Days",
+    amenities: [
+      "Accommodation",
+      "Vegetarian Meals",
+      "Yoga Mats",
+      "Meditation Hall",
+      "Nature Walks",
+      "Ayurvedic Spa",
+      "Library",
+    ],
+    details: "Rejuvenate your mind, body, and soul in the yoga capital of the world. Daily yoga sessions, meditation, healthy meals, and spiritual guidance.",
+    price: 8999,
+    ticketsAvailable: 50,
+    location: "Rishikesh, India",
+    verified: true,
+    immediate: false,
+    discount: "Group Discount Available",
+    distance: "0.1 km from Ganges",
+    busStopDistance: "0.8 km from Bus Stand",
+    contact: "+91 9876543214",
+    views: 890,
+    saves: 167,
+    rating: 4.9,
+    reviews: 245,
+    photos: 28,
+    responseRate: "99%",
+    responseTime: "< 4h",
+    availableForCall: true,
+    performers: [
+      { name: "Swami Gyan", type: "Yoga Master" },
+      { name: "Dr. Sharma", type: "Ayurvedic Expert" },
+    ],
+    organizers: "Spiritual India Foundation",
+    hashtags: ["#YogaRetreat", "#Wellness", "#Rishikesh"],
+    coordinates: {
+      lat: 30.0869,
+      lng: 78.2676,
+      address: "Parmarth Niketan Ashram, Rishikesh, Uttarakhand 249304"
+    }
+  },
+  {
+    id: 6,
+    images: [
+      "https://images.unsplash.com/photo-1510629954389-c1e0da47d5d3?w=800&q=80",
+      "https://images.unsplash.com/photo-1511735111819-9a3f7709049c?w=800&q=80",
+    ],
+    title: "Marvel Movie Marathon",
+    description: "PVR Cinemas, Delhi",
+    category: "Movie Screening",
+    date: "Nov 10, 2024",
+    time: "10:00 AM - 10:00 PM",
+    posted: "2 days ago",
+    postedBy: "PVR Events",
+    eventType: "Entertainment",
+    ticketType: "Day Pass",
+    ageLimit: "12+",
+    availableFrom: "Available Now",
+    duration: "12 Hours",
+    amenities: [
+      "Recliner Seats",
+      "Food Combo",
+      "Free Popcorn",
+      "Merchandise",
+      "Parking",
+      "AC Theater",
+    ],
+    details: "Watch all Avengers movies back-to-back! Includes Infinity War and Endgame. Special merchandise and unlimited popcorn for attendees.",
+    price: 1299,
+    ticketsAvailable: 200,
+    location: "Delhi, India",
+    verified: true,
+    immediate: true,
+    discount: "Combo Offer",
+    distance: "0.4 km from Metro",
+    busStopDistance: "0.3 km from Bus Stop",
+    contact: "+91 9876543215",
+    views: 1560,
+    saves: 289,
+    rating: 4.5,
+    reviews: 134,
+    photos: 15,
+    responseRate: "92%",
+    responseTime: "< 1h",
+    availableForCall: false,
+    performers: [],
+    organizers: "PVR Cinemas Ltd",
+    hashtags: ["#MarvelMarathon", "#MovieNight", "#Avengers"],
+    coordinates: {
+      lat: 28.7041,
+      lng: 77.1025,
+      address: "PVR Select Citywalk, Saket, New Delhi, Delhi 110017"
+    }
+  },
+  {
+    id: 7,
+    images: [
+      "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=800&q=80",
+      "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&q=80",
+    ],
+    title: "Art Exhibition: Modern Indian Masters",
+    description: "National Gallery of Modern Art, Delhi",
+    category: "Art Exhibition",
+    date: "Oct 28 - Nov 28, 2024",
+    time: "10:00 AM - 6:00 PM",
+    posted: "4 days ago",
+    postedBy: "NGMA Delhi",
+    eventType: "Art & Culture",
+    ticketType: "Daily Pass",
+    ageLimit: "All Ages",
+    availableFrom: "Oct 20, 2024",
+    duration: "1 Month",
+    amenities: [
+      "Guided Tours",
+      "Audio Guide",
+      "Cafeteria",
+      "Gift Shop",
+      "Parking",
+      "Wheelchair Access",
+    ],
+    details: "Exhibition featuring works by MF Husain, FN Souza, SH Raza, and other modern Indian masters. Curated collection with rare pieces.",
+    price: 200,
+    ticketsAvailable: 500,
+    location: "Delhi, India",
+    verified: true,
+    immediate: false,
+    discount: "Student Discount",
+    distance: "0.8 km from India Gate",
+    busStopDistance: "0.2 km from Bus Stop",
+    contact: "+91 9876543216",
+    views: 1250,
+    saves: 178,
+    rating: 4.8,
+    reviews: 96,
+    photos: 42,
+    responseRate: "94%",
+    responseTime: "< 5h",
+    availableForCall: false,
+    performers: [],
+    organizers: "National Gallery of Modern Art",
+    hashtags: ["#ArtExhibition", "#IndianArt", "#NGMA"],
+    coordinates: {
+      lat: 28.6139,
+      lng: 77.2295,
+      address: "National Gallery of Modern Art, Jaipur House, New Delhi 110003"
+    }
+  },
+  {
+    id: 8,
+    images: [
+      "https://images.unsplash.com/photo-1514890547357-a9ee288728e0?w=800&q=80",
+      "https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?w=800&q=80",
+    ],
+    title: "Food Truck Festival: Global Cuisines",
+    description: "Phoenix Marketcity, Chennai",
+    category: "Food Festival",
+    date: "Nov 8-10, 2024",
+    time: "4:00 PM - 11:00 PM",
+    posted: "6 hrs ago",
+    postedBy: "Foodie Events",
+    eventType: "Food Festival",
+    ticketType: "Free Entry",
+    ageLimit: "All Ages",
+    availableFrom: "Nov 1, 2024",
+    duration: "3 Days",
+    amenities: [
+      "50+ Food Trucks",
+      "Live Music",
+      "Beer Garden",
+      "Kids Play Area",
+      "Seating",
+      "Parking",
+      "Restrooms",
+    ],
+    details: "Taste global flavors from 50+ food trucks. Featuring Mexican, Italian, Asian, and Indian street food. Live music and entertainment.",
+    price: 0,
+    ticketsAvailable: 2000,
+    location: "Chennai, India",
+    verified: true,
+    immediate: true,
+    discount: "Free Entry",
+    distance: "0.3 km from Mall",
+    busStopDistance: "0.1 km from Bus Stop",
+    contact: "+91 9876543217",
+    views: 1890,
+    saves: 234,
+    rating: 4.4,
+    reviews: 178,
+    photos: 36,
+    responseRate: "97%",
+    responseTime: "< 2h",
+    availableForCall: true,
+    performers: [
+      { name: "Local Bands", type: "Live Music" },
+      { name: "DJ Night", type: "Music" },
+    ],
+    organizers: "Foodie Events Network",
+    hashtags: ["#FoodTruckFest", "#ChennaiFood", "#StreetFood"],
+    coordinates: {
+      lat: 13.0827,
+      lng: 80.2707,
+      address: "Phoenix Marketcity, Velachery, Chennai, Tamil Nadu 600042"
+    }
+  },
+  {
+    id: 9,
+    images: [
+      "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=800&q=80",
+      "https://images.unsplash.com/photo-1529900748604-07564a03e7a6?w=800&q=80",
+    ],
+    title: "Half Marathon: Run for Education",
+    description: "Marine Drive, Mumbai",
+    category: "Sports",
+    date: "Nov 24, 2024",
+    time: "5:30 AM - 10:00 AM",
+    posted: "1 week ago",
+    postedBy: "Mumbai Runners",
+    eventType: "Sports Event",
+    ticketType: "Registration",
+    ageLimit: "16+",
+    availableFrom: "Oct 15, 2024",
+    duration: "4.5 Hours",
+    amenities: [
+      "Timing Chip",
+      "Medal",
+      "T-Shirt",
+      "Water Stations",
+      "Medical Aid",
+      "Changing Rooms",
+      "Breakfast",
+    ],
+    details: "21km run along Marine Drive. All proceeds go to education for underprivileged children. Timing chips, medals, and certificates for all finishers.",
+    price: 800,
+    ticketsAvailable: 5000,
+    location: "Mumbai, India",
+    verified: true,
+    immediate: false,
+    discount: "Early Bird Registration",
+    distance: "On Marine Drive",
+    busStopDistance: "0.5 km from Bus Stop",
+    contact: "+91 9876543218",
+    views: 3450,
+    saves: 456,
+    rating: 4.7,
+    reviews: 324,
+    photos: 56,
+    responseRate: "95%",
+    responseTime: "< 3h",
+    availableForCall: true,
+    performers: [],
+    organizers: "Mumbai Runners Association",
+    hashtags: ["#Marathon", "#RunForEducation", "#MumbaiRun"],
+    coordinates: {
+      lat: 18.9440,
+      lng: 72.8229,
+      address: "Marine Drive, Netaji Subhash Chandra Bose Rd, Mumbai, Maharashtra 400020"
+    }
+  },
+  {
+    id: 10,
+    images: [
+      "https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=800&q=80",
+      "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&q=80",
+    ],
+    title: "Indie Music Festival: Rising Stars",
+    description: "Purple Haze, Bangalore",
+    category: "Music Concert",
+    date: "Nov 16, 2024",
+    time: "7:00 PM - 1:00 AM",
+    posted: "2 days ago",
+    postedBy: "Indie Music Collective",
+    eventType: "Music Festival",
+    ticketType: "Night Pass",
+    ageLimit: "21+",
+    availableFrom: "Oct 30, 2024",
+    duration: "6 Hours",
+    amenities: [
+      "Live Music",
+      "Dance Floor",
+      "Bar",
+      "Food",
+      "Parking",
+      "Coat Check",
+      "Smoking Area",
+    ],
+    details: "Discover India's best indie bands and solo artists. Featuring alternative rock, indie pop, and experimental music genres.",
+    price: 999,
+    ticketsAvailable: 300,
+    location: "Bangalore, India",
+    verified: false,
+    immediate: true,
+    discount: "Student Discount",
+    distance: "1.5 km from MG Road",
+    busStopDistance: "0.4 km from Bus Stop",
+    contact: "+91 9876543219",
+    views: 890,
+    saves: 123,
+    rating: 4.5,
+    reviews: 67,
+    photos: 22,
+    responseRate: "88%",
+    responseTime: "< 6h",
+    availableForCall: false,
+    performers: [
+      { name: "The Local Train", type: "Headliner" },
+      { name: "When Chai Met Toast", type: "Featured" },
+      { name: "Anuv Jain", type: "Special Guest" },
+    ],
+    organizers: "Indie Music Collective Bangalore",
+    hashtags: ["#IndieMusic", "#LiveMusic", "#BangaloreGigs"],
+    coordinates: {
+      lat: 12.9762,
+      lng: 77.6033,
+      address: "Purple Haze, Church Street, Bengaluru, Karnataka 560001"
+    }
+  },
+  {
+    id: 11,
+    images: [
+      "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80",
+      "https://images.unsplash.com/photo-1563089145-599997674d42?w=800&q=80",
+    ],
+    title: "Wine Tasting & Cheese Pairing",
+    description: "The Oberoi, Gurgaon",
+    category: "Food & Drink",
+    date: "Nov 12, 2024",
+    time: "7:00 PM - 10:00 PM",
+    posted: "1 day ago",
+    postedBy: "The Oberoi Events",
+    eventType: "Culinary Experience",
+    ticketType: "Premium Experience",
+    ageLimit: "25+",
+    availableFrom: "Nov 1, 2024",
+    duration: "3 Hours",
+    amenities: [
+      "Wine Expert",
+      "Cheese Selection",
+      "Small Plates",
+      "Souvenir Glass",
+      "Valet Parking",
+      "Lounge Seating",
+    ],
+    details: "Experience curated wine tasting with international wines paired with artisanal cheeses. Led by master sommelier.",
+    price: 2999,
+    ticketsAvailable: 40,
+    location: "Gurgaon, India",
+    verified: true,
+    immediate: true,
+    discount: "Couples Package",
+    distance: "0.1 km from Hotel",
+    busStopDistance: "0.3 km from Bus Stop",
+    contact: "+91 9876543220",
+    views: 670,
+    saves: 98,
+    rating: 4.9,
+    reviews: 45,
+    photos: 18,
+    responseRate: "99%",
+    responseTime: "< 1h",
+    availableForCall: true,
+    performers: [
+      { name: "Master Sommelier", type: "Expert" },
+    ],
+    organizers: "The Oberoi Hotels & Resorts",
+    hashtags: ["#WineTasting", "#CheesePairing", "#GurgaonEvents"],
+    coordinates: {
+      lat: 28.4595,
+      lng: 77.0266,
+      address: "The Oberoi, Udyog Vihar, Gurugram, Haryana 122016"
+    }
+  },
+  {
+    id: 12,
+    images: [
+      "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80",
+      "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&q=80",
+    ],
+    title: "Winter Trek to Triund",
+    description: "Dharamshala, Himachal Pradesh",
+    category: "Adventure",
+    date: "Dec 14-15, 2024",
+    time: "7:00 AM - 6:00 PM",
+    posted: "3 days ago",
+    postedBy: "Adventure Nation",
+    eventType: "Trekking",
+    ticketType: "All Inclusive",
+    ageLimit: "18+",
+    availableFrom: "Nov 15, 2024",
+    duration: "2 Days",
+    amenities: [
+      "Guide",
+      "Camping Equipment",
+      "Meals",
+      "First Aid",
+      "Transport",
+      "Insurance",
+      "Bonfire",
+    ],
+    details: "Moderate winter trek to Triund with stunning Himalayan views. Includes camping overnight and bonfire under the stars.",
+    price: 3499,
+    ticketsAvailable: 30,
+    location: "Dharamshala, India",
+    verified: true,
+    immediate: false,
+    discount: "Group of 4 Discount",
+    distance: "Starting from Dharamshala",
+    busStopDistance: "Meet at Bus Stand",
+    contact: "+91 9876543221",
+    views: 1230,
+    saves: 189,
+    rating: 4.8,
+    reviews: 156,
+    photos: 38,
+    responseRate: "96%",
+    responseTime: "< 4h",
+    availableForCall: true,
+    performers: [],
+    organizers: "Adventure Nation Treks",
+    hashtags: ["#WinterTrek", "#Triund", "#Himalayas"],
+    coordinates: {
+      lat: 32.2190,
+      lng: 76.3234,
+      address: "Triund Trek Starting Point, Dharamshala, Himachal Pradesh 176215"
+    }
+  },
+  {
+    id: 13,
+    images: [
+      "https://images.unsplash.com/photo-1511578314322-379afb476865?w=800&q=80",
+      "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=800&q=80",
+    ],
+    title: "Book Launch: 'The Midnight Library' Author Talk",
+    description: "Oxford Bookstore, Kolkata",
+    category: "Literary Event",
+    date: "Nov 5, 2024",
+    time: "6:00 PM - 8:00 PM",
+    posted: "4 days ago",
+    postedBy: "Oxford Bookstore",
+    eventType: "Author Event",
+    ticketType: "Free Registration",
+    ageLimit: "All Ages",
+    availableFrom: "Oct 25, 2024",
+    duration: "2 Hours",
+    amenities: [
+      "Author Interaction",
+      "Book Signing",
+      "Tea & Coffee",
+      "Bookstore Discount",
+      "Seating",
+      "Parking",
+    ],
+    details: "Meet the author of 'The Midnight Library' for an intimate discussion, Q&A session, and book signing.",
+    price: 0,
+    ticketsAvailable: 100,
+    location: "Kolkata, India",
+    verified: true,
+    immediate: true,
+    discount: "Free Event",
+    distance: "0.2 km from Park Street",
+    busStopDistance: "0.1 km from Bus Stop",
+    contact: "+91 9876543222",
+    views: 980,
+    saves: 145,
+    rating: 4.6,
+    reviews: 78,
+    photos: 16,
+    responseRate: "93%",
+    responseTime: "< 2h",
+    availableForCall: false,
+    performers: [
+      { name: "Matt Haig", type: "Author" },
+    ],
+    organizers: "Oxford Bookstore Kolkata",
+    hashtags: ["#BookLaunch", "#AuthorTalk", "#KolkataEvents"],
+    coordinates: {
+      lat: 22.5726,
+      lng: 88.3639,
+      address: "Oxford Bookstore, Park Street, Kolkata, West Bengal 700016"
+    }
+  },
+  {
+    id: 14,
+    images: [
+      "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&q=80",
+      "https://images.unsplash.com/photo-1574169208507-84376144848b?w=800&q=80",
+    ],
+    title: "Pottery Workshop for Beginners",
+    description: "Artisan Studio, Pune",
+    category: "Workshop",
+    date: "Nov 18, 2024",
+    time: "10:00 AM - 4:00 PM",
+    posted: "5 days ago",
+    postedBy: "Artisan Studio Pune",
+    eventType: "Creative Workshop",
+    ticketType: "Workshop Pass",
+    ageLimit: "12+",
+    availableFrom: "Nov 1, 2024",
+    duration: "6 Hours",
+    amenities: [
+      "Materials Provided",
+      "Expert Guidance",
+      "Lunch",
+      "Take Home Creation",
+      "Aprons",
+      "Studio Access",
+    ],
+    details: "Learn basic pottery techniques including wheel throwing and hand building. Take home your creations after firing.",
+    price: 1999,
+    ticketsAvailable: 15,
+    location: "Pune, India",
+    verified: true,
+    immediate: false,
+    discount: "Bring a Friend Discount",
+    distance: "0.5 km from Koregaon Park",
+    busStopDistance: "0.2 km from Bus Stop",
+    contact: "+91 9876543223",
+    views: 540,
+    saves: 89,
+    rating: 4.7,
+    reviews: 56,
+    photos: 24,
+    responseRate: "97%",
+    responseTime: "< 3h",
+    availableForCall: true,
+    performers: [
+      { name: "Master Potter", type: "Instructor" },
+    ],
+    organizers: "Artisan Studio Pune",
+    hashtags: ["#PotteryWorkshop", "#Creative", "#PuneEvents"],
+    coordinates: {
+      lat: 18.5204,
+      lng: 73.8567,
+      address: "Artisan Studio, Koregaon Park, Pune, Maharashtra 411001"
+    }
+  },
+  {
+    id: 15,
+    images: [
+      "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=800&q=80",
+      "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=800&q=80",
+    ],
+    title: "DJ Night: Bollywood vs Hollywood",
+    description: "Kitty Su, Delhi",
+    category: "Nightlife",
+    date: "Nov 9, 2024",
+    time: "9:00 PM - 2:00 AM",
+    posted: "1 day ago",
+    postedBy: "Kitty Su",
+    eventType: "Club Night",
+    ticketType: "Entry Pass",
+    ageLimit: "21+",
+    availableFrom: "Available Now",
+    duration: "5 Hours",
+    amenities: [
+      "DJ Performance",
+      "Dance Floor",
+      "Bar",
+      "VIP Tables",
+      "Coat Check",
+      "Valet Parking",
+      "Smoking Lounge",
+    ],
+    details: "Experience the ultimate Bollywood vs Hollywood music battle with top DJs. Premium sound system and light show.",
+    price: 1499,
+    ticketsAvailable: 200,
+    location: "Delhi, India",
+    verified: true,
+    immediate: true,
+    discount: "Ladies Night Special",
+    distance: "0.3 km from Connaught Place",
+    busStopDistance: "0.4 km from Bus Stop",
+    contact: "+91 9876543224",
+    views: 1780,
+    saves: 234,
+    rating: 4.4,
+    reviews: 189,
+    photos: 28,
+    responseRate: "91%",
+    responseTime: "< 2h",
+    availableForCall: false,
+    performers: [
+      { name: "DJ NYK", type: "Headliner" },
+      { name: "DJ Aqeel", type: "Special Guest" },
+    ],
+    organizers: "Kitty Su Delhi",
+    hashtags: ["#DJNight", "#Bollywood", "#DelhiNightlife"],
+    coordinates: {
+      lat: 28.6315,
+      lng: 77.2167,
+      address: "Kitty Su, The Lalit Hotel, Connaught Place, New Delhi 110001"
+    }
+  },
+  {
+    id: 16,
+    images: [
+      "https://images.unsplash.com/photo-1519681393784-d120267933ba?w=800&q=80",
+      "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80",
+    ],
+    title: "Photography Expedition: Ladakh Landscapes",
+    description: "Leh, Ladakh",
+    category: "Photography",
+    date: "Jun 10-18, 2025",
+    time: "All Day",
+    posted: "2 weeks ago",
+    postedBy: "Photography Expeditions",
+    eventType: "Photography Tour",
+    ticketType: "Full Package",
+    ageLimit: "18+",
+    availableFrom: "Jan 1, 2025",
+    duration: "9 Days",
+    amenities: [
+      "Professional Guide",
+      "Transport",
+      "Accommodation",
+      "Meals",
+      "Workshops",
+      "Equipment Support",
+      "Photo Review Sessions",
+    ],
+    details: "Capture the stunning landscapes of Ladakh with professional photographers. Visit Pangong Lake, Nubra Valley, and more.",
+    price: 45999,
+    ticketsAvailable: 12,
+    location: "Ladakh, India",
+    verified: true,
+    immediate: false,
+    discount: "Early Bird 15% Off",
+    distance: "Leh based tour",
+    busStopDistance: "Airport pick-up",
+    contact: "+91 9876543225",
+    views: 890,
+    saves: 167,
+    rating: 4.9,
+    reviews: 89,
+    photos: 64,
+    responseRate: "98%",
+    responseTime: "< 6h",
+    availableForCall: true,
+    performers: [
+      { name: "Professional Photographer", type: "Guide" },
+      { name: "Local Expert", type: "Coordinator" },
+    ],
+    organizers: "Photography Expeditions India",
+    hashtags: ["#PhotographyTour", "#Ladakh", "#LandscapePhotography"],
+    coordinates: {
+      lat: 34.1526,
+      lng: 77.5770,
+      address: "Leh Main Market, Leh, Ladakh 194101"
+    }
+  }
+];
+// Options data
+const searchTypes = [
+  "Music Events",
+  "Sports Events",
+  "Food Festivals",
+  "Comedy Shows",
+  "Workshops",
+  "Conferences",
+  "Parties",
+  "All Events",
+];
 
-// Fixed RelatedEventCard with smooth navigation
-const RelatedEventCard = ({ event, onCardClick }) => {
-  const handleClick = (e) => {
-    e.preventDefault();
-    // Scroll to top first, then navigate
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    setTimeout(() => {
-      onCardClick();
-    }, 100);
-  };
+const locationTypes = ["By City", "By Venue", "By Metro", "By Landmark"];
 
-  return (
-    
-    <div
-      onClick={handleClick}
-      className="group relative bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 cursor-pointer border border-gray-200 transform hover:-translate-y-2"
-    >
-      
-      <div className="relative h-48 overflow-hidden">
-        <img
-          src={event.image}
-          alt={event.title}
-          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
-        
-        <div className="absolute top-4 left-4 flex gap-2">
-          <span className="px-3 py-1.5 bg-white/95 backdrop-blur text-xs font-semibold rounded-full shadow-lg">
-            {event.tag}
-          </span>
-          <span className={`px-3 py-1.5 text-xs font-bold rounded-full text-white shadow-lg ${
-            event.isFree ? 'bg-green-600' : 'bg-[#27bb97]'
-          }`}>
-            {event.isFree ? 'FREE' : `₹${event.price}`}
-          </span>
-        </div>
+const radiusOptions = [
+  "5 km",
+  "10 km",
+  "25 km",
+  "50 km",
+  "100 km",
+  "Any Distance",
+];
 
-        {/* Quick Info Overlay */}
-        <div className="absolute bottom-4 left-4 right-4">
-          <div className="flex justify-between items-center text-white text-sm">
-            <div className="flex items-center gap-1 bg-black/50 px-2 py-1 rounded-full">
-              <FaStar className="w-3 h-3 text-yellow-400" />
-              <span className="font-semibold">{event.rating}</span>
-            </div>
-            <div className="flex items-center gap-1 bg-black/50 px-2 py-1 rounded-full">
-              <FaUsers className="w-3 h-3" />
-              <span>{event.attendees}</span>
-            </div>
-          </div>
-        </div>
-      </div>
+const budgetOptions = [
+  "Any Budget",
+  "Free Events",
+  "Under ₹500",
+  "₹500 - ₹1,000",
+  "₹1,000 - ₹2,000",
+  "₹2,000 - ₹5,000",
+  "Over ₹5,000",
+];
 
-      <div className="p-5">
-        <h4 className="font-bold text-lg text-gray-800 group-hover:text-[#27bb97] transition-colors line-clamp-2 mb-3">
-          {event.title}
-        </h4>
-        
-        <div className="space-y-2 text-sm text-gray-600 mb-4">
-          <div className="flex items-center gap-2">
-            <FaCalendarAlt className="w-4 h-4 text-[#27bb97] flex-shrink-0" />
-            <span className="truncate">{event.displayDate}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <FaMapMarkerAlt className="w-4 h-4 text-[#27bb97] flex-shrink-0" />
-            <span className="truncate">{event.location}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <FaClock className="w-4 h-4 text-[#27bb97] flex-shrink-0" />
-            <span>{event.time}</span>
-          </div>
-        </div>
+const eventTypes = [
+  "Music Concert",
+  "Festival",
+  "Sports Match",
+  "Food Festival",
+  "Comedy Show",
+  "Workshop",
+  "Conference",
+  "Exhibition",
+];
 
-        <div className="flex items-center justify-between pt-3 border-t border-gray-100">
-          <span className="text-xs font-semibold text-[#27bb97] bg-[#27bb97]/10 px-3 py-1.5 rounded-full">
-            View Details →
-          </span>
-          {event.ticketsLeft < 100 && (
-            <span className="text-xs font-semibold text-red-600 bg-red-50 px-2 py-1 rounded">
-              {event.ticketsLeft} left
-            </span>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-};
+const openEvents = [
+  {
+    title: "Coldplay Live in Mumbai - World Tour 2025",
+    timeAgo: "2 hrs ago",
+    location: "Mumbai, DY Patil Stadium",
+    organizer: "Live Nation",
+    price: "4,500",
+    eventType: "Music Concert",
+    date: "Jan 18, 2025",
+    eventTime: "7:00 PM onwards",
+  },
+  {
+    title: "IPL 2025 Opening Ceremony",
+    timeAgo: "1 day ago",
+    location: "Ahmedabad, Narendra Modi Stadium",
+    organizer: "BCCI",
+    price: "1,200",
+    eventType: "Sports Event",
+    date: "Mar 22, 2025",
+    eventTime: "6:30 PM - 10:30 PM",
+  },
+];
+
+const itemsPerPageOptions = [3, 6, 9, 12];
 
 // Google Maps Component
-const EventLocationMap = ({ location, fullLocation }) => {
-  const encodedLocation = encodeURIComponent(fullLocation || location);
-  const googleMapsUrl = `https://www.google.com/maps?q=${encodedLocation}&output=embed`;
-  const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodedLocation}`;
+const EventMap = ({ eventData }) => {
+  const [showInteractiveMap, setShowInteractiveMap] = useState(false);
   
+  // Generate Google Maps URL for the event
+  const getGoogleMapsUrl = () => {
+    const query = encodeURIComponent(`${eventData.title} ${eventData.description}`);
+    return `https://www.google.com/maps/search/?api=1&query=${query}`;
+  };
+
+  const getDirectionsUrl = () => {
+    const destination = encodeURIComponent(eventData.description);
+    return `https://www.google.com/maps/dir/?api=1&destination=${destination}`;
+  };
+
+  // Get coordinates for the map (simplified - in real app use geocoding)
+  const getEventCoordinates = () => {
+    // Default coordinates for India
+    const defaultCoords = { lat: 20.5937, lng: 78.9629 };
+    
+    // Mock coordinates based on location
+    const locationMap = {
+      'Goa, India': { lat: 15.5939, lng: 73.7749 },
+      'Mumbai, India': { lat: 19.0760, lng: 72.8777 },
+      'Delhi, India': { lat: 28.7041, lng: 77.1025 },
+      'Bangalore, India': { lat: 12.9716, lng: 77.5946 },
+      'Gurgaon, India': { lat: 28.4595, lng: 77.0266 },
+      'Chennai, India': { lat: 13.0827, lng: 80.2707 },
+      'Rishikesh, India': { lat: 30.0869, lng: 78.2676 },
+      'Dharamshala, India': { lat: 32.2190, lng: 76.3234 },
+      'Kolkata, India': { lat: 22.5726, lng: 88.3639 },
+      'Pune, India': { lat: 18.5204, lng: 73.8567 },
+      'Ladakh, India': { lat: 34.1526, lng: 77.5770 },
+      'Ahmedabad, India': { lat: 23.0225, lng: 72.5714 },
+    };
+    
+    return eventData.coordinates || locationMap[eventData.location] || defaultCoords;
+  };
+
+  const coordinates = getEventCoordinates();
+
   return (
-    <div className="bg-white rounded-3xl p-8 shadow-xl border border-gray-100">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-3xl font-bold flex items-center gap-3">
-          <FaMapMarkerAlt className="text-[#27bb97]" />
-          Event Location
-        </h2>
-        <div className="flex gap-3">
-          <a
-            href={directionsUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2 bg-[#27bb97] hover:bg-[#1fa582] text-white px-4 py-2 rounded-xl transition transform hover:-translate-y-1"
-          >
-            <FaDirections className="w-4 h-4" />
-            Get Directions
-          </a>
-          <a
-            href={`https://www.google.com/maps/search/?api=1&query=${encodedLocation}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2 bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-xl transition transform hover:-translate-y-1"
-          >
-            <FaExternalLinkAlt className="w-4 h-4" />
-            Open in Maps
-          </a>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Location Details */}
-        <div className="space-y-6">
-          <div className="bg-gray-50 rounded-2xl p-6">
-            <h3 className="font-bold text-lg mb-3 flex items-center gap-2">
-              <FaMapMarkerAlt className="text-[#27bb97]" />
-              Venue Address
-            </h3>
-            <p className="text-gray-700 leading-relaxed">{fullLocation || location}</p>
+    <div className="mt-8 bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+      <div className="p-6">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-6">
+          <div>
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">Location & Directions</h3>
+            <p className="text-gray-600">Find how to reach the event venue</p>
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="bg-green-50 border border-green-200 rounded-2xl p-4">
-              <h4 className="font-semibold text-green-800 mb-2">Parking Available</h4>
-              <p className="text-sm text-green-700">Free parking with validation</p>
-            </div>
-            <div className="bg-blue-50 border border-blue-200 rounded-2xl p-4">
-              <h4 className="font-semibold text-blue-800 mb-2">Public Transport</h4>
-              <p className="text-sm text-blue-700">Easily accessible via metro/bus</p>
-            </div>
-          </div>
-
-          <div className="bg-yellow-50 border border-yellow-200 rounded-2xl p-6">
-            <h4 className="font-bold text-yellow-800 mb-3 flex items-center gap-2">
-              <FaCar className="w-5 h-5" />
-              Getting There
-            </h4>
-            <ul className="space-y-2 text-sm text-yellow-800">
-              <li>• Free parking available across the street</li>
-              <li>• Additional parking at Flushing Hospital</li>
-              <li>• See security for parking validation</li>
-              <li>• Public transportation recommended</li>
-            </ul>
+          
+          <div className="flex gap-3 mt-4 lg:mt-0">
+            <button
+              onClick={() => setShowInteractiveMap(!showInteractiveMap)}
+              className="flex items-center gap-2 px-4 py-2.5 bg-blue-50 text-blue-700 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors"
+            >
+              <FaMap />
+              {showInteractiveMap ? "Hide Interactive Map" : "Show Interactive Map"}
+            </button>
+            
+            <a
+              href={getDirectionsUrl()}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 px-4 py-2.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+            >
+              <FaDirections />
+              Get Directions
+            </a>
           </div>
         </div>
 
-        {/* Google Maps Embed */}
-        <div className="rounded-2xl overflow-hidden shadow-lg border border-gray-200">
-          <iframe
-            src={googleMapsUrl}
-            width="100%"
-            height="400"
-            style={{ border: 0 }}
-            allowFullScreen=""
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
-            title="Event Location Map"
-            className="w-full h-full min-h-[400px]"
-          />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Location Details */}
+          <div className="lg:col-span-1 space-y-6">
+            {/* Venue Info */}
+            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+              <div className="flex items-start gap-3 mb-3">
+                <div className="p-2 bg-blue-100 rounded-lg">
+                  <FaMapMarkerAlt className="text-blue-600 text-lg" />
+                </div>
+                <div>
+                  <h4 className="font-semibold text-gray-900 text-lg">Venue Address</h4>
+                  <p className="text-gray-700 mt-2 leading-relaxed">
+                    {eventData.description}
+                    <br />
+                    <span className="text-gray-500">{eventData.location}</span>
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Transport Info */}
+            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+              <h4 className="font-semibold text-gray-900 text-lg mb-4">How to Get There</h4>
+              
+              <div className="space-y-4">
+                {/* Public Transport */}
+                <div>
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="p-1.5 bg-purple-100 rounded">
+                      <span className="text-purple-600">🚇</span>
+                    </div>
+                    <span className="font-medium text-gray-900">Nearest Metro Station</span>
+                  </div>
+                  <p className="text-gray-700 ml-8">
+                    {eventData.distance || "Walking distance from nearest metro station"}
+                  </p>
+                </div>
+
+                {/* Bus Stop */}
+                <div>
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="p-1.5 bg-green-100 rounded">
+                      <span className="text-green-600">🚌</span>
+                    </div>
+                    <span className="font-medium text-gray-900">Bus Stop</span>
+                  </div>
+                  <p className="text-gray-700 ml-8">
+                    {eventData.busStopDistance || "Multiple bus routes available nearby"}
+                  </p>
+                </div>
+
+                {/* Parking */}
+                <div>
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="p-1.5 bg-blue-100 rounded">
+                      <span className="text-blue-600">🅿️</span>
+                    </div>
+                    <span className="font-medium text-gray-900">Parking</span>
+                  </div>
+                  <p className="text-gray-700 ml-8">
+                    {eventData.amenities?.includes("Parking") 
+                      ? "Parking available at venue" 
+                      : "Limited street parking available"}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Quick Actions */}
+            {/* <div className="space-y-3">
+              <a
+                href={getGoogleMapsUrl()}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-3 w-full bg-white border-2 border-blue-600 text-blue-600 hover:bg-blue-50 font-semibold py-3.5 px-4 rounded-lg transition-colors"
+              >
+                <FaExternalLinkAlt />
+                Open in Google Maps
+              </a>
+              
+              <button
+                onClick={() => navigator.clipboard.writeText(eventData.description)}
+                className="flex items-center justify-center gap-3 w-full bg-gray-100 text-gray-700 hover:bg-gray-200 font-medium py-3.5 px-4 rounded-lg transition-colors"
+              >
+                📋 Copy Address
+              </button>
+            </div> */}
+          </div>
+
+          {/* Map Section */}
+          <div className="lg:col-span-2">
+            {showInteractiveMap ? (
+              // Interactive Google Maps (requires API key)
+              <div className="h-[400px] rounded-lg overflow-hidden border border-gray-300 relative">
+                <iframe
+                  width="100%"
+                  height="100%"
+                  frameBorder="0"
+                  style={{ border: 0 }}
+                  src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg&q=${encodeURIComponent(eventData.description)}&zoom=15&center=${coordinates.lat},${coordinates.lng}`}
+                  allowFullScreen
+                  title={`Location of ${eventData.title}`}
+                  loading="lazy"
+                />
+                <div className="absolute top-4 right-4 bg-white rounded-lg shadow-lg p-3">
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
+                    <span className="text-sm font-semibold">Event Location</span>
+                  </div>
+                  <p className="text-xs text-gray-600 mt-1 max-w-[200px]">{eventData.description}</p>
+                </div>
+              </div>
+            ) : (
+              // Simple Static Map
+              <div className="h-[400px] rounded-lg overflow-hidden border border-gray-300 relative">
+                <div className="w-full h-full bg-gradient-to-br from-blue-50 to-gray-100 flex items-center justify-center">
+                  <div className="text-center p-6">
+                    <div className="inline-block p-4 bg-blue-100 rounded-full mb-4">
+                      <FaMapMarkerAlt className="text-blue-600 text-3xl" />
+                    </div>
+                    <h4 className="text-lg font-semibold text-gray-900 mb-2">Event Location</h4>
+                    <p className="text-gray-700 mb-4 max-w-md mx-auto">{eventData.description}</p>
+                    <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                      <a
+                        href={getGoogleMapsUrl()}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 bg-blue-600 text-white px-4 py-2.5 rounded-lg hover:bg-blue-700 transition-colors"
+                      >
+                        <FaMap />
+                        View on Map
+                      </a>
+                      <button
+                        onClick={() => setShowInteractiveMap(true)}
+                        className="inline-flex items-center gap-2 border border-blue-600 text-blue-600 px-4 py-2.5 rounded-lg hover:bg-blue-50 transition-colors"
+                      >
+                        <FaDirections />
+                        Interactive Map
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Map Preview with Marker */}
+                <div className="absolute inset-0 pointer-events-none">
+                  <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                    <div className="relative">
+                      <div className="w-8 h-8 bg-red-500 rounded-full border-4 border-white shadow-lg animate-bounce"></div>
+                      <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 bg-white px-3 py-1.5 rounded-lg shadow-md whitespace-nowrap text-sm font-medium">
+                        📍 {eventData.location.split(',')[0]}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            {/* Map Controls */}
+            {/* <div className="flex flex-wrap gap-3 mt-4">
+              <div className="flex items-center gap-2 text-sm text-gray-600">
+                <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                <span>Event Location</span>
+              </div>
+              <div className="flex items-center gap-2 text-sm text-gray-600">
+                <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+                <span>Public Transport</span>
+              </div>
+              <div className="flex items-center gap-2 text-sm text-gray-600">
+                <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                <span>Parking Areas</span>
+              </div>
+            </div> */}
+
+            {/* Estimated Travel Times */}
+            {/* <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-3">
+              <div className="bg-blue-50 p-3 rounded-lg text-center">
+                <div className="text-sm text-gray-600">By Car</div>
+                <div className="font-semibold text-gray-900">15-25 min</div>
+              </div>
+              <div className="bg-green-50 p-3 rounded-lg text-center">
+                <div className="text-sm text-gray-600">By Metro</div>
+                <div className="font-semibold text-gray-900">20-30 min</div>
+              </div>
+              <div className="bg-purple-50 p-3 rounded-lg text-center">
+                <div className="text-sm text-gray-600">By Bus</div>
+                <div className="font-semibold text-gray-900">25-35 min</div>
+              </div>
+              <div className="bg-yellow-50 p-3 rounded-lg text-center">
+                <div className="text-sm text-gray-600">Walking</div>
+                <div className="font-semibold text-gray-900">8-12 min</div>
+              </div>
+            </div> */}
+          </div>
         </div>
       </div>
     </div>
@@ -422,17 +1332,36 @@ const EventLocationMap = ({ location, fullLocation }) => {
 };
 
 const EventDetailPage = () => {
-  const { eventId } = useParams();
   const navigate = useNavigate();
-  const [event, setEvent] = useState(null);
-  const [selectedTicket, setSelectedTicket] = useState(null);
-  const [quantity, setQuantity] = useState(1);
-  const [isFavorite, setIsFavorite] = useState(false);
+  const { eventId } = useParams();
+  
+  // State for search filters
+  const [searchType, setSearchType] = useState("Music Events");
+  const [locationType, setLocationType] = useState("By City");
+  const [location, setLocation] = useState("Mumbai");
+  const [radius, setRadius] = useState("25 km");
+  const [budget, setBudget] = useState("Any Budget");
+  const [eventType, setEventType] = useState("Music Events");
+  const [mainTab, setMainTab] = useState("upcoming");
+  const [dropdownTab, setDropdownTab] = useState("need");
+  const [sortBy, setSortBy] = useState("featured");
+  const [showMoreAmenities, setShowMoreAmenities] = useState({});
+  const [likedEvents, setLikedEvents] = useState({});
+  const [showContact, setShowContact] = useState({});
+  const [currentImageIndex, setCurrentImageIndex] = useState({});
+  const [showEventDropdown, setShowEventDropdown] = useState(false);
+  const [showPlusDropdown, setShowPlusDropdown] = useState(false);
+
+  const [eventData, setEventData] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Scroll to top on component mount and when eventId changes
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Find the event by ID
+    const foundEvent = allEvents.find(e => e.id === parseInt(eventId));
+    if (foundEvent) {
+      setEventData(foundEvent);
+    }
+    setLoading(false);
   }, [eventId]);
 
   // Enhanced navigation function
@@ -443,403 +1372,869 @@ const EventDetailPage = () => {
     }, 100);
   };
 
-  // Handle related event click
-  const handleRelatedEventClick = (relatedEventId) => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    setTimeout(() => {
-      navigate(`/events/${relatedEventId}`);
-    }, 100);
+  // Toggle like event
+  const toggleLike = (eventId) => {
+    setLikedEvents((prev) => ({
+      ...prev,
+      [eventId]: !prev[eventId],
+    }));
   };
 
-  useEffect(() => {
-    const allEvents = [...eventsData.popular, ...eventsData.upcoming];
-    const foundEvent = allEvents.find(e => e.id === parseInt(eventId));
-    if (foundEvent) {
-      const enhancedEvent = {
-        ...foundEvent,
-        fullLocation: "Community Center (The Hindu Temple), 143-09 Holly Ave, Flushing, NY 11355",
-        startTime: "6:00 PM (EST)",
-        doorsOpen: "5:00 PM (EST)",
-        duration: "5 hours",
-        language: "Bengali",
-        parking: "Free Parking (with validation)",
-        mobileTicket: true,
-        performers: [
-          { name: "Aurthohin", events: 1 },
-          { name: "Tanzir C Tuhin", events: 1 },
-          { name: "Rafi Alam", events: 1 }
-        ],
-        categories: ["Live Concert", "Singing", "Music"],
-        description: `🎶Aurthohin, Tanzir Tuhin (X-Sironamhin) & Rafi Alam Live in New York 🎶
-Date: Sunday, November 30 | Time: 6:00 PM (EST)
-Venue: 143-09 Holly Ave, Flushing NY 11355
-Come join us for an electrifying evening with Aurthohin, Tanzir Tuhin (X-Sironamhin) and Rafi Alam as they perform live in NYC! Get ready to rock out to their iconic tunes and experience their incredible stage presence up close. Don't miss this epic event filled with music, energy, and unforgettable memories. Grab your tickets now and get ready for a night to remember!
-🎶 An unforgettable musical journey awaits—join us for Aurthohin, Tanzir Tuhin & Rafi Live in NY!`,
-        parkingInstructions: [
-          "Limited parking is available across the street from the Community Center",
-          "Additional parking is available at Flushing Hospital Parking lot (Burlington Street)",
-          "See security staff at the venue for seal on the hospital parking ticket to get $7 as parking fee for the event.",
-          "No parking of cars or other vehicles blocking the entrance to the nearby houses of residents."
-        ],
-        ticketTypes: [
-          { type: "General", price: 40, status: "Going fast", closes: "Dec 1", benefits: ["Basic entry"] },
-          { type: "Gold", price: 50, status: "Going fast", closes: "Dec 1", benefits: ["Priority entry"] },
-          { type: "Premium", price: 75, status: "Available", closes: "Dec 1", benefits: ["Premium seating"] },
-          { 
-            type: "VIP (Includes Meet & Greet and exclusive Aurthohin Merchandise)", 
-            price: 100, 
-            status: "Available", 
-            closes: "Dec 1", 
-            benefits: ["Meet & Greet", "Exclusive Merch", "VIP Lounge"] 
-          }
-        ],
-        organizer: "Music Bangla Boston",
-        sellingFast: true,
-        coordinates: {
-          lat: 40.7505,
-          lng: -73.8451
-        }
-      };
-      setEvent(enhancedEvent);
-    }
-    setLoading(false);
-  }, [eventId]);
+  // Toggle contact visibility
+  const toggleContact = (eventId) => {
+    setShowContact((prev) => ({
+      ...prev,
+      [eventId]: !prev[eventId],
+    }));
+  };
 
-  const getCategoryIcon = (category) => {
-    switch (category) {
-      case "music": return <FaMusic className="w-6 h-6 text-white" />;
-      case "sports": return <FaFutbol className="w-6 h-6 text-white" />;
-      case "food": return <FaUtensils className="w-6 h-6 text-white" />;
-      case "entertainment": return <FaFilm className="w-6 h-6 text-white" />;
-      case "conference": return <FaConference className="w-6 h-6 text-white" />;
-      case "wellness": return <FaHeartbeat className="w-6 h-6 text-white" />;
-      case "festival": return <FaGlassCheers className="w-6 h-6 text-white" />;
-      default: return <FaStar className="w-6 h-6 text-white" />;
+  // Navigate images
+  const nextImage = (eventId, totalImages) => {
+    setCurrentImageIndex((prev) => ({
+      ...prev,
+      [eventId]: ((prev[eventId] || 0) + 1) % totalImages,
+    }));
+  };
+
+  const prevImage = (eventId, totalImages) => {
+    setCurrentImageIndex((prev) => ({
+      ...prev,
+      [eventId]: ((prev[eventId] || 0) - 1 + totalImages) % totalImages,
+    }));
+  };
+
+  // Search functions
+  const handleSearch = () => {
+    console.log("Searching events with filters:", {
+      searchType,
+      locationType,
+      location,
+      radius,
+      budget,
+      eventType,
+    });
+  };
+
+  // Share event
+  const handleShare = (event) => {
+    if (navigator.share) {
+      navigator.share({
+        title: event.title,
+        text: event.description,
+        url: window.location.href,
+      });
+    } else {
+      navigator.clipboard.writeText(window.location.href);
+      alert("Link copied to clipboard!");
     }
   };
 
-  if (loading) {
+  // Handle call
+  const handleCall = (event) => {
+    if (event.availableForCall && event.contact) {
+      window.location.href = `tel:${event.contact}`;
+    }
+  };
+
+  // Handle message
+  const handleMessage = (event) => {
+    alert(`Opening chat with ${event.postedBy} for ${event.title}`);
+  };
+
+  // Badge Component
+  const Badge = ({ children, type = "default" }) => {
+    const styles = {
+      verified: "bg-green-100 text-green-800 border-green-200",
+      immediate: "bg-blue-100 text-blue-800 border-blue-200",
+      discount: "bg-orange-100 text-orange-800 border-orange-200",
+      default: "bg-gray-100 text-gray-800 border-gray-200",
+      free: "bg-green-100 text-green-800 border-green-200",
+      vip: "bg-purple-100 text-purple-800 border-purple-200",
+    };
+
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
-        <div className="text-2xl font-semibold text-gray-700 animate-pulse">Loading event...</div>
-      </div>
+      <span
+        className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium border ${styles[type]}`}
+      >
+        {type === "verified" && <CheckCircle size={12} />}
+        {type === "immediate" && <Clock size={12} />}
+        {type === "free" && <Gift size={12} />}
+        {children}
+      </span>
     );
-  }
+  };
 
-  if (!event) {
+  // Rating Stars Component
+  const RatingStars = ({ rating, reviews }) => (
+    <div className="flex items-center gap-1">
+      <div className="flex">
+        {[1, 2, 3, 4, 5].map((star) => (
+          <Star
+            key={star}
+            size={14}
+            className={
+              star <= rating
+                ? "text-yellow-400 fill-yellow-400"
+                : "text-gray-300"
+            }
+          />
+        ))}
+      </div>
+      <span className="text-sm text-gray-600">({reviews})</span>
+    </div>
+  );
+
+  // Get event icon based on category
+  const getEventIcon = (category) => {
+    switch (category.toLowerCase()) {
+      case 'music festival':
+      case 'music concert':
+        return <Music size={16} className="text-blue-600" />;
+      case 'food festival':
+        return <Utensils size={16} className="text-red-600" />;
+      case 'cultural festival':
+        return <Sparkles size={16} className="text-yellow-600" />;
+      default:
+        return <Calendar size={16} className="text-gray-600" />;
+    }
+  };
+
+  // Event Amenity icons mapping
+  const amenityIcons = {
+    "Multiple Stages": <Music size={14} />,
+    "Food Court": <Utensils size={14} />,
+    "Parking": <Car size={14} />,
+    "Merch Store": <Shirt size={14} />,
+    "Medical Aid": <Heart size={14} />,
+    "Cultural Performances": <Users size={14} />,
+    "Kids Zone": <Gamepad2 size={14} />,
+    "Photo Booths": <Camera size={14} />,
+    "Food & Drinks": <Coffee size={14} />,
+    "AC Hall": <Snowflake size={14} />,
+    "Merchandise": <Gift size={14} />,
+  };
+
+  // Event Card Component
+  const EventCard = ({ event }) => {
+    const currentIndex = currentImageIndex[event.id] || 0;
+    const totalImages = event.images.length;
+
+    const handleCardClick = () => {
+      navigate(`/events/${event.id}`);
+    };
+
+    const handleTitleClick = (e) => {
+      e.stopPropagation();
+      navigate(`/events/${event.id}`);
+    };
+
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
-        <div className="text-center p-10 bg-white rounded-3xl shadow-2xl">
-          <h2 className="text-3xl font-bold text-gray-800 mb-4">Event Not Found</h2>
-          <button 
-            onClick={() => handleNavigate('/events')} 
-            className="bg-[#27bb97] hover:bg-[#1fa582] text-white font-bold py-3 px-8 rounded-xl transition transform hover:-translate-y-1"
-          >
-            ← Back to Events
-          </button>
-        </div>
-      </div>
-    );
-  }
+      <div
+        className="bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 group cursor-pointer"
+        onClick={handleCardClick}
+      >
+        <div className="flex flex-col md:flex-row">
+          {/* Image Gallery Section */}
+          <div className="md:w-2/5 h-48 md:h-auto relative">
+            <div className="relative w-full h-full overflow-hidden">
+              <img
+                src={event.images[currentIndex]}
+                alt={`${event.title} - Image ${currentIndex + 1}`}
+                className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+              />
 
-  const totalPrice = selectedTicket ? selectedTicket.price * quantity : 0;
-  const relatedEvents = eventsData.popular.filter(e => e.id !== event.id).slice(0, 4);
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100">
-      {/* Breadcrumb */}
-      <EventsSubNav />
-      <div className="bg-white/90 backdrop-blur-lg border-b border-gray-200 sticky top-0 z-40 shadow-sm">
-        <div className="container mx-auto px-6 py-4">
-          <nav className="flex items-center gap-3 text-sm font-medium">
-            <button 
-              onClick={() => handleNavigate('/')} 
-              className="flex items-center gap-2 hover:text-[#27bb97] transition transform hover:-translate-y-0.5"
-            >
-              <FaHome className="w-4 h-4" /> Home
-            </button>
-            <FaChevronRight className="w-4 h-4 text-gray-400" />
-            <button 
-              onClick={() => handleNavigate('/events')} 
-              className="hover:text-[#27bb97] transition transform hover:-translate-y-0.5"
-            >
-              Events
-            </button>
-            <FaChevronRight className="w-4 h-4 text-gray-400" />
-            <span className="text-[#27bb97] font-bold truncate max-w-md">
-              {event.title}
-            </span>
-          </nav>
-        </div>
-      </div>
-
-
-      {/* Hero Section */}
-      <div className="relative h-96 md:h-[500px] overflow-hidden">
-        <img src={event.image} alt={event.title} className="absolute inset-0 w-full h-full object-cover brightness-75" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent" />
-        
-        <div className="absolute bottom-0 left-0 right-0 p-8 md:p-12 text-white">
-          <div className="max-w-7xl mx-auto">
-            <div className="flex flex-wrap items-center gap-3 mb-4">
-              {event.sellingFast && (
-                <span className="inline-block bg-red-500 text-white px-4 py-2 rounded-full text-sm font-bold animate-pulse">
-                  🔥 Selling Fast
-                </span>
-              )}
-              <span className="px-4 py-2 bg-white/20 backdrop-blur-md rounded-full text-sm font-bold border border-white/30">
-                {event.tag}
-              </span>
-              <span className="px-5 py-2 bg-[#27bb97] rounded-full font-bold text-lg shadow-lg">
-                {event.isFree ? 'FREE EVENT' : event.displayPrice}
-              </span>
-            </div>
-            <h1 className="text-4xl md:text-6xl font-extrabold mb-4 leading-tight drop-shadow-2xl">
-              {event.title}
-            </h1>
-            <div className="flex flex-wrap items-center gap-6 text-lg">
-              <div className="flex items-center gap-2 bg-black/30 px-3 py-1 rounded-full">
-                <FaCalendarAlt /> {event.displayDate} • {event.startTime}
-              </div>
-              <div className="flex items-center gap-2 bg-black/30 px-3 py-1 rounded-full">
-                <FaMapMarkerAlt /> {event.fullLocation}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* FABs */}
-        <div className="absolute top-8 right-8 flex flex-col gap-3">
-          <button 
-            onClick={() => setIsFavorite(!isFavorite)} 
-            className="p-4 bg-white/20 backdrop-blur-lg rounded-full hover:bg-white/30 transition shadow-xl transform hover:-translate-y-1"
-          >
-            <FaHeart className={`w-6 h-6 ${isFavorite ? 'text-red-500 fill-red-500' : 'text-white'}`} />
-          </button>
-          <button className="p-4 bg-white/20 backdrop-blur-lg rounded-full hover:bg-white/30 transition shadow-xl transform hover:-translate-y-1">
-            <FaShareAlt className="w-6 h-6 text-white" />
-          </button>
-        </div>
-      </div>
-
-      {/* Main Content */}
-      <div className="container mx-auto px-6 py-12 max-w-7xl">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Left Column - Event Details */}
-          <div className="lg:col-span-2 space-y-8">
-            {/* Quick Info Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 text-center transform hover:-translate-y-1 transition">
-                <div className="w-12 h-12 bg-[#27bb97] rounded-full mx-auto mb-3 flex items-center justify-center">
-                  <FaClock className="w-6 h-6 text-white" />
-                </div>
-                <h3 className="font-bold text-gray-800">Duration</h3>
-                <p className="text-lg font-semibold text-[#27bb97]">{event.duration}</p>
-              </div>
-              
-              <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 text-center transform hover:-translate-y-1 transition">
-                <div className="w-12 h-12 bg-[#27bb97] rounded-full mx-auto mb-3 flex items-center justify-center">
-                  <FaLanguage className="w-6 h-6 text-white" />
-                </div>
-                <h3 className="font-bold text-gray-800">Language</h3>
-                <p className="text-lg font-semibold text-[#27bb97]">{event.language}</p>
-              </div>
-              
-              <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 text-center transform hover:-translate-y-1 transition">
-                <div className="w-12 h-12 bg-[#27bb97] rounded-full mx-auto mb-3 flex items-center justify-center">
-                  <FaDoorOpen className="w-6 h-6 text-white" />
-                </div>
-                <h3 className="font-bold text-gray-800">Doors Open</h3>
-                <p className="text-lg font-semibold text-[#27bb97]">{event.doorsOpen}</p>
-              </div>
-            </div>
-
-            {/* Event Details Section */}
-            <div className="bg-white rounded-3xl p-8 shadow-xl border border-gray-100">
-              <h2 className="text-3xl font-bold mb-6 flex items-center gap-3">
-                <FaExclamationTriangle className="text-yellow-500" />
-                Event Details
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-4">
-                  <div>
-                    <span className="text-sm text-gray-500">Category</span>
-                    <p className="font-semibold text-lg">{event.categories.join(', ')}</p>
-                  </div>
-                  <div>
-                    <span className="text-sm text-gray-500">Start Time</span>
-                    <p className="font-semibold text-lg">{event.startTime}</p>
-                  </div>
-                  <div>
-                    <span className="text-sm text-gray-500">Show Duration</span>
-                    <p className="font-semibold text-lg">{event.duration}</p>
-                  </div>
-                </div>
-                <div className="space-y-4">
-                  <div>
-                    <span className="text-sm text-gray-500">Language</span>
-                    <p className="font-semibold text-lg">{event.language}</p>
-                  </div>
-                  <div>
-                    <span className="text-sm text-gray-500">Doors Open</span>
-                    <p className="font-semibold text-lg">{event.doorsOpen}</p>
-                  </div>
-                  <div>
-                    <span className="text-sm text-gray-500">Parking</span>
-                    <p className="font-semibold text-lg">{event.parking}</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Location with Google Maps */}
-            <EventLocationMap 
-              location={event.location} 
-              fullLocation={event.fullLocation} 
-            />
-
-            {/* Performers - Card Layout */}
-            <div className="bg-white rounded-3xl p-8 shadow-xl border border-gray-100">
-              <h2 className="text-3xl font-bold mb-6">Event Performers</h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {event.performers.map((performer, i) => (
-                  <div key={i} className="text-center p-6 border-2 border-gray-100 rounded-2xl hover:border-[#27bb97] transition group transform hover:-translate-y-1">
-                    <div className="w-20 h-20 bg-gradient-to-br from-[#27bb97] to-[#1fa582] rounded-full mx-auto mb-4 flex items-center justify-center group-hover:scale-110 transition">
-                      <span className="text-2xl font-bold text-white">{performer.name.charAt(0)}</span>
-                    </div>
-                    <h4 className="font-bold text-lg mb-1 group-hover:text-[#27bb97] transition">{performer.name}</h4>
-                    <p className="text-sm text-gray-500">{performer.events} Upcoming Event(s)</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* About & Description */}
-            <div className="bg-white rounded-3xl p-8 shadow-xl border border-gray-100">
-              <h2 className="text-3xl font-bold mb-6">About this event</h2>
-              <div className="prose max-w-none text-gray-700 leading-relaxed text-lg">
-                <p className="whitespace-pre-wrap">{event.description}</p>
-              </div>
-              {event.parkingInstructions && event.parkingInstructions.length > 0 && (
-                <div className="mt-8 p-6 bg-yellow-50 border border-yellow-200 rounded-2xl">
-                  <h3 className="font-bold mb-4 flex items-center gap-2 text-yellow-800">
-                    <FaCar className="w-5 h-5" /> PARKING INSTRUCTIONS:
-                  </h3>
-                  <ul className="space-y-3 text-sm">
-                    {event.parkingInstructions.map((instr, i) => (
-                      <li key={i} className="flex items-start gap-3">
-                        <span className="text-yellow-600 font-bold bg-yellow-100 px-2 py-1 rounded-full text-xs">{i + 1}</span>
-                        <span className="flex-1">{instr}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Right Column - Ticket Panel */}
-          <div className="lg:col-span-1">
-            <div className="bg-white rounded-3xl shadow-2xl border border-gray-100 sticky top-24 p-8">
-              <h3 className="text-2xl font-bold mb-6">Ticket Information</h3>
-              
-              <div className="space-y-4 mb-6">
-                {event.ticketTypes.map((ticket) => (
-                  <div
-                    key={ticket.type}
-                    onClick={() => setSelectedTicket(ticket)}
-                    className={`p-5 rounded-2xl border-2 cursor-pointer transition-all relative transform hover:-translate-y-1 ${
-                      selectedTicket?.type === ticket.type
-                        ? 'border-[#27bb97] bg-[#27bb97]/5 shadow-lg'
-                        : 'border-gray-200 hover:border-gray-300'
-                    }`}
-                  >
-                    <span className={`absolute top-3 right-3 px-3 py-1 text-xs font-bold rounded-full ${
-                      ticket.status === 'Going fast' ? 'bg-red-500 text-white' : 'bg-green-500 text-white'
-                    }`}>
-                      {ticket.status}
-                    </span>
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h4 className="font-bold text-lg line-clamp-2 pr-8">{ticket.type}</h4>
-                        <p className="text-2xl font-extrabold text-[#27bb97] mt-1">
-                          ${ticket.price}.00
-                        </p>
-                        <p className="text-xs text-gray-500 mt-1">Ticket close on {ticket.closes}</p>
-                        {ticket.benefits && (
-                          <ul className="mt-2 space-y-1 text-xs text-gray-600">
-                            {ticket.benefits.map((benefit, j) => (
-                              <li key={j} className="flex items-center gap-1">
-                                • {benefit}
-                              </li>
-                            ))}
-                          </ul>
-                        )}
-                      </div>
-                      {selectedTicket?.type === ticket.type && <FaCheck className="w-6 h-6 text-[#27bb97]" />}
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {selectedTicket && (
+              {/* Image Navigation Arrows */}
+              {totalImages > 1 && (
                 <>
-                  <div className="mt-8">
-                    <label className="block font-semibold mb-3">Quantity</label>
-                    <div className="flex items-center justify-between bg-gray-50 rounded-xl p-4">
-                      <button 
-                        onClick={() => setQuantity(q => Math.max(1, q - 1))} 
-                        className="w-12 h-12 rounded-full bg-white shadow hover:shadow-md text-xl transition hover:bg-gray-50"
-                      >
-                        -
-                      </button>
-                      <span className="text-2xl font-bold w-20 text-center">{quantity}</span>
-                      <button 
-                        onClick={() => setQuantity(q => Math.min(999, q + 1))} 
-                        className="w-12 h-12 rounded-full bg-white shadow hover:shadow-md text-xl transition hover:bg-gray-50"
-                      >
-                        +
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="mt-8 p-6 bg-gradient-to-r from-[#27bb97]/10 to-[#27bb97]/5 rounded-2xl">
-                    <div className="flex justify-between items-center">
-                      <span className="text-xl font-bold">Total</span>
-                      <span className="text-3xl font-extrabold text-[#27bb97]">${totalPrice}.00</span>
-                    </div>
-                  </div>
-
                   <button
-                    onClick={() => alert(`Booking ${quantity} × ${selectedTicket.type} for $${totalPrice}`)}
-                    className="w-full mt-6 py-5 bg-[#27bb97] hover:bg-[#1fa582] text-white font-bold text-xl rounded-2xl shadow-xl hover:shadow-2xl transition transform hover:-translate-y-1 flex items-center justify-center gap-3"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      prevImage(event.id, totalImages);
+                    }}
+                    className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-1.5 rounded-full transition-all duration-200"
                   >
-                    <FaTicketAlt className="w-6 h-6" />
-                    ADD TO CART
+                    <ChevronLeft size={16} />
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      nextImage(event.id, totalImages);
+                    }}
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-1.5 rounded-full transition-all duration-200"
+                  >
+                    <ChevronRight size={16} />
                   </button>
                 </>
               )}
+
+              {/* Image Counter */}
+              {totalImages > 1 && (
+                <div className="absolute top-2 left-2 bg-black/70 text-white px-2 py-1 rounded text-xs">
+                  {currentIndex + 1} / {totalImages}
+                </div>
+              )}
+
+              {/* Top Left Badges */}
+              <div className="absolute top-3 left-3 flex flex-col gap-2">
+                {event.verified && <Badge type="verified">Verified</Badge>}
+                {event.immediate && <Badge type="immediate">On Sale</Badge>}
+                {event.price === 0 ? (
+                  <Badge type="free">Free Entry</Badge>
+                ) : (
+                  event.discount && <Badge type="discount">{event.discount}</Badge>
+                )}
+              </div>
+
+              {/* Like and Share Buttons */}
+              <div className="absolute top-3 right-3 flex gap-2">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleLike(event.id);
+                  }}
+                  className={`p-2 rounded-full shadow-lg transition-all duration-200 ${
+                    likedEvents[event.id]
+                      ? "bg-red-500 text-white"
+                      : "bg-white text-gray-600 hover:bg-gray-100"
+                  }`}
+                >
+                  <Heart
+                    size={18}
+                    fill={likedEvents[event.id] ? "currentColor" : "none"}
+                  />
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleShare(event);
+                  }}
+                  className="p-2 bg-white text-gray-600 rounded-full shadow-lg hover:bg-gray-100 transition-all duration-200"
+                >
+                  <Share2 size={18} />
+                </button>
+              </div>
+
+              {/* Distance Information */}
+              <div className="absolute bottom-12 left-3 right-3">
+                <div className="flex flex-col gap-1">
+                  <div className="flex flex-wrap gap-2">
+                    {event.distance && (
+                      <div className="bg-black/70 backdrop-blur-sm px-2 py-1 rounded text-xs text-white flex items-center gap-1">
+                        🚇 {event.distance}
+                      </div>
+                    )}
+                    {event.busStopDistance && (
+                      <div className="bg-black/70 backdrop-blur-sm px-2 py-1 rounded text-xs text-white flex items-center gap-1">
+                        🚌 {event.busStopDistance}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Content Section */}
+          <div className="md:w-3/5 p-5 flex flex-col justify-between">
+            {/* Header with Price and Badges */}
+            <div>
+              <div className="flex items-start justify-between mb-3">
+                <div className="flex-1 pr-4">
+                  <h3
+                    className="text-lg font-bold text-gray-800 mb-2 leading-tight hover:text-blue-600 transition-colors cursor-pointer"
+                    onClick={handleTitleClick}
+                  >
+                    {event.title}
+                  </h3>
+
+                  {/* Location and Quick Info */}
+                  <div className="flex items-center gap-3 text-sm text-gray-600 mb-2 flex-wrap">
+                    <div className="flex items-center gap-1">
+                      {getEventIcon(event.category)}
+                      <span>{event.category}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Calendar size={14} />
+                      <span>{event.date}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Clock size={14} />
+                      <span>{event.time}</span>
+                    </div>
+                  </div>
+
+                  {/* Rating and Response Info */}
+                  <div className="flex items-center gap-4 mb-3">
+                    <RatingStars
+                      rating={event.rating}
+                      reviews={event.reviews}
+                    />
+                    <div className="text-sm text-gray-600">
+                      ⚡ {event.responseRate} response • {event.responseTime}
+                    </div>
+                  </div>
+
+                  {/* Quick Stats */}
+                  <div className="flex items-center gap-4 mb-3">
+                    <div className="flex items-center gap-1 text-sm text-gray-700">
+                      <Users size={16} />
+                      <span>{event.views.toLocaleString()} views</span>
+                    </div>
+                    <div className="flex items-center gap-1 text-sm text-gray-700">
+                      <Clock size={16} />
+                      <span>{event.duration}</span>
+                    </div>
+                    <div className="flex items-center gap-1 text-sm text-gray-700">
+                      <Ticket size={16} />
+                      <span>{event.ticketsAvailable} tickets left</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Price Section */}
+                <div className="text-right">
+                  <div className="text-2xl font-bold text-blue-600 mb-1">
+                    {event.price === 0 ? (
+                      <span className="text-green-600">FREE</span>
+                    ) : (
+                      <>
+                        ₹{event.price.toLocaleString()}
+                        <span className="text-sm font-normal text-gray-600">/person</span>
+                      </>
+                    )}
+                  </div>
+                  <div className="text-sm text-gray-500">
+                    By: {event.postedBy}
+                  </div>
+                </div>
+              </div>
+
+              {/* Event Details in Compact Grid */}
+              <div className="grid grid-cols-3 gap-2 text-xs mb-4 p-3 bg-gray-50 rounded-lg">
+                <div className="text-center">
+                  <div className="font-semibold text-gray-900">Type</div>
+                  <div className="text-gray-600">{event.eventType}</div>
+                </div>
+                <div className="text-center">
+                  <div className="font-semibold text-gray-900">Age Limit</div>
+                  <div className="text-gray-600">{event.ageLimit}</div>
+                </div>
+                <div className="text-center">
+                  <div className="font-semibold text-gray-900">Saves</div>
+                  <div className="text-gray-600">{event.saves}</div>
+                </div>
+              </div>
+
+              {/* Key Amenities */}
+              <div className="mb-4">
+                <h4 className="text-sm font-semibold text-gray-900 mb-2">
+                  Event Features
+                </h4>
+                <div className="flex flex-wrap gap-1">
+                  {event.amenities.slice(0, 4).map((amenity, index) => (
+                    <span
+                      key={index}
+                      className="flex items-center gap-1.5 text-xs text-blue-700 px-3 py-2 rounded-lg border-blue-100 hover:bg-blue-100 transition-colors"
+                    >
+                      {amenityIcons[amenity] || <Sparkles size={14} />}
+                      {amenity}
+                    </span>
+                  ))}
+                  {event.amenities.length > 4 && (
+                    <div className="relative">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setShowMoreAmenities(prev => ({
+                            ...prev,
+                            [event.id]: !prev[event.id]
+                          }));
+                        }}
+                        className="flex items-center gap-1.5 text-xs bg-gray-100 text-gray-600 px-3 py-2 rounded-lg border border-gray-200 hover:bg-gray-200 transition-colors"
+                      >
+                        +{event.amenities.length - 4} more
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Description Line */}
+              <div className="text-sm text-gray-600 mb-4 leading-relaxed">
+                <p className="line-clamp-2">{event.details}</p>
+              </div>
+
+              {/* Performers */}
+              <div className="mb-4">
+                <h4 className="text-sm font-semibold text-gray-900 mb-2">
+                  Featured Artists
+                </h4>
+                <div className="flex flex-wrap gap-2">
+                  {event.performers.map((performer, index) => (
+                    <span
+                      key={index}
+                      className="text-xs bg-purple-50 text-purple-700 px-3 py-1.5 rounded-full border border-purple-200"
+                    >
+                      {performer.name}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex items-center justify-between pt-4 border-t border-gray-200">
+              {/* Contact Info */}
+              <div className="flex items-center gap-4 text-sm text-gray-500">
+                {showContact[event.id] ? (
+                  <div className="flex items-center gap-1">
+                    <Phone size={14} />
+                    <span className="font-medium">{event.contact}</span>
+                  </div>
+                ) : (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleContact(event.id);
+                    }}
+                    className="text-blue-600 hover:text-blue-700 hover:underline transition-colors"
+                  >
+                    Show Contact
+                  </button>
+                )}
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex gap-2">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleCall(event);
+                  }}
+                  disabled={!event.availableForCall}
+                  className={`flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 border ${
+                    event.availableForCall
+                      ? "bg-green-100 text-green-700 border-green-200 hover:bg-green-200 hover:shadow-sm"
+                      : "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
+                  }`}
+                >
+                  <Phone size={16} />
+                  Call
+                </button>
+
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleMessage(event);
+                  }}
+                  className="flex items-center gap-2 bg-[#27bb97] hover:bg-[#1FA987] text-white px-4 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 shadow-sm hover:shadow-md"
+                >
+                  <MessageCircle size={16} />
+                  Message
+                </button>
+
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleCardClick();
+                  }}
+                  className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 shadow-sm hover:shadow-md"
+                >
+                  <Ticket size={16} />
+                  Book Now
+                </button>
+              </div>
             </div>
           </div>
         </div>
+      </div>
+    );
+  };
 
-        {/* Related Events */}
-        {relatedEvents.length > 0 && (
-          <div className="mt-20">
-            <h2 className="text-4xl font-extrabold text-center mb-12 bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
-              More Events You'll Love
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-              {relatedEvents.map((relatedEvent) => (
-                <RelatedEventCard
-                  key={relatedEvent.id}
-                  event={relatedEvent}
-                  onCardClick={() => handleRelatedEventClick(relatedEvent.id)}
-                />
-              ))}
+  // Event Details Main Section
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-lg text-gray-600">Loading event details...</div>
+      </div>
+    );
+  }
+
+  if (!eventData) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-gray-800 mb-4">Event not found</h2>
+          <button
+            onClick={() => navigate('/events')}
+            className="bg-[#27bb97] text-white px-6 py-3 rounded-lg hover:bg-[#1FA987] transition-colors"
+          >
+            Browse All Events
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-white">
+      <EventsSubNav />
+
+      {/* Header Section */}
+      <div className="pt-4 pb-4 px-4 sm:px-8 lg:px-20">
+        <div className="">
+          {/* Breadcrumb Navigation */}
+          <div className="flex items-center gap-2 text-sm mb-4">
+            <button 
+              onClick={() => handleNavigate('/')}
+              className="flex items-center gap-1 text-gray-600 hover:text-gray-900"
+            >
+              <Home size={14} />
+              Home
+            </button>
+            <span className="text-gray-400">→</span>
+            <button 
+              onClick={() => handleNavigate('/events')}
+              className="text-gray-600 hover:text-gray-900"
+            >
+              Events
+            </button>
+            <span className="text-gray-400">→</span>
+            <span className="text-gray-900 font-medium truncate max-w-xs">
+              {eventData.title}
+            </span>
+          </div>
+
+          {/* Main Event Details */}
+          <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
+            <div className="flex flex-col lg:flex-row gap-6">
+              {/* Event Images */}
+              <div className="lg:w-2/5">
+                <div className="relative h-64 lg:h-96 rounded-lg overflow-hidden">
+                  <img
+                    src={eventData.images[0]}
+                    alt={eventData.title}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute top-4 left-4 flex gap-2">
+                    {eventData.price === 0 ? (
+                      <Badge type="free">FREE ENTRY</Badge>
+                    ) : (
+                      <Badge type="discount">TICKETS AVAILABLE</Badge>
+                    )}
+                    {eventData.verified && <Badge type="verified">VERIFIED</Badge>}
+                  </div>
+                  <div className="absolute bottom-4 right-4 bg-black/70 text-white px-3 py-1 rounded-full text-sm">
+                    {(currentImageIndex[eventData.id] || 0) + 1} / {eventData.images.length}
+                  </div>
+                </div>
+                
+                {/* Thumbnail Images */}
+                <div className="flex gap-2 mt-4">
+                  {eventData.images.slice(0, 4).map((img, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setCurrentImageIndex(prev => ({
+                        ...prev,
+                        [eventData.id]: index
+                      }))}
+                      className={`w-20 h-20 rounded-lg overflow-hidden border-2 ${
+                        (currentImageIndex[eventData.id] || 0) === index
+                          ? 'border-blue-500'
+                          : 'border-gray-200'
+                      }`}
+                    >
+                      <img
+                        src={img}
+                        alt={`Thumbnail ${index + 1}`}
+                        className="w-full h-full object-cover"
+                      />
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Event Info */}
+              <div className="lg:w-3/5">
+                <div className="flex justify-between items-start mb-4">
+                  <div>
+                    <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                      {eventData.title}
+                    </h1>
+                    <div className="flex items-center gap-4 text-gray-600 mb-4">
+                      <div className="flex items-center gap-1">
+                        <MapPin size={16} />
+                        <span>{eventData.description}</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Calendar size={16} />
+                        <span>{eventData.date}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => toggleLike(eventData.id)}
+                      className={`p-3 rounded-full ${
+                        likedEvents[eventData.id]
+                          ? 'bg-red-100 text-red-600'
+                          : 'bg-gray-100 text-gray-600'
+                      } hover:bg-gray-200 transition-colors`}
+                    >
+                      <Heart
+                        size={20}
+                        fill={likedEvents[eventData.id] ? 'currentColor' : 'none'}
+                      />
+                    </button>
+                    <button
+                      onClick={() => handleShare(eventData)}
+                      className="p-3 bg-gray-100 text-gray-600 rounded-full hover:bg-gray-200 transition-colors"
+                    >
+                      <Share2 size={20} />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Event Stats */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                  <div className="bg-gray-50 p-4 rounded-lg">
+                    <div className="text-sm text-gray-500 mb-1">Price</div>
+                    <div className="text-2xl font-bold text-blue-600">
+                      {eventData.price === 0 ? 'FREE' : `₹${eventData.price}`}
+                    </div>
+                  </div>
+                  <div className="bg-gray-50 p-4 rounded-lg">
+                    <div className="text-sm text-gray-500 mb-1">Duration</div>
+                    <div className="text-xl font-semibold text-gray-900">{eventData.duration}</div>
+                  </div>
+                  <div className="bg-gray-50 p-4 rounded-lg">
+                    <div className="text-sm text-gray-500 mb-1">Age Limit</div>
+                    <div className="text-xl font-semibold text-gray-900">{eventData.ageLimit}</div>
+                  </div>
+                  <div className="bg-gray-50 p-4 rounded-lg">
+                    <div className="text-sm text-gray-500 mb-1">Tickets Left</div>
+                    <div className="text-xl font-semibold text-gray-900">{eventData.ticketsAvailable}</div>
+                  </div>
+                </div>
+
+                {/* Event Description */}
+                <div className="mb-6">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-3">About this Event</h3>
+                  <p className="text-gray-700 leading-relaxed">{eventData.details}</p>
+                </div>
+
+                {/* Performers */}
+                <div className="mb-6">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-3">Featured Performers</h3>
+                  <div className="flex flex-wrap gap-3">
+                    {eventData.performers.map((performer, index) => (
+                      <div
+                        key={index}
+                        className="flex items-center gap-3 bg-gray-50 p-3 rounded-lg"
+                      >
+                        <div className="w-12 h-12  rounded-full flex items-center justify-center text-black font-bold">
+                          {performer.name.charAt(0)}
+                        </div>
+                        <div>
+                          <div className="font-semibold text-gray-900">{performer.name}</div>
+                          <div className="text-sm text-gray-600">{performer.type}</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex flex-wrap gap-4">
+                  <button
+                    onClick={() => alert(`Booking tickets for ${eventData.title}`)}
+                    className="flex-1 min-w-[200px] bg-[#27bb97] hover:bg-[#1FA987] text-white font-semibold py-4 px-8 rounded-lg transition-colors flex items-center justify-center gap-3"
+                  >
+                    <Ticket size={20} />
+                    Book Tickets Now
+                  </button>
+                  <button
+                    onClick={() => handleMessage(eventData)}
+                    className="px-6 py-4 border-2 border-[#27bb97] text-[#27bb97] font-semibold rounded-lg hover:bg-[#27bb97] hover:text-white transition-colors"
+                  >
+                    <MessageCircle size={20} className="inline mr-2" />
+                    Contact Organizer
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
-        )}
+
+          {/* Event Features Grid */}
+          <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="bg-white p-4 rounded-lg border border-gray-200">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="p-2 bg-blue-100 rounded-lg">
+                  <Calendar size={20} className="text-blue-600" />
+                </div>
+                <div>
+                  <div className="font-semibold text-gray-900">Date & Time</div>
+                  <div className="text-sm text-gray-600">{eventData.date} • {eventData.time}</div>
+                </div>
+              </div>
+            </div>
+            
+            <div className="bg-white p-4 rounded-lg border border-gray-200">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="p-2 bg-green-100 rounded-lg">
+                  <MapPin size={20} className="text-green-600" />
+                </div>
+                <div>
+                  <div className="font-semibold text-gray-900">Venue</div>
+                  <div className="text-sm text-gray-600">{eventData.description}</div>
+                </div>
+              </div>
+            </div>
+            
+            <div className="bg-white p-4 rounded-lg border border-gray-200">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="p-2 bg-purple-100 rounded-lg">
+                  <Users size={20} className="text-purple-600" />
+                </div>
+                <div>
+                  <div className="font-semibold text-gray-900">Organizer</div>
+                  <div className="text-sm text-gray-600">{eventData.postedBy}</div>
+                </div>
+              </div>
+            </div>
+            
+            <div className="bg-white p-4 rounded-lg border border-gray-200">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="p-2 bg-orange-100 rounded-lg">
+                  <FaTag size={20} className="text-orange-600" />
+                </div>
+                <div>
+                  <div className="font-semibold text-gray-900">Category</div>
+                  <div className="text-sm text-gray-600">{eventData.category}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Google Maps Section - ADDED HERE */}
+          <EventMap eventData={eventData} />
+
+          {/* Search Section for Related Events */}
+          <div className="mt-12">
+            <div className="bg-white rounded-lg p-6 border border-gray-200">
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">Find Similar Events</h2>
+              
+              {/* Search Bar */}
+              <div className="flex flex-col lg:flex-row items-center gap-3 mb-6">
+                <div className="w-full lg:w-auto">
+                  <div className="relative">
+                    <select
+                      className="w-full pl-3 pr-10 py-3 text-base border border-gray-200 rounded-lg lg:rounded-l-lg lg:rounded-r-none text-gray-700 focus:outline-none appearance-none bg-white"
+                      value={eventType}
+                      onChange={(e) => setEventType(e.target.value)}
+                    >
+                      {eventTypes.map((type) => (
+                        <option key={type} value={type}>
+                          {type}
+                        </option>
+                      ))}
+                    </select>
+                    <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 pointer-events-none" />
+                  </div>
+                </div>
+
+                <div className="w-full lg:w-auto">
+                  <div className="relative">
+                    <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
+                    <input
+                      type="text"
+                      placeholder="Enter location..."
+                      className="w-full pl-10 pr-3 py-3 text-base border border-gray-200 bg-white text-gray-800 focus:outline-none rounded-lg lg:rounded-none"
+                      value={location}
+                      onChange={(e) => setLocation(e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                <div className="w-full lg:w-auto">
+                  <div className="relative">
+                    <select
+                      className="w-full pl-3 pr-10 py-3 text-base border border-gray-200 rounded-lg lg:rounded-none text-gray-700 focus:outline-none appearance-none bg-white"
+                      value={budget}
+                      onChange={(e) => setBudget(e.target.value)}
+                    >
+                      {budgetOptions.map((option) => (
+                        <option key={option} value={option}>
+                          {option}
+                        </option>
+                      ))}
+                    </select>
+                    <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 pointer-events-none" />
+                  </div>
+                </div>
+
+                <button
+                  onClick={handleSearch}
+                  className="w-full lg:w-auto px-6 flex items-center justify-center gap-2 bg-[#27bb97] text-white font-semibold rounded-lg lg:rounded-r-lg py-3 hover:bg-[#1FA987] shadow-lg hover:shadow-xl transition-all duration-200"
+                >
+                  <Search className="w-4 h-4" />
+                  Search Events
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Related Events Section */}
+      <div className="py-8 px-4 sm:px-8 lg:px-20">
+        <div className="">
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">Similar Events You Might Like</h2>
+          
+          {/* Tabs */}
+          <div className="flex border-b border-gray-200 mb-6">
+            <button
+              onClick={() => setMainTab("upcoming")}
+              className={`pb-4 px-6 font-medium transition-colors ${
+                mainTab === "upcoming"
+                  ? "text-gray-900 border-b-2 border-blue-600"
+                  : "text-gray-500 hover:text-gray-700"
+              }`}
+            >
+              Upcoming Events
+            </button>
+            <button
+              onClick={() => setMainTab("nearby")}
+              className={`pb-4 px-6 font-medium transition-colors ${
+                mainTab === "nearby"
+                  ? "text-gray-900 border-b-2 border-blue-600"
+                  : "text-gray-500 hover:text-gray-700"
+              }`}
+            >
+              Nearby Events
+            </button>
+            <button
+              onClick={() => setMainTab("category")}
+              className={`pb-4 px-6 font-medium transition-colors ${
+                mainTab === "category"
+                  ? "text-gray-900 border-b-2 border-blue-600"
+                  : "text-gray-500 hover:text-gray-700"
+              }`}
+            >
+              Same Category
+            </button>
+          </div>
+
+          {/* Event Cards Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-6">
+            {allEvents
+              .filter(event => event.id !== eventData.id)
+              .slice(0, 14)
+              .map((event) => (
+                <EventCard key={event.id} event={event} />
+              ))}
+          </div>
+        </div>
       </div>
     </div>
   );
