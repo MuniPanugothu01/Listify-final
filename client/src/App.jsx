@@ -16,6 +16,9 @@ import Reviews from "./pages/Home/Reviews.jsx";
 import Footer from "./pages/Home/Footer.jsx";
 import Gallery from "./pages/Home/Gallery.jsx";
 
+import ContactUs from "./pages/ContactPage/ContactUS.jsx";
+import AboutUs from "./pages/AboutPage/AboutUs.jsx";
+
 // Roommates
 import Roommates from "./pages/Roommates/Roommates.jsx";
 import RoomMateDetails from "./components/Roommates/RoomMateDetails.jsx";
@@ -148,6 +151,12 @@ const App = () => {
               }
             />
 
+
+            {/*Contacts Page */}
+            <Route path="/contact-us" element={<ContactUs/>} />
+            <Route path="/about-us" element={<AboutUs/>} />
+
+
             {/* Roommates */}
             <Route path="/roommates" element={<Roommates />} />
             <Route path="/roommate-details" element={<RoomMateDetails />} />
@@ -191,6 +200,7 @@ const App = () => {
 
         {/* Floating Buttons */}
         <div className="fixed bottom-6 right-8 z-50 flex flex-col items-end space-y-4">
+          {/* 
           {showScrollTop && !isScrolling && (
             <button
               onClick={scrollToTop}
@@ -212,6 +222,9 @@ const App = () => {
               </svg>
             </button>
           )}
+
+
+           */}
 
           <div
             className={`transition-all duration-500 ${
