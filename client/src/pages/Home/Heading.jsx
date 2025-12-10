@@ -6,7 +6,7 @@ const Heading = () => {
   return (
     <div className="flex flex-col items-center justify-center">
       <div className="text-center mt-20 leading-[70px]">
-        <h1 className="text-[#c89a5e] text-[40px] font-['Dancing_Script'] ">
+        <h1 className="text-[#27BB97] text-[40px] font-['Dancing_Script'] ">
           Time To Explore
         </h1>
         <h1 className="font-extrabold text-[90px]">OUR CATEGORIES</h1>

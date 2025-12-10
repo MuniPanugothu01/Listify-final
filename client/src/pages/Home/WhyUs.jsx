@@ -9,14 +9,14 @@ const WhyUs = () => {
         <h1 className="text-6xl md:text-7xl font-black text-gray-900 mb-4 tracking-tight uppercase">
           Why Listify?
         </h1>
-        <div className="w-24 h-1.5 bg-[#c89a5e] mx-auto rounded-full"></div>
+        <div className="w-24 h-1.5 bg-[#27BB97] mx-auto rounded-full"></div>
       </div>
 
       {/* ======= 01: How It Works ======= */}
       <div className="flex items-center justify-between w-full px-10 py-6">
         {/* Left side - Text content */}
         <div className="w-[50%] text-black">
-          <h1 className="text-[#c89a5e] font-bold text-[25px] mb-3 uppercase">
+          <h1 className="text-black font-bold text-[25px] mb-3 uppercase">
             How Listify Works
           </h1>
           <p className="text-gray-700 text-justify leading-relaxed">
@@ -39,7 +39,7 @@ const WhyUs = () => {
 
         {/* Center - Step Number */}
         <div className="flex flex-col items-center gap-3 pl-10">
-          <h1 className="font-extrabold text-[60px] text-[#c89a5e]">01</h1>
+          <h1 className="font-extrabold text-[60px] text-[#27BB97]">01</h1>
           {[...Array(10)].map((_, i) => (
             <div key={i} className="bg-gray-300 h-3 w-3 rounded-full" />
           ))}
@@ -47,7 +47,7 @@ const WhyUs = () => {
 
         {/* Right side - Image */}
         <div className="w-[50%] flex flex-col justify-end items-end">
-          <div className="w-70 h-70 bg-[#c89a5e] rounded-full flex items-center justify-center overflow-hidden shadow-md">
+          <div className="w-70 h-70 bg-[#27BB97] rounded-full flex items-center justify-center overflow-hidden shadow-md">
             <img
               src="/Howworksgirl.png"
               alt="How Listify Works"
@@ -61,7 +61,7 @@ const WhyUs = () => {
       <div className="flex items-center justify-between w-full px-10 py-6">
         {/* Left side - Circular image */}
         <div className="w-[50%] flex flex-col justify-start items-left">
-          <div className="w-70 h-70 bg-[#c89a5e] rounded-full flex items-center justify-center overflow-hidden shadow-md">
+          <div className="w-70 h-70 bg-[#27BB97] rounded-full flex items-center justify-center overflow-hidden shadow-md">
             <img
               src="/Howworks3.png"
               alt="Why Choose Listify"
@@ -72,7 +72,7 @@ const WhyUs = () => {
 
         {/* Center - Step Number */}
         <div className="flex flex-col items-center gap-3 pl-10">
-          <h1 className="font-extrabold text-[60px] text-[#c89a5e]">02</h1>
+          <h1 className="font-extrabold text-[60px] text-[#27BB97]">02</h1>
           {[...Array(10)].map((_, i) => (
             <div key={i} className="bg-gray-300 h-3 w-3 rounded-full" />
           ))}
@@ -80,7 +80,7 @@ const WhyUs = () => {
 
         {/* Right side - Text content */}
         <div className="w-[50%] text-black pl-10">
-          <h1 className="text-[#c89a5e] font-bold text-[25px] mb-3 uppercase">
+          <h1 className="text-black font-bold text-[25px] mb-3 uppercase">
             Why Choose Listify
           </h1>
           <p className="text-gray-700 text-justify leading-relaxed">
@@ -105,7 +105,7 @@ const WhyUs = () => {
       <div className="flex items-center justify-between w-full px-10 py-6">
         {/* Left side - Text content */}
         <div className="w-[50%] text-black">
-          <h1 className="text-[#c89a5e] font-bold text-[25px] mb-3 uppercase">
+          <h1 className="text-black font-bold text-[25px] mb-3 uppercase">
             Categories on Listify
           </h1>
           <p className="text-gray-700 text-justify leading-relaxed">
@@ -115,37 +115,37 @@ const WhyUs = () => {
           </p>
           <ul className="mt-3 space-y-2 text-gray-700">
             <li className="flex items-center gap-2">
-              <FaArrowRight className="text-[#c89a5e]" />
+              <FaArrowRight className="text-black" />
               <span>Real Estate – Buy, Sell, or Rent Property</span>
             </li>
             <li className="flex items-center gap-2">
-              <FaArrowRight className="text-[#c89a5e]" />
+              <FaArrowRight className="text-black" />
               <span>Vehicles – Cars, Bikes, and Spare Parts</span>
             </li>
             <li className="flex items-center gap-2">
-              <FaArrowRight className="text-[#c89a5e]" />
+              <FaArrowRight className="text-black" />
               <span>Jobs – Full-time, Part-time, and Freelance</span>
             </li>
             <li className="flex items-center gap-2">
-              <FaArrowRight className="text-[#c89a5e]" />
+              <FaArrowRight className="text-black" />
               <span>Services – Home repair, Education, Events, and more</span>
             </li>
             <li className="flex items-center gap-2">
-              <FaArrowRight className="text-[#c89a5e]" />
+              <FaArrowRight className="text-black" />
               <span>Electronics – Mobiles, Laptops, and Gadgets</span>
             </li>
             <li className="flex items-center gap-2">
-              <FaArrowRight className="text-[#c89a5e]" />
+              <FaArrowRight className="text-black" />
               <span>
                 For Sale – Furniture, Fashion, Books, and Miscellaneous
               </span>
             </li>
             <li className="flex items-center gap-2">
-              <FaArrowRight className="text-[#c89a5e]" />
+              <FaArrowRight className="text-black" />
               <span>Pets – Adoption, Accessories, and Veterinary</span>
             </li>
             <li className="flex items-center gap-2">
-              <FaArrowRight className="text-[#c89a5e]" />
+              <FaArrowRight className="text-black" />
               <span>Community – Events, Activities, and Networking</span>
             </li>
           </ul>
@@ -158,7 +158,7 @@ const WhyUs = () => {
 
         {/* Center - Step Number */}
         <div className="flex flex-col items-center gap-3 pl-10">
-          <h1 className="font-extrabold text-[60px] text-[#c89a5e]">03</h1>
+          <h1 className="font-extrabold text-[60px] text-[#27BB97]">03</h1>
           {[...Array(10)].map((_, i) => (
             <div key={i} className="bg-gray-300 h-3 w-3 rounded-full" />
           ))}
@@ -166,7 +166,7 @@ const WhyUs = () => {
 
         {/* Right side - Circular image */}
         <div className="w-[50%] flex flex-col justify-end items-end">
-          <div className="w-70 h-70 bg-[#c89a5e] rounded-full flex items-center justify-center overflow-hidden shadow-md">
+          <div className="w-70 h-70 bg-[#27BB97] rounded-full flex items-center justify-center overflow-hidden shadow-md">
             <img
               src="/Whyrobo.png"
               alt="Listify Categories"

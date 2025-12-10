@@ -4,7 +4,7 @@ const TrendingCategories = () => {
   return (
     <div className="mt-15 flex  flex-col text-center min-h-screen px-10">
       <div className="">
-        <h1 className="font-extrabold text-[70px] max-w-3xl mx-auto uppercase text-gray-700 leading-[70px]">
+        <h1 className="font-extrabold text-[70px] max-w-3xl mx-auto uppercase text-black leading-[70px]">
           Trending Categories of 2025
         </h1>
       </div>

@@ -77,7 +77,7 @@ const Questions = () => {
 
           <div className="bg-[#2F3A63] border-2 border-[#2F3A63] text-[17px] cursor-pointer shadow-xl px-4 py-3 rounded-xl text-white flex items-center gap-2">
             <GoArrowUpRight size={20}/>
-            Ask A Question
+            Contact Us
           </div>
         </div>
 

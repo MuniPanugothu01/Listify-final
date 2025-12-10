@@ -65,7 +65,7 @@ const StarRating = ({ rating }) => (
     {[...Array(5)].map((_, index) => (
       <FaStar
         key={index}
-        className={`text-lg ${index < rating ? "text-[#C89A5E]" : "text-gray-300"}`}
+        className={`text-lg ${index < rating ? "text-yellow-300" : "text-gray-300"}`}
       />
     ))}
   </div>
@@ -84,8 +84,8 @@ const ReviewCard = ({ name, position, description, rating, imageSrc }) => (
 
     <div className="p-6 pt-8 relative -mt-4">
       <h3 className="text-2xl font-bold text-gray-800 mb-2">{name}</h3>
-      <div className="w-12 h-1 bg-gradient-to-r from-[#C89A5E] to-[#E6C9A8] mx-auto mb-3 rounded-full"></div>
-      <p className="text-[#C89A5E] font-semibold text-sm uppercase tracking-wide mb-3">{position}</p>
+      <div className="w-12 h-1 bg-[#27BB97] mx-auto mb-3 rounded-full"></div>
+      <p className="text-black font-semibold text-sm uppercase tracking-wide mb-3">{position}</p>
       <StarRating rating={rating} />
       <p className="text-gray-600 text-base leading-relaxed mb-6">{description}</p>
     </div>
@@ -114,7 +114,7 @@ const Reviews = () => {
           <p className="text-xl text-gray-600 mb-6 max-w-2xl mx-auto">
             Discover what our satisfied users say about their Listify experience. Real feedback from real people in our community.
           </p>
-          <div className="w-20 h-1 bg-gradient-to-r from-[#C89A5E] to-[#E6C9A8] mx-auto rounded-full"></div>
+          <div className="w-20 h-1 bg-[#27BB97] mx-auto rounded-full"></div>
         </div>
 
         <div className="relative">
@@ -141,7 +141,7 @@ const Reviews = () => {
             {/* ⬅️ Prev Button */}
             <button
               onClick={handlePrev}
-              className="bg-white text-gray-800 w-12 h-12 rounded-full shadow-lg flex items-center justify-center border border-[#C89A5E]/20 hover:bg-[#C89A5E] hover:text-white transition-all duration-300"
+              className="bg-white text-gray-800 w-12 h-12 rounded-full shadow-lg flex items-center justify-center border border-[#C89A5E]/20 hover:bg-gray-200 hover:text-white transition-all duration-300"
             >
               <FaChevronLeft className="text-lg" />
             </button>
@@ -149,7 +149,7 @@ const Reviews = () => {
             {/* ➡️ Next Button */}
             <button
               onClick={handleNext}
-              className="bg-white text-gray-800 w-12 h-12 rounded-full shadow-lg flex items-center justify-center border border-[#C89A5E]/20 hover:bg-[#C89A5E] hover:text-white transition-all duration-300"
+              className="bg-white text-gray-800 w-12 h-12 rounded-full shadow-lg flex items-center justify-center border border-[#C89A5E]/20 hover:bg-gray-200 hover:text-white transition-all duration-300"
             >
               <FaChevronRight className="text-lg" />
             </button>
