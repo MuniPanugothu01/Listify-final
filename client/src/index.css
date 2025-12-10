@@ -200,3 +200,26 @@ html {
     @apply bg-background text-foreground;
   }
 }
+
+
+
+/* jobs herosection buttons  */
+
+@property --gradient-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes border-rotate {
+  0% {
+    --gradient-angle: 0deg;
+  }
+  100% {
+    --gradient-angle: 360deg;
+  }
+}
+
+.animate-border-rotate {
+  animation: border-rotate 3s linear infinite;
+}
