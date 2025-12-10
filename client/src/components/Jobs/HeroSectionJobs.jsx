@@ -97,77 +97,81 @@ export default function HeroSectionJobs() {
             />
 
             {/* Professional Buttons with ALWAYS VISIBLE Continuously Moving Border Animations */}
-<div className="flex items-center gap-3 absolute top-3 left-32">
-  {/* I Offer a Job Button */}
-  <button
-    className="relative h-11 px-4 bg-gray-200 font-semibold text-gray-800 capitalize rounded-xl 
+            <div className="flex items-center gap-3 absolute top-3 left-32">
+              {/* I Offer a Job Button */}
+              <button
+                className="relative h-11 px-4 bg-gray-200 font-semibold text-gray-800 capitalize rounded-xl 
       min-w-[140px] hover:bg-gray-300 transition-all duration-300
       shadow-sm cursor-pointer overflow-hidden group"
-  >
-    {/* Animated border - ALWAYS VISIBLE */}
-    <div className="absolute -inset-0.5 rounded-xl pointer-events-none"
-      style={{
-        background: 'conic-gradient(from var(--gradient-angle, 0deg), #27bb97, #2d7dd7, #27bb97, #2d7dd7, #27bb97)',
-        animation: 'border-rotate 3s linear infinite',
-      }}
-    ></div>
-    
-    {/* Inner background to cover the center */}
-    <div className="absolute inset-0.5 bg-gray-200 rounded-lg group-hover:bg-gray-300 transition-colors duration-300"></div>
-    
-    <span className="relative z-10 flex items-center justify-center gap-2">
-      <svg
-        className="w-5 h-5"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth="2"
-          d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-        />
-      </svg>
-      I Offer a Job
-    </span>
-  </button>
+              >
+                {/* Animated border - ALWAYS VISIBLE */}
+                <div
+                  className="absolute -inset-0.5 rounded-xl pointer-events-none"
+                  style={{
+                    background:
+                      "conic-gradient(from var(--gradient-angle, 0deg), #27bb97, #2d7dd7, #27bb97, #2d7dd7, #27bb97)",
+                    animation: "border-rotate 3s linear infinite",
+                  }}
+                ></div>
 
-  {/* I Need a Job Button */}
-  <button
-    className="relative h-11 px-4 bg-gray-200 font-semibold text-gray-800 capitalize rounded-xl 
+                {/* Inner background to cover the center */}
+                <div className="absolute inset-0.5 bg-gray-200 rounded-lg group-hover:bg-gray-300 transition-colors duration-300"></div>
+
+                <span className="relative z-10 flex items-center justify-center gap-2">
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                    />
+                  </svg>
+                  I Offer a Job
+                </span>
+              </button>
+
+              {/* I Need a Job Button */}
+              <button
+                className="relative h-11 px-4 bg-gray-200 font-semibold text-gray-800 capitalize rounded-xl 
       min-w-[140px] hover:bg-gray-300 transition-all duration-300
       shadow-sm cursor-pointer overflow-hidden group"
-  >
-    {/* Animated border - ALWAYS VISIBLE */}
-    <div className="absolute -inset-0.5 rounded-xl pointer-events-none"
-      style={{
-        background: 'conic-gradient(from var(--gradient-angle, 0deg), #2d7dd7, #27bb97, #2d7dd7, #27bb97, #2d7dd7)',
-        animation: 'border-rotate 3s linear infinite',
-      }}
-    ></div>
-    
-    {/* Inner background to cover the center */}
-    <div className="absolute inset-0.5 bg-gray-200 rounded-lg group-hover:bg-gray-300 transition-colors duration-300"></div>
-    
-    <span className="relative z-10 flex items-center justify-center gap-2">
-      <svg
-        className="w-5 h-5"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth="2"
-          d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-        />
-      </svg>
-      I Need a Job
-    </span>
-  </button>
-</div>
+              >
+                {/* Animated border - ALWAYS VISIBLE */}
+                <div
+                  className="absolute -inset-0.5 rounded-xl pointer-events-none"
+                  style={{
+                    background:
+                      "conic-gradient(from var(--gradient-angle, 0deg), #2d7dd7, #27bb97, #2d7dd7, #27bb97, #2d7dd7)",
+                    animation: "border-rotate 3s linear infinite",
+                  }}
+                ></div>
+
+                {/* Inner background to cover the center */}
+                <div className="absolute inset-0.5 bg-gray-200 rounded-lg group-hover:bg-gray-300 transition-colors duration-300"></div>
+
+                <span className="relative z-10 flex items-center justify-center gap-2">
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                  I Need a Job
+                </span>
+              </button>
+            </div>
 
             {/* create resume */}
 
@@ -185,7 +189,7 @@ export default function HeroSectionJobs() {
             </div>
 
             {/* second image */}
-            <div className="absolute bg-white/20 bottom-2 z-50 -left-34  backdrop-blur-lg p-2 rounded-xl border-2 border-white w-fit">
+            <div className="absolute bg-white/20 bottom-2 z-10 -left-34  backdrop-blur-lg p-2 rounded-xl border-2 border-white w-fit">
               {/* <img src="/JobsImg/JobImg2.png" alt="" className="absolute h-40 -right-10 top-10"/> */}
               <img
                 src="/JobsImg/videoImg2.jpg"
@@ -210,11 +214,11 @@ export default function HeroSectionJobs() {
           <div className="absolute bottom-0 h-[100px] w-full bg-gradient-to-t from-white to-transparent" />
         </div>
 
-        <img
+        {/* <img
           src="/JobsImg/ribben.png"
           alt=""
           className="absolute z-0 right-110 h-[600px]"
-        />
+        /> */}
       </div>
     </div>
   );

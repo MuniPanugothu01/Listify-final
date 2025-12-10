@@ -4,6 +4,7 @@ import React from "react";
 import HeroSectionJobs from "../../components/Jobs/HeroSectionJobs";
 import FeaturedJobs from "../../components/Jobs/FeaturedJobs";
 import SubNavbar from "../../components/Jobs/SubNavbar";
+import CompaniesLIst from "../../components/Jobs/CompaniesLIst";
 
 const JobsPage = () => {
   return (
@@ -11,6 +12,7 @@ const JobsPage = () => {
       <SubNavbar />
       <HeroSectionJobs />
       <FeaturedJobs />
+      <CompaniesLIst/>
     </div>
   );
 };
