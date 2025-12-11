@@ -1,7 +1,10 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Bookmark, ChevronLeft, ChevronRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export default function FeaturedJobs() {
+  const navigate = useNavigate();
+  
   const jobs = [
     {
       id: 1,
@@ -111,15 +114,24 @@ export default function FeaturedJobs() {
     }
   };
 
-  const toggleSave = (id) => {
+  const toggleSave = (id, e) => {
+    e.stopPropagation(); // Prevent card click when clicking save button
     setSavedJobs(prev => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  const handleViewAllPositions = () => {
+    navigate("/job-search");
+  };
+
+  const handleCardClick = (jobId) => {
+    navigate("/job-search", { state: { selectedJobId: jobId } });
   };
 
   // Mouse drag handlers
   const handleMouseDown = (e) => {
     setIsDragging(true);
     setStartX(e.pageX - containerRef.current.offsetLeft);
-    setScrollLeft(startIndex * 340); // Store current scroll position
+    setScrollLeft(startIndex * 340);
     e.preventDefault();
   };
 
@@ -136,13 +148,11 @@ export default function FeaturedJobs() {
     e.preventDefault();
     
     const x = e.pageX - containerRef.current.offsetLeft;
-    const walk = (x - startX) * 2; // Scroll-fast factor
+    const walk = (x - startX) * 2;
     
-    // Calculate new index based on drag distance
     const cardWidth = 340;
     const dragIndex = Math.round((scrollLeft - walk) / cardWidth);
     
-    // Clamp the index to valid range
     const clampedIndex = Math.max(0, Math.min(dragIndex, jobs.length - cardsPerRow));
     
     setStartIndex(clampedIndex);
@@ -224,7 +234,8 @@ export default function FeaturedJobs() {
           {jobs.map((job) => (
             <div
               key={job.id}
-              className="min-w-[300px] md:min-w-[340px] bg-white rounded-3xl p-5 md:p-6 shadow-md hover:shadow-xl transition-all border border-gray-200 hover:border-green-300 select-text"
+              onClick={() => handleCardClick(job.id)}
+              className="min-w-[300px] md:min-w-[340px] bg-white rounded-3xl p-5 md:p-6 shadow-md hover:shadow-xl transition-all border border-gray-200 hover:border-green-300 select-text cursor-pointer"
               style={{ pointerEvents: isDragging ? 'none' : 'auto' }}
             >
               {/* Header */}
@@ -242,8 +253,8 @@ export default function FeaturedJobs() {
                 </div>
 
                 <button 
-                  onClick={() => toggleSave(job.id)}
-                  className="flex items-center gap-2 px-3 md:px-4 py-1.5 md:py-2 rounded-lg border border-gray-300 hover:bg-gray-50 transition"
+                  onClick={(e) => toggleSave(job.id, e)}
+                  className="flex items-center gap-2 px-3 md:px-4 py-1.5 md:py-2 rounded-lg border border-gray-300 hover:bg-gray-50 transition z-20"
                 >
                   <span
                     className={`text-sm font-medium ${
@@ -341,11 +352,14 @@ export default function FeaturedJobs() {
       </div>
 
       {/* View More Button */}
-        <div className="text-center mt-16">
-          <button className="px-8 py-3 border-2 border-[#27bb97] text-[#27bb97] font-semibold rounded-lg hover:bg-[#27bb97] hover:text-white transition-all duration-300 hover:shadow-lg cursor-pointer">
-            View All Positions →
-          </button>
-        </div>
+      <div className="text-center mt-16">
+        <button 
+          onClick={handleViewAllPositions}
+          className="px-8 py-3 border-2 border-[#27bb97] text-[#27bb97] font-semibold rounded-lg hover:bg-[#27bb97] hover:text-white transition-all duration-300 hover:shadow-lg cursor-pointer"
+        >
+          View All Positions →
+        </button>
+      </div>
     </div>
   );
 }

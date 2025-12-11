@@ -15,6 +15,7 @@ import Questions from "./pages/Home/Questions.jsx";
 import Reviews from "./pages/Home/Reviews.jsx";
 import Footer from "./pages/Home/Footer.jsx";
 import Gallery from "./pages/Home/Gallery.jsx";
+import FeaturedJobs from "./components/Jobs/FeaturedJobs.jsx"; // Import FeaturedJobs
 
 import ContactUs from "./pages/ContactPage/ContactUS.jsx";
 import AboutUs from "./pages/AboutPage/AboutUs.jsx";
@@ -37,6 +38,7 @@ import RentalDetailsPage from "./components/Rentals/RentalDetailsPage.jsx";
 
 // Jobs
 import JobsPage from "./pages/JobsPage/JobsPage.jsx";
+import JobSearchPortal from "./components/Jobs/JobSearchPortal.jsx"; // Import JobSearchPortal
 
 // Profile
 import Profile from "./pages/Home/Profile.jsx";
@@ -144,6 +146,7 @@ const App = () => {
                   <Heading />
                   <Gallery />
                   <TrendingCategories />
+                  <FeaturedJobs /> {/* Add FeaturedJobs component here */}
                   <WhyUs />
                   <Reviews />
                   <Questions />
@@ -151,11 +154,9 @@ const App = () => {
               }
             />
 
-
-            {/*Contacts Page */}
+            {/* Contacts Page */}
             <Route path="/contact-us" element={<ContactUs/>} />
             <Route path="/about-us" element={<AboutUs/>} />
-
 
             {/* Roommates */}
             <Route path="/roommates" element={<Roommates />} />
@@ -167,8 +168,9 @@ const App = () => {
             <Route path="/rentals-details" element={<RentalsListings />} />
             <Route path="/details" element={<RentalDetailsPage />} />
 
-            {/* Jobs (FIXED ROUTE) */}
+            {/* Jobs */}
             <Route path="/jobs" element={<JobsPage />} />
+            <Route path="/job-search" element={<JobSearchPortal />} /> {/* Add JobSearchPortal route */}
 
             {/* Events */}
             <Route path="/events" element={<Events />} />
@@ -200,32 +202,6 @@ const App = () => {
 
         {/* Floating Buttons */}
         <div className="fixed bottom-6 right-8 z-50 flex flex-col items-end space-y-4">
-          {/* 
-          {showScrollTop && !isScrolling && (
-            <button
-              onClick={scrollToTop}
-              className="w-12 h-12 bg-[#2D7A82] hover:bg-[#1FA987] text-white rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
-              aria-label="Scroll to top"
-            >
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M5 10l7-7m0 0l7 7m-7-7v18"
-                />
-              </svg>
-            </button>
-          )}
-
-
-           */}
-
           <div
             className={`transition-all duration-500 ${
               showScrollTop ? "translate-y-0" : "translate-y-2"
