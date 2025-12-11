@@ -38,7 +38,7 @@ export default function JobSeekerPosts() {
         {/* Header Section */}
         <div className="text-center mb-14">
           <h1 className="text-4xl font-bold text-gray-900 mb-3 tracking-tight">
-            Latest Job Seeker Profiles
+            Job Seeker Resumes in The <span className="text-[#27bb97] ">USA</span> and <span className="text-[#27bb97] ">Canada</span>
           </h1>
           <p className="text-gray-600 text-lg mb-4 max-w-2xl mx-auto">
             Discover talented professionals actively seeking new opportunities

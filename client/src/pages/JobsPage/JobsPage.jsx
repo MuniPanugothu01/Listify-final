@@ -9,6 +9,7 @@ import JobSeekerPosts from "../../components/Jobs/JobSeekerPosts";
 import LatestJobs from "../../components/Jobs/LatestJobs";
 import LatestsJobs2 from "../../components/Jobs/LatestsJobs2";
 import FeaturedRecruiters from "../../components/Jobs/FeaturedRecruiters";
+import FreelancerGrid from "../../components/Jobs/FreelancerGrid";
 
 
 const JobsPage = () => {
@@ -18,10 +19,11 @@ const JobsPage = () => {
       <HeroSectionJobs />
       <FeaturedJobs />
       <CompaniesLIst/>
-      <JobSeekerPosts/>
+      <FreelancerGrid/>
       {/* <LatestJobs/> */}
       <LatestsJobs2/>
       <FeaturedRecruiters/>
+      <JobSeekerPosts/>
     </div>
   );
 };

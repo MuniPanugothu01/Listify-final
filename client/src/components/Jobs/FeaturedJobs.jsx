@@ -341,11 +341,11 @@ export default function FeaturedJobs() {
       </div>
 
       {/* View More Button */}
-      <div className="flex justify-center mt-10 md:mt-12">
-        <button className="px-7 md:px-8 py-3 text-black border-2 border-gray-200 rounded-xl text-base md:text-lg font-medium hover:bg-gray-200 hover:border-gray-300 transition">
-          View More
-        </button>
-      </div>
+        <div className="text-center mt-16">
+          <button className="px-8 py-3 border-2 border-[#27bb97] text-[#27bb97] font-semibold rounded-lg hover:bg-[#27bb97] hover:text-white transition-all duration-300 hover:shadow-lg cursor-pointer">
+            View All Positions →
+          </button>
+        </div>
     </div>
   );
 }
