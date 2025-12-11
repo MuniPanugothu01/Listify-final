@@ -6,7 +6,8 @@ import FeaturedJobs from "../../components/Jobs/FeaturedJobs";
 import SubNavbar from "../../components/Jobs/SubNavbar";
 import CompaniesLIst from "../../components/Jobs/CompaniesLIst";
 import JobSeekerPosts from "../../components/Jobs/JobSeekerPosts";
-
+import LatestJobs from "../../components/Jobs/LatestJobs";
+import LatestsJobs2 from "../../components/Jobs/LatestsJobs2";
 
 
 const JobsPage = () => {
@@ -17,6 +18,8 @@ const JobsPage = () => {
       <FeaturedJobs />
       <CompaniesLIst/>
       <JobSeekerPosts/>
+      {/* <LatestJobs/> */}
+      <LatestsJobs2/>
     </div>
   );
 };

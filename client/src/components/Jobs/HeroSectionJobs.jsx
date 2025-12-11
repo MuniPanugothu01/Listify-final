@@ -214,11 +214,11 @@ export default function HeroSectionJobs() {
           <div className="absolute bottom-0 h-[100px] w-full bg-gradient-to-t from-white to-transparent" />
         </div>
 
-        {/* <img
+        <img
           src="/JobsImg/ribben.png"
           alt=""
           className="absolute z-0 right-110 h-[600px]"
-        /> */}
+        />
       </div>
     </div>
   );

@@ -169,15 +169,9 @@ export default function JobSeekerPosts() {
         </div>
 
         {/* View More Button */}
-        <div className="text-center">
-          <button
-            className="group px-8 py-3.5 border-2 border-gray-300 text-gray-700 rounded-xl hover:border-emerald-400 hover:bg-white hover:shadow-xl transition-all duration-300 font-medium cursor-pointer"
-            aria-label="View more job seeker profiles"
-          >
-            <span className="group-hover:text-emerald-600 transition-colors">
-              View More Profiles
-            </span>
-            <span className="ml-2 group-hover:ml-3 transition-all">→</span>
+        <div className="text-center mt-16">
+          <button className="px-8 py-3 border-2 border-[#27bb97] text-[#27bb97] font-semibold rounded-lg hover:bg-[#27bb97] hover:text-white transition-all duration-300 hover:shadow-lg cursor-pointer">
+            View All Positions →
           </button>
         </div>
       </div>
