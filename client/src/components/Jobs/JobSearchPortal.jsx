@@ -817,151 +817,151 @@ const JobSearchPortal = () => {
                 </div>
               </div>
 
-           {/* Job Cards - Display only visible jobs */}
-<div className="space-y-5 cursor-pointer">
-  {visibleJobs.map((job) => (
-    <div
-      key={job.id}
-      className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-xl transition-all duration-300 relative group"
-    >
-      {/* Featured Tag - MOVED TO TOP */}
-      {job.featured && (
-        <div className="absolute -top-3 left-6">
-          <span className="bg-gradient-to-r from-red-500 to-red-600 text-white text-xs font-semibold px-4 py-1.5 rounded-full shadow-lg">
-            Featured
-          </span>
-        </div>
-      )}
+              {/* Job Cards - Display only visible jobs */}
+              <div className="space-y-5 cursor-pointer">
+                {visibleJobs.map((job) => (
+                  <div
+                    key={job.id}
+                    className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-xl transition-all duration-300 relative group"
+                  >
+                    {/* Featured Tag - MOVED TO TOP */}
+                    {job.featured && (
+                      <div className="absolute -top-3 left-6">
+                        <span className="bg-gradient-to-r from-red-500 to-red-600 text-white text-xs font-semibold px-4 py-1.5 rounded-full shadow-lg">
+                          Featured
+                        </span>
+                      </div>
+                    )}
 
-      {/* APPLY NOW - TOP RIGHT */}
-      <button className="absolute top-6 right-6 px-4 py-2 bg-gradient-to-r from-[#27bb97] to-[#1fa987] text-white text-sm font-semibold rounded-lg hover:shadow-lg transition-all duration-200 transform hover:-translate-y-0.5 cursor-pointer">
-        Apply Now
-      </button>
+                    {/* APPLY NOW - TOP RIGHT */}
+                    <button className="absolute top-6 right-6 px-4 py-2 bg-gradient-to-r from-[#27bb97] to-[#1fa987] text-white text-sm font-semibold rounded-lg hover:shadow-lg transition-all duration-200 transform hover:-translate-y-0.5 cursor-pointer">
+                      Apply Now
+                    </button>
 
-      <div className="flex">
-        {/* Company Logo */}
-        <div className="flex-shrink-0 mr-6">
-          <div className="w-16 h-16 bg-white rounded-xl border border-gray-200 p-2 shadow-sm flex items-center justify-center">
-            <img
-              src={job.logo}
-              alt={job.company}
-              className="w-full h-full object-contain"
-              onError={(e) => {
-                e.target.style.display = "none";
-                e.target.parentElement.innerHTML = `
+                    <div className="flex">
+                      {/* Company Logo */}
+                      <div className="flex-shrink-0 mr-6">
+                        <div className="w-16 h-16 bg-white rounded-xl border border-gray-200 p-2 shadow-sm flex items-center justify-center">
+                          <img
+                            src={job.logo}
+                            alt={job.company}
+                            className="w-full h-full object-contain"
+                            onError={(e) => {
+                              e.target.style.display = "none";
+                              e.target.parentElement.innerHTML = `
                   <span class='text-lg font-bold text-gray-600'>
                     ${job.company.charAt(0)}
                   </span>
                 `;
-              }}
-            />
-          </div>
-        </div>
+                            }}
+                          />
+                        </div>
+                      </div>
 
-        {/* MAIN CONTENT */}
-        <div className="flex-1">
-          {/* Title and Company */}
-          <div className="mb-4">
-            <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-[#27bb97] transition-colors">
-              {job.title}
-            </h3>
-            <div className="flex items-center gap-4">
-              <p className="text-gray-600 font-medium text-lg">
-                {job.company}
-              </p>
-              <span className="text-gray-400">•</span>
-              <div className="flex items-center text-gray-500">
-                <MapPin className="w-4 h-4 mr-2" />
-                <span className="text-sm">{job.location}</span>
+                      {/* MAIN CONTENT */}
+                      <div className="flex-1">
+                        {/* Title and Company */}
+                        <div className="mb-4">
+                          <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-[#27bb97] transition-colors">
+                            {job.title}
+                          </h3>
+                          <div className="flex items-center gap-4">
+                            <p className="text-gray-600 font-medium text-lg">
+                              {job.company}
+                            </p>
+                            <span className="text-gray-400">•</span>
+                            <div className="flex items-center text-gray-500">
+                              <MapPin className="w-4 h-4 mr-2" />
+                              <span className="text-sm">{job.location}</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Remote Type Badge */}
+                        <span
+                          className={`inline-block px-3 py-1.5 rounded-lg text-xs font-semibold mb-4 ${
+                            job.remoteType === "Remote"
+                              ? "bg-green-50 text-green-700 border border-green-200"
+                              : job.remoteType === "Hybrid"
+                              ? "bg-blue-50 text-blue-700 border border-blue-200"
+                              : "bg-purple-50 text-purple-700 border border-purple-200"
+                          }`}
+                        >
+                          {job.remoteType}
+                        </span>
+
+                        {/* Job Description */}
+                        <p className="text-sm text-gray-600 mb-6 line-clamp-2 leading-relaxed">
+                          {job.description}
+                        </p>
+
+                        {/* Info Row */}
+                        <div className="grid grid-cols-4 gap-8 mb-6">
+                          <div className="space-y-1">
+                            <p className="text-gray-500 text-xs font-medium uppercase tracking-wider">
+                              Experience
+                            </p>
+                            <p className="font-semibold text-gray-900 flex items-center">
+                              <Briefcase className="w-4 h-4 mr-2 text-gray-400" />
+                              {job.experience}
+                            </p>
+                          </div>
+
+                          <div className="space-y-1">
+                            <p className="text-gray-500 text-xs font-medium uppercase tracking-wider">
+                              Job Type
+                            </p>
+                            <p className="font-semibold text-gray-900 flex items-center">
+                              <Clock className="w-4 h-4 mr-2 text-gray-400" />
+                              {job.jobType}
+                            </p>
+                          </div>
+
+                          <div className="space-y-1">
+                            <p className="text-gray-500 text-xs font-medium uppercase tracking-wider">
+                              Salary
+                            </p>
+                            <p className="font-semibold text-gray-900 flex items-center">
+                              <DollarSign className="w-4 h-4 mr-2 text-gray-400" />
+                              {job.salary}
+                              <span className="text-gray-500 text-sm ml-1">
+                                /year
+                              </span>
+                            </p>
+                          </div>
+
+                          <div className="space-y-1">
+                            <p className="text-gray-500 text-xs font-medium uppercase tracking-wider">
+                              Posted
+                            </p>
+                            <p className="font-semibold text-gray-900">
+                              {job.postedDays} days ago
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Footer */}
+                        <div className="flex justify-between items-center pt-5 border-t border-gray-100">
+                          <div className="flex items-center space-x-6">
+                            <button className="flex items-center space-x-2 text-gray-500 hover:text-[#27bb97] transition-colors duration-200 group/save">
+                              <Bookmark className="w-4 h-4 group-hover/save:fill-[#27bb97]" />
+                              <span className="text-sm font-medium">
+                                Save Job
+                              </span>
+                            </button>
+                            <button className="text-gray-500 hover:text-[#27bb97] text-sm font-medium transition-colors duration-200">
+                              View Details
+                            </button>
+                          </div>
+                          <button className="px-5 py-2 border border-gray-300 rounded-lg text-sm font-medium hover:border-[#27bb97] hover:text-[#27bb97] transition-all duration-200">
+                            Quick Apply
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
-            </div>
-          </div>
-
-          {/* Remote Type Badge */}
-          <span
-            className={`inline-block px-3 py-1.5 rounded-lg text-xs font-semibold mb-4 ${
-              job.remoteType === "Remote"
-                ? "bg-green-50 text-green-700 border border-green-200"
-                : job.remoteType === "Hybrid"
-                ? "bg-blue-50 text-blue-700 border border-blue-200"
-                : "bg-purple-50 text-purple-700 border border-purple-200"
-            }`}
-          >
-            {job.remoteType}
-          </span>
-
-          {/* Job Description */}
-          <p className="text-sm text-gray-600 mb-6 line-clamp-2 leading-relaxed">
-            {job.description}
-          </p>
-
-          {/* Info Row */}
-          <div className="grid grid-cols-4 gap-8 mb-6">
-            <div className="space-y-1">
-              <p className="text-gray-500 text-xs font-medium uppercase tracking-wider">
-                Experience
-              </p>
-              <p className="font-semibold text-gray-900 flex items-center">
-                <Briefcase className="w-4 h-4 mr-2 text-gray-400" />
-                {job.experience}
-              </p>
-            </div>
-
-            <div className="space-y-1">
-              <p className="text-gray-500 text-xs font-medium uppercase tracking-wider">
-                Job Type
-              </p>
-              <p className="font-semibold text-gray-900 flex items-center">
-                <Clock className="w-4 h-4 mr-2 text-gray-400" />
-                {job.jobType}
-              </p>
-            </div>
-
-            <div className="space-y-1">
-              <p className="text-gray-500 text-xs font-medium uppercase tracking-wider">
-                Salary
-              </p>
-              <p className="font-semibold text-gray-900 flex items-center">
-                <DollarSign className="w-4 h-4 mr-2 text-gray-400" />
-                {job.salary}
-                <span className="text-gray-500 text-sm ml-1">
-                  /year
-                </span>
-              </p>
-            </div>
-
-            <div className="space-y-1">
-              <p className="text-gray-500 text-xs font-medium uppercase tracking-wider">
-                Posted
-              </p>
-              <p className="font-semibold text-gray-900">
-                {job.postedDays} days ago
-              </p>
-            </div>
-          </div>
-
-          {/* Footer */}
-          <div className="flex justify-between items-center pt-5 border-t border-gray-100">
-            <div className="flex items-center space-x-6">
-              <button className="flex items-center space-x-2 text-gray-500 hover:text-[#27bb97] transition-colors duration-200 group/save">
-                <Bookmark className="w-4 h-4 group-hover/save:fill-[#27bb97]" />
-                <span className="text-sm font-medium">
-                  Save Job
-                </span>
-              </button>
-              <button className="text-gray-500 hover:text-[#27bb97] text-sm font-medium transition-colors duration-200">
-                View Details
-              </button>
-            </div>
-            <button className="px-5 py-2 border border-gray-300 rounded-lg text-sm font-medium hover:border-[#27bb97] hover:text-[#27bb97] transition-all duration-200">
-              Quick Apply
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  ))}
-</div>
 
               {/* Load More Button - Only show if there are more jobs to load */}
               {visibleJobs.length < jobListings.length && (
