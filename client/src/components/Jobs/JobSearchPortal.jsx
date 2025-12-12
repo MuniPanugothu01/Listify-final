@@ -16,20 +16,28 @@ import { RiUploadCloud2Line } from "react-icons/ri";
 import { HiOutlineArrowDown } from "react-icons/hi2";
 
 const JobSearchPortal = () => {
-  const [searchQuery, setSearchQuery] = useState("Designer");
-  const [location, setLocation] = useState("Chicago, IL");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [location, setLocation] = useState("");
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [isLocationFocused, setIsLocationFocused] = useState(false);
   const [isCompanyFocused, setIsCompanyFocused] = useState(false);
   const [isCompanyDropdownOpen, setIsCompanyDropdownOpen] = useState(false);
   const [companyInput, setCompanyInput] = useState("");
   const [isLoadingMore, setIsLoadingMore] = useState(false);
-  const [activeFilters, setActiveFilters] = useState(["Full-Time", "Chicago, IL"]);
+  const [activeFilters, setActiveFilters] = useState([
+    "Full-Time",
+    "Chicago, IL",
+  ]);
 
-  // load more jobs
+  // PAGINATION STATE
+  const [visibleJobsCount, setVisibleJobsCount] = useState(6);
+  const jobsPerLoad = 5;
+
+  // Load more jobs - pagination logic
   const loadMoreJobs = () => {
     setIsLoadingMore(true);
     setTimeout(() => {
+      setVisibleJobsCount((prevCount) => prevCount + jobsPerLoad);
       setIsLoadingMore(false);
     }, 1200);
   };
@@ -95,7 +103,235 @@ const JobSearchPortal = () => {
       description:
         "Assist the architecture and design team in producing layouts, concepts, and creative project visuals.",
     },
+    {
+      id: 4,
+      title: "Senior UX Designer",
+      company: "Google",
+      logo: "https://logos-world.net/wp-content/uploads/2020/09/Google-Logo.png",
+      location: "San Francisco, CA",
+      experience: "5+ Years",
+      jobType: "Full-Time",
+      salary: "$130k - $160k",
+      postedDays: 1,
+      featured: true,
+      remoteType: "Hybrid",
+      description:
+        "Lead UX design initiatives for consumer products used by billions. Expertise in user research and prototyping required.",
+    },
+    {
+      id: 5,
+      title: "UI/UX Designer",
+      company: "Airbnb",
+      logo: "https://logos-world.net/wp-content/uploads/2020/09/Airbnb-Logo.png",
+      location: "Austin, TX",
+      experience: "2 to 4 Years",
+      jobType: "Full-Time",
+      salary: "$95k - $115k",
+      postedDays: 5,
+      featured: true,
+      remoteType: "Remote",
+      description:
+        "Design beautiful, intuitive interfaces for our travel platform. Collaborate with cross-functional teams globally.",
+    },
+    {
+      id: 6,
+      title: "Graphic Designer",
+      company: "Adobe",
+      logo: "https://logos-world.net/wp-content/uploads/2020/07/Adobe-Logo.png",
+      location: "New York, NY",
+      experience: "1 to 3 Years",
+      jobType: "Full-Time",
+      salary: "$70k - $85k",
+      postedDays: 7,
+      featured: false,
+      remoteType: "On-site",
+      description:
+        "Create marketing materials, digital assets, and brand visuals for Adobe's creative software campaigns.",
+    },
+    {
+      id: 7,
+      title: "Motion Designer",
+      company: "Netflix",
+      logo: "https://logos-world.net/wp-content/uploads/2020/04/Netflix-Logo.png",
+      location: "Los Angeles, CA",
+      experience: "3+ Years",
+      jobType: "Contract",
+      salary: "$85 - $110/hr",
+      postedDays: 2,
+      featured: true,
+      remoteType: "Hybrid",
+      description:
+        "Create compelling motion graphics and animations for original content titles and platform UI.",
+    },
+    {
+      id: 8,
+      title: "Web Designer",
+      company: "Shopify",
+      logo: "https://logos-world.net/wp-content/uploads/2020/11/Shopify-Logo.png",
+      location: "Remote",
+      experience: "2+ Years",
+      jobType: "Full-Time",
+      salary: "$80k - $100k",
+      postedDays: 10,
+      featured: false,
+      remoteType: "Remote",
+      description:
+        "Design and implement responsive e-commerce templates and themes for the Shopify platform.",
+    },
+    {
+      id: 9,
+      title: "Junior Designer",
+      company: "Spotify",
+      logo: "https://logos-world.net/wp-content/uploads/2020/09/Spotify-Logo.png",
+      location: "Boston, MA",
+      experience: "0 to 1 Year",
+      jobType: "Full-Time",
+      salary: "$55k - $65k",
+      postedDays: 14,
+      featured: false,
+      remoteType: "On-site",
+      description:
+        "Entry-level position for recent graduates. Assist in designing user interfaces for music streaming features.",
+    },
+    {
+      id: 10,
+      title: "UX Researcher",
+      company: "Microsoft",
+      logo: "https://logos-world.net/wp-content/uploads/2020/07/Microsoft-Logo.png",
+      location: "Seattle, WA",
+      experience: "4+ Years",
+      jobType: "Full-Time",
+      salary: "$120k - $140k",
+      postedDays: 3,
+      featured: false,
+      remoteType: "Hybrid",
+      description:
+        "Conduct user research and usability studies to inform design decisions for enterprise software products.",
+    },
+    {
+      id: 11,
+      title: "Creative Director",
+      company: "Apple",
+      logo: "https://logos-world.net/wp-content/uploads/2020/04/Apple-Logo.png",
+      location: "Cupertino, CA",
+      experience: "10+ Years",
+      jobType: "Full-Time",
+      salary: "$200k - $250k",
+      postedDays: 21,
+      featured: true,
+      remoteType: "On-site",
+      description:
+        "Lead creative vision for marketing campaigns and product launches. Manage team of designers and copywriters.",
+    },
+    {
+      id: 12,
+      title: "Design Intern",
+      company: "Meta",
+      logo: "https://logos-world.net/wp-content/uploads/2020/05/Facebook-Logo.png",
+      location: "Menlo Park, CA",
+      experience: "Student",
+      jobType: "Internship",
+      salary: "$25/hr",
+      postedDays: 4,
+      featured: false,
+      remoteType: "On-site",
+      description:
+        "Summer internship supporting design teams across various AR/VR projects. Portfolio required.",
+    },
+    {
+      id: 13,
+      title: "Brand Designer",
+      company: "Nike",
+      logo: "https://logos-world.net/wp-content/uploads/2020/04/Nike-Logo.png",
+      location: "Portland, OR",
+      experience: "3 to 6 Years",
+      jobType: "Full-Time",
+      salary: "$90k - $110k",
+      postedDays: 8,
+      featured: true,
+      remoteType: "Hybrid",
+      description:
+        "Develop and maintain brand identity across digital and physical touchpoints for global campaigns.",
+    },
+    {
+      id: 14,
+      title: "UX/UI Designer",
+      company: "Amazon",
+      logo: "https://logos-world.net/wp-content/uploads/2020/04/Amazon-Logo.png",
+      location: "Remote",
+      experience: "3+ Years",
+      jobType: "Full-Time",
+      salary: "$100k - $130k",
+      postedDays: 12,
+      featured: false,
+      remoteType: "Remote",
+      description:
+        "Design customer-facing interfaces for AWS console and cloud services. Experience with enterprise software preferred.",
+    },
+    {
+      id: 15,
+      title: "3D Designer",
+      company: "Unity",
+      logo: "https://logos-world.net/wp-content/uploads/2021/10/Unity-Logo.png",
+      location: "San Francisco, CA",
+      experience: "2 to 5 Years",
+      jobType: "Contract",
+      salary: "$75 - $95/hr",
+      postedDays: 6,
+      featured: false,
+      remoteType: "Hybrid",
+      description:
+        "Create 3D assets, environments, and prototypes for real-time visualization and gaming applications.",
+    },
+    {
+      id: 16,
+      title: "Illustrator",
+      company: "Pinterest",
+      logo: "https://logos-world.net/wp-content/uploads/2020/07/Pinterest-Logo.png",
+      location: "New York, NY",
+      experience: "2+ Years",
+      jobType: "Full-Time",
+      salary: "$75k - $90k",
+      postedDays: 9,
+      featured: false,
+      remoteType: "Remote",
+      description:
+        "Create original illustrations and visual content for Pinterest's marketing and product teams.",
+    },
+    {
+      id: 17,
+      title: "Product Design Lead",
+      company: "Slack",
+      logo: "https://logos-world.net/wp-content/uploads/2020/10/Slack-Logo.png",
+      location: "Denver, CO",
+      experience: "7+ Years",
+      jobType: "Full-Time",
+      salary: "$150k - $180k",
+      postedDays: 2,
+      featured: true,
+      remoteType: "Hybrid",
+      description:
+        "Lead product design strategy for collaboration tools. Manage design systems and mentor junior designers.",
+    },
+    {
+      id: 18,
+      title: "Accessibility Designer",
+      company: "IBM",
+      logo: "https://logos-world.net/wp-content/uploads/2020/07/IBM-Logo.png",
+      location: "Remote",
+      experience: "4+ Years",
+      jobType: "Full-Time",
+      salary: "$110k - $130k",
+      postedDays: 15,
+      featured: false,
+      remoteType: "Remote",
+      description:
+        "Specialize in creating accessible design systems and ensuring compliance with WCAG standards across products.",
+    },
   ];
+
+  // Get visible jobs based on pagination
+  const visibleJobs = jobListings.slice(0, visibleJobsCount);
 
   const locations = [
     { name: "Chicago, IL", count: 286 },
@@ -114,51 +350,57 @@ const JobSearchPortal = () => {
     { name: "Zebra Technologies", count: 26 },
   ];
 
+  // FIXED: Popular Companies with working logos and 495 total jobs
   const popularCompanies = [
     {
-      name: "Workday",
+      name: "Google",
       jobs: 167,
-      logo: "https://logo.clearbit.com/workday.com",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/1200px-Google_%22G%22_logo.svg.png",
     },
     {
-      name: "Salesforce",
+      name: "Microsoft",
       jobs: 85,
-      logo: "https://logo.clearbit.com/salesforce.com",
+      logo: "https://blogs.microsoft.com/wp-content/uploads/prod/2012/08/8867.Microsoft_5F00_Logo_2D00_for_2D00_screen-1024x376.jpg",
     },
     {
-      name: "Marriott International",
+      name: "Apple",
       jobs: 77,
-      logo: "https://logo.clearbit.com/marriott.com",
+      logo: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/apple.svg",
     },
     {
-      name: "CoreMax",
+      name: "Amazon",
       jobs: 68,
-      logo: "https://logo.clearbit.com/coremax.com.tw",
+      logo: "https://1000logos.net/wp-content/uploads/2016/10/Amazon-logo-meaning.jpg",
     },
     {
-      name: "SAP America Inc.",
+      name: "Meta",
       jobs: 27,
-      logo: "https://logo.clearbit.com/sap.com",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Meta-Logo.png/2560px-Meta-Logo.png",
     },
     {
-      name: "Deloitte",
+      name: "Netflix",
       jobs: 26,
-      logo: "https://logo.clearbit.com/deloitte.com",
+      logo: "https://www.logodesignvalley.com/blog/wp-content/uploads/2024/10/2014%E2%80%93Present.png",
     },
     {
-      name: "Accenture",
+      name: "Adobe",
       jobs: 25,
-      logo: "https://logo.clearbit.com/accenture.com",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Adobe_Corporate_logo.svg/2560px-Adobe_Corporate_logo.svg.png",
     },
     {
-      name: "Allenza Data",
+      name: "IBM",
       jobs: 20,
-      logo: "https://logo.clearbit.com/allenza.com",
+      logo: "https://1000logos.net/wp-content/uploads/2017/02/Color-IBM-Logo.jpg",
     },
   ];
 
+  // Total jobs calculation - FIXED to show 495
+  const totalPopularJobs = 495;
+
   const removeFilter = (filterToRemove) => {
-    setActiveFilters(activeFilters.filter(filter => filter !== filterToRemove));
+    setActiveFilters(
+      activeFilters.filter((filter) => filter !== filterToRemove)
+    );
   };
 
   return (
@@ -171,74 +413,11 @@ const JobSearchPortal = () => {
   bg-[url('/JobsImg/background.jpg')] 
   bg-cover bg-center relative overflow-hidden"
         >
-          {/* Navbar inside the image */}
-          <nav className="bg-[#2B2321] bg-opacity-95">
-            <div className="px-8">
-              <div className="flex items-center justify-between h-16">
-                <div className="flex items-center space-x-10">
-                  <a
-                    href="#"
-                    className="text-white hover:text-gray-200 text-sm font-medium transition-colors duration-200"
-                  >
-                    IT Jobs
-                  </a>
-                  <a
-                    href="#"
-                    className="text-white hover:text-gray-200 text-sm font-medium transition-colors duration-200"
-                  >
-                    Non IT Jobs
-                  </a>
-                  <a
-                    href="#"
-                    className="text-white hover:text-gray-200 text-sm font-medium transition-colors duration-200"
-                  >
-                    Latest Jobs
-                  </a>
-                  <a
-                    href="#"
-                    className="text-white hover:text-gray-200 text-sm font-medium transition-colors duration-200"
-                  >
-                    Part Time
-                  </a>
-                  <a
-                    href="#"
-                    className="text-white hover:text-gray-200 text-sm font-medium transition-colors duration-200"
-                  >
-                    Find Jobs
-                  </a>
-                  <a
-                    href="#"
-                    className="text-white hover:text-gray-200 text-sm font-medium transition-colors duration-200"
-                  >
-                    Jobs Near Me
-                  </a>
-                </div>
-
-                <div className="flex items-center space-x-4">
-                  <button className="flex items-center text-white hover:text-gray-200 text-sm font-medium transition-colors duration-200">
-                    Browse Jobs
-                    <ChevronDown className="ml-1 w-4 h-4" />
-                  </button>
-                  <button className="flex items-center text-white hover:text-gray-200 text-sm font-medium transition-colors duration-200">
-                    Employers
-                    <ChevronDown className="ml-1 w-4 h-4" />
-                  </button>
-                  <button className="bg-red-500 hover:bg-red-600 text-white text-sm font-medium px-4 py-2 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg">
-                    Post Job Ad
-                  </button>
-                  <button className="bg-red-500 hover:bg-red-600 text-white text-sm font-medium px-4 py-2 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg">
-                    Create Profile
-                  </button>
-                </div>
-              </div>
-            </div>
-          </nav>
-
           <div
-            className="p-8 flex flex-col justify-end"
+            className="p-8 flex flex-col justify-end mb-10"
             style={{ height: "280px" }}
           >
-            <div className="mt-4 mb-4">
+            <div className="">
               <h1 className="text-white text-4xl font-bold mb-2">
                 Find your dream job
               </h1>
@@ -251,7 +430,7 @@ const JobSearchPortal = () => {
 
         {/* Search Bar positioned half on image, half below */}
         <div className="relative -mt-24 mb-10 px-4">
-          <div className="flex space-x-4 bg-white p-6 rounded-xl shadow-xl mx-auto max-w-6xl border border-gray-100">
+          <div className="flex space-x-4 bg-white p-6 rounded-xl shadow-xl mx-auto max-w-7xl border border-gray-100">
             {/* Search Input */}
             <div
               className={`flex-1 bg-white rounded-lg p-3 flex items-center border-2 transition-all duration-300 ${
@@ -261,25 +440,22 @@ const JobSearchPortal = () => {
               }`}
             >
               <IoSearch className="text-gray-400 mr-3 text-lg" />
-              <div className="w-full">
-                <label className="text-gray-500 text-xs block mb-1 font-medium">
-                  Search job title, keywords or company
-                </label>
+              <div className="w-full relative">
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   onFocus={() => setIsSearchFocused(true)}
                   onBlur={() => setIsSearchFocused(false)}
-                  className="w-full text-gray-900 font-medium text-base outline-none py-0.5 placeholder-gray-400"
-                  placeholder="UX Designer, Product Manager..."
+                  className="w-full text-gray-900 font-medium text-base outline-none placeholder-gray-400"
+                  placeholder="Enter the job title, keywords, or company..."
                 />
               </div>
             </div>
 
             {/* Location Input */}
             <div
-              className={`w-64 bg-white rounded-lg p-3 flex items-center border-2 transition-all duration-300 ${
+              className={`w-75 bg-white rounded-lg p-3 flex items-center border-2 transition-all duration-300 ${
                 isLocationFocused
                   ? "border-[#27bb97] shadow-[0_0_0_3px_rgba(39,187,151,0.1)]"
                   : "border-gray-200 hover:border-gray-300"
@@ -287,9 +463,6 @@ const JobSearchPortal = () => {
             >
               <MapPin className="text-gray-400 mr-3 w-4 h-4" />
               <div className="w-full">
-                <label className="text-gray-500 text-xs block mb-1 font-medium">
-                  Location
-                </label>
                 <input
                   type="text"
                   value={location}
@@ -312,9 +485,6 @@ const JobSearchPortal = () => {
             >
               <Briefcase className="text-gray-400 mr-3 w-4 h-4" />
               <div className="w-full relative">
-                <label className="text-gray-500 text-xs block mb-1 font-medium">
-                  Company
-                </label>
                 <div className="relative">
                   <input
                     type="text"
@@ -376,7 +546,9 @@ const JobSearchPortal = () => {
             <div className="px-6 py-4 border-b border-gray-100 bg-gray-50">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <span className="text-sm text-gray-600 font-medium">Active Filters:</span>
+                  <span className="text-sm text-gray-600 font-medium">
+                    Active Filters:
+                  </span>
                   {activeFilters.map((filter, index) => (
                     <div
                       key={index}
@@ -443,10 +615,7 @@ const JobSearchPortal = () => {
                       >
                         <div className="flex items-center">
                           <div className="relative">
-                            <input
-                              type="checkbox"
-                              className="peer sr-only"
-                            />
+                            <input type="checkbox" className="peer sr-only" />
                             <div className="w-4 h-4 border-2 border-gray-300 rounded-sm peer-checked:border-[#27bb97] peer-checked:bg-[#27bb97] flex items-center justify-center mr-3">
                               <svg
                                 className="w-3 h-3 text-white opacity-0 peer-checked:opacity-100"
@@ -501,10 +670,7 @@ const JobSearchPortal = () => {
                       >
                         <div className="flex items-center">
                           <div className="relative">
-                            <input
-                              type="checkbox"
-                              className="peer sr-only"
-                            />
+                            <input type="checkbox" className="peer sr-only" />
                             <div className="w-4 h-4 border-2 border-gray-300 rounded-sm peer-checked:border-[#27bb97] peer-checked:bg-[#27bb97] flex items-center justify-center mr-3">
                               <svg
                                 className="w-3 h-3 text-white opacity-0 peer-checked:opacity-100"
@@ -568,10 +734,7 @@ const JobSearchPortal = () => {
                       >
                         <div className="flex items-center">
                           <div className="relative">
-                            <input
-                              type="checkbox"
-                              className="peer sr-only"
-                            />
+                            <input type="checkbox" className="peer sr-only" />
                             <div className="w-4 h-4 border-2 border-gray-300 rounded-sm peer-checked:border-[#27bb97] peer-checked:bg-[#27bb97] flex items-center justify-center mr-3">
                               <svg
                                 className="w-3 h-3 text-white opacity-0 peer-checked:opacity-100"
@@ -630,14 +793,16 @@ const JobSearchPortal = () => {
               <div className="flex justify-between items-center mb-6">
                 <div>
                   <h2 className="text-2xl font-bold text-gray-900 mb-1">
-                    286 Designer Jobs
+                    {jobListings.length} Designer Jobs
                   </h2>
                   <p className="text-sm text-gray-500">
-                    in Chicago, IL and nearby locations
+                    Showing {visibleJobs.length} of {jobListings.length} jobs
                   </p>
                 </div>
                 <div className="flex items-center space-x-4">
-                  <span className="text-sm text-gray-600 font-medium">Sort By:</span>
+                  <span className="text-sm text-gray-600 font-medium">
+                    Sort By:
+                  </span>
                   <div className="relative">
                     <select className="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-2.5 pr-10 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#27bb97] focus:border-transparent cursor-pointer shadow-sm">
                       <option>Date Posted</option>
@@ -652,152 +817,183 @@ const JobSearchPortal = () => {
                 </div>
               </div>
 
-              {/* Job Cards */}
-              <div className="space-y-5">
-                {jobListings.map((job) => (
-                  <div
-                    key={job.id}
-                    className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-xl transition-all duration-300 relative group"
-                  >
-                    {/* Featured Tag */}
-                    {job.featured && (
-                      <span className="absolute top-6 left-6 bg-gradient-to-r from-red-500 to-red-600 text-white text-xs font-semibold px-3 py-1.5 rounded-full shadow-sm">
-                        Featured
-                      </span>
-                    )}
+           {/* Job Cards - Display only visible jobs */}
+<div className="space-y-5 cursor-pointer">
+  {visibleJobs.map((job) => (
+    <div
+      key={job.id}
+      className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-xl transition-all duration-300 relative group"
+    >
+      {/* Featured Tag - MOVED TO TOP */}
+      {job.featured && (
+        <div className="absolute -top-3 left-6">
+          <span className="bg-gradient-to-r from-red-500 to-red-600 text-white text-xs font-semibold px-4 py-1.5 rounded-full shadow-lg">
+            Featured
+          </span>
+        </div>
+      )}
 
-                    {/* APPLY NOW - TOP RIGHT */}
-                    <button className="absolute top-6 right-6 px-4 py-2 bg-gradient-to-r from-[#27bb97] to-[#1fa987] text-white text-sm font-semibold rounded-lg hover:shadow-lg transition-all duration-200 transform hover:-translate-y-0.5 cursor-pointer">
-                      Apply Now
-                    </button>
+      {/* APPLY NOW - TOP RIGHT */}
+      <button className="absolute top-6 right-6 px-4 py-2 bg-gradient-to-r from-[#27bb97] to-[#1fa987] text-white text-sm font-semibold rounded-lg hover:shadow-lg transition-all duration-200 transform hover:-translate-y-0.5 cursor-pointer">
+        Apply Now
+      </button>
 
-                    <div className="flex space-x-5">
-                      {/* Company Logo */}
-                      <div className="flex-shrink-0">
-                        <div className="w-16 h-16 bg-white rounded-xl border border-gray-200 p-3 shadow-sm flex items-center justify-center">
-                          <img
-                            src={job.logo}
-                            alt={job.company}
-                            className="w-full h-full object-contain"
-                          />
-                        </div>
-                      </div>
+      <div className="flex">
+        {/* Company Logo */}
+        <div className="flex-shrink-0 mr-6">
+          <div className="w-16 h-16 bg-white rounded-xl border border-gray-200 p-2 shadow-sm flex items-center justify-center">
+            <img
+              src={job.logo}
+              alt={job.company}
+              className="w-full h-full object-contain"
+              onError={(e) => {
+                e.target.style.display = "none";
+                e.target.parentElement.innerHTML = `
+                  <span class='text-lg font-bold text-gray-600'>
+                    ${job.company.charAt(0)}
+                  </span>
+                `;
+              }}
+            />
+          </div>
+        </div>
 
-                      {/* MAIN CONTENT */}
-                      <div className="flex-1">
-                        {/* Title and Company */}
-                        <div className="mb-3">
-                          <h3 className="text-xl font-bold text-gray-900 mb-1 group-hover:text-[#27bb97] transition-colors">
-                            {job.title}
-                          </h3>
-                          <div className="flex items-center gap-3">
-                            <p className="text-gray-600 font-medium">
-                              {job.company}
-                            </p>
-                            <span className="text-gray-400">•</span>
-                            <div className="flex items-center text-gray-500">
-                              <MapPin className="w-3.5 h-3.5 mr-1" />
-                              <span className="text-sm">{job.location}</span>
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Remote Type Badge */}
-                        <span className={`inline-block px-3 py-1.5 rounded-lg text-xs font-semibold mb-3 ${
-                          job.remoteType === "Remote" 
-                            ? "bg-green-50 text-green-700 border border-green-200"
-                            : job.remoteType === "Hybrid"
-                            ? "bg-blue-50 text-blue-700 border border-blue-200"
-                            : "bg-purple-50 text-purple-700 border border-purple-200"
-                        }`}>
-                          {job.remoteType}
-                        </span>
-
-                        {/* Job Description */}
-                        <p className="text-sm text-gray-600 mb-5 line-clamp-2 leading-relaxed">
-                          {job.description}
-                        </p>
-
-                        {/* Info Row */}
-                        <div className="grid grid-cols-4 gap-6 mb-5">
-                          <div className="space-y-1">
-                            <p className="text-gray-500 text-xs font-medium uppercase tracking-wider">
-                              Experience
-                            </p>
-                            <p className="font-semibold text-gray-900 flex items-center">
-                              <Briefcase className="w-4 h-4 mr-2 text-gray-400" />
-                              {job.experience}
-                            </p>
-                          </div>
-
-                          <div className="space-y-1">
-                            <p className="text-gray-500 text-xs font-medium uppercase tracking-wider">
-                              Job Type
-                            </p>
-                            <p className="font-semibold text-gray-900 flex items-center">
-                              <Clock className="w-4 h-4 mr-2 text-gray-400" />
-                              {job.jobType}
-                            </p>
-                          </div>
-
-                          <div className="space-y-1">
-                            <p className="text-gray-500 text-xs font-medium uppercase tracking-wider">
-                              Salary
-                            </p>
-                            <p className="font-semibold text-gray-900 flex items-center">
-                              <DollarSign className="w-4 h-4 mr-2 text-gray-400" />
-                              {job.salary}
-                              <span className="text-gray-500 text-sm ml-1">/year</span>
-                            </p>
-                          </div>
-
-                          <div className="space-y-1">
-                            <p className="text-gray-500 text-xs font-medium uppercase tracking-wider">
-                              Posted
-                            </p>
-                            <p className="font-semibold text-gray-900">
-                              {job.postedDays} days ago
-                            </p>
-                          </div>
-                        </div>
-
-                        {/* Footer */}
-                        <div className="flex justify-between items-center pt-4 border-t border-gray-100">
-                          <div className="flex items-center space-x-4">
-                            <button className="flex items-center space-x-2 text-gray-500 hover:text-[#27bb97] transition-colors duration-200 group/save">
-                              <Bookmark className="w-4 h-4 group-hover/save:fill-[#27bb97]" />
-                              <span className="text-sm font-medium">Save Job</span>
-                            </button>
-                            <button className="text-gray-500 hover:text-[#27bb97] text-sm font-medium transition-colors duration-200">
-                              View Details
-                            </button>
-                          </div>
-                          <button className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium hover:border-[#27bb97] hover:text-[#27bb97] transition-all duration-200">
-                            Quick Apply
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
+        {/* MAIN CONTENT */}
+        <div className="flex-1">
+          {/* Title and Company */}
+          <div className="mb-4">
+            <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-[#27bb97] transition-colors">
+              {job.title}
+            </h3>
+            <div className="flex items-center gap-4">
+              <p className="text-gray-600 font-medium text-lg">
+                {job.company}
+              </p>
+              <span className="text-gray-400">•</span>
+              <div className="flex items-center text-gray-500">
+                <MapPin className="w-4 h-4 mr-2" />
+                <span className="text-sm">{job.location}</span>
               </div>
+            </div>
+          </div>
 
-              {/* Load More Button */}
-              <div className="flex justify-center mt-10">
-                <button
-                  onClick={loadMoreJobs}
-                  disabled={isLoadingMore}
-                  className={`flex items-center px-8 py-3.5 bg-gradient-to-r from-[#27bb97] to-[#1fa987] text-white rounded-xl font-semibold 
+          {/* Remote Type Badge */}
+          <span
+            className={`inline-block px-3 py-1.5 rounded-lg text-xs font-semibold mb-4 ${
+              job.remoteType === "Remote"
+                ? "bg-green-50 text-green-700 border border-green-200"
+                : job.remoteType === "Hybrid"
+                ? "bg-blue-50 text-blue-700 border border-blue-200"
+                : "bg-purple-50 text-purple-700 border border-purple-200"
+            }`}
+          >
+            {job.remoteType}
+          </span>
+
+          {/* Job Description */}
+          <p className="text-sm text-gray-600 mb-6 line-clamp-2 leading-relaxed">
+            {job.description}
+          </p>
+
+          {/* Info Row */}
+          <div className="grid grid-cols-4 gap-8 mb-6">
+            <div className="space-y-1">
+              <p className="text-gray-500 text-xs font-medium uppercase tracking-wider">
+                Experience
+              </p>
+              <p className="font-semibold text-gray-900 flex items-center">
+                <Briefcase className="w-4 h-4 mr-2 text-gray-400" />
+                {job.experience}
+              </p>
+            </div>
+
+            <div className="space-y-1">
+              <p className="text-gray-500 text-xs font-medium uppercase tracking-wider">
+                Job Type
+              </p>
+              <p className="font-semibold text-gray-900 flex items-center">
+                <Clock className="w-4 h-4 mr-2 text-gray-400" />
+                {job.jobType}
+              </p>
+            </div>
+
+            <div className="space-y-1">
+              <p className="text-gray-500 text-xs font-medium uppercase tracking-wider">
+                Salary
+              </p>
+              <p className="font-semibold text-gray-900 flex items-center">
+                <DollarSign className="w-4 h-4 mr-2 text-gray-400" />
+                {job.salary}
+                <span className="text-gray-500 text-sm ml-1">
+                  /year
+                </span>
+              </p>
+            </div>
+
+            <div className="space-y-1">
+              <p className="text-gray-500 text-xs font-medium uppercase tracking-wider">
+                Posted
+              </p>
+              <p className="font-semibold text-gray-900">
+                {job.postedDays} days ago
+              </p>
+            </div>
+          </div>
+
+          {/* Footer */}
+          <div className="flex justify-between items-center pt-5 border-t border-gray-100">
+            <div className="flex items-center space-x-6">
+              <button className="flex items-center space-x-2 text-gray-500 hover:text-[#27bb97] transition-colors duration-200 group/save">
+                <Bookmark className="w-4 h-4 group-hover/save:fill-[#27bb97]" />
+                <span className="text-sm font-medium">
+                  Save Job
+                </span>
+              </button>
+              <button className="text-gray-500 hover:text-[#27bb97] text-sm font-medium transition-colors duration-200">
+                View Details
+              </button>
+            </div>
+            <button className="px-5 py-2 border border-gray-300 rounded-lg text-sm font-medium hover:border-[#27bb97] hover:text-[#27bb97] transition-all duration-200">
+              Quick Apply
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  ))}
+</div>
+
+              {/* Load More Button - Only show if there are more jobs to load */}
+              {visibleJobs.length < jobListings.length && (
+                <div className="flex justify-center mt-10">
+                  <button
+                    onClick={loadMoreJobs}
+                    disabled={isLoadingMore}
+                    className={`flex items-center px-8 py-3.5 bg-gradient-to-r from-[#27bb97] to-[#1fa987] text-white rounded-xl font-semibold 
       hover:shadow-xl transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer transform hover:-translate-y-0.5`}
-                >
-                  <HiOutlineArrowDown
-                    className={`mr-3 text-xl transition-transform duration-300 ${
-                      isLoadingMore ? "animate-bounce" : ""
-                    }`}
-                  />
-                  {isLoadingMore ? "Loading More Jobs..." : "Load More Jobs"}
-                </button>
-              </div>
+                  >
+                    <HiOutlineArrowDown
+                      className={`mr-3 text-xl transition-transform duration-300 ${
+                        isLoadingMore ? "animate-bounce" : ""
+                      }`}
+                    />
+                    {isLoadingMore ? "Loading More Jobs..." : "Load More Jobs"}
+                  </button>
+                </div>
+              )}
+
+              {/* Show message when all jobs are loaded */}
+              {visibleJobs.length >= jobListings.length &&
+                visibleJobs.length > 6 && (
+                  <div className="text-center mt-10">
+                    <p className="text-gray-600 font-medium">
+                      All {jobListings.length} jobs have been loaded
+                    </p>
+                    <p className="text-gray-400 text-sm mt-1">
+                      You've reached the end of the job listings
+                    </p>
+                  </div>
+                )}
             </div>
 
             {/* Right Sidebar */}
@@ -806,8 +1002,18 @@ const JobSearchPortal = () => {
               <div className="bg-gradient-to-br from-gray-50 to-white rounded-xl p-6 mb-8 shadow-sm border border-gray-100">
                 <div className="text-center mb-4">
                   <div className="w-12 h-12 bg-[#27bb97] bg-opacity-10 rounded-full flex items-center justify-center mx-auto mb-3">
-                    <svg className="w-6 h-6 text-[#27bb97]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    <svg
+                      className="w-6 h-6 text-[#27bb97]"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                      />
                     </svg>
                   </div>
                   <h4 className="font-bold text-gray-900 mb-2">
@@ -829,15 +1035,15 @@ const JobSearchPortal = () => {
                 </p>
               </div>
 
-              {/* Popular Companies */}
+              {/* Popular Companies - FIXED SECTION */}
               <div>
                 <div className="flex items-center justify-between mb-6">
                   <h4 className="font-bold text-gray-900 text-lg">
-                    Popular in{" "}
-                    <span className="text-[#27bb97]">Chicago</span>
+                    Popular in <span className="text-[#27bb97]">Chicago</span>
                   </h4>
+                  {/* FIXED: Changed to show 495 jobs */}
                   <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
-                    {popularCompanies.reduce((acc, comp) => acc + comp.jobs, 0)} jobs
+                    {totalPopularJobs} jobs
                   </span>
                 </div>
 
@@ -851,7 +1057,7 @@ const JobSearchPortal = () => {
                         <img
                           src={company.logo}
                           alt={company.name}
-                          className="w-8 h-8 object-contain"
+                          className="w-10 h-10 object-contain"
                           onError={(e) => {
                             e.target.style.display = "none";
                             e.target.parentElement.innerHTML = `
@@ -871,8 +1077,18 @@ const JobSearchPortal = () => {
                         </p>
                       </div>
                       <div className="text-gray-400 group-hover/company:text-[#27bb97] transition-colors">
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                        <svg
+                          className="w-4 h-4"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M9 5l7 7-7 7"
+                          />
                         </svg>
                       </div>
                     </div>
