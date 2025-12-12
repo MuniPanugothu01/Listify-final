@@ -154,34 +154,29 @@ const App = () => {
                 </>
               }
             />
-
             {/* Contacts Page */}
-            <Route path="/contact-us" element={<ContactUs/>} />
-            <Route path="/about-us" element={<AboutUs/>} />
-
+            <Route path="/contact-us" element={<ContactUs />} />
+            <Route path="/about-us" element={<AboutUs />} />
             {/* Roommates */}
             <Route path="/roommates" element={<Roommates />} />
             <Route path="/roommate-details" element={<RoomMateDetails />} />
             <Route path="/details" element={<DetailsPage />} />
-
             {/* Rentals */}
-            <Route path="/rentals" element={<Rentals/>} />
+            <Route path="/rentals" element={<Rentals />} />
             <Route path="/rentals-details" element={<RentalsListings />} />
             <Route path="/details" element={<RentalDetailsPage />} />
-
             {/* Jobs */}
             <Route path="/jobs" element={<JobsPage />} />
-            <Route path="/job-search" element={<JobSearchPortal />} /> {/* Add JobSearchPortal route */}
-  <Route path="/job-details/:id" element={<JobDetailsPage/>} />
+            <Route path="/job-search" element={<JobSearchPortal />} />{" "}
+            {/* Add JobSearchPortal route */}
+            <Route path="/job-details/:id" element={<JobDetailsPage />} />
             {/* Events */}
             <Route path="/events" element={<Events />} />
             <Route path="/events/:eventId" element={<EventDetailPage />} />
             <Route path="/event-details" element={<EventDetails />} />
             <Route path="/events-list" element={<EventList />} />
-
             {/* Profile */}
             <Route path="/profile" element={<Profile />} />
-
             {/* Placeholder Pages */}
             <Route path="/services" element={<div>Services Page</div>} />
             <Route path="/marketplace" element={<div>Marketplace Page</div>} />
