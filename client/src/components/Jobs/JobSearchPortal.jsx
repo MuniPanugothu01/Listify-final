@@ -14,8 +14,10 @@ import { IoSearch } from "react-icons/io5";
 import { MdOutlineUploadFile } from "react-icons/md";
 import { RiUploadCloud2Line } from "react-icons/ri";
 import { HiOutlineArrowDown } from "react-icons/hi2";
+import { useNavigate } from "react-router-dom"; // Add this import
 
 const JobSearchPortal = () => {
+  const navigate = useNavigate(); // Add this hook
   const [searchQuery, setSearchQuery] = useState("");
   const [location, setLocation] = useState("");
   const [isSearchFocused, setIsSearchFocused] = useState(false);
@@ -40,6 +42,17 @@ const JobSearchPortal = () => {
       setVisibleJobsCount((prevCount) => prevCount + jobsPerLoad);
       setIsLoadingMore(false);
     }, 1200);
+  };
+
+  // Handle job click - navigate to job details page
+  const handleJobClick = (jobId) => {
+    navigate(`/job-details/${jobId}`);
+  };
+
+  // Handle view details button click
+  const handleViewDetailsClick = (jobId, e) => {
+    e.stopPropagation(); // Prevent event bubbling
+    navigate(`/job-details/${jobId}`);
   };
 
   const [companyOptions] = useState([
@@ -818,11 +831,12 @@ const JobSearchPortal = () => {
               </div>
 
               {/* Job Cards - Display only visible jobs */}
-              <div className="space-y-5 cursor-pointer">
+              <div className="space-y-5">
                 {visibleJobs.map((job) => (
                   <div
                     key={job.id}
-                    className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-xl transition-all duration-300 relative group"
+                    onClick={() => handleJobClick(job.id)}
+                    className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-xl transition-all duration-300 relative group cursor-pointer"
                   >
                     {/* Featured Tag - MOVED TO TOP */}
                     {job.featured && (
@@ -834,7 +848,13 @@ const JobSearchPortal = () => {
                     )}
 
                     {/* APPLY NOW - TOP RIGHT */}
-                    <button className="absolute top-6 right-6 px-4 py-2 bg-gradient-to-r from-[#27bb97] to-[#1fa987] text-white text-sm font-semibold rounded-lg hover:shadow-lg transition-all duration-200 transform hover:-translate-y-0.5 cursor-pointer">
+                    <button 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        // Handle apply now logic here
+                      }}
+                      className="absolute top-6 right-6 px-4 py-2 bg-gradient-to-r from-[#27bb97] to-[#1fa987] text-white text-sm font-semibold rounded-lg hover:shadow-lg transition-all duration-200 transform hover:-translate-y-0.5 cursor-pointer"
+                    >
                       Apply Now
                     </button>
 
@@ -849,10 +869,10 @@ const JobSearchPortal = () => {
                             onError={(e) => {
                               e.target.style.display = "none";
                               e.target.parentElement.innerHTML = `
-                  <span class='text-lg font-bold text-gray-600'>
-                    ${job.company.charAt(0)}
-                  </span>
-                `;
+                                <span class='text-lg font-bold text-gray-600'>
+                                  ${job.company.charAt(0)}
+                                </span>
+                              `;
                             }}
                           />
                         </div>
@@ -860,13 +880,19 @@ const JobSearchPortal = () => {
 
                       {/* MAIN CONTENT */}
                       <div className="flex-1">
-                        {/* Title and Company */}
-                        <div className="mb-4">
-                          <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-[#27bb97] transition-colors">
+                        {/* Title and Company - Clickable */}
+                        <div 
+                          className="mb-4"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleJobClick(job.id);
+                          }}
+                        >
+                          <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-[#27bb97] transition-colors cursor-pointer hover:underline">
                             {job.title}
                           </h3>
                           <div className="flex items-center gap-4">
-                            <p className="text-gray-600 font-medium text-lg">
+                            <p className="text-gray-600 font-medium text-lg cursor-pointer hover:text-[#27bb97] hover:underline">
                               {job.company}
                             </p>
                             <span className="text-gray-400">•</span>
@@ -943,17 +969,32 @@ const JobSearchPortal = () => {
                         {/* Footer */}
                         <div className="flex justify-between items-center pt-5 border-t border-gray-100">
                           <div className="flex items-center space-x-6">
-                            <button className="flex items-center space-x-2 text-gray-500 hover:text-[#27bb97] transition-colors duration-200 group/save">
+                            <button 
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                // Handle save job logic here
+                              }}
+                              className="flex items-center space-x-2 text-gray-500 hover:text-[#27bb97] transition-colors duration-200 group/save"
+                            >
                               <Bookmark className="w-4 h-4 group-hover/save:fill-[#27bb97]" />
                               <span className="text-sm font-medium">
                                 Save Job
                               </span>
                             </button>
-                            <button className="text-gray-500 hover:text-[#27bb97] text-sm font-medium transition-colors duration-200">
+                            <button 
+                              onClick={(e) => handleViewDetailsClick(job.id, e)}
+                              className="text-gray-500 hover:text-[#27bb97] text-sm font-medium transition-colors duration-200"
+                            >
                               View Details
                             </button>
                           </div>
-                          <button className="px-5 py-2 border border-gray-300 rounded-lg text-sm font-medium hover:border-[#27bb97] hover:text-[#27bb97] transition-all duration-200">
+                          <button 
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              // Handle quick apply logic here
+                            }}
+                            className="px-5 py-2 border border-gray-300 rounded-lg text-sm font-medium hover:border-[#27bb97] hover:text-[#27bb97] transition-all duration-200"
+                          >
                             Quick Apply
                           </button>
                         </div>

@@ -39,6 +39,7 @@ import RentalDetailsPage from "./components/Rentals/RentalDetailsPage.jsx";
 // Jobs
 import JobsPage from "./pages/JobsPage/JobsPage.jsx";
 import JobSearchPortal from "./components/Jobs/JobSearchPortal.jsx"; // Import JobSearchPortal
+import JobDetailsPage from "./components/Jobs/JobDetailsPage.jsx";
 
 // Profile
 import Profile from "./pages/Home/Profile.jsx";
@@ -171,7 +172,7 @@ const App = () => {
             {/* Jobs */}
             <Route path="/jobs" element={<JobsPage />} />
             <Route path="/job-search" element={<JobSearchPortal />} /> {/* Add JobSearchPortal route */}
-
+  <Route path="/job-details/:id" element={<JobDetailsPage/>} />
             {/* Events */}
             <Route path="/events" element={<Events />} />
             <Route path="/events/:eventId" element={<EventDetailPage />} />
