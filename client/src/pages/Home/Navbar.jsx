@@ -64,6 +64,14 @@ const Navbar = () => {
   ];
 
   const mainMenuItems = [
+    { name: "Home", path: "/" },
+    { name: "About Us", path: "/about-us" },
+    { name: "Contact Us", path: "/contact-us" },
+    { name: "Our Services", path: "/services" },
+    
+  ];
+
+  const moreMenuItems = [
     { name: "Roommates", path: "/roommates" },
     { name: "Rentals", path: "/rentals" },
     { name: "Jobs", path: "/jobs" },
@@ -71,9 +79,6 @@ const Navbar = () => {
     { name: "Services", path: "/services" },
     { name: "Marketplace", path: "/marketplace" },
     { name: "TakeCare", path: "/takecare" },
-  ];
-
-  const moreMenuItems = [
     { name: "Jobs", path: "/jobs" },
     { name: "Cares", path: "/cares" },
     { name: "Blogs", path: "/blogs" },
@@ -671,7 +676,7 @@ const Navbar = () => {
                       isScrolled ? "text-white" : "text-gray-700"
                     }`}
                   >
-                    More
+                    All Categories
                     <FaChevronDown className="h-4 w-4 ml-1" />
                   </a>
                   {showMoreDropdown && (
