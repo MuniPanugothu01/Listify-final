@@ -19,6 +19,7 @@ import FeaturedJobs from "./components/Jobs/FeaturedJobs.jsx"; // Import Feature
 
 import ContactUs from "./pages/ContactPage/ContactUS.jsx";
 import AboutUs from "./pages/AboutPage/AboutUs.jsx";
+import ServicesPage from "./pages/Services/ServicesPage.jsx";
 
 // Roommates
 import Roommates from "./pages/Roommates/Roommates.jsx";
@@ -147,7 +148,6 @@ const App = () => {
                   <Heading />
                   <Gallery />
                   <TrendingCategories />
-                  <FeaturedJobs /> {/* Add FeaturedJobs component here */}
                   <WhyUs />
                   <Reviews />
                   <Questions />
@@ -157,6 +157,7 @@ const App = () => {
             {/* Contacts Page */}
             <Route path="/contact-us" element={<ContactUs />} />
             <Route path="/about-us" element={<AboutUs />} />
+            <Route path="/services" element={<ServicesPage/>} />
             {/* Roommates */}
             <Route path="/roommates" element={<Roommates />} />
             <Route path="/roommate-details" element={<RoomMateDetails />} />
@@ -178,7 +179,7 @@ const App = () => {
             {/* Profile */}
             <Route path="/profile" element={<Profile />} />
             {/* Placeholder Pages */}
-            <Route path="/services" element={<div>Services Page</div>} />
+            
             <Route path="/marketplace" element={<div>Marketplace Page</div>} />
             <Route path="/vehicles" element={<div>Vehicles Page</div>} />
             <Route path="/takecare" element={<div>TakeCare Page</div>} />

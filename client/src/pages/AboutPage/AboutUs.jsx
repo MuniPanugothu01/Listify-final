@@ -268,7 +268,7 @@ const AboutUs = () => {
        
 
               {/* Buttons with Hover Effects */}
-              <div className="flex flex-wrap gap-6 pt-4">
+              {/* <div className="flex flex-wrap gap-6 pt-4">
                 <button className="group relative px-10 py-4 bg-gradient-to-r from-[#27bb97] to-[#1FA987] text-white font-semibold rounded-lg overflow-hidden transition-all duration-300 hover:shadow-2xl hover:scale-105">
                   <span className="relative z-10">Browse Local Listings</span>
                   <div className="absolute inset-0 bg-gradient-to-r from-[#1FA987] to-[#198F72] transform translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
@@ -281,7 +281,7 @@ const AboutUs = () => {
                     Post For Free
                   </span>
                 </button>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
