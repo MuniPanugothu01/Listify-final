@@ -667,33 +667,44 @@ const Navbar = () => {
                     </Link>
                   </li>
                 ))}
-                {/* More Dropdown */}
-                <li className="relative">
-                  <a
-                    href="#"
-                    onClick={handleMoreClick}
-                    className={`nav-link text-xs md:text-sm lg:text-base hover:text-gray-900 px-1 whitespace-nowrap flex items-center ${
-                      isScrolled ? "text-white" : "text-gray-700"
-                    }`}
-                  >
-                    All Categories
-                    <FaChevronDown className="h-4 w-4 ml-1" />
-                  </a>
-                  {showMoreDropdown && (
-                    <div className="absolute top-full left-0 mt-1 bg-white border border-gray-300 rounded-lg shadow-lg min-w-max z-10">
-                      {moreMenuItems.map((item, index) => (
-                        <Link
-                          key={index}
-                          to={item.path}
-                          className="more-dropdown-link block px-4 py-2 hover:bg-gray-100 text-sm text-gray-700"
-                          onClick={() => setShowMoreDropdown(false)}
-                        >
-                          {item.name}
-                        </Link>
-                      ))}
-                    </div>
-                  )}
-                </li>
+               <li
+  className="relative"
+  onMouseEnter={() => setShowMoreDropdown(true)}
+  onMouseLeave={() => setShowMoreDropdown(false)}
+>
+  <a
+    href="#"
+    className={`nav-link text-xs md:text-sm lg:text-base px-1 whitespace-nowrap flex items-center hover:text-gray-900 ${
+      isScrolled ? "text-white" : "text-gray-700"
+    }`}
+  >
+    All Categories
+    <FaChevronDown className="h-4 w-4 ml-1 transition-transform duration-300" />
+  </a>
+
+  {/* Dropdown */}
+  <div
+    className={`absolute top-full left-0 mt-2 bg-white border border-gray-300 rounded-lg shadow-lg z-20
+      transition-all duration-300 ease-out
+      ${showMoreDropdown
+        ? "opacity-100 translate-y-0 scale-100 visible"
+        : "opacity-0 -translate-y-2 scale-95 invisible"
+      }
+      min-w-[280px]`}
+  >
+    {moreMenuItems.map((item, index) => (
+      <Link
+        key={index}
+        to={item.path}
+        onClick={() => setShowMoreDropdown(false)} // ✅ CLOSE ON CLICK
+        className="block px-5 py-3 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+      >
+        {item.name}
+      </Link>
+    ))}
+  </div>
+</li>
+
               </ul>
               {/* Right side actions */}
               <div className="flex items-center space-x-3 md:space-x-4 ml-20">
