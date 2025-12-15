@@ -15,11 +15,12 @@ import Questions from "./pages/Home/Questions.jsx";
 import Reviews from "./pages/Home/Reviews.jsx";
 import Footer from "./pages/Home/Footer.jsx";
 import Gallery from "./pages/Home/Gallery.jsx";
-import FeaturedJobs from "./components/Jobs/FeaturedJobs.jsx"; // Import FeaturedJobs
+
 
 import ContactUs from "./pages/ContactPage/ContactUS.jsx";
 import AboutUs from "./pages/AboutPage/AboutUs.jsx";
 import ServicesPage from "./pages/Services/ServicesPage.jsx";
+import PostaddPage from "./pages/PostaddPage/Postadd.jsx";
 
 // Roommates
 import Roommates from "./pages/Roommates/Roommates.jsx";
@@ -158,6 +159,7 @@ const App = () => {
             <Route path="/contact-us" element={<ContactUs />} />
             <Route path="/about-us" element={<AboutUs />} />
             <Route path="/our-services" element={<ServicesPage/>} />
+            <Route path="/post-add" element={<PostaddPage/>} />
             {/* Roommates */}
             <Route path="/roommates" element={<Roommates />} />
             <Route path="/roommate-details" element={<RoomMateDetails />} />

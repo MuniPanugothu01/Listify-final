@@ -68,6 +68,7 @@ const Navbar = () => {
     { name: "About Us", path: "/about-us" },
     { name: "Contact Us", path: "/contact-us" },
     { name: "Our Services", path: "/our-services" },
+   
     
   ];
 
@@ -709,10 +710,13 @@ const Navbar = () => {
               {/* Right side actions */}
               <div className="flex items-center space-x-3 md:space-x-4 ml-20">
                 {/* Create Listing Button */}
+
+                <Link to="/post-add">
                 <button className="flex items-center gap-2 bg-[#27bb97] text-white px-4 py-3.5 md:px-4 md:py-3.5 rounded-lg text-xs md:text-sm lg:text-base whitespace-nowrap hover:bg-[#1fa987] transition cursor-pointer">
                   <LuPencilLine className="text-white text-base md:text-lg" />
                   Create a Listing
                 </button>
+                </Link>
 
                 {/* Profile Dropdown */}
                 <div className="relative">
