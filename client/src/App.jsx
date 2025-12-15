@@ -157,7 +157,7 @@ const App = () => {
             {/* Contacts Page */}
             <Route path="/contact-us" element={<ContactUs />} />
             <Route path="/about-us" element={<AboutUs />} />
-            <Route path="/services" element={<ServicesPage/>} />
+            <Route path="/our-services" element={<ServicesPage/>} />
             {/* Roommates */}
             <Route path="/roommates" element={<Roommates />} />
             <Route path="/roommate-details" element={<RoomMateDetails />} />

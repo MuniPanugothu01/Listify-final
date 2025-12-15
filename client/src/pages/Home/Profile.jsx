@@ -264,7 +264,7 @@ export default function Profile() {
         </div>
       </header>
 
-      <div className="pt-16 container mx-auto px-1 py-6 mt-4">
+      <div className="pt-4 container mx-auto px-1 py-6 mt-4">
         <div className="lg:flex gap-6">
           <Sidebar 
             activeSection={activeSection}
