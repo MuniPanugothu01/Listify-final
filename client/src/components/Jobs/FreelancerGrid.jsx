@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const FreelancerCard = ({
   name,
@@ -204,18 +205,16 @@ const FreelancerGrid = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
-
-{/* Header Section */}
-        <div className="text-center mb-14">
-          <h1 className="text-4xl font-bold text-gray-900 mb-3 tracking-tight">
-            Latest Job Seeker Profiles in <span className="text-[#27bb97] ">USA</span>! 
-          </h1 >
-          <p className="text-gray-600 text-lg mb-4 max-w-2xl mx-auto">
-            Discover talented professionals actively seeking new opportunities
-          </p>
-          <div className="w-20 h-1 bg-gradient-to-r from-teal-500 to-emerald-500 mx-auto rounded-full"></div>
-        </div>
-
+      {/* Header Section */}
+      <div className="text-center mb-14">
+        <h1 className="text-4xl font-bold text-gray-900 mb-3 tracking-tight">
+          Latest Job Seeker Profiles in <span className="text-[#27bb97] ">USA</span>! 
+        </h1 >
+        <p className="text-gray-600 text-lg mb-4 max-w-2xl mx-auto">
+          Discover talented professionals actively seeking new opportunities
+        </p>
+        <div className="w-20 h-1 bg-gradient-to-r from-teal-500 to-emerald-500 mx-auto rounded-full"></div>
+      </div>
 
       <div className="max-w-7xl mx-auto">
         {/* Cards Grid */}
@@ -229,9 +228,11 @@ const FreelancerGrid = () => {
 
         {/* View More Button */}
         <div className="text-center mt-16">
-          <button className="px-8 py-3 border-2 border-[#27bb97] text-[#27bb97] font-semibold rounded-lg hover:bg-[#27bb97] hover:text-white transition-all duration-300 hover:shadow-lg cursor-pointer">
-            View All Positions →
-          </button>
+          <Link to="/job-seekers">
+            <button className="px-8 py-3 border-2 border-[#27bb97] text-[#27bb97] font-semibold rounded-lg hover:bg-[#27bb97] hover:text-white transition-all duration-300 hover:shadow-lg cursor-pointer">
+              View All Positions →
+            </button>
+          </Link>
         </div>
       </div>
     </div>

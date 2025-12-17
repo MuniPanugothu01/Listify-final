@@ -42,6 +42,9 @@ import RentalDetailsPage from "./components/Rentals/RentalDetailsPage.jsx";
 import JobsPage from "./pages/JobsPage/JobsPage.jsx";
 import JobSearchPortal from "./components/Jobs/JobSearchPortal.jsx"; // Import JobSearchPortal
 import JobDetailsPage from "./components/Jobs/JobDetailsPage.jsx";
+import JobSeekerInterface from "./components/Jobs/JobSeekerInterface.jsx"; // Adjust path as needed
+
+
 
 // Profile
 import Profile from "./pages/Home/Profile.jsx";
@@ -173,6 +176,10 @@ const App = () => {
             <Route path="/job-search" element={<JobSearchPortal />} />{" "}
             {/* Add JobSearchPortal route */}
             <Route path="/job-details/:id" element={<JobDetailsPage />} />
+<Route path="/job-seekers" element={<JobSeekerInterface />} />
+
+
+
             {/* Events */}
             <Route path="/events" element={<Events />} />
             <Route path="/events/:eventId" element={<EventDetailPage />} />
