@@ -1,103 +1,132 @@
 import React, { useState, useEffect } from "react";
-import {Link} from "react-router-dom"; // Import Link component if using Next.js
 
 // React Icons imports
 import { CiClock2 } from "react-icons/ci";
-import { FaLongArrowAltRight, FaSearch, FaBriefcase, FaUsers, FaFileAlt, FaBuilding, FaMapMarkerAlt, FaCalendarAlt, FaArrowRight } from "react-icons/fa";
+import {
+  FaLongArrowAltRight,
+  FaSearch,
+  FaBriefcase,
+  FaUsers,
+  FaFileAlt,
+  FaBuilding,
+  FaMapMarkerAlt,
+  FaCalendarAlt,
+  FaArrowRight,
+} from "react-icons/fa";
 
 export default function JobSeekerInterface() {
   const [jobRole, setJobRole] = useState("");
   const [location, setLocation] = useState("");
-  const [visibleJobs, setVisibleJobs] = useState(3); // Show 3 jobs initially
+  const [visibleJobs, setVisibleJobs] = useState(6); // CHANGED: Show 6 jobs initially
   const [loading, setLoading] = useState(false);
   const [allJobsLoaded, setAllJobsLoaded] = useState(false);
 
-  // profile icon 
+  // Updated profiles array with progress values
   const profiles = [
     {
       id: 1,
-      initial: 'R',
-      title: 'Receptionist',
-      updated: '2 hrs ago',
-      location: 'Denton, TX',
-      bgColor: 'bg-red-400'
+      image:
+        "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=400&h=400&fit=crop&crop=face",
+      title: "Receptionist",
+      updated: "2 hrs ago",
+      location: "Denton, TX",
+      progress: 95, // 95% profile complete
+      lastActive: "Just now",
     },
     {
       id: 2,
-      initial: 'D',
-      title: 'Data Entry Operator',
-      updated: '3 hrs ago',
-      location: 'Sayreville, NJ',
-      bgColor: 'bg-purple-300'
+      image:
+        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face",
+      title: "Data Entry Operator",
+      updated: "3 hrs ago",
+      location: "Sayreville, NJ",
+      progress: 87,
+      lastActive: "1 hr ago",
     },
     {
       id: 3,
-      initial: 'M',
-      title: 'Mainframe Developer',
-      updated: '4 hrs ago',
-      location: 'South Plainfield',
-      bgColor: 'bg-orange-300'
+      image:
+        "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&crop=face",
+      title: "Mainframe Developer",
+      updated: "4 hrs ago",
+      location: "South Plainfield",
+      progress: 92,
+      lastActive: "30 mins ago",
     },
     {
       id: 4,
-      initial: 'L',
-      title: 'Leasing Consultant',
-      updated: '5 hrs ago',
-      location: 'Houston, TX',
-      bgColor: 'bg-teal-300'
+      image:
+        "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop&crop=face",
+      title: "Leasing Consultant",
+      updated: "5 hrs ago",
+      location: "Houston, TX",
+      progress: 78,
+      lastActive: "2 hrs ago",
     },
     {
       id: 5,
-      initial: 'F',
-      title: 'Founder & Lead Architect',
-      updated: '7 hrs ago',
-      location: 'Staten Island, NY',
-      bgColor: 'bg-sky-300'
+      image:
+        "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop&crop=face",
+      title: "Founder & Lead Architect",
+      updated: "7 hrs ago",
+      location: "Staten Island, NY",
+      progress: 100,
+      lastActive: "4 hrs ago",
     },
     {
       id: 6,
-      initial: 'A',
-      title: 'Accountant',
-      updated: '7 hrs ago',
-      location: 'Toms River, NJ',
-      bgColor: 'bg-orange-300'
+      image:
+        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&h=400&fit=crop&crop=face",
+      title: "Accountant",
+      updated: "7 hrs ago",
+      location: "Toms River, NJ",
+      progress: 85,
+      lastActive: "3 hrs ago",
     },
     {
       id: 7,
-      initial: 'N',
-      title: 'Nanny',
-      updated: '7 hrs ago',
-      location: 'Sunnyvale, CA',
-      bgColor: 'bg-red-400'
-    }
+      image:
+        "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=400&fit=crop&crop=face",
+      title: "Nanny",
+      updated: "7 hrs ago",
+      location: "Sunnyvale, CA",
+      progress: 70,
+      lastActive: "6 hrs ago",
+    },
   ];
 
   // articles
   const articles = [
     {
       id: 1,
-      title: 'What Does Prompt Engineering Entail in 2026? Skills, Salary, ...',
-      author: 'Rajkamal',
-      image: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 150"%3E%3Crect fill="%23002147" width="200" height="150"/%3E%3Cg fill="%23FDB913"%3E%3Crect x="45" y="45" width="30" height="35" rx="3"/%3E%3Crect x="45" y="85" width="30" height="8" rx="2"/%3E%3Crect x="80" y="50" width="25" height="25" rx="3"/%3E%3Crect x="85" y="55" width="5" height="5"/%3E%3Crect x="92" y="55" width="5" height="5"/%3E%3Crect x="85" y="65" width="15" height="3" rx="1"/%3E%3Ccircle cx="130" cy="60" r="25"/%3E%3Cpath d="M130 50 L135 60 L130 70 L125 60 Z"/%3E%3Cpath d="M120 60 L140 60 M130 50 L130 70" stroke="%23002147" stroke-width="2"/%3E%3C/g%3E%3C/svg%3E',
-      description: 'Explore the future of prompt engineering in 2026, covering essential skills, salary trends, real-world use cases, and the growing demand fo...',
-      readMoreLink: 'Read more »'
+      title: "What Does Prompt Engineering Entail in 2026? Skills, Salary, ...",
+      author: "Rajkamal",
+      image:
+        'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 150"%3E%3Crect fill="%23002147" width="200" height="150"/%3E%3Cg fill="%23FDB913"%3E%3Crect x="45" y="45" width="30" height="35" rx="3"/%3E%3Crect x="45" y="85" width="30" height="8" rx="2"/%3E%3Crect x="80" y="50" width="25" height="25" rx="3"/%3E%3Crect x="85" y="55" width="5" height="5"/%3E%3Crect x="92" y="55" width="5" height="5"/%3E%3Crect x="85" y="65" width="15" height="3" rx="1"/%3E%3Ccircle cx="130" cy="60" r="25"/%3E%3Cpath d="M130 50 L135 60 L130 70 L125 60 Z"/%3E%3Cpath d="M120 60 L140 60 M130 50 L130 70" stroke="%23002147" stroke-width="2"/%3E%3C/g%3E%3C/svg%3E',
+      description:
+        "Explore the future of prompt engineering in 2026, covering essential skills, salary trends, real-world use cases, and the growing demand fo...",
+      readMoreLink: "Read more »",
     },
     {
       id: 2,
-      title: 'How Indian IT Firms Are Slashing H-1B Visa Reliance in 202...',
-      author: 'Rajkamal',
-      image: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 150"%3E%3Crect fill="%23003D5C" width="200" height="150"/%3E%3Ctext x="20" y="30" font-family="Arial" font-size="12" font-weight="bold" fill="white"%3EHow Indian IT Firms Are Slashing H-1B Visa%3C/text%3E%3Ctext x="20" y="45" font-family="Arial" font-size="12" font-weight="bold" fill="white"%3EReliance in 2025: Trends, Challenges and Costs%3C/text%3E%3Crect x="140" y="25" width="40" height="50" fill="white" rx="2"/%3E%3Ctext x="148" y="40" font-family="Arial" font-size="10" font-weight="bold" fill="%23003D5C"%3EH-1B VISA%3C/text%3E%3Crect x="145" y="45" width="30" height="3" fill="%23003D5C"/%3E%3Crect x="145" y="52" width="25" height="2" fill="%23666"/%3E%3Crect x="145" y="57" width="28" height="2" fill="%23666"/%3E%3Cg fill="%23FDB913"%3E%3Ctext x="25" y="75" font-family="Arial" font-size="11" font-weight="bold"%3EKey Highlights:%3C/text%3E%3Ccircle cx="30" cy="90" r="2"/%3E%3Ctext x="38" y="93" font-family="Arial" font-size="9"%3ECost Reduction%3C/text%3E%3Ccircle cx="30" cy="105" r="2"/%3E%3Ctext x="38" y="108" font-family="Arial" font-size="9"%3EAI Automation%3C/text%3E%3Ccircle cx="110" cy="90" r="2"/%3E%3Ctext x="118" y="93" font-family="Arial" font-size="9"%3EPolicy Changes%3C/text%3E%3Ccircle cx="110" cy="105" r="2"/%3E%3Ctext x="118" y="108" font-family="Arial" font-size="9"%3EGlobal Talent%3C/text%3E%3C/g%3E%3Cpath d="M140 100 L150 110 L160 95 L170 105 L180 90" stroke="%2300D4FF" stroke-width="2" fill="none"/%3E%3Cg fill="white"%3E%3Ccircle cx="160" cy="130" r="8"/%3E%3Cpath d="M156 130 L159 133 L165 127" stroke="%23003D5C" stroke-width="2" fill="none"/%3E%3Ccircle cx="45" cy="130" r="8"/%3E%3Cpath d="M45 126 L45 134 M41 130 L49 130" stroke="%23003D5C" stroke-width="2"/%3E%3Ccircle cx="100" cy="130" r="8"/%3E%3Cpath d="M100 126 L100 134 M96 130 L104 130" stroke="%23003D5C" stroke-width="2"/%3E%3C/g%3E%3C/svg%3E',
-      description: 'Indian IT firms have sharply reduced H-1B use in 2025 due to tighter US policies, higher costs, and AI-driven automation, while expanding n...',
-      readMoreLink: 'Read more »'
+      title: "How Indian IT Firms Are Slashing H-1B Visa Reliance in 202...",
+      author: "Rajkamal",
+      image:
+        'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 150"%3E%3Crect fill="%23003D5C" width="200" height="150"/%3E%3Ctext x="20" y="30" font-family="Arial" font-size="12" font-weight="bold" fill="white"%3EHow Indian IT Firms Are Slashing H-1B Visa%3C/text%3E%3Ctext x="20" y="45" font-family="Arial" font-size="12" font-weight="bold" fill="white"%3EReliance in 2025: Trends, Challenges and Costs%3C/text%3E%3Crect x="140" y="25" width="40" height="50" fill="white" rx="2"/%3E%3Ctext x="148" y="40" font-family="Arial" font-size="10" font-weight="bold" fill="%23003D5C"%3EH-1B VISA%3C/text%3E%3Crect x="145" y="45" width="30" height="3" fill="%23003D5C"/%3E%3Crect x="145" y="52" width="25" height="2" fill="%23666"/%3E%3Crect x="145" y="57" width="28" height="2" fill="%23666"/%3E%3Cg fill="%23FDB913"%3E%3Ctext x="25" y="75" font-family="Arial" font-size="11" font-weight="bold"%3EKey Highlights:%3C/text%3E%3Ccircle cx="30" cy="90" r="2"/%3E%3Ctext x="38" y="93" font-family="Arial" font-size="9"%3ECost Reduction%3C/text%3E%3Ccircle cx="30" cy="105" r="2"/%3E%3Ctext x="38" y="108" font-family="Arial" font-size="9"%3EAI Automation%3C/text%3E%3Ccircle cx="110" cy="90" r="2"/%3E%3Ctext x="118" y="93" font-family="Arial" font-size="9"%3EPolicy Changes%3C/text%3E%3Ccircle cx="110" cy="105" r="2"/%3E%3Ctext x="118" y="108" font-family="Arial" font-size="9"%3EGlobal Talent%3C/text%3E%3C/g%3E%3Cpath d="M140 100 L150 110 L160 95 L170 105 L180 90" stroke="%2300D4FF" stroke-width="2" fill="none"/%3E%3Cg fill="white"%3E%3Ccircle cx="160" cy="130" r="8"/%3E%3Cpath d="M156 130 L159 133 L165 127" stroke="%23003D5C" stroke-width="2" fill="none"/%3E%3Ccircle cx="45" cy="130" r="8"/%3E%3Cpath d="M45 126 L45 134 M41 130 L49 130" stroke="%23003D5C" stroke-width="2"/%3E%3Ccircle cx="100" cy="130" r="8"/%3E%3Cpath d="M100 126 L100 134 M96 130 L104 130" stroke="%23003D5C" stroke-width="2"/%3E%3C/g%3E%3C/svg%3E',
+      description:
+        "Indian IT firms have sharply reduced H-1B use in 2025 due to tighter US policies, higher costs, and AI-driven automation, while expanding n...",
+      readMoreLink: "Read more »",
     },
     {
       id: 3,
-      title: 'High-Demand Jobs in USA for Indians in 2026-2027: Guide t...',
-      author: 'Rajkamal',
-      image: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 150"%3E%3Crect fill="%23003D5C" width="200" height="150"/%3E%3Ctext x="15" y="25" font-family="Arial" font-size="13" font-weight="bold" fill="white"%3EHIGH-DEMAND%3C/text%3E%3Ctext x="15" y="40" font-family="Arial" font-size="13" font-weight="bold" fill="white"%3EJOBS IN USA FOR%3C/text%3E%3Ctext x="15" y="55" font-family="Arial" font-size="13" font-weight="bold" fill="white"%3EINDIANS IN 2026-%3C/text%3E%3Ctext x="15" y="70" font-family="Arial" font-size="13" font-weight="bold" fill="white"%3E2027%3C/text%3E%3Ccircle cx="170" cy="35" r="18" fill="none" stroke="white" stroke-width="2"/%3E%3Cpath d="M170 17 L170 35 M155 35 L185 35" stroke="white" stroke-width="2"/%3E%3Cpath d="M170 35 L178 43 L162 43 Z" fill="white"/%3E%3Ccircle cx="175" cy="35" r="20" fill="none" stroke="white" stroke-width="1" opacity="0.3"/%3E%3Ccircle cx="35" cy="100" r="15" fill="%2300A3E0"/%3E%3Cpath d="M35 90 L35 100 L42 95 Z" fill="white"/%3E%3Cpath d="M30 105 L40 105 M35 100 L35 110" stroke="white" stroke-width="2"/%3E%3Crect x="60" y="95" width="25" height="18" rx="2" fill="%2300A3E0"/%3E%3Crect x="65" y="99" width="15" height="2" fill="white"/%3E%3Crect x="65" y="104" width="12" height="2" fill="white"/%3E%3Crect x="65" y="109" width="10" height="1" fill="white"/%3E%3Ccircle cx="170" cy="100" r="15" fill="none" stroke="%2300A3E0" stroke-width="2"/%3E%3Cpath d="M165 95 Q170 85 175 95 M175 95 L175 105 M165 105 L175 105" stroke="%2300A3E0" stroke-width="2" fill="none"/%3E%3Cg fill="%23FDB913"%3E%3Ccircle cx="30" cy="130" r="8"/%3E%3Cpath d="M26 130 L29 133 L35 127" stroke="%23003D5C" stroke-width="2" fill="none"/%3E%3Ccircle cx="70" cy="130" r="8"/%3E%3Cpath d="M70 126 L70 130 L74 128" stroke="%23003D5C" stroke-width="2" fill="none"/%3E%3Ccircle cx="110" cy="130" r="8"/%3E%3Ctext x="107" y="134" font-size="10" font-weight="bold" fill="%23003D5C"%3E$%3C/text%3E%3Ccircle cx="150" cy="130" r="8"/%3E%3Crect x="147" y="127" width="6" height="6" stroke="%23003D5C" stroke-width="1.5" fill="none"/%3E%3C/g%3E%3Ccircle cx="175" cy="60" r="12" fill="none" stroke="white" stroke-width="2"/%3E%3Cpath d="M175 52 L175 60 L180 55" stroke="white" stroke-width="2" fill="none"/%3E%3Cpath d="M164 63 L164 68 L186 68 L186 63 Q175 58 164 63" fill="%23DC143C"/%3E%3Cpath d="M164 68 L164 73 L186 73 L186 68" fill="white"/%3E%3Cpath d="M164 73 L164 78 L186 78 L186 73" fill="%23DC143C"/%3E%3C/svg%3E',
-      description: 'ChatGPT said:Discover the top high-demand US jobs for Indians in 2026–2027, including salary insights, key sectors, and updated H-1B visa p...',
-      readMoreLink: 'Read more »'
-    }
+      title: "High-Demand Jobs in USA for Indians in 2026-2027: Guide t...",
+      author: "Rajkamal",
+      image:
+        'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 150"%3E%3Crect fill="%23003D5C" width="200" height="150"/%3E%3Ctext x="15" y="25" font-family="Arial" font-size="13" font-weight="bold" fill="white"%3EHIGH-DEMAND%3C/text%3E%3Ctext x="15" y="40" font-family="Arial" font-size="13" font-weight="bold" fill="white"%3EJOBS IN USA FOR%3C/text%3E%3Ctext x="15" y="55" font-family="Arial" font-size="13" font-weight="bold" fill="white"%3EINDIANS IN 2026-%3C/text%3E%3Ctext x="15" y="70" font-family="Arial" font-size="13" font-weight="bold" fill="white"%3E2027%3C/text%3E%3Ccircle cx="170" cy="35" r="18" fill="none" stroke="white" stroke-width="2"/%3E%3Cpath d="M170 17 L170 35 M155 35 L185 35" stroke="white" stroke-width="2"/%3E%3Cpath d="M170 35 L178 43 L162 43 Z" fill="white"/%3E%3Ccircle cx="175" cy="35" r="20" fill="none" stroke="white" stroke-width="1" opacity="0.3"/%3E%3Ccircle cx="35" cy="100" r="15" fill="%2300A3E0"/%3E%3Cpath d="M35 90 L35 100 L42 95 Z" fill="white"/%3E%3Cpath d="M30 105 L40 105 M35 100 L35 110" stroke="white" stroke-width="2"/%3E%3Crect x="60" y="95" width="25" height="18" rx="2" fill="%2300A3E0"/%3E%3Crect x="65" y="99" width="15" height="2" fill="white"/%3E%3Crect x="65" y="104" width="12" height="2" fill="white"/%3E%3Crect x="65" y="109" width="10" height="1" fill="white"/%3E%3Ccircle cx="170" cy="100" r="15" fill="none" stroke="%2300A3E0" stroke-width="2"/%3E%3Cpath d="M165 95 Q170 85 175 95 M175 95 L175 105 M165 105 L175 105" stroke="%2300A3E0" stroke-width="2" fill="none"/%3E%3Cg fill="%23FDB913"%3E%3Ccircle cx="30" cy="130" r="8"/%3E%3Cpath d="M26 130 L29 133 L35 127" stroke="%23003D5C" stroke-width="2" fill="none"/%3E%3Ccircle cx="70" cy="130" r="8"/%3E%3Cpath d="M70 126 L70 130 L74 128" stroke="%23003D5C" stroke-width="2" fill="none"/%3E%3Ccircle cx="110" cy="130" r="8"/%3E%3Ctext x="107" y="134" font-size="10" font-weight="bold" fill="%23003D5C"%3E$%3C/text%3E%3Ccircle cx="150" cy="130" r="8"/%3E%3Crect x="147" y="127" width="6" height="6" stroke="%23003D5C" stroke-width="1.5" fill="none"/%3E%3C/g%3E%3Ccircle cx="175" cy="60" r="12" fill="none" stroke="white" stroke-width="2"/%3E%3Cpath d="M175 52 L175 60 L180 55" stroke="white" stroke-width="2" fill="none"/%3E%3Cpath d="M164 63 L164 68 L186 68 L186 63 Q175 58 164 63" fill="%23DC143C"/%3E%3Cpath d="M164 68 L164 73 L186 73 L186 68" fill="white"/%3E%3Cpath d="M164 73 L164 78 L186 78 L186 73" fill="%23DC143C"/%3E%3C/svg%3E',
+      description:
+        "ChatGPT said:Discover the top high-demand US jobs for Indians in 2026–2027, including salary insights, key sectors, and updated H-1B visa p...",
+      readMoreLink: "Read more »",
+    },
   ];
 
   // Job cards data - more than 20 items
@@ -112,10 +141,11 @@ export default function JobSeekerInterface() {
       industry: "IT Software / Services",
       functionalArea: "IT Software",
       skills: "java, devops",
-      description: "Looking for a career in Mainframe technology. Preferrably remote position. Can work on C2C or W2",
+      description:
+        "Looking for a career in Mainframe technology. Preferrably remote position. Can work on C2C or W2",
       salary: "$50-60",
       salaryPeriod: "/Monthly",
-      link: "/jobs/mainframe-developer" // Added link property
+      link: "/jobs/mainframe-developer",
     },
     {
       id: 2,
@@ -127,10 +157,11 @@ export default function JobSeekerInterface() {
       industry: "IT Software",
       functionalArea: "Software Development",
       skills: "React, Node.js, AWS",
-      description: "Experienced full-stack developer seeking challenging role in innovative tech company.",
+      description:
+        "Experienced full-stack developer seeking challenging role in innovative tech company.",
       salary: "$80-95",
       salaryPeriod: "/Monthly",
-      link: "/jobs/senior-software-engineer"
+      link: "/jobs/senior-software-engineer",
     },
     {
       id: 3,
@@ -142,10 +173,11 @@ export default function JobSeekerInterface() {
       industry: "Data Analytics",
       functionalArea: "Machine Learning",
       skills: "Python, TensorFlow, SQL",
-      description: "Passionate about AI/ML applications in healthcare and finance sectors.",
+      description:
+        "Passionate about AI/ML applications in healthcare and finance sectors.",
       salary: "$75-90",
       salaryPeriod: "/Monthly",
-      link: "/jobs/data-scientist"
+      link: "/jobs/data-scientist",
     },
     {
       id: 4,
@@ -157,10 +189,11 @@ export default function JobSeekerInterface() {
       industry: "Tech Products",
       functionalArea: "Product Management",
       skills: "Agile, Scrum, User Research",
-      description: "Driving product strategy and roadmap for consumer-facing applications.",
+      description:
+        "Driving product strategy and roadmap for consumer-facing applications.",
       salary: "$85-100",
       salaryPeriod: "/Monthly",
-      link: "/jobs/product-manager"
+      link: "/jobs/product-manager",
     },
     {
       id: 5,
@@ -172,10 +205,11 @@ export default function JobSeekerInterface() {
       industry: "Design Services",
       functionalArea: "User Experience",
       skills: "Figma, Adobe XD, Prototyping",
-      description: "Creating intuitive and beautiful user interfaces for web and mobile apps.",
+      description:
+        "Creating intuitive and beautiful user interfaces for web and mobile apps.",
       salary: "$60-75",
       salaryPeriod: "/Monthly",
-      link: "/jobs/ux-ui-designer"
+      link: "/jobs/ux-ui-designer",
     },
     {
       id: 6,
@@ -187,10 +221,11 @@ export default function JobSeekerInterface() {
       industry: "Cloud Services",
       functionalArea: "Infrastructure",
       skills: "Docker, Kubernetes, AWS",
-      description: "Building scalable cloud infrastructure and CI/CD pipelines.",
+      description:
+        "Building scalable cloud infrastructure and CI/CD pipelines.",
       salary: "$70-85",
       salaryPeriod: "/Monthly",
-      link: "/jobs/devops-engineer"
+      link: "/jobs/devops-engineer",
     },
     {
       id: 7,
@@ -202,10 +237,11 @@ export default function JobSeekerInterface() {
       industry: "Security Services",
       functionalArea: "Information Security",
       skills: "Network Security, Threat Analysis",
-      description: "Protecting organizational data and infrastructure from cyber threats.",
+      description:
+        "Protecting organizational data and infrastructure from cyber threats.",
       salary: "$65-80",
       salaryPeriod: "/Monthly",
-      link: "/jobs/cybersecurity-analyst"
+      link: "/jobs/cybersecurity-analyst",
     },
     {
       id: 8,
@@ -217,10 +253,11 @@ export default function JobSeekerInterface() {
       industry: "Cloud Computing",
       functionalArea: "Cloud Infrastructure",
       skills: "AWS, Azure, GCP",
-      description: "Designing and implementing cloud solutions for enterprise clients.",
+      description:
+        "Designing and implementing cloud solutions for enterprise clients.",
       salary: "$90-110",
       salaryPeriod: "/Monthly",
-      link: "/jobs/cloud-architect"
+      link: "/jobs/cloud-architect",
     },
     {
       id: 9,
@@ -232,10 +269,11 @@ export default function JobSeekerInterface() {
       industry: "Mobile Apps",
       functionalArea: "Mobile Development",
       skills: "React Native, Swift, Kotlin",
-      description: "Building cross-platform mobile applications for iOS and Android.",
+      description:
+        "Building cross-platform mobile applications for iOS and Android.",
       salary: "$70-85",
       salaryPeriod: "/Monthly",
-      link: "/jobs/mobile-app-developer"
+      link: "/jobs/mobile-app-developer",
     },
     {
       id: 10,
@@ -250,7 +288,7 @@ export default function JobSeekerInterface() {
       description: "Researching and implementing cutting-edge AI algorithms.",
       salary: "$85-100",
       salaryPeriod: "/Monthly",
-      link: "/jobs/ai-research-engineer"
+      link: "/jobs/ai-research-engineer",
     },
     {
       id: 11,
@@ -265,7 +303,7 @@ export default function JobSeekerInterface() {
       description: "Bridging the gap between IT and business stakeholders.",
       salary: "$55-70",
       salaryPeriod: "/Monthly",
-      link: "/jobs/business-analyst"
+      link: "/jobs/business-analyst",
     },
     {
       id: 12,
@@ -280,7 +318,7 @@ export default function JobSeekerInterface() {
       description: "Automating test cases and ensuring software quality.",
       salary: "$60-75",
       salaryPeriod: "/Monthly",
-      link: "/jobs/qa-automation-engineer"
+      link: "/jobs/qa-automation-engineer",
     },
     {
       id: 13,
@@ -292,10 +330,11 @@ export default function JobSeekerInterface() {
       industry: "Networking",
       functionalArea: "Network Infrastructure",
       skills: "Cisco, Juniper, Network Security",
-      description: "Designing and maintaining enterprise network infrastructure.",
+      description:
+        "Designing and maintaining enterprise network infrastructure.",
       salary: "$65-80",
       salaryPeriod: "/Monthly",
-      link: "/jobs/network-engineer"
+      link: "/jobs/network-engineer",
     },
     {
       id: 14,
@@ -310,7 +349,7 @@ export default function JobSeekerInterface() {
       description: "Managing and optimizing database performance and security.",
       salary: "$70-85",
       salaryPeriod: "/Monthly",
-      link: "/jobs/database-administrator"
+      link: "/jobs/database-administrator",
     },
     {
       id: 15,
@@ -325,7 +364,7 @@ export default function JobSeekerInterface() {
       description: "Building responsive and interactive web applications.",
       salary: "$65-80",
       salaryPeriod: "/Monthly",
-      link: "/jobs/frontend-developer"
+      link: "/jobs/frontend-developer",
     },
     {
       id: 16,
@@ -340,7 +379,7 @@ export default function JobSeekerInterface() {
       description: "Developing server-side logic and database architecture.",
       salary: "$70-85",
       salaryPeriod: "/Monthly",
-      link: "/jobs/backend-developer"
+      link: "/jobs/backend-developer",
     },
     {
       id: 17,
@@ -352,10 +391,11 @@ export default function JobSeekerInterface() {
       industry: "Web Development",
       functionalArea: "Full Stack Development",
       skills: "MERN Stack, REST APIs, Docker",
-      description: "End-to-end web application development from frontend to backend.",
+      description:
+        "End-to-end web application development from frontend to backend.",
       salary: "$75-90",
       salaryPeriod: "/Monthly",
-      link: "/jobs/full-stack-developer"
+      link: "/jobs/full-stack-developer",
     },
     {
       id: 18,
@@ -370,7 +410,7 @@ export default function JobSeekerInterface() {
       description: "Leading IT projects from initiation to completion.",
       salary: "$80-95",
       salaryPeriod: "/Monthly",
-      link: "/jobs/it-project-manager"
+      link: "/jobs/it-project-manager",
     },
     {
       id: 19,
@@ -385,7 +425,7 @@ export default function JobSeekerInterface() {
       description: "Managing and maintaining server infrastructure.",
       salary: "$60-75",
       salaryPeriod: "/Monthly",
-      link: "/jobs/system-administrator"
+      link: "/jobs/system-administrator",
     },
     {
       id: 20,
@@ -397,10 +437,11 @@ export default function JobSeekerInterface() {
       industry: "Machine Learning",
       functionalArea: "ML Engineering",
       skills: "Python, Scikit-learn, Deep Learning",
-      description: "Building and deploying machine learning models in production.",
+      description:
+        "Building and deploying machine learning models in production.",
       salary: "$85-100",
       salaryPeriod: "/Monthly",
-      link: "/jobs/machine-learning-engineer"
+      link: "/jobs/machine-learning-engineer",
     },
     {
       id: 21,
@@ -412,10 +453,11 @@ export default function JobSeekerInterface() {
       industry: "Blockchain",
       functionalArea: "Blockchain Development",
       skills: "Solidity, Ethereum, Smart Contracts",
-      description: "Developing decentralized applications on blockchain platforms.",
+      description:
+        "Developing decentralized applications on blockchain platforms.",
       salary: "$80-95",
       salaryPeriod: "/Monthly",
-      link: "/jobs/blockchain-developer"
+      link: "/jobs/blockchain-developer",
     },
     {
       id: 22,
@@ -427,27 +469,28 @@ export default function JobSeekerInterface() {
       industry: "Gaming",
       functionalArea: "Game Development",
       skills: "Unity, C#, 3D Graphics",
-      description: "Creating engaging game experiences across multiple platforms.",
+      description:
+        "Creating engaging game experiences across multiple platforms.",
       salary: "$65-80",
       salaryPeriod: "/Monthly",
-      link: "/jobs/game-developer"
-    }
+      link: "/jobs/game-developer",
+    },
   ];
 
   // Handle View More click
   const handleViewMore = () => {
     setLoading(true);
-    
+
     // Simulate API call delay
     setTimeout(() => {
       const newVisibleCount = visibleJobs + 3;
       setVisibleJobs(newVisibleCount);
-      
+
       // Check if all jobs are loaded
       if (newVisibleCount >= jobCards.length) {
         setAllJobsLoaded(true);
       }
-      
+
       setLoading(false);
     }, 1000); // 1 second loading simulation
   };
@@ -479,14 +522,14 @@ export default function JobSeekerInterface() {
                   placeholder="Job role"
                   value={jobRole}
                   onChange={(e) => setJobRole(e.target.value)}
-                  className="flex-1 px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#27bb97]"
+                  className="flex-1 px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
                 <input
                   type="text"
                   placeholder="Location"
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
-                  className="flex-1 px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#27bb97]"
+                  className="flex-1 px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
                 <button className="px-8 py-3 bg-[#27bb97] hover:bg-[#1fa987] text-white rounded-md font-medium cursor-pointer">
                   Search
@@ -510,7 +553,7 @@ export default function JobSeekerInterface() {
               </button>
             </div>
 
-            <div className="bg-yellow-50 relative  border-orange-400 border-b border-dashed border-gray-300 p-6 rounded-r-lg mb-6">
+            <div className="bg-yellow-50 relative border-orange-400 border-b border-dashed border-gray-300 p-6 rounded-r-lg mb-6">
               <div className="bg-orange-400 h-full w-[3px] absolute left-0 top-0" />
               <h2 className="text-xl font-semibold text-gray-800 mb-2">
                 Browse Latest Job Seekers in the USA and Canada – Connect Now!
@@ -520,25 +563,25 @@ export default function JobSeekerInterface() {
               </p>
             </div>
 
-            {/* Job Cards Container with smooth animation */}
+            {/* Job Cards Container with smooth animation - NOW SHOWS 6 CARDS INITIALLY */}
             <div className="space-y-6 transition-all duration-500 ease-in-out">
               {jobCards.slice(0, visibleJobs).map((job, index) => (
-                <div 
+                <div
                   key={job.id}
-                  className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-all duration-300 ease-in-out hover:scale-[1.005] group"
-                  style={{ 
+                  className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-all duration-300 ease-in-out hover:scale-[1.005] group "
+                  style={{
                     animationDelay: `${index * 100}ms`,
-                    animation: `fadeInUp 0.5s ease-out ${index * 100}ms both`
+                    animation: `fadeInUp 0.5s ease-out ${index * 100}ms both`,
                   }}
                 >
-                  <div className="flex items-center border-b-2 border-dotted mb-7">
+                  <div className="flex items-center border-b-2 border-dotted mb-7 cursor-pointer">
                     <div className="flex-1">
                       {/* Card Title with Link - Changes to green on hover */}
-                      <Link href={job.link || "#"}>
-                        <h3 className="text-2xl font-semibold text-gray-800 mb-1 group-hover:text-[#27bb97] transition-colors duration-300 cursor-pointer">
+                      <a href={job.link || "#"} className="inline-block">
+                        <h3 className="text-2xl font-semibold text-gray-800 mb-1 group-hover:text-[#1fa987] transition-colors duration-300 cursor-pointer ">
                           {job.title}
                         </h3>
-                      </Link>
+                      </a>
 
                       <div className="flex items-center gap-4 text-sm text-gray-600 mb-6">
                         <div className="flex items-center gap-1 font-medium">
@@ -564,7 +607,9 @@ export default function JobSeekerInterface() {
                             className="h-10 w-10"
                           />
                           <p className="text-sm text-gray-500">Work History</p>
-                          <p className="font-semibold text-gray-800">{job.workHistory}</p>
+                          <p className="font-semibold text-gray-800">
+                            {job.workHistory}
+                          </p>
                         </div>
 
                         {/* Current Position */}
@@ -574,7 +619,9 @@ export default function JobSeekerInterface() {
                             alt="Current Position"
                             className="h-10 w-10"
                           />
-                          <p className="text-sm text-gray-500">Current Position</p>
+                          <p className="text-sm text-gray-500">
+                            Current Position
+                          </p>
                           <p className="font-semibold text-blue-600">
                             {job.currentPosition}
                           </p>
@@ -600,8 +647,12 @@ export default function JobSeekerInterface() {
                             alt="Functional Area"
                             className="h-10 w-10"
                           />
-                          <p className="text-sm text-gray-500">Functional Area</p>
-                          <p className="font-semibold text-gray-800">{job.functionalArea}</p>
+                          <p className="text-sm text-gray-500">
+                            Functional Area
+                          </p>
+                          <p className="font-semibold text-gray-800">
+                            {job.functionalArea}
+                          </p>
                         </div>
                       </div>
 
@@ -621,12 +672,14 @@ export default function JobSeekerInterface() {
                         </p>
                       </div>
                     </div>
-                    <div className="h-[280px] w-[1px] bg-gray-300"/>
+                    <div className="h-[280px] w-[1px] bg-gray-300" />
                     <div className="p-4">
                       <p>Expected Salary</p>
                       <h1 className="text-[20px] font-bold">
                         {job.salary}{" "}
-                        <span className="text-[12px] text-gray-500">{job.salaryPeriod}</span>
+                        <span className="text-[12px] text-gray-500">
+                          {job.salaryPeriod}
+                        </span>
                       </h1>
                     </div>
                   </div>
@@ -785,29 +838,98 @@ export default function JobSeekerInterface() {
               </button>
             </div>
 
-            {/* Latest job seeker profiles section */}
+            {/* Latest job seeker profiles section with progress bars */}
             <div className="border border-gray-300 rounded-lg overflow-hidden shadow-sm mb-6">
               <div className="bg-white border-b border-gray-300 px-6 py-4">
-                <h1 className="text-2xl font-bold text-gray-900">Latest job seeker profiles</h1>
+                <h1 className="text-2xl font-bold text-gray-900">
+                  Latest job seeker profiles
+                </h1>
+                <p className="text-sm text-gray-500 mt-1">
+                  Profile completion status
+                </p>
               </div>
-              
+
               <div className="divide-y divide-gray-200">
                 {profiles.map((profile) => (
-                  <div key={profile.id} className="flex items-center gap-4 px-6 py-4 hover:bg-gray-50 transition-colors">
-                    <div className={`${profile.bgColor} w-14 h-14 rounded flex items-center justify-center flex-shrink-0`}>
-                      <span className="text-white text-xl font-semibold">{profile.initial}</span>
-                    </div>
-                    
-                    <div className="flex-1">
-                      <h2 className="text-lg font-normal text-blue-500 mb-1">{profile.title}</h2>
-                      <div className="flex items-center gap-4 text-sm text-gray-600">
-                        <div className="flex items-center gap-1">
-                          <FaFileAlt className="w-4 h-4 text-gray-400" />
-                          <span>Updated {profile.updated}</span>
+                  <div
+                    key={profile.id}
+                    className="px-6 py-4 hover:bg-gray-50 transition-colors group"
+                  >
+                    <div className="flex items-start gap-4">
+                      {/* Profile Image */}
+                      <div className="w-14 h-14 rounded-full overflow-hidden flex-shrink-0 border-2 border-gray-200">
+                        <img
+                          src={profile.image}
+                          alt={profile.title}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = `https://ui-avatars.com/api/?name=${
+                              profile.title.split(" ")[0]
+                            }&background=random&color=fff&size=56`;
+                          }}
+                        />
+                      </div>
+
+                      <div className="flex-1">
+                        <div className="flex justify-between items-start cursor-pointer">
+                          <div>
+                            <h2 className="text-lg font-bold text-black mb-1 group-hover:text-[#1fa987] transition-colors duration-200">
+                              {profile.title}
+                            </h2>
+                            <div className="flex items-center gap-4 text-sm text-gray-600 mb-2">
+                              <div className="flex items-center gap-1">
+                                <FaMapMarkerAlt className="w-4 h-4 text-gray-400" />
+                                <span>{profile.location}</span>
+                              </div>
+                              <div className="flex items-center gap-1">
+                                <FaFileAlt className="w-4 h-4 text-gray-400" />
+                                <span>Updated {profile.updated}</span>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <span
+                              className={`px-2 py-1 text-xs font-semibold rounded-full ${
+                                profile.progress >= 90
+                                  ? "bg-green-100 text-green-800"
+                                  : profile.progress >= 75
+                                  ? "bg-blue-100 text-blue-800"
+                                  : "bg-yellow-100 text-yellow-800"
+                              }`}
+                            >
+                              {profile.progress}%
+                            </span>
+                            <p className="text-xs text-gray-500 mt-1">
+                              Complete
+                            </p>
+                          </div>
                         </div>
-                        <div className="flex items-center gap-1">
-                          <FaMapMarkerAlt className="w-4 h-4 text-gray-400" />
-                          <span>{profile.location}</span>
+
+                        {/* Progress Bar */}
+                        <div className="mt-2">
+                          <div className="flex justify-between text-xs text-gray-500 mb-1">
+                            <span>Profile completion</span>
+                            <span>{profile.progress}%</span>
+                          </div>
+                          <div className="w-full bg-gray-200 rounded-full h-2">
+                            <div
+                              className={`h-2 rounded-full ${
+                                profile.progress >= 90
+                                  ? "bg-green-500"
+                                  : profile.progress >= 75
+                                  ? "bg-blue-500"
+                                  : "bg-yellow-500"
+                              }`}
+                              style={{ width: `${profile.progress}%` }}
+                            ></div>
+                          </div>
+                        </div>
+
+                        {/* Last Active */}
+                        <div className="flex items-center gap-1 text-xs text-gray-500 mt-2">
+                          <CiClock2 className="w-3 h-3" />
+                          <span>Last active: {profile.lastActive}</span>
                         </div>
                       </div>
                     </div>
@@ -817,66 +939,110 @@ export default function JobSeekerInterface() {
             </div>
 
             {/* Upload Resume Banner */}
-            <div className="bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg p-8 border-4 border-white shadow-lg mb-6">
-              <div className="border-2 border-white rounded p-8 text-center">
-                <h2 className="text-white text-xl font-medium mb-6 leading-relaxed">
-                  Not able to find the right Job in USA & Canada ? Upload your resume now and let employers find you!
-                </h2>
-                <button className="bg-white text-gray-800 px-8 py-3 rounded font-medium hover:bg-gray-50 transition-colors text-base">
-                  Upload Resume
-                </button>
-              </div>
+            <div className="bg-gray-50 border border-gray-200 rounded-xl p-6 shadow-sm mb-6">
+              <h2 className="text-gray-800 text-xl font-semibold mb-3 leading-relaxed">
+                Not able to find the right job in USA & Canada?
+              </h2>
+
+              <p className="text-gray-600 text-sm mb-6">
+                Upload your resume and let verified employers find you.
+              </p>
+
+              <button
+                className="
+    bg-[#27bb97]
+    hover:bg-[#1fa987]
+    active:bg-[#159a7a]
+    text-white
+    px-8 py-3
+    rounded-lg
+    font-semibold
+    transition
+    shadow-sm
+  "
+              >
+                Upload Resume
+              </button>
             </div>
 
             {/* Job Alert Banner */}
-            <div className="bg-gradient-to-r from-pink-500 via-purple-500 to-purple-600 rounded-lg p-8 border-4 border-white shadow-lg mb-6">
-              <div className="border-2 border-white rounded p-8 text-center">
-                <h2 className="text-white text-xl font-medium mb-6">
-                  Get the best matching Jobs through email!
-                </h2>
-                <button className="bg-white text-gray-800 px-8 py-3 rounded font-medium hover:bg-gray-50 transition-colors text-base">
-                  Set Job Alert
-                </button>
-              </div>
+            <div className="bg-gray-50 border border-gray-200 rounded-xl p-6 mb-6">
+              <h2 className="text-gray-800 text-xl font-semibold mb-2">
+                Get matching jobs in your inbox
+              </h2>
+              <p className="text-gray-500 text-sm mb-5">
+                No spam. Only relevant jobs. Unsubscribe anytime.
+              </p>
+              <button
+                className="
+    bg-[#27bb97]
+    hover:bg-[#1fa987]
+    text-white
+    px-7 py-3
+    rounded-lg
+    font-semibold
+    transition
+  "
+              >
+                Set Job Alert
+              </button>
             </div>
 
             {/* Post Job Need Banner */}
-            <div className="bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg p-8 border-4 border-white shadow-lg mb-6">
-              <div className="border-2 border-white rounded p-8 text-center">
-                <h2 className="text-white text-xl font-medium mb-6 leading-relaxed">
-                  Post your job need and rank higher in the page to get job earliest.
-                </h2>
-                <button className="bg-white text-gray-800 px-8 py-3 rounded font-medium hover:bg-gray-50 transition-colors text-base">
-                  Post Your Job Need
-                </button>
-              </div>
+            <div className="bg-[#27bb97]/10 border border-[#27bb97]/30 rounded-xl p-6 mb-6">
+              <h2 className="text-gray-800 text-xl font-semibold mb-2">
+                Post your job need & get noticed faster
+              </h2>
+              <p className="text-gray-600 text-sm mb-5">
+                Rank higher and reach recruiters directly
+              </p>
+              <button
+                className="
+    bg-[#27bb97]
+    hover:bg-[#1fa987]
+    text-white
+    px-7 py-3
+    rounded-lg
+    font-semibold
+    transition
+  "
+              >
+                Post Job Need (Free)
+              </button>
             </div>
 
             {/* Latest Articles section */}
             <div className="border border-gray-300 rounded-lg overflow-hidden shadow-sm mb-6">
               <div className="bg-white px-6 py-4 border-b border-gray-200">
-                <h1 className="text-2xl font-bold text-gray-900">Latest Articles</h1>
+                <h1 className="text-2xl font-bold text-gray-900">
+                  Latest Articles
+                </h1>
               </div>
-              
+
               <div className="divide-y divide-gray-200">
                 {articles.map((article) => (
                   <div key={article.id} className="px-6 py-5">
                     <h2 className="text-lg text-blue-500 mb-1 hover:underline cursor-pointer">
                       {article.title}
                     </h2>
-                    <p className="text-sm text-gray-600 mb-3">by {article.author}</p>
-                    
+                    <p className="text-sm text-gray-600 mb-3">
+                      by {article.author}
+                    </p>
+
                     <div className="flex gap-4">
-                      <img 
+                      <img
                         src={article.image}
                         alt={article.title}
                         className="w-44 h-32 object-cover rounded flex-shrink-0"
                       />
-                      
+
                       <div className="flex-1">
                         <p className="text-sm text-gray-700 leading-relaxed">
                           {article.description}
-                          <a href="#" className="text-blue-500 hover:underline ml-1">
+                          <a
+                            href="#"
+                            className="text-blue-500 hover:underline ml-1"
+                          >
                             {article.readMoreLink}
                           </a>
                         </p>
@@ -885,9 +1051,12 @@ export default function JobSeekerInterface() {
                   </div>
                 ))}
               </div>
-              
+
               <div className="px-6 py-4 border-t border-gray-200 flex justify-end">
-                <a href="#" className="flex items-center gap-2 text-blue-500 hover:underline">
+                <a
+                  href="#"
+                  className="flex items-center gap-2 text-blue-500 hover:underline"
+                >
                   View More <span className="font-semibold">Articles</span>
                   <FaArrowRight className="w-4 h-4" />
                 </a>
@@ -909,7 +1078,7 @@ export default function JobSeekerInterface() {
             transform: translateY(0);
           }
         }
-        
+
         .animate-fadeIn {
           animation: fadeInUp 0.5s ease-out;
         }
