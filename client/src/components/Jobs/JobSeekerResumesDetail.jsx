@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Search, MapPin, ChevronDown, User, X } from "lucide-react";
+import {
+  FaSearch,
+  FaMapMarkerAlt,
+  FaUser,
+  FaChevronDown,
+  FaTimes,
+} from "react-icons/fa";
 
 export default function JobSeekerResumesDetail() {
   const [selectedRoles, setSelectedRoles] = useState([]);
@@ -278,13 +284,13 @@ export default function JobSeekerResumesDetail() {
                     <option>Europe</option>
                     <option>Asia</option>
                   </datalist>
-                  <ChevronDown
+                  <FaChevronDown
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"
-                    size={20}
+                    size={16}
                   />
                 </div>
                 <button className="bg-[#27bb97] hover:bg-[#1fa987] px-8 rounded transition-colors flex items-center justify-center">
-                  <Search size={22} className="text-white" />
+                  <FaSearch size={18} className="text-white" />
                 </button>
               </div>
             </div>
@@ -325,7 +331,7 @@ export default function JobSeekerResumesDetail() {
                       onClick={() => removeFilter(filter)}
                       className="text-gray-400 hover:text-gray-600 transition-colors"
                     >
-                      <X className="w-3 h-3" />
+                      <FaTimes className="w-3 h-3" />
                     </button>
                   </div>
                 ))}
@@ -378,7 +384,7 @@ export default function JobSeekerResumesDetail() {
                     <h4 className="text-xs font-semibold text-gray-700 uppercase tracking-wider">
                       Job Role
                     </h4>
-                    <ChevronDown
+                    <FaChevronDown
                       className={`w-3 h-3 text-gray-500 transition-all duration-200 group-hover:text-gray-700 ${
                         openJobRole ? "rotate-180" : "rotate-0"
                       }`}
@@ -451,7 +457,7 @@ export default function JobSeekerResumesDetail() {
                     <h4 className="text-xs font-semibold text-gray-700 uppercase tracking-wider">
                       Skills
                     </h4>
-                    <ChevronDown
+                    <FaChevronDown
                       className={`w-3 h-3 text-gray-500 transition-all duration-200 group-hover:text-gray-700 ${
                         openSkills ? "rotate-180" : "rotate-0"
                       }`}
@@ -525,7 +531,7 @@ export default function JobSeekerResumesDetail() {
                     <h4 className="text-xs font-semibold text-gray-700 uppercase tracking-wider">
                       Education
                     </h4>
-                    <ChevronDown
+                    <FaChevronDown
                       className={`w-3 h-3 text-gray-500 transition-all duration-200 group-hover:text-gray-700 ${
                         openEducation ? "rotate-180" : "rotate-0"
                       }`}
@@ -587,7 +593,7 @@ export default function JobSeekerResumesDetail() {
                     <h4 className="text-xs font-semibold text-gray-700 uppercase tracking-wider">
                       Job Type
                     </h4>
-                    <ChevronDown
+                    <FaChevronDown
                       className={`w-3 h-3 text-gray-500 transition-all duration-200 group-hover:text-gray-700 ${
                         openJobType ? "rotate-180" : "rotate-0"
                       }`}
@@ -649,7 +655,7 @@ export default function JobSeekerResumesDetail() {
                     <h4 className="text-xs font-semibold text-gray-700 uppercase tracking-wider">
                       Date Posted
                     </h4>
-                    <ChevronDown
+                    <FaChevronDown
                       className={`w-3 h-3 text-gray-500 transition-all duration-200 group-hover:text-gray-700 ${
                         openDatePosted ? "rotate-180" : "rotate-0"
                       }`}
@@ -711,7 +717,7 @@ export default function JobSeekerResumesDetail() {
                     <h4 className="text-xs font-semibold text-gray-700 uppercase tracking-wider">
                       Industry
                     </h4>
-                    <ChevronDown
+                    <FaChevronDown
                       className={`w-3 h-3 text-gray-500 transition-all duration-200 group-hover:text-gray-700 ${
                         openIndustry ? "rotate-180" : "rotate-0"
                       }`}
@@ -785,7 +791,7 @@ export default function JobSeekerResumesDetail() {
                     <h4 className="text-xs font-semibold text-gray-700 uppercase tracking-wider">
                       Experience
                     </h4>
-                    <ChevronDown
+                    <FaChevronDown
                       className={`w-3 h-3 text-gray-500 transition-all duration-200 group-hover:text-gray-700 ${
                         openExperience ? "rotate-180" : "rotate-0"
                       }`}
@@ -849,7 +855,7 @@ export default function JobSeekerResumesDetail() {
                     <h4 className="text-xs font-semibold text-gray-700 uppercase tracking-wider">
                       Work Authorization
                     </h4>
-                    <ChevronDown
+                    <FaChevronDown
                       className={`w-3 h-3 text-gray-500 transition-all duration-200 group-hover:text-gray-700 ${
                         openWorkAuthorization ? "rotate-180" : "rotate-0"
                       }`}
@@ -955,11 +961,11 @@ export default function JobSeekerResumesDetail() {
 
                         <div className="flex items-center gap-5 text-[13px] text-gray-600 mb-3">
                           <span className="flex items-center gap-1.5">
-                            <User size={13} />
+                            <FaUser size={13} />
                             {seeker.name}
                           </span>
                           <span className="flex items-center gap-1.5">
-                            <MapPin size={13} />
+                            <FaMapMarkerAlt size={13} />
                             {seeker.location}
                           </span>
                         </div>
@@ -978,8 +984,7 @@ export default function JobSeekerResumesDetail() {
                           </span>
                         </div>
 
-<div className="w-full border-t border-dashed border-gray-300 my-4"></div>
-
+                        <div className="w-full border-t border-dashed border-gray-300 my-4"></div>
 
                         <div className="mb-4">
                           <span className="text-[13px] font-medium text-gray-800">
@@ -992,16 +997,15 @@ export default function JobSeekerResumesDetail() {
 
                         <div className="w-full border-t border-dashed border-gray-300 my-4"></div>
 
-                     <div className="flex justify-between items-center w-full">
-  <button className="px-6 py-2 border border-gray-300 rounded text-[14px] font-medium text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer">
-    View Profile
-  </button>
+                        <div className="flex justify-between items-center w-full">
+                          <button className="px-6 py-2 border border-gray-300 rounded text-[14px] font-medium text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer">
+                            View Profile
+                          </button>
 
-  <button className="px-6 py-2 bg-[#27bb97] border border-[#1fa987] text-white rounded text-[14px] font-medium hover:bg-[#1fa987] transition-colors cursor-pointer">
-    Download CV
-  </button>
-</div>
-
+                          <button className="px-6 py-2 bg-[#27bb97] border border-[#1fa987] text-white rounded text-[14px] font-medium hover:bg-[#1fa987] transition-colors cursor-pointer">
+                            Download CV
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -1031,45 +1035,168 @@ export default function JobSeekerResumesDetail() {
           </div>
 
           {/* Right Sidebar */}
-          <div className="w-[300px] flex-shrink-0">
-            <div className="space-y-4 sticky top-4">
-              <div className="bg-white rounded-md shadow-sm border border-gray-200 p-6 text-center">
-                <p className="text-[15px] text-gray-800 mb-4 font-medium">
-                  Start recruiting right Talent today
-                </p>
-                <button className="w-full bg-[#22c55e] hover:bg-[#16a34a] text-white py-3 rounded text-[15px] font-semibold transition-colors">
-                  Resume Package
+          <div className="w-[320px] flex-shrink-0">
+            <div className="space-y-5 sticky top-6">
+              {/* Card 1 - Primary CTA */}
+              <div className="bg-white rounded-xl shadow-md border border-gray-100 p-7 text-center hover:shadow-lg transition-shadow duration-300">
+                <div className="mb-6">
+                  <div className="inline-flex items-center justify-center w-12 h-12 bg-green-50 rounded-full mb-4">
+                    <svg
+                      className="w-6 h-6 text-green-600"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                    Start Recruiting Top Talent Today
+                  </h3>
+                  <p className="text-gray-600 text-sm leading-relaxed">
+                    Access premium candidates with verified credentials
+                  </p>
+                </div>
+                <button className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white py-3.5 rounded-lg text-[15px] font-semibold transition-all duration-300 shadow-sm hover:shadow-md">
+                  Explore Resume Packages
                 </button>
               </div>
 
-              <div className="bg-white rounded-md shadow-sm border border-gray-200 p-6 text-center">
-                <p className="text-[15px] text-gray-800 mb-4 font-medium">
-                  Are you hiring? Find talent now!
-                </p>
-                <button className="w-full bg-[#22c55e] hover:bg-[#16a34a] text-white py-3 rounded text-[15px] font-semibold transition-colors">
+              {/* Card 2 - Secondary CTA */}
+              <div className="bg-white rounded-xl shadow-md border border-gray-100 p-7 text-center hover:shadow-lg transition-shadow duration-300">
+                <div className="mb-6">
+                  <div className="inline-flex items-center justify-center w-12 h-12 bg-blue-50 rounded-full mb-4">
+                    <svg
+                      className="w-6 h-6 text-blue-600"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                      />
+                    </svg>
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                    Need to Hire Quickly?
+                  </h3>
+                  <p className="text-gray-600 text-sm leading-relaxed">
+                    Post your job and get quality applications within 24 hours
+                  </p>
+                </div>
+                <button className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white py-3.5 rounded-lg text-[15px] font-semibold transition-all duration-300 shadow-sm hover:shadow-md">
                   Post Your Job Ad
                 </button>
               </div>
 
-              <div className="bg-white rounded-md shadow-sm border border-gray-200 p-6 text-center">
-                <p className="text-[13px] text-gray-700 mb-4">
-                  <span className="font-semibold">Hire with confidence:</span>{" "}
-                  Sulekha Jobs delivers top talent
+              {/* Card 3 - Trust Building */}
+              <div className="bg-white rounded-xl shadow-md border border-gray-100 p-7 text-center hover:shadow-lg transition-shadow duration-300">
+                <div className="flex items-center justify-center gap-3 mb-6">
+                  <div className="flex -space-x-2">
+                    {[1, 2, 3].map((i) => (
+                      <div
+                        key={i}
+                        className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-400 to-pink-400 border-2 border-white"
+                      ></div>
+                    ))}
+                  </div>
+                  <div className="text-left">
+                    <div className="flex items-center gap-1">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <svg
+                          key={star}
+                          className="w-4 h-4 text-yellow-400"
+                          fill="currentColor"
+                          viewBox="0 0 20 20"
+                        >
+                          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                        </svg>
+                      ))}
+                      <span className="text-sm font-semibold text-gray-900 ml-1">
+                        4.8/5
+                      </span>
+                    </div>
+                    <p className="text-xs text-gray-500">
+                      500+ companies trust us
+                    </p>
+                  </div>
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-3">
+                  Hire with Confidence
+                </h3>
+                <p className="text-gray-600 text-sm leading-relaxed mb-6">
+                  Sulekha Jobs delivers pre-screened, top-tier talent matched to
+                  your needs
                 </p>
-                <button className="w-full bg-[#22c55e] hover:bg-[#16a34a] text-white py-3 rounded text-[15px] font-semibold transition-colors">
-                  Recruiter Profile
+                <button className="w-full bg-[#27bb97] hover:bg-[#1fa987] text-white py-3.5 rounded-lg text-[15px] font-semibold transition-all duration-300 shadow-sm hover:shadow-md">
+                  View Recruiter Profiles
                 </button>
               </div>
 
-              <div className="bg-white rounded-md shadow-sm border border-gray-200 p-5 text-center">
-                <p className="text-[13px] text-gray-700 leading-relaxed">
-                  Reach out to Shortlist resumes and
-                  <br />
-                  call directly
-                </p>
+              {/* Card 4 - Feature Highlight */}
+              <div className="bg-gradient-to-br from-gray-50 to-white rounded-xl border border-gray-200 p-6">
+                <div className="flex items-start gap-4">
+                  <div className="flex-shrink-0">
+                    <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                      <svg
+                        className="w-5 h-5 text-green-600"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                  <div className="text-left">
+                    <h4 className="font-semibold text-gray-900 mb-1">
+                      Direct Candidate Access
+                    </h4>
+                    <p className="text-sm text-gray-600 leading-relaxed">
+                      Shortlist resumes and contact candidates directly. No
+                      middlemen, faster hiring.
+                    </p>
+                    <a
+                      href="#"
+                      className="inline-flex items-center text-green-600 hover:text-green-700 font-medium text-sm mt-3 transition-colors"
+                    >
+                      Learn more
+                      <svg
+                        className="w-4 h-4 ml-1"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M9 5l7 7-7 7"
+                        />
+                      </svg>
+                    </a>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
+
+
+
+          
         </div>
       </div>
     </div>
