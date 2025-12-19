@@ -20,6 +20,7 @@ import ContactUs from "./pages/ContactPage/ContactUS.jsx";
 import AboutUs from "./pages/AboutPage/AboutUs.jsx";
 import ServicesPage from "./pages/Services/ServicesPage.jsx";
 import PostaddPage from "./pages/PostaddPage/Postadd.jsx";
+import TakeCare from "./pages/TakeCare/TakeCare.jsx";
 
 // Roommates
 import Roommates from "./pages/Roommates/Roommates.jsx";
@@ -162,6 +163,10 @@ const App = () => {
             <Route path="/about-us" element={<AboutUs />} />
             <Route path="/our-services" element={<ServicesPage />} />
             <Route path="/post-add" element={<PostaddPage />} />
+            <Route path="/our-services" element={<ServicesPage/>} />
+            <Route path="/post-add" element={<PostaddPage/>} />
+            <Route path="/takecare" element={<TakeCare/>} />
+
             {/* Roommates */}
             <Route path="/roommates" element={<Roommates />} />
             <Route path="/roommate-details" element={<RoomMateDetails />} />
@@ -178,6 +183,9 @@ const App = () => {
             {/* Job Seeker Resumes Routes - FIXED */}
             <Route path="/job-seeker-resumes" element={<JobSeekerResumesDetail />} />
             <Route path="/job-seeker-posts" element={<JobSeekerResume />} />
+
+
+
             {/* Events */}
             <Route path="/events" element={<Events />} />
             <Route path="/events/:eventId" element={<EventDetailPage />} />
