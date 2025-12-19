@@ -16,7 +16,6 @@ import Reviews from "./pages/Home/Reviews.jsx";
 import Footer from "./pages/Home/Footer.jsx";
 import Gallery from "./pages/Home/Gallery.jsx";
 
-
 import ContactUs from "./pages/ContactPage/ContactUS.jsx";
 import AboutUs from "./pages/AboutPage/AboutUs.jsx";
 import ServicesPage from "./pages/Services/ServicesPage.jsx";
@@ -40,11 +39,11 @@ import RentalDetailsPage from "./components/Rentals/RentalDetailsPage.jsx";
 
 // Jobs
 import JobsPage from "./pages/JobsPage/JobsPage.jsx";
-import JobSearchPortal from "./components/Jobs/JobSearchPortal.jsx"; // Import JobSearchPortal
+import JobSearchPortal from "./components/Jobs/JobSearchPortal.jsx";
 import JobDetailsPage from "./components/Jobs/JobDetailsPage.jsx";
-import JobSeekerInterface from "./components/Jobs/JobSeekerInterface.jsx"; // Adjust path as needed
-
-
+import JobSeekerInterface from "./components/Jobs/JobSeekerInterface.jsx";
+import JobSeekerResume from "./components/Jobs/JobSeekerResume.jsx"; // Job seeker profile page
+import JobSeekerResumesDetail from "./components/Jobs/JobSeekerResumesDetail.jsx"; // Job seeker listings page
 
 // Profile
 import Profile from "./pages/Home/Profile.jsx";
@@ -161,8 +160,8 @@ const App = () => {
             {/* Contacts Page */}
             <Route path="/contact-us" element={<ContactUs />} />
             <Route path="/about-us" element={<AboutUs />} />
-            <Route path="/our-services" element={<ServicesPage/>} />
-            <Route path="/post-add" element={<PostaddPage/>} />
+            <Route path="/our-services" element={<ServicesPage />} />
+            <Route path="/post-add" element={<PostaddPage />} />
             {/* Roommates */}
             <Route path="/roommates" element={<Roommates />} />
             <Route path="/roommate-details" element={<RoomMateDetails />} />
@@ -173,13 +172,12 @@ const App = () => {
             <Route path="/details" element={<RentalDetailsPage />} />
             {/* Jobs */}
             <Route path="/jobs" element={<JobsPage />} />
-            <Route path="/job-search" element={<JobSearchPortal />} />{" "}
-            {/* Add JobSearchPortal route */}
+            <Route path="/job-search" element={<JobSearchPortal />} />
             <Route path="/job-details/:id" element={<JobDetailsPage />} />
-<Route path="/job-seekers" element={<JobSeekerInterface />} />
-
-
-
+            <Route path="/job-seekers" element={<JobSeekerInterface />} />
+            {/* Job Seeker Resumes Routes - FIXED */}
+            <Route path="/job-seeker-resumes" element={<JobSeekerResumesDetail />} />
+            <Route path="/job-seeker-posts" element={<JobSeekerResume />} />
             {/* Events */}
             <Route path="/events" element={<Events />} />
             <Route path="/events/:eventId" element={<EventDetailPage />} />
@@ -188,7 +186,6 @@ const App = () => {
             {/* Profile */}
             <Route path="/profile" element={<Profile />} />
             {/* Placeholder Pages */}
-            
             <Route path="/marketplace" element={<div>Marketplace Page</div>} />
             <Route path="/vehicles" element={<div>Vehicles Page</div>} />
             <Route path="/takecare" element={<div>TakeCare Page</div>} />

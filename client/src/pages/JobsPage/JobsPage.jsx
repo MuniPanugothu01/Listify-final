@@ -5,7 +5,7 @@ import HeroSectionJobs from "../../components/Jobs/HeroSectionJobs";
 import FeaturedJobs from "../../components/Jobs/FeaturedJobs";
 import SubNavbar from "../../components/Jobs/SubNavbar";
 import CompaniesLIst from "../../components/Jobs/CompaniesLIst";
-import JobSeekerPosts from "../../components/Jobs/JobSeekerPosts";
+import JobSeekerResume from "../../components/Jobs/JobSeekerResume";
 import LatestJobs from "../../components/Jobs/LatestJobs";
 import LatestsJobs2 from "../../components/Jobs/LatestsJobs2";
 import FeaturedRecruiters from "../../components/Jobs/FeaturedRecruiters";
@@ -23,7 +23,7 @@ const JobsPage = () => {
       {/* <LatestJobs/> */}
       <LatestsJobs2/>
       <FeaturedRecruiters/>
-      <JobSeekerPosts/>
+      <JobSeekerResume/>
     </div>
   );
 };

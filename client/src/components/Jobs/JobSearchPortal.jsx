@@ -14,10 +14,10 @@ import { IoSearch } from "react-icons/io5";
 import { MdOutlineUploadFile } from "react-icons/md";
 import { RiUploadCloud2Line } from "react-icons/ri";
 import { HiOutlineArrowDown } from "react-icons/hi2";
-import { useNavigate } from "react-router-dom"; // Add this import
+import { useNavigate } from "react-router-dom";
 
 const JobSearchPortal = () => {
-  const navigate = useNavigate(); // Add this hook
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [location, setLocation] = useState("");
   const [isSearchFocused, setIsSearchFocused] = useState(false);
@@ -31,9 +31,22 @@ const JobSearchPortal = () => {
     "Chicago, IL",
   ]);
 
-  // PAGINATION STATE
+  // PAGINATION STATE - CHANGED: Show 6 jobs initially instead of 12
   const [visibleJobsCount, setVisibleJobsCount] = useState(6);
-  const jobsPerLoad = 5;
+  const jobsPerLoad = 6;
+
+  // FILTER STATES
+  const [openJobType, setOpenJobType] = useState(true);
+  const [openLocation, setOpenLocation] = useState(false);
+  const [openCompany, setOpenCompany] = useState(false);
+  const [openExperience, setOpenExperience] = useState(false);
+  const [openPriceRange, setOpenPriceRange] = useState(false);
+  const [openRemoteType, setOpenRemoteType] = useState(false);
+  const [openIndustry, setOpenIndustry] = useState(false);
+
+  // Price Range state
+  const [minPrice, setMinPrice] = useState("0");
+  const [maxPrice, setMaxPrice] = useState("200000");
 
   // Load more jobs - pagination logic
   const loadMoreJobs = () => {
@@ -51,7 +64,7 @@ const JobSearchPortal = () => {
 
   // Handle view details button click
   const handleViewDetailsClick = (jobId, e) => {
-    e.stopPropagation(); // Prevent event bubbling
+    e.stopPropagation();
     navigate(`/job-details/${jobId}`);
   };
 
@@ -64,10 +77,6 @@ const JobSearchPortal = () => {
     { value: "netflix", label: "Netflix" },
     { value: "tesla", label: "Tesla" },
   ]);
-
-  const [openJobType, setOpenJobType] = useState(true);
-  const [openLocation, setOpenLocation] = useState(false);
-  const [openCompany, setOpenCompany] = useState(false);
 
   // UPDATED job listings with remoteType + description
   const jobListings = [
@@ -85,6 +94,7 @@ const JobSearchPortal = () => {
       remoteType: "On-site",
       description:
         "We are seeking a creative visual designer to help craft clean, modern design solutions for enterprise clients.",
+      industry: "Consulting",
     },
     {
       id: 2,
@@ -100,6 +110,7 @@ const JobSearchPortal = () => {
       remoteType: "Hybrid",
       description:
         "Join our product design team and help shape intuitive user experiences for global software solutions.",
+      industry: "Technology",
     },
     {
       id: 3,
@@ -115,6 +126,7 @@ const JobSearchPortal = () => {
       remoteType: "Remote",
       description:
         "Assist the architecture and design team in producing layouts, concepts, and creative project visuals.",
+      industry: "Architecture",
     },
     {
       id: 4,
@@ -130,6 +142,7 @@ const JobSearchPortal = () => {
       remoteType: "Hybrid",
       description:
         "Lead UX design initiatives for consumer products used by billions. Expertise in user research and prototyping required.",
+      industry: "Technology",
     },
     {
       id: 5,
@@ -145,6 +158,7 @@ const JobSearchPortal = () => {
       remoteType: "Remote",
       description:
         "Design beautiful, intuitive interfaces for our travel platform. Collaborate with cross-functional teams globally.",
+      industry: "Travel",
     },
     {
       id: 6,
@@ -160,6 +174,7 @@ const JobSearchPortal = () => {
       remoteType: "On-site",
       description:
         "Create marketing materials, digital assets, and brand visuals for Adobe's creative software campaigns.",
+      industry: "Technology",
     },
     {
       id: 7,
@@ -175,6 +190,7 @@ const JobSearchPortal = () => {
       remoteType: "Hybrid",
       description:
         "Create compelling motion graphics and animations for original content titles and platform UI.",
+      industry: "Entertainment",
     },
     {
       id: 8,
@@ -190,6 +206,7 @@ const JobSearchPortal = () => {
       remoteType: "Remote",
       description:
         "Design and implement responsive e-commerce templates and themes for the Shopify platform.",
+      industry: "E-commerce",
     },
     {
       id: 9,
@@ -205,6 +222,7 @@ const JobSearchPortal = () => {
       remoteType: "On-site",
       description:
         "Entry-level position for recent graduates. Assist in designing user interfaces for music streaming features.",
+      industry: "Entertainment",
     },
     {
       id: 10,
@@ -220,6 +238,7 @@ const JobSearchPortal = () => {
       remoteType: "Hybrid",
       description:
         "Conduct user research and usability studies to inform design decisions for enterprise software products.",
+      industry: "Technology",
     },
     {
       id: 11,
@@ -235,6 +254,7 @@ const JobSearchPortal = () => {
       remoteType: "On-site",
       description:
         "Lead creative vision for marketing campaigns and product launches. Manage team of designers and copywriters.",
+      industry: "Technology",
     },
     {
       id: 12,
@@ -250,6 +270,7 @@ const JobSearchPortal = () => {
       remoteType: "On-site",
       description:
         "Summer internship supporting design teams across various AR/VR projects. Portfolio required.",
+      industry: "Technology",
     },
     {
       id: 13,
@@ -265,6 +286,7 @@ const JobSearchPortal = () => {
       remoteType: "Hybrid",
       description:
         "Develop and maintain brand identity across digital and physical touchpoints for global campaigns.",
+      industry: "Retail",
     },
     {
       id: 14,
@@ -280,6 +302,7 @@ const JobSearchPortal = () => {
       remoteType: "Remote",
       description:
         "Design customer-facing interfaces for AWS console and cloud services. Experience with enterprise software preferred.",
+      industry: "Technology",
     },
     {
       id: 15,
@@ -295,6 +318,7 @@ const JobSearchPortal = () => {
       remoteType: "Hybrid",
       description:
         "Create 3D assets, environments, and prototypes for real-time visualization and gaming applications.",
+      industry: "Gaming",
     },
     {
       id: 16,
@@ -310,6 +334,7 @@ const JobSearchPortal = () => {
       remoteType: "Remote",
       description:
         "Create original illustrations and visual content for Pinterest's marketing and product teams.",
+      industry: "Technology",
     },
     {
       id: 17,
@@ -325,6 +350,7 @@ const JobSearchPortal = () => {
       remoteType: "Hybrid",
       description:
         "Lead product design strategy for collaboration tools. Manage design systems and mentor junior designers.",
+      industry: "Technology",
     },
     {
       id: 18,
@@ -340,6 +366,103 @@ const JobSearchPortal = () => {
       remoteType: "Remote",
       description:
         "Specialize in creating accessible design systems and ensuring compliance with WCAG standards across products.",
+      industry: "Technology",
+    },
+    {
+      id: 19,
+      title: "Frontend Designer",
+      company: "Twitter",
+      logo: "https://logos-world.net/wp-content/uploads/2023/07/Twitter-Logo.png",
+      location: "San Francisco, CA",
+      experience: "3+ Years",
+      jobType: "Full-Time",
+      salary: "$120k - $150k",
+      postedDays: 5,
+      featured: false,
+      remoteType: "Remote",
+      description:
+        "Design and implement responsive web interfaces for social media platform features.",
+      industry: "Technology",
+    },
+    {
+      id: 20,
+      title: "Game Designer",
+      company: "Electronic Arts",
+      logo: "https://logos-world.net/wp-content/uploads/2020/10/Electronic-Arts-Logo.png",
+      location: "Redwood City, CA",
+      experience: "4+ Years",
+      jobType: "Full-Time",
+      salary: "$110k - $140k",
+      postedDays: 11,
+      featured: false,
+      remoteType: "On-site",
+      description:
+        "Design game mechanics, levels, and user experiences for popular video game franchises.",
+      industry: "Gaming",
+    },
+    {
+      id: 21,
+      title: "Packaging Designer",
+      company: "Procter & Gamble",
+      logo: "https://logos-world.net/wp-content/uploads/2020/04/Procter-And-Gamble-Logo.png",
+      location: "Cincinnati, OH",
+      experience: "2+ Years",
+      jobType: "Full-Time",
+      salary: "$65k - $85k",
+      postedDays: 7,
+      featured: false,
+      remoteType: "Hybrid",
+      description:
+        "Create innovative packaging designs for consumer products in a fast-paced retail environment.",
+      industry: "Consumer Goods",
+    },
+    {
+      id: 22,
+      title: "Environmental Designer",
+      company: "Gensler",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Gensler_logo.svg/2560px-Gensler_logo.svg.png",
+      location: "Los Angeles, CA",
+      experience: "5+ Years",
+      jobType: "Full-Time",
+      salary: "$95k - $125k",
+      postedDays: 3,
+      featured: false,
+      remoteType: "On-site",
+      description:
+        "Design interior spaces and environmental graphics for commercial and residential projects.",
+      industry: "Architecture",
+    },
+    {
+      id: 23,
+      title: "Typography Designer",
+      company: "Monotype",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Monotype_logo.svg/2560px-Monotype_logo.svg.png",
+      location: "Woburn, MA",
+      experience: "3+ Years",
+      jobType: "Full-Time",
+      salary: "$80k - $100k",
+      postedDays: 14,
+      featured: false,
+      remoteType: "Remote",
+      description:
+        "Create and refine typefaces for digital and print applications across various industries.",
+      industry: "Typography",
+    },
+    {
+      id: 24,
+      title: "Exhibition Designer",
+      company: "Smithsonian",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Smithsonian_Institution_logo.svg/1200px-Smithsonian_Institution_logo.svg.png",
+      location: "Washington, DC",
+      experience: "4+ Years",
+      jobType: "Full-Time",
+      salary: "$70k - $90k",
+      postedDays: 21,
+      featured: false,
+      remoteType: "On-site",
+      description:
+        "Design interactive museum exhibitions and educational displays for public engagement.",
+      industry: "Museum",
     },
   ];
 
@@ -363,7 +486,33 @@ const JobSearchPortal = () => {
     { name: "Zebra Technologies", count: 26 },
   ];
 
-  // FIXED: Popular Companies with working logos and 495 total jobs
+  // Price Range options
+  const priceRanges = [
+    { label: "Under $30k", count: 24 },
+    { label: "$30k - $50k", count: 68 },
+    { label: "$50k - $80k", count: 142 },
+    { label: "$80k - $120k", count: 87 },
+    { label: "$120k+", count: 45 },
+  ];
+
+  // Remote Type options
+  const remoteTypes = [
+    { label: "Remote", count: 89 },
+    { label: "Hybrid", count: 124 },
+    { label: "On-site", count: 73 },
+  ];
+
+  // Industry options
+  const industries = [
+    { label: "Technology", count: 167 },
+    { label: "Healthcare", count: 58 },
+    { label: "Finance", count: 47 },
+    { label: "Education", count: 36 },
+    { label: "Retail", count: 29 },
+    { label: "Manufacturing", count: 25 },
+  ];
+
+  // Popular Companies data
   const popularCompanies = [
     {
       name: "Google",
@@ -407,7 +556,6 @@ const JobSearchPortal = () => {
     },
   ];
 
-  // Total jobs calculation - FIXED to show 495
   const totalPopularJobs = 495;
 
   const removeFilter = (filterToRemove) => {
@@ -420,11 +568,11 @@ const JobSearchPortal = () => {
     <div className="w-full min-h-screen bg-[#F8FAFC]">
       {/* Header */}
       <div className="p-6">
-        {/* Image Background Section with Navbar */}
+        {/* Image Background Section */}
         <div
           className="rounded-2xl bg-white shadow-lg mb-10 
-  bg-[url('/JobsImg/background.jpg')] 
-  bg-cover bg-center relative overflow-hidden"
+          bg-[url('/JobsImg/background.jpg')] 
+          bg-cover bg-center relative overflow-hidden"
         >
           <div
             className="p-8 flex flex-col justify-end mb-10"
@@ -441,7 +589,7 @@ const JobSearchPortal = () => {
           </div>
         </div>
 
-        {/* Search Bar positioned half on image, half below */}
+        {/* Search Bar */}
         <div className="relative -mt-24 mb-10 px-4">
           <div className="flex space-x-4 bg-white p-6 rounded-xl shadow-xl mx-auto max-w-7xl border border-gray-100">
             {/* Search Input */}
@@ -514,13 +662,9 @@ const JobSearchPortal = () => {
                     placeholder="Search company..."
                     className="w-full text-gray-900 font-medium text-base outline-none py-0.5 pr-8 placeholder-gray-400"
                   />
-
-                  {/* Dropdown arrow */}
                   <div className="absolute right-0 top-1/2 -translate-y-1/2 pr-2 pointer-events-none">
                     <ChevronDown className="w-4 h-4 text-gray-400" />
                   </div>
-
-                  {/* Dropdown options */}
                   {isCompanyDropdownOpen && (
                     <div className="absolute z-50 w-full bg-white border border-gray-200 rounded-lg shadow-lg mt-2 max-h-48 overflow-y-auto">
                       {companyOptions.map((option) => (
@@ -544,7 +688,7 @@ const JobSearchPortal = () => {
             {/* Search Button */}
             <button
               className="px-8 py-3 bg-[#27bb97] text-white rounded-lg font-semibold text-sm 
-        hover:bg-[#1fa987] flex items-center gap-2 cursor-pointer transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                hover:bg-[#1fa987] flex items-center gap-2 cursor-pointer transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
             >
               <IoSearch className="text-lg" />
               Search Jobs
@@ -609,9 +753,7 @@ const JobSearchPortal = () => {
                     }`}
                   />
                 </button>
-
                 <div className="h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent my-4"></div>
-
                 {openJobType && (
                   <div className="space-y-3 text-sm">
                     {[
@@ -658,6 +800,224 @@ const JobSearchPortal = () => {
                 )}
               </div>
 
+              {/* EXPERIENCE LEVEL */}
+              <div className="mb-8">
+                <button
+                  className="w-full flex justify-between items-center mb-4 group"
+                  onClick={() => setOpenExperience(!openExperience)}
+                >
+                  <h4 className="text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                    Experience Level
+                  </h4>
+                  <ChevronDown
+                    className={`w-4 h-4 text-gray-500 transition-all duration-300 group-hover:text-gray-700 ${
+                      openExperience ? "rotate-180" : "rotate-0"
+                    }`}
+                  />
+                </button>
+                <div className="h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent my-4"></div>
+                {openExperience && (
+                  <div className="space-y-3 text-sm">
+                    {[
+                      {
+                        label: "Entry Level",
+                        count: 105,
+                        color: "text-[#27bb97]",
+                      },
+                      { label: "Intermediate", count: 89 },
+                      { label: "Expert", count: 56 },
+                    ].map((item, idx) => (
+                      <label
+                        key={idx}
+                        className="flex items-center justify-between p-2 rounded-lg hover:bg-gray-50 transition-colors duration-150 cursor-pointer"
+                      >
+                        <div className="flex items-center">
+                          <div className="relative">
+                            <input type="checkbox" className="peer sr-only" />
+                            <div className="w-4 h-4 border-2 border-gray-300 rounded-sm peer-checked:border-[#27bb97] peer-checked:bg-[#27bb97] flex items-center justify-center mr-3">
+                              <svg
+                                className="w-3 h-3 text-white opacity-0 peer-checked:opacity-100"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth="3"
+                                  d="M5 13l4 4L19 7"
+                                />
+                              </svg>
+                            </div>
+                          </div>
+                          <span className={item.color || "text-gray-700"}>
+                            {item.label}
+                          </span>
+                        </div>
+                        <span className="text-gray-400 text-xs">
+                          {item.count}
+                        </span>
+                      </label>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* PRICE RANGE */}
+              <div className="mb-8">
+                <button
+                  className="w-full flex justify-between items-center mb-4 group"
+                  onClick={() => setOpenPriceRange(!openPriceRange)}
+                >
+                  <h4 className="text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                    Price Range
+                  </h4>
+                  <ChevronDown
+                    className={`w-4 h-4 text-gray-500 transition-all duration-300 group-hover:text-gray-700 ${
+                      openPriceRange ? "rotate-180" : "rotate-0"
+                    }`}
+                  />
+                </button>
+                <div className="h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent my-4"></div>
+                {openPriceRange && (
+                  <div className="space-y-4 text-sm">
+                    <div className="p-2">
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="text-xs text-gray-500">Min</span>
+                        <span className="text-xs text-gray-500">Max</span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <input
+                          type="number"
+                          value={minPrice}
+                          onChange={(e) => setMinPrice(e.target.value)}
+                          className="w-20 p-2 border border-gray-300 rounded text-sm"
+                          placeholder="0"
+                        />
+                        <span className="text-gray-400">to</span>
+                        <input
+                          type="number"
+                          value={maxPrice}
+                          onChange={(e) => setMaxPrice(e.target.value)}
+                          className="w-20 p-2 border border-gray-300 rounded text-sm"
+                          placeholder="200000"
+                        />
+                      </div>
+                      <div className="mt-3">
+                        <input
+                          type="range"
+                          min="0"
+                          max="300000"
+                          step="10000"
+                          value={minPrice}
+                          onChange={(e) => setMinPrice(e.target.value)}
+                          className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                        />
+                        <input
+                          type="range"
+                          min="0"
+                          max="300000"
+                          step="10000"
+                          value={maxPrice}
+                          onChange={(e) => setMaxPrice(e.target.value)}
+                          className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer mt-1"
+                        />
+                      </div>
+                      <div className="flex justify-between mt-2">
+                        <span className="text-xs text-gray-600">$0</span>
+                        <span className="text-xs text-gray-600">$300k</span>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      {priceRanges.map((range, idx) => (
+                        <label
+                          key={idx}
+                          className="flex items-center justify-between p-2 rounded-lg hover:bg-gray-50 transition-colors duration-150 cursor-pointer"
+                        >
+                          <div className="flex items-center">
+                            <div className="relative">
+                              <input type="checkbox" className="peer sr-only" />
+                              <div className="w-4 h-4 border-2 border-gray-300 rounded-sm peer-checked:border-[#27bb97] peer-checked:bg-[#27bb97] flex items-center justify-center mr-3">
+                                <svg
+                                  className="w-3 h-3 text-white opacity-0 peer-checked:opacity-100"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth="3"
+                                    d="M5 13l4 4L19 7"
+                                  />
+                                </svg>
+                              </div>
+                            </div>
+                            <span className="text-gray-700">{range.label}</span>
+                          </div>
+                          <span className="text-gray-400 text-xs">
+                            ({range.count})
+                          </span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* REMOTE TYPE */}
+              <div className="mb-8">
+                <button
+                  className="w-full flex justify-between items-center mb-4 group"
+                  onClick={() => setOpenRemoteType(!openRemoteType)}
+                >
+                  <h4 className="text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                    Remote Type
+                  </h4>
+                  <ChevronDown
+                    className={`w-4 h-4 text-gray-500 transition-all duration-300 group-hover:text-gray-700 ${
+                      openRemoteType ? "rotate-180" : "rotate-0"
+                    }`}
+                  />
+                </button>
+                <div className="h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent my-4"></div>
+                {openRemoteType && (
+                  <div className="space-y-3 text-sm">
+                    {remoteTypes.map((type, idx) => (
+                      <label
+                        key={idx}
+                        className="flex items-center justify-between p-2 rounded-lg hover:bg-gray-50 transition-colors duration-150 cursor-pointer"
+                      >
+                        <div className="flex items-center">
+                          <div className="relative">
+                            <input type="checkbox" className="peer sr-only" />
+                            <div className="w-4 h-4 border-2 border-gray-300 rounded-sm peer-checked:border-[#27bb97] peer-checked:bg-[#27bb97] flex items-center justify-center mr-3">
+                              <svg
+                                className="w-3 h-3 text-white opacity-0 peer-checked:opacity-100"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth="3"
+                                  d="M5 13l4 4L19 7"
+                                />
+                              </svg>
+                            </div>
+                          </div>
+                          <span className="text-gray-700">{type.label}</span>
+                        </div>
+                        <span className="text-gray-400 text-xs">
+                          ({type.count})
+                        </span>
+                      </label>
+                    ))}
+                  </div>
+                )}
+              </div>
+
               {/* LOCATION FILTER */}
               <div className="mb-8">
                 <button
@@ -673,7 +1033,6 @@ const JobSearchPortal = () => {
                     }`}
                   />
                 </button>
-
                 {openLocation && (
                   <div className="space-y-3 text-sm">
                     {locations.map((loc, idx) => (
@@ -720,6 +1079,64 @@ const JobSearchPortal = () => {
                 )}
               </div>
 
+              {/* INDUSTRY */}
+              <div className="mb-8">
+                <button
+                  className="w-full flex justify-between items-center mb-4 group"
+                  onClick={() => setOpenIndustry(!openIndustry)}
+                >
+                  <h4 className="text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                    Industry
+                  </h4>
+                  <ChevronDown
+                    className={`w-4 h-4 text-gray-500 transition-all duration-300 group-hover:text-gray-700 ${
+                      openIndustry ? "rotate-180" : "rotate-0"
+                    }`}
+                  />
+                </button>
+                <div className="h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent my-4"></div>
+                {openIndustry && (
+                  <div className="space-y-3 text-sm">
+                    {industries.map((industry, idx) => (
+                      <label
+                        key={idx}
+                        className="flex items-center justify-between p-2 rounded-lg hover:bg-gray-50 transition-colors duration-150 cursor-pointer"
+                      >
+                        <div className="flex items-center">
+                          <div className="relative">
+                            <input type="checkbox" className="peer sr-only" />
+                            <div className="w-4 h-4 border-2 border-gray-300 rounded-sm peer-checked:border-[#27bb97] peer-checked:bg-[#27bb97] flex items-center justify-center mr-3">
+                              <svg
+                                className="w-3 h-3 text-white opacity-0 peer-checked:opacity-100"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth="3"
+                                  d="M5 13l4 4L19 7"
+                                />
+                              </svg>
+                            </div>
+                          </div>
+                          <span className="text-gray-700">
+                            {industry.label}
+                          </span>
+                        </div>
+                        <span className="text-gray-400 text-xs">
+                          ({industry.count})
+                        </span>
+                      </label>
+                    ))}
+                    <button className="w-full text-center text-[#27bb97] hover:text-[#1fa987] text-sm font-medium pt-2 transition-colors">
+                      + Show More Industries
+                    </button>
+                  </div>
+                )}
+              </div>
+
               <div className="h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent my-6"></div>
 
               {/* COMPANY FILTER */}
@@ -737,7 +1154,6 @@ const JobSearchPortal = () => {
                     }`}
                   />
                 </button>
-
                 {openCompany && (
                   <div className="space-y-3 text-sm">
                     {companies.map((comp, idx) => (
@@ -848,7 +1264,7 @@ const JobSearchPortal = () => {
                     )}
 
                     {/* APPLY NOW - TOP RIGHT */}
-                    <button 
+                    <button
                       onClick={(e) => {
                         e.stopPropagation();
                         // Handle apply now logic here
@@ -881,7 +1297,7 @@ const JobSearchPortal = () => {
                       {/* MAIN CONTENT */}
                       <div className="flex-1">
                         {/* Title and Company - Clickable */}
-                        <div 
+                        <div
                           className="mb-4"
                           onClick={(e) => {
                             e.stopPropagation();
@@ -891,7 +1307,7 @@ const JobSearchPortal = () => {
                           <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-[#27bb97] transition-colors cursor-pointer hover:underline">
                             {job.title}
                           </h3>
-                          <div className="flex items-center gap-4">
+                          <div className="flex items-center gap-4 mb-2">
                             <p className="text-gray-600 font-medium text-lg cursor-pointer hover:text-[#27bb97] hover:underline">
                               {job.company}
                             </p>
@@ -900,6 +1316,10 @@ const JobSearchPortal = () => {
                               <MapPin className="w-4 h-4 mr-2" />
                               <span className="text-sm">{job.location}</span>
                             </div>
+                            <span className="text-gray-400">•</span>
+                            <span className="text-sm text-gray-500">
+                              {job.industry}
+                            </span>
                           </div>
                         </div>
 
@@ -969,7 +1389,7 @@ const JobSearchPortal = () => {
                         {/* Footer */}
                         <div className="flex justify-between items-center pt-5 border-t border-gray-100">
                           <div className="flex items-center space-x-6">
-                            <button 
+                            <button
                               onClick={(e) => {
                                 e.stopPropagation();
                                 // Handle save job logic here
@@ -981,14 +1401,14 @@ const JobSearchPortal = () => {
                                 Save Job
                               </span>
                             </button>
-                            <button 
+                            <button
                               onClick={(e) => handleViewDetailsClick(job.id, e)}
                               className="text-gray-500 hover:text-[#27bb97] text-sm font-medium transition-colors duration-200"
                             >
                               View Details
                             </button>
                           </div>
-                          <button 
+                          <button
                             onClick={(e) => {
                               e.stopPropagation();
                               // Handle quick apply logic here
@@ -1076,13 +1496,12 @@ const JobSearchPortal = () => {
                 </p>
               </div>
 
-              {/* Popular Companies - FIXED SECTION */}
+              {/* Popular Companies */}
               <div>
                 <div className="flex items-center justify-between mb-6">
                   <h4 className="font-bold text-gray-900 text-lg">
                     Popular in <span className="text-[#27bb97]">Chicago</span>
                   </h4>
-                  {/* FIXED: Changed to show 495 jobs */}
                   <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
                     {totalPopularJobs} jobs
                   </span>

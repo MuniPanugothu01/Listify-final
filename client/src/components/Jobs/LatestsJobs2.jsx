@@ -1,8 +1,11 @@
 import React from 'react';
 import { MapPin, DollarSign, Clock } from 'lucide-react';
 import { MdArrowOutward } from "react-icons/md";
+import { useNavigate } from 'react-router-dom';
 
 const LatestJobs = () => {
+  const navigate = useNavigate();
+  
   const jobs = [
     {
       title: "UI/UX & Product Designer",
@@ -65,6 +68,10 @@ const LatestJobs = () => {
       posted: "4 days ago"
     },
   ];
+
+  const handleViewAllPositions = () => {
+    navigate("/job-search");
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 py-16 px-4">
@@ -187,7 +194,10 @@ const LatestJobs = () => {
 
         {/* View More Button */}
         <div className="text-center mt-16">
-          <button className="px-8 py-3 border-2 border-[#27bb97] text-[#27bb97] font-semibold rounded-lg hover:bg-[#27bb97] hover:text-white transition-all duration-300 hover:shadow-lg cursor-pointer">
+          <button 
+            onClick={handleViewAllPositions}
+            className="px-8 py-3 border-2 border-[#27bb97] text-[#27bb97] font-semibold rounded-lg hover:bg-[#27bb97] hover:text-white transition-all duration-300 hover:shadow-lg cursor-pointer"
+          >
             View All Positions →
           </button>
         </div>

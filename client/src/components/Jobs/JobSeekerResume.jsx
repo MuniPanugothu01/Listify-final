@@ -1,7 +1,10 @@
 import React from "react";
 import { Heart, MapPin, Briefcase, User } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
-export default function JobSeekerPosts() {
+export default function JobSeekerResume() {
+  const navigate = useNavigate();
+  
   const jobSeekers = [
     {
       id: 1,
@@ -31,6 +34,10 @@ export default function JobSeekerPosts() {
       verified: true,
     },
   ];
+
+  const handleViewAllPositions = () => {
+    navigate("/job-seeker-resumes");
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-16 px-4">
@@ -170,7 +177,10 @@ export default function JobSeekerPosts() {
 
         {/* View More Button */}
         <div className="text-center mt-16">
-          <button className="px-8 py-3 border-2 border-[#27bb97] text-[#27bb97] font-semibold rounded-lg hover:bg-[#27bb97] hover:text-white transition-all duration-300 hover:shadow-lg cursor-pointer">
+          <button 
+            onClick={handleViewAllPositions}
+            className="px-8 py-3 border-2 border-[#27bb97] text-[#27bb97] font-semibold rounded-lg hover:bg-[#27bb97] hover:text-white transition-all duration-300 hover:shadow-lg cursor-pointer"
+          >
             View All Positions →
           </button>
         </div>
