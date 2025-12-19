@@ -21,6 +21,7 @@ import ContactUs from "./pages/ContactPage/ContactUS.jsx";
 import AboutUs from "./pages/AboutPage/AboutUs.jsx";
 import ServicesPage from "./pages/Services/ServicesPage.jsx";
 import PostaddPage from "./pages/PostaddPage/Postadd.jsx";
+import TakeCare from "./pages/TakeCare/TakeCare.jsx";
 
 // Roommates
 import Roommates from "./pages/Roommates/Roommates.jsx";
@@ -163,6 +164,8 @@ const App = () => {
             <Route path="/about-us" element={<AboutUs />} />
             <Route path="/our-services" element={<ServicesPage/>} />
             <Route path="/post-add" element={<PostaddPage/>} />
+            <Route path="/takecare" element={<TakeCare/>} />
+
             {/* Roommates */}
             <Route path="/roommates" element={<Roommates />} />
             <Route path="/roommate-details" element={<RoomMateDetails />} />
@@ -176,7 +179,7 @@ const App = () => {
             <Route path="/job-search" element={<JobSearchPortal />} />{" "}
             {/* Add JobSearchPortal route */}
             <Route path="/job-details/:id" element={<JobDetailsPage />} />
-<Route path="/job-seekers" element={<JobSeekerInterface />} />
+            <Route path="/job-seekers" element={<JobSeekerInterface />} />
 
 
 
