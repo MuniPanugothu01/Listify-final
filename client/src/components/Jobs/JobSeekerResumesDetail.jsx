@@ -5,6 +5,10 @@ import {
   FaUser,
   FaChevronDown,
   FaTimes,
+  FaClock,
+  FaInfoCircle,
+  FaCheckCircle,
+  FaStar,
 } from "react-icons/fa";
 
 export default function JobSeekerResumesDetail() {
@@ -20,11 +24,11 @@ export default function JobSeekerResumesDetail() {
   const [openWorkAuthorization, setOpenWorkAuthorization] = useState(true);
 
   // New states for view more functionality
-  const [visibleJobs, setVisibleJobs] = useState(4);
+  const [visibleJobs, setVisibleJobs] = useState(6); // Changed to show only 6 initially
   const [loading, setLoading] = useState(false);
   const [allJobSeekers, setAllJobSeekers] = useState([]);
 
-  // JSON data for job seekers (extended with 4+ entries)
+  // JSON data for job seekers (extended with descriptions and 10 entries)
   const jobSeekersData = [
     {
       id: 1,
@@ -38,6 +42,8 @@ export default function JobSeekerResumesDetail() {
         "Predictive Analytics, Predictive Modeling, Business Analytics, Machine Learning, Fraud Detection, Design Patent, Apt,",
       featured: true,
       image: "https://i.pravatar.cc/150?img=1",
+      description:
+        "Senior Business Analyst with extensive experience in data-driven decision making and process optimization for enterprise clients.",
     },
     {
       id: 2,
@@ -50,6 +56,8 @@ export default function JobSeekerResumesDetail() {
       skills: "Financial Analysis, Risk Management, Portfolio Management",
       featured: true,
       image: "https://i.pravatar.cc/150?img=2",
+      description:
+        "Finance professional specializing in investment analysis and risk assessment for portfolio management.",
     },
     {
       id: 3,
@@ -62,6 +70,8 @@ export default function JobSeekerResumesDetail() {
       skills: "React.js, Node.js, Python, AWS, Docker, Kubernetes",
       featured: false,
       image: "https://i.pravatar.cc/150?img=3",
+      description:
+        "Full-stack developer experienced in building scalable web applications and cloud-based solutions.",
     },
     {
       id: 4,
@@ -75,6 +85,8 @@ export default function JobSeekerResumesDetail() {
         "Python, Machine Learning, Deep Learning, SQL, TensorFlow, PyTorch",
       featured: true,
       image: "https://i.pravatar.cc/150?img=4",
+      description:
+        "PhD Data Scientist with expertise in machine learning algorithms and big data analytics.",
     },
     {
       id: 5,
@@ -87,6 +99,8 @@ export default function JobSeekerResumesDetail() {
       skills: "Agile, Scrum, Risk Management, Team Leadership, Budget Planning",
       featured: false,
       image: "https://i.pravatar.cc/150?img=5",
+      description:
+        "Certified PMP with proven track record in delivering complex projects on time and within budget.",
     },
     {
       id: 6,
@@ -99,6 +113,8 @@ export default function JobSeekerResumesDetail() {
       skills: "Figma, Sketch, User Research, Prototyping, Wireframing",
       featured: false,
       image: "https://i.pravatar.cc/150?img=6",
+      description:
+        "Creative UX designer focused on creating intuitive user experiences and beautiful interfaces.",
     },
     {
       id: 7,
@@ -111,6 +127,8 @@ export default function JobSeekerResumesDetail() {
       skills: "AWS, Docker, Kubernetes, Jenkins, Terraform, Linux",
       featured: true,
       image: "https://i.pravatar.cc/150?img=7",
+      description:
+        "DevOps specialist with expertise in cloud infrastructure and CI/CD pipeline optimization.",
     },
     {
       id: 8,
@@ -124,6 +142,38 @@ export default function JobSeekerResumesDetail() {
         "Digital Marketing, SEO, Social Media, Content Strategy, Analytics",
       featured: false,
       image: "https://i.pravatar.cc/150?img=8",
+      description:
+        "Strategic marketing leader with expertise in digital campaigns and brand development.",
+    },
+    {
+      id: 9,
+      name: "David Wilson",
+      role: "Financial Analyst",
+      location: "Houston",
+      experience: "7 Years",
+      education: "Master",
+      category: "Finance",
+      skills:
+        "Financial Modeling, Investment Analysis, Excel, Bloomberg Terminal",
+      featured: true,
+      image: "https://i.pravatar.cc/150?img=9",
+      description:
+        "Financial analyst with strong background in investment research and financial modeling.",
+    },
+    {
+      id: 10,
+      name: "Lisa Anderson",
+      role: "HR Manager",
+      location: "Phoenix",
+      experience: "11 Years",
+      education: "Master",
+      category: "Human Resources",
+      skills:
+        "Recruitment, Employee Relations, Talent Management, HR Compliance",
+      featured: false,
+      image: "https://i.pravatar.cc/150?img=10",
+      description:
+        "HR professional experienced in talent acquisition and employee development programs.",
     },
   ];
 
@@ -208,6 +258,95 @@ export default function JobSeekerResumesDetail() {
     { label: "Other Visa", count: 19 },
   ];
 
+  // job applicants data
+  const applicants = [
+    { title: "Staff Assistant", time: "16 hrs ago", location: "Raleigh, NC" },
+    { title: "Administrator", time: "16 hrs ago", location: "Apex, NC" },
+    { title: "Pharmacist", time: "16 hrs ago", location: "Plano, TX" },
+    { title: "Care Assistant", time: "17 hrs ago", location: "Rockville, MD" },
+    {
+      title: "Administrative Assistant",
+      time: "18 hrs ago",
+      location: "Duluth, GA",
+    },
+    { title: "Cashier", time: "18 hrs ago", location: "Kendall Park, NJ" },
+    { title: "Tutor", time: "1 day ago", location: "Celina, TX" },
+  ];
+
+  // job seekers profiles data (10 items)
+  const profiles = [
+    {
+      title: "Administrator",
+      updatedTime: "1 hour ago",
+      location: "San Jose, CA",
+      verified: true,
+      rating: 4.8,
+    },
+    {
+      title: "Hotel Chef",
+      updatedTime: "9 hrs ago",
+      location: "Denver, CO",
+      verified: true,
+      rating: 4.5,
+    },
+    {
+      title: "Process Analyst",
+      updatedTime: "10 hrs ago",
+      location: "Mount Prospect",
+      verified: false,
+      rating: 4.2,
+    },
+    {
+      title: "Python Developer",
+      updatedTime: "10 hrs ago",
+      location: "Chicago, IL",
+      verified: true,
+      rating: 4.9,
+    },
+    {
+      title: "Beauty Advisor",
+      updatedTime: "11 hrs ago",
+      location: "North Bergen, NJ",
+      verified: false,
+      rating: 4.0,
+    },
+    {
+      title: "Front Desk Agent",
+      updatedTime: "14 hrs ago",
+      location: "Hayward, CA",
+      verified: true,
+      rating: 4.7,
+    },
+    {
+      title: "Cashier",
+      updatedTime: "15 hrs ago",
+      location: "Kendall Park",
+      verified: true,
+      rating: 4.3,
+    },
+    {
+      title: "Data Analyst",
+      updatedTime: "2 hrs ago",
+      location: "New York, NY",
+      verified: true,
+      rating: 4.6,
+    },
+    {
+      title: "Graphic Designer",
+      updatedTime: "5 hrs ago",
+      location: "Los Angeles, CA",
+      verified: false,
+      rating: 4.1,
+    },
+    {
+      title: "Project Manager",
+      updatedTime: "7 hrs ago",
+      location: "Seattle, WA",
+      verified: true,
+      rating: 4.8,
+    },
+  ];
+
   // Initialize data on component mount
   useEffect(() => {
     setAllJobSeekers(jobSeekersData);
@@ -233,18 +372,18 @@ export default function JobSeekerResumesDetail() {
     setSelectedRoles([]);
   };
 
-  // View More button handler with loading animation
+  // View More button handler with loading animation - shows all remaining cards
   const handleViewMore = () => {
     setLoading(true);
 
     // Simulate API call delay
     setTimeout(() => {
-      setVisibleJobs((prev) => prev + 4);
+      setVisibleJobs(allJobSeekers.length); // Show all cards
       setLoading(false);
     }, 1000);
   };
 
-  // Get currently visible job seekers
+  // Get currently visible job seekers (first 6 initially, then all when clicked)
   const visibleJobSeekers = allJobSeekers.slice(0, visibleJobs);
   const hasMoreJobs = visibleJobs < allJobSeekers.length;
 
@@ -347,9 +486,9 @@ export default function JobSeekerResumesDetail() {
         )}
 
         <div className="flex gap-6">
-          {/* Left Sidebar - Filter */}
+          {/* Left Sidebar - Filter - Made sticky */}
           <div className="w-72 flex-shrink-0">
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 sticky top-6">
               {/* Sticky Header */}
               <div className="sticky top-0 z-10 bg-white border-b border-gray-200 px-6 py-4">
                 <div className="flex justify-between items-center">
@@ -365,7 +504,7 @@ export default function JobSeekerResumesDetail() {
 
               {/* Scrollable Filter Content - SMALLER SCROLLBAR */}
               <div
-                className="h-[calc(100vh-250px)] overflow-y-auto px-6 py-4 
+                className="h-[calc(100vh-320px)] overflow-y-auto px-6 py-4 
                 [&::-webkit-scrollbar]:w-1.5
                 [&::-webkit-scrollbar-track]:bg-gray-100
                 [&::-webkit-scrollbar-thumb]:bg-gray-300
@@ -664,12 +803,12 @@ export default function JobSeekerResumesDetail() {
                   {openDatePosted && (
                     <div
                       className="max-h-40 overflow-y-auto pr-1
-                      [&::-webkit-scrollbar]:w-1
-                      [&::-webkit-scrollbar-track]:bg-gray-50
-                      [&::-webkit-scrollbar-thumb]:bg-gray-200
-                      [&::-webkit-scrollbar-thumb]:rounded-full
-                      scrollbar-width:thin
-                      scrollbar-color:#e5e7eb #f9fafb"
+                        [&::-webkit-scrollbar]:w-1
+                        [&::-webkit-scrollbar-track]:bg-gray-50
+                        [&::-webkit-scrollbar-thumb]:bg-gray-200
+                        [&::-webkit-scrollbar-thumb]:rounded-full
+                        scrollbar-width:thin
+                        scrollbar-color:#e5e7eb #f9fafb"
                     >
                       {datePostedOptions.map((dateOption, idx) => (
                         <label
@@ -734,12 +873,12 @@ export default function JobSeekerResumesDetail() {
                       </div>
                       <div
                         className="max-h-40 overflow-y-auto pr-1
-                        [&::-webkit-scrollbar]:w-1
-                        [&::-webkit-scrollbar-track]:bg-gray-50
-                        [&::-webkit-scrollbar-thumb]:bg-gray-200
-                        [&::-webkit-scrollbar-thumb]:rounded-full
-                        scrollbar-width:thin
-                        scrollbar-color:#e5e7eb #f9fafb"
+                          [&::-webkit-scrollbar]:w-1
+                          [&::-webkit-scrollbar-track]:bg-gray-50
+                          [&::-webkit-scrollbar-thumb]:bg-gray-200
+                          [&::-webkit-scrollbar-thumb]:rounded-full
+                          scrollbar-width:thin
+                          scrollbar-color:#e5e7eb #f9fafb"
                       >
                         {industries.map((industry, idx) => (
                           <label
@@ -800,12 +939,12 @@ export default function JobSeekerResumesDetail() {
                   {openExperience && (
                     <div
                       className="max-h-40 overflow-y-auto pr-1
-                      [&::-webkit-scrollbar]:w-1
-                      [&::-webkit-scrollbar-track]:bg-gray-50
-                      [&::-webkit-scrollbar-thumb]:bg-gray-200
-                      [&::-webkit-scrollbar-thumb]:rounded-full
-                      scrollbar-width:thin
-                      scrollbar-color:#e5e7eb #f9fafb"
+                        [&::-webkit-scrollbar]:w-1
+                        [&::-webkit-scrollbar-track]:bg-gray-50
+                        [&::-webkit-scrollbar-thumb]:bg-gray-200
+                        [&::-webkit-scrollbar-thumb]:rounded-full
+                        scrollbar-width:thin
+                        scrollbar-color:#e5e7eb #f9fafb"
                     >
                       {experienceLevels.map((experience, idx) => (
                         <label
@@ -864,12 +1003,12 @@ export default function JobSeekerResumesDetail() {
                   {openWorkAuthorization && (
                     <div
                       className="max-h-40 overflow-y-auto pr-1
-                      [&::-webkit-scrollbar]:w-1
-                      [&::-webkit-scrollbar-track]:bg-gray-50
-                      [&::-webkit-scrollbar-thumb]:bg-gray-200
-                      [&::-webkit-scrollbar-thumb]:rounded-full
-                      scrollbar-width:thin
-                      scrollbar-color:#e5e7eb #f9fafb"
+                        [&::-webkit-scrollbar]:w-1
+                        [&::-webkit-scrollbar-track]:bg-gray-50
+                        [&::-webkit-scrollbar-thumb]:bg-gray-200
+                        [&::-webkit-scrollbar-thumb]:rounded-full
+                        scrollbar-width:thin
+                        scrollbar-color:#e5e7eb #f9fafb"
                     >
                       {workAuthorizationOptions.map((auth, idx) => (
                         <label
@@ -913,35 +1052,53 @@ export default function JobSeekerResumesDetail() {
 
           {/* Center Content - Job Listings */}
           <div className="flex-1">
-            <h2 className="text-[20px] font-semibold text-gray-800 mb-5">
-              Jobseekers in USA/ Canada
-            </h2>
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold text-gray-900">
+                Job Seekers in USA/Canada
+                <span className="block text-sm font-normal text-gray-500 mt-1">
+                  Discover qualified candidates for your open positions
+                </span>
+              </h2>
+              <div className="text-sm text-gray-500">
+                Showing{" "}
+                <span className="font-semibold text-gray-800">
+                  {visibleJobSeekers.length}
+                </span>{" "}
+                of{" "}
+                <span className="font-semibold text-gray-800">
+                  {allJobSeekers.length}
+                </span>{" "}
+                profiles
+              </div>
+            </div>
 
-            <div className="space-y-4">
+            <div className="space-y-5">
               {visibleJobSeekers.map((seeker) => (
                 <div
                   key={seeker.id}
-                  className="bg-white rounded-md shadow-sm border border-gray-200 hover:shadow-md transition-shadow relative overflow-hidden"
+                  className="bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-lg transition-all duration-300 relative overflow-hidden group hover:border-gray-200"
                 >
                   {seeker.featured && (
-                    <div className="absolute top-0 right-0">
-                      <div className="bg-gradient-to-br from-[#7c3aed] to-[#6d28d9] text-white px-5 py-2 text-[11px] font-semibold tracking-wide rounded-bl-lg">
-                        Featured
+                    <div className="absolute top-0 left-0 z-10">
+                      <div className="bg-gradient-to-r from-[#27bb97] to-[#1fa987] text-white px-4 py-1.5 text-xs font-semibold tracking-wide rounded-br-lg shadow-sm">
+                        <span className="flex items-center gap-1">
+                          <FaStar className="w-3 h-3" />
+                          Featured Profile
+                        </span>
                       </div>
                     </div>
                   )}
 
-                  <div className="p-6">
-                    <div className="flex gap-5">
-                      {/* Avatar */}
-                      <div className="flex-shrink-0">
-                        <div className="w-[70px] h-[70px] rounded-full overflow-hidden bg-gray-100">
+                  <div className="p-7">
+                    <div className="flex gap-6">
+                      {/* Avatar with Professional Badge */}
+                      <div className="flex-shrink-0 relative">
+                        <div className="w-20 h-20 rounded-xl overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100 border-2 border-white shadow-sm">
                           <img
                             src={seeker.image}
                             alt={`${seeker.name}'s profile`}
-                            className="w-full h-full object-cover rounded-full"
+                            className="w-full h-full object-cover"
                             onError={(e) => {
-                              // Fallback to gradient background if image fails to load
                               e.target.style.display = "none";
                               e.target.parentElement.classList.add(
                                 "bg-gradient-to-br",
@@ -951,60 +1108,211 @@ export default function JobSeekerResumesDetail() {
                             }}
                           />
                         </div>
+                        {seeker.featured && (
+                          <div className="absolute -bottom-1 -right-1 w-7 h-7 bg-[#27bb97] rounded-full border-2 border-white flex items-center justify-center shadow-sm">
+                            <FaCheckCircle className="w-3.5 h-3.5 text-white" />
+                          </div>
+                        )}
                       </div>
 
                       {/* Content */}
                       <div className="flex-1 min-w-0">
-                        <h3 className="text-[18px] font-semibold text-gray-800 mb-2">
-                          {seeker.role}
-                        </h3>
+                        {/* Header Section */}
+                        <div className="flex justify-between items-start mb-4">
+                          <div>
+                            <h3 className="text-xl font-bold text-gray-900 mb-1 group-hover:text-[#27bb97] transition-colors duration-200">
+                              {seeker.role}
+                            </h3>
+                            <div className="flex items-center gap-4 text-sm text-gray-600">
+                              <span className="flex items-center gap-2">
+                                <div className="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center">
+                                  <FaUser className="w-4 h-4 text-gray-500" />
+                                </div>
+                                <span className="font-medium">
+                                  {seeker.name}
+                                </span>
+                              </span>
+                              <span className="flex items-center gap-2">
+                                <div className="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center">
+                                  <FaMapMarkerAlt className="w-4 h-4 text-gray-500" />
+                                </div>
+                                <span className="font-medium">
+                                  {seeker.location}
+                                </span>
+                              </span>
+                            </div>
+                          </div>
 
-                        <div className="flex items-center gap-5 text-[13px] text-gray-600 mb-3">
-                          <span className="flex items-center gap-1.5">
-                            <FaUser size={13} />
-                            {seeker.name}
-                          </span>
-                          <span className="flex items-center gap-1.5">
-                            <FaMapMarkerAlt size={13} />
-                            {seeker.location}
-                          </span>
+                          {/* Quick Stats */}
+                          <div className="flex flex-col items-end">
+                            <div className="text-xs text-gray-500 mb-1">
+                              Profile Score
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <div className="flex">
+                                {[1, 2, 3, 4, 5].map((star) => (
+                                  <FaStar
+                                    key={star}
+                                    className={`w-4 h-4 ${
+                                      star <= 4
+                                        ? "text-yellow-400"
+                                        : "text-gray-300"
+                                    }`}
+                                  />
+                                ))}
+                              </div>
+                              <span className="text-sm font-semibold text-gray-800">
+                                4.0
+                              </span>
+                            </div>
+                          </div>
                         </div>
 
-                        <div className="flex items-center gap-2 mb-3 text-[13px]">
-                          <span className="text-[#3b82f6] font-medium">
-                            {seeker.experience}
+                        {/* Badges Section */}
+                        <div className="flex flex-wrap gap-2 mb-5">
+                          <span className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-100">
+                            <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
+                            {seeker.experience} Experience
                           </span>
-                          <span className="text-gray-300">|</span>
-                          <span className="text-[#3b82f6] font-medium">
+                          <span className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium bg-green-50 text-green-700 border border-green-100">
+                            <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
                             {seeker.education}
                           </span>
-                          <span className="text-gray-300">|</span>
-                          <span className="text-[#3b82f6] font-medium">
+                          <span className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium bg-purple-50 text-purple-700 border border-purple-100">
+                            <span className="w-2 h-2 bg-purple-500 rounded-full mr-2"></span>
                             {seeker.category}
                           </span>
                         </div>
 
-                        <div className="w-full border-t border-dashed border-gray-300 my-4"></div>
-
-                        <div className="mb-4">
-                          <span className="text-[13px] font-medium text-gray-800">
-                            Key Skills:{" "}
-                          </span>
-                          <span className="text-[13px] text-gray-600">
-                            {seeker.skills}
-                          </span>
+                        {/* Description Section */}
+                        <div className="mb-5">
+                          <div className="flex items-center gap-2 mb-3">
+                            <div className="w-6 h-6 rounded-md bg-gray-50 flex items-center justify-center">
+                              <svg
+                                className="w-4 h-4 text-gray-500"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth="2"
+                                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                                />
+                              </svg>
+                            </div>
+                            <h4 className="text-sm font-semibold text-gray-800">
+                              Professional Summary
+                            </h4>
+                          </div>
+                          <p className="text-sm text-gray-600 leading-relaxed bg-gray-50 rounded-lg p-4 border border-gray-100">
+                            {seeker.description}
+                          </p>
                         </div>
 
-                        <div className="w-full border-t border-dashed border-gray-300 my-4"></div>
+                        {/* Skills Section */}
+                        <div className="mb-6">
+                          <div className="flex items-center gap-2 mb-3">
+                            <div className="w-6 h-6 rounded-md bg-gray-50 flex items-center justify-center">
+                              <svg
+                                className="w-4 h-4 text-gray-500"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth="2"
+                                  d="M13 10V3L4 14h7v7l9-11h-7z"
+                                />
+                              </svg>
+                            </div>
+                            <h4 className="text-sm font-semibold text-gray-800">
+                              Core Competencies
+                            </h4>
+                          </div>
+                          <div className="flex flex-wrap gap-2">
+                            {seeker.skills
+                              .split(",")
+                              .slice(0, 6)
+                              .map((skill, index) => (
+                                <span
+                                  key={index}
+                                  className="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-medium bg-gray-50 text-gray-700 border border-gray-200 hover:bg-gray-100 transition-colors"
+                                >
+                                  {skill.trim()}
+                                </span>
+                              ))}
+                            {seeker.skills.split(",").length > 6 && (
+                              <span className="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-medium bg-gray-100 text-gray-600 border border-gray-200">
+                                +{seeker.skills.split(",").length - 6} more
+                              </span>
+                            )}
+                          </div>
+                        </div>
 
-                        <div className="flex justify-between items-center w-full">
-                          <button className="px-6 py-2 border border-gray-300 rounded text-[14px] font-medium text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer">
-                            View Profile
+                        {/* Action Buttons */}
+                        <div className="flex justify-between items-center pt-5 border-t border-gray-100">
+                          <button className="flex items-center gap-2 px-5 py-2.5 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 group-hover:border-[#27bb97] group-hover:text-[#27bb97]">
+                            <svg
+                              className="w-4 h-4"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth="2"
+                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                              />
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth="2"
+                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                              />
+                            </svg>
+                            View Full Profile
                           </button>
 
-                          <button className="px-6 py-2 bg-[#27bb97] border border-[#1fa987] text-white rounded text-[14px] font-medium hover:bg-[#1fa987] transition-colors cursor-pointer">
-                            Download CV
-                          </button>
+                          <div className="flex items-center gap-3">
+                            <button className="flex items-center gap-2 px-5 py-2.5 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-all duration-200">
+                              <svg
+                                className="w-4 h-4"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth="2"
+                                  d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                                />
+                              </svg>
+                              Save Profile
+                            </button>
+
+                            <button className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-[#27bb97] to-[#1fa987] text-white rounded-lg text-sm font-semibold hover:from-[#1fa987] hover:to-[#189977] transition-all duration-200 shadow-sm hover:shadow-md">
+                              <svg
+                                className="w-4 h-4"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth="2"
+                                  d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                                />
+                              </svg>
+                              Download Resume
+                            </button>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -1013,23 +1321,44 @@ export default function JobSeekerResumesDetail() {
               ))}
             </div>
 
-            {/* View More Button with Loading Animation */}
+            {/* View More Button in the middle of the cards - Only show if we have more cards to show */}
             {hasMoreJobs && (
-              <div className="mt-8 text-center">
-                <button
-                  onClick={handleViewMore}
-                  disabled={loading}
-                  className="px-8 py-3 bg-[#27bb97] hover:bg-[#1fa987] text-white rounded text-[15px] font-medium transition-colors disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center mx-auto gap-2"
-                >
-                  {loading ? (
-                    <>
-                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                      Loading...
-                    </>
-                  ) : (
-                    "View More Resumes"
-                  )}
-                </button>
+              <div className="mt-10 text-center">
+                <div className="relative">
+                  <button
+                    onClick={handleViewMore}
+                    disabled={loading}
+                    className="relative px-8 py-3.5 bg-gradient-to-r from-[#27bb97] to-[#1fa987] text-white rounded-xl text-[15px] font-semibold transition-all duration-300 hover:from-[#1fa987] hover:to-[#189977] disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center mx-auto gap-3 shadow-sm hover:shadow-md hover:-translate-y-0.5"
+                  >
+                    {loading ? (
+                      <>
+                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        Loading More Profiles...
+                      </>
+                    ) : (
+                      <>
+                        <span>View More Job Seekers</span>
+                        <svg
+                          className="w-5 h-5"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M19 14l-7 7m0 0l-7-7m7 7V3"
+                          />
+                        </svg>
+                      </>
+                    )}
+                  </button>
+                  <div className="text-sm text-gray-500 mt-3">
+                    Showing {visibleJobSeekers.length} of {allJobSeekers.length}{" "}
+                    profiles • Click to view all
+                  </div>
+                </div>
               </div>
             )}
           </div>
@@ -1038,9 +1367,9 @@ export default function JobSeekerResumesDetail() {
           <div className="w-[320px] flex-shrink-0">
             <div className="space-y-5 sticky top-6">
               {/* Card 1 - Primary CTA */}
-              <div className="bg-white rounded-xl shadow-md border border-gray-100 p-7 text-center hover:shadow-lg transition-shadow duration-300">
+              <div className="bg-white rounded-xl shadow-md border border-gray-100 p-7 text-center hover:shadow-lg transition-shadow duration-300 group">
                 <div className="mb-6">
-                  <div className="inline-flex items-center justify-center w-12 h-12 bg-green-50 rounded-full mb-4">
+                  <div className="inline-flex items-center justify-center w-12 h-12 bg-green-50 rounded-full mb-4 group-hover:bg-green-100 transition-colors duration-300">
                     <svg
                       className="w-6 h-6 text-green-600"
                       fill="none"
@@ -1055,7 +1384,7 @@ export default function JobSeekerResumesDetail() {
                       />
                     </svg>
                   </div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-[#27bb97] transition-colors duration-200">
                     Start Recruiting Top Talent Today
                   </h3>
                   <p className="text-gray-600 text-sm leading-relaxed">
@@ -1068,9 +1397,9 @@ export default function JobSeekerResumesDetail() {
               </div>
 
               {/* Card 2 - Secondary CTA */}
-              <div className="bg-white rounded-xl shadow-md border border-gray-100 p-7 text-center hover:shadow-lg transition-shadow duration-300">
+              <div className="bg-white rounded-xl shadow-md border border-gray-100 p-7 text-center hover:shadow-lg transition-shadow duration-300 group">
                 <div className="mb-6">
-                  <div className="inline-flex items-center justify-center w-12 h-12 bg-blue-50 rounded-full mb-4">
+                  <div className="inline-flex items-center justify-center w-12 h-12 bg-blue-50 rounded-full mb-4 group-hover:bg-blue-100 transition-colors duration-300">
                     <svg
                       className="w-6 h-6 text-blue-600"
                       fill="none"
@@ -1085,7 +1414,7 @@ export default function JobSeekerResumesDetail() {
                       />
                     </svg>
                   </div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-[#27bb97] transition-colors duration-200">
                     Need to Hire Quickly?
                   </h3>
                   <p className="text-gray-600 text-sm leading-relaxed">
@@ -1098,7 +1427,7 @@ export default function JobSeekerResumesDetail() {
               </div>
 
               {/* Card 3 - Trust Building */}
-              <div className="bg-white rounded-xl shadow-md border border-gray-100 p-7 text-center hover:shadow-lg transition-shadow duration-300">
+              <div className="bg-white rounded-xl shadow-md border border-gray-100 p-7 text-center hover:shadow-lg transition-shadow duration-300 group">
                 <div className="flex items-center justify-center gap-3 mb-6">
                   <div className="flex -space-x-2">
                     {[1, 2, 3].map((i) => (
@@ -1129,7 +1458,7 @@ export default function JobSeekerResumesDetail() {
                     </p>
                   </div>
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">
+                <h3 className="text-lg font-semibold text-gray-900 mb-3 group-hover:text-[#27bb97] transition-colors duration-200">
                   Hire with Confidence
                 </h3>
                 <p className="text-gray-600 text-sm leading-relaxed mb-6">
@@ -1142,10 +1471,10 @@ export default function JobSeekerResumesDetail() {
               </div>
 
               {/* Card 4 - Feature Highlight */}
-              <div className="bg-gradient-to-br from-gray-50 to-white rounded-xl border border-gray-200 p-6">
+              <div className="bg-gradient-to-br from-gray-50 to-white rounded-xl border border-gray-200 p-6 group hover:shadow-md transition-all duration-300">
                 <div className="flex items-start gap-4">
                   <div className="flex-shrink-0">
-                    <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                    <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center group-hover:bg-green-200 transition-colors duration-300">
                       <svg
                         className="w-5 h-5 text-green-600"
                         fill="none"
@@ -1162,7 +1491,7 @@ export default function JobSeekerResumesDetail() {
                     </div>
                   </div>
                   <div className="text-left">
-                    <h4 className="font-semibold text-gray-900 mb-1">
+                    <h4 className="font-semibold text-gray-900 mb-1 group-hover:text-[#27bb97] transition-colors duration-200">
                       Direct Candidate Access
                     </h4>
                     <p className="text-sm text-gray-600 leading-relaxed">
@@ -1191,12 +1520,116 @@ export default function JobSeekerResumesDetail() {
                   </div>
                 </div>
               </div>
+
+              {/* Latest Job applicant Profile */}
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+                <div className="border-b border-gray-200 p-4">
+                  <h1 className="text-lg font-semibold text-gray-800">
+                    Latest Job Applicant Profiles
+                  </h1>
+                </div>
+
+                <div className="divide-y divide-gray-100">
+                  {applicants.map((applicant, index) => (
+                    <div
+                      key={index}
+                      className="p-4 hover:bg-gray-50 transition-colors cursor-pointer group"
+                    >
+                      <h2 className="text-sm font-semibold text-gray-800 mb-2 group-hover:text-[#27bb97] transition-colors duration-200">
+                        {applicant.title}
+                      </h2>
+                      <div className="flex items-center gap-3 text-xs text-gray-500">
+                        <span className="flex items-center gap-1">
+                          <FaClock className="w-3 h-3" />
+                          Updated {applicant.time}
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <FaMapMarkerAlt className="w-3 h-3" />
+                          {applicant.location}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Latest Job Seeker Profiles */}
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                <div className="border-b border-gray-200 px-6 py-4 bg-gray-50">
+                  <h1 className="text-lg font-semibold text-gray-800">
+                    Latest Job Seeker Profiles
+                  </h1>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Recently updated candidate profiles
+                  </p>
+                </div>
+
+                <div
+                  className="divide-y divide-gray-100 max-h-[400px] overflow-y-auto 
+    [&::-webkit-scrollbar]:w-1.5
+    [&::-webkit-scrollbar-track]:bg-gray-50
+    [&::-webkit-scrollbar-thumb]:bg-gray-300
+    [&::-webkit-scrollbar-thumb]:rounded-full
+    [&::-webkit-scrollbar-thumb:hover]:bg-gray-400
+    [&::-webkit-scrollbar]:hover:w-2
+    scrollbar-width:thin
+    scrollbar-color:#d1d5db #f3f4f6"
+                >
+                  {profiles.map((profile, index) => (
+                    <div
+                      key={index}
+                      className="px-6 py-4 hover:bg-gray-50 transition-colors cursor-pointer group"
+                    >
+                      <div className="flex justify-between items-start">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-2">
+                            <h2 className="text-sm font-semibold text-gray-900 group-hover:text-[#27bb97] transition-colors duration-200">
+                              {profile.title}
+                            </h2>
+                            {profile.verified && (
+                              <span className="flex items-center gap-1 text-xs bg-green-50 text-green-700 px-2 py-0.5 rounded-full">
+                                <FaCheckCircle className="w-3 h-3" />
+                                Verified
+                              </span>
+                            )}
+                          </div>
+
+                          <div className="flex items-center gap-3 text-xs text-gray-500 mb-2">
+                            <span className="flex items-center gap-1">
+                              <FaClock className="w-3 h-3" />
+                              Updated {profile.updatedTime}
+                            </span>
+                            <span className="flex items-center gap-1">
+                              <FaMapMarkerAlt className="w-3 h-3" />
+                              {profile.location}
+                            </span>
+                          </div>
+
+                          <div className="flex items-center gap-1">
+                            <FaStar className="w-3 h-3 text-yellow-400" />
+                            <span className="text-xs font-medium text-gray-700">
+                              {profile.rating}
+                            </span>
+                            <span className="text-xs text-gray-400">/5</span>
+                          </div>
+                        </div>
+
+                        <div className="ml-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <FaInfoCircle className="w-5 h-5 text-gray-300 group-hover:text-gray-400 transition-colors" />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="border-t border-gray-200 px-6 py-3 bg-gray-50">
+                  <button className="w-full text-center text-sm text-[#27bb97] hover:text-[#1fa987] font-medium transition-colors">
+                    View All Profiles →
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
-
-
-
-          
         </div>
       </div>
     </div>
