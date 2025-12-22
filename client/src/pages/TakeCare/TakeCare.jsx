@@ -1,5 +1,6 @@
 import React from "react";
 import HeroPage from "../../components/TakeCare/HeroPage.jsx";
+import RecentCare from "../../components/TakeCare/RecentCare.jsx";
 import CareServices from "../../components/TakeCare/CareServices.jsx";
 import AllServices from "../../components/TakeCare/AllServices.jsx";
 import EasyServices from "../../components/TakeCare/EasyServices.jsx";
@@ -231,10 +232,11 @@ const TakeCare = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="">
       <HeroPage />
+      <RecentCare/>
       <CareServices/>
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+      <main className="max-w-7xl mx-auto ">
         <AllServices 
           services={serviceTypesData} 
           onServiceClick={handleServiceClick}
@@ -247,32 +249,11 @@ const TakeCare = () => {
         
         <FeaturedServices providers={featuredProvidersData} />
         
+      
+      </main>
         <HowItWorks />
         
         <WhyChooseUs />
-      </main>
-
-      {/* Add custom animations */}
-      <style jsx>{`
-        @keyframes float {
-          0%,
-          100% {
-            transform: translateY(0px);
-          }
-          50% {
-            transform: translateY(-20px);
-          }
-        }
-        .animate-float {
-          animation: float 3s ease-in-out infinite;
-        }
-        .line-clamp-3 {
-          display: -webkit-box;
-          -webkit-line-clamp: 3;
-          -webkit-box-orient: vertical;
-          overflow: hidden;
-        }
-      `}</style>
     </div>
   );
 };

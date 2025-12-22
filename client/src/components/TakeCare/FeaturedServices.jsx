@@ -88,7 +88,7 @@ const FeaturedServices = ({ providers }) => {
               </div>
 
               {/* View Details Button */}
-              <button className="w-full mt-6 py-3 bg-gradient-to-r from-[#27BB97] to-[#1FA987] text-white font-semibold rounded-xl hover:from-[#1FA987] hover:to-[#198F72] transition-all shadow-md hover:shadow-lg">
+              <button className="w-full mt-6 py-3  text-[#27BB97] font-semibold rounded-xl border border-[#27BB97] hover:text-white hover:bg-[#27BB97] transition-all shadow-md hover:shadow-lg">
                 View Details
               </button>
             </div>
