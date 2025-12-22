@@ -386,7 +386,7 @@ const AboutUs = () => {
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <div className="space-y-8">
               <div className="group animate-fade-in-up">
-                <h1 className="text-5xl lg:text-6xl font-black text-white leading-tight mb-6">
+                <h1 className="text-5xl lg:text-5xl font-black text-white leading-tight mb-6">
                   THE SMART WAY TO
                   <br />
                   <span className="bg-gradient-to-r from-[#27bb97] via-white to-[#27bb97] bg-clip-text text-transparent">
@@ -397,46 +397,12 @@ const AboutUs = () => {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 hover-lift border border-white/20">
-                <img
-                  src="https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=600&q=90"
-                  alt="Local Marketplace"
-                  className="w-full h-48 object-cover rounded-xl mb-4"
-                />
-                <p className="text-white font-semibold">Local Marketplace</p>
-              </div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 hover-lift border border-white/20">
-                <img
-                  src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=600&q=90"
-                  alt="Community Events"
-                  className="w-full h-48 object-cover rounded-xl mb-4"
-                />
-                <p className="text-white font-semibold">Community Events</p>
-              </div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 hover-lift border border-white/20">
-                <img
-                  src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=600&q=90"
-                  alt="Verified Services"
-                  className="w-full h-48 object-cover rounded-xl mb-4"
-                />
-                <p className="text-white font-semibold">Verified Services</p>
-              </div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 hover-lift border border-white/20">
-                <img
-                  src="https://images.unsplash.com/photo-1573164713988-8665fc963095?w=600&q=90"
-                  alt="Neighborhood Network"
-                  className="w-full h-48 object-cover rounded-xl mb-4"
-                />
-                <p className="text-white font-semibold">Neighborhood Network</p>
-              </div>
-            </div>
           </div>
         </div>
       </section>
 
       {/* ENHANCED STATS SECTION */}
-      <section className="py-20 bg-gradient-to-b from-white to-gray-50">
+      {/* <section className="py-20 bg-gradient-to-b from-white to-gray-50">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid lg:grid-cols-2 gap-12 items-center mb-16">
             <div className="scroll-animate">
@@ -475,7 +441,7 @@ const AboutUs = () => {
             </div>
           </div>
 
-          {/* Impact Stats */}
+         
           <div className="scroll-animate">
             <div className="bg-gradient-to-r from-[#27bb97] to-[#2d7dd7] rounded-3xl p-8 text-white">
               <div className="grid md:grid-cols-4 gap-8">
@@ -490,7 +456,7 @@ const AboutUs = () => {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* ENHANCED SERVICES */}
       <section className="py-20 bg-white">
@@ -788,7 +754,7 @@ const AboutUs = () => {
             alt="Community celebration"
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#27bb97]/90 to-[#2d7dd7]/90"></div>
+          <div className="absolute inset-0 opacity/10"></div>
         </div>
 
         <div className="max-w-4xl mx-auto px-6 text-center relative z-10">

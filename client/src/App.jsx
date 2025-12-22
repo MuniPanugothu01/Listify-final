@@ -22,6 +22,7 @@ import OurServicesPage from "./pages/OurServices/OurServicesPage.jsx";
 
 import PostaddPage from "./pages/PostaddPage/Postadd.jsx";
 import TakeCare from "./pages/TakeCare/TakeCare.jsx";
+import NannyService from "./components/TakeCare/TakeCareServices/NannyService.jsx";
 
 // Roommates
 import Roommates from "./pages/Roommates/Roommates.jsx";
@@ -169,7 +170,10 @@ const App = () => {
             <Route path="/our-services" element={<OurServicesPage />} />
             <Route path="/post-add" element={<PostaddPage />} />
             <Route path="/post-add" element={<PostaddPage/>} />
+
+            {/* TakeCare */}
             <Route path="/takecare" element={<TakeCare/>} />
+            <Route path="/takecare/:serviceId" element={<NannyService/>} />
 
             {/* Roommates */}
             <Route path="/roommates" element={<Roommates />} />

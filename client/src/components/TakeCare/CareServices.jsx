@@ -1,8 +1,11 @@
 import React, { useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 
 const CareServices = () => {
+  const navigate = useNavigate();
   const scrollContainerRef = useRef(null);
+  
   const services = [
     {
       id: "nanny",
@@ -62,9 +65,9 @@ const CareServices = () => {
     }
   ];
 
+  // Handle card click to navigate to specific service page
   const handleServiceClick = (serviceId) => {
-    console.log(`Navigating to: ${serviceId}`);
-    // Add your routing logic here
+    navigate(`/takecare/${serviceId}`);
   };
 
   const scrollLeft = () => {
@@ -122,6 +125,13 @@ const CareServices = () => {
             key={service.id}
             className="flex-shrink-0 w-72 flex flex-col items-center text-center p-8 rounded-2xl border border-gray-200 hover:border-[#27BB97] hover:shadow-xl transition-all duration-300 group cursor-pointer bg-white"
             onClick={() => handleServiceClick(service.id)}
+            role="link"
+            tabIndex={0}
+            onKeyPress={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                handleServiceClick(service.id);
+              }
+            }}
           >
             {/* Rounded Image */}
             <div className="relative mb-6">
@@ -155,6 +165,7 @@ const CareServices = () => {
                 e.stopPropagation();
                 handleServiceClick(service.id);
               }}
+              aria-label={`Explore ${service.title} services`}
             >
               Explore
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
