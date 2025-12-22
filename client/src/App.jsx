@@ -18,7 +18,8 @@ import Gallery from "./pages/Home/Gallery.jsx";
 
 import ContactUs from "./pages/ContactPage/ContactUS.jsx";
 import AboutUs from "./pages/AboutPage/AboutUs.jsx";
-import ServicesPage from "./pages/Services/ServicesPage.jsx";
+import OurServicesPage from "./pages/OurServices/OurServicesPage.jsx";
+
 import PostaddPage from "./pages/PostaddPage/Postadd.jsx";
 import TakeCare from "./pages/TakeCare/TakeCare.jsx";
 
@@ -45,6 +46,10 @@ import JobDetailsPage from "./components/Jobs/JobDetailsPage.jsx";
 import JobSeekerInterface from "./components/Jobs/JobSeekerInterface.jsx";
 import JobSeekerResume from "./components/Jobs/JobSeekerResume.jsx"; // Job seeker profile page
 import JobSeekerResumesDetail from "./components/Jobs/JobSeekerResumesDetail.jsx"; // Job seeker listings page
+
+
+// Services
+import ServicesPage from "./pages/Services/ServicesPage.jsx";
 
 // Profile
 import Profile from "./pages/Home/Profile.jsx";
@@ -161,9 +166,8 @@ const App = () => {
             {/* Contacts Page */}
             <Route path="/contact-us" element={<ContactUs />} />
             <Route path="/about-us" element={<AboutUs />} />
-            <Route path="/our-services" element={<ServicesPage />} />
+            <Route path="/our-services" element={<OurServicesPage />} />
             <Route path="/post-add" element={<PostaddPage />} />
-            <Route path="/our-services" element={<ServicesPage/>} />
             <Route path="/post-add" element={<PostaddPage/>} />
             <Route path="/takecare" element={<TakeCare/>} />
 
@@ -191,6 +195,12 @@ const App = () => {
             <Route path="/events/:eventId" element={<EventDetailPage />} />
             <Route path="/event-details" element={<EventDetails />} />
             <Route path="/events-list" element={<EventList />} />
+
+            {/* Services Category */}
+            <Route path="/services" element={<ServicesPage />} />
+
+
+
             {/* Profile */}
             <Route path="/profile" element={<Profile />} />
             {/* Placeholder Pages */}
