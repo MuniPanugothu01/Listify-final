@@ -1,209 +1,278 @@
-import React, { useState } from 'react';
-import { Search, MapPin, Heart, Shield, Star, CheckCircle, Users, Home, BookOpen } from 'lucide-react';
+import React from "react";
+import HeroPage from "../../components/TakeCare/HeroPage.jsx";
+import CareServices from "../../components/TakeCare/CareServices.jsx";
+import AllServices from "../../components/TakeCare/AllServices.jsx";
+import EasyServices from "../../components/TakeCare/EasyServices.jsx";
+import FeaturedServices from "../../components/TakeCare/FeaturedServices.jsx";
+import HowItWorks from "../../components/TakeCare/HowItWorks.jsx";
+import WhyChooseUs from "../../components/TakeCare/WhyChooseUs.jsx";
 
 const TakeCare = () => {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [location, setLocation] = useState('');
-
-  // Baby care service categories
-  const serviceCategories = [
+  // Data
+  const serviceTypesData = [
     {
-      id: 'daycare',
-      name: 'Day Care',
-      description: 'Safe & nurturing daycare facilities with certified staff',
-      icon: <Home className="w-6 h-6" />,
-      color: 'from-pink-400 to-pink-600',
-      count: '1,200+'
+      id: "childcare",
+      title: "Child Care",
+      description: "Now! It's easy to find affordable care services for your child. From babysitter for a night to daily child care, we have it all.",
+      color: "from-blue-500 to-cyan-500",
+      bgColor: "bg-blue-50",
+      services: [
+        "Nannies",
+        "Babysitter", 
+        "Tutors",
+        "Daycare Centers",
+        "Nanny Jobs",
+        "Babysitter Jobs",
+        "Tutoring Jobs"
+      ],
+      image: "https://images.unsplash.com/photo-1577896851231-70ef18881754?w=400&h=300&fit=crop"
     },
     {
-      id: 'nanny care',
-      name: 'Nanny Care',
-      description: 'Experienced nannies for in-home childcare',
-      icon: <Users className="w-6 h-6" />,
-      color: 'from-blue-400 to-blue-600',
-      count: '850+'
+      id: "homecare",
+      title: "Home Care",
+      description: "Missing the taste of home-cooked food? Faced with an untidy home? From cooking services to housekeeping, we have it all.",
+      color: "from-green-500 to-emerald-500",
+      bgColor: "bg-green-50",
+      services: [
+        "Housekeeping",
+        "Cooking",
+        "Part Time Cooking",
+        "Part Time Housekeeping",
+        "Housekeeping Jobs",
+        "Cooking Jobs",
+        "Care Jobs"
+      ],
+      image: "https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=400&h=300&fit=crop"
     },
     {
-      id: 'babysitter',
-      name: 'Baby Sitting',
-      description: 'Trusted babysitters for flexible hours',
-      icon: <Heart className="w-6 h-6" />,
-      color: 'from-green-400 to-green-600',
-      count: '2,300+'
+      id: "eldercare",
+      title: "Elder Care",
+      description: "Do your elderly parents need care while you're away? We offer full-time and part-time senior caretakers, we have it all.",
+      color: "from-purple-500 to-violet-500",
+      bgColor: "bg-purple-50",
+      services: [
+        "Elder Care Individuals",
+        "Elder Care Centers",
+        "Senior Care",
+        "Elder Care Jobs",
+        "Nurse Jobs",
+        "Elder Care Center Jobs",
+        "Adult Daycare"
+      ],
+      image: "https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=400&h=300&fit=crop"
     }
   ];
 
+  const easyServicesData = [
+    {
+      id: "nanny",
+      title: "Nanny",
+      description: "Hire professional nannies with a good track record. Connect with a professional nanny for your naughty baby.",
+      image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w-400&h=300&fit=crop",
+      color: "from-pink-500 to-rose-500"
+    },
+    {
+      id: "babysitter",
+      title: "Babysitter",
+      description: "Hire a babysitter to keep your baby happy! Know the babysitter who will know your baby better.",
+      image: "https://images.unsplash.com/photo-1519457431-44ccd64a579b?w=400&h=300&fit=crop",
+      color: "from-blue-500 to-cyan-500"
+    },
+    {
+      id: "cook",
+      title: "Cook",
+      description: "Appoint a cook who cooks, shares, and cares! Connect with a cook for delicious food daily.",
+      image: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400&h=300&fit=crop",
+      color: "from-orange-500 to-amber-500"
+    },
+    {
+      id: "housekeeper",
+      title: "Housekeeper",
+      description: "Book a housekeeper for a hygienic house. Hire a housekeeper with good organizing skills for your home.",
+      image: "https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=400&h=300&fit=crop",
+      color: "from-green-500 to-emerald-500"
+    },
+    {
+      id: "eldercare-provider",
+      title: "Eldercare provider/Nurse",
+      description: "Connect with trusted Elder care providers. Learn more about the most-reliable elder care providers.",
+      image: "https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=400&h=300&fit=crop",
+      color: "from-purple-500 to-violet-500"
+    },
+    {
+      id: "daycare-center",
+      title: "Daycare center",
+      description: "Know more about the daycare that cares for your child! Connect with the best daycare who cares.",
+      image: "https://images.unsplash.com/photo-1519457431-44ccd64a579b?w=400&h=300&fit=crop",
+      color: "from-yellow-500 to-orange-500"
+    },
+    {
+      id: "family-childcare",
+      title: "Family child care center",
+      description: "Get in touch with the best family child care center. Enquire now about top-class family child care center.",
+      image: "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=400&h=300&fit=crop",
+      color: "from-teal-500 to-cyan-500"
+    },
+    {
+      id: "pet-care",
+      title: "Pet care provider",
+      description: "Hire the best pet care provider in the town to express your love for your pet. Get in touch with the most experienced pet care provider.",
+      image: "https://images.unsplash.com/photo-1552053831-71594a27632d?w=400&h=300&fit=crop",
+      color: "from-indigo-500 to-blue-500"
+    }
+  ];
+
+  const featuredProvidersData = [
+    {
+      id: 1,
+      name: "Little Sunshine Daycare",
+      type: "Day Care Center",
+      rating: 4.9,
+      reviews: 247,
+      price: "$$",
+      location: "Downtown, NY",
+      distance: "0.5 mi",
+      image: "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d",
+      features: ["Certified Staff", "24/7 CCTV", "Healthy Meals", "Play Area"],
+      availability: "3 spots left",
+      verified: true,
+      badge: "Top Rated",
+    },
+    {
+      id: 2,
+      name: "Nanny Mary Care",
+      type: "Nanny Service",
+      rating: 4.8,
+      reviews: 132,
+      price: "$$$",
+      location: "Upper East Side",
+      distance: "1.2 mi",
+      image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2",
+      features: [
+        "10+ Years Exp",
+        "CPR Certified",
+        "Multilingual",
+        "Flexible Hours",
+      ],
+      availability: "Available Now",
+      verified: true,
+      badge: "Featured",
+    },
+    {
+      id: 3,
+      name: "Play & Learn Preschool",
+      type: "Preschool",
+      rating: 4.7,
+      reviews: 185,
+      price: "$$",
+      location: "Midtown",
+      distance: "2.1 mi",
+      image: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1",
+      features: ["Montessori", "STEM Program", "Outdoor Play", "Art Classes"],
+      availability: "Enrolling Now",
+      verified: true,
+      badge: "Best Value",
+    },
+    {
+      id: 4,
+      name: "Happy Tails Pet Care",
+      type: "Pet Care Service",
+      rating: 4.9,
+      reviews: 98,
+      price: "$$",
+      location: "Brooklyn, NY",
+      distance: "3.4 mi",
+      image: "https://images.unsplash.com/photo-1552053831-71594a27632d",
+      features: ["Experienced Sitters", "Daily Updates", "Pet Grooming", "Vet Visits"],
+      availability: "Limited Slots",
+      verified: true,
+      badge: "Highly Recommended",
+    },
+    {
+      id: 5,
+      name: "ElderCare Plus",
+      type: "Eldercare Service",
+      rating: 4.8,
+      reviews: 76,
+      price: "$$$",
+      location: "Queens, NY",
+      distance: "4.0 mi",
+      image: "https://images.unsplash.com/photo-1581578731548-c64695cc6952",
+      features: ["24/7 Care", "Medical Assistance", "Companionship", "Physical Therapy"],
+      availability: "Contact for Availability",
+      verified: true,
+      badge: "Top Choice",
+    },
+    {
+      id: 6,
+      name: "Chef's Delight Home Cooking",
+      type: "Cooking Service",
+      rating: 4.9,
+      reviews: 54,
+      price: "$$",
+      location: "Manhattan, NY",
+      distance: "1.5 mi",
+      image: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136",
+      features: ["Custom Menus", "Healthy Options", "Event Catering", "Dietary Needs"],
+      availability: "Book Now",
+      verified: true,
+      badge: "Customer Favorite",
+    },
+  ];
+
+
+  
+
+  // Function to handle service click
+  const handleServiceClick = (serviceId) => {
+    console.log(`Navigating to: ${serviceId}`);
+    // Add your routing logic here
+    // Example: router.push(`/services/${serviceId}`);
+  };
+
   return (
-    <div className="">
-      {/* Hero Section - Only background image and text */}
-      <section className="relative min-h-[80vh] flex items-center justify-center overflow-hidden">
-        {/* Background Image */}
-        <div
-          className="absolute inset-0 bg-cover bg-center"
-          style={{
-            backgroundImage: `url('babycare-7.jpg')`,
-          }}
+    <div className="min-h-screen bg-white">
+      <HeroPage />
+      <CareServices/>
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+        <AllServices 
+          services={serviceTypesData} 
+          onServiceClick={handleServiceClick}
         />
+        
+        <EasyServices
+          services={easyServicesData} 
+          onServiceClick={handleServiceClick}
+        />
+        
+        <FeaturedServices providers={featuredProvidersData} />
+        
+        <HowItWorks />
+        
+        <WhyChooseUs />
+      </main>
 
-        {/* Optional subtle overlay for better text contrast */}
-        <div className="absolute inset-0 bg-black/20" />
-
-        {/* Centered Content Container */}
-        <div className="relative z-10 px-6 w-full max-w-7xl mx-auto">
-          {/* Top Content - Centered */}
-          <div className="text-center">
-            {/* Main Heading */}
-            <h1 className="text-6xl md:text-7xl lg:text-8xl font-extrabold text-white leading-tight">
-              Joy for Every
-              <br />
-              Little One!
-            </h1>
-
-            {/* Heart Icon */}
-            <div className="flex justify-center my-6">
-              <Heart className="w-16 h-16 md:w-20 md:h-20 text-white fill-white" />
-            </div>
-
-            {/* Subheading */}
-            <p className="text-lg md:text-xl text-gray-200 max-w-2xl mx-auto leading-relaxed mt-8">
-              Find the perfect, certified caregivers and daycare centers for your child. 
-              Safe, loving environments where your baby can learn, grow, and thrive.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Search Bar Section - Between hero and white content */}
-      <div className="relative -mt-12 z-20  ">
-        <div className="w-full max-w-5xl mx-auto ">
-          <div className="bg-white rounded-xl shadow-2xl p-2 border border-gray-200  px-6 py-6">
-            <div className="flex flex-col md:flex-row gap-2">
-              <div className="flex-1">
-                <div className="flex items-center bg-gray-50 rounded-lg px-4 py-3 border border-gray-300">
-                  <Search className="w-5 h-5 text-gray-400 mr-3" />
-                  <input
-                    type="text"
-                    placeholder="Search daycares, nannies, preschools..."
-                    className="flex-1 bg-transparent outline-none text-gray-800 placeholder-gray-500 px-2 py-2 "
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                  />
-                </div>
-              </div>
-
-              <div className="flex-1">
-                <div className="flex items-center bg-gray-50 rounded-lg px-4 py-3 border border-gray-300">
-                  <MapPin className="w-5 h-5 text-gray-400 mr-3" />
-                  <input
-                    type="text"
-                    placeholder="Enter city or zip code"
-                    className="flex-1 bg-transparent outline-none text-gray-800 placeholder-gray-500 px-2 py-2"
-                    value={location}
-                    onChange={(e) => setLocation(e.target.value)}
-                  />
-                </div>
-              </div>
-
-              <button className="px-6 py-3 bg-gradient-to-r from-[#27BB97] to-[#1FA987] text-white rounded-lg font-semibold hover:from-[#1FA987] hover:to-[#198F72] transition-all duration-300 hover:shadow-lg">
-                Search
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Rest of your page (white background sections) */}
-      <section className="bg-white py-16 pt-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Service Categories */}
-          <div className="mb-16">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                Find Trusted <span className="text-[#27BB97]">Baby Care Services</span>
-              </h2>
-              <p className="text-gray-600 max-w-2xl mx-auto">
-                Choose from our wide range of certified childcare providers
-              </p>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {serviceCategories.map((category) => (
-                <div 
-                  key={category.id}
-                  className="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 border border-gray-100 group hover:border-[#27BB97]/20"
-                >
-                  <div className={`w-14 h-14 rounded-xl bg-gradient-to-r ${category.color} flex items-center justify-center mb-4 mx-auto group-hover:scale-110 transition-transform duration-300`}>
-                    <div className="text-white">
-                      {category.icon}
-                    </div>
-                  </div>
-                  
-                  <h3 className="text-lg font-bold text-gray-900 mb-2 text-center">
-                    {category.name}
-                  </h3>
-                  
-                  <p className="text-gray-600 text-sm mb-4 text-center">
-                    {category.description}
-                  </p>
-                  
-                  <div className="flex items-center justify-center gap-3">
-                    <span className="px-3 py-1 bg-gray-100 text-gray-700 text-sm font-medium rounded-full">
-                      {category.count}
-                    </span>
-                    <button className="text-[#27BB97] font-medium text-sm hover:text-[#1FA987] transition-colors">
-                      Browse →
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-         
-        </div>
-      </section>
-
-
-      <section className="bg-white">
-         {/* Why Choose Us */}
-          <div className="mt-16 bg-gradient-to-r from-blue-50 to-pink-50 rounded-2xl p-8 md:p-12">
-            <div className="text-center mb-10">
-              <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
-                Why Parents <span className="text-[#27BB97]">Trust Us</span>
-              </h2>
-              <p className="text-gray-600 max-w-2xl mx-auto">
-                We make finding quality childcare simple, safe, and stress-free
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="text-center">
-                <div className="w-16 h-16 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 flex items-center justify-center mx-auto mb-4">
-                  <Shield className="w-8 h-8 text-white" />
-                </div>
-                <h3 className="text-lg font-bold text-gray-900 mb-2">Verified Providers</h3>
-                <p className="text-gray-600">All caregivers pass strict background checks</p>
-              </div>
-
-              <div className="text-center">
-                <div className="w-16 h-16 rounded-full bg-gradient-to-r from-green-500 to-green-600 flex items-center justify-center mx-auto mb-4">
-                  <CheckCircle className="w-8 h-8 text-white" />
-                </div>
-                <h3 className="text-lg font-bold text-gray-900 mb-2">Quality Guaranteed</h3>
-                <p className="text-gray-600">We stand behind every service we list</p>
-              </div>
-
-              <div className="text-center">
-                <div className="w-16 h-16 rounded-full bg-gradient-to-r from-purple-500 to-purple-600 flex items-center justify-center mx-auto mb-4">
-                  <Heart className="w-8 h-8 text-white" />
-                </div>
-                <h3 className="text-lg font-bold text-gray-900 mb-2">Loving Care</h3>
-                <p className="text-gray-600">Nurturing environments for happy babies</p>
-              </div>
-            </div>
-          </div>
-
-      </section>
+      {/* Add custom animations */}
+      <style jsx>{`
+        @keyframes float {
+          0%,
+          100% {
+            transform: translateY(0px);
+          }
+          50% {
+            transform: translateY(-20px);
+          }
+        }
+        .animate-float {
+          animation: float 3s ease-in-out infinite;
+        }
+        .line-clamp-3 {
+          display: -webkit-box;
+          -webkit-line-clamp: 3;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+        }
+      `}</style>
     </div>
   );
 };

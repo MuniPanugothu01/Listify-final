@@ -119,7 +119,7 @@ const ServicesPage = () => {
     }
   ];
 
-  // How Listify Works - UPDATED with corrected alternating layout
+  // How Listify Works
   const howItWorks = [
     {
       title: 'Browse & Discover',
@@ -133,7 +133,7 @@ const ServicesPage = () => {
       icon: <Eye className="w-12 h-12" />,
       color: 'bg-gradient-to-r from-[#27BB97] to-[#1FA987]',
       image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1920&q=80',
-      imagePosition: 'left' // Image on LEFT for first item
+      imagePosition: 'left'
     },
     {
       title: 'Connect & Book',
@@ -147,7 +147,7 @@ const ServicesPage = () => {
       icon: <PhoneCall className="w-12 h-12" />,
       color: 'bg-gradient-to-r from-[#27BB97] to-[#198F72]',
       image: 'https://images.unsplash.com/photo-1545235617-9465d2a55698?w=1920&q=80',
-      imagePosition: 'right' // Image on RIGHT for second item
+      imagePosition: 'right'
     },
     {
       title: 'Experience & Review',
@@ -161,11 +161,11 @@ const ServicesPage = () => {
       icon: <ClipboardCheck className="w-12 h-12" />,
       color: 'bg-gradient-to-r from-[#27BB97] to-[#146C54]',
       image: 'https://images.unsplash.com/photo-1559028012-481c04fa702d?w=1920&q=80',
-      imagePosition: 'left' // Image on LEFT for third item
+      imagePosition: 'left'
     }
   ];
 
-  // Enhanced Why Choose Listify Section
+  // Enhanced Why Choose Listify Section with Images
   const enhancedWhyChooseUs = [
     {
       icon: <Target className="w-12 h-12" />,
@@ -173,7 +173,8 @@ const ServicesPage = () => {
       description: 'We understand New York neighborhoods intimately. Our platform connects you with providers who know your area best.',
       stats: '500+ NYC Neighborhoods',
       color: 'bg-gradient-to-br from-[#27BB97]/20 to-[#1FA987]/10',
-      borderColor: 'border-[#27BB97]/20'
+      borderColor: 'border-[#27BB97]/20',
+      image: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=600&q=90'
     },
     {
       icon: <ShieldCheck className="w-12 h-12" />,
@@ -181,7 +182,8 @@ const ServicesPage = () => {
       description: 'Every provider undergoes rigorous background checks, verification, and continuous quality monitoring.',
       stats: '99.8% Verified',
       color: 'bg-gradient-to-br from-[#27BB97]/20 to-[#198F72]/10',
-      borderColor: 'border-[#1FA987]/20'
+      borderColor: 'border-[#1FA987]/20',
+      image: 'https://images.unsplash.com/photo-1559028012-481c04fa702d?w=600&q=90'
     },
     {
       icon: <TrendingUp className="w-12 h-12" />,
@@ -189,7 +191,8 @@ const ServicesPage = () => {
       description: 'We stand behind every service. If you\'re not satisfied, we\'ll work to make it right or provide a refund.',
       stats: '4.9/5 Average Rating',
       color: 'bg-gradient-to-br from-[#27BB97]/20 to-[#146C54]/10',
-      borderColor: 'border-[#198F72]/20'
+      borderColor: 'border-[#198F72]/20',
+      image: 'https://images.unsplash.com/photo-1545235617-9465d2a55698?w=600&q=90'
     }
   ];
 
@@ -303,12 +306,21 @@ const ServicesPage = () => {
       50% { transform: translateY(-10px); }
     }
 
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
     .animate-fade-in-up {
       animation: fadeInUp 0.6s ease-out forwards;
     }
 
     .animate-float {
       animation: float 3s ease-in-out infinite;
+    }
+
+    .animate-pulse {
+      animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
     }
 
     .hover-lift {
@@ -343,6 +355,42 @@ const ServicesPage = () => {
     .stagger-delay-3 { transition-delay: 0.3s; }
     .stagger-delay-4 { transition-delay: 0.4s; }
     .stagger-delay-5 { transition-delay: 0.5s; }
+
+    .glass-effect {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .gradient-border {
+      position: relative;
+      background: white;
+    }
+
+    .gradient-border::before {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      border-radius: inherit;
+      padding: 1px;
+      background: linear-gradient(135deg, #27BB97 0%, #1FA987 100%);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+    }
+
+    .delay-1000 {
+      animation-delay: 1s;
+    }
+
+    .hover-scale {
+      transition: transform 0.3s ease;
+    }
+
+    .hover-scale:hover {
+      transform: scale(1.05);
+    }
   `;
 
   // Intersection Observer for scroll animations
@@ -499,7 +547,7 @@ const ServicesPage = () => {
         </div>
       </section>
 
-      {/* How Listify Works Section - CORRECTED alternating layout */}
+      {/* How Listify Works Section */}
       <section className="py-20 bg-gradient-to-b from-white to-gray-50">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16 scroll-animate">
@@ -517,7 +565,6 @@ const ServicesPage = () => {
                 key={index}
                 className={`scroll-animate`}
               >
-                {/* CORRECTED: First item image left, second item image right, third item image left */}
                 <div className={`grid md:grid-cols-2 gap-12 items-center ${step.imagePosition === 'right' ? 'md:flex-row-reverse' : ''}`}>
                   
                   {/* Image Column */}
@@ -530,12 +577,10 @@ const ServicesPage = () => {
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
                     </div>
-                  
                   </div>
 
                   {/* Content Column */}
-                  <div className={`${step.imagePosition === 'right' ? '' : ''}`}>
-                   
+                  <div className={``}>
                     <h3 className="text-3xl font-bold text-gray-900 mb-6">
                       {step.title}
                     </h3>
@@ -564,113 +609,274 @@ const ServicesPage = () => {
         </div>
       </section>
 
-      {/* Enhanced Why Choose Listify Section */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-6">
+      {/* Enhanced Why Trust Listify Section */}
+      <section className="py-20 bg-gradient-to-b from-white to-gray-50 relative overflow-hidden">
+        {/* Background Decorative Elements */}
+        <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-[#27bb97]/5 to-[#2d7dd7]/5 rounded-full blur-3xl -translate-y-48 translate-x-48"></div>
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-tr from-[#27bb97]/5 to-[#1FA987]/5 rounded-full blur-3xl translate-y-48 -translate-x-48"></div>
+        
+        <div className="max-w-7xl mx-auto px-6 relative z-10">
           <div className="text-center mb-16 scroll-animate">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              Why Trust <span className="gradient-text">Listify</span> for Your Services
-            </h2>
+            <div className="inline-flex items-center gap-3 mb-4">
+              <ShieldCheck className="w-8 h-8 text-[#27bb97]" />
+              <h2 className="text-4xl font-bold text-gray-900">
+                Why Trust <span className="gradient-text">Listify</span> for Your Services
+              </h2>
+            </div>
             <p className="text-lg text-gray-600 max-w-3xl mx-auto">
               We're not just a platform - we're your trusted partner in finding quality local services
             </p>
           </div>
 
+          {/* Magic UI Cards with Images */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
             {enhancedWhyChooseUs.map((feature, index) => (
               <div 
                 key={index}
-                className={`scroll-animate stagger-delay-${(index % 3) + 1} hover-lift`}
+                className={`scroll-animate stagger-delay-${(index % 3) + 1}`}
               >
-                <div className={`bg-white p-8 rounded-2xl shadow-xl border-2 ${feature.borderColor} h-full transition-all duration-300 hover:shadow-2xl`}>
-                  <div className={`${feature.color} w-20 h-20 rounded-2xl flex items-center justify-center mb-6 mx-auto`}>
-                    <div className="text-[#27BB97]">
-                      {feature.icon}
-                    </div>
+                {/* Glass Morphism Card */}
+                <div className="relative group">
+                  {/* Card Background with Image */}
+                  <div className="absolute inset-0 rounded-2xl overflow-hidden">
+                    <img
+                      src={feature.image}
+                      alt={feature.title}
+                      className="w-full h-full object-cover opacity-10 group-hover:opacity-20 transition-opacity duration-500"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-br from-white/95 to-white/90 backdrop-blur-sm"></div>
                   </div>
                   
-                  <h3 className="text-2xl font-bold text-gray-900 mb-4 text-center">
-                    {feature.title}
-                  </h3>
-                  
-                  <p className="text-gray-600 mb-6 text-center">
-                    {feature.description}
-                  </p>
-                  
-                  <div className="text-center">
-                    <div className="inline-block px-4 py-2 bg-gradient-to-r from-[#27BB97]/10 to-[#1FA987]/10 rounded-full">
-                      <span className="text-[#27BB97] font-bold text-lg">{feature.stats}</span>
+                  {/* Main Card Content */}
+                  <div className="relative bg-gradient-to-br from-white/80 to-white/60 backdrop-blur-lg rounded-2xl p-8 border border-white/40 shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 h-full">
+                    {/* Floating Icon with Glow Effect */}
+                    <div className="relative mb-6">
+                      <div className="absolute -inset-4 bg-gradient-to-r from-[#27bb97]/20 to-[#1FA987]/20 rounded-full blur-lg opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                      <div className={`${feature.color} w-20 h-20 rounded-2xl flex items-center justify-center relative z-10 transform group-hover:scale-110 transition-transform duration-300`}>
+                        <div className="text-[#27bb97]">
+                          {feature.icon}
+                        </div>
+                      </div>
                     </div>
+                    
+                    <h3 className="text-2xl font-bold text-gray-900 mb-4 group-hover:text-[#27bb97] transition-colors">
+                      {feature.title}
+                    </h3>
+                    
+                    <p className="text-gray-600 mb-6">
+                      {feature.description}
+                    </p>
+                    
+                    {/* Stats with Animated Background */}
+                    <div className="relative mt-8 pt-6 border-t border-gray-100/50">
+                      <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 px-4 py-1 bg-white rounded-full shadow-lg border border-gray-100">
+                        <span className="text-[#27bb97] font-bold text-lg">{feature.stats}</span>
+                      </div>
+                    </div>
+                    
+                    {/* Hover Effect Line */}
+                    <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-1 bg-gradient-to-r from-[#27bb97] to-[#1FA987] group-hover:w-full transition-all duration-500 rounded-full"></div>
+                  </div>
+                  
+                  {/* Floating Image Element */}
+                  <div className="absolute -top-4 -right-4 w-24 h-24 rounded-2xl overflow-hidden shadow-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 transform group-hover:translate-x-2 group-hover:-translate-y-2">
+                    <img
+                      src={`https://images.unsplash.com/photo-${index === 0 ? '1556761175-b413da4baf72' : index === 1 ? '1521791136064-7986c2920216' : '1543269865-cbf427effbad'}?w=200&q=90`}
+                      alt="Trust illustration"
+                      className="w-full h-full object-cover"
+                    />
                   </div>
                 </div>
               </div>
             ))}
           </div>
+
+          {/* Enhanced Testimonial Banner */}
+          <div className="scroll-animate bg-gradient-to-r from-[#27bb97] via-[#1FA987] to-[#27bb97] rounded-3xl p-8 text-white relative overflow-hidden">
+            {/* Background Pattern */}
+            <div className="absolute inset-0 opacity-10">
+              <div className="absolute inset-0" style={{
+                backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+                backgroundSize: '20px 20px'
+              }}></div>
+            </div>
+            
+            <div className="relative z-10 grid md:grid-cols-3 gap-8 items-center">
+              <div className="text-center">
+                <div className="text-5xl font-black mb-2">2M+</div>
+                <div className="text-white/90">Happy Customers</div>
+              </div>
+              <div className="text-center">
+                <div className="text-5xl font-black mb-2">99.8%</div>
+                <div className="text-white/90">Satisfaction Rate</div>
+              </div>
+              <div className="text-center">
+                <div className="text-5xl font-black mb-2">24/7</div>
+                <div className="text-white/90">Support Available</div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* Enhanced Daily Routine Section */}
-      <section className="py-20 bg-gradient-to-br from-[#27BB97]/5 via-white to-[#1FA987]/5">
-        <div className="max-w-7xl mx-auto px-6">
+      {/* Enhanced Optimize Your Service Routine Section */}
+      <section className="py-20 bg-white relative overflow-hidden">  
+        <div className="max-w-7xl mx-auto px-6 relative z-10">
           <div className="text-center mb-16 scroll-animate">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              Optimize Your <span className="gradient-text">Service Routine</span>
-            </h2>
+            <div className="inline-flex items-center gap-3 mb-4">
+              <Calendar className="w-8 h-8 text-[#27bb97]" />
+              <h2 className="text-4xl font-bold text-gray-900">
+                Optimize Your <span className="gradient-text">Service Routine</span>
+              </h2>
+            </div>
             <p className="text-lg text-gray-600 max-w-3xl mx-auto">
               Follow our proven daily routine to maximize your service experience in New York
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {enhancedDailyRoutine.map((routine, index) => (
-              <div 
-                key={index}
-                className={`scroll-animate stagger-delay-${(index % 4) + 1} hover-lift`}
-              >
-                <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 h-full transition-all duration-300 hover:border-[#27BB97] group">
-                  {/* Time Slot Header */}
-                  <div className="flex items-center justify-between mb-6">
-                    <div className="text-sm font-semibold text-[#27BB97]">{routine.timeSlot}</div>
-                    <div className={`${routine.color} w-12 h-12 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}>
-                      <div className="text-white">
-                        {routine.icon}
+          {/* Timeline Layout with Images */}
+          <div className="relative">
+            {/* Timeline Line */}
+            <div className="absolute left-0 md:left-1/2 md:transform md:-translate-x-1/2 h-full w-1 bg-gradient-to-b from-[#27bb97]/20 via-[#1FA987]/20 to-[#198F72]/20"></div>
+            
+            <div className="space-y-12">
+              {enhancedDailyRoutine.map((routine, index) => (
+                <div 
+                  key={index}
+                  className={`scroll-animate stagger-delay-${(index % 4) + 1} relative`}
+                >
+                  
+                  {/* Card Container with alternating layout */}
+                  <div className={`ml-8 md:ml-0 ${index % 2 === 0 ? 'md:pr-1/2' : 'md:pl-1/2 md:text-right'}`}>
+                    <div className="group">
+                      {/* Main Card */}
+                      <div className="bg-white rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-1 border border-gray-100">
+                        {/* Card Header with Image Background */}
+                        <div className="relative h-32 overflow-hidden">
+                          <img
+                            src={`https://images.unsplash.com/photo-${index === 0 ? '1497366754035-f200968a6e72' : index === 1 ? '1559028012-481c04fa702d' : index === 2 ? '1545235617-9465d2a55698' : '1521791136064-7986c2920216'}?w=800&q=90`}
+                            alt={routine.time}
+                            className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-r from-[#27bb97]/90 to-[#1FA987]/90 mix-blend-multiply"></div>
+                          
+                          {/* Time Slot Overlay */}
+                          <div className="absolute top-4 left-4">
+                            <div className="px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full">
+                              <span className="text-white font-bold text-sm">{routine.timeSlot}</span>
+                            </div>
+                          </div>
+                          
+                          {/* Icon Floating */}
+                          <div className="absolute -bottom-6 right-6">
+                            <div className={`${routine.color} w-12 h-12 rounded-xl flex items-center justify-center shadow-lg transform group-hover:scale-110 group-hover:rotate-12 transition-all duration-300`}>
+                              <div className="text-white">
+                                {routine.icon}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Card Content */}
+                        <div className="p-6 pt-8">
+                          <div className="mb-4">
+                            <span className="text-sm font-medium text-[#27bb97] bg-[#27bb97]/10 px-3 py-1 rounded-full">
+                              {routine.time}
+                            </span>
+                            <h3 className="text-xl font-bold text-gray-900 mt-3 mb-2">{routine.title}</h3>
+                          </div>
+                          
+                          <p className="text-gray-600 mb-6 text-sm">
+                            {routine.description}
+                          </p>
+                          
+                          {/* Steps with Check Icons */}
+                          <div className="space-y-3 mb-6">
+                            {routine.steps.map((step, stepIndex) => (
+                              <div key={stepIndex} className="flex items-center gap-3 group/item">
+                                <div className="flex-shrink-0 w-6 h-6 rounded-full bg-[#27bb97]/10 flex items-center justify-center group-hover/item:bg-[#27bb97] transition-colors duration-300">
+                                  <CheckCircle className="w-3 h-3 text-[#27bb97] group-hover/item:text-white transition-colors duration-300" />
+                                </div>
+                                <span className="text-sm text-gray-700 group-hover/item:text-[#27bb97] transition-colors duration-300">
+                                  {step}
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                          
+                          {/* Interactive Button */}
+                          <button className="w-full group/btn py-3 bg-gradient-to-r from-[#27bb97] to-[#1FA987] text-white font-semibold rounded-lg hover:from-[#1FA987] hover:to-[#198F72] transition-all duration-300 overflow-hidden relative">
+                            <span className="relative z-10 flex items-center justify-center gap-2">
+                              <Clock className="w-4 h-4" />
+                              Set Reminder
+                              <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
+                            </span>
+                            <div className="absolute inset-0 bg-gradient-to-r from-[#1FA987] to-[#198F72] transform translate-y-full group-hover/btn:translate-y-0 transition-transform duration-300"></div>
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Floating Time Card */}
+                      <div className="absolute -top-2 -left-2 md:left-auto md:right-2 bg-white rounded-lg shadow-lg p-3 transform group-hover:scale-110 transition-transform duration-300">
+                        <div className="text-center">
+                          <div className="text-xs text-gray-500 mb-1">Start At</div>
+                          <div className="text-lg font-bold text-[#27bb97]">{routine.timeSlot.split(' ')[0]}</div>
+                        </div>
                       </div>
                     </div>
                   </div>
-                  
-                  <div className="mb-4">
-                    <span className="text-sm font-medium text-gray-500">{routine.time}</span>
-                    <h3 className="text-xl font-bold text-gray-900 mt-1">{routine.title}</h3>
-                  </div>
-                  
-                  <p className="text-gray-600 mb-6 text-sm">
-                    {routine.description}
-                  </p>
-                  
-                  {/* Steps */}
-                  <div className="space-y-3 mb-6">
-                    {routine.steps.map((step, stepIndex) => (
-                      <div key={stepIndex} className="flex items-center gap-3">
-                        <div className="w-6 h-6 rounded-full bg-[#27BB97]/10 flex items-center justify-center flex-shrink-0">
-                          <div className="w-2 h-2 rounded-full bg-[#27BB97]"></div>
-                        </div>
-                        <span className="text-sm text-gray-700">{step}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Daily Schedule Visualizer */}
+          <div className="scroll-animate mt-16 bg-gradient-to-r from-[#27bb97]/5 to-[#1FA987]/5 rounded-2xl p-8 border border-[#27bb97]/10">
+            <div className="grid md:grid-cols-2  gap-8 items-center">
+              <div>
+                <h3 className="text-2xl font-bold text-gray-900 mb-4">Daily Schedule Visualizer</h3>
+                <p className="text-gray-600 mb-6">
+                  Track your service activities throughout the day with our interactive schedule. See when you're most productive and optimize your routine.
+                </p>
+                <div className="space-y-4">
+                  {enhancedDailyRoutine.map((routine, index) => (
+                    <div key={index} className="flex items-center gap-4">
+                      <div className="w-3 h-3 rounded-full bg-gradient-to-r from-[#27bb97] to-[#1FA987]"></div>
+                      <span className="font-medium text-gray-700">{routine.time}</span>
+                      <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
+                        <div 
+                          className="h-full bg-gradient-to-r from-[#27bb97] to-[#1FA987] rounded-full"
+                          style={{ width: `${25 * (index + 1)}%` }}
+                        ></div>
                       </div>
-                    ))}
-                  </div>
-                  
-                  <button className="w-full py-3 bg-gradient-to-r from-[#27BB97] to-[#1FA987] text-white font-semibold rounded-lg hover:from-[#1FA987] hover:to-[#198F72] transition-all duration-300">
-                    Set Reminder
-                  </button>
+                      <span className="text-sm text-gray-500">{routine.timeSlot}</span>
+                    </div>
+                  ))}
                 </div>
               </div>
-            ))}
+              <div className="relative">
+                <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-100">
+                  <div className="text-center mb-6">
+                    <div className="text-4xl font-black text-[#27bb97] mb-2">4x</div>
+                    <div className="text-gray-600">More Productive</div>
+                  </div>
+                  <img
+                    src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=600&q=90"
+                    alt="Productivity Visualization"
+                    className="w-full h-48 object-cover rounded-lg mb-4"
+                  />
+                  <p className="text-sm text-gray-600 text-center">
+                    Users following this routine complete 4x more service bookings
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Enhanced Featured Service Providers Section */}
-      <section className="py-20 bg-white">
+      <section className="py-20 bg-gradient-to-b from-white to-gray-50">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16 scroll-animate">
             <h2 className="text-4xl font-bold text-gray-900 mb-4">
