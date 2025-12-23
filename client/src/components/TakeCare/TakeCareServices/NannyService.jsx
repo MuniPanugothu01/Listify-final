@@ -11,6 +11,9 @@ import {
   MessageSquare
 } from "lucide-react";
 
+import { RainbowButton } from "../../ui/rainbow-button";
+
+
 const NannyService = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [location, setLocation] = useState("");
@@ -263,43 +266,14 @@ const NannyService = () => {
               {heroData.description}
             </p>
 
-            {/* Search Bar */}
-            <div className="max-w-4xl mx-auto bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl p-6 mb-12">
-              <div className="flex flex-col lg:flex-row gap-4">
-                <div className="flex-1">
-                  <div className="relative">
-                    <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                    <input
-                      type="text"
-                      placeholder="Search for nannies by skills, experience..."
-                      className="w-full pl-12 pr-4 py-4 bg-white border border-gray-200 rounded-xl text-gray-800 placeholder-gray-500 focus:outline-none focus:border-[#27BB97] focus:ring-2 focus:ring-[#27BB97]/20 transition-all"
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                    />
-                  </div>
-                </div>
-
-                <div className="flex-1">
-                  <div className="relative">
-                    <MapPin className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                    <input
-                      type="text"
-                      placeholder="Enter city, state, or zip code"
-                      className="w-full pl-12 pr-4 py-4 bg-white border border-gray-200 rounded-xl text-gray-800 placeholder-gray-500 focus:outline-none focus:border-[#27BB97] focus:ring-2 focus:ring-[#27BB97]/20 transition-all"
-                      value={location}
-                      onChange={(e) => setLocation(e.target.value)}
-                    />
-                  </div>
-                </div>
-
-                <button className="flex items-center justify-center gap-3 px-8 py-4 bg-gray-900 text-white rounded-xl font-semibold hover:bg-gray-800 transition-all duration-300 hover:shadow-lg border-2 border-gray-900 hover:border-white">
-                  <Search className="w-5 h-5" />
-                  Search Nannies
-                </button>
-              </div>
+            <div className=" flex justify-center gap-2 ">
+               <RainbowButton className="bg-red">Offer Nanny Care Job</RainbowButton>
+               <RainbowButton>Need a Nanny Job</RainbowButton>
             </div>
-
-           
+              
+               <button className="mt-6 gap-3 pl-8 pr-8 py-3 bg-white text-gray-900 rounded-xl font-medium hover:bg-gray-100 transition-all duration-300 hover:shadow-lg hover:shadow-gray-300/30">
+                Post Now
+               </button>
           </div>
         </div>
       </section>
