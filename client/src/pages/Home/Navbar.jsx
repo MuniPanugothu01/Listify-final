@@ -68,8 +68,6 @@ const Navbar = () => {
     { name: "About Us", path: "/about-us" },
     { name: "Contact Us", path: "/contact-us" },
     { name: "Our Services", path: "/our-services" },
-   
-    
   ];
 
   const moreMenuItems = [
@@ -80,7 +78,6 @@ const Navbar = () => {
     { name: "Services", path: "/services" },
     { name: "Marketplace", path: "/marketplace" },
     { name: "TakeCare", path: "/takecare" },
-    { name: "Jobs", path: "/jobs" },
     { name: "Cares", path: "/cares" },
     { name: "Blogs", path: "/blogs" },
     { name: "Forums", path: "/forums" },
@@ -230,7 +227,7 @@ const Navbar = () => {
     ],
   };
 
-  // Countries for the dropdown - 3 countries as requested
+  // Countries for the dropdown
   const countries = [
     { name: "United States", flag: "🇺🇸", code: "US" },
     { name: "India", flag: "🇮🇳", code: "IN" },
@@ -315,7 +312,6 @@ const Navbar = () => {
     if (path === "/profile") {
       navigate("/profile");
     } else if (path === "/logout") {
-      // Handle logout logic here
       console.log("Logging out...");
       navigate("/");
     } else {
@@ -366,7 +362,7 @@ const Navbar = () => {
     };
   }, []);
 
-  // Enhanced scroll handler with smooth animation
+  // Enhanced scroll handler
   useEffect(() => {
     let ticking = false;
     
@@ -374,7 +370,6 @@ const Navbar = () => {
       if (!ticking) {
         requestAnimationFrame(() => {
           const scrollY = window.scrollY;
-          // Change background when scrolled more than 50px
           setIsScrolled(scrollY > 50);
           ticking = false;
         });
@@ -382,7 +377,6 @@ const Navbar = () => {
       }
     };
 
-    // Use passive scroll listener for better performance
     window.addEventListener('scroll', handleScroll, { passive: true });
     
     return () => {
@@ -392,191 +386,175 @@ const Navbar = () => {
 
   return (
     <>
-      <style jsx>{`
-        @keyframes slideUp {
-          from {
-            transform: translateY(100%);
-            opacity: 0.8;
+      {/* CSS Styles as a style tag */}
+      <style>
+        {`
+          @keyframes slideUp {
+            from {
+              transform: translateY(100%);
+              opacity: 0.8;
+            }
+            to {
+              transform: translateY(0);
+              opacity: 1;
+            }
           }
-          to {
-            transform: translateY(0);
-            opacity: 1;
+
+          @keyframes slideInFromRight {
+            from {
+              transform: translateX(100%);
+              opacity: 0;
+            }
+            to {
+              transform: translateX(0);
+              opacity: 1;
+            }
           }
-        }
 
-        @keyframes slideInFromRight {
-          from {
-            transform: translateX(100%);
-            opacity: 0;
+          @keyframes slideOutToRight {
+            from {
+              transform: translateX(0);
+              opacity: 1;
+            }
+            to {
+              transform: translateX(100%);
+              opacity: 0;
+            }
           }
-          to {
-            transform: translateX(0);
-            opacity: 1;
+
+          @keyframes fadeIn {
+            from {
+              opacity: 0;
+            }
+            to {
+              opacity: 1;
+            }
           }
-        }
 
-        @keyframes slideOutToRight {
-          from {
-            transform: translateX(0);
-            opacity: 1;
+          @keyframes slideDown {
+            from {
+              transform: translateY(-10px);
+              opacity: 0;
+            }
+            to {
+              transform: translateY(0);
+              opacity: 1;
+            }
           }
-          to {
-            transform: translateX(100%);
-            opacity: 0;
+
+          .location-dropdown {
+            animation: slideUp 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
           }
-        }
 
-        @keyframes fadeIn {
-          from {
-            opacity: 0;
+          .search-modal-enter {
+            animation: slideInFromRight 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
           }
-          to {
-            opacity: 1;
+
+          .profile-dropdown {
+            animation: slideDown 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
           }
-        }
 
-        @keyframes fadeOut {
-          from {
-            opacity: 1;
+          .backdrop {
+            animation: fadeIn 0.4s ease-out;
           }
-          to {
-            opacity: 0;
+
+          .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
           }
-        }
-
-        @keyframes slideDown {
-          from {
-            transform: translateY(-10px);
-            opacity: 0;
+          
+          .scrollbar-hide::-webkit-scrollbar {
+            display: none;
           }
-          to {
-            transform: translateY(0);
-            opacity: 1;
+
+          .nav-link {
+            position: relative;
+            transition: color 0.3s ease;
           }
-        }
 
-        .location-dropdown {
-          animation: slideUp 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        }
+          .nav-link:hover {
+            color: #1FA987;
+          }
 
-        .search-modal-enter {
-          animation: slideInFromRight 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)
-            forwards;
-        }
+          .nav-link::after {
+            content: "";
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -4px;
+            left: 0;
+            background-color: #1FA987;
+            transition: width 0.3s ease;
+          }
 
-        .search-modal-exit {
-          animation: slideOutToRight 0.5s cubic-bezier(0.55, 0.085, 0.68, 0.53)
-            forwards;
-        }
+          .nav-link:hover::after {
+            width: 100%;
+          }
 
-        .profile-dropdown {
-          animation: slideDown 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        }
+          .more-dropdown-link {
+            transition: all 0.3s ease;
+          }
 
-        .backdrop {
-          animation: fadeIn 0.4s ease-out;
-        }
+          .more-dropdown-link:hover {
+            color: #2d7a82;
+            background-color: #f0f9fa;
+          }
 
-        .scrollbar-hide {
-          -ms-overflow-style: none;
-          scrollbar-width: none;
-        }
-        .scrollbar-hide::-webkit-scrollbar {
-          display: none;
-        }
+          .profile-dropdown-link {
+            transition: all 0.2s ease;
+          }
 
-        /* Navbar link hover effects */
-        .nav-link {
-          position: relative;
-          transition: color 0.3s ease;
-        }
+          .profile-dropdown-link:hover {
+            background-color: #f8f9fa;
+            transform: translateX(4px);
+          }
 
-        .nav-link:hover {
-          color: #1FA987;
-        }
+          .navbar-transition {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+          }
 
-        .nav-link::after {
-          content: "";
-          position: absolute;
-          width: 0;
-          height: 2px;
-          bottom: -4px;
-          left: 0;
-          background-color: #1FA987;
-          transition: width 0.3s ease;
-        }
+          .navbar-scrolled {
+            background-color: rgba(0, 0, 0, 0.95) !important;
+            backdrop-filter: blur(20px) !important;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+          }
 
-        .nav-link:hover::after {
-          width: 100%;
-        }
+          .navbar-scrolled .nav-link {
+            color: #ffffff;
+          }
 
-        /* More dropdown link styles */
-        .more-dropdown-link {
-          transition: all 0.3s ease;
-        }
+          .navbar-scrolled .nav-link:hover {
+            color: #2d7a82;
+          }
 
-        .more-dropdown-link:hover {
-          color: #2d7a82;
-          background-color: #f0f9fa;
-        }
+          .navbar-scrolled .logo-text {
+            color: #ffffff;
+          }
 
-        /* Profile dropdown link styles */
-        .profile-dropdown-link {
-          transition: all 0.2s ease;
-        }
+          .navbar-scrolled .search-input {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+          }
 
-        .profile-dropdown-link:hover {
-          background-color: #f8f9fa;
-          transform: translateX(4px);
-        }
+          .navbar-scrolled .search-input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+          }
 
-        /* Smooth navbar transition */
-        .navbar-transition {
-          transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
+          .navbar-scrolled .search-icon {
+            color: rgba(255, 255, 255, 0.7);
+          }
 
-        /* Scrolled state styles */
-        .navbar-scrolled {
-          background-color: rgba(0, 0, 0, 0.95) !important;
-          backdrop-filter: blur(20px) !important;
-          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-        }
+          .navbar-scrolled .profile-button {
+            border-color: rgba(255, 255, 255, 0.3);
+            color: #ffffff;
+          }
 
-        .navbar-scrolled .nav-link {
-          color: #ffffff;
-        }
-
-        .navbar-scrolled .nav-link:hover {
-          color: #2d7a82;
-        }
-
-        .navbar-scrolled .logo-text {
-          color: #ffffff;
-        }
-
-        .navbar-scrolled .search-input {
-          background-color: rgba(255, 255, 255, 0.1);
-          border-color: rgba(255, 255, 255, 0.2);
-          color: #ffffff;
-        }
-
-        .navbar-scrolled .search-input::placeholder {
-          color: rgba(255, 255, 255, 0.7);
-        }
-
-        .navbar-scrolled .search-icon {
-          color: rgba(255, 255, 255, 0.7);
-        }
-
-        .navbar-scrolled .profile-button {
-          border-color: rgba(255, 255, 255, 0.3);
-          color: #ffffff;
-        }
-
-        .navbar-scrolled .profile-button:hover {
-          background-color: rgba(255, 255, 255, 0.1);
-        }
-      `}</style>
+          .navbar-scrolled .profile-button:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+          }
+        `}
+      </style>
 
       <nav
         ref={navbarRef}
@@ -601,14 +579,14 @@ const Navbar = () => {
             </div>
 
             {/* Desktop Search Bars */}
-            <div className="hidden sm:flex flex-0 justify-center max-w-md sm:max-w-lg md:max-w-2xl mx-2 sm:mx-4 md:mx-8 ">
+            <div className="hidden sm:flex flex-0 justify-center max-w-md sm:max-w-lg md:max-w-2xl mx-2 sm:mx-4 md:mx-8">
               <div className="flex space-x-1 sm:space-x-2">
                 {/* General Search */}
-                <div className="relative flex-1 ">
+                <div className="relative flex-1">
                   <input
                     type="text"
                     placeholder="Search by service or category"
-                    className={`w-[10px] pl-8 sm:pl-10 pr-2 sm:pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#c89a5e] text-sm cursor-pointer search-input ${
+                    className={`w-full pl-8 sm:pl-10 pr-2 sm:pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#c89a5e] text-sm cursor-pointer search-input ${
                       isScrolled 
                         ? "bg-white/10 border-white/20 text-white placeholder-white/70" 
                         : "border-gray-300 text-gray-900"
@@ -630,7 +608,7 @@ const Navbar = () => {
                     type="text"
                     placeholder="Location"
                     value={selectedLocation}
-                    className={`w-[140px] pl-8 sm:pl-10 pr-8 sm:pr-10 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm cursor-pointer search-input ${
+                    className={`w-full pl-8 sm:pl-10 pr-8 sm:pr-10 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm cursor-pointer search-input ${
                       isScrolled 
                         ? "bg-white/10 border-white/20 text-white placeholder-white/70" 
                         : "border-gray-300 text-gray-900"
@@ -668,54 +646,51 @@ const Navbar = () => {
                     </Link>
                   </li>
                 ))}
-               <li
-  className="relative"
-  onMouseEnter={() => setShowMoreDropdown(true)}
-  onMouseLeave={() => setShowMoreDropdown(false)}
->
-  <a
-    href="#"
-    className={`nav-link text-xs md:text-sm lg:text-base px-1 whitespace-nowrap flex items-center hover:text-gray-900 ${
-      isScrolled ? "text-white" : "text-gray-700"
-    }`}
-  >
-    All Categories
-    <FaChevronDown className="h-4 w-4 ml-1 transition-transform duration-300" />
-  </a>
+                <li
+                  className="relative"
+                  onMouseEnter={() => setShowMoreDropdown(true)}
+                  onMouseLeave={() => setShowMoreDropdown(false)}
+                >
+                  <a
+                    href="#"
+                    className={`nav-link text-xs md:text-sm lg:text-base px-1 whitespace-nowrap flex items-center hover:text-gray-900 ${
+                      isScrolled ? "text-white" : "text-gray-700"
+                    }`}
+                  >
+                    All Categories
+                    <FaChevronDown className="h-4 w-4 ml-1 transition-transform duration-300" />
+                  </a>
 
-  {/* Dropdown */}
-  <div
-    className={`absolute top-full left-0 mt-2 bg-white border border-gray-300 rounded-lg shadow-lg z-20
-      transition-all duration-300 ease-out
-      ${showMoreDropdown
-        ? "opacity-100 translate-y-0 scale-100 visible"
-        : "opacity-0 -translate-y-2 scale-95 invisible"
-      }
-      min-w-[280px]`}
-  >
-    {moreMenuItems.map((item, index) => (
-      <Link
-        key={index}
-        to={item.path}
-        onClick={() => setShowMoreDropdown(false)} // ✅ CLOSE ON CLICK
-        className="block px-5 py-3 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
-      >
-        {item.name}
-      </Link>
-    ))}
-  </div>
-</li>
-
+                  {/* Dropdown */}
+                  <div
+                    className={`absolute top-full left-0 mt-2 bg-white border border-gray-300 rounded-lg shadow-lg z-20 transition-all duration-300 ease-out ${
+                      showMoreDropdown
+                        ? "opacity-100 translate-y-0 scale-100 visible"
+                        : "opacity-0 -translate-y-2 scale-95 invisible"
+                    } min-w-[280px]`}
+                  >
+                    {moreMenuItems.map((item, index) => (
+                      <Link
+                        key={index}
+                        to={item.path}
+                        onClick={() => setShowMoreDropdown(false)}
+                        className="block px-5 py-3 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                      >
+                        {item.name}
+                      </Link>
+                    ))}
+                  </div>
+                </li>
               </ul>
+              
               {/* Right side actions */}
               <div className="flex items-center space-x-3 md:space-x-4 ml-20">
                 {/* Create Listing Button */}
-
                 <Link to="/post-add">
-                <button className="flex items-center gap-2 bg-[#27bb97] text-white px-4 py-3.5 md:px-4 md:py-3.5 rounded-lg text-xs md:text-sm lg:text-base whitespace-nowrap hover:bg-[#1fa987] transition cursor-pointer">
-                  <LuPencilLine className="text-white text-base md:text-lg" />
-                  Create a Listing
-                </button>
+                  <button className="flex items-center gap-2 bg-[#27bb97] text-white px-4 py-3.5 md:px-4 md:py-3.5 rounded-lg text-xs md:text-sm lg:text-base whitespace-nowrap hover:bg-[#1fa987] transition cursor-pointer">
+                    <LuPencilLine className="text-white text-base md:text-lg" />
+                    Create a Listing
+                  </button>
                 </Link>
 
                 {/* Profile Dropdown */}
@@ -848,10 +823,12 @@ const Navbar = () => {
                     </Link>
                   ))}
                 </div>
-                <button className="flex items-center justify-center gap-2 bg-[#2D7A82] text-white px-4 py-2 rounded-lg text-sm">
-                  <LuPencilLine className="text-white" />
-                  Create a Listing
-                </button>
+                <Link to="/post-add">
+                  <button className="flex items-center justify-center gap-2 bg-[#27bb97] text-white px-4 py-2 rounded-lg text-sm">
+                    <LuPencilLine className="text-white" />
+                    Create a Listing
+                  </button>
+                </Link>
                 
                 {/* Mobile Profile Link */}
                 <Link
@@ -874,7 +851,6 @@ const Navbar = () => {
         </div>
       </nav>
 
-      {/* Rest of your existing code for Location Dropdown and Search Modal remains the same */}
       {/* Location Dropdown */}
       {showLocationDropdown && (
         <div className="fixed inset-0 z-50">
@@ -949,7 +925,7 @@ const Navbar = () => {
                     <FaSearch className="h-5 w-5 text-gray-400" />
                   </div>
 
-                  {/* Current Location Icon - Light Red */}
+                  {/* Current Location Icon */}
                   <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
                     <button
                       onClick={handleUseCurrentLocation}
@@ -1148,7 +1124,7 @@ const Navbar = () => {
                     </div>
                   )}
 
-                  {/* Footer with Countries - Updated with Real Flag Images */}
+                  {/* Footer with Countries */}
                   <div className="p-4 bg-gray-50">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-4">
@@ -1238,7 +1214,7 @@ const Navbar = () => {
         </div>
       )}
 
-      {/* Search Modal with Right Slide Animation */}
+      {/* Search Modal */}
       {showSearchModal && (
         <div className="fixed inset-0 z-50">
           <div
@@ -1348,7 +1324,7 @@ const Navbar = () => {
                           className={`w-12 h-12 rounded-full flex items-center justify-center cursor-pointer ${
                             index === 0
                               ? "bg-red-50"
-                              : " group-hover:bg-red-50 "
+                              : "group-hover:bg-red-50"
                           } transition-colors`}
                         >
                           <IconComponent
