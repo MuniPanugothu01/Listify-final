@@ -1,3 +1,11 @@
+
+import React from "react";
+import { FaStar, FaCalendarCheck, FaCheckCircle, FaFire, FaArrowRight, FaCheck, FaTimes, FaClock } from "react-icons/fa";
+import { MdVerified, MdLocationOn, MdElectricBolt, MdLocalOffer, MdShield } from "react-icons/md";
+import { GiWaterDrop, GiBroom, GiPaintRoller, GiSpiderWeb } from "react-icons/gi";
+import { TbAirConditioning, TbTools } from "react-icons/tb";
+import { RiArrowRightSLine } from "react-icons/ri";
+
 const services = [
   {
     title: "Plumbing",
@@ -84,15 +92,16 @@ export default function MostBookedServices() {
             >
 
               {/* IMAGE */}
-              <div className="relative h-64 md:h-72 overflow-hidden">
+              <div className="relative h-50 md:h-50 overflow-hidden">
                 <img
                   src={service.image}
                   alt={service.title}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                  className="w-full h-50 object-cover group-hover:scale-110 transition-transform duration-700"
                 />
 
                 {/* PRICE BADGE */}
-                <div className="absolute top-4 right-4 bg-white/95 backdrop-blur px-4 py-2 rounded-full shadow-md">
+                <div className="absolute top-4 right-4 bg-white/95 backdrop-blur px-4 py-2 rounded-full shadow-md flex items-center gap-2">
+                  <MdLocalOffer className="text-[#27bb97]" />
                   <span className="font-semibold text-gray-900">
                     {service.price}
                   </span>
@@ -107,11 +116,13 @@ export default function MostBookedServices() {
 
                 {/* BADGES */}
                 <div className="flex flex-wrap gap-2 mb-4">
-                  <span className="px-3 py-1 text-xs font-semibold rounded-full bg-[#27bb97]/10 text-[#27bb97]">
-                    ✔ Verified
+                  <span className="px-3 py-1 text-xs font-semibold rounded-full bg-[#27bb97]/10 text-[#27bb97] flex items-center gap-1">
+                    <MdVerified className="text-sm" />
+                    Verified
                   </span>
-                  <span className="px-3 py-1 text-xs font-semibold rounded-full bg-orange-50 text-orange-600">
-                    🔥 Popular
+                  <span className="px-3 py-1 text-xs font-semibold rounded-full bg-orange-50 text-orange-600 flex items-center gap-1">
+                    <FaFire className="text-sm" />
+                    Popular
                   </span>
                 </div>
 
@@ -122,9 +133,7 @@ export default function MostBookedServices() {
                   </h3>
 
                   <div className="flex items-center gap-1 bg-gray-50 px-3 py-1.5 rounded-full">
-                    <svg className="w-4 h-4 text-yellow-400 fill-current" viewBox="0 0 20 20">
-                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                    </svg>
+                    <FaStar className="text-yellow-400 fill-current" />
                     <span className="font-semibold text-gray-900">
                       {service.rating}
                     </span>
@@ -133,9 +142,7 @@ export default function MostBookedServices() {
 
                 {/* BOOKINGS COUNT */}
                 <div className="flex items-center gap-2 text-gray-600 mb-4">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 7h18M5 7v10a2 2 0 002 2h10a2 2 0 002-2V7" />
-                  </svg>
+                  <FaCalendarCheck className="w-5 h-5" />
                   <span className="font-medium">
                     {service.bookings} bookings on platform
                   </span>
@@ -144,20 +151,27 @@ export default function MostBookedServices() {
                 {/* AVAILABILITY */}
                 <div className="flex items-center gap-2 text-sm text-green-600 mb-5">
                   <span className="w-2 h-2 rounded-full bg-green-500" />
+                  <FaClock className="text-sm" />
                   Available today
                 </div>
 
                 {/* CTA */}
                 <button className="w-full py-3.5 bg-[#27bb97] text-white font-semibold rounded-xl hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center gap-2">
                   Book Now
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                  </svg>
+                  <RiArrowRightSLine className="w-5 h-5" />
                 </button>
 
                 {/* MICRO TRUST */}
-                <p className="mt-3 text-xs text-gray-500 text-center">
-                  No hidden charges · Free cancellation
+                <p className="mt-3 text-xs text-gray-500 text-center flex items-center justify-center gap-4">
+                  <span className="flex items-center gap-1">
+                    <MdShield className="text-gray-400" />
+                    No hidden charges
+                  </span>
+                  <span className="text-gray-300">|</span>
+                  <span className="flex items-center gap-1">
+                    <FaCheckCircle className="text-gray-400" />
+                    Free cancellation
+                  </span>
                 </p>
               </div>
             </div>
@@ -168,9 +182,7 @@ export default function MostBookedServices() {
         <div className="mt-16 text-center">
           <button className="inline-flex items-center gap-3 px-8 py-3.5 border-2 border-[#27bb97] text-[#27bb97] font-semibold rounded-xl hover:bg-[#27bb97] hover:text-white hover:shadow-lg transition">
             View All Services
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-            </svg>
+            <FaArrowRight className="w-5 h-5" />
           </button>
         </div>
 
