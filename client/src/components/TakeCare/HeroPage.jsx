@@ -4,6 +4,86 @@ import { Search, MapPin, Heart, Filter, ChevronDown } from "lucide-react";
 const HeroPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [location, setLocation] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("Nanny");
+  const [selectedPrice, setSelectedPrice] = useState("");
+  const [selectedWorkType, setSelectedWorkType] = useState("");
+  const [selectedJobType, setSelectedJobType] = useState("");
+
+  // Search categories
+  const categories = [
+    "Nanny",
+    "Babysitter",
+    "Tutor",
+    "Daycare center",
+    "Family child care center",
+    "Cook",
+    "Housekeeper",
+    "Elder Care Provider / Nurse",
+    "Elder Care Center",
+    "Pet Care Provider",
+    "Pet Care Center",
+  ];
+
+  // US Cities
+  const usCities = [
+    "New York, NY",
+    "Los Angeles, CA",
+    "Chicago, IL",
+    "Houston, TX",
+    "Phoenix, AZ",
+    "Philadelphia, PA",
+    "San Antonio, TX",
+    "San Diego, CA",
+    "Dallas, TX",
+    "San Jose, CA",
+    "Austin, TX",
+    "Jacksonville, FL",
+    "Fort Worth, TX",
+    "Columbus, OH",
+    "Charlotte, NC",
+    "San Francisco, CA",
+    "Indianapolis, IN",
+    "Seattle, WA",
+    "Denver, CO",
+    "Washington, DC",
+    "Boston, MA",
+    "El Paso, TX",
+    "Nashville, TN",
+    "Detroit, MI",
+    "Oklahoma City, OK",
+  ];
+
+  // Price options
+  const priceOptions = [
+    { label: "$15 - $20/hr", value: "15-20" },
+    { label: "$20 - $30/hr", value: "20-30" },
+    { label: "$30+/hr", value: "30-plus" },
+  ];
+
+  // Work type options
+  const workTypeOptions = [
+    { label: "Live In", value: "live-in" },
+    { label: "Live Out", value: "live-out" },
+  ];
+
+  // Job type options
+  const jobTypeOptions = [
+    { label: "Full Time", value: "full-time" },
+    { label: "Part Time", value: "part-time" },
+    { label: "Hourly Basis", value: "hourly" },
+  ];
+
+  const handleSearch = () => {
+    // Implement search functionality here
+    console.log({
+      category: selectedCategory,
+      location: location,
+      price: selectedPrice,
+      workType: selectedWorkType,
+      jobType: selectedJobType,
+      query: searchQuery,
+    });
+  };
 
   return (
     <>
@@ -43,44 +123,134 @@ const HeroPage = () => {
 
       {/* Search Bar Overlay */}
       <div className="relative -mt-10 mb-20">
-        <div className="max-w-6xl mx-auto px-6">
+        <div className=" px-6">
           <div className="bg-white rounded-2xl shadow-2xl p-6 border border-gray-200">
-            <div className="flex flex-col lg:flex-row gap-4">
-              <div className="flex-1">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
+              {/* Category Dropdown */}
+              <div className="relative">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Category
+                </label>
                 <div className="relative">
-                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                  <input
-                    type="text"
-                    placeholder="Search daycares, nannies, babysitters..."
-                    className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-200 rounded-xl text-gray-800 placeholder-gray-500 focus:outline-none focus:border-[#27BB97] focus:ring-2 focus:ring-[#27BB97]/20 transition-all"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                  />
+                  <select
+                    className="w-full pl-4 pr-10 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-800 focus:outline-none focus:border-[#27BB97] focus:ring-2 focus:ring-[#27BB97]/20 appearance-none"
+                    value={selectedCategory}
+                    onChange={(e) => setSelectedCategory(e.target.value)}
+                  >
+                    {categories.map((category) => (
+                      <option key={category} value={category}>
+                        {category}
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
                 </div>
               </div>
 
-              <div className="flex-1">
+              {/* City Dropdown */}
+              <div className="relative">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  City
+                </label>
                 <div className="relative">
-                  <MapPin className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                  <input
-                    type="text"
-                    placeholder="Enter city, state, or zip code"
-                    className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-200 rounded-xl text-gray-800 placeholder-gray-500 focus:outline-none focus:border-[#27BB97] focus:ring-2 focus:ring-[#27BB97]/20 transition-all"
+                  <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <select
+                    className="w-full pl-10 pr-10 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-800 focus:outline-none focus:border-[#27BB97] focus:ring-2 focus:ring-[#27BB97]/20 appearance-none"
                     value={location}
                     onChange={(e) => setLocation(e.target.value)}
-                  />
+                  >
+                    <option value="">Select a city</option>
+                    {usCities.map((city) => (
+                      <option key={city} value={city}>
+                        {city}
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
                 </div>
               </div>
 
-              <button className="flex items-center justify-center gap-2 px-6 py-4 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-colors">
-                <Filter className="w-5 h-5" />
-                Filters
-              </button>
+              {/* Price Dropdown */}
+              <div className="relative">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Price Range
+                </label>
+                <div className="relative">
+                  <select
+                    className="w-full pl-4 pr-10 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-800 focus:outline-none focus:border-[#27BB97] focus:ring-2 focus:ring-[#27BB97]/20 appearance-none"
+                    value={selectedPrice}
+                    onChange={(e) => setSelectedPrice(e.target.value)}
+                  >
+                    <option value="">Select price range</option>
+                    {priceOptions.map((price) => (
+                      <option key={price.value} value={price.value}>
+                        {price.label}
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+                </div>
+              </div>
 
-              <button className="flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-[#27BB97] to-[#1FA987] text-white rounded-xl font-semibold hover:from-[#1FA987] hover:to-[#198F72] transition-all duration-300 hover:shadow-lg hover:shadow-[#27BB97]/30">
+              {/* Work Type Dropdown */}
+              <div className="relative">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Work Type
+                </label>
+                <div className="relative">
+                  <select
+                    className="w-full pl-4 pr-10 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-800 focus:outline-none focus:border-[#27BB97] focus:ring-2 focus:ring-[#27BB97]/20 appearance-none"
+                    value={selectedWorkType}
+                    onChange={(e) => setSelectedWorkType(e.target.value)}
+                  >
+                    <option value="">Select work type</option>
+                    {workTypeOptions.map((type) => (
+                      <option key={type.value} value={type.value}>
+                        {type.label}
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+                </div>
+              </div>
+
+              {/* Job Type Dropdown */}
+              <div className="relative">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Job Type
+                </label>
+                <div className="relative">
+                  <select
+                    className="w-full pl-4 pr-10 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-800 focus:outline-none focus:border-[#27BB97] focus:ring-2 focus:ring-[#27BB97]/20 appearance-none"
+                    value={selectedJobType}
+                    onChange={(e) => setSelectedJobType(e.target.value)}
+                  >
+                    <option value="">Select job type</option>
+                    {jobTypeOptions.map((type) => (
+                      <option key={type.value} value={type.value}>
+                        {type.label}
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+                </div>
+
+              </div>
+              {/* Action Buttons */}
+
+              <div className="relative flex items-end">
+                 <button
+                onClick={handleSearch}
+                className="flex items-center justify-center gap-3 px-4 py-4 bg-gradient-to-r from-[#27BB97] to-[#1FA987] text-white rounded-xl font-medium hover:from-[#1FA987] hover:to-[#198F72] transition-all duration-300 hover:shadow-lg hover:shadow-[#27BB97]/30"
+              >
                 <Search className="w-5 h-5" />
                 Search Now
               </button>
+
+              </div>
+
+             
+
             </div>
           </div>
         </div>
