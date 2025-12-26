@@ -167,7 +167,7 @@ const ServiceHub = () => {
         <section className="mb-12">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-bold text-gray-700 flex items-center gap-2">
-              <span className="text-[#27bb97]">⭐</span> Popular Categories
+              <span className="text-[#27bb97]"></span> Popular Categories
             </h2>
             <button className="text-[#27bb97] hover:text-[#1fa987] font-medium flex items-center gap-1">
               See all categories
