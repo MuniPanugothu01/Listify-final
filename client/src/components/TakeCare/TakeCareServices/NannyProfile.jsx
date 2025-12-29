@@ -41,7 +41,7 @@ export default function NannyProfile() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 py-12 px-4">
+    <div className="min-h-screen py-12 px-4">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">
@@ -83,7 +83,7 @@ export default function NannyProfile() {
 
         {/* CTA Button */}
         <div className="text-center">
-          <button className="bg-pink-400 hover:bg-pink-500 text-white font-semibold py-4 px-12 rounded-full shadow-lg transition-colors duration-200 inline-flex items-center gap-2">
+          <button className="bg-[#27BB97] text-white font-semibold py-4 px-12 rounded-full shadow-lg transition-colors duration-200 inline-flex items-center gap-2">
             Create your profile
             <span>→</span>
           </button>

@@ -58,13 +58,13 @@ export default function NannyFaq() {
   const currentFAQs = activeTab === 'careSeeker' ? careSeekerFAQs : caregiverFAQs;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-12 px-4">
+    <div className="min-h-screen py-12 px-4">
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Left Section */}
           <div className="lg:col-span-4">
             <div className="sticky top-8">
-              <div className="inline-block bg-pink-600 text-white px-4 py-1 rounded-md text-sm font-semibold mb-4">
+              <div className="inline-block bg-[#27BB97] text-white px-4 py-1 rounded-md text-sm font-semibold mb-4">
                 FAQS
               </div>
               <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4 leading-tight">
@@ -105,7 +105,7 @@ export default function NannyFaq() {
             </div>
 
             {/* Section Title */}
-            <h2 className="text-2xl font-bold text-pink-600 mb-6">
+            <h2 className="text-2xl font-bold text-[#27BB97] mb-6">
               {activeTab === 'careSeeker' ? 'Care Seeker' : 'Caregiver'}
             </h2>
 

@@ -99,8 +99,8 @@ export default function NannyJobs() {
         {/* Header */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-2 mb-4">
-            <span className="text-red-500 text-sm font-medium">Nanny Services</span>
-            <Baby className="w-5 h-5 text-red-500" />
+            <span className="text-[#27BB97] text-sm font-medium">Nanny Services</span>
+            <Baby className="w-5 h-5 text-[#27BB97]" />
           </div>
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
             Nannies and Nanny Jobs In New York,NY
