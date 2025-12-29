@@ -153,16 +153,12 @@ const HeroSection = () => {
                   <span className="text-base">Search</span>
                 </button>
               </div>
-
-              {/* Visual indicator of the split (optional) */}
-              <div className="absolute top-0 bottom-0 left-1/2 transform -translate-x-1/2 w-px bg-gradient-to-b from-transparent via-gray-300 to-transparent hidden md:block"></div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Spacer to ensure content isn't hidden behind search bar */}
-      <div className="h-12"></div>
+      
     </section>
   );
 };
