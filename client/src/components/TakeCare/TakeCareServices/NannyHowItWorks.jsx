@@ -30,10 +30,10 @@ const NannyHowItWorks = () => {
   };
 
   return (
-    <div className="relative py-20 px-4 overflow-hidden">
+    <div className="relative py-20 px-4 overflow-hidden ">
       {/* Background Image with Overlay */}
       <div 
-        className="absolute inset-0 bg-cover bg-center bg-fixed"
+        className="absolute inset-0 bg-cover bg-contain bg-fixed "
         style={{
           backgroundImage: `url('/nanny-care-4.jpg')`,
         }}
