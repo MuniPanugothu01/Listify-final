@@ -5,38 +5,43 @@ export default function NannyProfile() {
   const steps = [
     {
       icon: <User className="w-8 h-8" />,
-      iconColor: "text-orange-500",
+      iconColor: "text-white",
       title: "Register with your email, password, and personal details to create a profile. Use Neighborhood-Based Matching to connect with local families effortlessly.",
       buttonText: "Sign Up",
-      buttonColor: "bg-orange-500 hover:bg-orange-600"
+      buttonColor: "",
+      bgImage: "/babycare-1.jpg"
     },
     {
       icon: <Image className="w-8 h-8" />,
-      iconColor: "text-blue-600",
+      iconColor: "text-white",
       title: "Add a professional, welcoming photo to make your profile stand out to attract more families in your area.",
       buttonText: "Upload a Photo",
-      buttonColor: "bg-blue-600 hover:bg-blue-700"
+      buttonColor: "",
+      bgImage: "/babycare-2.jpg"
     },
     {
       icon: <Lightbulb className="w-8 h-8" />,
-      iconColor: "text-red-500",
+      iconColor: "text-white",
       title: "List your caregiving skills, certifications, and availability. Real-time updates ensure families know when you're available.",
       buttonText: "Highlight Skills",
-      buttonColor: "bg-red-500 hover:bg-red-600"
+      buttonColor: "",
+      bgImage: "/babycare-3.jpg"
     },
     {
       icon: <Award className="w-8 h-8" />,
-      iconColor: "text-teal-500",
+      iconColor: "text-white",
       title: "Verify your email and phone number to build trust. Reach more families through our Mobile App integration.",
       buttonText: "Verification Check",
-      buttonColor: "bg-teal-500 hover:bg-teal-600"
+      buttonColor: "",
+      bgImage: "/babycare-4.jpg"
     },
     {
       icon: <Send className="w-8 h-8" />,
-      iconColor: "text-yellow-500",
+      iconColor: "text-white",
       title: "Review your profile for accuracy. Use Smart Dashboard Features to manage responses and track performance.",
       buttonText: "Submit & Review",
-      buttonColor: "bg-yellow-500 hover:bg-yellow-600"
+      buttonColor: "",
+      bgImage: "/babycare-5.jpg"
     }
   ];
 
@@ -57,18 +62,30 @@ export default function NannyProfile() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-12">
           {steps.map((step, index) => (
             <div key={index} className="relative">
-              {/* Card */}
-              <div className="bg-white rounded-lg shadow-md p-6 h-80 flex flex-col">
-                {/* Icon */}
-                <div className={`${step.iconColor} mb-4`}>
-                  {step.icon}
-                </div>
+              {/* Card with Background Image */}
+              <div 
+                className="rounded-lg shadow-md p-6 h-80 flex flex-col relative overflow-hidden"
+              >
+                {/* Background Image with dark overlay */}
+                <div 
+                  className="absolute inset-0 bg-cover bg-center"
+                  style={{ backgroundImage: `url(${step.bgImage})` }}
+                ></div>
+                <div className="absolute inset-0 bg-black/40"></div>
 
-                {/* Description */}
-                <p className="text-gray-600 text-sm leading-relaxed flex-grow">
-                  {step.title}
-                </p>
-              </div>
+                {/* Content */}
+                <div className="relative z-10 flex-grow flex flex-col">
+                  {/* Icon */}
+                  <div className={`${step.iconColor} mb-4`}>
+                    {step.icon}
+                  </div>
+
+                  {/* Description */}
+                  <p className="text-white text-sm leading-relaxed flex-grow">
+                    {step.title}
+                  </p>
+                </div>
+            
 
               {/* Button with speech bubble tail */}
               <div className="relative mt-[-1px]">  
@@ -77,6 +94,8 @@ export default function NannyProfile() {
                   {step.buttonText}
                 </button>
               </div>
+
+               </div>
             </div>
           ))}
         </div>

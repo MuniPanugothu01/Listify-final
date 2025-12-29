@@ -88,11 +88,13 @@ const HeroPage = () => {
   return (
     <>
       {/* Hero Section */}
-      <section className="relative min-h-[80vh] flex items-center justify-center overflow-hidden">
+      <section className="relative w-full h-[50vh] min-h-[500px] max-h-[600px] flex items-center justify-center overflow-hidden">
         <div
           className="absolute inset-0 bg-cover bg-center bg-fixed"
           style={{
             backgroundImage: `url('babycare-7.jpg')`,
+            loading: "lazy",
+
           }}
         />
 
