@@ -29,16 +29,16 @@ const ServiceHub = () => {
   const serviceSections = {
     home: {
       title: 'Home Services',
-      icon: '/home-services.jpg',
+      icon: '/Services/HomeServices/homeicon.jpg',
       services: [
-        { icon: '/plumbing.jpg', label: 'Plumbing' },
-        { icon: '/electrical.jpg', label: 'Electrical' },
-        { icon: '/carpentry.jpg', label: 'Carpentry' },
-        { icon: '/painting.jpg', label: 'Painting' },
-        { icon: '/cleaning.jpg', label: 'Cleaning' },
-        { icon: '/pest-control.jpg', label: 'Pest Control' },
+        { icon: '/Services/HomeServices/plumbing.jpg', label: 'Plumbing' },
+        { icon: '/Services/HomeServices/electrical.jpg', label: 'Electrical' },
+        { icon: '/Services/HomeServices/carpentry2.jpg', label: 'Carpentry' },
+        { icon: '/Services/HomeServices/painting.jpg', label: 'Painting' },
+        { icon: '/Services/HomeServices/cleaning.jpg', label: 'Cleaning' },
+        { icon: '/Services/HomeServices/pest-control.jpg', label: 'Pest Control' },
         { icon: '/ac-service.jpg', label: 'AC Service' },
-        { icon: '/bathroom.jpg', label: 'Bathroom' }
+        { icon: '/Services/HomeServices/bathroom.jpg', label: 'Bathroom' }
       ]
     },
     appliance: {
@@ -253,7 +253,7 @@ const ServiceHub = () => {
                     <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
                       <div className="w-2 h-2 bg-[#27bb97] rounded-full"></div>
                     </div>
-                    <div className="w-12 h-12 mb-3 overflow-hidden rounded-full group-hover:scale-110 transition-transform">
+                    <div className="w-20 h-20 mb-3 overflow-hidden rounded-full group-hover:scale-110 transition-transform">
                       <img 
                         src={service.icon} 
                         alt={service.label}
