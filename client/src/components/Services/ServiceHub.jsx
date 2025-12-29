@@ -19,8 +19,8 @@ const ServiceHub = () => {
 
   const topCategories = [
     { icon: '/Services/home.jpg', label: 'Home', key: 'home' },
-    { icon: '/appliance.jpg', label: 'Appliance', key: 'appliance' },
-    { icon: '/cleaning.jpg', label: 'Cleaning', key: 'cleaning' },
+    { icon: '/Services/appliance.jpg', label: 'Appliance', key: 'appliance' },
+    { icon: '/Services/cleaning.jpg', label: 'Cleaning', key: 'cleaning' },
     { icon: '/personal.jpg', label: 'Personal', key: 'personal' },
     { icon: '/event.jpg', label: 'Event', key: 'event' },
     { icon: '/digital.jpg', label: 'Digital', key: 'it' }
@@ -173,29 +173,36 @@ const ServiceHub = () => {
               <ChevronDown className="w-4 h-4" />
             </button>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
-            {topCategories.map((category) => (
-              <button
-                key={category.key}
-                className="group flex flex-col items-center p-6 bg-white rounded-2xl border-2 border-gray-200 hover:border-[#27bb97] hover:shadow-lg transition-all duration-300"
-              >
-                <div className="w-16 h-16 mb-3 overflow-hidden rounded-full group-hover:scale-110 transition-transform">
-                  <img 
-                    src={category.icon} 
-                    alt={category.label}
-                    className="w-full h-full object-cover"
-                    onError={(e) => {
-                      e.target.onerror = null;
-                      e.target.src = `https://via.placeholder.com/64/27bb97/ffffff?text=${category.label.charAt(0)}`;
-                    }}
-                  />
-                </div>
-                <span className="text-base font-semibold text-gray-700 group-hover:text-[#27bb97]">
-                  {category.label}
-                </span>
-              </button>
-            ))}
-          </div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
+  {topCategories.map((category) => (
+    <button
+      key={category.key}
+      className="group relative flex flex-col items-center justify-end bg-white rounded-2xl border-2 border-gray-200 hover:border-[#27bb97] hover:shadow-lg transition-all duration-300 overflow-hidden min-h-[120px] md:min-h-[140px]"
+    >
+      {/* Background Image */}
+      <div className="absolute inset-0 w-full h-full">
+        <img 
+          src={category.icon} 
+          alt={category.label}
+          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+          onError={(e) => {
+            e.target.onerror = null;
+            e.target.src = `https://via.placeholder.com/300x140/27bb97/ffffff?text=${category.label}`;
+          }}
+        />
+        {/* Gradient overlay for better text visibility */}
+        {/* <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent group-hover:from-black/60 group-hover:via-black/30 transition-colors duration-300"></div> */}
+      </div>
+      
+      {/* Label at bottom */}
+      <div className="relative z-10 w-full p-3 text-center">
+        <span className="text-base font-semibold text-white group-hover:text-[#27bb97] drop-shadow-md">
+          {category.label}
+        </span>
+      </div>
+    </button>
+  ))}
+</div>
         </section>
 
         {/* Service Sections */}
