@@ -21,9 +21,9 @@ const ServiceHub = () => {
     { icon: '/Services/home.jpg', label: 'Home', key: 'home' },
     { icon: '/Services/appliance.jpg', label: 'Appliance', key: 'appliance' },
     { icon: '/Services/cleaning.jpg', label: 'Cleaning', key: 'cleaning' },
-    { icon: '/personal.jpg', label: 'Personal', key: 'personal' },
-    { icon: '/event.jpg', label: 'Event', key: 'event' },
-    { icon: '/digital.jpg', label: 'Digital', key: 'it' }
+    { icon: '/Services/personallifestyle.jpg', label: 'Personal', key: 'personal' },
+    { icon: '/Services/eventservices.jpg', label: 'Event', key: 'event' },
+    { icon: '/Services/ITDigital.jpg', label: 'Digital', key: 'it' }
   ];
 
   const serviceSections = {
@@ -177,7 +177,7 @@ const ServiceHub = () => {
   {topCategories.map((category) => (
     <button
       key={category.key}
-      className="group relative flex flex-col items-center justify-end bg-white rounded-2xl border-2 border-gray-200 hover:border-[#27bb97] hover:shadow-lg transition-all duration-300 overflow-hidden min-h-[120px] md:min-h-[140px]"
+      className="group relative flex flex-col items-center justify-end text-black bg-white rounded-2xl border-2 border-gray-200 hover:border-[#27bb97] hover:shadow-lg transition-all duration-300 overflow-hidden min-h-[120px] md:min-h-[140px]"
     >
       {/* Background Image */}
       <div className="absolute inset-0 w-full h-full">
