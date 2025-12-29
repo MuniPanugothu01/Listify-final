@@ -394,6 +394,12 @@ const AboutUs = () => {
                   </span>
                 </h1>
                 <div className="w-32 h-1 bg-gradient-to-r from-[#27bb97] to-white transform transition-all duration-500 group-hover:w-48"></div>
+                <div>
+                  <span className="text-lg text-white/90 ">
+                    Listify combines the best of classifieds with community features to
+                    create a trusted, local marketplace for everyone.
+                  </span>
+                </div>
               </div>
             </div>
 
