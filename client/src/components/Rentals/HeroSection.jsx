@@ -18,7 +18,7 @@ export default function HeroSection() {
   const priceRanges = ["Any", "0-10k", "10k-20k", "20k-30k", "30k-50k", "50k+"];
 
   return (
-    <div className="min-h-screen bg-[#ffffff] relative overflow-hidden">
+    <div className="min-h-screen w-full h-[50vh] max-h-[600px] bg-[#ffffff] relative overflow-hidden">
       {/* Hero Section */}
       <div className="max-w-7xl mx-auto px-8 py-16">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
