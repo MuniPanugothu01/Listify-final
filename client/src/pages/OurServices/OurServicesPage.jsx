@@ -675,7 +675,6 @@ const OurServicesPage = () => {
                     </div>
                     
                     {/* Hover Effect Line */}
-                    <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-1 bg-gradient-to-r from-[#27bb97] to-[#1FA987] group-hover:w-full transition-all duration-500 rounded-full"></div>
                   </div>
                   
                   {/* Floating Image Element */}
@@ -717,160 +716,91 @@ const OurServicesPage = () => {
       </section>
 
       {/* Enhanced Optimize Your Service Routine Section */}
-      <section className="py-20 bg-white relative overflow-hidden">  
-        <div className="max-w-7xl mx-auto px-6 relative z-10">
-          <div className="text-center mb-16 scroll-animate">
-            <div className="inline-flex items-center gap-3 mb-4">
-              <Calendar className="w-8 h-8 text-[#27bb97]" />
-              <h2 className="text-4xl font-bold text-gray-900">
-                Optimize Your <span className="gradient-text">Service Routine</span>
-              </h2>
-            </div>
-            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-              Follow our proven daily routine to maximize your service experience in New York
-            </p>
-          </div>
+   <section className="py-20 bg-white relative overflow-hidden">
+  <div className="max-w-7xl mx-auto px-6 relative z-10">
+    <div className="text-center mb-16 scroll-animate">
+      <div className="inline-flex items-center gap-3 mb-4">
+        <Calendar className="w-8 h-8 text-[#27bb97]" />
+        <h2 className="text-4xl font-bold text-gray-900">
+          Optimize Your <span className="gradient-text">Service Routine</span>
+        </h2>
+      </div>
+      <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+        Follow our proven daily routine to maximize your service experience in New York
+      </p>
+    </div>
 
-          {/* Timeline Layout with Images */}
-          <div className="relative">
-            {/* Timeline Line */}
-            <div className="absolute left-0 md:left-1/2 md:transform md:-translate-x-1/2 h-full w-1 bg-gradient-to-b from-[#27bb97]/20 via-[#1FA987]/20 to-[#198F72]/20"></div>
-            
-            <div className="space-y-12">
-              {enhancedDailyRoutine.map((routine, index) => (
-                <div 
-                  key={index}
-                  className={`scroll-animate stagger-delay-${(index % 4) + 1} relative`}
-                >
-                  
-                  {/* Card Container with alternating layout */}
-                  <div className={`ml-8 md:ml-0 ${index % 2 === 0 ? 'md:pr-1/2' : 'md:pl-1/2 md:text-right'}`}>
-                    <div className="group">
-                      {/* Main Card */}
-                      <div className="bg-white rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-1 border border-gray-100">
-                        {/* Card Header with Image Background */}
-                        <div className="relative h-32 overflow-hidden">
-                          <img
-                            src={`https://images.unsplash.com/photo-${index === 0 ? '1497366754035-f200968a6e72' : index === 1 ? '1559028012-481c04fa702d' : index === 2 ? '1545235617-9465d2a55698' : '1521791136064-7986c2920216'}?w=800&q=90`}
-                            alt={routine.time}
-                            className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-r from-[#27bb97]/90 to-[#1FA987]/90 mix-blend-multiply"></div>
-                          
-                          {/* Time Slot Overlay */}
-                          <div className="absolute top-4 left-4">
-                            <div className="px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full">
-                              <span className="text-white font-bold text-sm">{routine.timeSlot}</span>
-                            </div>
-                          </div>
-                          
-                          {/* Icon Floating */}
-                          <div className="absolute -bottom-6 right-6">
-                            <div className={`${routine.color} w-12 h-12 rounded-xl flex items-center justify-center shadow-lg transform group-hover:scale-110 group-hover:rotate-12 transition-all duration-300`}>
-                              <div className="text-white">
-                                {routine.icon}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Card Content */}
-                        <div className="p-6 pt-8">
-                          <div className="mb-4">
-                            <span className="text-sm font-medium text-[#27bb97] bg-[#27bb97]/10 px-3 py-1 rounded-full">
-                              {routine.time}
-                            </span>
-                            <h3 className="text-xl font-bold text-gray-900 mt-3 mb-2">{routine.title}</h3>
-                          </div>
-                          
-                          <p className="text-gray-600 mb-6 text-sm">
-                            {routine.description}
-                          </p>
-                          
-                          {/* Steps with Check Icons */}
-                          <div className="space-y-3 mb-6">
-                            {routine.steps.map((step, stepIndex) => (
-                              <div key={stepIndex} className="flex items-center gap-3 group/item">
-                                <div className="flex-shrink-0 w-6 h-6 rounded-full bg-[#27bb97]/10 flex items-center justify-center group-hover/item:bg-[#27bb97] transition-colors duration-300">
-                                  <CheckCircle className="w-3 h-3 text-[#27bb97] group-hover/item:text-white transition-colors duration-300" />
-                                </div>
-                                <span className="text-sm text-gray-700 group-hover/item:text-[#27bb97] transition-colors duration-300">
-                                  {step}
-                                </span>
-                              </div>
-                            ))}
-                          </div>
-                          
-                          {/* Interactive Button */}
-                          <button className="w-full group/btn py-3 bg-gradient-to-r from-[#27bb97] to-[#1FA987] text-white font-semibold rounded-lg hover:from-[#1FA987] hover:to-[#198F72] transition-all duration-300 overflow-hidden relative">
-                            <span className="relative z-10 flex items-center justify-center gap-2">
-                              <Clock className="w-4 h-4" />
-                              Set Reminder
-                              <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
-                            </span>
-                            <div className="absolute inset-0 bg-gradient-to-r from-[#1FA987] to-[#198F72] transform translate-y-full group-hover/btn:translate-y-0 transition-transform duration-300"></div>
-                          </button>
-                        </div>
-                      </div>
-
-                      {/* Floating Time Card */}
-                      <div className="absolute -top-2 -left-2 md:left-auto md:right-2 bg-white rounded-lg shadow-lg p-3 transform group-hover:scale-110 transition-transform duration-300">
-                        <div className="text-center">
-                          <div className="text-xs text-gray-500 mb-1">Start At</div>
-                          <div className="text-lg font-bold text-[#27bb97]">{routine.timeSlot.split(' ')[0]}</div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Daily Schedule Visualizer */}
-          <div className="scroll-animate mt-16 bg-gradient-to-r from-[#27bb97]/5 to-[#1FA987]/5 rounded-2xl p-8 border border-[#27bb97]/10">
-            <div className="grid md:grid-cols-2  gap-8 items-center">
-              <div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-4">Daily Schedule Visualizer</h3>
-                <p className="text-gray-600 mb-6">
-                  Track your service activities throughout the day with our interactive schedule. See when you're most productive and optimize your routine.
-                </p>
-                <div className="space-y-4">
-                  {enhancedDailyRoutine.map((routine, index) => (
-                    <div key={index} className="flex items-center gap-4">
-                      <div className="w-3 h-3 rounded-full bg-gradient-to-r from-[#27bb97] to-[#1FA987]"></div>
-                      <span className="font-medium text-gray-700">{routine.time}</span>
-                      <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
-                        <div 
-                          className="h-full bg-gradient-to-r from-[#27bb97] to-[#1FA987] rounded-full"
-                          style={{ width: `${25 * (index + 1)}%` }}
-                        ></div>
-                      </div>
-                      <span className="text-sm text-gray-500">{routine.timeSlot}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <div className="relative">
-                <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-100">
-                  <div className="text-center mb-6">
-                    <div className="text-4xl font-black text-[#27bb97] mb-2">4x</div>
-                    <div className="text-gray-600">More Productive</div>
-                  </div>
+    {/* Horizontal Scroll Cards */}
+    <div className="scroll-animate">
+      <div className="flex overflow-x-auto pb-8 snap-x snap-mandatory gap-6 px-4 -mx-4 scrollbar-hide">
+        {enhancedDailyRoutine.map((routine, index) => (
+          <div 
+            key={index}
+            className="min-w-[85vw] md:min-w-[400px] flex-shrink-0 snap-center"
+          >
+            <div className="group h-full">
+              <div className="bg-white rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-1 border border-gray-100 h-full">
+                {/* Card Header with Image Background */}
+                <div className="relative h-40 overflow-hidden">
                   <img
-                    src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=600&q=90"
-                    alt="Productivity Visualization"
-                    className="w-full h-48 object-cover rounded-lg mb-4"
+                    src={`https://images.unsplash.com/photo-${index === 0 ? '1497366754035-f200968a6e72' : index === 1 ? '1559028012-481c04fa702d' : index === 2 ? '1545235617-9465d2a55698' : '1521791136064-7986c2920216'}?w=800&q=90`}
+                    alt={routine.time}
+                    className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
                   />
-                  <p className="text-sm text-gray-600 text-center">
-                    Users following this routine complete 4x more service bookings
+                  <div className="absolute inset-0 bg-gradient-to-r from-[#27bb97]/90 to-[#1FA987]/90 mix-blend-multiply"></div>
+                  
+                  {/* Time Badge */}
+                  <div className="absolute top-4 left-4">
+                    <div className="px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full">
+                      <span className="text-white font-bold text-sm">{routine.timeSlot}</span>
+                    </div>
+                  </div>
+                  
+                 
+                </div>
+
+                {/* Card Content */}
+                <div className="p-6">
+                  <div className="mb-4">
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">{routine.title}</h3>
+                    <span className="text-sm font-medium text-[#27bb97] bg-[#27bb97]/10 px-3 py-1 rounded-full">
+                      {routine.time}
+                    </span>
+                  </div>
+                  
+                  <p className="text-gray-600 mb-6 text-sm">
+                    {routine.description}
                   </p>
+                  
+                  {/* Steps */}
+                  <div className="space-y-3 mb-6">
+                    {routine.steps.map((step, stepIndex) => (
+                      <div key={stepIndex} className="flex items-start gap-3">
+                        <div className="flex-shrink-0 w-5 h-5 rounded-full bg-[#27bb97]/10 flex items-center justify-center mt-0.5">
+                          <CheckCircle className="w-3 h-3 text-[#27bb97]" />
+                        </div>
+                        <span className="text-sm text-gray-700">
+                          {step}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                  
+                  {/* Button */}
+                  <button className="w-full py-3 bg-gradient-to-r from-[#27bb97] to-[#1FA987] text-white font-semibold rounded-lg hover:from-[#1FA987] hover:to-[#198F72] transition-all duration-300 flex items-center justify-center gap-2">
+                    <Clock className="w-4 h-4" />
+                    Set Reminder
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  </button>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
 
       {/* Enhanced Featured Service Providers Section */}
       <section className="py-20 bg-gradient-to-b from-white to-gray-50">

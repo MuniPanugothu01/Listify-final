@@ -17,6 +17,7 @@ import NannyJobs from "./NannyJobs";
 import NannyFaq from "./NannyFaq";
 import CareServices from "../CareServices";
 import NannyContact from "./NannyContact";
+import NannyHero from "./NannyHero";
 
 import { RainbowButton } from "../../ui/rainbow-button";
 
@@ -69,6 +70,8 @@ const NannyService = () => {
           </div>
         </div>
       </section>
+
+      {/* <NannyHero/> */}
 
       <NannyAbout/>
 
