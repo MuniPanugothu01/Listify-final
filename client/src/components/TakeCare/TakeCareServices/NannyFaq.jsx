@@ -58,7 +58,7 @@ export default function NannyFaq() {
   const currentFAQs = activeTab === 'careSeeker' ? careSeekerFAQs : caregiverFAQs;
 
   return (
-    <div className="min-h-screen py-12 px-4">
+    <div className="min-h-screen">
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Left Section */}

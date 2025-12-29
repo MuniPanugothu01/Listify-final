@@ -41,7 +41,7 @@ export default function NannyProfile() {
   ];
 
   return (
-    <div className="min-h-screen py-12 px-4">
+    <div className="min-h-screen py-20 px-4">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">
