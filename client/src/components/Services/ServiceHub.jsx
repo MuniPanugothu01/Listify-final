@@ -18,97 +18,97 @@ const ServiceHub = () => {
   };
 
   const topCategories = [
-    { icon: '🏠', label: 'Home', key: 'home' },
-    { icon: '🔌', label: 'Appliance', key: 'appliance' },
-    { icon: '🧹', label: 'Cleaning', key: 'cleaning' },
-    { icon: '💇', label: 'Personal', key: 'personal' },
-    { icon: '🎉', label: 'Event', key: 'event' },
-    { icon: '💻', label: 'Digital', key: 'it' }
+    { icon: '/Services/home.jpg', label: 'Home', key: 'home' },
+    { icon: '/appliance.jpg', label: 'Appliance', key: 'appliance' },
+    { icon: '/cleaning.jpg', label: 'Cleaning', key: 'cleaning' },
+    { icon: '/personal.jpg', label: 'Personal', key: 'personal' },
+    { icon: '/event.jpg', label: 'Event', key: 'event' },
+    { icon: '/digital.jpg', label: 'Digital', key: 'it' }
   ];
 
   const serviceSections = {
     home: {
       title: 'Home Services',
-      icon: '🏠',
+      icon: '/home-services.jpg',
       services: [
-        { icon: '🚿', label: 'Plumbing' },
-        { icon: '⚡', label: 'Electrical' },
-        { icon: '🪚', label: 'Carpentry' },
-        { icon: '🎨', label: 'Painting' },
-        { icon: '🧹', label: 'Cleaning' },
-        { icon: '🐜', label: 'Pest Control' },
-        { icon: '❄️', label: 'AC Service' },
-        { icon: '🚽', label: 'Bathroom' }
+        { icon: '/plumbing.jpg', label: 'Plumbing' },
+        { icon: '/electrical.jpg', label: 'Electrical' },
+        { icon: '/carpentry.jpg', label: 'Carpentry' },
+        { icon: '/painting.jpg', label: 'Painting' },
+        { icon: '/cleaning.jpg', label: 'Cleaning' },
+        { icon: '/pest-control.jpg', label: 'Pest Control' },
+        { icon: '/ac-service.jpg', label: 'AC Service' },
+        { icon: '/bathroom.jpg', label: 'Bathroom' }
       ]
     },
     appliance: {
       title: 'Appliance Repair',
-      icon: '🔌',
+      icon: '/appliance-repair.jpg',
       services: [
-        { icon: '🧺', label: 'Washing Machine' },
-        { icon: '🧊', label: 'Refrigerator' },
-        { icon: '📺', label: 'TV Repair' },
-        { icon: '🔥', label: 'Microwave' },
-        { icon: '💧', label: 'Water Purifier' }
+        { icon: '/washing-machine.jpg', label: 'Washing Machine' },
+        { icon: '/refrigerator.jpg', label: 'Refrigerator' },
+        { icon: '/tv-repair.jpg', label: 'TV Repair' },
+        { icon: '/microwave.jpg', label: 'Microwave' },
+        { icon: '/water-purifier.jpg', label: 'Water Purifier' }
       ]
     },
     cleaning: {
       title: 'Cleaning & Maintenance',
-      icon: '🧼',
+      icon: '/cleaning-maintenance.jpg',
       services: [
-        { icon: '🏠', label: 'House Cleaning' },
-        { icon: '🚿', label: 'Bathroom Cleaning' },
-        { icon: '🛋️', label: 'Sofa Cleaning' },
-        { icon: '💧', label: 'Water Tank Cleaning' },
-        { icon: '🪟', label: 'Window Cleaning' }
+        { icon: '/house-cleaning.jpg', label: 'House Cleaning' },
+        { icon: '/bathroom-cleaning.jpg', label: 'Bathroom Cleaning' },
+        { icon: '/sofa-cleaning.jpg', label: 'Sofa Cleaning' },
+        { icon: '/water-tank-cleaning.jpg', label: 'Water Tank Cleaning' },
+        { icon: '/window-cleaning.jpg', label: 'Window Cleaning' }
       ]
     },
     personal: {
       title: 'Personal & Lifestyle',
-      icon: '💇',
+      icon: '/personal-lifestyle.jpg',
       services: [
-        { icon: '✂️', label: 'Salon at Home' },
-        { icon: '💆', label: 'Massage' },
-        { icon: '🧘', label: 'Yoga Trainer' },
-        { icon: '🏋️', label: 'Gym Trainer' }
+        { icon: '/salon.jpg', label: 'Salon at Home' },
+        { icon: '/massage.jpg', label: 'Massage' },
+        { icon: '/yoga.jpg', label: 'Yoga Trainer' },
+        { icon: '/gym.jpg', label: 'Gym Trainer' }
       ]
     },
     event: {
       title: 'Event Services',
-      icon: '🎉',
+      icon: '/event-services.jpg',
       services: [
-        { icon: '📸', label: 'Photography' },
-        { icon: '🍽️', label: 'Catering' },
-        { icon: '🎈', label: 'Decoration' },
-        { icon: '🎧', label: 'DJ' }
+        { icon: '/photography.jpg', label: 'Photography' },
+        { icon: '/catering.jpg', label: 'Catering' },
+        { icon: '/decoration.jpg', label: 'Decoration' },
+        { icon: '/dj.jpg', label: 'DJ' }
       ]
     },
     education: {
       title: 'Education & Training',
-      icon: '🎓',
+      icon: '/education.jpg',
       services: [
-        { icon: '📚', label: 'Home Tuition' },
-        { icon: '💻', label: 'Online Classes' },
-        { icon: '📝', label: 'Exam Coaching' }
+        { icon: '/tuition.jpg', label: 'Home Tuition' },
+        { icon: '/online-classes.jpg', label: 'Online Classes' },
+        { icon: '/coaching.jpg', label: 'Exam Coaching' }
       ]
     },
     it: {
       title: 'IT & Digital Services',
-      icon: '💻',
+      icon: '/it-services.jpg',
       services: [
-        { icon: '🌐', label: 'Web Development' },
-        { icon: '📱', label: 'App Development' },
-        { icon: '📈', label: 'Digital Marketing' },
-        { icon: '🎨', label: 'Design' }
+        { icon: '/web-development.jpg', label: 'Web Development' },
+        { icon: '/app-development.jpg', label: 'App Development' },
+        { icon: '/digital-marketing.jpg', label: 'Digital Marketing' },
+        { icon: '/design.jpg', label: 'Design' }
       ]
     },
     repair: {
       title: 'Repair & Fabrication',
-      icon: '🛠️',
+      icon: '/repair.jpg',
       services: [
-        { icon: '🔥', label: 'Welding' },
-        { icon: '🛋️', label: 'Furniture Repair' },
-        { icon: '🪟', label: 'Glass Work' }
+        { icon: '/welding.jpg', label: 'Welding' },
+        { icon: '/furniture-repair.jpg', label: 'Furniture Repair' },
+        { icon: '/glass-work.jpg', label: 'Glass Work' }
       ]
     }
   };
@@ -121,7 +121,6 @@ const ServiceHub = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-
       <main className="max-w-7xl mx-auto px-4 py-8">
         {/* Hero Section */}
         <div className="text-center mb-10">
@@ -169,7 +168,7 @@ const ServiceHub = () => {
             <h2 className="text-2xl font-bold text-gray-700 flex items-center gap-2">
               <span className="text-[#27bb97]"></span> Popular Categories
             </h2>
-            <button className="text-[#27bb97] hover:text-[#1fa987] font-medium flex items-center gap-1">
+            <button className="text-[#27bb97] hover:text-[#1fa987] font-medium flex items-center gap-1 hover:underline cursor-pointer">
               See all categories
               <ChevronDown className="w-4 h-4" />
             </button>
@@ -180,7 +179,17 @@ const ServiceHub = () => {
                 key={category.key}
                 className="group flex flex-col items-center p-6 bg-white rounded-2xl border-2 border-gray-200 hover:border-[#27bb97] hover:shadow-lg transition-all duration-300"
               >
-                <span className="text-3xl mb-3 group-hover:scale-110 transition-transform">{category.icon}</span>
+                <div className="w-16 h-16 mb-3 overflow-hidden rounded-full group-hover:scale-110 transition-transform">
+                  <img 
+                    src={category.icon} 
+                    alt={category.label}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = `https://via.placeholder.com/64/27bb97/ffffff?text=${category.label.charAt(0)}`;
+                    }}
+                  />
+                </div>
                 <span className="text-base font-semibold text-gray-700 group-hover:text-[#27bb97]">
                   {category.label}
                 </span>
@@ -201,8 +210,16 @@ const ServiceHub = () => {
             <section key={sectionKey} className="mb-10 bg-white rounded-2xl p-6 shadow-sm border border-gray-200">
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center">
-                    <span className="text-2xl">{section.icon}</span>
+                  <div className="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center overflow-hidden">
+                    <img 
+                      src={section.icon} 
+                      alt={section.title}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = `https://via.placeholder.com/48/27bb97/ffffff?text=${section.title.charAt(0)}`;
+                      }}
+                    />
                   </div>
                   <div>
                     <h2 className="text-xl font-bold text-gray-700">{section.title}</h2>
@@ -229,7 +246,17 @@ const ServiceHub = () => {
                     <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
                       <div className="w-2 h-2 bg-[#27bb97] rounded-full"></div>
                     </div>
-                    <span className="text-3xl mb-3 group-hover:scale-110 transition-transform">{service.icon}</span>
+                    <div className="w-12 h-12 mb-3 overflow-hidden rounded-full group-hover:scale-110 transition-transform">
+                      <img 
+                        src={service.icon} 
+                        alt={service.label}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = `https://via.placeholder.com/48/cccccc/333333?text=${service.label.charAt(0)}`;
+                        }}
+                      />
+                    </div>
                     <span className="text-sm font-medium text-gray-700 text-center group-hover:text-[#27bb97] leading-tight">
                       {service.label}
                     </span>
@@ -342,8 +369,6 @@ const ServiceHub = () => {
           </div>
         </section>
       </main>
-
-  
     </div>
   );
 };
