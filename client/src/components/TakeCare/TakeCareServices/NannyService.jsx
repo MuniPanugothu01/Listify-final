@@ -15,6 +15,7 @@ import NannyHowItWorks from "./NannyHowItWorks";
 import NannyProfile from "./NannyProfile";
 import NannyJobs from "./NannyJobs";
 import NannyFaq from "./NannyFaq";
+import CareServices from "../CareServices";
 
 import { RainbowButton } from "../../ui/rainbow-button";
 
@@ -77,6 +78,8 @@ const NannyService = () => {
 
 
       <NannyJobs/>
+
+      <CareServices/>
 
       <NannyFaq/>
 
