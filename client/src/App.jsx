@@ -157,8 +157,8 @@ const App = () => {
                   <HeroSection />
                   <Heading />
                   <Gallery />
-                  <TrendingCategories />
                   <WhyUs />
+                  <TrendingCategories />
                   <Reviews />
                   <Questions />
                 </>

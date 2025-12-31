@@ -1,12 +1,22 @@
-import { useState } from "react";
+// src/components/Footer.jsx
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import {
-  FaFacebook,
-  FaTwitter,
-  FaYoutube,
-  FaInstagram,
-  FaGooglePlus,
-  FaEnvelope,
-} from "react-icons/fa";
+  Facebook,
+  Twitter,
+  Instagram,
+  Linkedin,
+  Mail,
+  MapPin,
+  Phone,
+  Download,
+  Shield,
+  Heart,
+  ArrowUp,
+  ChevronRight,
+  Star,
+  CheckCircle,
+} from "lucide-react";
 
 const Footer = () => {
   const [email, setEmail] = useState("");
@@ -15,223 +25,299 @@ const Footer = () => {
   const handleSubscribe = (e) => {
     e.preventDefault();
     if (email) {
+      // API call simulation
+      console.log("Subscribed with:", email);
       setIsSubscribed(true);
       setEmail("");
       setTimeout(() => setIsSubscribed(false), 3000);
     }
   };
 
-  const hotelsAndResorts = [
-    "Mauritius Le Prince Maurice",
-    "Constance Belle Mare Plage",
-    "Seychelles Belle Mare Plage",
-    "Constance Lemuria",
-    "Constance Ephelia",
-    "Maldives Halaveli",
-    "Constance Moofushi",
-    "Madagascar Tsarabanjina",
-    "Constance Tsarabanjina",
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  // Production data
+  const marketplaceLinks = [
+    { name: "Buy", path: "/buy", description: "Find great deals" },
+    { name: "Sell", path: "/sell", description: "Sell your items" },
+    {
+      name: "Services",
+      path: "/services",
+      description: "Professional services",
+    },
+    { name: "Jobs", path: "/jobs", description: "Career opportunities" },
+    { name: "Housing", path: "/housing", description: "Rent & properties" },
+    { name: "Community", path: "/community", description: "Local events" },
   ];
 
-  const experiences = [
-    "Gastronomy",
-    "Golf",
-    "Spa",
-    "Weddings & Honeymoons",
-    "Diving",
-    "Constance Kids Club",
+  const supportLinks = [
+    { name: "Help Center", path: "/help" },
+    { name: "Safety Tips", path: "/safety" },
+    { name: "Contact Us", path: "/contact" },
+    { name: "FAQ", path: "/faq" },
+    { name: "Seller Guide", path: "/seller-guide" },
+    { name: "Buyer Guide", path: "/buyer-guide" },
   ];
 
-  const aboutUs = [
-    "One Team",
-    "Work with Us",
-    "Hospitality Training Centre",
-    "Offices",
-    "Press",
-    "Partners",
-  ];
-
-  const gallery = ["Blog", "Groups & Incentives"];
-
-  const recommendations = [
-    "Milan",
-    "Venice",
-    "Rome",
-    "Florence",
-    "BAGLIONI HOTELS",
-    "Tuscany",
-    "London",
-    "France",
-    "Marrakech",
+  const companyLinks = [
+    { name: "About Us", path: "/about" },
+    { name: "Careers", path: "/careers" },
+    { name: "Press", path: "/press" },
+    { name: "Blog", path: "/blog" },
+    { name: "Team", path: "/team" },
+    { name: "Partners", path: "/partners" },
   ];
 
   return (
-    <footer className="bg-black text-white mt-20 rounded-t-[12%]">
-      {/* Main Footer Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 relative">
-        {/* Logo Circle */}
-        <div className="absolute top-0 left-0 w-12 h-12 bg-gold rounded-full opacity-20"></div>
-
-        {/* Footer Links Grid */}
-        <div className="flex justify-between gap-10">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
-            {/* Hotels & Resorts */}
-            <div>
-              <h4 className="text-base font-semibold text-gold mb-6 uppercase tracking-wide">
-                Hotels & Resorts
-              </h4>
-              <ul className="space-y-3">
-                {hotelsAndResorts.map((item, index) => (
-                  <li key={index}>
-                    <a
-                      href="#"
-                      className="text-gray-300 hover:text-gold transition-all duration-200 block text-sm leading-relaxed"
-                    >
-                      {item}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Experiences */}
-            <div>
-              <h4 className="text-base font-semibold text-gold mb-6 uppercase tracking-wide">
-                Experiences
-              </h4>
-              <ul className="space-y-3">
-                {experiences.map((item, index) => (
-                  <li key={index}>
-                    <a
-                      href="#"
-                      className="text-gray-300 hover:text-gold transition-all duration-200 block text-sm leading-relaxed"
-                    >
-                      {item}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* About Us */}
-            <div>
-              <h4 className="text-base font-semibold text-gold mb-6 uppercase tracking-wide">
-                About Us
-              </h4>
-              <ul className="space-y-3">
-                {aboutUs.map((item, index) => (
-                  <li key={index}>
-                    <a
-                      href="#"
-                      className="text-gray-300 hover:text-gold transition-all duration-200 block text-sm leading-relaxed"
-                    >
-                      {item}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Gallery */}
-            <div>
-              <h4 className="text-base font-semibold text-gold mb-6 uppercase tracking-wide">
-                Gallery
-              </h4>
-              <ul className="space-y-3">
-                {gallery.map((item, index) => (
-                  <li key={index}>
-                    <a
-                      href="#"
-                      className="text-gray-300 hover:text-gold transition-all duration-200 block text-sm leading-relaxed"
-                    >
-                      {item}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-
-          {/* Vertical Line */}
-
-          <div className="h-48 w-px bg-gray-700"></div>
-
-          {/* Follow Us & Newsletter */}
-          <div className="lg:col-span-1">
-            <div className="mb-8">
-              <h4 className="text-base font-semibold text-gold mb-6 uppercase tracking-wide">
-                Follow Us
-              </h4>
-              <div className="flex gap-3">
-                {/* Facebook */}
-                <a
-                  href="#"
-                  className="relative w-10 h-10 rounded-full flex items-center justify-center text-white group transition-all duration-300"
-                >
-                  <div className="absolute inset-0 bg-gray-800 rounded-full group-hover:bg-[#1877F2] transition-all duration-300"></div>
-                  <FaFacebook size={16} className="relative z-10" />
-                </a>
-
-                {/* Twitter */}
-                <a
-                  href="#"
-                  className="relative w-10 h-10 rounded-full flex items-center justify-center text-white group transition-all duration-300"
-                >
-                  <div className="absolute inset-0 bg-gray-800 rounded-full group-hover:bg-[#1DA1F2] transition-all duration-300"></div>
-                  <FaTwitter size={16} className="relative z-10" />
-                </a>
-
-                {/* YouTube */}
-                <a
-                  href="#"
-                  className="relative w-10 h-10 rounded-full flex items-center justify-center text-white group transition-all duration-300"
-                >
-                  <div className="absolute inset-0 bg-gray-800 rounded-full group-hover:bg-[#FF0000] transition-all duration-300"></div>
-                  <FaYoutube size={16} className="relative z-10" />
-                </a>
-
-                {/* Instagram */}
-                <a
-                  href="#"
-                  className="relative w-10 h-10 rounded-full flex items-center justify-center text-white group transition-all duration-300"
-                >
-                  <div className="absolute inset-0 bg-gray-800 rounded-full group-hover:bg-[#E4405F] transition-all duration-300"></div>
-                  <FaInstagram size={16} className="relative z-10" />
-                </a>
-
-                {/* Google Plus */}
-                <a
-                  href="#"
-                  className="relative w-10 h-10 rounded-full flex items-center justify-center text-white group transition-all duration-300"
-                >
-                  <div className="absolute inset-0 bg-gray-800 rounded-full group-hover:bg-[#DB4437] transition-all duration-300"></div>
-                  <FaGooglePlus size={16} className="relative z-10" />
-                </a>
+    <footer className="bg-white border-t border-gray-200 pt-16 pb-8 mt-14 px-4 sm:px-6 lg:px-8 relative overflow-hidden ">
+      <div className="max-w-7xl mx-auto relative z-10">
+        {/* Main Footer Content */}
+        <div className="grid grid-cols-1 lg:grid-cols-6 gap-8 mb-12">
+          {/* Brand & Description */}
+          <div className="col-span-1 lg:col-span-2">
+            <div className="flex items-center space-x-3 mb-6">
+              <div>
+                <h2 className="text-gray-900 font-bold text-2xl">Listify</h2>
+                <p className="text-gray-500 text-sm">
+                  Your Trusted Local Marketplace
+                </p>
               </div>
             </div>
 
+            <p className="text-gray-600 text-sm mb-6 leading-relaxed max-w-md">
+              Connecting communities through trusted local commerce. Buy, sell,
+              and discover everything you need right in your neighborhood with
+              safety and convenience.
+            </p>
+
+            {/* Trust Badges */}
+            {/* <div className="flex flex-wrap gap-3 mb-6">
+              <div className="flex items-center space-x-2 bg-green-50 px-3 py-2 rounded-lg border border-green-200">
+                <CheckCircle className="w-4 h-4 text-green-600" />
+                <span className="text-green-700 text-xs font-medium">Verified Sellers</span>
+              </div>
+              <div className="flex items-center space-x-2 bg-blue-50 px-3 py-2 rounded-lg border border-blue-200">
+                <Shield className="w-4 h-4 text-blue-600" />
+                <span className="text-blue-700 text-xs font-medium">Secure Payments</span>
+              </div>
+              <div className="flex items-center space-x-2 bg-[#FFCE32] bg-opacity-20 px-3 py-2 rounded-lg border border-[#FFCE32] border-opacity-30">
+                <Star className="w-4 h-4 text-gray-800" />
+                <span className="text-gray-800 text-xs font-medium">Top Rated</span>
+              </div>
+            </div> */}
+
+            {/* Contact Info */}
+            <div className="space-y-3">
+              <div className="flex items-center space-x-3 text-gray-600">
+                <MapPin className="w-4 h-4 text-[#27BB97]" />
+                <span className="text-sm">123 Market Street, Suite 100</span>
+              </div>
+              <div className="flex items-center space-x-3 text-gray-600">
+                <Phone className="w-4 h-4 text-[#27BB97]" />
+                <span className="text-sm">+1 (555) 123-4567</span>
+              </div>
+              <div className="flex items-center space-x-3 text-gray-600">
+                <Mail className="w-4 h-4 text-[#27BB97]" />
+                <span className="text-sm">support@listify.com</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Marketplace Links */}
+          <div className="col-span-1 lg:col-span-1">
+            <h3 className="text-gray-900 font-bold mb-6 text-sm uppercase tracking-wider pl-5">
+              Marketplace
+            </h3>
+            <ul className="space-y-3">
+              {marketplaceLinks.map((item) => (
+                <li key={item.name}>
+                  <Link
+                    to={item.path}
+                    className="group flex items-center space-x-2 text-gray-600 hover:text-blue-600 transition-all duration-200 text-sm"
+                  >
+                    <ChevronRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+                    <span className="group-hover:font-medium">{item.name}</span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Support Links */}
+          <div className="col-span-1 lg:col-span-1">
+            <h3 className="text-gray-900 font-bold mb-6 text-sm uppercase tracking-wider  pl-5">
+              Support
+            </h3>
+            <ul className="space-y-3">
+              {supportLinks.map((item) => (
+                <li key={item.name}>
+                  <Link
+                    to={item.path}
+                    className="group flex items-center space-x-2 text-gray-600 hover:text-green-600 transition-all duration-200 text-sm"
+                  >
+                    <ChevronRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+                    <span className="group-hover:font-medium">{item.name}</span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Company Links */}
+          <div className="col-span-1 lg:col-span-1">
+            <h3 className="text-gray-900 font-bold mb-6 text-sm uppercase tracking-wider pl-5">
+              Company
+            </h3>
+            <ul className="space-y-3">
+              {companyLinks.map((item) => (
+                <li key={item.name}>
+                  <Link
+                    to={item.path}
+                    className="group flex items-center space-x-2 text-gray-600 hover:text-blue-600 transition-all duration-200 text-sm"
+                  >
+                    <ChevronRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+                    <span className="group-hover:font-medium">{item.name}</span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Newsletter & Apps */}
+          <div className="col-span-1 lg:col-span-1">
+            <h3 className="text-gray-900 font-bold mb-6 text-sm uppercase tracking-wider">
+              Stay Connected
+            </h3>
+
             {/* Newsletter */}
-            <div>
-              <h4 className="text-base font-semibold text-gold mb-4 uppercase tracking-wide">
-                Newsletter
-              </h4>
-              <form onSubmit={handleSubscribe} className="flex flex-col gap-2">
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Enter your email"
-                  className="px-3 py-2 bg-gray-800 border border-gray-700 rounded text-sm text-white placeholder-gray-400 focus:outline-none focus:border-gold"
-                  required
-                />
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-gold text-white font-semibold rounded text-sm bg-yellow-500 transition-all duration-200 uppercase tracking-wide cursor-pointer hover:bg-yellow-600"
-                >
-                  {isSubscribed ? "Subscribed!" : "Subscribe"}
-                </button>
+            <div className="mb-8">
+              <p className="text-gray-600 text-sm mb-4">
+                Get the latest updates and exclusive offers
+              </p>
+              <form onSubmit={handleSubscribe} className="space-y-3">
+                <div className="relative">
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="your email"
+                    className="w-full pl-2 pr-24 py-3 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FFCE32] focus:border-[#FFCE32] transition-all duration-200 bg-white"
+                    required
+                  />
+                  <button
+  type="submit"
+  className="absolute right-0 top-0 bottom-0 bg-[#FFCE32] hover:bg-[#E6B82E] text-gray-900 px-3 rounded-md transition-all duration-200 cursor-pointer flex items-center justify-center"
+>
+  ➜
+</button>
+
+                </div>
+                {isSubscribed && (
+                  <p className="text-green-600 text-xs font-medium animate-pulse">
+                    ✅ Thank you for subscribing!
+                  </p>
+                )}
               </form>
             </div>
+
+            {/* Mobile Apps */}
+            <div>
+              <h4 className="text-gray-700 font-semibold mb-3 text-sm">
+                Get Our App
+              </h4>
+              <div className="space-y-3">
+                <button className="w-full flex items-center justify-center space-x-3 bg-black  text-white py-3 px-4 rounded-lg transition-all duration-200 text-sm cursor-pointer shadow-lg ">
+                  <Download className="w-4 h-4" />
+                  <span>App Store</span>
+                </button>
+                <button className="w-full flex items-center justify-center space-x-3 bg-black  text-white py-3 px-4 rounded-lg transition-all duration-200 text-sm cursor-pointer shadow-lg hover:shadow-xl">
+                  <Download className="w-4 h-4" />
+                  <span>Google Play</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom Section */}
+        <div className="flex flex-col lg:flex-row justify-between items-center space-y-6 lg:space-y-0 pt-8 border-t border-gray-200">
+          {/* Copyright & Legal */}
+          <div className="flex flex-col md:flex-row items-center space-y-3 md:space-y-0 md:space-x-8 text-gray-500 text-sm">
+            <p className="text-center md:text-left">
+              © {new Date().getFullYear()} Listify Marketplace. All rights
+              reserved.
+            </p>
+            <div className="flex flex-wrap justify-center gap-4">
+              {[
+                "Terms of Service",
+                "Privacy Policy",
+                "Cookie Policy",
+                "Disclaimer",
+              ].map((item) => (
+                <Link
+                  key={item}
+                  to={`/${item.toLowerCase().replace(/\s+/g, "-")}`}
+                  className="text-gray-500 hover:text-blue-600 transition-colors duration-200 text-sm"
+                >
+                  {item}
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          {/* Social Links & Scroll to Top */}
+          <div className="flex items-center space-x-6">
+            {/* Social Links */}
+            <div className="flex items-center space-x-4">
+              {[
+                {
+                  icon: Facebook,
+                  href: "https://facebook.com/listify",
+                  label: "Facebook",
+                  color: "hover:text-blue-600",
+                },
+                {
+                  icon: Twitter,
+                  href: "https://twitter.com/listify",
+                  label: "Twitter",
+                  color: "hover:text-blue-400",
+                },
+                {
+                  icon: Instagram,
+                  href: "https://instagram.com/listify",
+                  label: "Instagram",
+                  color: "hover:text-pink-600",
+                },
+                {
+                  icon: Linkedin,
+                  href: "https://linkedin.com/company/listify",
+                  label: "LinkedIn",
+                  color: "hover:text-blue-700",
+                },
+              ].map((social) => (
+                <a
+                  key={social.label}
+                  href={social.href}
+                  className={`text-gray-400 ${social.color} transition-all duration-200 p-2 rounded-lg hover:bg-gray-100`}
+                  aria-label={`Follow us on ${social.label}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <social.icon className="w-5 h-5" />
+                </a>
+              ))}
+            </div>
+
+            {/* Scroll to Top */}
+            <button
+              onClick={scrollToTop}
+              className="flex items-center space-x-2 bg-[#27BB97] text-gray-900 px-4 py-2.5 rounded-lg transition-all duration-200 hover:shadow-lg text-sm font-medium cursor-pointer"
+              aria-label="Scroll to top"
+            >
+              <ArrowUp className="w-4 h-4" />
+              <span>Top</span>
+            </button>
           </div>
         </div>
       </div>
