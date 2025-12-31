@@ -70,7 +70,7 @@ const Footer = () => {
   ];
 
   return (
-    <footer className="bg-white border-t border-gray-200 pt-16 pb-8 mt-14 px-4 sm:px-6 lg:px-8 relative overflow-hidden ">
+    <footer className="bg-gray-100 border-t border-gray-200 pt-16 pb-8 mt-14 px-4 sm:px-6 lg:px-8 relative overflow-hidden ">
       <div className="max-w-7xl mx-auto relative z-10">
         {/* Main Footer Content */}
         <div className="grid grid-cols-1 lg:grid-cols-6 gap-8 mb-12">
@@ -206,12 +206,11 @@ const Footer = () => {
                     required
                   />
                   <button
-  type="submit"
-  className="absolute right-0 top-0 bottom-0 bg-[#FFCE32] hover:bg-[#E6B82E] text-gray-900 px-3 rounded-md transition-all duration-200 cursor-pointer flex items-center justify-center"
->
-  ➜
-</button>
-
+                    type="submit"
+                    className="absolute right-0 top-0 bottom-0 bg-[#FFCE32] hover:bg-[#E6B82E] text-gray-900 px-3 rounded-md transition-all duration-200 cursor-pointer flex items-center justify-center"
+                  >
+                    ➜
+                  </button>
                 </div>
                 {isSubscribed && (
                   <p className="text-green-600 text-xs font-medium animate-pulse">
