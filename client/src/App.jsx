@@ -10,6 +10,7 @@ import Navbar from "./pages/Home/Navbar.jsx";
 import HeroSection from "./pages/Home/HeroSection.jsx";
 import Heading from "./pages/Home/Heading.jsx";
 import TrendingCategories from "./pages/Home/TrendingCategories.jsx";
+import Category from "./pages/Home/Category.jsx";
 import WhyUs from "./pages/Home/WhyUs.jsx";
 import Questions from "./pages/Home/Questions.jsx";
 import Reviews from "./pages/Home/Reviews.jsx";
@@ -157,6 +158,7 @@ const App = () => {
                   <HeroSection />
                   <Heading />
                   <Gallery />
+                  <Category/>
                   <WhyUs />
                   <TrendingCategories />
                   <Reviews />
