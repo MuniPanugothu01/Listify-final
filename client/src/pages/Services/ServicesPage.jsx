@@ -7,6 +7,7 @@ import ServiceHub from '../../components/Services/ServiceHub'
 import ServiceCategories from '../../components/Services/ServiceCategories';
 import SmartFilterBar from '../../components/Services/SmartFilterBar';
 import HowItWorks from '../../components/Services/HowItWorks';
+import ServiceTrustStrip from '../../components/Services/ServiceTrustStrip';
 
 const ServicesPage = () => {
   return (
@@ -17,6 +18,7 @@ const ServicesPage = () => {
       {/* <ServiceHub/> */}
       <ServiceCategories/>
       <HowItWorks/>
+   <ServiceTrustStrip/>
 
     </div>
   )
