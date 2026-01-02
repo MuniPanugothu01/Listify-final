@@ -8,6 +8,8 @@ import ServiceCategories from '../../components/Services/ServiceCategories';
 import SmartFilterBar from '../../components/Services/SmartFilterBar';
 import HowItWorks from '../../components/Services/HowItWorks';
 import ServiceTrustStrip from '../../components/Services/ServiceTrustStrip';
+import PopularNearbyServices from '../../components/Services/PopularNearbyServices';
+
 
 const ServicesPage = () => {
   return (
@@ -19,6 +21,8 @@ const ServicesPage = () => {
       <ServiceCategories/>
       <HowItWorks/>
    <ServiceTrustStrip/>
+<PopularNearbyServices/>
+
 
     </div>
   )
