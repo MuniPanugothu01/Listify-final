@@ -157,7 +157,7 @@ const App = () => {
                 <>
                   <HeroSection />
                   <Heading />
-                  <Gallery />
+                  {/* <Gallery /> */}
                   <Category/>
                   <WhyUs />
                   <TrendingCategories />

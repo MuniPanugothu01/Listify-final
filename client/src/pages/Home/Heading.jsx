@@ -16,7 +16,7 @@ const Heading = () => {
           incidunt ut.
         </p>
       </div>
-
+{/* 
       <div className="flex items-center gap-3 mt-8">
         <div className="bg-[#27bb97] p-2 rounded-full w-fit">
           <FaInstagram size={24} className="text-white" />
@@ -30,7 +30,7 @@ const Heading = () => {
       </div>
       <div className="">
         <button className="bg-[#27bb97] px-7 py-3 rounded-full mt-5 text-white font-semibold text-[23px] cursor-pointer">Explore Now</button>
-      </div>
+      </div> */}
     </div>
   );
 };
