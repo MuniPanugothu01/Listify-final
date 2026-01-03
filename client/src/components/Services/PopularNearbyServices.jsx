@@ -7,6 +7,7 @@ const services = [
     area: "Whitefield",
     rating: "4.9",
     price: "₹299",
+    available: true,
     image:
       "https://images.unsplash.com/photo-1581578731548-c64695cc6952",
   },
@@ -15,6 +16,7 @@ const services = [
     area: "Indiranagar",
     rating: "4.8",
     price: "₹399",
+    available: true,
     image:
       "https://images.unsplash.com/photo-1603712725038-e9334ae8f39f",
   },
@@ -23,6 +25,7 @@ const services = [
     area: "Koramangala",
     rating: "4.9",
     price: "₹499",
+    available: false,
     image:
       "https://images.unsplash.com/photo-1621905251189-08b45d6a269e",
   },
@@ -47,7 +50,6 @@ export default function PopularNearbyServices() {
 
         {/* CARDS */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-
           {services.map((service, index) => (
             <button
               key={index}
@@ -67,16 +69,19 @@ export default function PopularNearbyServices() {
 
               {/* CONTENT */}
               <div className="p-5">
+                {/* TITLE */}
                 <h3 className="text-lg font-semibold text-gray-900 mb-1">
                   {service.title}
                 </h3>
 
+                {/* LOCATION */}
                 <div className="flex items-center gap-1 text-sm text-gray-500 mb-3">
                   <MdLocationOn className="text-[#27bb97]" />
                   {service.area}
                 </div>
 
-                <div className="flex items-center justify-between text-sm text-gray-600">
+                {/* RATING + PRICE */}
+                <div className="flex items-center justify-between text-sm text-gray-600 mb-3">
                   <span className="flex items-center gap-1">
                     <FaStar className="text-yellow-400" />
                     {service.rating}
@@ -86,10 +91,17 @@ export default function PopularNearbyServices() {
                     From <span className="font-semibold">{service.price}</span>
                   </span>
                 </div>
+
+                {/* AVAILABILITY */}
+                {service.available && (
+                  <div className="flex items-center gap-2 text-sm text-green-600">
+                    <span className="w-2 h-2 rounded-full bg-green-500" />
+                    Available today
+                  </div>
+                )}
               </div>
             </button>
           ))}
-
         </div>
 
         {/* VIEW ALL */}
