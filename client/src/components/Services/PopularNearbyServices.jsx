@@ -1,115 +1,167 @@
 import { FaStar } from "react-icons/fa";
-import { MdLocationOn } from "react-icons/md";
+import { MdLocationOn, MdVerified } from "react-icons/md";
 
 const services = [
   {
+    id: 1,
     title: "Plumber",
     area: "Whitefield",
-    rating: "4.9",
+    rating: 4.9,
+    reviews: 128,
     price: "₹299",
-    available: true,
-    image:
-      "https://images.unsplash.com/photo-1581578731548-c64695cc6952",
+    availability: {
+      isToday: true,
+      nextAvailable: null,
+    },
+    isVerified: true,
+    image: "https://images.unsplash.com/photo-1581578731548-c64695cc6952",
   },
   {
+    id: 2,
     title: "House Cleaning",
     area: "Indiranagar",
-    rating: "4.8",
+    rating: 4.8,
+    reviews: 94,
     price: "₹399",
-    available: true,
-    image:
-      "https://images.unsplash.com/photo-1603712725038-e9334ae8f39f",
+    availability: {
+      isToday: false,
+      nextAvailable: "Tomorrow",
+    },
+    isVerified: true,
+    image: "https://images.unsplash.com/photo-1603712725038-e9334ae8f39f",
   },
   {
+    id: 3,
     title: "AC Repair",
     area: "Koramangala",
-    rating: "4.9",
+    rating: 4.9,
+    reviews: 156,
     price: "₹499",
-    available: false,
-    image:
-      "https://images.unsplash.com/photo-1621905251189-08b45d6a269e",
+    availability: {
+      isToday: false,
+      nextAvailable: "Mon, 22 Apr",
+    },
+    isVerified: true,
+    image: "https://images.unsplash.com/photo-1621905251189-08b45d6a269e",
   },
 ];
 
 export default function PopularNearbyServices() {
   return (
-    <section className="bg-white py-16">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6">
+    <section className="bg-gray-50 py-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* HEADER */}
-        <div className="mb-10">
-          <h2 className="text-2xl md:text-3xl font-bold text-gray-900">
-            Popular Services Near You
-          </h2>
+        <div className="flex flex-col md:flex-row md:items-center justify-between mb-12">
+          <div>
+            <h2 className="text-3xl font-bold text-gray-900 tracking-tight">
+              Popular Services Near You 
+              {/* <span className="text-[#27bb97]">USA & Canada</span>! */}
+            </h2>
+            <div className="mt-2 flex items-center gap-2 text-gray-600">
+              <MdLocationOn className="text-emerald-500" size={18} />
+              <span className="text-sm">Based in <span className="font-semibold text-[#27bb97]">Bangalore</span></span>
+            </div>
+          </div>
+          
+          <button className="mt-4 md:mt-0 text-emerald-600 font-semibold text-sm hover:text-emerald-700 transition-colors hover:underline cursor-pointer">
+            View all services →
+          </button>
+        </div>
+{/* CARDS */}
+<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 cursor-pointer">
+  {services.map((service) => (
+    <div
+      key={service.id}
+      className="group bg-white rounded-2xl shadow-sm hover:shadow-xl 
+                 transition-all duration-300 overflow-hidden border border-gray-100"
+    >
+      {/* IMAGE CONTAINER */}
+      <div className="relative h-48 overflow-hidden">
+        <img
+          src={service.image}
+          alt={service.title}
+          className="h-full w-full object-cover group-hover:scale-105 
+                   transition-transform duration-500"
+        />
+      </div>
 
-          <div className="mt-2 flex items-center gap-2 text-sm text-gray-600">
-            <MdLocationOn className="text-[#27bb97]" />
-            Based on <span className="font-medium">Bangalore</span>
+      {/* CONTENT */}
+      <div className="p-6">
+        {/* TITLE ROW */}
+        <div className="flex items-start justify-between mb-3">
+          <div className="flex items-center gap-2">
+            <h3 className="text-xl font-semibold text-gray-900
+                           group-hover:text-[#27bb97] transition-colors duration-300">
+              {service.title}
+            </h3>
+            {service.isVerified && (
+              <MdVerified 
+                className="text-emerald-500" 
+                size={20}
+                title="Verified professional"
+              />
+            )}
           </div>
         </div>
 
-        {/* CARDS */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {services.map((service, index) => (
-            <button
-              key={index}
-              className="group bg-white border border-gray-100 rounded-2xl
-                         overflow-hidden shadow-sm hover:shadow-xl
-                         transition-all duration-300 text-left"
-            >
-              {/* IMAGE */}
-              <div className="h-44 w-full overflow-hidden">
-                <img
-                  src={service.image}
-                  alt={service.title}
-                  className="h-full w-full object-cover
-                             group-hover:scale-105 transition-transform duration-500"
-                />
-              </div>
+        {/* LOCATION */}
+        <div className="flex items-center gap-2 text-gray-600 mb-4">
+          <MdLocationOn className="text-gray-400" size={16} />
+          <span className="text-sm">{service.area}, Bangalore</span>
+        </div>
 
-              {/* CONTENT */}
-              <div className="p-5">
-                {/* TITLE */}
-                <h3 className="text-lg font-semibold text-gray-900 mb-1">
-                  {service.title}
-                </h3>
+        {/* RATING & REVIEWS */}
+        <div className="flex items-center gap-2 mb-6">
+          <div className="flex items-center gap-1.5 bg-emerald-50 
+                        text-emerald-700 px-3 py-1 rounded-full">
+            <FaStar className="text-emerald-500" size={14} />
+            <span className="text-sm font-semibold">{service.rating}</span>
+          </div>
+          <span className="text-sm text-gray-500">
+            ({service.reviews} reviews)
+          </span>
+        </div>
 
-                {/* LOCATION */}
-                <div className="flex items-center gap-1 text-sm text-gray-500 mb-3">
-                  <MdLocationOn className="text-[#27bb97]" />
-                  {service.area}
-                </div>
-
-                {/* RATING + PRICE */}
-                <div className="flex items-center justify-between text-sm text-gray-600 mb-3">
-                  <span className="flex items-center gap-1">
-                    <FaStar className="text-yellow-400" />
-                    {service.rating}
-                  </span>
-
-                  <span>
-                    From <span className="font-semibold">{service.price}</span>
-                  </span>
-                </div>
-
-                {/* AVAILABILITY */}
-                {service.available && (
-                  <div className="flex items-center gap-2 text-sm text-green-600">
-                    <span className="w-2 h-2 rounded-full bg-green-500" />
+        {/* FOOTER - Availability & Price */}
+        <div className="pt-4 border-t border-gray-100">
+          <div className="flex items-center justify-between">
+            {/* AVAILABILITY */}
+            <div className="flex items-center gap-2">
+              {service.availability.isToday ? (
+                <>
+                  <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                  <span className="text-sm font-medium text-emerald-700">
                     Available today
+                  </span>
+                </>
+              ) : (
+                <>
+                  <div className="w-2 h-2 rounded-full bg-gray-300" />
+                  <div className="flex flex-col">
+                    <span className="text-xs text-gray-500">Next available</span>
+                    <span className="text-sm font-medium text-gray-900">
+                      {service.availability.nextAvailable}
+                    </span>
                   </div>
-                )}
-              </div>
-            </button>
-          ))}
-        </div>
+                </>
+              )}
+            </div>
 
-        {/* VIEW ALL */}
-        <div className="mt-10">
-          <button className="text-sm font-semibold text-[#27bb97] hover:underline">
-            View all nearby services →
-          </button>
+            {/* PRICE */}
+            <div className="text-right">
+              <span className="text-xs text-gray-500">Starting from</span>
+              <div className="text-lg font-bold text-gray-900">
+                {service.price}
+                <span className="text-sm font-normal text-gray-500">/service</span>
+              </div>
+            </div>
+          </div>
         </div>
+      </div>
+    </div>
+  ))}
+</div>
 
       </div>
     </section>
