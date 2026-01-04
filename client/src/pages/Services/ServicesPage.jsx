@@ -9,7 +9,7 @@ import SmartFilterBar from '../../components/Services/SmartFilterBar';
 import HowItWorks from '../../components/Services/HowItWorks';
 import ServiceTrustStrip from '../../components/Services/ServiceTrustStrip';
 import PopularNearbyServices from '../../components/Services/PopularNearbyServices';
-
+import TopRatedProfessionals from '../../components/Services/TopRatedProfessionals';
 
 const ServicesPage = () => {
   return (
@@ -22,7 +22,7 @@ const ServicesPage = () => {
       <HowItWorks/>
    <ServiceTrustStrip/>
 <PopularNearbyServices/>
-
+<TopRatedProfessionals/>
 
     </div>
   )
