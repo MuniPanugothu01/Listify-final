@@ -48,65 +48,64 @@ const services = [
 
 export default function PopularNearbyServices() {
   return (
-    <section className="bg-gray-50 py-16">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="bg-white py-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
         {/* HEADER */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between mb-12">
+        <div className="mb-10 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+          {/* LEFT */}
           <div>
-            <h2 className="text-3xl font-bold text-gray-900 tracking-tight">
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900">
               Popular Services Near You
-              {/* <span className="text-[#27bb97]">USA & Canada</span>! */}
             </h2>
-            <div className="mt-2 flex items-center gap-2 text-gray-600">
-              <MdLocationOn className="text-emerald-500" size={18} />
-              <span className="text-sm">
-                Based in{" "}
-                <span className="font-semibold text-[#27bb97]">Bangalore</span>
-              </span>
+
+            <div className="mt-2 flex items-center gap-2 text-sm text-gray-600">
+              <MdLocationOn className="text-[#27bb97]" />
+              Based on{" "}
+              <span className="font-medium text-[#27bb97]">Bangalore</span>
             </div>
           </div>
 
-          <button className="mt-4 md:mt-0 text-emerald-600 font-semibold text-sm hover:text-emerald-700 transition-colors hover:underline cursor-pointer">
-            View all services →
+          {/* RIGHT */}
+          <button className="text-sm font-semibold text-[#27bb97] hover:underline self-start sm:self-auto cursor-pointer">
+            View all nearby services →
           </button>
         </div>
+
         {/* CARDS */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 cursor-pointer">
           {services.map((service) => (
             <div
               key={service.id}
               className="group bg-white rounded-2xl shadow-sm hover:shadow-xl 
-                 transition-all duration-300 overflow-hidden border border-gray-100"
+                         transition-all duration-300 overflow-hidden border border-gray-100"
             >
-              {/* IMAGE CONTAINER */}
+              {/* IMAGE */}
               <div className="relative h-48 overflow-hidden">
                 <img
                   src={service.image}
                   alt={service.title}
-                  className="h-full w-full object-cover group-hover:scale-105 
-                   transition-transform duration-500"
+                  className="h-full w-full object-cover 
+                             group-hover:scale-105 transition-transform duration-500"
                 />
               </div>
 
               {/* CONTENT */}
               <div className="p-6">
-                {/* TITLE ROW */}
-                <div className="flex items-start justify-between mb-3">
-                  <div className="flex items-center gap-2">
-                    <h3
-                      className="text-xl font-semibold text-gray-900
-                           group-hover:text-[#27bb97] transition-colors duration-300"
-                    >
-                      {service.title}
-                    </h3>
-                    {service.isVerified && (
-                      <MdVerified
-                        className="text-emerald-500"
-                        size={20}
-                        title="Verified professional"
-                      />
-                    )}
-                  </div>
+                {/* TITLE + VERIFIED */}
+                <div className="flex items-center gap-2 mb-2">
+                  <h3
+                    className="text-xl font-semibold text-gray-900
+                                 group-hover:text-[#27bb97] transition-colors duration-300"
+                  >
+                    {service.title}
+                  </h3>
+                  {service.isVerified && (
+                    <MdVerified
+                      className="text-emerald-500"
+                      size={20}
+                      title="Verified professional"
+                    />
+                  )}
                 </div>
 
                 {/* LOCATION */}
@@ -115,11 +114,11 @@ export default function PopularNearbyServices() {
                   <span className="text-sm">{service.area}, Bangalore</span>
                 </div>
 
-                {/* RATING & REVIEWS */}
+                {/* RATING */}
                 <div className="flex items-center gap-2 mb-6">
                   <div
                     className="flex items-center gap-1.5 bg-emerald-50 
-                        text-emerald-700 px-3 py-1 rounded-full"
+                                  text-emerald-700 px-3 py-1 rounded-full"
                   >
                     <FaStar className="text-emerald-500" size={14} />
                     <span className="text-sm font-semibold">
@@ -131,44 +130,40 @@ export default function PopularNearbyServices() {
                   </span>
                 </div>
 
-                {/* FOOTER - Availability & Price */}
-                <div className="pt-4 border-t border-gray-100">
-                  <div className="flex items-center justify-between">
-                    {/* AVAILABILITY */}
-                    <div className="flex items-center gap-2">
-                      {service.availability.isToday ? (
-                        <>
-                          <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                          <span className="text-sm font-medium text-emerald-700">
-                            Available today
-                          </span>
-                        </>
-                      ) : (
-                        <>
-                          <div className="w-2 h-2 rounded-full bg-gray-300" />
-                          <div className="flex flex-col">
-                            <span className="text-xs text-gray-500">
-                              Next available
-                            </span>
-                            <span className="text-sm font-medium text-gray-900">
-                              {service.availability.nextAvailable}
-                            </span>
-                          </div>
-                        </>
-                      )}
-                    </div>
-
-                    {/* PRICE */}
-                    <div className="text-right">
-                      <span className="text-xs text-gray-500">
-                        Starting from
-                      </span>
-                      <div className="text-lg font-bold text-gray-900">
-                        {service.price}
-                        <span className="text-sm font-normal text-gray-500">
-                          /service
+                {/* FOOTER */}
+                <div className="pt-4 border-t border-gray-100 flex items-center justify-between">
+                  {/* AVAILABILITY */}
+                  <div className="flex items-center gap-2">
+                    {service.availability.isToday ? (
+                      <>
+                        <div className="w-2 h-2 rounded-full bg-emerald-500" />
+                        <span className="text-sm font-medium text-emerald-700">
+                          Available today
                         </span>
-                      </div>
+                      </>
+                    ) : (
+                      <>
+                        <div className="w-2 h-2 rounded-full bg-gray-300" />
+                        <div className="flex flex-col">
+                          <span className="text-xs text-gray-500">
+                            Next available
+                          </span>
+                          <span className="text-sm font-medium text-gray-900">
+                            {service.availability.nextAvailable}
+                          </span>
+                        </div>
+                      </>
+                    )}
+                  </div>
+
+                  {/* PRICE */}
+                  <div className="text-right">
+                    <span className="text-xs text-gray-500">Starting from</span>
+                    <div className="text-lg font-bold text-gray-900">
+                      {service.price}
+                      <span className="text-sm font-normal text-gray-500">
+                        /service
+                      </span>
                     </div>
                   </div>
                 </div>
