@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Users, Home, ShoppingCart, Briefcase, Music } from "lucide-react";
 
 const Category = () => {
@@ -59,7 +59,7 @@ const Category = () => {
       id: 5,
       title: "Cars",
       image: "https://www.huntermoss.com/images/best-cars-for-road-trips/a-img.webp",
-      icon: Briefcase, // You can add a car icon later
+      icon: Briefcase,
       subcategories: [
         "Used Cars",
         "New Cars",
@@ -146,7 +146,28 @@ const Category = () => {
         "Books & Toys",
       ],
     },
+    {
+      id: 12,
+      title: "Pets",
+      image: "https://www.akc.org/wp-content/uploads/2017/11/Golden-Retriever-puppy-outdoors.jpg",
+      icon: Users,
+      subcategories: [
+        "Dogs for Adoption",
+        "Cats for Adoption",
+        "Pet Supplies",
+        "Pet Services",
+        "Lost & Found Pets",
+      ],
+    },
   ];
+
+  // State to track if we should show all cards
+  const [showAll, setShowAll] = useState(false);
+  
+  // Calculate cards to show initially (8 cards = 2 rows of 4 on desktop)
+  const initialCardsCount = 8;
+  const displayedCategories = showAll ? categories : categories.slice(0, initialCardsCount);
+  const hasMoreCards = categories.length > initialCardsCount;
 
   const renderCard = (category) => (
     <div
@@ -201,30 +222,52 @@ const Category = () => {
 
   return (
     <div className="min-h-screen bg-white py-12 px-4">
-      <div className="px-10">
-        {/* <h1 className="text-center mb-12">
-          <div className="text-5xl font-bold text-gray-900">
+      <div className="px-4 sm:px-6 lg:px-8">
+        <h1 className="text-center mb-12">
+          <div className="text-4xl sm:text-5xl font-bold text-gray-900">
             Popular Categories
           </div>
-          <div className="relative inline-block mt-6">
-            <div className="text-3xl font-semibold text-gray-700">
+          <div className="relative inline-block mt-4 sm:mt-6">
+            <div className="text-2xl sm:text-3xl font-semibold text-gray-700">
               Explore Local Listings
             </div>
             <div className="h-1 w-full bg-gradient-to-r from-transparent via-[#27bb97] to-transparent mt-2"></div>
           </div>
-        </h1> */}
+        </h1>
 
-        {/* Grid: 1-2-3-5 columns responsive */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 max-w-7xl mx-auto">
-          {categories.map(renderCard)}
+        {/* Grid: 1-2-3-4 columns responsive */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 max-w-7xl mx-auto">
+          {displayedCategories.map(renderCard)}
         </div>
 
-        {/* View All Button (optional if you have more) */}
-        {categories.length > 11 && (
-          <div className="text-center mt-16">
-            <button className="px-8 py-3 border-2 border-[#27bb97] text-[#27bb97] font-semibold rounded-lg hover:bg-[#27bb97] hover:text-white transition-all duration-300 hover:shadow-lg">
-              View All Categories →
+        {/* View More / View Less Button */}
+        {hasMoreCards && (
+          <div className="text-center mt-12">
+            <button
+              onClick={() => setShowAll(!showAll)}
+              className="px-8 py-3 border-2 border-[#27bb97] text-[#27bb97] font-semibold rounded-lg hover:bg-[#27bb97] hover:text-white transition-all duration-300 hover:shadow-lg flex items-center justify-center mx-auto gap-2"
+            >
+              {showAll ? (
+                <>
+                  View Less
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clipRule="evenodd" />
+                  </svg>
+                </>
+              ) : (
+                <>
+                  View More Categories
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                  </svg>
+                </>
+              )}
             </button>
+            {!showAll && (
+              <p className="text-gray-500 mt-3 text-sm">
+                Showing {initialCardsCount} of {categories.length} categories
+              </p>
+            )}
           </div>
         )}
       </div>
