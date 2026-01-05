@@ -10,6 +10,7 @@ import HowItWorks from '../../components/Services/HowItWorks';
 import ServiceTrustStrip from '../../components/Services/ServiceTrustStrip';
 import PopularNearbyServices from '../../components/Services/PopularNearbyServices';
 import TopRatedProfessionals from '../../components/Services/TopRatedProfessionals';
+import PropertyExperts from '../../components/Services/PropertyExperts'
 
 const ServicesPage = () => {
   return (
@@ -23,6 +24,8 @@ const ServicesPage = () => {
    <ServiceTrustStrip/>
 <PopularNearbyServices/>
 <TopRatedProfessionals/>
+<PropertyExperts/>
+
 
     </div>
   )

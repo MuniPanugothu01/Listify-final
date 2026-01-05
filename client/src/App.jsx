@@ -54,11 +54,20 @@ import JobSeekerResumesDetail from "./components/Jobs/JobSeekerResumesDetail.jsx
 // Services
 import ServicesPage from "./pages/Services/ServicesPage.jsx";
 
+
+// Cars categories
+import CarsPage from "./pages/CarsPages/CarsPage.jsx";
+
+
+
+
+
 // Profile
 import Profile from "./pages/Home/Profile.jsx";
 
 // ChatBot
 import ChatBot from "./components/ChatBot.jsx";
+import { ScrollProgress } from "./components/ui/scroll-progress.jsx";
 
 // Layout wrapper for Footer visibility
 const Layout = ({ children }) => {
@@ -148,6 +157,8 @@ const App = () => {
     <Router>
       <div className="relative">
         <Navbar />
+        
+        
 
         <Layout>
           <Routes>
@@ -206,6 +217,9 @@ const App = () => {
 
             {/* Services Category */}
             <Route path="/services" element={<ServicesPage />} />
+
+{/* Cars categories */}
+            <Route path="/cars" element={<CarsPage />} />
 
 
 

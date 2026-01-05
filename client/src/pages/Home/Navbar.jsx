@@ -29,6 +29,10 @@ import {
   FaChevronRight,
 } from "react-icons/fa";
 
+
+import { ScrollProgress } from "../../components/ui/scroll-progress";
+
+
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showLocationDropdown, setShowLocationDropdown] = useState(false);
@@ -78,7 +82,7 @@ const Navbar = () => {
     { name: "Services", path: "/services" },
     { name: "Marketplace", path: "/marketplace" },
     { name: "TakeCare", path: "/takecare" },
-    { name: "Cares", path: "/cares" },
+    { name: "Cars", path: "/cars" },
     { name: "Blogs", path: "/blogs" },
     { name: "Forums", path: "/forums" },
     { name: "Community", path: "/community" },
@@ -1493,6 +1497,9 @@ const Navbar = () => {
           </div>
         </div>
       )}
+
+
+      <ScrollProgress />
     </>
   );
 };
