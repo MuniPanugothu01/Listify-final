@@ -223,7 +223,7 @@ const Category = () => {
   return (
     <div className="min-h-screen bg-white py-12 px-4">
       <div className="px-4 sm:px-6 lg:px-8">
-        <h1 className="text-center mb-12">
+        {/* <h1 className="text-center mb-12">
           <div className="text-4xl sm:text-5xl font-bold text-gray-900">
             Popular Categories
           </div>
@@ -233,7 +233,7 @@ const Category = () => {
             </div>
             <div className="h-1 w-full bg-gradient-to-r from-transparent via-[#27bb97] to-transparent mt-2"></div>
           </div>
-        </h1>
+        </h1> */}
 
         {/* Grid: 1-2-3-4 columns responsive */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 max-w-7xl mx-auto">
