@@ -58,6 +58,7 @@ import Profile from "./pages/Home/Profile.jsx";
 
 // ChatBot
 import ChatBot from "./components/ChatBot.jsx";
+import { ScrollProgress } from "./components/ui/scroll-progress.jsx";
 
 // Layout wrapper for Footer visibility
 const Layout = ({ children }) => {
@@ -147,6 +148,8 @@ const App = () => {
     <Router>
       <div className="relative">
         <Navbar />
+        
+        
 
         <Layout>
           <Routes>

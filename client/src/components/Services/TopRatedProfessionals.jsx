@@ -52,7 +52,7 @@ const professionals = [
 
 export default function TopRatedProfessionals() {
   return (
-    <section className="bg-white py-16">
+    <section className="bg-white py-16 ">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         {/* HEADER */}
         <div className="mb-12">
@@ -70,7 +70,7 @@ export default function TopRatedProfessionals() {
         </div>
 
         {/* CARDS */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6  ">
           {professionals.map((pro) => (
             <div
               key={pro.id}
@@ -79,7 +79,7 @@ export default function TopRatedProfessionals() {
                          transition-all duration-300 cursor-pointer"
             >
               {/* COVER IMAGE WITH JOBS OVERLAY */}
-              <div className="relative h-40 overflow-hidden">
+              <div className="relative h-40">
                 <img
                   src={serviceCovers[pro.profession]}
                   alt={pro.profession}
@@ -87,8 +87,7 @@ export default function TopRatedProfessionals() {
                            transition-transform duration-500"
                 />
 
-                {/* GRADIENT OVERLAY */}
-                <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/20" />
+      
 
                 {/* STATUS BADGE */}
                 <div className="absolute top-4 right-4">
@@ -106,7 +105,7 @@ export default function TopRatedProfessionals() {
 
                 {/* AVATAR */}
                 <div
-                  className="absolute left-6 -bottom-6 w-16 h-16 rounded-full 
+                  className="absolute left-6 -bottom-6 w-16 h-16 z-50 rounded-full  
                               border-4 border-white shadow-lg overflow-hidden 
                               bg-white"
                 >
@@ -119,7 +118,7 @@ export default function TopRatedProfessionals() {
               </div>
 
               {/* CONTENT */}
-              <div className="pt-10 px-6 pb-6">
+              <div className="pt-10  px-6 pb-6 ">
                 {/* NAME & VERIFICATION */}
                 <div className="flex items-start justify-between mb-2">
                   <div className="flex items-center gap-2">
@@ -180,6 +179,8 @@ export default function TopRatedProfessionals() {
                   </div>
                 </div>
               </div>
+
+
             </div>
           ))}
         </div>
