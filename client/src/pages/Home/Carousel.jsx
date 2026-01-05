@@ -1,29 +1,37 @@
-import React from 'react';
-import { Search, Zap, Target, Shield, Settings } from 'lucide-react';
+import React from "react";
 
 export default function Carousel() {
   return (
     <div className="min-h-screen">
-    
-      {/* Hero Section */}
       <section className="px-8 py-16 max-w-7xl mx-auto">
         <div className="grid md:grid-cols-2 gap-12 items-center">
-          {/* Left Content */}
+          {/* Left Content (same as before) */}
           <div className="space-y-6">
             <h1 className="text-5xl md:text-6xl font-bold leading-tight">
-              We Are Solution Oriented{' '}
+              We Are Solution Oriented{" "}
               <span className="text-orange-500 relative">
                 Digital
-                <svg className="absolute -bottom-2 left-0 w-full" height="8" viewBox="0 0 200 8">
-                  <path d="M0,4 Q50,0 100,4 T200,4" stroke="#ff6b35" strokeWidth="2" fill="none" strokeDasharray="5,5"/>
+                <svg
+                  className="absolute -bottom-2 left-0 w-full"
+                  height="8"
+                  viewBox="0 0 200 8"
+                >
+                  <path
+                    d="M0,4 Q50,0 100,4 T200,4"
+                    stroke="#ff6b35"
+                    strokeWidth="2"
+                    fill="none"
+                    strokeDasharray="5,5"
+                  />
                 </svg>
-              </span>
-              {' '}Agency
-             
+              </span>{" "}
+              Agency
             </h1>
-            
+
             <p className="text-gray-600 text-lg">
-              Suspendisse id odio a felis porta semper eu id ligula. Cras vestibulum nibh eu vehicula finibus. Praesent sollicitudin, arcu eu facilisis.
+              Suspendisse id odio a felis porta semper eu id ligula. Cras
+              vestibulum nibh eu vehicula finibus. Praesent sollicitudin, arcu
+              eu facilisis.
             </p>
 
             <div className="flex gap-4">
@@ -34,40 +42,116 @@ export default function Carousel() {
                 How It Works
               </button>
             </div>
-
-         
-
           </div>
 
-          {/* Right Content - Hero Image */}
-          <div className="relative">
-            {/* Main Circle */}
-            <div className="relative w-full aspect-square max-w-lg mx-auto">
-              {/* Yellow Circle Background */}
-              <div className="absolute inset-0  rounded-full"></div>
-              
-              {/* Person Image */}
-          <div className="flex items-center justify-center  h-[600px] w-[600px] mx-auto border border-orange-300 rounded-full p-4">
-              <div className='bg-orange-400 rounded-full h-[500px] w-[500px] overflow-hidden flex items-center justify-center mx-auto'>
-              <div className='bg-orange-300 rounded-full h-[400px] w-[400px] overflow-hidden'>
+          <div className="relative ">
+            <div className="bg-orange-400 rounded-full h-[500px] w-[500px] overflow-hidden flex items-center justify-center mx-auto">
+              <div className="bg-orange-300 rounded-full h-[400px] w-[400px] overflow-hidden">
+                <img
+                  src="/Services/HomeServices/hero-1.png"
+                  alt="Hero-image"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            </div>
+
+            {/* Rotating div with very slow CSS animation */}
+            <div 
+              className="-top-11 -left-3 absolute items-center justify-center h-[600px] w-[600px] mx-auto border border-orange-300 rounded-full p-4"
+              style={{
+                animation: 'rotate 60s linear infinite' // Very slow - 60 seconds per rotation
+              }}
+            >
+              {/* Car images - they will counter-rotate to stay upright */}
               <img 
-                    src="/Services/HomeServices/hero-1.png" 
-                    alt="Hero-image" 
-                    className="w-full h-full object-cover"
-                  />
+                src="/cars/bmw.png" 
+                className="absolute right-14 top-0" 
+                alt="car"
+                style={{
+                  animation: 'rotateCounter 60s linear infinite'
+                }}
+              />
+              <img 
+                src="/cars/bmw.png" 
+                className="absolute left-10 bottom-10" 
+                alt="car"
+                style={{
+                  animation: 'rotateCounter 60s linear infinite'
+                }}
+              />
+              <img 
+                src="/cars/bmw.png" 
+                className="absolute -right-14 top-50" 
+                alt="car"
+                style={{
+                  animation: 'rotateCounter 60s linear infinite'
+                }}
+              />
+              <img 
+                src="/cars/bmw.png" 
+                className="absolute -left-11 top-50" 
+                alt="car"
+                style={{
+                  animation: 'rotateCounter 60s linear infinite'
+                }}
+              />
+              <img 
+                src="/cars/bmw.png" 
+                className="absolute right-60 -top-13" 
+                alt="car"
+                style={{
+                  animation: 'rotateCounter 60s linear infinite'
+                }}
+              />
+              <img
+                src="/cars/bmw.png"
+                className="absolute right-60 -bottom-12"
+                alt="car"
+                style={{
+                  animation: 'rotateCounter 60s linear infinite'
+                }}
+              />
+              <img 
+                src="/cars/bmw.png" 
+                className="absolute right-10 bottom-6" 
+                alt="car"
+                style={{
+                  animation: 'rotateCounter 60s linear infinite'
+                }}
+              />
+              <img 
+                src="/cars/bmw.png" 
+                className="absolute left-13 top-6" 
+                alt="car"
+                style={{
+                  animation: 'rotateCounter 60s linear infinite'
+                }}
+              />
             </div>
-            </div>
-          </div>
-            </div>
-
-            {/* Decorative wavy line */}
-            {/* <svg className="absolute -bottom-12 left-0 w-full" height="100" viewBox="0 0 500 100">
-              <path d="M0,50 Q125,30 250,50 T500,50" stroke="#FFA500" strokeWidth="3" fill="none" opacity="0.3"/>
-            </svg> */}
           </div>
         </div>
       </section>
 
+      {/* Add CSS animations in style tag */}
+      <style jsx>{`
+        @keyframes rotate {
+          from {
+            transform: rotate(0deg);
+          }
+          to {
+            transform: rotate(360deg);
+          }
+        }
+        
+        @keyframes rotateCounter {
+          from {
+            transform: rotate(0deg);
+          }
+          to {
+            transform: rotate(-360deg);
+          }
+        }
+      `}</style>
     </div>
   );
 }
