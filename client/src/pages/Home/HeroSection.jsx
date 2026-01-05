@@ -60,7 +60,7 @@ const HeroSection = () => {
   return (
     <section
       className="relative bg-cover bg-center min-h-screen flex flex-col items-center justify-center"
-      style={{ backgroundImage: `url(/herobg.jpg)` }}
+      style={{ backgroundImage: `url(/babycare-1.jpg)` }}
     >
       <div className="relative border-t-4 border-x-4 border-black/40 rounded-t-xl px-170 py-70 text-center">
         <div className="flex items-center gap-3 absolute -top-9 left-1/2 -translate-x-1/2  font-bold bg-black  text-3xl px-7 py-2 broder-5 rounded-xl">

@@ -43,6 +43,28 @@ export default {
         "primary-btn-hover": "#1fa987",
         "secondary-blue": "#2d7dd7",
       },
+      fontFamily: {
+        'parisienne': ['Parisienne', 'cursive'],
+        'indie-flower': ['Indie Flower', 'cursive'],
+      },
+      animation: {
+        'rotate-it': 'rotate-it 60s linear infinite',
+      },
+      keyframes: {
+        'rotate-it': {
+          'to': { transform: 'rotate(360deg)' },
+        },
+      },
+      filter: {
+        'invert-75': 'invert(75%)',
+      },
+      rotate: {
+        '15': '15deg',
+      },
+      scale: {
+        '35': '0.35',
+        '60': '0.6',
+      },
     },
   },
 };

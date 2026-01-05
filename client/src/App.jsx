@@ -16,6 +16,7 @@ import Questions from "./pages/Home/Questions.jsx";
 import Reviews from "./pages/Home/Reviews.jsx";
 import Footer from "./pages/Home/Footer.jsx";
 import Gallery from "./pages/Home/Gallery.jsx";
+import Carousel from "./pages/Home/Carousel.jsx";
 
 import ContactUs from "./pages/ContactPage/ContactUS.jsx";
 import AboutUs from "./pages/AboutPage/AboutUs.jsx";
@@ -163,6 +164,7 @@ const App = () => {
                   <TrendingCategories />
                   <Reviews />
                   <Questions />
+                  <Carousel/>
                 </>
               }
             />
