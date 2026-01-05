@@ -72,7 +72,7 @@ const BrowseCategories = () => {
           {/* icon */}
 
           <div className=" justify-center flex mb-2 mt-2">
-            <img src="" alt="" className="h-20 w-20 rounded-2xl" />
+            <img src="/Cars/lamborghini.png" alt="" className="h-20 w-20 rounded-2xl" />
           </div>
           {/* text */}
 
