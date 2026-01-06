@@ -27,7 +27,7 @@ const PostCars = () => {
 
         {/* second sell your car */}
 
-           <div className="h-85 w-140 p-10 bg-green-50 border border-[#e9f3ff] rounded-lg">
+        <div className="h-85 w-140 p-10 bg-green-50 border border-[#e9f3ff] rounded-lg">
           <h2 className="text-2xl font-bold mt-10 right-10 capitalize">
             do you want to <br /> sell your car ?
           </h2>
@@ -41,7 +41,7 @@ const PostCars = () => {
               get started <GoArrowUpRight className="" />
             </button>
 
-            <img src="/cars/sellcar.png" alt="" className="h-16 w-18 mb-5"/>
+            <img src="/cars/sellcar.png" alt="" className="h-16 w-18 mb-5" />
           </div>
         </div>
       </div>
