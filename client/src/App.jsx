@@ -167,8 +167,8 @@ const App = () => {
               path="/"
               element={
                 <>
-                  <HeroSection />
                   <Carousel/>
+                  <HeroSection />
                   <Heading />
                   {/* <Gallery /> */}
                   <Category/>
