@@ -168,6 +168,7 @@ const App = () => {
               element={
                 <>
                   <HeroSection />
+                  <Carousel/>
                   <Heading />
                   {/* <Gallery /> */}
                   <Category/>
@@ -175,7 +176,6 @@ const App = () => {
                   <TrendingCategories />
                   <Reviews />
                   <Questions />
-                  <Carousel/>
                 </>
               }
             />
