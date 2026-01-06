@@ -3,6 +3,7 @@ import HeroSection from '../../components/Cars/HeroSection'
 import BrowseCategories from '../../components/Cars/BrowseCategories'
 import FeaturedCars from '../../components/Cars/FeaturedCars'
 import PostCars from '../../components/Cars/PostCars'
+import CarListings from '../../components/Cars/CarListings'
 
 const CarsPage = () => {
   return (
@@ -11,6 +12,8 @@ const CarsPage = () => {
 <BrowseCategories />
 <FeaturedCars />
 <PostCars />
+
+<CarListings/>
     </div>
   )
 }
