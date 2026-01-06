@@ -112,6 +112,7 @@ const FeaturedCars = () => {
             <div className="relative h-[575px]">
               <img
                 src={cars[0].image}
+                loading="lazy"
                 alt={cars[0].name}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
               />
@@ -165,6 +166,7 @@ const FeaturedCars = () => {
                 {/* Background Image */}
                 <img
                   src={car.image}
+                  loading="lazy"
                   alt={car.name}
                   className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
