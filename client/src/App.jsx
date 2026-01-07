@@ -50,17 +50,11 @@ import JobSeekerInterface from "./components/Jobs/JobSeekerInterface.jsx";
 import JobSeekerResume from "./components/Jobs/JobSeekerResume.jsx"; // Job seeker profile page
 import JobSeekerResumesDetail from "./components/Jobs/JobSeekerResumesDetail.jsx"; // Job seeker listings page
 
-
 // Services
 import ServicesPage from "./pages/Services/ServicesPage.jsx";
 
-
 // Cars categories
 import CarsPage from "./pages/CarsPages/CarsPage.jsx";
-
-
-
-
 
 // Profile
 import Profile from "./pages/Home/Profile.jsx";
@@ -96,34 +90,6 @@ const Layout = ({ children }) => {
 
 const App = () => {
   const [showScrollTop, setShowScrollTop] = useState(false);
-  const [isScrolling, setIsScrolling] = useState(false);
-
-  // Smooth scroll to top
-  const scrollToTop = () => {
-    setIsScrolling(true);
-    const startPosition = window.pageYOffset;
-    const startTime = performance.now();
-
-    const scroll = (currentTime) => {
-      const elapsed = currentTime - startTime;
-      const progress = Math.min(elapsed / 600, 1);
-
-      const easeInOutCubic =
-        progress < 0.5
-          ? 4 * progress * progress * progress
-          : 1 - Math.pow(-2 * progress + 2, 3) / 2;
-
-      window.scrollTo(0, startPosition * (1 - easeInOutCubic));
-
-      if (progress < 1) {
-        requestAnimationFrame(scroll);
-      } else {
-        setIsScrolling(false);
-      }
-    };
-
-    requestAnimationFrame(scroll);
-  };
 
   useEffect(() => {
     let ticking = false;
@@ -157,8 +123,6 @@ const App = () => {
     <Router>
       <div className="relative">
         <Navbar />
-        
-        
 
         <Layout>
           <Routes>
@@ -167,11 +131,11 @@ const App = () => {
               path="/"
               element={
                 <>
-                  <Carousel/>
+                  <Carousel />
                   {/* <HeroSection /> */}
                   <Heading />
                   {/* <Gallery /> */}
-                  <Category/>
+                  <Category />
                   <WhyUs />
                   <TrendingCategories />
                   <Reviews />
@@ -183,11 +147,11 @@ const App = () => {
             <Route path="/contact-us" element={<ContactUs />} />
             <Route path="/about-us" element={<AboutUs />} />
             <Route path="/our-services" element={<OurServicesPage />} />
-            <Route path="/post-add" element={<PostaddPage/>} />
+            <Route path="/post-add" element={<PostaddPage />} />
 
             {/* TakeCare */}
-            <Route path="/takecare" element={<TakeCare/>} />
-            <Route path="/takecare/:serviceId" element={<NannyService/>} />
+            <Route path="/takecare" element={<TakeCare />} />
+            <Route path="/takecare/:serviceId" element={<NannyService />} />
 
             {/* Roommates */}
             <Route path="/roommates" element={<Roommates />} />
@@ -203,10 +167,11 @@ const App = () => {
             <Route path="/job-details/:id" element={<JobDetailsPage />} />
             <Route path="/job-seekers" element={<JobSeekerInterface />} />
             {/* Job Seeker Resumes Routes - FIXED */}
-            <Route path="/job-seeker-resumes" element={<JobSeekerResumesDetail />} />
+            <Route
+              path="/job-seeker-resumes"
+              element={<JobSeekerResumesDetail />}
+            />
             <Route path="/job-seeker-posts" element={<JobSeekerResume />} />
-
-
 
             {/* Events */}
             <Route path="/events" element={<Events />} />
@@ -217,10 +182,8 @@ const App = () => {
             {/* Services Category */}
             <Route path="/services" element={<ServicesPage />} />
 
-{/* Cars categories */}
+            {/* Cars categories */}
             <Route path="/cars" element={<CarsPage />} />
-
-
 
             {/* Profile */}
             <Route path="/profile" element={<Profile />} />
