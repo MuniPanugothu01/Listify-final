@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { FaCircleQuestion } from "react-icons/fa6";
 import { BsQuestionCircle } from "react-icons/bs";
 import { GoArrowUpRight } from "react-icons/go";
 import { MdKeyboardArrowUp, MdKeyboardArrowDown } from "react-icons/md";
@@ -47,60 +46,75 @@ const Questions = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-[#c89a5e]/20 mt-10 rounded-[10%] py-7 flex flex-col items-center justify-center px-10 text-black">
-      {/* <div className="bg-[#F3F3F3] w-fit flex items-center gap-2 px-4 py-1 rounded-full shadow-xl shadow-balck">
-        <FaCircleQuestion />
-        <p>FAQS</p>
-      </div> */}
-
-      <div className="flex flex-col items-center text-center ">
+    <div className="min-h-screen bg-[#c89a5e]/20 mt-8 sm:mt-10 md:mt-12 lg:mt-10 rounded-[5%] sm:rounded-[8%] lg:rounded-[10%] py-6 sm:py-7 md:py-8 lg:py-10 flex flex-col items-center justify-center px-3 sm:px-4 md:px-6 lg:px-8 xl:px-10 text-black">
+      {/* Header Section */}
+      <div className="flex flex-col items-center text-center mb-6 sm:mb-8 md:mb-10">
         <h1
           style={{ fontFamily: "Satoshi, sans-serif" }}
-          className="text-[55px] font-normal"
+          className="text-3xl sm:text-4xl md:text-5xl lg:text-[55px] font-normal leading-tight sm:leading-snug"
         >
           Questions? Answers!
         </h1>
-        <p className="text-[15px] text-gray-700">
+        <p className="text-sm sm:text-base md:text-[15px] text-gray-700 mt-2 sm:mt-3 max-w-2xl mx-auto px-2">
           Find quick answers to the most common questions about Listify
         </p>
       </div>
 
-      <div className="flex gap-5 mt-7">
-        <div className="flex flex-col items-center gap-3 h-fit bg-white rounded-xl shadow-xl shadow-gray-400 p-5">
-          <div className="p-4 bg-white rounded-xl shadow shadow-gray-400">
-            <BsQuestionCircle size={25} />
+      {/* Content Section - Stack on mobile, side by side on desktop */}
+      <div className="flex flex-col lg:flex-row gap-4 sm:gap-5 w-full max-w-6xl">
+        {/* Contact Card - Full width on mobile, 30% on desktop */}
+        <div className="w-full lg:w-[30%] flex flex-col items-center gap-3 sm:gap-4 h-fit bg-white rounded-xl sm:rounded-2xl shadow-lg sm:shadow-xl shadow-gray-300 sm:shadow-gray-400 p-4 sm:p-5 md:p-6">
+          <div className="p-3 sm:p-4 bg-white rounded-xl shadow shadow-gray-300 sm:shadow-gray-400">
+            <BsQuestionCircle size={20} className="sm:w-6 sm:h-6" />
           </div>
           <div className="flex flex-col items-center text-center">
-            <h2 className="text-[26px] ">Get In Touch Now!</h2>
-            <p className="text-gray-600">Still have questions? Feel free to get in touch with us today!</p>
+            <h2 className="text-lg sm:text-xl md:text-2xl lg:text-[26px] font-medium mb-1 sm:mb-2">
+              Get In Touch Now!
+            </h2>
+            <p className="text-gray-600 text-sm sm:text-base">
+              Still have questions? Feel free to get in touch with us today!
+            </p>
           </div>
 
-          <div className="bg-[#2F3A63] border-2 border-[#2F3A63] text-[17px] cursor-pointer shadow-xl px-4 py-3 rounded-xl text-white flex items-center gap-2">
-            <GoArrowUpRight size={20}/>
+          <button className="bg-[#2F3A63] border-2 border-[#2F3A63] text-sm sm:text-base md:text-[17px] cursor-pointer shadow-lg sm:shadow-xl px-3 sm:px-4 py-2 sm:py-3 rounded-lg sm:rounded-xl text-white flex items-center justify-center gap-1 sm:gap-2 w-full sm:w-auto hover:bg-[#242f5a] transition-colors duration-300">
+            <GoArrowUpRight size={18} className="sm:w-5 sm:h-5" />
             Contact Us
-          </div>
+          </button>
         </div>
 
-        {/* questions */}
-        <div className="flex flex-col gap-4">
+        {/* FAQ Questions - Full width on mobile, 70% on desktop */}
+        <div className="w-full lg:w-[70%] flex flex-col gap-3 sm:gap-4">
           {faqData.map((item, index) => (
-            <div key={index} className="bg-white rounded-lg w-[500px] shadow-lg shadow-gray-300 overflow-hidden">
+            <div 
+              key={index} 
+              className="bg-white rounded-lg sm:rounded-xl w-full shadow-md sm:shadow-lg shadow-gray-200 sm:shadow-gray-300 overflow-hidden transition-all duration-300 hover:shadow-lg"
+            >
               <div 
-                className="flex items-center justify-between p-4 cursor-pointer"
+                className="flex items-center justify-between p-3 sm:p-4 cursor-pointer hover:bg-gray-50 transition-colors duration-200"
                 onClick={() => toggleQuestion(index)}
               >
-                <p className="text-gray-800 font-medium">{item.question}</p>
-                {activeIndex === index ? <MdKeyboardArrowUp size={20} /> : <MdKeyboardArrowDown size={20} />}
+                <p className="text-gray-800 font-medium text-sm sm:text-base md:text-lg pr-2">
+                  {item.question}
+                </p>
+                {activeIndex === index ? 
+                  <MdKeyboardArrowUp size={18} className="sm:w-5 sm:h-5 flex-shrink-0" /> : 
+                  <MdKeyboardArrowDown size={18} className="sm:w-5 sm:h-5 flex-shrink-0" />
+                }
               </div>
               {activeIndex === index && (
-                <div className="px-4 pb-4">
-                  <p className="text-gray-600 text-sm">{item.answer}</p>
+                <div className="px-3 sm:px-4 pb-3 sm:pb-4 border-t border-gray-100 pt-3">
+                  <p className="text-gray-600 text-xs sm:text-sm md:text-base leading-relaxed">
+                    {item.answer}
+                  </p>
                 </div>
               )}
             </div>
           ))}
         </div>
       </div>
+
+      {/* Spacing at bottom */}
+      <div className="mt-8 sm:mt-10 md:mt-12"></div>
     </div>
   );
 }

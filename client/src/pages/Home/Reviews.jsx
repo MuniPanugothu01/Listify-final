@@ -61,11 +61,11 @@ const data = {
 
 // ⭐ Star Rating Component
 const StarRating = ({ rating }) => (
-  <div className="flex justify-center space-x-1 mb-3">
+  <div className="flex justify-center space-x-1 mb-2 sm:mb-3">
     {[...Array(5)].map((_, index) => (
       <FaStar
         key={index}
-        className={`text-lg ${index < rating ? "text-yellow-300" : "text-gray-300"}`}
+        className={`text-sm sm:text-base md:text-lg ${index < rating ? "text-yellow-300" : "text-gray-300"}`}
       />
     ))}
   </div>
@@ -73,8 +73,8 @@ const StarRating = ({ rating }) => (
 
 // 🧱 Single Review Card
 const ReviewCard = ({ name, position, description, rating, imageSrc }) => (
-  <div className="flex-shrink-0 w-80 mx-4 bg-white rounded-2xl shadow-2xl text-center overflow-hidden">
-    <div className="relative w-full h-48 overflow-hidden">
+  <div className="flex-shrink-0 w-64 sm:w-72 md:w-80 mx-2 sm:mx-3 md:mx-4 bg-white rounded-xl sm:rounded-2xl shadow-lg sm:shadow-xl md:shadow-2xl text-center overflow-hidden">
+    <div className="relative w-full h-36 sm:h-40 md:h-48 overflow-hidden">
       <img src={imageSrc} alt={name} className="w-full h-full object-cover" />
       <div
         className="absolute bottom-0 left-0 w-full h-1/3 bg-white transform -skew-y-3 origin-bottom-left"
@@ -82,12 +82,12 @@ const ReviewCard = ({ name, position, description, rating, imageSrc }) => (
       ></div>
     </div>
 
-    <div className="p-6 pt-8 relative -mt-4">
-      <h3 className="text-2xl font-bold text-gray-800 mb-2">{name}</h3>
-      <div className="w-12 h-1 bg-[#27BB97] mx-auto mb-3 rounded-full"></div>
-      <p className="text-black font-semibold text-sm uppercase tracking-wide mb-3">{position}</p>
+    <div className="p-4 sm:p-5 md:p-6 pt-5 sm:pt-6 md:pt-8 relative -mt-3 sm:-mt-4">
+      <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-800 mb-1 sm:mb-2">{name}</h3>
+      <div className="w-8 sm:w-10 md:w-12 h-0.5 sm:h-1 bg-[#27BB97] mx-auto mb-2 sm:mb-3 rounded-full"></div>
+      <p className="text-black font-semibold text-xs sm:text-sm uppercase tracking-wide mb-2 sm:mb-3">{position}</p>
       <StarRating rating={rating} />
-      <p className="text-gray-600 text-base leading-relaxed mb-6">{description}</p>
+      <p className="text-gray-600 text-sm sm:text-base leading-relaxed mb-4 sm:mb-5 md:mb-6">{description}</p>
     </div>
   </div>
 );
@@ -96,34 +96,59 @@ const Reviews = () => {
   const { teamMembers } = data;
   const [currentIndex, setCurrentIndex] = useState(0);
 
+  // Calculate visible cards based on screen size
+  const getVisibleCards = () => {
+    if (typeof window === 'undefined') return 1;
+    
+    if (window.innerWidth >= 1024) return 3; // desktop
+    if (window.innerWidth >= 768) return 2;  // tablet
+    return 1; // mobile
+  };
+
+  const visibleCards = getVisibleCards();
+  
+  // Calculate max index based on visible cards
+  const maxIndex = Math.max(0, teamMembers.length - visibleCards);
+
   const handleNext = () => {
-    setCurrentIndex((prev) => (prev + 1) % teamMembers.length);
+    setCurrentIndex((prev) => (prev + 1) % (maxIndex + 1));
   };
 
   const handlePrev = () => {
-    setCurrentIndex((prev) => (prev - 1 + teamMembers.length) % teamMembers.length);
+    setCurrentIndex((prev) => (prev - 1 + (maxIndex + 1)) % (maxIndex + 1));
   };
 
+  // Calculate card width based on screen size
+  const getCardWidth = () => {
+    if (typeof window === 'undefined') return 320;
+    
+    if (window.innerWidth >= 1024) return 320; // desktop
+    if (window.innerWidth >= 768) return 304;  // tablet
+    return 272; // mobile
+  };
+
+  const cardWidth = getCardWidth();
+
   return (
-    <div className="bg-gray-100 py-20 px-4 sm:px-6 lg:px-8">
+    <div className="bg-gray-100 py-10 sm:py-14 md:py-16 lg:py-20 px-3 sm:px-4 md:px-6 lg:px-8">
       <section className="max-w-7xl mx-auto">
-        <div className="text-center mb-16">
-          <h1 className="text-5xl font-bold text-gray-800 mb-4 uppercase">
+        <div className="text-center mb-10 sm:mb-12 md:mb-14 lg:mb-16">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-800 mb-3 sm:mb-4 uppercase">
             Our Clients Reviews
           </h1>
-          <p className="text-xl text-gray-600 mb-6 max-w-2xl mx-auto">
+          <p className="text-base sm:text-lg md:text-xl text-gray-600 mb-4 sm:mb-5 md:mb-6 max-w-2xl mx-auto px-2">
             Discover what our satisfied users say about their Listify experience. Real feedback from real people in our community.
           </p>
-          <div className="w-20 h-1 bg-[#27BB97] mx-auto rounded-full"></div>
+          <div className="w-12 sm:w-16 md:w-20 h-0.5 sm:h-1 bg-[#27BB97] mx-auto rounded-full"></div>
         </div>
 
         <div className="relative">
           {/* Cards Container */}
-          <div className="overflow-hidden mb-8">
+          <div className="overflow-hidden mb-6 sm:mb-7 md:mb-8">
             <div
               className="flex transition-transform duration-700 ease-in-out"
               style={{
-                transform: `translateX(-${currentIndex * 320}px)`,
+                transform: `translateX(-${currentIndex * cardWidth}px)`,
               }}
             >
               {teamMembers.map((member, index) => (
@@ -137,21 +162,23 @@ const Reviews = () => {
           </div>
 
           {/* Navigation Buttons - Below Cards Side by Side */}
-          <div className="flex justify-center items-center space-x-4">
+          <div className="flex justify-center items-center space-x-3 sm:space-x-4">
             {/* ⬅️ Prev Button */}
             <button
               onClick={handlePrev}
-              className="bg-white text-gray-800 w-12 h-12 rounded-full shadow-lg flex items-center justify-center border border-[#C89A5E]/20 hover:bg-gray-200 hover:text-white transition-all duration-300"
+              className="bg-white text-gray-800 w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 rounded-full shadow-md sm:shadow-lg flex items-center justify-center border border-[#C89A5E]/20 hover:bg-gray-100 hover:text-white transition-all duration-300"
+              aria-label="Previous review"
             >
-              <FaChevronLeft className="text-lg" />
+              <FaChevronLeft className="text-sm sm:text-base md:text-lg" />
             </button>
 
             {/* ➡️ Next Button */}
             <button
               onClick={handleNext}
-              className="bg-white text-gray-800 w-12 h-12 rounded-full shadow-lg flex items-center justify-center border border-[#C89A5E]/20 hover:bg-gray-200 hover:text-white transition-all duration-300"
+              className="bg-white text-gray-800 w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 rounded-full shadow-md sm:shadow-lg flex items-center justify-center border border-[#C89A5E]/20 hover:bg-gray-100 hover:text-white transition-all duration-300"
+              aria-label="Next review"
             >
-              <FaChevronRight className="text-lg" />
+              <FaChevronRight className="text-sm sm:text-base md:text-lg" />
             </button>
           </div>
         </div>

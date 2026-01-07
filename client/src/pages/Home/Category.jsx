@@ -164,15 +164,37 @@ const Category = () => {
   // State to track if we should show all cards
   const [showAll, setShowAll] = useState(false);
   
-  // Calculate cards to show initially (8 cards = 2 rows of 4 on desktop)
-  const initialCardsCount = 8;
+  // Responsive initial cards count
+  const getInitialCardsCount = () => {
+    if (typeof window !== 'undefined') {
+      if (window.innerWidth >= 1280) return 8; // xl screens
+      if (window.innerWidth >= 1024) return 6; // lg screens
+      if (window.innerWidth >= 640) return 6;  // sm/md screens
+      return 4; // mobile
+    }
+    return 8; // default
+  };
+
+  const [initialCardsCount, setInitialCardsCount] = useState(8);
+
+  // Update initial cards count on window resize
+  React.useEffect(() => {
+    const handleResize = () => {
+      setInitialCardsCount(getInitialCardsCount());
+    };
+    
+    handleResize(); // Set initial value
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const displayedCategories = showAll ? categories : categories.slice(0, initialCardsCount);
   const hasMoreCards = categories.length > initialCardsCount;
 
   const renderCard = (category) => (
     <div
       key={category.id}
-      className="group relative h-80 w-full overflow-hidden cursor-pointer rounded-lg shadow-lg hover:shadow-2xl transition-all duration-700 ease-in-out transform hover:scale-[1.02]"
+      className="group relative h-48 sm:h-56 md:h-64 lg:h-72 xl:h-80 w-full overflow-hidden cursor-pointer rounded-lg sm:rounded-xl shadow-lg hover:shadow-2xl transition-all duration-700 ease-in-out transform hover:scale-[1.02]"
     >
       {/* Background Image */}
       <img
@@ -189,19 +211,19 @@ const Category = () => {
       <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-all duration-700"></div>
 
       {/* Title at Bottom - Hides on Hover */}
-      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/70 to-transparent p-5 transition-all duration-700 opacity-100 group-hover:opacity-0 group-hover:translate-y-4">
-        <h3 className="text-white font-semibold text-xl text-center">
+      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/70 to-transparent p-3 sm:p-4 md:p-5 transition-all duration-700 opacity-100 group-hover:opacity-0 group-hover:translate-y-4">
+        <h3 className="text-white font-semibold text-base sm:text-lg md:text-xl text-center">
           {category.title}
         </h3>
       </div>
 
       {/* Hover Overlay - Slides Up with Subcategories */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/65 to-black/90 translate-y-full group-hover:translate-y-0 transition-all duration-800 ease-in-out flex flex-col justify-center items-center pt-6">
-        <ul className="space-y-2 text-center">
+      <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/65 to-black/90 translate-y-full group-hover:translate-y-0 transition-all duration-800 ease-in-out flex flex-col justify-center items-center pt-4 sm:pt-5 md:pt-6">
+        <ul className="space-y-1 sm:space-y-1.5 md:space-y-2 text-center px-1 sm:px-2">
           {category.subcategories.map((sub, index) => (
             <li
               key={index}
-              className="text-white/90 text-sm cursor-pointer px-4 py-1 rounded-md hover:text-white hover:bg-gray-700 transition-all duration-500 ease-out opacity-0 transform translate-y-4 group-hover:translate-y-0 group-hover:opacity-100"
+              className="text-white/90 text-xs sm:text-sm cursor-pointer px-2 sm:px-3 md:px-4 py-0.5 sm:py-1 rounded-md hover:text-white hover:bg-gray-700 transition-all duration-500 ease-out opacity-0 transform translate-y-4 group-hover:translate-y-0 group-hover:opacity-100"
               style={{ transitionDelay: `${index * 80}ms` }}
             >
               {sub}
@@ -210,74 +232,64 @@ const Category = () => {
         </ul>
 
         {/* More Button */}
-        <button className="bg-[#27bb97] absolute bottom-0 hover:bg-[#1fa987] h-10 w-full text-white font-medium text-[15px] transition-colors duration-300">
+        <button className="bg-[#27bb97] absolute bottom-0 hover:bg-[#1fa987] h-8 sm:h-9 md:h-10 w-full text-white font-medium text-xs sm:text-sm md:text-[15px] transition-colors duration-300">
           More in {category.title}
         </button>
       </div>
 
       {/* Border Effect */}
-      <div className="absolute inset-0 border-2 border-transparent group-hover:border-white/30 rounded-lg transition-all duration-700"></div>
+      <div className="absolute inset-0 border-2 border-transparent group-hover:border-white/30 rounded-lg sm:rounded-xl transition-all duration-700"></div>
     </div>
   );
 
   return (
-    <div className="min-h-screen py-12 px-4">
-      <div className="px-4 sm:px-6 lg:px-8">
-        {/* <h1 className="text-center mb-12">
-          <div className="text-4xl sm:text-5xl font-bold text-gray-900">
-            Popular Categories
-          </div>
-          <div className="relative inline-block mt-4 sm:mt-6">
-            <div className="text-2xl sm:text-3xl font-semibold text-gray-700">
-              Explore Local Listings
-            </div>
-            <div className="h-1 w-full bg-gradient-to-r from-transparent via-[#27bb97] to-transparent mt-2"></div>
-          </div>
-        </h1> */}
+    <div className="min-h-screen">
+      <div className="px-3 sm:px-4 md:px-6 lg:px-8">
+        {/* Header Section */}
+        <div className="text-center">
+          <h1 className="text-[#27BB97] text-2xl sm:text-3xl md:text-4xl font-['Dancing_Script'] leading-tight">
+            Time To Explore
+          </h1>
+          <h1 className="font-extrabold text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl mt-2 sm:mt-3 md:mt-4">
+            OUR CATEGORIES
+          </h1>
+          <p className="font-semibold max-w-3xl mx-auto leading-relaxed mt-4 sm:mt-5 md:mt-6 lg:mt-7 text-sm sm:text-base md:text-lg px-3 sm:px-4">
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptates
+            quae totam porro maxime dolorem delectus consequatur vero odio
+            incidunt ut.
+          </p>
+        </div>
 
-        <div className="text-center leading-[70px]">
-        <h1 className="text-[#27BB97] text-[40px] font-['Dancing_Script'] ">
-          Time To Explore
-        </h1>
-        <h1 className="font-extrabold text-[90px]">OUR CATEGORIES</h1>
-        <p className="font-semibold max-w-3xl mx-auto leading-[30px] mt-7">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptates
-          quae totam porro maxime dolorem delectus consequatur vero odio
-          incidunt ut.
-        </p>
-      </div>
-
-
-        {/* Grid: 1-2-3-4 columns responsive */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 max-w-7xl mx-auto mt-8">
+        {/* Grid: Responsive columns */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 md:gap-5 lg:gap-6 max-w-7xl mx-auto mt-6 sm:mt-8 md:mt-10 lg:mt-12">
           {displayedCategories.map(renderCard)}
         </div>
 
         {/* View More / View Less Button */}
         {hasMoreCards && (
-          <div className="text-center mt-12">
+          <div className="text-center mt-8 sm:mt-10 md:mt-12">
             <button
               onClick={() => setShowAll(!showAll)}
-              className="px-8 py-3 border-2 border-[#27bb97] text-[#27bb97] font-semibold rounded-lg hover:bg-[#27bb97] hover:text-white transition-all duration-300 hover:shadow-lg flex items-center justify-center mx-auto gap-2"
+              className="px-4 sm:px-6 md:px-8 py-2 sm:py-2.5 md:py-3 border-2 border-[#27bb97] text-[#27bb97] font-semibold rounded-lg sm:rounded-xl hover:bg-[#27bb97] hover:text-white transition-all duration-300 hover:shadow-lg flex items-center justify-center mx-auto gap-1 sm:gap-2 text-sm sm:text-base"
             >
               {showAll ? (
                 <>
                   View Less
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 sm:h-5 sm:w-5" viewBox="0 0 20 20" fill="currentColor">
                     <path fillRule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clipRule="evenodd" />
                   </svg>
                 </>
               ) : (
                 <>
                   View More Categories
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 sm:h-5 sm:w-5" viewBox="0 0 20 20" fill="currentColor">
                     <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
                   </svg>
                 </>
               )}
             </button>
             {!showAll && (
-              <p className="text-gray-500 mt-3 text-sm">
+              <p className="text-gray-500 mt-2 sm:mt-3 text-xs sm:text-sm">
                 Showing {initialCardsCount} of {categories.length} categories
               </p>
             )}
