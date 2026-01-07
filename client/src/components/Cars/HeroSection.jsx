@@ -112,7 +112,7 @@ const HeroSection = () => {
         {/* Car Image */}
       </div>
       <div className="max-w-5xl mx-auto  ">
-        <img src="client/public/cars/cars.png" alt="" className="h-100 w-full" />
+        <img src="./cars/cars.png" alt="car" className="h-100 w-full" />
       </div>
     </div>
   );
