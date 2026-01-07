@@ -168,7 +168,7 @@ const App = () => {
               element={
                 <>
                   <Carousel/>
-                  <HeroSection />
+                  {/* <HeroSection /> */}
                   <Heading />
                   {/* <Gallery /> */}
                   <Category/>
