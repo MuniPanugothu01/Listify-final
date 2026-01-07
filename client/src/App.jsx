@@ -183,7 +183,6 @@ const App = () => {
             <Route path="/contact-us" element={<ContactUs />} />
             <Route path="/about-us" element={<AboutUs />} />
             <Route path="/our-services" element={<OurServicesPage />} />
-            <Route path="/post-add" element={<PostaddPage />} />
             <Route path="/post-add" element={<PostaddPage/>} />
 
             {/* TakeCare */}

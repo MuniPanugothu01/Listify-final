@@ -89,8 +89,6 @@ const allEvents = [
     ],
     details: "Sunburn Goa is Asia's premier electronic dance music festival. Experience 4 days of non-stop music across multiple stages with world-class production, lighting, and sound systems. Featuring top international DJs and artists from around the globe.",
     tags: ["EDM", "Festival", "Electronic Music", "Beach Party", "Nightlife"],
-    featured: true,
-    verified: true,
     immediate: true,
     discount: "Early Bird",
     distance: "5 km from Airport",
