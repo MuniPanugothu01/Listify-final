@@ -221,7 +221,7 @@ const Category = () => {
   );
 
   return (
-    <div className="min-h-screen bg-white py-12 px-4">
+    <div className="min-h-screen py-12 px-4">
       <div className="px-4 sm:px-6 lg:px-8">
         {/* <h1 className="text-center mb-12">
           <div className="text-4xl sm:text-5xl font-bold text-gray-900">
@@ -235,8 +235,21 @@ const Category = () => {
           </div>
         </h1> */}
 
+        <div className="text-center leading-[70px]">
+        <h1 className="text-[#27BB97] text-[40px] font-['Dancing_Script'] ">
+          Time To Explore
+        </h1>
+        <h1 className="font-extrabold text-[90px]">OUR CATEGORIES</h1>
+        <p className="font-semibold max-w-3xl mx-auto leading-[30px] mt-7">
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptates
+          quae totam porro maxime dolorem delectus consequatur vero odio
+          incidunt ut.
+        </p>
+      </div>
+
+
         {/* Grid: 1-2-3-4 columns responsive */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 max-w-7xl mx-auto mt-8">
           {displayedCategories.map(renderCard)}
         </div>
 

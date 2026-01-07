@@ -5,7 +5,7 @@ import { FaXTwitter } from "react-icons/fa6";
 const Heading = () => {
   return (
     <div className="flex flex-col items-center justify-center">
-      <div className="text-center mt-20 leading-[70px]">
+      {/* <div className="text-center leading-[70px]">
         <h1 className="text-[#27BB97] text-[40px] font-['Dancing_Script'] ">
           Time To Explore
         </h1>
@@ -15,7 +15,7 @@ const Heading = () => {
           quae totam porro maxime dolorem delectus consequatur vero odio
           incidunt ut.
         </p>
-      </div>
+      </div> */}
 {/* 
       <div className="flex items-center gap-3 mt-8">
         <div className="bg-[#27bb97] p-2 rounded-full w-fit">

@@ -436,7 +436,7 @@ export default function Carousel() {
 
             {/* Original Search Bar (hidden when search is active) */}
             {!isSearchActive && (
-              <div className="relative mt-8">
+              <div className="relative mt-8 ">
                 <div
                   ref={searchContainerRef}
                   className="relative transition-all duration-500 ease-out w-full"
@@ -444,10 +444,10 @@ export default function Carousel() {
                   <button
                     onClick={handleSearchClick}
                     className="
-                      absolute right-3 z-50 top-1/2 -translate-y-1/2 
+                      absolute right-3 z-10 top-1/2 -translate-y-1/2 
                       bg-[#27bb97] text-white px-6 py-4 rounded-xl text-sm 
                       cursor-pointer transition-all duration-300 
-                      hover:bg-[#1fa987] hover:shadow-lg
+                      hover:bg-[#1fa987] hover:shadow-lg 
                     "
                   >
                     Search
