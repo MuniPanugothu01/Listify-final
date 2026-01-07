@@ -63,7 +63,11 @@ export default function Carousel() {
     { name: "Housing", image: "/house.png", color: "bg-purple-100" },
     { name: "Jobs", image: "/car1.png", color: "bg-blue-100" },
     { name: "Services", image: "/carservice.png", color: "bg-green-100" },
-    { name: "TakeCare", image: "/categories/amazon.png", color: "bg-yellow-100" },
+    {
+      name: "TakeCare",
+      image: "/categories/amazon.png",
+      color: "bg-yellow-100",
+    },
     { name: "Marketplace", image: "/Furniture.png", color: "bg-blue-50" },
     { name: "Freelancers", image: "/phiyano.png", color: "bg-orange-100" },
     { name: "Relocation Services", image: "/bag.png", color: "bg-red-100" },
@@ -72,114 +76,118 @@ export default function Carousel() {
 
   // Category data for the rotating icons
   const categories = [
-    { 
-      id: 1, 
-      name: "Cars", 
-      position: "top", 
-      color: "text-orange-500", 
+    {
+      id: 1,
+      name: "Cars",
+      position: "top",
+      color: "text-orange-500",
       bgColor: "bg-orange-50",
       icon: "M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4",
-      labelPosition: "right"
+      labelPosition: "right",
     },
-    { 
-      id: 2, 
-      name: "Rentals", 
-      position: "bottom", 
-      color: "text-blue-500", 
+    {
+      id: 2,
+      name: "Rentals",
+      position: "bottom",
+      color: "text-blue-500",
       bgColor: "bg-blue-50",
       icon: "M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4",
-      labelPosition: "right"
+      labelPosition: "right",
     },
-    { 
-      id: 3, 
-      name: "Home Care", 
-      position: "right", 
-      color: "text-green-500", 
+    {
+      id: 3,
+      name: "Home Care",
+      position: "right",
+      color: "text-green-500",
       bgColor: "bg-green-50",
       icon: "M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6",
-      labelPosition: "right"
+      labelPosition: "right",
     },
-    { 
-      id: 4, 
-      name: "Services", 
-      position: "left", 
-      color: "text-purple-500", 
+    {
+      id: 4,
+      name: "Services",
+      position: "left",
+      color: "text-purple-500",
       bgColor: "bg-purple-50",
       icon: "M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z M15 12a3 3 0 11-6 0 3 3 0 016 0z",
-      labelPosition: "left"
+      labelPosition: "left",
     },
-    { 
-      id: 5, 
-      name: "Automobiles", 
-      position: "top-right", 
-      color: "text-red-500", 
+    {
+      id: 5,
+      name: "Automobiles",
+      position: "top-right",
+      color: "text-red-500",
       bgColor: "bg-red-50",
       icon: "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z",
-      labelPosition: "right"
+      labelPosition: "right",
     },
-    { 
-      id: 6, 
-      name: "Events", 
-      position: "top-left", 
-      color: "text-yellow-500", 
+    {
+      id: 6,
+      name: "Events",
+      position: "top-left",
+      color: "text-yellow-500",
       bgColor: "bg-yellow-50",
       icon: "M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z",
-      labelPosition: "left"
+      labelPosition: "left",
     },
-    { 
-      id: 7, 
-      name: "Travel", 
-      position: "bottom-right", 
-      color: "text-teal-500", 
+    {
+      id: 7,
+      name: "Travel",
+      position: "bottom-right",
+      color: "text-teal-500",
       bgColor: "bg-teal-50",
       icon: "M12 19l9 2-9-18-9 18 9-2zm0 0v-8",
-      labelPosition: "right"
+      labelPosition: "right",
     },
-    { 
-      id: 8, 
-      name: "Jobs", 
-      position: "bottom-left", 
-      color: "text-indigo-500", 
+    {
+      id: 8,
+      name: "Jobs",
+      position: "bottom-left",
+      color: "text-indigo-500",
       bgColor: "bg-indigo-50",
       icon: "M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z",
-      labelPosition: "left"
+      labelPosition: "left",
     },
   ];
 
   // Get position classes for icons
   const getPositionClasses = (position) => {
-    switch(position) {
-      case 'top':
-        return 'absolute -top-8 left-1/2 -translate-x-1/2';
-      case 'bottom':
-        return 'absolute -bottom-8 left-1/2 -translate-x-1/2';
-      case 'right':
-        return 'absolute top-1/2 -right-8 -translate-y-1/2';
-      case 'left':
-        return 'absolute top-1/2 -left-8 -translate-y-1/2';
-      case 'top-right':
-        return 'absolute top-8 right-12 md:right-16';
-      case 'top-left':
-        return 'absolute top-8 left-12 md:left-16';
-      case 'bottom-right':
-        return 'absolute bottom-8 right-12 md:right-16';
-      case 'bottom-left':
-        return 'absolute bottom-8 left-12 md:left-16';
+    switch (position) {
+      case "top":
+        return "absolute -top-8 left-1/2 -translate-x-1/2";
+      case "bottom":
+        return "absolute -bottom-8 left-1/2 -translate-x-1/2";
+      case "right":
+        return "absolute top-1/2 -right-8 -translate-y-1/2";
+      case "left":
+        return "absolute top-1/2 -left-8 -translate-y-1/2";
+      case "top-right":
+        return "absolute top-8 right-12 md:right-16";
+      case "top-left":
+        return "absolute top-8 left-12 md:left-16";
+      case "bottom-right":
+        return "absolute bottom-8 right-12 md:right-16";
+      case "bottom-left":
+        return "absolute bottom-8 left-12 md:left-16";
       default:
-        return '';
+        return "";
     }
   };
 
   const getSizeClasses = (position) => {
-    return ['top-right', 'top-left', 'bottom-right', 'bottom-left'].includes(position)
-      ? 'w-10 md:w-14 h-10 md:h-14'
-      : 'w-12 md:w-16 h-12 md:h-16';
+    return ["top-right", "top-left", "bottom-right", "bottom-left"].includes(
+      position
+    )
+      ? "w-10 md:w-14 h-10 md:h-14"
+      : "w-12 md:w-16 h-12 md:h-16";
   };
 
   const getIconSize = (position) => {
-    return ['top-right', 'top-left', 'bottom-right', 'bottom-left'].includes(position)
-      ? 'w-6 h-6 md:w-7 md:h-7'
-      : 'w-8 h-8';
+    return ["top-right", "top-left", "bottom-right", "bottom-left"].includes(
+      position
+    )
+      ? "w-6 h-6 md:w-7 md:h-7"
+      : "w-8 h-8";
   };
 
   const CategoryIcon = ({ category }) => {
@@ -195,34 +203,46 @@ export default function Carousel() {
         <div className="relative flex items-center space-x-0">
           {/* Label on LEFT side for Services, Events, Jobs */}
           {isLabelLeft && (
-            <div className={`
+            <div
+              className={`
               whitespace-nowrap z-40
               px-4 py-2 rounded-full font-medium text-sm md:text-base
               ${category.color} ${category.bgColor}
               border border-white shadow-lg
               transition-all duration-300 ease-out transform
-              ${isActive ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-4 pointer-events-none'}
+              ${
+                isActive
+                  ? "opacity-100 translate-x-0"
+                  : "opacity-0 translate-x-4 pointer-events-none"
+              }
               absolute right-full mr-0
-            `}>
+            `}
+            >
               {category.name}
             </div>
           )}
 
           {/* Icon Container */}
-          <div className={`
+          <div
+            className={`
             ${getSizeClasses(category.position)} 
             bg-white rounded-full p-2 shadow-lg
             transition-all duration-300 ease-out transform
-            ${isActive ? 'scale-110 shadow-xl' : 'scale-100'}
+            ${isActive ? "scale-110 shadow-xl" : "scale-100"}
             group-hover:scale-110 group-hover:shadow-xl
             z-30
-            ${isLabelLeft ? 'order-2' : ''}
-          `}>
-            <div className={`w-full h-full flex items-center justify-center ${category.color}`}>
+            ${isLabelLeft ? "order-2" : ""}
+          `}
+          >
+            <div
+              className={`w-full h-full flex items-center justify-center ${category.color}`}
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className={`${getIconSize(category.position)} transition-transform duration-300
-                  ${isActive ? 'rotate-6' : ''}
+                className={`${getIconSize(
+                  category.position
+                )} transition-transform duration-300
+                  ${isActive ? "rotate-6" : ""}
                   group-hover:rotate-6
                 `}
                 fill="none"
@@ -241,15 +261,21 @@ export default function Carousel() {
 
           {/* Label on RIGHT side for all others */}
           {!isLabelLeft && (
-            <div className={`
+            <div
+              className={`
               whitespace-nowrap z-40
               px-4 py-2 rounded-full font-medium text-sm md:text-base
               ${category.color} ${category.bgColor}
               border border-white shadow-lg
               transition-all duration-300 ease-out transform
-              ${isActive ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4 pointer-events-none'}
+              ${
+                isActive
+                  ? "opacity-100 translate-x-0"
+                  : "opacity-0 -translate-x-4 pointer-events-none"
+              }
               absolute left-full ml-0
-            `}>
+            `}
+            >
               {category.name}
             </div>
           )}
@@ -259,52 +285,51 @@ export default function Carousel() {
   };
 
   return (
-    <div className="min-h-screen overflow-x-hidden">
+    <div className="min-h-screen overflow-x-hidden relative">
       {/* Dark Overlay when search is active */}
-      <div 
+      <div
         className={`fixed inset-0 bg-black z-40 transition-all duration-500 ease-in-out ${
-          isSearchActive 
-            ? 'opacity-90 pointer-events-auto' 
-            : 'opacity-0 pointer-events-none'
+          isSearchActive
+            ? "opacity-90 pointer-events-auto"
+            : "opacity-0 pointer-events-none"
         }`}
         onClick={handleCloseSearch}
       />
 
       {/* Search Bar Modal - Positioned at Top */}
-      <div 
+      <div
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-in-out  ${
-          isSearchActive 
-            ? 'opacity-100 translate-y-0' 
-            : 'opacity-0 -translate-y-full pointer-events-none'
+          isSearchActive
+            ? "opacity-100 translate-y-0"
+            : "opacity-0 -translate-y-full pointer-events-none"
         }`}
       >
         <div className="container  max-w-4xl mx-auto px-4 py-8 ">
           <div className="flex items-center justify-between mb-4 ">
-            <h2 className="text-2xl font-bold text-white">What are you looking for?</h2>
+            <h2 className="text-2xl font-bold text-white">
+              What are you looking for?
+            </h2>
             <button
               onClick={handleCloseSearch}
               className="text-white transition-colors duration-300 z-50 p-2 hover:text-red-500 "
             >
-              <svg 
-                className="w-8 h-8" 
-                fill="none" 
-                stroke="currentColor" 
+              <svg
+                className="w-8 h-8"
+                fill="none"
+                stroke="currentColor"
                 viewBox="0 0 24 24"
               >
-                <path 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round" 
-                  strokeWidth={2} 
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
                   d="M6 18L18 6M6 6l12 12"
                 />
               </svg>
             </button>
           </div>
 
-          <div 
-            ref={searchContainerRef}
-            className="relative"
-          >
+          <div ref={searchContainerRef} className="relative">
             <button
               onClick={handleSearchClick}
               className="
@@ -472,10 +497,32 @@ export default function Carousel() {
                 How It Works
               </button>
             </div> */}
+
+            <div className="absolute bottom-32">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="4.015 53.195 774.841 72.3952"
+                width="904.841px"
+                height="130.3952px"
+              >
+                <path
+                  style={{ fill: "none", stroke: "rgba(156, 246, 52, 1)",
+                    strokeWidth: "3px"
+                   }}
+                  d="M 4.015 114.085 C 7.75 111.284 12.271 109.175 14.721 106.725 C 15.581 105.865 22.83 106.805 23.419 107.394 C 28.245 112.22 43.314 116.598 52.86 113.416 C 66.308 108.933 84.561 95.475 100.368 103.379 C 111.95 109.17 131.552 122.18 147.876 118.1 C 161.29 114.746 174.303 112.246 185.346 106.725 C 187.511 105.642 198.046 104.711 200.736 106.056 C 214.249 112.812 227.783 120.823 243.56 123.453 C 246.921 124.013 257.968 125.951 261.626 124.122 C 267.093 121.388 279.725 114.085 285.714 114.085 C 287.1 114.085 293.531 113.203 294.413 114.085 C 297.944 117.616 316.89 122.57 322.516 121.445 C 336.132 118.722 351.625 111.24 363.332 105.386 C 366.216 103.945 373.624 105.514 376.046 106.725 C 387.313 112.359 396.999 118.17 408.832 122.114 C 425.988 127.833 433.611 104.055 453.663 110.739 C 463.104 113.886 472.469 129.228 485.781 124.791 C 495.342 121.604 502.919 114.214 512.546 109.401 C 513.596 108.876 520.803 107.622 521.914 108.732 C 537.514 124.333 564.276 124.122 590.833 124.122 C 605.134 124.122 621.936 125.129 634.995 120.776 C 648.377 116.315 658.732 105.727 671.797 101.372 C 683.862 97.349 701.283 94.636 709.936 85.982 C 729.728 66.191 749.483 53.195 778.856 53.195"
+                  id="object-0"
+                  transform="matrix(1, 0, 0, 1, 0, -1.4210854715202004e-14)"
+                />
+              </svg>
+            </div>
           </div>
 
           {/* Right Section - Carousel */}
-          <div className={`relative flex justify-center items-center transition-all duration-300 ${isSearchActive ? 'opacity-30' : 'opacity-100'}`}>
+          <div
+            className={`relative flex justify-center items-center transition-all duration-300 ${
+              isSearchActive ? "opacity-30" : "opacity-100"
+            }`}
+          >
             {/* Orange image container */}
             <div className="relative z-10 bg-orange-400 rounded-full w-[300px] md:w-[400px] h-[300px] md:h-[400px] overflow-hidden flex items-center justify-center mx-auto">
               <div className="bg-orange-300 rounded-full w-[240px] md:w-[320px] h-[240px] md:h-[320px] overflow-hidden">
