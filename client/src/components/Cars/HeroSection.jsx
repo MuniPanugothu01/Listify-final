@@ -2,10 +2,10 @@ import React, { useState } from "react";
 import { FaChevronDown } from "react-icons/fa";
 
 const HeroSection = () => {
-  const [carType, setCarType] = useState("Used Cars");
-  const [make, setMake] = useState("Any Makes");
-  const [model, setModel] = useState("Any Models");
-  const [price, setPrice] = useState("All Prices");
+  const [carType, setCarType] = useState("");
+  const [make, setMake] = useState("");
+  const [model, setModel] = useState("");
+  const [price, setPrice] = useState("");
 
   return (
     <div className="relative bg-blue-100 h-[80vh] w-full">
@@ -17,75 +17,74 @@ const HeroSection = () => {
           </h1>
         </div>
 
+        {/* two buttons */}
+        
+<div className="flex justify-center gap-2">
+  <button className="text-black border border-[#27bb97] bg-white/60 backdrop-blur-sm hover:bg-[#27bb97] hover:text-white px-6 py-3 rounded-lg cursor-pointer transition-all duration-200 capitalize">
+    for sale
+  </button>
+  <button className="text-black border border-[#27bb97] bg-white/60 backdrop-blur-sm hover:bg-[#27bb97] hover:text-white px-6 py-3 rounded-lg cursor-pointer transition-all duration-200 capitalize">
+    for rent
+  </button>
+</div>
+
+
         {/* Search Bar */}
         <div className="max-w-5xl flex items-center gap-5 mx-auto bg-white rounded-full shadow-xl px-6 py-3">
           <div className="flex items-center gap-4 w-full">
-            {/* Car Type Dropdown */}
+            {/* Car Type - Input + Dropdown */}
             <div className="relative w-full">
-              <select
+              <input
+                type="text"
+                placeholder="Car Type"
                 value={carType}
                 onChange={(e) => setCarType(e.target.value)}
-                className="w-full px-4 py-3 rounded-lg appearance-none cursor-pointer focus:outline-none text-gray-700"
-              >
-                <option>Used Cars</option>
-                <option>New Cars</option>
-                <option>Certified Cars</option>
-              </select>
+                className="w-full px-4 py-3 rounded-lg focus:outline-none text-gray-700 pr-10"
+              />
               <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
                 <FaChevronDown />
+
+                
               </div>
             </div>
 
-            {/* Make Dropdown */}
+            {/* Make - Input + Dropdown */}
             <div className="relative w-full">
-              <select
+              <input
+                type="text"
+                placeholder="Make"
                 value={make}
                 onChange={(e) => setMake(e.target.value)}
-                className="w-full px-4 py-3 rounded-lg appearance-none cursor-pointer focus:outline-none text-gray-700"
-              >
-                <option>Any Makes</option>
-                <option>Tesla</option>
-                <option>BMW</option>
-                <option>Mercedes</option>
-                <option>Audi</option>
-                <option>Toyota</option>
-              </select>
+                className="w-full px-4 py-3 rounded-lg focus:outline-none text-gray-700 pr-10"
+              />
               <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
                 <FaChevronDown />
               </div>
             </div>
 
-            {/* Model Dropdown */}
+            {/* Model - Input + Dropdown */}
             <div className="relative w-full">
-              <select
+              <input
+                type="text"
+                placeholder="Model"
                 value={model}
                 onChange={(e) => setModel(e.target.value)}
-                className="w-full px-4 py-3 rounded-lg appearance-none cursor-pointer focus:outline-none text-gray-700"
-              >
-                <option>Any Models</option>
-                <option>Model S</option>
-                <option>Model 3</option>
-                <option>Model X</option>
-                <option>Model Y</option>
-              </select>
+                className="w-full px-4 py-3 rounded-lg focus:outline-none text-gray-700 pr-10"
+              />
               <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
                 <FaChevronDown />
               </div>
             </div>
 
-            {/* Price Dropdown */}
+            {/* Price - Input + Dropdown */}
             <div className="relative w-full">
-              <select
+              <input
+                type="text"
+                placeholder="Price"
                 value={price}
                 onChange={(e) => setPrice(e.target.value)}
-                className="w-full px-4 py-3 rounded-lg appearance-none cursor-pointer focus:outline-none text-gray-700"
-              >
-                <option>All Prices</option>
-                <option>Under $20k</option>
-                <option>$20k - $40k</option>
-                <option>$40k - $60k</option>
-                <option>$60k+</option>
-              </select>
+                className="w-full px-4 py-3 rounded-lg focus:outline-none text-gray-700 pr-10"
+              />
               <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
                 <FaChevronDown />
               </div>
@@ -109,7 +108,6 @@ const HeroSection = () => {
             </svg>
           </button>
         </div>
-        
 
         {/* Car Image */}
       </div>
