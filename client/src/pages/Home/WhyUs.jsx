@@ -13,7 +13,7 @@ const WhyUs = () => {
       </div>
 
       {/* ======= 01: How It Works ======= */}
-      <div className="flex flex-col lg:flex-row items-center justify-between w-full px-4 sm:px-6 md:px-8 lg:px-10 py-6 sm:py-8 md:py-10 lg:py-12 gap-8 lg:gap-0">
+      <div className="flex flex-col lg:flex-row items-center justify-between w-full">
         {/* Left side - Text content */}
         <div className="w-full lg:w-[50%] text-black order-1 lg:order-1">
           <h1 className="text-black font-bold text-lg sm:text-xl md:text-2xl lg:text-[25px] mb-2 sm:mb-3 uppercase">

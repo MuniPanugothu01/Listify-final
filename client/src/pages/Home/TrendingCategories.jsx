@@ -58,7 +58,7 @@ const TrendingCategories = () => {
             <img
               src="/trendingfur1.png"
               alt="Furniture"
-              className="h-32 sm:h-36 md:h-40 lg:h-44 xl:h-48 w-full max-w-xs object-contain rounded"
+              className="h-80 w-full object-contain rounded"
             />
           </div>
           
@@ -94,7 +94,7 @@ const TrendingCategories = () => {
             <img
               src="/trendingcar4.png"
               alt="Services"
-              className="h-32 sm:h-36 md:h-40 lg:h-44 xl:h-48 w-full max-w-xs object-contain object-top rounded"
+              className="h-36 sm:h-40 md:h-40 lg:h-44 xl:h-48 w-full max-w-xs object-contain object-top rounded"
             />
           </div>
           

@@ -243,8 +243,8 @@ const Category = () => {
   );
 
   return (
-    <div className="min-h-screen">
-      <div className="px-3 sm:px-4 md:px-6 lg:px-8">
+    <div className="min-h-screen  mt-4 px-4 py-4">
+      <div className="">
         {/* Header Section */}
         <div className="text-center">
           <h1 className="text-[#27BB97] text-2xl sm:text-3xl md:text-4xl font-['Dancing_Script'] leading-tight">
