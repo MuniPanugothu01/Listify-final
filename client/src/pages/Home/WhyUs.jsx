@@ -3,7 +3,7 @@ import { FaArrowRight } from "react-icons/fa6";
 
 const WhyUs = () => {
   return (
-    <div className="max-w-6xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 pt-8 sm:pt-10 md:pt-12 lg:pt-15">
+    <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 pt-8 sm:pt-10 md:pt-12 lg:pt-15">
       {/* Enhanced Section Heading */}
       <div className="text-center mb-8 sm:mb-10 md:mb-12 lg:mb-16">
         <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black text-gray-900 mb-3 sm:mb-4 tracking-tight uppercase">
@@ -13,9 +13,9 @@ const WhyUs = () => {
       </div>
 
       {/* ======= 01: How It Works ======= */}
-      <div className="flex flex-col lg:flex-row items-center justify-between w-full">
+      <div className="flex flex-col lg:flex-row items-center justify-between w-full ">
         {/* Left side - Text content */}
-        <div className="w-full lg:w-[50%] text-black order-1 lg:order-1">
+        <div className="w-full lg:w-[50%] text-black order-1 lg:order-1 ">
           <h1 className="text-black font-bold text-lg sm:text-xl md:text-2xl lg:text-[25px] mb-2 sm:mb-3 uppercase">
             How Listify Works
           </h1>
@@ -30,7 +30,7 @@ const WhyUs = () => {
             commissions.
           </p>
 
-          <div className="flex items-center gap-1 sm:gap-2 mt-4 sm:mt-5 md:mt-6 lg:mt-7">
+          <div className="flex items-center gap-1 sm:gap-2 mt-4 sm:mt-5 md:mt-6 lg:mt-7 ">
             {[...Array(6)].map((_, i) => (
               <div key={i} className="bg-gray-400 h-2 w-2 sm:h-3 sm:w-3 rounded-full" />
             ))}
@@ -39,7 +39,7 @@ const WhyUs = () => {
 
         {/* Center - Step Number */}
         <div className="flex flex-row lg:flex-col items-center justify-center gap-3 sm:gap-4 order-3 lg:order-2 w-full lg:w-auto">
-          <h1 className="font-extrabold text-4xl sm:text-5xl md:text-6xl lg:text-[60px] text-[#27BB97]">01</h1>
+          <h1 className="font-extrabold text-4xl sm:text-5xl md:text-6xl lg:text-[60px] text-[#27BB97] ">01</h1>
           <div className="hidden lg:flex flex-col items-center gap-3 pl-10">
             {[...Array(5)].map((_, i) => (
               <div key={i} className="bg-gray-300 h-2 w-2 sm:h-3 sm:w-3 rounded-full" />

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import { FaChevronLeft, FaChevronRight, FaStar } from "react-icons/fa";
 
 const professionalImages = {
@@ -95,6 +95,11 @@ const ReviewCard = ({ name, position, description, rating, imageSrc }) => (
 const Reviews = () => {
   const { teamMembers } = data;
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
+  const containerRef = useRef(null);
+  const cardsContainerRef = useRef(null);
 
   // Calculate visible cards based on screen size
   const getVisibleCards = () => {
@@ -129,6 +134,74 @@ const Reviews = () => {
 
   const cardWidth = getCardWidth();
 
+  // Handle mouse down for dragging
+  const handleMouseDown = useCallback((e) => {
+    if (!containerRef.current) return;
+    
+    setIsDragging(true);
+    setStartX(e.pageX - containerRef.current.offsetLeft);
+    setScrollLeft(containerRef.current.scrollLeft || 0);
+    
+    // Prevent text selection while dragging
+    e.preventDefault();
+  }, []);
+
+  // Handle mouse move for dragging
+  const handleMouseMove = useCallback((e) => {
+    if (!isDragging || !containerRef.current) return;
+    
+    e.preventDefault();
+    const x = e.pageX - containerRef.current.offsetLeft;
+    const walk = (x - startX) * 2; // Multiply by 2 for faster scroll
+    
+    // Update scroll position
+    containerRef.current.scrollLeft = scrollLeft - walk;
+    
+    // Update current index based on scroll position
+    const newIndex = Math.round(containerRef.current.scrollLeft / cardWidth);
+    setCurrentIndex(Math.min(Math.max(0, newIndex), maxIndex));
+  }, [isDragging, startX, scrollLeft, cardWidth, maxIndex]);
+
+  // Handle mouse up/leave for dragging
+  const handleMouseUpOrLeave = useCallback(() => {
+    setIsDragging(false);
+  }, []);
+
+  // Handle scroll events
+  const handleScroll = useCallback(() => {
+    if (!containerRef.current) return;
+    
+    const newIndex = Math.round(containerRef.current.scrollLeft / cardWidth);
+    setCurrentIndex(Math.min(Math.max(0, newIndex), maxIndex));
+  }, [cardWidth, maxIndex]);
+
+  // Add event listeners for dragging
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    container.addEventListener('mousedown', handleMouseDown);
+    container.addEventListener('mousemove', handleMouseMove);
+    container.addEventListener('mouseup', handleMouseUpOrLeave);
+    container.addEventListener('mouseleave', handleMouseUpOrLeave);
+    container.addEventListener('scroll', handleScroll);
+
+    return () => {
+      container.removeEventListener('mousedown', handleMouseDown);
+      container.removeEventListener('mousemove', handleMouseMove);
+      container.removeEventListener('mouseup', handleMouseUpOrLeave);
+      container.removeEventListener('mouseleave', handleMouseUpOrLeave);
+      container.removeEventListener('scroll', handleScroll);
+    };
+  }, [handleMouseDown, handleMouseMove, handleMouseUpOrLeave, handleScroll]);
+
+  // Update scroll position when currentIndex changes from buttons
+  useEffect(() => {
+    if (containerRef.current) {
+      containerRef.current.scrollLeft = currentIndex * cardWidth;
+    }
+  }, [currentIndex, cardWidth]);
+
   return (
     <div className="bg-gray-100 py-10 sm:py-14 md:py-16 lg:py-20 px-3 sm:px-4 md:px-6 lg:px-8">
       <section className="max-w-7xl mx-auto">
@@ -143,12 +216,22 @@ const Reviews = () => {
         </div>
 
         <div className="relative">
-          {/* Cards Container */}
-          <div className="overflow-hidden mb-6 sm:mb-7 md:mb-8">
-            <div
-              className="flex transition-transform duration-700 ease-in-out"
-              style={{
-                transform: `translateX(-${currentIndex * cardWidth}px)`,
+          {/* Cards Container with Scrollbar and Drag Support */}
+          <div 
+            ref={containerRef}
+            className="overflow-x-auto mb-6 sm:mb-7 md:mb-8 scrollbar-hide"
+            style={{ 
+              cursor: isDragging ? 'grabbing' : 'grab',
+              scrollBehavior: 'smooth'
+            }}
+          >
+            <div 
+              ref={cardsContainerRef}
+              className="flex pb-4"
+              style={{ 
+                width: `${teamMembers.length * (cardWidth + 16)}px`, // 16px for margins
+                paddingLeft: '1rem',
+                paddingRight: '1rem'
               }}
             >
               {teamMembers.map((member, index) => (
@@ -166,20 +249,45 @@ const Reviews = () => {
             {/* ⬅️ Prev Button */}
             <button
               onClick={handlePrev}
-              className="bg-white text-gray-800 w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 rounded-full shadow-md sm:shadow-lg flex items-center justify-center border border-[#C89A5E]/20 hover:bg-gray-100 hover:text-white transition-all duration-300"
+              disabled={currentIndex === 0}
+              className={`bg-white text-gray-800 w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 rounded-full shadow-md sm:shadow-lg flex items-center justify-center border border-[#C89A5E]/20 hover:bg-gray-100 transition-all duration-300 ${
+                currentIndex === 0 ? 'opacity-50 cursor-not-allowed' : 'hover:text-white'
+              }`}
               aria-label="Previous review"
             >
               <FaChevronLeft className="text-sm sm:text-base md:text-lg" />
             </button>
 
+            {/* Indicator Dots */}
+            <div className="flex space-x-2">
+              {Array.from({ length: maxIndex + 1 }).map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentIndex(index)}
+                  className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                    index === currentIndex ? 'bg-[#27BB97] w-6' : 'bg-gray-300'
+                  }`}
+                  aria-label={`Go to review ${index + 1}`}
+                />
+              ))}
+            </div>
+
             {/* ➡️ Next Button */}
             <button
               onClick={handleNext}
-              className="bg-white text-gray-800 w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 rounded-full shadow-md sm:shadow-lg flex items-center justify-center border border-[#C89A5E]/20 hover:bg-gray-100 hover:text-white transition-all duration-300"
+              disabled={currentIndex === maxIndex}
+              className={`bg-white text-gray-800 w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 rounded-full shadow-md sm:shadow-lg flex items-center justify-center border border-[#C89A5E]/20 hover:bg-gray-100 transition-all duration-300 ${
+                currentIndex === maxIndex ? 'opacity-50 cursor-not-allowed' : 'hover:text-white'
+              }`}
               aria-label="Next review"
             >
               <FaChevronRight className="text-sm sm:text-base md:text-lg" />
             </button>
+          </div>
+
+          {/* Instructions for dragging (visible on desktop) */}
+          <div className="text-center mt-4 text-sm text-gray-500 hidden md:block">
+            <p>Drag with mouse to scroll • Click buttons or dots to navigate</p>
           </div>
         </div>
       </section>

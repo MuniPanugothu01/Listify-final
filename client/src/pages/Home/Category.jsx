@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Users, Home, ShoppingCart, Briefcase, Music } from "lucide-react";
 
 const Category = () => {
@@ -163,6 +163,10 @@ const Category = () => {
 
   // State to track if we should show all cards
   const [showAll, setShowAll] = useState(false);
+  // State to track which card is expanded (for mobile only)
+  const [expandedCard, setExpandedCard] = useState(null);
+  // State to track screen size
+  const [isMobile, setIsMobile] = useState(false);
   
   // Responsive initial cards count
   const getInitialCardsCount = () => {
@@ -177,73 +181,157 @@ const Category = () => {
 
   const [initialCardsCount, setInitialCardsCount] = useState(8);
 
-  // Update initial cards count on window resize
-  React.useEffect(() => {
+  // Check if device is mobile (less than 768px)
+  const checkIsMobile = useCallback(() => {
+    return typeof window !== 'undefined' && window.innerWidth < 768;
+  }, []);
+
+  // Handle card click for mobile only
+  const handleCardClick = (id, event) => {
+    if (!isMobile) return; // Only handle clicks on mobile
+    
+    event.stopPropagation();
+    
+    // Toggle expanded state
+    if (expandedCard === id) {
+      setExpandedCard(null);
+    } else {
+      setExpandedCard(id);
+    }
+  };
+
+  // Handle click outside to collapse (mobile only)
+  const handleClickOutside = useCallback((event) => {
+    if (isMobile && expandedCard !== null) {
+      // Check if click is outside any category card
+      const isClickInsideCard = event.target.closest('.category-card');
+      if (!isClickInsideCard) {
+        setExpandedCard(null);
+      }
+    }
+  }, [expandedCard, isMobile]);
+
+  // Update screen size and initial cards count on window resize
+  useEffect(() => {
     const handleResize = () => {
+      const mobile = checkIsMobile();
+      setIsMobile(mobile);
       setInitialCardsCount(getInitialCardsCount());
+      
+      // If switching from mobile to desktop, collapse any expanded card
+      if (!mobile) {
+        setExpandedCard(null);
+      }
     };
     
     handleResize(); // Set initial value
     window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+    document.addEventListener('click', handleClickOutside);
+    
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, [checkIsMobile, handleClickOutside]);
 
   const displayedCategories = showAll ? categories : categories.slice(0, initialCardsCount);
   const hasMoreCards = categories.length > initialCardsCount;
 
-  const renderCard = (category) => (
-    <div
-      key={category.id}
-      className="group relative h-48 sm:h-56 md:h-64 lg:h-72 xl:h-80 w-full overflow-hidden cursor-pointer rounded-lg sm:rounded-xl shadow-lg hover:shadow-2xl transition-all duration-700 ease-in-out transform hover:scale-[1.02]"
-    >
-      {/* Background Image */}
-      <img
-        src={category.image}
-        alt={category.title}
-        className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 ease-out group-hover:scale-110"
-        onError={(e) => {
-          e.target.onerror = null;
-          e.target.src = "https://images.unsplash.com/photo-1502082553048-f009c37129b9?w=600&h=400&fit=crop";
-        }}
-      />
+  const renderCard = (category) => {
+    const isExpanded = expandedCard === category.id;
+    
+    return (
+      <div
+        key={category.id}
+        className="category-card group relative h-48 sm:h-56 md:h-64 lg:h-72 xl:h-80 w-full overflow-hidden cursor-pointer rounded-lg sm:rounded-xl shadow-lg hover:shadow-2xl transition-all duration-700 ease-in-out transform hover:scale-[1.02]"
+        onClick={(e) => handleCardClick(category.id, e)}
+      >
+        {/* Background Image */}
+        <img
+          src={category.image}
+          alt={category.title}
+          className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 ease-out group-hover:scale-110"
+          onError={(e) => {
+            e.target.onerror = null;
+            e.target.src = "https://images.unsplash.com/photo-1502082553048-f009c37129b9?w=600&h=400&fit=crop";
+          }}
+        />
 
-      {/* Dark Overlay */}
-      <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-all duration-700"></div>
+        {/* Dark Overlay */}
+        <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-all duration-700"></div>
 
-      {/* Title at Bottom - Hides on Hover */}
-      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/70 to-transparent p-3 sm:p-4 md:p-5 transition-all duration-700 opacity-100 group-hover:opacity-0 group-hover:translate-y-4">
-        <h3 className="text-white font-semibold text-base sm:text-lg md:text-xl text-center">
-          {category.title}
-        </h3>
-      </div>
+        {/* Title at Bottom - Hides on Hover (desktop) or when expanded (mobile) */}
+        <div className={`absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/70 to-transparent p-3 sm:p-4 md:p-5 transition-all duration-700 ${
+          // On desktop: hide on hover
+          // On mobile: hide when expanded
+          (!isMobile && 'opacity-100 group-hover:opacity-0 group-hover:translate-y-4') ||
+          (isMobile && (isExpanded ? 'opacity-0 translate-y-4' : 'opacity-100'))
+        }`}>
+          <h3 className="text-white font-semibold text-base sm:text-lg md:text-xl text-center">
+            {category.title}
+          </h3>
+        </div>
 
-      {/* Hover Overlay - Slides Up with Subcategories */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/65 to-black/90 translate-y-full group-hover:translate-y-0 transition-all duration-800 ease-in-out flex flex-col justify-center items-center pt-4 sm:pt-5 md:pt-6">
-        <ul className="space-y-1 sm:space-y-1.5 md:space-y-2 text-center px-1 sm:px-2">
-          {category.subcategories.map((sub, index) => (
-            <li
-              key={index}
-              className="text-white/90 text-xs sm:text-sm cursor-pointer px-2 sm:px-3 md:px-4 py-0.5 sm:py-1 rounded-md hover:text-white hover:bg-gray-700 transition-all duration-500 ease-out opacity-0 transform translate-y-4 group-hover:translate-y-0 group-hover:opacity-100"
-              style={{ transitionDelay: `${index * 80}ms` }}
+        {/* Mobile Toggle Indicator */}
+        {isMobile && !isExpanded && (
+          <div className="absolute top-2 right-2 bg-black/50 text-white text-xs px-2 py-1 rounded-full">
+            Tap to expand
+          </div>
+        )}
+
+        {/* Hover/Click Overlay - Slides Up with Subcategories */}
+        <div className={`absolute inset-0 bg-gradient-to-b from-black/80 via-black/65 to-black/90 flex flex-col justify-center items-center pt-4 sm:pt-5 md:pt-6 transition-all duration-800 ease-in-out ${
+          // Desktop: show on hover
+          // Mobile: show when expanded
+          (!isMobile && 'translate-y-full group-hover:translate-y-0') ||
+          (isMobile && (isExpanded ? 'translate-y-0' : 'translate-y-full'))
+        }`}>
+          <ul className="space-y-1 sm:space-y-1.5 md:space-y-2 text-center px-1 sm:px-2">
+            {category.subcategories.map((sub, index) => (
+              <li
+                key={index}
+                className={`text-white/90 text-xs sm:text-sm cursor-pointer px-2 sm:px-3 md:px-4 py-0.5 sm:py-1 rounded-md hover:text-white hover:bg-gray-700 transition-all duration-500 ease-out ${
+                  // Desktop: animated on hover
+                  // Mobile: show immediately when expanded
+                  (!isMobile && 'translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100') ||
+                  (isMobile && (isExpanded ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'))
+                }`}
+                style={{ 
+                  transitionDelay: !isMobile ? `${index * 80}ms` : '0ms' 
+                }}
+              >
+                {sub}
+              </li>
+            ))}
+          </ul>
+
+          {/* More Button */}
+          <button className="bg-[#27bb97] absolute bottom-0 hover:bg-[#1fa987] h-8 sm:h-9 md:h-10 w-full text-white font-medium text-xs sm:text-sm md:text-[15px] transition-colors duration-300">
+            More in {category.title}
+          </button>
+
+          {/* Close button for mobile */}
+          {isMobile && isExpanded && (
+            <button 
+              onClick={(e) => {
+                e.stopPropagation();
+                setExpandedCard(null);
+              }}
+              className="absolute top-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded-full hover:bg-black/90 transition-colors duration-300"
             >
-              {sub}
-            </li>
-          ))}
-        </ul>
+              Close
+            </button>
+          )}
+        </div>
 
-        {/* More Button */}
-        <button className="bg-[#27bb97] absolute bottom-0 hover:bg-[#1fa987] h-8 sm:h-9 md:h-10 w-full text-white font-medium text-xs sm:text-sm md:text-[15px] transition-colors duration-300">
-          More in {category.title}
-        </button>
+        {/* Border Effect */}
+        <div className="absolute inset-0 border-2 border-transparent group-hover:border-white/30 rounded-lg sm:rounded-xl transition-all duration-700"></div>
       </div>
-
-      {/* Border Effect */}
-      <div className="absolute inset-0 border-2 border-transparent group-hover:border-white/30 rounded-lg sm:rounded-xl transition-all duration-700"></div>
-    </div>
-  );
+    );
+  };
 
   return (
-    <div className="min-h-screen  mt-4 px-4 py-4">
+    <div className="min-h-screen mt-4 px-4 py-4">
       <div className="">
         {/* Header Section */}
         <div className="text-center">
@@ -258,6 +346,12 @@ const Category = () => {
             quae totam porro maxime dolorem delectus consequatur vero odio
             incidunt ut.
           </p>
+          {/* Mobile instructions */}
+          {isMobile && (
+            <p className="text-sm text-gray-600 mt-2">
+              Tap on a card to see details
+            </p>
+          )}
         </div>
 
         {/* Grid: Responsive columns */}

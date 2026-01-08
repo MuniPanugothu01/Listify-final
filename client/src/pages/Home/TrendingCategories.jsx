@@ -13,7 +13,7 @@ const TrendingCategories = () => {
       </div>
 
       {/* First Row - Housing (70%) and Furniture (30%) */}
-      <div className="flex flex-col lg:flex-row gap-3 sm:gap-4 w-full mt-4 sm:mt-6 md:mt-8 lg:mt-10">
+      <div className="flex flex-col lg:flex-row gap-3 sm:gap-4 w-full ">
         {/* Housing Card */}
         <div className="w-full lg:w-[70%] bg-[#c89a5e]/30 flex flex-col lg:flex-row justify-between p-3 sm:p-4 md:p-5 lg:p-6 rounded-lg border border-[#c89a5e]">
           {/* Content Section */}
@@ -25,8 +25,8 @@ const TrendingCategories = () => {
               <h1 className="font-bold text-xl sm:text-2xl md:text-3xl lg:text-[30px] text-left leading-tight sm:leading-snug mb-2 sm:mb-3">
                 EXPLORE OUR HOUSING CATEGORIES
               </h1>
-              <p className="text-gray-700 text-sm sm:text-base md:text-[17px] text-left mb-3 sm:mb-4">
-                We have different types of house listings around the world
+              <p className="text-gray-700 text-sm sm:text-base md:text-[24px] text-left ">
+                We have different types of house listings around the world lo
               </p>
             </div>
             <div className="flex items-center gap-2 sm:gap-3 cursor-pointer">
@@ -38,7 +38,7 @@ const TrendingCategories = () => {
           </div>
           
           {/* Image Section - No absolute positioning */}
-          <div className="w-full lg:w-1/2 flex justify-center lg:justify-end items-center">
+          <div className="w-full lg:w-1/2 flex justify-center lg:justify-end items-center ">
             <img 
               src="/trendinghouse.png" 
               alt="Housing" 
@@ -58,7 +58,7 @@ const TrendingCategories = () => {
             <img
               src="/trendingfur1.png"
               alt="Furniture"
-              className="h-80 w-full object-contain rounded"
+              className="h-64 w-full object-contain rounded"
             />
           </div>
           

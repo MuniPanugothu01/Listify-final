@@ -73,7 +73,7 @@ const Footer = () => {
     <footer className="bg-gray-100 border-t border-gray-200 pt-16 pb-8 mt-14 px-4 sm:px-6 lg:px-8 relative overflow-hidden ">
       <div className="max-w-7xl mx-auto relative z-10">
         {/* Main Footer Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-6 gap-8 mb-12">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 mb-12">
           {/* Brand & Description */}
           <div className="col-span-1 lg:col-span-2">
             <div className="flex items-center space-x-3 mb-6">
@@ -126,7 +126,7 @@ const Footer = () => {
 
           {/* Marketplace Links */}
           <div className="col-span-1 lg:col-span-1">
-            <h3 className="text-gray-900 font-bold mb-6 text-sm uppercase tracking-wider pl-5">
+            <h3 className="text-gray-900 font-bold mb-6 text-sm uppercase tracking-wider pl-5 sm:mt-2">
               Marketplace
             </h3>
             <ul className="space-y-3">
