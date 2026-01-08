@@ -1019,9 +1019,9 @@ const RoomMateDetails = () => {
                         />
                       </button>
                       {showPropertyDropdown && (
-                        <div className="absolute top-full left-0 z-20 bg-white border border-gray-200 rounded-lg shadow-lg w-[600px] p-4 max-h-96 overflow-y-auto">
+                        <div className="absolute top-full left-0 z-20 bg-white border border-gray-200 rounded-lg shadow-lg lg:w-[600px] p-4 max-h-96 overflow-y-auto">
                           {/* I Need / I Offer Tabs */}
-                          <div className="mb-4 flex border-b pb-2">
+                          <div className="mb-4 hidden lg:flex border-b pb-2">
                             <button
                               onClick={() => setDropdownTab("need")}
                               className={`flex-1 text-center py-2 font-medium transition-colors ${
@@ -1048,7 +1048,7 @@ const RoomMateDetails = () => {
                           {dropdownTab === "need" && (
                             <>
                               {/* Two Column Layout */}
-                              <div className="grid grid-cols-2 gap-8">
+                              <div className="grid lg:grid-cols-2 grid-cols-1 gap-8">
                                 {/* Left Column - I need a property for rent */}
                                 <div>
                                   <div className="mb-4">

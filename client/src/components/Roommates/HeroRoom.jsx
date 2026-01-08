@@ -62,17 +62,17 @@ export default function HeroRoom() {
         <img
           src="/roommates3.jpg" 
           alt="Roommates"
-          className="w-full h-full object-cover z-0 object-center"
+          className="w-full hidden lg:flex h-full object-cover z-0 object-center"
         />
 
         {/* CONTENT OVERLAY */}
         <div>
-          <div className="container mx-auto px-6 h-full flex items-center">
+          <div className="lg:container mx-auto lg:px-6 h-full flex items-center">
             <div className="grid grid-cols-1 lg:grid-cols-1 gap-12 w-full">
               {/* LEFT SIDE - Text & Buttons */}
               <div className="space-y-8 text-white">
                 {/* Room for Rent & Property for Rent Buttons */}
-                <div className="mt-50 absolute top-62 right-130 flex-col items-center flex justify-center sm:flex-row gap-4">
+                <div className="lg:mt-50 absolute top-62 lg:right-130 left-70 flex-col items-center flex justify-center sm:flex-row gap-4">
                   <div className="cursor-pointer group ">
                     <div className="bg-white/10 backdrop-blur-sm group-hover:bg-white/20 border border-white/30 rounded-2xl p-6 w-full sm:w-48 flex flex-col items-center transition duration-300 shadow-lg hover:shadow-xl">
                       <DoorOpen className="w-12 h-12 mb-3 text-white drop-shadow" />
@@ -94,10 +94,10 @@ export default function HeroRoom() {
               </div>
 
               {/* COMPACT SINGLE ROW SEARCH BAR */}
-              <div className="bg-white absolute top-150 right-30 rounded-3xl shadow-2xl p-6 border border-gray-200 w-full max-w-7xl mx-auto">
+              <div className="bg-white absolute lg:top-150   lg:right-30 rounded-3xl shadow-2xl lg:p-6 p-4 border border-gray-200 w-full lg:max-w-7xl lg:mx-auto">
                 <div className="flex flex-col lg:flex-row items-end gap-3">
                   {/* Search Type */}
-                  <div className="flex-1 min-w-[140px]">
+                  <div className="lg:flex-1 md:min-w-[140px] w-full">
                     <label className="block text-xs font-medium text-gray-600 mb-1">
                       I'm Looking For
                     </label>
@@ -117,7 +117,7 @@ export default function HeroRoom() {
                   </div>
 
                   {/* Property Type */}
-                  <div className="flex-1 min-w-[120px]">
+                  <div className="flex-1 lg:min-w-[120px] w-full">
                     <label className="block text-xs font-medium text-gray-600 mb-1">
                       Property Type
                     </label>
@@ -137,7 +137,7 @@ export default function HeroRoom() {
                   </div>
 
                   {/* Location Type */}
-                  <div className="flex-1 min-w-[120px]">
+                  <div className="flex-1 lg:min-w-[120px] w-full">
                     <label className="block text-xs font-medium text-gray-600 mb-1">
                       Search By
                     </label>
@@ -157,7 +157,7 @@ export default function HeroRoom() {
                   </div>
 
                   {/* Location Input */}
-                  <div className="flex-1 min-w-[150px]">
+                  <div className="flex-1 lg:min-w-[150px] w-full">
                     <label className="block text-xs font-medium text-gray-600 mb-1">
                       Location
                     </label>
@@ -174,7 +174,7 @@ export default function HeroRoom() {
                     </div>
                   </div>
                   {/* Gender */}
-                  <div className="flex-1 min-w-[110px]">
+                  <div className="flex-1 lg:min-w-[110px] w-full">
                     <label className="block text-xs font-medium text-gray-600 mb-1">
                       Gender
                     </label>
@@ -194,7 +194,7 @@ export default function HeroRoom() {
                   </div>
 
                   {/* Price Range */}
-                  <div className="flex-1 min-w-[120px]">
+                  <div className="flex-1 lg:min-w-[120px] w-full">
                     <label className="block text-xs font-medium text-gray-600 mb-1">
                       Price Range
                     </label>
@@ -214,7 +214,7 @@ export default function HeroRoom() {
                   </div>
 
                   {/* Search Button */}
-                  <div className="flex-1 min-w-[100px]">
+                  <div className="flex-1 lg:min-w-[100px] w-full">
                     <button
                       className="w-full flex items-center justify-center gap-2 bg-[#27bb97] hover:bg-[#1FA987] transition-colors
                                text-white font-semibold rounded-lg px-4 py-2.5 
