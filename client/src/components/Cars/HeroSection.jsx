@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { FaChevronDown } from "react-icons/fa";
 
 const HeroSection = () => {
   const [carType, setCarType] = useState("Used Cars");
@@ -7,7 +8,7 @@ const HeroSection = () => {
   const [price, setPrice] = useState("All Prices");
 
   return (
-    <div className="relative  bg-blue-100 h-[80vh] w-full ">
+    <div className="relative bg-blue-100 h-[80vh] w-full">
       <div className="relative z-10 container mx-auto px-4 pt-16 pb-8">
         {/* Header */}
         <div className="text-center mb-12">
@@ -24,14 +25,14 @@ const HeroSection = () => {
               <select
                 value={carType}
                 onChange={(e) => setCarType(e.target.value)}
-                className="w-full px-4 py-3 w-full  rounded-lg appearance-none cursor-pointer focus:outline-none  text-gray-700"
+                className="w-full px-4 py-3 rounded-lg appearance-none cursor-pointer focus:outline-none text-gray-700"
               >
                 <option>Used Cars</option>
                 <option>New Cars</option>
                 <option>Certified Cars</option>
               </select>
               <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
-                ▼
+                <FaChevronDown />
               </div>
             </div>
 
@@ -40,7 +41,7 @@ const HeroSection = () => {
               <select
                 value={make}
                 onChange={(e) => setMake(e.target.value)}
-                className="w-full px-4 py-3  rounded-lg appearance-none cursor-pointer focus:outline-none  text-gray-700"
+                className="w-full px-4 py-3 rounded-lg appearance-none cursor-pointer focus:outline-none text-gray-700"
               >
                 <option>Any Makes</option>
                 <option>Tesla</option>
@@ -50,7 +51,7 @@ const HeroSection = () => {
                 <option>Toyota</option>
               </select>
               <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
-                ▼
+                <FaChevronDown />
               </div>
             </div>
 
@@ -59,7 +60,7 @@ const HeroSection = () => {
               <select
                 value={model}
                 onChange={(e) => setModel(e.target.value)}
-                className="w-full px-4 py-3  rounded-lg appearance-none cursor-pointer focus:outline-none  text-gray-700"
+                className="w-full px-4 py-3 rounded-lg appearance-none cursor-pointer focus:outline-none text-gray-700"
               >
                 <option>Any Models</option>
                 <option>Model S</option>
@@ -68,7 +69,7 @@ const HeroSection = () => {
                 <option>Model Y</option>
               </select>
               <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
-                ▼
+                <FaChevronDown />
               </div>
             </div>
 
@@ -77,7 +78,7 @@ const HeroSection = () => {
               <select
                 value={price}
                 onChange={(e) => setPrice(e.target.value)}
-                className="w-full px-4 py-3  rounded-lg appearance-none cursor-pointer focus:outline-none  text-gray-700"
+                className="w-full px-4 py-3 rounded-lg appearance-none cursor-pointer focus:outline-none text-gray-700"
               >
                 <option>All Prices</option>
                 <option>Under $20k</option>
@@ -86,7 +87,7 @@ const HeroSection = () => {
                 <option>$60k+</option>
               </select>
               <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
-                ▼
+                <FaChevronDown />
               </div>
             </div>
 
@@ -111,7 +112,7 @@ const HeroSection = () => {
 
         {/* Car Image */}
       </div>
-      <div className="max-w-5xl mx-auto  ">
+      <div className="max-w-5xl mx-auto mt-10">
         <img src="/cars/cars.png" alt="car" className="h-auto w-full" />
       </div>
     </div>
