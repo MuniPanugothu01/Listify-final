@@ -79,12 +79,8 @@ const Navbar = () => {
     { name: "Jobs", path: "/jobs" },
     { name: "Events", path: "/events" },
     { name: "Services", path: "/services" },
-    { name: "Marketplace", path: "/marketplace" },
     { name: "TakeCare", path: "/takecare" },
     { name: "Cars", path: "/cars" },
-    { name: "Blogs", path: "/blogs" },
-    { name: "Forums", path: "/forums" },
-    { name: "Community", path: "/community" },
   ];
 
   const profileMenuItems = [

@@ -21,9 +21,7 @@ import NannyHero from "./NannyHero";
 
 import { RainbowButton } from "../../ui/rainbow-button";
 
-
 const NannyService = () => {
-  
   // Section 1: Hero Section
   const heroData = {
     title: "Find Your Perfect Nanny",
@@ -31,66 +29,106 @@ const NannyService = () => {
     description: "Connect with experienced nannies who provide loving care and professional support for your children.",
   };
 
-
   return (
     <div className="min-h-screen bg-white">
       {/* Section 1: Hero with Background Image */}
-      <section className="relative min-h-[80vh] flex items-center justify-center overflow-hidden">
-        {/* Background Image */}
+      <section className="relative min-h-[60vh] sm:min-h-[70vh] lg:min-h-[80vh] flex items-center justify-center overflow-hidden">
+        {/* Background Image - Fixed on desktop, scroll on mobile for performance */}
         <div 
-          className="absolute inset-0 bg-cover bg-center bg-fixed"
+          className="absolute inset-0 bg-cover bg-center lg:bg-fixed"
           style={{
-              backgroundImage: `url('/nany-care-1.jpg')`, 
+            backgroundImage: `url('/nany-care-1.jpg')`,
           }}
         />
         
         {/* Dark Overlay */}
         <div className="absolute inset-0 bg-black/50" />
         
-        <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center text-white">
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-black mb-6 leading-tight">
+        <div className="relative z-10 w-full max-w-7xl mx-auto px-3 xs:px-4 sm:px-6 lg:px-8">
+          <div className="text-center text-white py-8 sm:py-12 lg:py-16 px-2">
+            <h1 className="text-3xl xs:text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-black mb-4 sm:mb-6 leading-tight tracking-tight">
               {heroData.title}
             </h1>
-            <p className="text-2xl md:text-3xl text-white/90 mb-8 max-w-3xl mx-auto">
+            <p className="text-lg xs:text-xl sm:text-2xl lg:text-3xl text-white/90 mb-4 sm:mb-6 lg:mb-8 max-w-3xl mx-auto leading-relaxed">
               {heroData.subtitle}
             </p>
-            <p className="text-xl text-white/80 mb-12 max-w-2xl mx-auto">
+            <p className="text-sm xs:text-base sm:text-lg lg:text-xl text-white/80 mb-8 sm:mb-10 lg:mb-12 max-w-2xl mx-auto leading-relaxed">
               {heroData.description}
             </p>
 
-            <div className=" flex justify-center gap-2 ">
+            {/* Button Container */}
+           
+            <div className=" flex justify-center gap-2  mb-4">
                <RainbowButton className="bg-red">Offer Nanny Care Job</RainbowButton>
                <RainbowButton>Need a Nanny Job</RainbowButton>
             </div>
-              
-               <button className="mt-6 gap-3 pl-8 pr-8 py-3 bg-white text-gray-900 rounded-xl font-medium hover:bg-gray-100 transition-all duration-300 hover:shadow-lg hover:shadow-gray-300/30">
-                Post Now
-               </button>
+            {/* Additional CTA Button */}
+            <button 
+              className="inline-flex items-center justify-center gap-2 sm:gap-3 px-6 sm:px-8 py-3 sm:py-4 bg-white text-gray-900 rounded-lg sm:rounded-xl font-medium hover:bg-gray-100 transition-all duration-300 hover:shadow-lg hover:shadow-gray-300/30 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-transparent"
+              aria-label="Post nanny job now"
+            >
+              <span>Post Now</span>
+              <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
+            </button>
+
+            {/* Scroll Indicator for Mobile */}
+            <div className="mt-10 sm:mt-12 lg:hidden">
+              <div className="flex flex-col items-center gap-2 text-white/70 animate-bounce">
+                <span className="text-sm">Scroll to explore</span>
+                <ChevronRight className="w-5 h-5 rotate-90" />
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* <NannyHero/> */}
+      {/* Remove fixed background on mobile for performance */}
+      <style jsx>{`
+        @media (max-width: 1024px) {
+          .lg\\:bg-fixed {
+            background-attachment: scroll !important;
+          }
+        }
+        
+        @media (max-width: 640px) {
+          .min-h-\\[60vh\\] {
+            min-height: 60vh !important;
+          }
+        }
+      `}</style>
 
-      <NannyAbout/>
+      {/* Imported Components */}
+      <div className="space-y-12 sm:space-y-16 lg:space-y-20">
+        {/* <NannyHero/> */}
+        
+        <div className="px-3 xs:px-4 sm:px-6 lg:px-8">
+          <NannyAbout/>
+        </div>
 
-      <NannyHowItWorks/>
+        <div className="px-3 xs:px-4 sm:px-6 lg:px-8">
+          <NannyHowItWorks/>
+        </div>
 
-      <NannyProfile/>
+        <div className="px-3 xs:px-4 sm:px-6 lg:px-8">
+          <NannyProfile/>
+        </div>
 
+        <div className="px-3 xs:px-4 sm:px-6 lg:px-8">
+          <NannyJobs/>
+        </div>
 
+        <div className="px-3 xs:px-4 sm:px-6 lg:px-8">
+          <CareServices/>
+        </div>
 
-      <NannyJobs/>
+        <div className="px-3 xs:px-4 sm:px-6 lg:px-8">
+          <NannyFaq/>
+        </div>
 
-      <CareServices/>
-
-      <NannyFaq/>
-
-      <NannyContact/>
-
-      
-
+        <div className="px-3 xs:px-4 sm:px-6 lg:px-8">
+          <NannyContact/>
+        </div>
+      </div>
     </div>
   );
 };
