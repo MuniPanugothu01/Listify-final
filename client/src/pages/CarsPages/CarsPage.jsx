@@ -5,6 +5,7 @@ import FeaturedCars from "../../components/Cars/FeaturedCars";
 import PostCars from "../../components/Cars/PostCars";
 import CarListings from "../../components/Cars/CarListings";
 import BrowseCategories2 from "../../components/Cars/BrowseCategories2";
+import TrendingCars from "../../components/Cars/TrendingCars";
 
 const CarsPage = () => {
   return (
@@ -15,8 +16,9 @@ const CarsPage = () => {
 
       <FeaturedCars />
       <PostCars />
-
       <CarListings />
+      <TrendingCars />
+
     </div>
   );
 };
