@@ -22,6 +22,14 @@ const TrendingCars = () => {
         <div className="relative w-66 h-70 bg-green-100 rounded-lg">
           <h1 className="absolute p-4 uppercase font-bold">bmw i4</h1>
 
+          {/* image placeholder */}
+          <img
+            src="/cars/trendcar.webp"
+            alt=""
+            className="absolute h-full w-full top-0 left-0  object-cover"
+          />
+
+          {/* footer price tag */}
           <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between">
             <p className="text-black capitalize">$150/day</p>
 
@@ -32,7 +40,14 @@ const TrendingCars = () => {
         </div>
         <div className="relative w-66 h-70 bg-[#ffffff]  rounded-lg">
           <h1 className="p-4 uppercase font-bold">audi a7</h1>
-         <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between">
+
+          {/* image placeholder */}
+          <img
+            src="/cars/trendcar.webp"
+            alt=""
+            className="absolute h-full w-full top-0 left-0  object-cover"
+          />
+          <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between">
             <p className="text-black capitalize">$150/day</p>
 
             <button className="px-4 h-10 border bg-[#ffffff]  text-black rounded-full cursor-pointer">
@@ -42,7 +57,15 @@ const TrendingCars = () => {
         </div>
         <div className="relative w-66 h-70 bg-[#ffffff] rounded-lg">
           <h1 className="p-4 uppercase font-bold">mercedes e-class</h1>
-               <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between">
+         
+         {/* image placeholder */}
+<img src="/cars/trendcar.webp" alt="" className="absolute h-full w-full top-0 left-0  object-cover" />
+         
+          <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between">
+           
+           
+           
+           
             <p className="text-black capitalize">$150/day</p>
 
             <button className="px-4 h-10 border bg-[#ffffff] border-black/10  text-black rounded-full cursor-pointer">
@@ -52,7 +75,12 @@ const TrendingCars = () => {
         </div>
         <div className="relative w-66 h-70 bg-[#ffffff] rounded-lg">
           <h1 className="p-4 uppercase font-bold">porsche 911</h1>
-       <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between">
+          
+          {/* image placeholder */}
+<img src="/cars/trendcar.webp" alt="" className="absolute h-full w-full top-0 left-0  object-cover" />
+          
+          
+          <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between">
             <p className="text-black capitalize">$150/day</p>
 
             <button className="px-4 h-10 border bg-[#ffffff] border-black/10  text-black rounded-full cursor-pointer">
