@@ -69,8 +69,8 @@ const Navbar = () => {
   const mainMenuItems = [
     { name: "Home", path: "/" },
     { name: "About Us", path: "/about-us" },
-    { name: "Contact Us", path: "/contact-us" },
     { name: "Our Services", path: "/our-services" },
+    { name: "Contact Us", path: "/contact-us" },
   ];
 
   const moreMenuItems = [
@@ -81,6 +81,7 @@ const Navbar = () => {
     { name: "Services", path: "/services" },
     { name: "TakeCare", path: "/takecare" },
     { name: "Cars", path: "/cars" },
+    { name: "For sale", path: "/forsale" },
   ];
 
   const profileMenuItems = [
