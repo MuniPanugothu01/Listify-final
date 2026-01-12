@@ -6,6 +6,7 @@ import PostCars from "../../components/Cars/PostCars";
 import CarListings from "../../components/Cars/CarListings";
 import BrowseCategories2 from "../../components/Cars/BrowseCategories2";
 import TrendingCars from "../../components/Cars/TrendingCars";
+import WhyChooseUs from "../../components/Cars/WhyChooseUs";
 
 const CarsPage = () => {
   return (
@@ -18,7 +19,7 @@ const CarsPage = () => {
       <PostCars />
       <CarListings />
       <TrendingCars />
-
+<WhyChooseUs/>
     </div>
   );
 };

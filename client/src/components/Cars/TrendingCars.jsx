@@ -1,9 +1,10 @@
-import React from "react";
-
+import React, { useState } from "react";
 // react icons
 import { GoArrowRight } from "react-icons/go";
 
 const TrendingCars = () => {
+  const [selectedFeature, setSelectedFeature] = useState(null);
+
   return (
     <div className="my-20 min-h-screen bg-[#f3f3f3] p-5 w-full">
       <div className="max-w-7xl mx-auto px-4 flex items-center justify-between">
@@ -158,8 +159,15 @@ const TrendingCars = () => {
         {/* Feature Benefits Bar */}
         <div className="bg-black text-white p-8 grid grid-cols-1 md:grid-cols-4 gap-6">
           {/* Seamless Booking */}
-          <div className="flex items-start gap-4">
-            <div className="w-12 h-12 border-2 border-white rounded-lg flex items-center justify-center flex-shrink-0">
+          <div 
+            className={`flex items-start gap-4 p-4 rounded-lg cursor-pointer transition-all duration-200 ${
+              selectedFeature === 'seamless' ? 'bg-gray-800/50' : 'hover:bg-gray-900/30'
+            }`}
+            onClick={() => setSelectedFeature(selectedFeature === 'seamless' ? null : 'seamless')}
+          >
+            <div className={`w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 ${
+              selectedFeature === 'seamless' ? 'bg-gray-700 border-gray-600' : 'border-2 border-white'
+            }`}>
               <svg
                 className="w-6 h-6"
                 fill="none"
@@ -180,8 +188,15 @@ const TrendingCars = () => {
           </div>
 
           {/* Premium Privileges */}
-          <div className="flex items-start gap-4">
-            <div className="w-12 h-12 border-2 border-white rounded-lg flex items-center justify-center flex-shrink-0">
+          <div 
+            className={`flex items-start gap-4 p-4 rounded-lg cursor-pointer transition-all duration-200 ${
+              selectedFeature === 'premium' ? 'bg-gray-800/50' : 'hover:bg-gray-900/30'
+            }`}
+            onClick={() => setSelectedFeature(selectedFeature === 'premium' ? null : 'premium')}
+          >
+            <div className={`w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 ${
+              selectedFeature === 'premium' ? 'bg-gray-700 border-gray-600' : 'border-2 border-white'
+            }`}>
               <svg
                 className="w-6 h-6"
                 fill="none"
@@ -203,8 +218,15 @@ const TrendingCars = () => {
           </div>
 
           {/* Flexible Cancellation */}
-          <div className="flex items-start gap-4">
-            <div className="w-12 h-12 border-2 border-white rounded-lg flex items-center justify-center flex-shrink-0">
+          <div 
+            className={`flex items-start gap-4 p-4 rounded-lg cursor-pointer transition-all duration-200 ${
+              selectedFeature === 'flexible' ? 'bg-gray-800/50' : 'hover:bg-gray-900/30'
+            }`}
+            onClick={() => setSelectedFeature(selectedFeature === 'flexible' ? null : 'flexible')}
+          >
+            <div className={`w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 ${
+              selectedFeature === 'flexible' ? 'bg-gray-700 border-gray-600' : 'border-2 border-white'
+            }`}>
               <svg
                 className="w-6 h-6"
                 fill="none"
@@ -234,8 +256,15 @@ const TrendingCars = () => {
           </div>
 
           {/* No Recharging Fees */}
-          <div className="flex items-start gap-4">
-            <div className="w-12 h-12 border-2 border-white rounded-lg flex items-center justify-center flex-shrink-0">
+          <div 
+            className={`flex items-start gap-4 p-4 rounded-lg cursor-pointer transition-all duration-200 ${
+              selectedFeature === 'nofee' ? 'bg-gray-800/50' : 'hover:bg-gray-900/30'
+            }`}
+            onClick={() => setSelectedFeature(selectedFeature === 'nofee' ? null : 'nofee')}
+          >
+            <div className={`w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 ${
+              selectedFeature === 'nofee' ? 'bg-gray-700 border-gray-600' : 'border-2 border-white'
+            }`}>
               <div className="relative">
                 <span className="text-xs font-bold">NO FEE</span>
               </div>
