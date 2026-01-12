@@ -97,9 +97,9 @@ export default function EventsHero() {
   };
 
   return (
-    <div className="relative h-[50vh] ">
+    <div className="relative h-[40vh] sm:h-[50vh] lg:h-[60vh] xl:h-[70vh]">
       {/* Carousel Container */}
-      <div className="relative w-full h-[60vh] min-h-[500px] overflow-hidden ">
+      <div className="relative w-full h-[40vh] sm:h-[50vh] lg:h-[60vh] xl:h-[70vh] min-h-[400px] sm:min-h-[500px] overflow-hidden">
         {carouselItems.map((item, index) => {
           const isActive = index === currentSlide;
           const isPrevious = index === (currentSlide - 1 + carouselItems.length) % carouselItems.length;
@@ -130,17 +130,18 @@ export default function EventsHero() {
                 src={item.image}
                 alt={item.title}
                 className="w-full h-full object-cover"
+                loading="lazy"
               />
               <div className="absolute inset-0 bg-black/40" />
               
               {/* Content Overlay */}
-              <div className="absolute inset-0 flex items-center">
-                <div className="container mx-auto px-6">
+              <div className="absolute inset-0 flex items-center px-4 xs:px-6 sm:px-8 lg:px-12">
+                <div className="container mx-auto">
                   <div className="text-center max-w-4xl mx-auto">
-                    <h1 className="text-4xl md:text-6xl font-semibold text-white mb-4">
+                    <h1 className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold text-white mb-2 sm:mb-3 lg:mb-4 leading-tight">
                       {item.title}
                     </h1>
-                    <p className="text-lg md:text-xl text-white/80 mb-10">
+                    <p className="text-sm xs:text-base sm:text-lg md:text-xl text-white/80 mb-6 sm:mb-8 lg:mb-10 px-2 sm:px-0">
                       {item.subtitle}
                     </p>
                   </div>
@@ -150,43 +151,46 @@ export default function EventsHero() {
           );
         })}
 
-        {/* Navigation Arrows - Vertical */}
-        <div className="absolute right-6 top-1/2 transform -translate-y-1/2 z-30 flex flex-col space-y-4">
+        {/* Navigation Arrows - Vertical (Hidden on mobile, visible on tablet+) */}
+        <div className="hidden sm:flex absolute right-3 sm:right-4 lg:right-6 top-1/2 transform -translate-y-1/2 z-30 flex-col space-y-3 sm:space-y-4">
           <button
             onClick={prevSlide}
             disabled={isAnimating}
-            className="bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full p-3 transition-all duration-300 disabled:opacity-50 group"
+            className="bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full p-2 sm:p-3 transition-all duration-300 disabled:opacity-50 group"
+            aria-label="Previous slide"
           >
-            <ChevronUp className="w-6 h-6 text-white group-hover:scale-110 transition-transform" />
+            <ChevronUp className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-white group-hover:scale-110 transition-transform" />
           </button>
           
           <button
             onClick={nextSlide}
             disabled={isAnimating}
-            className="bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full p-3 transition-all duration-300 disabled:opacity-50 group"
+            className="bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full p-2 sm:p-3 transition-all duration-300 disabled:opacity-50 group"
+            aria-label="Next slide"
           >
-            <ChevronDown className="w-6 h-6 text-white group-hover:scale-110 transition-transform" />
+            <ChevronDown className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-white group-hover:scale-110 transition-transform" />
           </button>
         </div>
 
-        {/* Dots Indicator - Vertical on the left */}
-        <div className="absolute left-6 top-1/2 transform -translate-y-1/2 z-30 flex flex-col space-y-3">
+        {/* Dots Indicator - Horizontal on mobile, Vertical on tablet+ */}
+        <div className="absolute bottom-4 sm:bottom-auto sm:top-1/2 sm:transform sm:-translate-y-1/2 left-1/2 sm:left-4 lg:left-6 transform -translate-x-1/2 sm:transform-none z-30 flex sm:flex-col space-x-3 sm:space-x-0 sm:space-y-3">
           {carouselItems.map((_, index) => (
             <button
               key={index}
               onClick={() => goToSlide(index)}
               disabled={isAnimating}
-              className={`w-3 h-3 rounded-full transition-all duration-300 ${
+              className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full transition-all duration-300 ${
                 index === currentSlide
-                  ? "bg-white scale-125"
+                  ? "bg-white scale-125 sm:scale-110"
                   : "bg-white/50 hover:bg-white/70"
               } ${isAnimating ? "cursor-not-allowed" : "cursor-pointer"}`}
+              aria-label={`Go to slide ${index + 1}`}
             />
           ))}
         </div>
 
         {/* Progress Bar */}
-        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-30 w-32 h-1 bg-white/30 rounded-full overflow-hidden">
+        <div className="absolute bottom-2 sm:bottom-4 left-1/2 transform -translate-x-1/2 z-30 w-24 sm:w-32 h-0.5 sm:h-1 bg-white/30 rounded-full overflow-hidden">
           <div 
             className="h-full bg-white rounded-full transition-all duration-100 ease-linear"
             style={{ 
@@ -196,21 +200,43 @@ export default function EventsHero() {
             }}
           />
         </div>
+
+        {/* Mobile Navigation Arrows (Horizontal at bottom) */}
+        <div className="sm:hidden absolute bottom-8 left-0 right-0 flex justify-center space-x-8 z-30">
+          <button
+            onClick={prevSlide}
+            disabled={isAnimating}
+            className="bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full p-3 transition-all duration-300 disabled:opacity-50 group"
+            aria-label="Previous slide"
+          >
+            <ChevronUp className="w-5 h-5 text-white group-hover:scale-110 transition-transform rotate-90" />
+          </button>
+          
+          <button
+            onClick={nextSlide}
+            disabled={isAnimating}
+            className="bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full p-3 transition-all duration-300 disabled:opacity-50 group"
+            aria-label="Next slide"
+          >
+            <ChevronDown className="w-5 h-5 text-white group-hover:scale-110 transition-transform rotate-90" />
+          </button>
+        </div>
       </div>
 
-      {/* 🌟 Floating Search Bar - Fixed position to stay below carousel */}
-      <div className="absolute left-1/2 -bottom-50 transform -translate-x-1/2 w-full px-6 z-30">
-        <div className="rounded-2xl shadow-lg p-6 max-w-7xl mx-auto bg-gray-50 border border-gray-200">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+      {/* 🌟 Floating Search Bar - Responsive positioning */}
+      <div className="absolute left-1/2 -bottom-15 transform -translate-x-1/2 w-full px-3 xs:px-4 sm:px-6 lg:px-8 z-30" 
+          >
+        <div className="rounded-lg sm:rounded-xl lg:rounded-2xl shadow-lg p-4 sm:p-5 lg:p-6 mx-auto bg-white/95 backdrop-blur-sm border border-gray-200">
+          <div className="grid grid-cols-5 sm:grid-cols-5 md:grid-cols-5 lg:grid-cols-5 gap-3 sm:gap-4">
             
             {/* Event Type */}
-            <div>
+            <div className="lg:col-span-1">
               <label className="block text-xs font-medium text-gray-600 mb-1">
                 Event Type
               </label>
               <select
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-800 
-                           focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
+                className="w-full px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-300 rounded-lg text-gray-800 
+                           focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent text-sm sm:text-base"
                 value={searchType}
                 onChange={(e) => setSearchType(e.target.value)}
               >
@@ -223,17 +249,17 @@ export default function EventsHero() {
             </div>
 
             {/* Location */}
-            <div>
+            <div className="lg:col-span-1">
               <label className="block text-xs font-medium text-gray-600 mb-1">
                 Location
               </label>
               <div className="relative">
-                <MapPin className="absolute left-3 top-3.5 w-5 h-5 text-gray-400" />
+                <MapPin className="absolute left-3 top-3 sm:top-3.5 w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
                 <input
                   type="text"
                   placeholder="City or area"
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg text-gray-800 
-                             focus:outline-none focus:ring-2 focus:ring-gray-400"
+                  className="w-full pl-9 sm:pl-10 pr-3 sm:pr-4 py-2.5 sm:py-3 border border-gray-300 rounded-lg text-gray-800 
+                             focus:outline-none focus:ring-2 focus:ring-gray-400 text-sm sm:text-base"
                   value={city}
                   onChange={(e) => setCity(e.target.value)}
                 />
@@ -241,13 +267,13 @@ export default function EventsHero() {
             </div>
 
             {/* Date */}
-            <div>
+            <div className="lg:col-span-1">
               <label className="block text-xs font-medium text-gray-600 mb-1">
                 When
               </label>
               <select
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-800 
-                           focus:outline-none focus:ring-2 focus:ring-gray-400"
+                className="w-full px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-300 rounded-lg text-gray-800 
+                           focus:outline-none focus:ring-2 focus:ring-gray-400 text-sm sm:text-base"
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
               >
@@ -260,13 +286,13 @@ export default function EventsHero() {
             </div>
 
             {/* Category */}
-            <div>
+            <div className="lg:col-span-1">
               <label className="block text-xs font-medium text-gray-600 mb-1">
                 Category
               </label>
               <select
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-800 
-                           focus:outline-none focus:ring-2 focus:ring-gray-400"
+                className="w-full px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-300 rounded-lg text-gray-800 
+                           focus:outline-none focus:ring-2 focus:ring-gray-400 text-sm sm:text-base"
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
               >
@@ -279,14 +305,23 @@ export default function EventsHero() {
             </div>
 
             {/* Search Button */}
-            <div className="flex items-end">
-              <button className="w-full bg-[#25676D] text-white font-medium px-8 py-3.5 rounded-lg hover:bg-[#1e555a] transition flex items-center justify-center gap-2">
-                <Search className="w-5 h-5" />
-                Search
+            <div className="xs:col-span-2 lg:col-span-1 flex items-end mt-1">
+              <button className="w-full bg-[#25676D] text-white font-medium px-4 sm:px-6 lg:px-8 py-2.5 sm:py-3 lg:py-3.5 rounded-lg hover:bg-[#1e555a] transition flex items-center justify-center gap-2 text-sm sm:text-base">
+                <Search className="w-4 h-4 sm:w-5 sm:h-5" />
+                <span className="whitespace-nowrap">Search</span>
               </button>
             </div>
 
           </div>
+
+          {/* Mobile: Show 2 columns for better visibility */}
+          <style jsx>{`
+            @media (max-width: 475px) {
+              .xs\\:grid-cols-2 {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+              }
+            }
+          `}</style>
         </div>
       </div>
 
@@ -328,6 +363,19 @@ export default function EventsHero() {
 
         .slide-exit {
           animation: rollOutToTop 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        /* Responsive height calculations */
+        @media (max-width: 640px) {
+          .min-h-\\[400px\\] {
+            min-height: 400px;
+          }
+        }
+        
+        @media (min-width: 641px) and (max-width: 1024px) {
+          .min-h-\\[500px\\] {
+            min-height: 500px;
+          }
         }
       `}</style>
     </div>

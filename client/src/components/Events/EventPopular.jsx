@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { format, isToday, isTomorrow, isThisWeek, parseISO } from 'date-fns';
 
@@ -215,6 +215,18 @@ const eventsData = {
 
 const EventsPopular = () => {
   const navigate = useNavigate();
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const allEvents = [...eventsData.popular, ...eventsData.upcoming];
 
@@ -243,58 +255,60 @@ const EventsPopular = () => {
     return (
       <div
         onClick={handleCardClick}
-        className="bg-white rounded-lg shadow-md hover:shadow-2xl transition-all duration-300 cursor-pointer overflow-hidden group"
+        className="bg-white rounded-lg sm:rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer overflow-hidden group w-full"
       >
         <div className="relative overflow-hidden">
           <img
             src={event.image}
             alt={event.title}
-            className="w-full h-56 object-cover group-hover:scale-110 transition-transform duration-500"
+            className="w-full h-40 sm:h-48 md:h-56 object-cover group-hover:scale-105 transition-transform duration-500"
             loading="lazy"
           />
           {event.isFree && (
-            <span className="absolute top-3 left-3 bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full">
+            <span className="absolute top-2 left-2 sm:top-3 sm:left-3 bg-green-500 text-white text-xs font-bold px-2 py-1 sm:px-3 sm:py-1 rounded-full">
               FREE
             </span>
           )}
           {event.ticketsLeft < 50 && event.ticketsLeft > 0 && (
-            <span className="absolute top-3 right-3 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full">
-              Almost Sold Out
+            <span className="absolute top-2 right-2 sm:top-3 sm:right-3 bg-red-600 text-white text-xs font-bold px-2 py-1 sm:px-3 sm:py-1 rounded-full">
+              {isMobile ? 'Low Stock' : 'Almost Sold Out'}
             </span>
           )}
         </div>
 
-        <div className="p-5">
-          <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
-            <span>{format(parseISO(event.date), 'EEE, MMM d')}</span>
+        <div className="p-3 sm:p-4 md:p-5">
+          <div className="flex items-center gap-1.5 text-xs sm:text-sm text-gray-600 mb-2">
+            <span>{format(parseISO(event.date), isMobile ? 'EEE' : 'EEE, MMM d')}</span>
             <span>•</span>
             <span>{event.time}</span>
           </div>
 
-          <h3 className="text-lg font-bold text-gray-900 group-hover:text-blue-600 transition line-clamp-2">
+          <h3 className="text-base sm:text-lg font-bold text-gray-900 group-hover:text-blue-600 transition line-clamp-2">
             {event.title}
           </h3>
-          <p className="text-sm text-gray-600 mt-1 line-clamp-1">{event.location}</p>
+          <p className="text-xs sm:text-sm text-gray-600 mt-1 line-clamp-1">{event.location}</p>
 
-          <div className="flex justify-between items-center mt-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-0 mt-3 sm:mt-4">
             <div>
-              <p className="text-xl font-bold text-gray-900">{event.displayPrice}</p>
+              <p className="text-lg sm:text-xl font-bold text-gray-900">{event.displayPrice}</p>
               {event.attendees && (
-                <p className="text-xs text-gray-500">{event.attendees} interested</p>
+                <p className="text-xs text-gray-500 mt-0.5">
+                  {event.attendees} interested
+                </p>
               )}
             </div>
             <button 
               onClick={handleButtonClick}
-              className="bg-gray-100 hover:bg-blue-600 hover:text-white text-gray-700 font-medium text-sm px-5 py-2 rounded-md transition"
+              className="bg-gray-100 hover:bg-blue-600 hover:text-white text-gray-700 font-medium text-xs sm:text-sm px-3 sm:px-4 py-2 rounded-md transition w-full sm:w-auto"
             >
-              More Info
+              {isMobile ? 'Info' : 'More Info'}
             </button>
           </div>
 
-          <div className="flex flex-wrap gap-2 mt-4">
-            <span className="text-xs bg-blue-100 text-blue-700 px-3 py-1 rounded-full">#{event.tag}</span>
+          <div className="flex flex-wrap gap-1.5 mt-3 sm:mt-4">
+            <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">#{event.tag}</span>
             {event.category && (
-              <span className="text-xs bg-purple-100 text-purple-700 px-3 py-1 rounded-full">
+              <span className="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded-full">
                 #{event.category}
               </span>
             )}
@@ -308,17 +322,19 @@ const EventsPopular = () => {
     if (events.length === 0) return null;
 
     return (
-      <div className="mb-12">
-        <div className="flex items-center gap-4 mb-6">
-          <span className={`px-5 py-2 rounded-full text-white font-bold text-sm ${badgeColor}`}>
+      <div className="mb-8 sm:mb-10 lg:mb-12">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
+          <span className={`px-4 py-1.5 sm:px-5 sm:py-2 rounded-full text-white font-bold text-xs sm:text-sm ${badgeColor} w-fit`}>
             {title}
           </span>
-          <h2 className="text-2xl font-bold text-gray-800">
-            {title === "Today" ? "Today's Events" : title}
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-800">
+            {title === "Today" ? "Today's Events" : 
+             title === "Tomorrow" ? "Tomorrow's Events" : 
+             title}
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-5 lg:gap-6">
           {events.map(event => (
             <EventCard key={event.id} event={event} />
           ))}
@@ -328,13 +344,13 @@ const EventsPopular = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 px-4 sm:px-6 lg:px-8 py-8">
+    <div className="min-h-screen bg-gray-50 px-3 xs:px-4 sm:px-5 lg:px-6 xl:px-8 py-4 sm:py-6 lg:py-8">
       <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+        <div className="text-center mb-8 sm:mb-10 lg:mb-12">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-2 sm:mb-3 lg:mb-4">
             Just Listed Events
           </h1>
-          <p className="text-lg text-pink-600">
+          <p className="text-sm sm:text-base lg:text-lg text-pink-600">
             Explore events near you
           </p>
         </div>
@@ -345,8 +361,8 @@ const EventsPopular = () => {
         <EventSection title="Upcoming" events={upcomingEvents} badgeColor="bg-purple-600" />
 
         {allEvents.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-gray-500 text-lg">No events found. Check back later!</p>
+          <div className="text-center py-8 sm:py-10 lg:py-12">
+            <p className="text-gray-500 text-sm sm:text-base lg:text-lg">No events found. Check back later!</p>
           </div>
         )}
       </div>

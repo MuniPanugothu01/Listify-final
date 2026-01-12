@@ -13,12 +13,11 @@ const Events = () => {
         <div className="events-page">
             <EventsSubNav />
             <EventsHero />
-           <div className='pt-30'>
+           
              <Eventcard />
-           </div>
 
            <EventsPopular />
-          
+
         </div>
     );
 }

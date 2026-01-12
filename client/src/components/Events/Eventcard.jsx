@@ -1,6 +1,6 @@
 // src/components/Events/EventsShowcase.jsx
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { 
   FaCalendarAlt, FaMapMarkerAlt, FaUsers, FaHeart, 
@@ -8,7 +8,8 @@ import {
   FaSearch, FaFilter, FaStar, FaClock, FaMusic,
   FaFutbol, FaUtensils, FaFilm, FaUsers as FaConference,
   FaHeartbeat, FaGlassCheers, FaTimes,
-  FaCheck, FaShareAlt, FaArrowRight
+  FaCheck, FaShareAlt, FaArrowRight,
+  FaBars, FaTimesCircle
 } from "react-icons/fa";
 
 // Events Data (same as before)
@@ -222,76 +223,80 @@ const eventsData = {
   ]
 };
 
-// EventCard Component with Routing
+// Responsive EventCard Component
 const EventCard = ({ event, onEventClick }) => {
   return (
-    <div onClick={onEventClick} className="block cursor-pointer">
-      <div className="bg-white rounded-2xl overflow-hidden border border-gray-300 hover:border-[#27bb97] transition-all duration-300 hover:transform hover:-translate-y-2 group shadow-lg hover:shadow-xl">
+    <div 
+      onClick={onEventClick} 
+      className="block cursor-pointer w-full"
+    >
+      <div className="bg-white rounded-xl sm:rounded-2xl overflow-hidden border border-gray-200 sm:border-gray-300 hover:border-[#27bb97] transition-all duration-300 hover:transform hover:-translate-y-1 sm:hover:-translate-y-2 group shadow-sm sm:shadow-lg hover:shadow-xl">
         {/* Image */}
-        <div className="relative h-48 overflow-hidden">
+        <div className="relative h-40 sm:h-48 md:h-56 overflow-hidden">
           <img
             src={event.image}
             alt={event.title}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            loading="lazy"
           />
 
           {/* Tag */}
-          <span className="absolute top-3 left-3 px-3 py-1 bg-white bg-opacity-90 text-gray-800 text-xs font-medium rounded-full uppercase tracking-wide">
+          <span className="absolute top-2 left-2 sm:top-3 sm:left-3 px-2 sm:px-3 py-1 bg-white bg-opacity-90 text-gray-800 text-xs font-medium rounded-full uppercase tracking-wide">
             {event.tag}
           </span>
 
           {/* Heart */}
-          <button className="absolute top-3 right-3 p-2 bg-white bg-opacity-80 rounded-full hover:bg-opacity-100 transition">
-            <FaHeart className="w-4 h-4 text-gray-600 hover:text-red-500" />
+          <button className="absolute top-2 right-2 sm:top-3 sm:right-3 p-1.5 sm:p-2 bg-white bg-opacity-80 rounded-full hover:bg-opacity-100 transition">
+            <FaHeart className="w-3 h-3 sm:w-4 sm:h-4 text-gray-600 hover:text-red-500" />
           </button>
 
           {/* Price Badge */}
-          <span className={`absolute bottom-3 left-3 px-3 py-2 ${event.isFree ? 'bg-green-500' : 'bg-[#27bb97]'} text-white text-sm font-bold rounded-full shadow-lg`}>
+          <span className={`absolute bottom-2 left-2 sm:bottom-3 sm:left-3 px-2 py-1 sm:px-3 sm:py-2 ${event.isFree ? 'bg-green-500' : 'bg-[#27bb97]'} text-white text-xs sm:text-sm font-bold rounded-full shadow-md sm:shadow-lg`}>
             {event.isFree ? 'FREE' : `₹${event.price}`}
           </span>
         </div>
 
         {/* Content */}
-        <div className="p-5">
-          <h3 className="font-semibold text-gray-800 text-lg line-clamp-2 mb-3  transition-colors">
+        <div className="p-3 sm:p-4 md:p-5">
+          <h3 className="font-semibold text-gray-800 text-base sm:text-lg line-clamp-2 mb-2 sm:mb-3 transition-colors">
             {event.title}
           </h3>
 
           {/* Event Details */}
-          <div className="space-y-2 text-sm text-gray-600 mb-4">
-            <div className="flex items-center gap-2">
-              <FaCalendarAlt className="w-4 h-4 " />
-              <span>{event.displayDate}</span>
+          <div className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-gray-600 mb-3 sm:mb-4">
+            <div className="flex items-center gap-1.5 sm:gap-2">
+              <FaCalendarAlt className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
+              <span className="truncate">{event.displayDate}</span>
             </div>
-            <div className="flex items-center gap-2">
-              <FaClock className="w-4 h-4 " />
-              <span>{event.time}</span>
+            <div className="flex items-center gap-1.5 sm:gap-2">
+              <FaClock className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
+              <span className="truncate">{event.time}</span>
             </div>
-            <div className="flex items-center gap-2">
-              <FaMapMarkerAlt className="w-4 h-4 " />
+            <div className="flex items-center gap-1.5 sm:gap-2">
+              <FaMapMarkerAlt className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
               <span className="truncate">{event.location}</span>
             </div>
           </div>
 
           {/* Stats and Rating */}
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center justify-between mb-3 sm:mb-4">
             <div className="flex items-center gap-1">
-              <FaStar className="w-4 h-4 text-yellow-400 fill-current" />
-              <span className="text-sm text-gray-600">{event.rating}</span>
+              <FaStar className="w-3 h-3 sm:w-4 sm:h-4 text-yellow-400 fill-current" />
+              <span className="text-xs sm:text-sm text-gray-600">{event.rating}</span>
             </div>
             <div className="flex items-center gap-1">
-              <FaTicketAlt className="w-4 h-4 " />
-              <span className="text-sm text-gray-600">{event.ticketsLeft} left</span>
+              <FaTicketAlt className="w-3 h-3 sm:w-4 sm:h-4 text-gray-500" />
+              <span className="text-xs sm:text-sm text-gray-600">{event.ticketsLeft} left</span>
             </div>
-            <div className="flex items-center gap-1.5 text-sm text-gray-600">
-              <FaUsers className="w-4 h-4" />
-              <span>{event.attendees}</span>
+            <div className="flex items-center gap-1">
+              <FaUsers className="w-3 h-3 sm:w-4 sm:h-4 text-gray-500" />
+              <span className="text-xs sm:text-sm text-gray-600">{event.attendees}</span>
             </div>
           </div>
 
           {/* CTA Button */}
-          <button className="w-full bg-[#27bb97] hover:bg-[#1fa582] text-white py-3 rounded-xl font-semibold transition-colors flex items-center justify-center gap-2 group-hover:shadow-lg group-hover:shadow-[#27bb97]/20">
-            <FaTicketAlt className="w-4 h-4" />
+          <button className="w-full bg-[#27bb97] hover:bg-[#1fa582] text-white py-2 sm:py-3 rounded-lg sm:rounded-xl font-medium sm:font-semibold transition-colors flex items-center justify-center gap-1.5 sm:gap-2 text-sm sm:text-base group-hover:shadow-md group-hover:shadow-[#27bb97]/20">
+            <FaTicketAlt className="w-3 h-3 sm:w-4 sm:h-4" />
             Get Tickets
           </button>
         </div>
@@ -300,71 +305,72 @@ const EventCard = ({ event, onEventClick }) => {
   );
 };
 
-// DiscoverEventCard Component with Routing
+// Responsive DiscoverEventCard Component
 const DiscoverEventCard = ({ event, onEventClick }) => {
   return (
-    <div onClick={onEventClick} className="cursor-pointer">
-      <div className="bg-white rounded-2xl overflow-hidden border border-gray-200 hover:border-[#27bb97] transition-all duration-300 hover:transform hover:-translate-y-1 group shadow-md hover:shadow-lg">
+    <div onClick={onEventClick} className="cursor-pointer w-full">
+      <div className="bg-white rounded-xl overflow-hidden border border-gray-200 hover:border-[#27bb97] transition-all duration-300 hover:transform hover:-translate-y-1 group shadow-sm hover:shadow-md">
         {/* Image with overlay */}
-        <div className="relative h-40 overflow-hidden">
+        <div className="relative h-32 sm:h-40 overflow-hidden">
           <img
             src={event.image}
             alt={event.title}
             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+            loading="lazy"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black opacity-60"></div>
           
           {/* Category Badge */}
-          <div className="absolute top-3 left-3">
-            <span className="px-3 py-1 bg-white text-gray-800 text-xs font-semibold rounded-full capitalize">
+          <div className="absolute top-2 left-2">
+            <span className="px-2 py-1 bg-white text-gray-800 text-xs font-semibold rounded-full capitalize">
               {event.category}
             </span>
           </div>
           
           {/* Favorite Button */}
-          <button className="absolute top-3 right-3 p-2 bg-opacity-30 rounded-full hover:bg-opacity-30 transition backdrop-blur-sm">
-            <FaHeart className="w-4 h-4 text-white hover:text-red-400 transition-colors" />
+          <button className="absolute top-2 right-2 p-1 bg-white bg-opacity-30 rounded-full hover:bg-opacity-40 transition backdrop-blur-sm">
+            <FaHeart className="w-3 h-3 text-white hover:text-red-400 transition-colors" />
           </button>
         </div>
 
         {/* Content */}
-        <div className="p-4">
+        <div className="p-3 sm:p-4">
           {/* Title and Date */}
-          <div className="mb-3">
-            <h3 className="font-bold text-gray-800 text-lg line-clamp-2 mb-2  transition-colors">
+          <div className="mb-2 sm:mb-3">
+            <h3 className="font-bold text-gray-800 text-sm sm:text-base md:text-lg line-clamp-2 mb-1 sm:mb-2 transition-colors">
               {event.title}
             </h3>
-            <div className="flex items-center gap-2 text-sm text-gray-600">
-              <FaCalendarAlt className="w-3 h-3 " />
+            <div className="flex items-center gap-1.5 text-xs text-gray-600">
+              <FaCalendarAlt className="w-3 h-3 flex-shrink-0" />
               <span>{event.displayDate}</span>
-              <span className="mx-1">•</span>
-              <FaClock className="w-3 h-3 " />
+              <span className="mx-0.5">•</span>
+              <FaClock className="w-3 h-3 flex-shrink-0" />
               <span>{event.time}</span>
             </div>
           </div>
 
           {/* Location */}
-          <div className="flex items-center gap-2 text-sm text-gray-600 mb-3">
-            <FaMapMarkerAlt className="w-3 h-3  flex-shrink-0" />
+          <div className="flex items-center gap-1.5 text-xs text-gray-600 mb-2 sm:mb-3">
+            <FaMapMarkerAlt className="w-3 h-3 flex-shrink-0" />
             <span className="line-clamp-1">{event.location}</span>
           </div>
 
           {/* Price and Rating Row */}
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
-              <span className={`text-lg font-bold ${event.isFree ? 'text-green-600' : 'text-[#27bb97]'}`}>
+          <div className="flex items-center justify-between mb-3 sm:mb-4">
+            <div className="flex items-center gap-1.5">
+              <span className={`text-base sm:text-lg font-bold ${event.isFree ? 'text-green-600' : 'text-[#27bb97]'}`}>
                 {event.isFree ? 'FREE' : `₹${event.price}`}
               </span>
             </div>
             <div className="flex items-center gap-1 bg-gray-100 px-2 py-1 rounded-full">
               <FaStar className="w-3 h-3 text-yellow-400 fill-current" />
-              <span className="text-sm font-semibold text-gray-700">{event.rating}</span>
+              <span className="text-xs sm:text-sm font-semibold text-gray-700">{event.rating}</span>
             </div>
           </div>
 
           {/* Stats and CTA */}
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4 text-xs text-gray-500">
+            <div className="flex items-center gap-3 text-xs text-gray-500">
               <div className="flex items-center gap-1">
                 <FaUsers className="w-3 h-3" />
                 <span>{event.attendees}</span>
@@ -374,9 +380,9 @@ const DiscoverEventCard = ({ event, onEventClick }) => {
                 <span>{event.ticketsLeft} left</span>
               </div>
             </div>
-            <button className="px-4 py-2 bg-[#27bb97] hover:bg-[#1fa582] text-white text-sm font-semibold rounded-lg transition-colors flex items-center gap-2">
+            <button className="px-3 py-1.5 sm:px-4 sm:py-2 bg-[#27bb97] hover:bg-[#1fa582] text-white text-xs sm:text-sm font-semibold rounded-lg transition-colors flex items-center gap-1.5">
               <FaTicketAlt className="w-3 h-3" />
-              Book
+              <span className="hidden xs:inline">Book</span>
             </button>
           </div>
         </div>
@@ -385,114 +391,115 @@ const DiscoverEventCard = ({ event, onEventClick }) => {
   );
 };
 
-// UpcomingEventsSection Component with Routing
+// Responsive UpcomingEventsSection Component
 const UpcomingEventsSection = ({ onEventClick }) => {
   const navigate = useNavigate();
 
   const handleViewMore = () => {
-    // Navigate to the first upcoming event details
-    if (eventsData.upcoming.length > 0) {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setTimeout(() => {
       navigate(`/events-list`);
-    }
+    }, 100);
   };
 
   return (
-    <section className="mt-20 px-4 md:px-8 lg:px-16">
+    <section className="mt-12 sm:mt-16 lg:mt-20 px-4 sm:px-6 lg:px-8 xl:px-16">
       <div>
-        <h1 className="text-black font-extrabold text-center text-3xl md:text-4xl">
+        <h1 className="text-black font-bold sm:font-extrabold text-center text-2xl sm:text-3xl md:text-4xl">
           Upcoming Events You Can't Miss!
         </h1>
-        <div className="h-1 w-20 bg-gradient-to-r from-[#25676D] to-[#2D8690] mt-3 rounded-full mx-auto"></div>
-        <p className="text-center text-gray-600 mt-3 text-base md:text-lg max-w-2xl mx-auto">
+        <div className="h-1 w-16 sm:w-20 bg-gradient-to-r from-[#25676D] to-[#2D8690] mt-2 sm:mt-3 rounded-full mx-auto"></div>
+        <p className="text-center text-gray-600 mt-2 sm:mt-3 text-sm sm:text-base md:text-lg max-w-2xl mx-auto px-4">
           Discover exciting upcoming events featuring music, sports, entertainment, and more. Book your tickets early!
         </p>
 
         {/* Events Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-7xl mx-auto cursor-pointer mt-10">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 max-w-7xl mx-auto cursor-pointer mt-6 sm:mt-8 lg:mt-10">
           {eventsData.upcoming.map((event) => (
             <div
               key={event.id}
               onClick={() => onEventClick(event)}
-              className="bg-white rounded-xl shadow-sm hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-100 cursor-pointer"
+              className="bg-white rounded-xl shadow-sm hover:shadow-lg transition-shadow duration-300 overflow-hidden border border-gray-100 cursor-pointer"
             >
-              <div className="flex flex-col sm:flex-row">
+              <div className="flex flex-col md:flex-row">
                 {/* Image Section */}
-                <div className="sm:w-2/5 h-48 sm:h-auto relative">
+                <div className="md:w-2/5 h-48 md:h-auto relative">
                   <img
                     src={event.image}
                     alt={event.title}
                     className="w-full h-full object-cover"
+                    loading="lazy"
                   />
                   {/* Event Tag */}
-                  <span className="absolute top-3 left-3 px-3 py-1 bg-white bg-opacity-90 text-gray-800 text-xs font-medium rounded-full uppercase tracking-wide">
+                  <span className="absolute top-2 left-2 sm:top-3 sm:left-3 px-2 py-1 sm:px-3 sm:py-1 bg-white bg-opacity-90 text-gray-800 text-xs font-medium rounded-full uppercase tracking-wide">
                     {event.tag}
                   </span>
                 </div>
 
                 {/* Content Section */}
-                <div className="sm:w-3/5 p-5 flex flex-col justify-between">
+                <div className="md:w-3/5 p-4 sm:p-5 flex flex-col justify-between">
                   {/* Title and Rating */}
                   <div>
-                    <div className="flex items-center justify-between w-full">
-                      <h3 className="text-lg font-bold text-gray-800 mb-2">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between w-full gap-2">
+                      <h3 className="text-lg sm:text-xl font-bold text-gray-800">
                         {event.title}
                       </h3>
-                      <div className="text-blue-600 px-3 py-1 font-bold text-[20px]">
+                      <div className="text-blue-600 px-3 py-1 font-bold text-lg sm:text-xl">
                         {event.isFree ? 'FREE' : `₹${event.price.toLocaleString()}`}
                       </div>
                     </div>
-                    <div className="flex items-center gap-2 mb-3">
+                    <div className="flex items-center gap-2 my-2 sm:my-3">
                       <div className="flex text-yellow-400">
                         {[...Array(5)].map((_, i) => (
-                          <span key={i}>★</span>
+                          <span key={i} className="text-sm sm:text-base">★</span>
                         ))}
                       </div>
-                      <span className="text-sm text-gray-500">
+                      <span className="text-xs sm:text-sm text-gray-500">
                         ({event.rating}/5 Rating)
                       </span>
                     </div>
 
                     {/* Event Type and Category */}
-                    <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center justify-between mb-3 sm:mb-4">
                       <div>
-                        <span className="inline-block px-3 py-1 bg-orange-100 text-orange-600 text-xs font-semibold rounded-full">
+                        <span className="inline-block px-2 py-1 sm:px-3 sm:py-1 bg-orange-100 text-orange-600 text-xs font-semibold rounded-full">
                           {event.category}
                         </span>
                       </div>
                     </div>
 
                     {/* Event Details */}
-                    <div className="flex items-center gap-4 text-gray-600 text-sm mb-4">
+                    <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-gray-600 text-xs sm:text-sm mb-3 sm:mb-4">
                       <div className="flex items-center gap-1">
-                        <FaCalendarAlt size={16} />
+                        <FaCalendarAlt size={14} className="sm:w-4 sm:h-4" />
                         <span>{event.displayDate}</span>
                       </div>
                       <div className="flex items-center gap-1">
-                        <FaClock size={16} />
+                        <FaClock size={14} className="sm:w-4 sm:h-4" />
                         <span>{event.time}</span>
                       </div>
                       <div className="flex items-center gap-1">
-                        <FaUsers size={16} />
+                        <FaUsers size={14} className="sm:w-4 sm:h-4" />
                         <span>{event.attendees}</span>
                       </div>
                     </div>
 
                     {/* Artist/Organizer */}
-                    <div className="flex items-center gap-2 text-sm text-gray-600 mb-3">
+                    <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-600 mb-2 sm:mb-3">
                       <span className="font-medium">By:</span>
                       <span>{event.artist || event.organizer}</span>
                     </div>
 
                     {/* Horizontal Line */}
-                    <div className="border-t border-gray-200 mb-4"></div>
+                    <div className="border-t border-gray-200 mb-3 sm:mb-4"></div>
 
                     {/* Location and Button */}
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-1 text-gray-500 text-sm">
-                        <FaMapMarkerAlt size={14} />
-                        <span>{event.location}</span>
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                      <div className="flex items-center gap-1.5 text-xs sm:text-sm text-gray-500">
+                        <FaMapMarkerAlt size={12} className="sm:w-4 sm:h-4" />
+                        <span className="line-clamp-2 sm:line-clamp-1">{event.location}</span>
                       </div>
-                      <button className="bg-[#2D8690] hover:bg-[#25676D] text-white px-5 py-2 rounded-full text-sm font-medium transition-colors">
+                      <button className="w-full sm:w-auto bg-[#2D8690] hover:bg-[#25676D] text-white px-4 py-2 sm:px-5 sm:py-2 rounded-full text-xs sm:text-sm font-medium transition-colors text-center">
                         Book Now
                       </button>
                     </div>
@@ -504,13 +511,13 @@ const UpcomingEventsSection = ({ onEventClick }) => {
         </div>
 
         {/* View More Events Button */}
-        <div className="flex justify-center mt-12">
+        <div className="flex justify-center mt-8 sm:mt-10 lg:mt-12">
           <button 
             onClick={handleViewMore}
-            className="bg-[#27bb97] hover:bg-[#1fa582] text-white px-8 py-4 rounded-xl font-semibold transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg flex items-center gap-3 group cursor-pointer"
+            className="bg-[#27bb97] hover:bg-[#1fa582] text-white px-6 py-3 sm:px-8 sm:py-4 rounded-lg sm:rounded-xl font-medium sm:font-semibold transition-all duration-300 transform hover:-translate-y-0.5 sm:hover:-translate-y-1 hover:shadow-lg flex items-center gap-2 sm:gap-3 group cursor-pointer text-sm sm:text-base"
           >
             View More Events
-            <FaArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            <FaArrowRight className="w-3 h-3 sm:w-4 sm:h-4 group-hover:translate-x-1 transition-transform" />
           </button>
         </div>
       </div>
@@ -518,7 +525,7 @@ const UpcomingEventsSection = ({ onEventClick }) => {
   );
 };
 
-// Main EventsShowcase Component
+// Main Responsive EventsShowcase Component
 const EventsShowcase = () => {
   const scrollRef = useRef(null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -526,8 +533,20 @@ const EventsShowcase = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [priceRange, setPriceRange] = useState('all');
   const [showFilters, setShowFilters] = useState(false);
-  
+  const [isMobile, setIsMobile] = useState(false);
   const navigate = useNavigate();
+
+  // Check if mobile
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Combine all events for filtering
   const allEvents = [...eventsData.popular, ...eventsData.upcoming];
@@ -551,18 +570,19 @@ const EventsShowcase = () => {
 
   const scrollLeft = () => {
     if (scrollRef.current) {
-      scrollRef.current.scrollBy({ left: -300, behavior: 'smooth' });
+      const scrollAmount = isMobile ? 250 : 300;
+      scrollRef.current.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
     }
   };
 
   const scrollRight = () => {
     if (scrollRef.current) {
-      scrollRef.current.scrollBy({ left: 300, behavior: 'smooth' });
+      const scrollAmount = isMobile ? 250 : 300;
+      scrollRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
     }
   };
 
   const handleEventClick = (event) => {
-    // Scroll to top first, then navigate
     window.scrollTo({ top: 0, behavior: 'smooth' });
     setTimeout(() => {
       navigate(`/events/${event.id}`);
@@ -570,7 +590,6 @@ const EventsShowcase = () => {
   };
 
   const handleViewMorePopular = () => {
-    // Navigate to the first popular event details
     if (eventsData.popular.length > 0) {
       window.scrollTo({ top: 0, behavior: 'smooth' });
       setTimeout(() => {
@@ -580,7 +599,6 @@ const EventsShowcase = () => {
   };
 
   const handleViewMoreDiscover = () => {
-    // Navigate to the first filtered event or first popular event
     const targetEvent = filteredEvents.length > 0 ? filteredEvents[0] : eventsData.popular[0];
     if (targetEvent) {
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -595,13 +613,14 @@ const EventsShowcase = () => {
     setSelectedDate('');
     setSelectedCategory('all');
     setPriceRange('all');
+    setShowFilters(false);
   };
 
   const categories = [
-    { id: 'all', name: 'All Events', icon: FaStar },
+    { id: 'all', name: 'All', icon: FaStar },
     { id: 'music', name: 'Music', icon: FaMusic },
     { id: 'sports', name: 'Sports', icon: FaFutbol },
-    { id: 'food', name: 'Food & Drink', icon: FaUtensils },
+    { id: 'food', name: 'Food', icon: FaUtensils },
     { id: 'entertainment', name: 'Entertainment', icon: FaFilm },
     { id: 'conference', name: 'Conference', icon: FaConference },
     { id: 'wellness', name: 'Wellness', icon: FaHeartbeat },
@@ -610,174 +629,179 @@ const EventsShowcase = () => {
 
   return (
     <div className="min-h-screen text-gray-800 relative overflow-hidden">
-      <div className="relative z-10 py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
+      <div className="relative z-10 py-8 sm:py-12 lg:py-16">
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 xl:px-8 space-y-12 sm:space-y-16">
           {/* 1. POPULAR EVENTS with Scroll Bar */}
-          <section>
-            <div className="flex items-center justify-between mb-8 pt-10">
-              <h2 className="text-4xl font-bold text-gray-800 text-center w-full">
+          <section className="pt-10 sm:pt-10 lg:pt-10">
+            <div className="flex flex-col sm:flex-row items-center justify-between mb-6 sm:mb-8 gap-4">
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-800 text-center sm:text-left w-full sm:w-auto">
                 POPULAR EVENTS
-                <div className="h-1 w-20 bg-gradient-to-r from-[#25676D] to-[#2D8690] rounded-full mx-auto mt-3"></div>
+                <div className="h-1 w-16 sm:w-20 bg-gradient-to-r from-[#25676D] to-[#2D8690] rounded-full mx-auto sm:mx-0 mt-2 sm:mt-3"></div>
               </h2>
 
               <div className="flex gap-2">
                 <button 
                   onClick={scrollLeft}
-                  className="p-3 rounded-full bg-white border border-gray-300 hover:border-[#27bb97] transition shadow-sm"
+                  className="p-2 sm:p-3 rounded-full bg-white border border-gray-300 hover:border-[#27bb97] transition shadow-sm"
+                  aria-label="Scroll left"
                 >
-                  <FaChevronLeft className="w-5 h-5 text-gray-600" />
+                  <FaChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600" />
                 </button>
                 <button 
                   onClick={scrollRight}
-                  className="p-3 rounded-full bg-white border border-gray-300 hover:border-[#27bb97] transition shadow-sm"
+                  className="p-2 sm:p-3 rounded-full bg-white border border-gray-300 hover:border-[#27bb97] transition shadow-sm"
+                  aria-label="Scroll right"
                 >
-                  <FaChevronRight className="w-5 h-5 text-gray-600" />
+                  <FaChevronRight className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600" />
                 </button>
               </div>
             </div>
             
             <div 
               ref={scrollRef}
-              className="flex gap-6 overflow-x-auto scrollbar-hide pb-4 scroll-smooth"
+              className="flex gap-4 sm:gap-6 overflow-x-auto scrollbar-hide pb-4 scroll-smooth px-1"
               style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
             >
               {eventsData.popular.map((event) => (
-                <div key={event.id} className="min-w-[320px] flex-shrink-0">
+                <div key={event.id} className="min-w-[280px] sm:min-w-[300px] md:min-w-[320px] flex-shrink-0">
                   <EventCard event={event} onEventClick={() => handleEventClick(event)} />
                 </div>
               ))}
             </div>
 
             {/* View More Button for Popular Events */}
-            <div className="flex justify-center mt-8">
+            <div className="flex justify-center mt-6 sm:mt-8">
               <button 
                 onClick={handleViewMorePopular}
-                className="bg-[#27bb97] hover:bg-[#1fa582] text-white px-8 py-4 rounded-xl font-semibold transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg flex items-center gap-3 group cursor-pointer"
+                className="bg-[#27bb97] hover:bg-[#1fa582] text-white px-6 py-3 sm:px-8 sm:py-4 rounded-lg sm:rounded-xl font-medium sm:font-semibold transition-all duration-300 transform hover:-translate-y-0.5 sm:hover:-translate-y-1 hover:shadow-lg flex items-center gap-2 sm:gap-3 group cursor-pointer text-sm sm:text-base"
               >
                 View More Popular Events
-                <FaArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                <FaArrowRight className="w-3 h-3 sm:w-4 sm:h-4 group-hover:translate-x-1 transition-transform" />
               </button>
             </div>
           </section>
 
-          {/* 2. DISCOVER EVENTS Section with NEW Card Design */}
+          {/* 2. DISCOVER EVENTS Section */}
           <section>
-            <h2 className="text-4xl font-bold text-center mb-4 tracking-wide text-gray-800">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-center mb-4 tracking-wide text-gray-800 px-4">
               DISCOVER EVENTS
             </h2>
             
             {/* Gradient Divider */}
-            <div className="h-1 w-20 bg-gradient-to-r from-[#25676D] to-[#2D8690] mt-3 rounded-full mx-auto mb-8"></div>
+            <div className="h-1 w-16 sm:w-20 bg-gradient-to-r from-[#25676D] to-[#2D8690] mt-2 sm:mt-3 rounded-full mx-auto mb-6 sm:mb-8"></div>
 
-            <p className="text-center text-gray-600 mb-8 text-base md:text-lg max-w-2xl mx-auto">
+            <p className="text-center text-gray-600 mb-6 sm:mb-8 text-sm sm:text-base md:text-lg max-w-2xl mx-auto px-4">
               Find your perfect event with our advanced filters and search options
             </p>
 
             {/* Enhanced Filter Section */}
-            <div className="bg-white rounded-2xl p-6 mb-8 border border-gray-300 shadow-lg">
+            <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 mb-6 sm:mb-8 border border-gray-200 sm:border-gray-300 shadow-md sm:shadow-lg">
               {/* Search and Main Filters */}
-              <div className="flex flex-col lg:flex-row gap-4 items-center justify-between mb-4">
+              <div className="flex flex-col gap-4">
                 {/* Search Bar */}
-                <div className="relative flex-1 w-full">
-                  <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <div className="relative w-full">
+                  <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 sm:w-5 sm:h-5" />
                   <input
                     type="text"
                     placeholder="Search events, locations, or artists..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-300 rounded-xl text-gray-800 placeholder-gray-500 focus:outline-none focus:border-[#27bb97] transition-colors"
+                    className="w-full pl-10 pr-4 py-2.5 sm:py-3 bg-gray-50 border border-gray-300 rounded-lg sm:rounded-xl text-gray-800 placeholder-gray-500 focus:outline-none focus:border-[#27bb97] transition-colors text-sm sm:text-base"
                   />
                 </div>
 
-                {/* Date Filter */}
-                <div className="flex items-center gap-2 bg-gray-50 px-4 py-3 rounded-xl border border-gray-300">
-                  <FaCalendarAlt className="w-5 h-5 text-[#27bb97]" />
-                  <input
-                    type="date"
-                    value={selectedDate}
-                    onChange={(e) => setSelectedDate(e.target.value)}
-                    className="bg-transparent text-gray-800 focus:outline-none"
-                  />
-                </div>
-
-                {/* Filter Toggle Button */}
-                <button
-                  onClick={() => setShowFilters(!showFilters)}
-                  className="px-6 py-3 bg-[#27bb97] hover:bg-[#1fa582] text-white rounded-xl transition-colors font-medium flex items-center gap-2"
-                >
-                  <FaFilter className="w-4 h-4" />
-                  Filters
-                </button>
-
-                {/* Clear Filters */}
-                <button
-                  onClick={clearFilters}
-                  className="px-6 py-3 bg-gray-500 hover:bg-gray-600 text-white rounded-xl transition-colors font-medium"
-                >
-                  Clear All
-                </button>
-              </div>
-
-              {/* Expandable Filters */}
-              {showFilters && (
-                <div className="border-t border-gray-300 pt-4 mt-4">
-                  <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
-                    {/* Category Filter */}
-                    <select
-                      value={selectedCategory}
-                      onChange={(e) => setSelectedCategory(e.target.value)}
-                      className="px-4 py-3 bg-gray-50 border border-gray-300 rounded-xl text-gray-800 focus:outline-none focus:border-[#27bb97] transition-colors flex-1"
-                    >
-                      <option value="all">All Categories</option>
-                      <option value="music">Music</option>
-                      <option value="sports">Sports</option>
-                      <option value="food">Food & Drink</option>
-                      <option value="entertainment">Entertainment</option>
-                      <option value="conference">Conference</option>
-                      <option value="wellness">Wellness</option>
-                      <option value="festival">Festival</option>
-                    </select>
-
-                    {/* Price Filter */}
-                    <select
-                      value={priceRange}
-                      onChange={(e) => setPriceRange(e.target.value)}
-                      className="px-4 py-3 bg-gray-50 border border-gray-300 rounded-xl text-gray-800 focus:outline-none focus:border-[#27bb97] transition-colors flex-1"
-                    >
-                      <option value="all">Any Price</option>
-                      <option value="free">Free Events</option>
-                      <option value="under1000">Under ₹1,000</option>
-                      <option value="1000to5000">₹1,000 - ₹5,000</option>
-                      <option value="over5000">Over ₹5,000</option>
-                    </select>
+                {/* Filter Controls Row */}
+                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                  {/* Date Filter */}
+                  <div className="flex items-center gap-2 bg-gray-50 px-3 sm:px-4 py-2.5 rounded-lg sm:rounded-xl border border-gray-300 flex-1">
+                    <FaCalendarAlt className="w-4 h-4 sm:w-5 sm:h-5 text-[#27bb97] flex-shrink-0" />
+                    <input
+                      type="date"
+                      value={selectedDate}
+                      onChange={(e) => setSelectedDate(e.target.value)}
+                      className="bg-transparent text-gray-800 focus:outline-none w-full text-sm sm:text-base"
+                    />
                   </div>
+
+                  {/* Filter Toggle Button */}
+                  <button
+                    onClick={() => setShowFilters(!showFilters)}
+                    className="px-4 sm:px-6 py-2.5 sm:py-3 bg-[#27bb97] hover:bg-[#1fa582] text-white rounded-lg sm:rounded-xl transition-colors font-medium flex items-center justify-center gap-2 text-sm sm:text-base"
+                  >
+                    <FaFilter className="w-3 h-3 sm:w-4 sm:h-4" />
+                    <span>Filters</span>
+                  </button>
+
+                  {/* Clear Filters */}
+                  <button
+                    onClick={clearFilters}
+                    className="px-4 sm:px-6 py-2.5 sm:py-3 bg-gray-500 hover:bg-gray-600 text-white rounded-lg sm:rounded-xl transition-colors font-medium text-sm sm:text-base"
+                  >
+                    Clear All
+                  </button>
                 </div>
-              )}
+
+                {/* Expandable Filters */}
+                {showFilters && (
+                  <div className="border-t border-gray-300 pt-4 mt-4">
+                    <div className="flex flex-col sm:flex-row gap-4">
+                      {/* Category Filter */}
+                      <select
+                        value={selectedCategory}
+                        onChange={(e) => setSelectedCategory(e.target.value)}
+                        className="px-3 sm:px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg sm:rounded-xl text-gray-800 focus:outline-none focus:border-[#27bb97] transition-colors text-sm sm:text-base"
+                      >
+                        <option value="all">All Categories</option>
+                        <option value="music">Music</option>
+                        <option value="sports">Sports</option>
+                        <option value="food">Food & Drink</option>
+                        <option value="entertainment">Entertainment</option>
+                        <option value="conference">Conference</option>
+                        <option value="wellness">Wellness</option>
+                        <option value="festival">Festival</option>
+                      </select>
+
+                      {/* Price Filter */}
+                      <select
+                        value={priceRange}
+                        onChange={(e) => setPriceRange(e.target.value)}
+                        className="px-3 sm:px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg sm:rounded-xl text-gray-800 focus:outline-none focus:border-[#27bb97] transition-colors text-sm sm:text-base"
+                      >
+                        <option value="all">Any Price</option>
+                        <option value="free">Free Events</option>
+                        <option value="under1000">Under ₹1,000</option>
+                        <option value="1000to5000">₹1,000 - ₹5,000</option>
+                        <option value="over5000">Over ₹5,000</option>
+                      </select>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
 
-            {/* Quick Categories */}
-            <div className="flex overflow-x-auto gap-3 mb-8 pb-4 scrollbar-hide">
+            {/* Quick Categories - Scrollable on mobile */}
+            <div className="flex overflow-x-auto gap-2 sm:gap-3 mb-6 sm:mb-8 pb-4 scrollbar-hide px-1">
               {categories.map((category) => {
                 const IconComponent = category.icon;
                 return (
                   <button
                     key={category.id}
                     onClick={() => setSelectedCategory(category.id)}
-                    className={`flex items-center gap-2 px-4 py-3 rounded-xl font-medium transition-all whitespace-nowrap ${
+                    className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-3 rounded-lg sm:rounded-xl font-medium transition-all whitespace-nowrap text-sm sm:text-base ${
                       selectedCategory === category.id
-                        ? 'bg-[#27bb97] text-white'
+                        ? 'bg-[#27bb97] text-white shadow-md'
                         : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-300'
                     } shadow-sm`}
                   >
-                    <IconComponent className="w-4 h-4" />
+                    <IconComponent className="w-3 h-3 sm:w-4 sm:h-4" />
                     {category.name}
                   </button>
                 );
               })}
             </div>
 
-            {/* Events Grid with NEW Discover Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {/* Events Grid with responsive columns */}
+            <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-5 lg:gap-6">
               {filteredEvents.map((event) => (
                 <DiscoverEventCard key={event.id} event={event} onEventClick={() => handleEventClick(event)} />
               ))}
@@ -785,13 +809,13 @@ const EventsShowcase = () => {
 
             {/* No Results Message */}
             {filteredEvents.length === 0 && (
-              <div className="text-center py-12 bg-white rounded-2xl border border-gray-300 shadow-lg">
-                <FaSearch className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-xl font-semibold text-gray-600 mb-2">No events found</h3>
-                <p className="text-gray-500 mb-4">Try adjusting your search criteria or filters</p>
+              <div className="text-center py-8 sm:py-12 bg-white rounded-xl sm:rounded-2xl border border-gray-200 sm:border-gray-300 shadow-md sm:shadow-lg mt-4">
+                <FaSearch className="w-12 h-12 sm:w-16 sm:h-16 text-gray-400 mx-auto mb-3 sm:mb-4" />
+                <h3 className="text-lg sm:text-xl font-semibold text-gray-600 mb-1 sm:mb-2">No events found</h3>
+                <p className="text-gray-500 mb-4 sm:mb-6 text-sm sm:text-base px-4">Try adjusting your search criteria or filters</p>
                 <button
                   onClick={clearFilters}
-                  className="px-6 py-3 bg-[#27bb97] hover:bg-[#1fa582] text-white rounded-xl transition-colors font-medium"
+                  className="px-4 sm:px-6 py-2.5 sm:py-3 bg-[#27bb97] hover:bg-[#1fa582] text-white rounded-lg sm:rounded-xl transition-colors font-medium text-sm sm:text-base"
                 >
                   Clear All Filters
                 </button>
@@ -800,19 +824,19 @@ const EventsShowcase = () => {
 
             {/* View More Button for Discover Events */}
             {filteredEvents.length > 0 && (
-              <div className="flex justify-center mt-8">
+              <div className="flex justify-center mt-6 sm:mt-8">
                 <button 
                   onClick={handleViewMoreDiscover}
-                  className="bg-[#27bb97] hover:bg-[#1fa582] text-white px-8 py-4 rounded-xl font-semibold transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg flex items-center gap-3 group cursor-pointer"
+                  className="bg-[#27bb97] hover:bg-[#1fa582] text-white px-6 py-3 sm:px-8 sm:py-4 rounded-lg sm:rounded-xl font-medium sm:font-semibold transition-all duration-300 transform hover:-translate-y-0.5 sm:hover:-translate-y-1 hover:shadow-lg flex items-center gap-2 sm:gap-3 group cursor-pointer text-sm sm:text-base"
                 >
                   View More Events
-                  <FaArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  <FaArrowRight className="w-3 h-3 sm:w-4 sm:h-4 group-hover:translate-x-1 transition-transform" />
                 </button>
               </div>
             )}
           </section>
 
-          {/* 3. UPCOMING EVENTS Section with Property Card Style */}
+          {/* 3. UPCOMING EVENTS Section */}
           <UpcomingEventsSection onEventClick={handleEventClick} />
         </div>
       </div>
