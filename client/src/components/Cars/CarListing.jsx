@@ -888,7 +888,7 @@ const CarListing = () => {
                             <div className="text-gray-400 mb-0.5">
                               Condition:
                             </div>
-                            <div className="text-green-500 font-medium">
+                            <div className="text-[#1fa987] font-medium">
                               Excellent
                             </div>
                           </div>
@@ -898,10 +898,10 @@ const CarListing = () => {
                       {/* Price & Action */}
                       <div className="w-48 p-4 flex flex-col justify-between items-center border-l ml-5 border-gray-300">
                         <button
-                          className={`w-full py-2.5 rounded-md font-semibold text-sm transition mb-3 ${
+                          className={`w-full py-2.5 rounded-md font-semibold text-sm transition cursor-pointer mb-3 ${
                             car.action === "Rent Now"
-                              ? "bg-green-500 text-white hover:bg-green-600"
-                              : "bg-white border border-green-500 text-green-600 hover:bg-green-50"
+                              ? "bg-[#27bb97] text-white hover:bg-[#1fa987]"
+                              : "bg-white border border-[#1fa987] text-[#1fa987] hover:bg-green-50"
                           }`}
                         >
                           {car.action === "Rent Now" ? "Buy Now" : "Make Bid"}
@@ -947,7 +947,7 @@ const CarListing = () => {
                             ({car.reviews} Reviews)
                           </span>
                           {car.verified && (
-                            <CheckCircle className="w-4 h-4 text-green-500" />
+                            <CheckCircle className="w-4 h-4 text-[#1fa987]" />
                           )}
                         </div>
                       </div>
