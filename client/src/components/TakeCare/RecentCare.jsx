@@ -46,7 +46,7 @@ const LatestMatches = () => {
   ];
 
   return (
-    <section className="mb-8 sm:mb-12 px-3 xs:px-4 sm:px-6 lg:px-8 py-6 sm:py-8 bg-gray-50 rounded-xl sm:rounded-2xl">
+    <section className=" max-w-7xl mx-auto mb-8 sm:mb-12 px-3 xs:px-4 sm:px-6 lg:px-8 py-6 sm:py-8 bg-gray-50 rounded-xl sm:rounded-2xl">
       <div className="flex justify-between items-center mb-6 sm:mb-8 px-2 xs:px-0">
         <h2 className="text-xl xs:text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900">
           Latest Care takers & Seekers

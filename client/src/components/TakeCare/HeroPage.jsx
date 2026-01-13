@@ -128,7 +128,7 @@ const HeroPage = () => {
       <div className="relative -mt-8 sm:-mt-10 md:-mt-12 mb-12 sm:mb-16 md:mb-20">
         <div className="px-3 sm:px-4 md:px-6">
           <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg sm:shadow-2xl p-4 sm:p-5 md:p-6 border border-gray-200 mx-2 sm:mx-0">
-            <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
+            <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-6 lg:grid-cols-6 gap-3 sm:gap-4">
               {/* Category Dropdown */}
               <div className="relative">
                 <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
