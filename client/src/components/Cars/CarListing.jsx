@@ -901,7 +901,7 @@ const CarListing = () => {
                           className={`w-full py-2.5 rounded-md font-semibold text-sm transition cursor-pointer mb-3 ${
                             car.action === "Rent Now"
                               ? "bg-[#27bb97] text-white hover:bg-[#1fa987]"
-                              : "bg-white border border-[#1fa987] text-[#1fa987] hover:bg-green-50"
+                              : "bg-white border border-[#1fa987] text-[#1fa987] hover:bg-green-100"
                           }`}
                         >
                           {car.action === "Rent Now" ? "Buy Now" : "Make Bid"}
