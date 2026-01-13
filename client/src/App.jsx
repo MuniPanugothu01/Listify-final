@@ -59,7 +59,7 @@ import ServicesPage from "./pages/Services/ServicesPage.jsx";
 
 // Cars categories
 import CarsPage from "./pages/CarsPages/CarsPage.jsx";
-
+import CarListing from "./components/Cars/CarListing.jsx";
 // Profile
 import Profile from "./pages/Home/Profile.jsx";
 
@@ -191,6 +191,7 @@ const App = () => {
 
             {/* Cars categories */}
             <Route path="/cars" element={<CarsPage />} />
+        <Route path="/car-listings" element={<CarListing />} />
 
             {/* Profile */}
             <Route path="/profile" element={<Profile />} />
