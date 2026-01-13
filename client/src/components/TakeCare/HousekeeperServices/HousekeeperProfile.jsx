@@ -1,12 +1,12 @@
 import React from 'react';
 import { User, Image, Lightbulb, Award, Send } from 'lucide-react';
 
-export default function NannyProfile() {
+export default function HousekeeperProfile() {
   const steps = [
     {
       icon: <User className="w-6 h-6 xs:w-7 xs:h-7 sm:w-8 sm:h-8" />,
       iconColor: "text-white",
-      title: "Register with your email, password, and personal details to create a profile. Use Neighborhood-Based Matching to connect with local families effortlessly.",
+      title: "Register with your email, password, and personal details to create a profile. Use Neighborhood-Based Matching to connect with local clients effortlessly.",
       buttonText: "Sign Up",
       buttonColor: "bg-[#27BB97] hover:bg-[#1FA987]",
       bgImage: "/babycare-1.jpg"
@@ -14,7 +14,7 @@ export default function NannyProfile() {
     {
       icon: <Image className="w-6 h-6 xs:w-7 xs:h-7 sm:w-8 sm:h-8" />,
       iconColor: "text-white",
-      title: "Add a professional, welcoming photo to make your profile stand out to attract more families in your area.",
+      title: "Add a professional photo to make your profile stand out and attract more cleaning opportunities.",
       buttonText: "Upload a Photo",
       buttonColor: "bg-[#27BB97] hover:bg-[#1FA987]",
       bgImage: "/babycare-2.jpg"
@@ -22,7 +22,7 @@ export default function NannyProfile() {
     {
       icon: <Lightbulb className="w-6 h-6 xs:w-7 xs:h-7 sm:w-8 sm:h-8" />,
       iconColor: "text-white",
-      title: "List your caregiving skills, certifications, and availability. Real-time updates ensure families know when you're available.",
+      title: "List your cleaning skills, certifications, specialties, and availability. Real-time updates show clients when you're available.",
       buttonText: "Highlight Skills",
       buttonColor: "bg-[#27BB97] hover:bg-[#1FA987]",
       bgImage: "/babycare-3.jpg"
@@ -30,7 +30,7 @@ export default function NannyProfile() {
     {
       icon: <Award className="w-6 h-6 xs:w-7 xs:h-7 sm:w-8 sm:h-8" />,
       iconColor: "text-white",
-      title: "Verify your email and phone number to build trust. Reach more families through our Mobile App integration.",
+      title: "Verify your email and phone number to build trust. Reach more clients through our Mobile App for last-minute bookings.",
       buttonText: "Verification Check",
       buttonColor: "bg-[#27BB97] hover:bg-[#1FA987]",
       bgImage: "/babycare-4.jpg"
@@ -38,7 +38,7 @@ export default function NannyProfile() {
     {
       icon: <Send className="w-6 h-6 xs:w-7 xs:h-7 sm:w-8 sm:h-8" />,
       iconColor: "text-white",
-      title: "Review your profile for accuracy. Use Smart Dashboard Features to manage responses and track performance.",
+      title: "Review your profile for accuracy. Use Smart Dashboard Features to manage cleaning requests and track your schedule.",
       buttonText: "Submit & Review",
       buttonColor: "bg-[#27BB97] hover:bg-[#1FA987]",
       bgImage: "/babycare-5.jpg"
@@ -46,15 +46,15 @@ export default function NannyProfile() {
   ];
 
   return (
-    <div className="min-h-screen py-8 sm:py-12 lg:py-16 px-3 xs:px-4 sm:px-6 lg:px-8">
+    <div className="py-8 sm:py-12 lg:py-16 px-3 xs:px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8 sm:mb-10 lg:mb-12 px-2">
           <h1 className="text-2xl xs:text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-800 mb-3 sm:mb-4 leading-tight">
-            Create a Nanny Profile
+            Create a Housekeeper Profile
           </h1>
           <p className="text-gray-600 text-sm xs:text-base sm:text-lg">
-            Connect with families looking for trusted care.
+            Connect with clients looking for professional cleaning services.
           </p>
         </div>
 
@@ -119,7 +119,7 @@ export default function NannyProfile() {
         <div className="text-center">
           <button 
             className="bg-gradient-to-r from-[#27BB97] to-[#1FA987] hover:from-[#1FA987] hover:to-[#198F72] text-white font-semibold py-3 xs:py-3.5 sm:py-4 px-8 xs:px-10 sm:px-12 rounded-full sm:rounded-full shadow-lg hover:shadow-xl transition-all duration-300 inline-flex items-center gap-2 text-sm xs:text-base sm:text-lg focus:outline-none focus:ring-2 focus:ring-[#27BB97] focus:ring-offset-2"
-            aria-label="Create your nanny profile"
+            aria-label="Create your housekeeper profile"
           >
             <span>Create your profile</span>
             <span className="text-lg xs:text-xl">→</span>
@@ -127,7 +127,7 @@ export default function NannyProfile() {
           
           {/* Additional Info */}
           <p className="mt-4 sm:mt-6 text-gray-500 text-xs xs:text-sm">
-            Join thousands of caregivers already connected with families
+            Join thousands of cleaning professionals already connected with clients
           </p>
         </div>
       </div>

@@ -1,14 +1,19 @@
 import React, { useRef, useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 
 const CareServices = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const scrollContainerRef = useRef(null);
   const [showLeftButton, setShowLeftButton] = useState(false);
   const [showRightButton, setShowRightButton] = useState(true);
   
-  const services = [
+  // Check if we're on a specific service page (not the main takecare page)
+  const currentPath = location.pathname;
+  const isOnSpecificServicePage = currentPath !== '/takecare' && currentPath !== '/';
+  
+  const allServices = [
     {
       id: "nanny",
       title: "Nanny",
@@ -67,6 +72,31 @@ const CareServices = () => {
     }
   ];
 
+  // Get current service ID from URL (e.g., /takecare/nanny -> "nanny")
+  const getCurrentServiceId = () => {
+    const pathParts = currentPath.split('/');
+    return pathParts[pathParts.length - 1];
+  };
+
+  const currentServiceId = getCurrentServiceId();
+  const isOnNannyPage = currentServiceId === 'nanny';
+  
+  // Filter out current service if we're on its specific page
+  const services = isOnSpecificServicePage 
+    ? allServices.filter(service => service.id !== currentServiceId)
+    : allServices;
+
+  // Debug log to check what's happening
+  useEffect(() => {
+    console.log('====================================');
+    console.log('Current path:', currentPath);
+    console.log('Current service ID:', currentServiceId);
+    console.log('Is on specific service page:', isOnSpecificServicePage);
+    console.log('Is on Nanny page:', isOnNannyPage);
+    console.log('Services showing:', services.length);
+    console.log('====================================');
+  }, [currentPath, currentServiceId, isOnSpecificServicePage, isOnNannyPage, services.length]);
+
   // Update scroll button visibility
   const updateScrollButtons = () => {
     if (scrollContainerRef.current) {
@@ -84,7 +114,7 @@ const CareServices = () => {
       
       return () => container.removeEventListener('scroll', updateScrollButtons);
     }
-  }, []);
+  }, [services]); // Re-run when services change
 
   // Handle card click to navigate to specific service page
   const handleServiceClick = (serviceId) => {
@@ -111,10 +141,10 @@ const CareServices = () => {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 sm:mb-10 lg:mb-12 gap-4">
         <div className="text-left">
           <h2 className="text-2xl xs:text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-2 sm:mb-3 lg:mb-4 leading-tight">
-            ALL IN ONE PLACE
+            {isOnSpecificServicePage ? "OTHER CARE SERVICES" : "ALL IN ONE PLACE"}
           </h2>
           <p className="text-base sm:text-lg lg:text-xl text-gray-600 max-w-2xl">
-            Providing care, finding care
+            {isOnSpecificServicePage ? "Explore other care services we offer" : "Providing care, finding care"}
           </p>
         </div>
 
@@ -180,59 +210,66 @@ const CareServices = () => {
           className="flex overflow-x-auto scrollbar-hide gap-4 xs:gap-5 sm:gap-6 pb-4 sm:pb-6 px-2 xs:px-3 sm:px-0 snap-x snap-mandatory"
           style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
         >
-          {services.map((service) => (
-            <div 
-              key={service.id}
-              className="flex-shrink-0 w-[260px] xs:w-[280px] sm:w-72 flex flex-col items-center text-center p-6 sm:p-8 rounded-xl sm:rounded-2xl border border-gray-200 hover:border-[#27BB97] hover:shadow-lg sm:hover:shadow-xl transition-all duration-300 group cursor-pointer bg-white snap-center"
-              onClick={() => handleServiceClick(service.id)}
-              role="link"
-              tabIndex={0}
-              onKeyPress={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  handleServiceClick(service.id);
-                }
-              }}
-            >
-              {/* Rounded Image */}
-              <div className="relative mb-5 sm:mb-6">
-                <div className="w-20 h-20 xs:w-24 xs:h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden border-4 border-white shadow-lg sm:shadow-xl group-hover:scale-105 sm:group-hover:scale-110 transition-transform duration-300">
-                  <img
-                    src={service.image}
-                    alt={service.title}
-                    className="w-full h-full object-cover"
-                    loading="lazy"
-                  />
-                </div>
-                {/* Gradient Ring Effect */}
-                <div className="absolute inset-0 rounded-full border-2 border-transparent">
-                  <div className={`absolute inset-0 rounded-full bg-gradient-to-r ${service.color} opacity-0 group-hover:opacity-20 transition-opacity duration-300`} />
-                </div>
-              </div>
-
-              {/* Title */}
-              <h3 className="text-xl xs:text-2xl sm:text-2xl font-bold text-gray-900 mb-2 sm:mb-3 group-hover:text-[#27BB97] transition-colors leading-tight">
-                {service.title}
-              </h3>
-
-              {/* Description */}
-              <p className="text-gray-600 text-xs xs:text-sm sm:text-sm mb-6 sm:mb-8 min-h-[2.5rem] xs:min-h-[3rem] leading-tight px-1">
-                {service.description}
-              </p>
-
-              {/* Explore Button */}
-              <button 
-                className="w-full flex items-center justify-center gap-2 px-4 xs:px-5 sm:px-6 py-2.5 xs:py-3 sm:py-3 text-[#27BB97] font-semibold rounded-lg xs:rounded-lg sm:rounded-lg border border-[#27BB97] hover:bg-[#27BB97] hover:text-white transition-all group-hover:shadow-md text-xs xs:text-sm sm:text-sm"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleServiceClick(service.id);
+          {services.length > 0 ? (
+            services.map((service) => (
+              <div 
+                key={service.id}
+                className="flex-shrink-0 w-[260px] xs:w-[280px] sm:w-72 flex flex-col items-center text-center p-6 sm:p-8 rounded-xl sm:rounded-2xl border border-gray-200 hover:border-[#27BB97] hover:shadow-lg sm:hover:shadow-xl transition-all duration-300 group cursor-pointer bg-white snap-center"
+                onClick={() => handleServiceClick(service.id)}
+                role="link"
+                tabIndex={0}
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    handleServiceClick(service.id);
+                  }
                 }}
-                aria-label={`Explore ${service.title} services`}
               >
-                Explore
-                <ArrowRight className="w-3 h-3 xs:w-4 xs:h-4 group-hover:translate-x-1 transition-transform" />
-              </button>
+                {/* Rounded Image */}
+                <div className="relative mb-5 sm:mb-6">
+                  <div className="w-20 h-20 xs:w-24 xs:h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden border-4 border-white shadow-lg sm:shadow-xl group-hover:scale-105 sm:group-hover:scale-110 transition-transform duration-300">
+                    <img
+                      src={service.image}
+                      alt={service.title}
+                      className="w-full h-full object-cover"
+                      loading="lazy"
+                    />
+                  </div>
+                  {/* Gradient Ring Effect */}
+                  <div className="absolute inset-0 rounded-full border-2 border-transparent">
+                    <div className={`absolute inset-0 rounded-full bg-gradient-to-r ${service.color} opacity-0 group-hover:opacity-20 transition-opacity duration-300`} />
+                  </div>
+                </div>
+
+                {/* Title */}
+                <h3 className="text-xl xs:text-2xl sm:text-2xl font-bold text-gray-900 mb-2 sm:mb-3 group-hover:text-[#27BB97] transition-colors leading-tight">
+                  {service.title}
+                </h3>
+
+                {/* Description */}
+                <p className="text-gray-600 text-xs xs:text-sm sm:text-sm mb-6 sm:mb-8 min-h-[2.5rem] xs:min-h-[3rem] leading-tight px-1">
+                  {service.description}
+                </p>
+
+                {/* Explore Button */}
+                <button 
+                  className="w-full flex items-center justify-center gap-2 px-4 xs:px-5 sm:px-6 py-2.5 xs:py-3 sm:py-3 text-[#27BB97] font-semibold rounded-lg xs:rounded-lg sm:rounded-lg border border-[#27BB97] hover:bg-[#27BB97] hover:text-white transition-all group-hover:shadow-md text-xs xs:text-sm sm:text-sm"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleServiceClick(service.id);
+                  }}
+                  aria-label={`Explore ${service.title} services`}
+                >
+                  Explore
+                  <ArrowRight className="w-3 h-3 xs:w-4 xs:h-4 group-hover:translate-x-1 transition-transform" />
+                </button>
+              </div>
+            ))
+          ) : (
+            // Fallback if no services
+            <div className="flex-shrink-0 w-full text-center py-8">
+              <p className="text-gray-500">No other services available</p>
             </div>
-          ))}
+          )}
         </div>
 
         {/* Scroll progress indicator */}

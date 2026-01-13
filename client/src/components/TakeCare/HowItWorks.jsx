@@ -64,12 +64,7 @@ const HowItWorks = () => {
                     key={step.step}
                     className="bg-white/95 backdrop-blur-sm rounded-xl xs:rounded-2xl lg:rounded-3xl p-4 xs:p-5 sm:p-6 md:p-7 lg:p-8 shadow-lg hover:shadow-2xl hover:-translate-y-1 sm:hover:-translate-y-2 transition-all duration-300 border border-white/30 flex flex-col items-center text-center group relative w-full"
                   >
-                    {/* Step Number */}
-                    <div className="absolute -top-2 -left-2 xs:-top-3 xs:-left-3 w-7 h-7 xs:w-8 xs:h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 lg:w-11 lg:h-11 rounded-full bg-gradient-to-br from-[#27BB97] to-[#1FA987] flex items-center justify-center shadow-lg">
-                      <span className="text-white font-bold text-xs xs:text-sm sm:text-base">
-                        {step.step}
-                      </span>
-                    </div>
+                  
 
                     {/* Icon - Perfectly centered */}
                     <div className="w-12 h-12 xs:w-14 xs:h-14 sm:w-16 sm:h-16 md:w-18 md:h-18 lg:w-20 lg:h-20 xl:w-22 xl:h-22 rounded-xl xs:rounded-2xl bg-gradient-to-br from-[#27BB97]/10 to-[#1FA987]/10 flex items-center justify-center mb-3 xs:mb-4 sm:mb-5 md:mb-6 group-hover:scale-105 transition-transform duration-300 mx-auto">

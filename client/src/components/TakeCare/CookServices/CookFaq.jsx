@@ -1,53 +1,53 @@
 import React, { useState } from 'react';
-import { ChevronDown, ChevronUp, ArrowUp } from 'lucide-react';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 
-export default function NannyFaq() {
-  const [activeTab, setActiveTab] = useState('careSeeker');
+export default function CookFaq() {
+  const [activeTab, setActiveTab] = useState('client');
   const [openQuestion, setOpenQuestion] = useState(null);
 
-  const careSeekerFAQs = [
+  const clientFAQs = [
     {
-      question: "How much does it cost to hire a nanny?",
-      answer: "The cost of hiring a nanny varies based on location, experience, and responsibilities. On average, nannies charge between $15-25 per hour. Live-in nannies may have different compensation structures including room and board."
+      question: "How much does it cost to hire a cook?",
+      answer: "The cost of hiring a cook varies based on location, experience, and services needed. On average, cooks charge between $25-50 per hour. Rates may be higher for specialized diets, event catering, or multiple meals per day."
     },
     {
-      question: "What are the typical working hours for a nanny?",
-      answer: "Typical working hours vary based on family needs. Full-time nannies usually work 40-50 hours per week, while part-time arrangements can range from 15-30 hours. Some families need evening or weekend care as well."
+      question: "What are the typical working hours for a cook?",
+      answer: "Cooking hours are flexible based on your needs. Common arrangements include daily meal prep, weekly meal services, event catering, or personal chef services for specific hours/days."
     },
     {
-      question: "What are the benefits of hiring a live-in nanny versus a live-out nanny?",
-      answer: "Live-in nannies provide more flexibility and availability, often at a lower hourly rate since room and board are included. Live-out nannies maintain separate living arrangements, which can provide better work-life boundaries for both parties."
+      question: "What are the benefits of hiring a regular cook versus occasional catering?",
+      answer: "Regular cooks provide consistency, understand dietary preferences, and can create meal plans. Occasional catering is ideal for events. Many clients use both for daily meals and special occasions."
     },
     {
-      question: "How do I create an attractive job post to find a nanny?",
-      answer: "Include detailed information about your family, children's ages, responsibilities, schedule, compensation, and any special requirements. Be clear about expectations and highlight what makes your family a great place to work."
+      question: "How do I create an attractive job post to find a cook?",
+      answer: "Include details about meal frequency, dietary requirements, cuisine preferences, kitchen facilities, schedule, pay rate, and any special requirements. Be clear about expectations and highlight what makes your home a great place to work."
     },
     {
-      question: "How do I check a nanny's references?",
-      answer: "Contact at least 2-3 previous employers, ask specific questions about reliability, childcare skills, and professionalism. Verify employment dates and reasons for leaving. Consider background checks and credential verification as well."
+      question: "How do I check a cook's references?",
+      answer: "Contact at least 2-3 previous clients, ask about culinary skills, reliability, cleanliness, and professionalism. Verify experience with similar dietary needs and ask about menu creativity."
     }
   ];
 
-  const caregiverFAQs = [
+  const cookFAQs = [
     {
-      question: "What qualifications do I need to become a nanny?",
-      answer: "While formal qualifications aren't always required, most families prefer nannies with CPR/First Aid certification, childcare experience, and relevant education. Some positions may require early childhood education degrees or specialized training."
+      question: "What qualifications do I need to become a professional cook?",
+      answer: "While formal culinary degrees are valuable, most clients look for cooks with food safety certification, proven cooking experience, and good references. Specialized skills in specific cuisines or dietary restrictions are highly valued."
     },
     {
-      question: "What are the typical responsibilities of a nanny?",
-      answer: "Typical responsibilities include supervising children, preparing meals, helping with homework, organizing activities, light housekeeping related to children, transportation to activities, and maintaining a safe environment."
+      question: "What are the typical responsibilities of a cook?",
+      answer: "Typical responsibilities include meal planning, grocery shopping, food preparation, cooking, kitchen cleanup, following dietary guidelines, and maintaining food safety standards. Some positions may include menu creation."
     },
     {
       question: "How do I create a standout profile on Sulekha Care Services?",
-      answer: "Include a professional photo, detailed work history, certifications, special skills, and a compelling bio. Highlight your unique qualities, experience with different age groups, and any additional languages or skills you offer."
+      answer: "Include professional kitchen photos, detailed experience with different cuisines, certifications, specialty skills (baking, dietary meals), and a compelling bio. Highlight your availability and preferred cooking arrangements."
     },
     {
       question: "Can I apply to multiple jobs at once on Sulekha Care Services?",
-      answer: "Yes, you can apply to multiple positions simultaneously. This increases your chances of finding the right fit. Make sure to customize your application for each family to show genuine interest."
+      answer: "Yes, you can apply to multiple positions simultaneously. This increases your chances of finding the right fit. Customize your application for each client to show understanding of their specific culinary needs."
     },
     {
-      question: "What are the advantages of having CPR or First Aid certifications as a nanny?",
-      answer: "CPR and First Aid certifications demonstrate professionalism, preparedness for emergencies, and commitment to child safety. These certifications often make you more competitive and can justify higher rates."
+      question: "What are the advantages of having food safety certifications as a cook?",
+      answer: "Food safety certifications demonstrate professionalism, knowledge of safe food handling practices, and commitment to client health. These certifications often make you more competitive and can justify higher rates."
     }
   ];
 
@@ -55,10 +55,10 @@ export default function NannyFaq() {
     setOpenQuestion(openQuestion === index ? null : index);
   };
 
-  const currentFAQs = activeTab === 'careSeeker' ? careSeekerFAQs : caregiverFAQs;
+  const currentFAQs = activeTab === 'client' ? clientFAQs : cookFAQs;
 
   return (
-    <div className="min-h-screen px-3 xs:px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
+    <div className="px-3 xs:px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8">
           {/* Left Section */}
@@ -71,7 +71,7 @@ export default function NannyFaq() {
                 The answers you're looking for
               </h1>
               <p className="text-gray-600 text-sm xs:text-base sm:text-lg leading-relaxed">
-                We've Answered Common Questions to Help You Choose the Right Care and Services for Your Needs.
+                We've Answered Common Questions to Help You Find the Perfect Cook or Cooking Job.
               </p>
             </div>
           </div>
@@ -82,33 +82,33 @@ export default function NannyFaq() {
             <div className="flex justify-start lg:justify-end mb-4 sm:mb-6">
               <div className="inline-flex bg-white rounded-full p-1 shadow-sm sm:shadow-md border border-gray-200 w-full lg:w-auto">
                 <button
-                  onClick={() => setActiveTab('careSeeker')}
+                  onClick={() => setActiveTab('client')}
                   className={`flex-1 lg:flex-none px-3 xs:px-4 sm:px-5 lg:px-6 py-2 xs:py-2.5 sm:py-2.5 rounded-full font-medium transition-all duration-200 text-xs xs:text-sm ${
-                    activeTab === 'careSeeker'
+                    activeTab === 'client'
                       ? 'bg-gradient-to-r from-[#27BB97] to-[#1FA987] text-white shadow-sm'
                       : 'bg-transparent text-gray-600 hover:text-gray-900'
                   }`}
-                  aria-label="View care seeker FAQs"
+                  aria-label="View client FAQs"
                 >
-                  Care Seeker
+                  Client
                 </button>
                 <button
-                  onClick={() => setActiveTab('caregiver')}
+                  onClick={() => setActiveTab('cook')}
                   className={`flex-1 lg:flex-none px-3 xs:px-4 sm:px-5 lg:px-6 py-2 xs:py-2.5 sm:py-2.5 rounded-full font-medium transition-all duration-200 text-xs xs:text-sm ${
-                    activeTab === 'caregiver'
+                    activeTab === 'cook'
                       ? 'bg-gradient-to-r from-[#27BB97] to-[#1FA987] text-white shadow-sm'
                       : 'bg-transparent text-gray-600 hover:text-gray-900'
                   }`}
-                  aria-label="View caregiver FAQs"
+                  aria-label="View cook FAQs"
                 >
-                  Caregiver
+                  Cook
                 </button>
               </div>
             </div>
 
             {/* Section Title */}
             <h2 className="text-lg xs:text-xl sm:text-2xl font-bold text-[#27BB97] mb-4 sm:mb-6">
-              {activeTab === 'careSeeker' ? 'Care Seeker' : 'Caregiver'}
+              {activeTab === 'client' ? 'Client' : 'Cook'}
             </h2>
 
             {/* FAQ Accordion */}
@@ -151,16 +151,6 @@ export default function NannyFaq() {
             </div>
           </div>
         </div>
-
-
-        {/* Scroll to Top Button */}
-        <button 
-          className="fixed bottom-4 xs:bottom-6 sm:bottom-8 right-3 xs:right-4 sm:right-6 lg:right-8 w-10 h-10 xs:w-11 xs:h-11 sm:w-12 sm:h-12 bg-white rounded-full shadow-md border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#27BB97] z-50"
-          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-          aria-label="Scroll to top"
-        >
-          <ArrowUp className="w-4 h-4 xs:w-5 xs:h-5 text-gray-600" />
-        </button>
       </div>
     </div>
   );
