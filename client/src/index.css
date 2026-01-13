@@ -228,3 +228,38 @@ html {
 
 
 
+/* Ultra-thin professional scrollbar styles - NO ARROWS */
+.scrollbar-thin::-webkit-scrollbar {
+  width: 3px; /* Keep it at 3px for visibility */
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 3px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: #cbd5e1; /* Lighter gray - slate-300 */
+  border-radius: 3px;
+  opacity: 0.7;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8; /* slate-400 on hover */
+  opacity: 1;
+}
+
+/* HIDE THE SCROLLBAR BUTTONS (ARROWS) */
+.scrollbar-thin::-webkit-scrollbar-button {
+  display: none; /* This removes the arrows */
+}
+
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+}
+
+/* Optional: Hide scrollbar when not scrolling */
+.scrollbar-thin {
+  scrollbar-gutter: stable;
+}

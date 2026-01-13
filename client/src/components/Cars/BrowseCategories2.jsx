@@ -1,7 +1,14 @@
 import React from "react";
 import { GoArrowUpRight } from "react-icons/go";
+import { Link, useNavigate } from "react-router-dom";
 
 const BrowseCategories2 = () => {
+  const navigate = useNavigate();
+
+  const handleViewAllCars = () => {
+    navigate("/car-listings");
+  };
+
   return (
     <div className="max-w-7xl mx-auto my-20 px-4">
       {/* text */}
@@ -65,7 +72,7 @@ const BrowseCategories2 = () => {
             className="h-[260px] w-[260px] sm:h-[300px] sm:w-[220px] md:h-[340px] md:w-[280px]
                        object-cover rounded-lg
                        transform scale-100 group-hover:scale-110
-                       transition-transform duration-700 ease-out"
+                       transition-transform duration=700 ease-out"
           />
         </div>
 
@@ -92,7 +99,7 @@ const BrowseCategories2 = () => {
             className="h-[260px] w-[260px] sm:h-[300px] sm:w-[220px] md:h-[340px] md:w-[280px]
                        object-cover rounded-lg
                        transform scale-100 group-hover:scale-110
-                       transition-transform duration-700 ease-out"
+                       transition-transform duration=700 ease-out"
           />
         </div>
 
@@ -119,21 +126,24 @@ const BrowseCategories2 = () => {
             className="h-[260px] w-[260px] sm:h-[300px] sm:w-[220px] md:h-[340px] md:w-[280px]
                        object-cover rounded-lg
                        transform scale-100 group-hover:scale-110
-                       transition-transform duration-700 ease-out"
+                       transition-transform duration=700 ease-out"
           />
         </div>
       </div>
 
       {/* View More Button */}
       <div className="text-center mt-16">
+        
+        <Link to="/car-listings">
         <button
+          
           className="px-8 py-3 border-2 border-[#27bb97] text-[#27bb97] font-semibold rounded-lg
                      hover:bg-[#27bb97] hover:text-white transition-all duration-300
-                     hover:shadow-lg capitalize"
+                     hover:shadow-lg capitalize cursor-pointer"
         >
           View All cars →
-        </button>
-      </div>
+        </button></Link>
+              </div>
     </div>
   );
 };
