@@ -44,6 +44,9 @@ import {
   Gamepad2,
   Sparkles,
   Beer,
+  Menu,
+  X,
+  ArrowLeft,
 } from "lucide-react";
 import {
   FaMapMarkerAlt,
@@ -992,6 +995,7 @@ const allEvents = [
     }
   }
 ];
+
 // Options data
 const searchTypes = [
   "Music Events",
@@ -1064,7 +1068,19 @@ const itemsPerPageOptions = [3, 6, 9, 12];
 // Google Maps Component
 const EventMap = ({ eventData }) => {
   const [showInteractiveMap, setShowInteractiveMap] = useState(false);
-  
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   // Generate Google Maps URL for the event
   const getGoogleMapsUrl = () => {
     const query = encodeURIComponent(`${eventData.title} ${eventData.description}`);
@@ -1076,7 +1092,7 @@ const EventMap = ({ eventData }) => {
     return `https://www.google.com/maps/dir/?api=1&destination=${destination}`;
   };
 
-  // Get coordinates for the map (simplified - in real app use geocoding)
+  // Get coordinates for the map
   const getEventCoordinates = () => {
     // Default coordinates for India
     const defaultCoords = { lat: 20.5937, lng: 78.9629 };
@@ -1103,95 +1119,95 @@ const EventMap = ({ eventData }) => {
   const coordinates = getEventCoordinates();
 
   return (
-    <div className="mt-8 bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
-      <div className="p-6">
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-6">
-          <div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">Location & Directions</h3>
-            <p className="text-gray-600">Find how to reach the event venue</p>
+    <div className="mt-6 sm:mt-8 bg-white rounded-xl sm:rounded-2xl shadow-lg border border-gray-200 overflow-hidden">
+      <div className="p-4 sm:p-6">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-4 sm:mb-6">
+          <div className="mb-4 sm:mb-0">
+            <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-1 sm:mb-2">Location & Directions</h3>
+            <p className="text-xs sm:text-sm text-gray-600">Find how to reach the event venue</p>
           </div>
           
-          <div className="flex gap-3 mt-4 lg:mt-0">
+          <div className="flex gap-2 sm:gap-3 flex-wrap">
             <button
               onClick={() => setShowInteractiveMap(!showInteractiveMap)}
-              className="flex items-center gap-2 px-4 py-2.5 bg-blue-50 text-blue-700 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors"
+              className="flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-2 bg-blue-50 text-blue-700 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors text-xs sm:text-sm"
             >
-              <FaMap />
-              {showInteractiveMap ? "Hide Interactive Map" : "Show Interactive Map"}
+              <FaMap className="text-xs sm:text-sm" />
+              {showInteractiveMap ? (isMobile ? "Hide Map" : "Hide Interactive Map") : (isMobile ? "Show Map" : "Interactive Map")}
             </button>
             
             <a
               href={getDirectionsUrl()}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 px-4 py-2.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+              className="flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-xs sm:text-sm"
             >
-              <FaDirections />
-              Get Directions
+              <FaDirections className="text-xs sm:text-sm" />
+              {isMobile ? "Directions" : "Get Directions"}
             </a>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
           {/* Location Details */}
-          <div className="lg:col-span-1 space-y-6">
+          <div className="lg:col-span-1 space-y-4 sm:space-y-6">
             {/* Venue Info */}
-            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-              <div className="flex items-start gap-3 mb-3">
-                <div className="p-2 bg-blue-100 rounded-lg">
-                  <FaMapMarkerAlt className="text-blue-600 text-lg" />
+            <div className="bg-gray-50 p-3 sm:p-4 rounded-lg border border-gray-200">
+              <div className="flex items-start gap-2 sm:gap-3 mb-2 sm:mb-3">
+                <div className="p-1.5 sm:p-2 bg-blue-100 rounded-lg">
+                  <FaMapMarkerAlt className="text-blue-600 text-sm sm:text-lg" />
                 </div>
                 <div>
-                  <h4 className="font-semibold text-gray-900 text-lg">Venue Address</h4>
-                  <p className="text-gray-700 mt-2 leading-relaxed">
+                  <h4 className="font-semibold text-gray-900 text-sm sm:text-lg">Venue Address</h4>
+                  <p className="text-gray-700 mt-1 sm:mt-2 leading-relaxed text-xs sm:text-sm">
                     {eventData.description}
                     <br />
-                    <span className="text-gray-500">{eventData.location}</span>
+                    <span className="text-gray-500 text-xs sm:text-sm">{eventData.location}</span>
                   </p>
                 </div>
               </div>
             </div>
 
             {/* Transport Info */}
-            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-              <h4 className="font-semibold text-gray-900 text-lg mb-4">How to Get There</h4>
+            <div className="bg-gray-50 p-3 sm:p-4 rounded-lg border border-gray-200">
+              <h4 className="font-semibold text-gray-900 text-sm sm:text-lg mb-3 sm:mb-4">How to Get There</h4>
               
-              <div className="space-y-4">
+              <div className="space-y-3 sm:space-y-4">
                 {/* Public Transport */}
                 <div>
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="p-1.5 bg-purple-100 rounded">
-                      <span className="text-purple-600">🚇</span>
+                  <div className="flex items-center gap-1.5 sm:gap-2 mb-1 sm:mb-2">
+                    <div className="p-1 sm:p-1.5 bg-purple-100 rounded">
+                      <span className="text-purple-600 text-xs sm:text-sm">🚇</span>
                     </div>
-                    <span className="font-medium text-gray-900">Nearest Metro Station</span>
+                    <span className="font-medium text-gray-900 text-xs sm:text-sm">Nearest Metro Station</span>
                   </div>
-                  <p className="text-gray-700 ml-8">
+                  <p className="text-gray-700 ml-6 sm:ml-8 text-xs sm:text-sm">
                     {eventData.distance || "Walking distance from nearest metro station"}
                   </p>
                 </div>
 
                 {/* Bus Stop */}
                 <div>
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="p-1.5 bg-green-100 rounded">
-                      <span className="text-green-600">🚌</span>
+                  <div className="flex items-center gap-1.5 sm:gap-2 mb-1 sm:mb-2">
+                    <div className="p-1 sm:p-1.5 bg-green-100 rounded">
+                      <span className="text-green-600 text-xs sm:text-sm">🚌</span>
                     </div>
-                    <span className="font-medium text-gray-900">Bus Stop</span>
+                    <span className="font-medium text-gray-900 text-xs sm:text-sm">Bus Stop</span>
                   </div>
-                  <p className="text-gray-700 ml-8">
+                  <p className="text-gray-700 ml-6 sm:ml-8 text-xs sm:text-sm">
                     {eventData.busStopDistance || "Multiple bus routes available nearby"}
                   </p>
                 </div>
 
                 {/* Parking */}
                 <div>
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="p-1.5 bg-blue-100 rounded">
-                      <span className="text-blue-600">🅿️</span>
+                  <div className="flex items-center gap-1.5 sm:gap-2 mb-1 sm:mb-2">
+                    <div className="p-1 sm:p-1.5 bg-blue-100 rounded">
+                      <span className="text-blue-600 text-xs sm:text-sm">🅿️</span>
                     </div>
-                    <span className="font-medium text-gray-900">Parking</span>
+                    <span className="font-medium text-gray-900 text-xs sm:text-sm">Parking</span>
                   </div>
-                  <p className="text-gray-700 ml-8">
+                  <p className="text-gray-700 ml-6 sm:ml-8 text-xs sm:text-sm">
                     {eventData.amenities?.includes("Parking") 
                       ? "Parking available at venue" 
                       : "Limited street parking available"}
@@ -1199,33 +1215,13 @@ const EventMap = ({ eventData }) => {
                 </div>
               </div>
             </div>
-
-            {/* Quick Actions */}
-            {/* <div className="space-y-3">
-              <a
-                href={getGoogleMapsUrl()}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center gap-3 w-full bg-white border-2 border-blue-600 text-blue-600 hover:bg-blue-50 font-semibold py-3.5 px-4 rounded-lg transition-colors"
-              >
-                <FaExternalLinkAlt />
-                Open in Google Maps
-              </a>
-              
-              <button
-                onClick={() => navigator.clipboard.writeText(eventData.description)}
-                className="flex items-center justify-center gap-3 w-full bg-gray-100 text-gray-700 hover:bg-gray-200 font-medium py-3.5 px-4 rounded-lg transition-colors"
-              >
-                📋 Copy Address
-              </button>
-            </div> */}
           </div>
 
           {/* Map Section */}
           <div className="lg:col-span-2">
             {showInteractiveMap ? (
-              // Interactive Google Maps (requires API key)
-              <div className="h-[400px] rounded-lg overflow-hidden border border-gray-300 relative">
+              // Interactive Google Maps
+              <div className="h-[300px] sm:h-[400px] rounded-lg overflow-hidden border border-gray-300 relative">
                 <iframe
                   width="100%"
                   height="100%"
@@ -1236,40 +1232,40 @@ const EventMap = ({ eventData }) => {
                   title={`Location of ${eventData.title}`}
                   loading="lazy"
                 />
-                <div className="absolute top-4 right-4 bg-white rounded-lg shadow-lg p-3">
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
-                    <span className="text-sm font-semibold">Event Location</span>
+                <div className="absolute top-2 sm:top-4 right-2 sm:right-4 bg-white rounded-lg shadow-lg p-2 sm:p-3">
+                  <div className="flex items-center gap-1 sm:gap-2">
+                    <div className="w-2 h-2 sm:w-3 sm:h-3 bg-red-500 rounded-full animate-pulse"></div>
+                    <span className="text-xs sm:text-sm font-semibold">Event Location</span>
                   </div>
-                  <p className="text-xs text-gray-600 mt-1 max-w-[200px]">{eventData.description}</p>
+                  <p className="text-xs text-gray-600 mt-1 max-w-[120px] sm:max-w-[200px] truncate">{eventData.description}</p>
                 </div>
               </div>
             ) : (
               // Simple Static Map
-              <div className="h-[400px] rounded-lg overflow-hidden border border-gray-300 relative">
+              <div className="h-[300px] sm:h-[400px] rounded-lg overflow-hidden border border-gray-300 relative">
                 <div className="w-full h-full bg-gradient-to-br from-blue-50 to-gray-100 flex items-center justify-center">
-                  <div className="text-center p-6">
-                    <div className="inline-block p-4 bg-blue-100 rounded-full mb-4">
-                      <FaMapMarkerAlt className="text-blue-600 text-3xl" />
+                  <div className="text-center p-4 sm:p-6">
+                    <div className="inline-block p-3 sm:p-4 bg-blue-100 rounded-full mb-3 sm:mb-4">
+                      <FaMapMarkerAlt className="text-blue-600 text-2xl sm:text-3xl" />
                     </div>
-                    <h4 className="text-lg font-semibold text-gray-900 mb-2">Event Location</h4>
-                    <p className="text-gray-700 mb-4 max-w-md mx-auto">{eventData.description}</p>
-                    <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                    <h4 className="text-base sm:text-lg font-semibold text-gray-900 mb-1 sm:mb-2">Event Location</h4>
+                    <p className="text-gray-700 mb-3 sm:mb-4 max-w-md mx-auto text-xs sm:text-sm">{eventData.description}</p>
+                    <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 justify-center">
                       <a
                         href={getGoogleMapsUrl()}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 bg-blue-600 text-white px-4 py-2.5 rounded-lg hover:bg-blue-700 transition-colors"
+                        className="inline-flex items-center gap-1 sm:gap-2 bg-blue-600 text-white px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg hover:bg-blue-700 transition-colors text-xs sm:text-sm"
                       >
-                        <FaMap />
+                        <FaMap className="text-xs sm:text-sm" />
                         View on Map
                       </a>
                       <button
                         onClick={() => setShowInteractiveMap(true)}
-                        className="inline-flex items-center gap-2 border border-blue-600 text-blue-600 px-4 py-2.5 rounded-lg hover:bg-blue-50 transition-colors"
+                        className="inline-flex items-center gap-1 sm:gap-2 border border-blue-600 text-blue-600 px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg hover:bg-blue-50 transition-colors text-xs sm:text-sm"
                       >
-                        <FaDirections />
-                        Interactive Map
+                        <FaDirections className="text-xs sm:text-sm" />
+                        {isMobile ? "Interactive" : "Interactive Map"}
                       </button>
                     </div>
                   </div>
@@ -1279,8 +1275,8 @@ const EventMap = ({ eventData }) => {
                 <div className="absolute inset-0 pointer-events-none">
                   <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
                     <div className="relative">
-                      <div className="w-8 h-8 bg-red-500 rounded-full border-4 border-white shadow-lg animate-bounce"></div>
-                      <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 bg-white px-3 py-1.5 rounded-lg shadow-md whitespace-nowrap text-sm font-medium">
+                      <div className="w-6 h-6 sm:w-8 sm:h-8 bg-red-500 rounded-full border-4 border-white shadow-lg animate-bounce"></div>
+                      <div className="absolute -bottom-6 sm:-bottom-8 left-1/2 transform -translate-x-1/2 bg-white px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg shadow-md whitespace-nowrap text-xs sm:text-sm font-medium">
                         📍 {eventData.location.split(',')[0]}
                       </div>
                     </div>
@@ -1288,42 +1284,6 @@ const EventMap = ({ eventData }) => {
                 </div>
               </div>
             )}
-            
-            {/* Map Controls */}
-            {/* <div className="flex flex-wrap gap-3 mt-4">
-              <div className="flex items-center gap-2 text-sm text-gray-600">
-                <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-                <span>Event Location</span>
-              </div>
-              <div className="flex items-center gap-2 text-sm text-gray-600">
-                <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
-                <span>Public Transport</span>
-              </div>
-              <div className="flex items-center gap-2 text-sm text-gray-600">
-                <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                <span>Parking Areas</span>
-              </div>
-            </div> */}
-
-            {/* Estimated Travel Times */}
-            {/* <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-3">
-              <div className="bg-blue-50 p-3 rounded-lg text-center">
-                <div className="text-sm text-gray-600">By Car</div>
-                <div className="font-semibold text-gray-900">15-25 min</div>
-              </div>
-              <div className="bg-green-50 p-3 rounded-lg text-center">
-                <div className="text-sm text-gray-600">By Metro</div>
-                <div className="font-semibold text-gray-900">20-30 min</div>
-              </div>
-              <div className="bg-purple-50 p-3 rounded-lg text-center">
-                <div className="text-sm text-gray-600">By Bus</div>
-                <div className="font-semibold text-gray-900">25-35 min</div>
-              </div>
-              <div className="bg-yellow-50 p-3 rounded-lg text-center">
-                <div className="text-sm text-gray-600">Walking</div>
-                <div className="font-semibold text-gray-900">8-12 min</div>
-              </div>
-            </div> */}
           </div>
         </div>
       </div>
@@ -1334,6 +1294,8 @@ const EventMap = ({ eventData }) => {
 const EventDetailPage = () => {
   const navigate = useNavigate();
   const { eventId } = useParams();
+  const [isMobile, setIsMobile] = useState(false);
+  const [isTablet, setIsTablet] = useState(false);
   
   // State for search filters
   const [searchType, setSearchType] = useState("Music Events");
@@ -1354,6 +1316,19 @@ const EventDetailPage = () => {
 
   const [eventData, setEventData] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const checkScreenSize = () => {
+      const width = window.innerWidth;
+      setIsMobile(width < 768);
+      setIsTablet(width >= 768 && width < 1024);
+    };
+    
+    checkScreenSize();
+    window.addEventListener('resize', checkScreenSize);
+    
+    return () => window.removeEventListener('resize', checkScreenSize);
+  }, []);
 
   useEffect(() => {
     // Find the event by ID
@@ -1480,7 +1455,7 @@ const EventDetailPage = () => {
           />
         ))}
       </div>
-      <span className="text-sm text-gray-600">({reviews})</span>
+      <span className="text-xs sm:text-sm text-gray-600">({reviews})</span>
     </div>
   );
 
@@ -1530,7 +1505,7 @@ const EventDetailPage = () => {
 
     return (
       <div
-        className="bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 group cursor-pointer"
+        className="bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 group cursor-pointer w-full"
         onClick={handleCardClick}
       >
         <div className="flex flex-col md:flex-row">
@@ -1635,23 +1610,25 @@ const EventDetailPage = () => {
           </div>
 
           {/* Content Section */}
-          <div className="md:w-3/5 p-5 flex flex-col justify-between">
+          <div className="md:w-3/5 p-4 sm:p-5 flex flex-col justify-between">
             {/* Header with Price and Badges */}
             <div>
-              <div className="flex items-start justify-between mb-3">
+              <div className="flex flex-col sm:flex-row sm:items-start justify-between mb-3 gap-3">
                 <div className="flex-1 pr-4">
                   <h3
-                    className="text-lg font-bold text-gray-800 mb-2 leading-tight hover:text-blue-600 transition-colors cursor-pointer"
+                    className="text-base sm:text-lg font-bold text-gray-800 mb-2 leading-tight hover:text-blue-600 transition-colors cursor-pointer"
                     onClick={handleTitleClick}
                   >
-                    {event.title}
+                    {isMobile && event.title.length > 60 
+                      ? `${event.title.substring(0, 60)}...` 
+                      : event.title}
                   </h3>
 
                   {/* Location and Quick Info */}
-                  <div className="flex items-center gap-3 text-sm text-gray-600 mb-2 flex-wrap">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 text-xs sm:text-sm text-gray-600 mb-2 flex-wrap">
                     <div className="flex items-center gap-1">
                       {getEventIcon(event.category)}
-                      <span>{event.category}</span>
+                      <span className="truncate">{event.category}</span>
                     </div>
                     <div className="flex items-center gap-1">
                       <Calendar size={14} />
@@ -1664,46 +1641,46 @@ const EventDetailPage = () => {
                   </div>
 
                   {/* Rating and Response Info */}
-                  <div className="flex items-center gap-4 mb-3">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mb-3">
                     <RatingStars
                       rating={event.rating}
                       reviews={event.reviews}
                     />
-                    <div className="text-sm text-gray-600">
+                    <div className="text-xs sm:text-sm text-gray-600">
                       ⚡ {event.responseRate} response • {event.responseTime}
                     </div>
                   </div>
 
                   {/* Quick Stats */}
-                  <div className="flex items-center gap-4 mb-3">
-                    <div className="flex items-center gap-1 text-sm text-gray-700">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-3">
+                    <div className="flex items-center gap-1 text-xs sm:text-sm text-gray-700">
                       <Users size={16} />
                       <span>{event.views.toLocaleString()} views</span>
                     </div>
-                    <div className="flex items-center gap-1 text-sm text-gray-700">
+                    <div className="flex items-center gap-1 text-xs sm:text-sm text-gray-700">
                       <Clock size={16} />
                       <span>{event.duration}</span>
                     </div>
-                    <div className="flex items-center gap-1 text-sm text-gray-700">
+                    <div className="flex items-center gap-1 text-xs sm:text-sm text-gray-700">
                       <Ticket size={16} />
-                      <span>{event.ticketsAvailable} tickets left</span>
+                      <span>{event.ticketsAvailable} tickets</span>
                     </div>
                   </div>
                 </div>
 
                 {/* Price Section */}
                 <div className="text-right">
-                  <div className="text-2xl font-bold text-blue-600 mb-1">
+                  <div className="text-xl sm:text-2xl font-bold text-blue-600 mb-1">
                     {event.price === 0 ? (
                       <span className="text-green-600">FREE</span>
                     ) : (
                       <>
                         ₹{event.price.toLocaleString()}
-                        <span className="text-sm font-normal text-gray-600">/person</span>
+                        <span className="text-xs sm:text-sm font-normal text-gray-600">/person</span>
                       </>
                     )}
                   </div>
-                  <div className="text-sm text-gray-500">
+                  <div className="text-xs sm:text-sm text-gray-500">
                     By: {event.postedBy}
                   </div>
                 </div>
@@ -1713,7 +1690,7 @@ const EventDetailPage = () => {
               <div className="grid grid-cols-3 gap-2 text-xs mb-4 p-3 bg-gray-50 rounded-lg">
                 <div className="text-center">
                   <div className="font-semibold text-gray-900">Type</div>
-                  <div className="text-gray-600">{event.eventType}</div>
+                  <div className="text-gray-600 truncate">{event.eventType}</div>
                 </div>
                 <div className="text-center">
                   <div className="font-semibold text-gray-900">Age Limit</div>
@@ -1731,16 +1708,16 @@ const EventDetailPage = () => {
                   Event Features
                 </h4>
                 <div className="flex flex-wrap gap-1">
-                  {event.amenities.slice(0, 4).map((amenity, index) => (
+                  {event.amenities.slice(0, isMobile ? 2 : 4).map((amenity, index) => (
                     <span
                       key={index}
-                      className="flex items-center gap-1.5 text-xs text-blue-700 px-3 py-2 rounded-lg border-blue-100 hover:bg-blue-100 transition-colors"
+                      className="flex items-center gap-1.5 text-xs text-blue-700 px-2 py-1.5 rounded-lg border-blue-100 hover:bg-blue-100 transition-colors"
                     >
                       {amenityIcons[amenity] || <Sparkles size={14} />}
-                      {amenity}
+                      <span className="truncate max-w-[100px] sm:max-w-none">{amenity}</span>
                     </span>
                   ))}
-                  {event.amenities.length > 4 && (
+                  {event.amenities.length > (isMobile ? 2 : 4) && (
                     <div className="relative">
                       <button
                         onClick={(e) => {
@@ -1752,7 +1729,7 @@ const EventDetailPage = () => {
                         }}
                         className="flex items-center gap-1.5 text-xs bg-gray-100 text-gray-600 px-3 py-2 rounded-lg border border-gray-200 hover:bg-gray-200 transition-colors"
                       >
-                        +{event.amenities.length - 4} more
+                        +{event.amenities.length - (isMobile ? 2 : 4)} more
                       </button>
                     </div>
                   )}
@@ -1773,7 +1750,7 @@ const EventDetailPage = () => {
                   {event.performers.map((performer, index) => (
                     <span
                       key={index}
-                      className="text-xs bg-purple-50 text-purple-700 px-3 py-1.5 rounded-full border border-purple-200"
+                      className="text-xs bg-purple-50 text-purple-700 px-2 py-1.5 rounded-full border border-purple-200 truncate max-w-[120px] sm:max-w-none"
                     >
                       {performer.name}
                     </span>
@@ -1783,13 +1760,13 @@ const EventDetailPage = () => {
             </div>
 
             {/* Action Buttons */}
-            <div className="flex items-center justify-between pt-4 border-t border-gray-200">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-0 pt-4 border-t border-gray-200">
               {/* Contact Info */}
               <div className="flex items-center gap-4 text-sm text-gray-500">
                 {showContact[event.id] ? (
                   <div className="flex items-center gap-1">
                     <Phone size={14} />
-                    <span className="font-medium">{event.contact}</span>
+                    <span className="font-medium text-xs sm:text-sm">{event.contact}</span>
                   </div>
                 ) : (
                   <button
@@ -1797,7 +1774,7 @@ const EventDetailPage = () => {
                       e.stopPropagation();
                       toggleContact(event.id);
                     }}
-                    className="text-blue-600 hover:text-blue-700 hover:underline transition-colors"
+                    className="text-blue-600 hover:text-blue-700 hover:underline transition-colors text-xs sm:text-sm"
                   >
                     Show Contact
                   </button>
@@ -1812,14 +1789,14 @@ const EventDetailPage = () => {
                     handleCall(event);
                   }}
                   disabled={!event.availableForCall}
-                  className={`flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 border ${
+                  className={`flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 border ${
                     event.availableForCall
                       ? "bg-green-100 text-green-700 border-green-200 hover:bg-green-200 hover:shadow-sm"
                       : "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
                   }`}
                 >
                   <Phone size={16} />
-                  Call
+                  <span className="hidden xs:inline">Call</span>
                 </button>
 
                 <button
@@ -1827,10 +1804,10 @@ const EventDetailPage = () => {
                     e.stopPropagation();
                     handleMessage(event);
                   }}
-                  className="flex items-center gap-2 bg-[#27bb97] hover:bg-[#1FA987] text-white px-4 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 shadow-sm hover:shadow-md"
+                  className="flex items-center gap-1 sm:gap-2 bg-[#27bb97] hover:bg-[#1FA987] text-white px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all duration-200 shadow-sm hover:shadow-md"
                 >
                   <MessageCircle size={16} />
-                  Message
+                  <span className="hidden xs:inline">Message</span>
                 </button>
 
                 <button
@@ -1838,10 +1815,10 @@ const EventDetailPage = () => {
                     e.stopPropagation();
                     handleCardClick();
                   }}
-                  className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 shadow-sm hover:shadow-md"
+                  className="flex items-center gap-1 sm:gap-2 bg-blue-600 hover:bg-blue-700 text-white px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all duration-200 shadow-sm hover:shadow-md"
                 >
                   <Ticket size={16} />
-                  Book Now
+                  <span className="hidden xs:inline">Book Now</span>
                 </button>
               </div>
             </div>
@@ -1880,43 +1857,60 @@ const EventDetailPage = () => {
     <div className="min-h-screen bg-white">
       <EventsSubNav />
 
+      {/* Mobile Back Button */}
+      {isMobile && (
+        <div className="sticky top-0 z-40 bg-white border-b border-gray-200 px-4 py-3 flex items-center gap-3">
+          <button
+            onClick={() => navigate(-1)}
+            className="p-2 rounded-lg hover:bg-gray-100"
+          >
+            <ArrowLeft size={20} />
+          </button>
+          <span className="font-medium text-gray-900 truncate max-w-[200px]">
+            {eventData.title}
+          </span>
+        </div>
+      )}
+
       {/* Header Section */}
-      <div className="pt-4 pb-4 px-4 sm:px-8 lg:px-20">
-        <div className="">
-          {/* Breadcrumb Navigation */}
-          <div className="flex items-center gap-2 text-sm mb-4">
-            <button 
-              onClick={() => handleNavigate('/')}
-              className="flex items-center gap-1 text-gray-600 hover:text-gray-900"
-            >
-              <Home size={14} />
-              Home
-            </button>
-            <span className="text-gray-400">→</span>
-            <button 
-              onClick={() => handleNavigate('/events')}
-              className="text-gray-600 hover:text-gray-900"
-            >
-              Events
-            </button>
-            <span className="text-gray-400">→</span>
-            <span className="text-gray-900 font-medium truncate max-w-xs">
-              {eventData.title}
-            </span>
-          </div>
+      <div className="pt-4 pb-4 px-3 sm:px-6 lg:px-8 xl:px-12">
+        <div className="max-w-7xl mx-auto">
+          {/* Breadcrumb Navigation - Hidden on mobile */}
+          {!isMobile && (
+            <div className="flex items-center gap-2 text-sm mb-4">
+              <button 
+                onClick={() => handleNavigate('/')}
+                className="flex items-center gap-1 text-gray-600 hover:text-gray-900"
+              >
+                <Home size={14} />
+                Home
+              </button>
+              <span className="text-gray-400">→</span>
+              <button 
+                onClick={() => handleNavigate('/events')}
+                className="text-gray-600 hover:text-gray-900"
+              >
+                Events
+              </button>
+              <span className="text-gray-400">→</span>
+              <span className="text-gray-900 font-medium truncate max-w-xs">
+                {eventData.title}
+              </span>
+            </div>
+          )}
 
           {/* Main Event Details */}
-          <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
-            <div className="flex flex-col lg:flex-row gap-6">
+          <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-4 sm:p-6">
+            <div className="flex flex-col lg:flex-row gap-4 sm:gap-6">
               {/* Event Images */}
               <div className="lg:w-2/5">
-                <div className="relative h-64 lg:h-96 rounded-lg overflow-hidden">
+                <div className="relative h-56 sm:h-64 lg:h-80 xl:h-96 rounded-lg overflow-hidden">
                   <img
                     src={eventData.images[0]}
                     alt={eventData.title}
                     className="w-full h-full object-cover"
                   />
-                  <div className="absolute top-4 left-4 flex gap-2">
+                  <div className="absolute top-3 sm:top-4 left-3 sm:left-4 flex gap-2">
                     {eventData.price === 0 ? (
                       <Badge type="free">FREE ENTRY</Badge>
                     ) : (
@@ -1924,13 +1918,13 @@ const EventDetailPage = () => {
                     )}
                     {eventData.verified && <Badge type="verified">VERIFIED</Badge>}
                   </div>
-                  <div className="absolute bottom-4 right-4 bg-black/70 text-white px-3 py-1 rounded-full text-sm">
+                  <div className="absolute bottom-3 sm:bottom-4 right-3 sm:right-4 bg-black/70 text-white px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm">
                     {(currentImageIndex[eventData.id] || 0) + 1} / {eventData.images.length}
                   </div>
                 </div>
                 
                 {/* Thumbnail Images */}
-                <div className="flex gap-2 mt-4">
+                <div className="flex gap-2 mt-3 sm:mt-4">
                   {eventData.images.slice(0, 4).map((img, index) => (
                     <button
                       key={index}
@@ -1938,7 +1932,7 @@ const EventDetailPage = () => {
                         ...prev,
                         [eventData.id]: index
                       }))}
-                      className={`w-20 h-20 rounded-lg overflow-hidden border-2 ${
+                      className={`w-16 h-16 sm:w-20 sm:h-20 rounded-lg overflow-hidden border-2 ${
                         (currentImageIndex[eventData.id] || 0) === index
                           ? 'border-blue-500'
                           : 'border-gray-200'
@@ -1956,88 +1950,90 @@ const EventDetailPage = () => {
 
               {/* Event Info */}
               <div className="lg:w-3/5">
-                <div className="flex justify-between items-start mb-4">
+                <div className="flex justify-between items-start mb-3 sm:mb-4">
                   <div>
-                    <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                      {eventData.title}
+                    <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-1 sm:mb-2">
+                      {isMobile && eventData.title.length > 70 
+                        ? `${eventData.title.substring(0, 70)}...` 
+                        : eventData.title}
                     </h1>
-                    <div className="flex items-center gap-4 text-gray-600 mb-4">
-                      <div className="flex items-center gap-1">
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-gray-600 mb-3 sm:mb-4">
+                      <div className="flex items-center gap-1 text-sm sm:text-base">
                         <MapPin size={16} />
-                        <span>{eventData.description}</span>
+                        <span className="truncate">{eventData.description}</span>
                       </div>
-                      <div className="flex items-center gap-1">
+                      <div className="flex items-center gap-1 text-sm sm:text-base">
                         <Calendar size={16} />
                         <span>{eventData.date}</span>
                       </div>
                     </div>
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex gap-1 sm:gap-2">
                     <button
                       onClick={() => toggleLike(eventData.id)}
-                      className={`p-3 rounded-full ${
+                      className={`p-2 sm:p-3 rounded-full ${
                         likedEvents[eventData.id]
                           ? 'bg-red-100 text-red-600'
                           : 'bg-gray-100 text-gray-600'
                       } hover:bg-gray-200 transition-colors`}
                     >
                       <Heart
-                        size={20}
+                        size={18}
                         fill={likedEvents[eventData.id] ? 'currentColor' : 'none'}
                       />
                     </button>
                     <button
                       onClick={() => handleShare(eventData)}
-                      className="p-3 bg-gray-100 text-gray-600 rounded-full hover:bg-gray-200 transition-colors"
+                      className="p-2 sm:p-3 bg-gray-100 text-gray-600 rounded-full hover:bg-gray-200 transition-colors"
                     >
-                      <Share2 size={20} />
+                      <Share2 size={18} />
                     </button>
                   </div>
                 </div>
 
                 {/* Event Stats */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                  <div className="bg-gray-50 p-4 rounded-lg">
-                    <div className="text-sm text-gray-500 mb-1">Price</div>
-                    <div className="text-2xl font-bold text-blue-600">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4 mb-4 sm:mb-6">
+                  <div className="bg-gray-50 p-3 sm:p-4 rounded-lg">
+                    <div className="text-xs sm:text-sm text-gray-500 mb-1">Price</div>
+                    <div className="text-lg sm:text-xl lg:text-2xl font-bold text-blue-600">
                       {eventData.price === 0 ? 'FREE' : `₹${eventData.price}`}
                     </div>
                   </div>
-                  <div className="bg-gray-50 p-4 rounded-lg">
-                    <div className="text-sm text-gray-500 mb-1">Duration</div>
-                    <div className="text-xl font-semibold text-gray-900">{eventData.duration}</div>
+                  <div className="bg-gray-50 p-3 sm:p-4 rounded-lg">
+                    <div className="text-xs sm:text-sm text-gray-500 mb-1">Duration</div>
+                    <div className="text-base sm:text-lg lg:text-xl font-semibold text-gray-900">{eventData.duration}</div>
                   </div>
-                  <div className="bg-gray-50 p-4 rounded-lg">
-                    <div className="text-sm text-gray-500 mb-1">Age Limit</div>
-                    <div className="text-xl font-semibold text-gray-900">{eventData.ageLimit}</div>
+                  <div className="bg-gray-50 p-3 sm:p-4 rounded-lg">
+                    <div className="text-xs sm:text-sm text-gray-500 mb-1">Age Limit</div>
+                    <div className="text-base sm:text-lg lg:text-xl font-semibold text-gray-900">{eventData.ageLimit}</div>
                   </div>
-                  <div className="bg-gray-50 p-4 rounded-lg">
-                    <div className="text-sm text-gray-500 mb-1">Tickets Left</div>
-                    <div className="text-xl font-semibold text-gray-900">{eventData.ticketsAvailable}</div>
+                  <div className="bg-gray-50 p-3 sm:p-4 rounded-lg">
+                    <div className="text-xs sm:text-sm text-gray-500 mb-1">Tickets Left</div>
+                    <div className="text-base sm:text-lg lg:text-xl font-semibold text-gray-900">{eventData.ticketsAvailable}</div>
                   </div>
                 </div>
 
                 {/* Event Description */}
-                <div className="mb-6">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-3">About this Event</h3>
-                  <p className="text-gray-700 leading-relaxed">{eventData.details}</p>
+                <div className="mb-4 sm:mb-6">
+                  <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2 sm:mb-3">About this Event</h3>
+                  <p className="text-gray-700 leading-relaxed text-sm sm:text-base">{eventData.details}</p>
                 </div>
 
                 {/* Performers */}
-                <div className="mb-6">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-3">Featured Performers</h3>
-                  <div className="flex flex-wrap gap-3">
+                <div className="mb-4 sm:mb-6">
+                  <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2 sm:mb-3">Featured Performers</h3>
+                  <div className="flex flex-wrap gap-2 sm:gap-3">
                     {eventData.performers.map((performer, index) => (
                       <div
                         key={index}
-                        className="flex items-center gap-3 bg-gray-50 p-3 rounded-lg"
+                        className="flex items-center gap-2 sm:gap-3 bg-gray-50 p-2 sm:p-3 rounded-lg flex-1 min-w-[140px]"
                       >
-                        <div className="w-12 h-12  rounded-full flex items-center justify-center text-black font-bold">
+                        <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center text-black font-bold">
                           {performer.name.charAt(0)}
                         </div>
-                        <div>
-                          <div className="font-semibold text-gray-900">{performer.name}</div>
-                          <div className="text-sm text-gray-600">{performer.type}</div>
+                        <div className="min-w-0">
+                          <div className="font-semibold text-gray-900 text-sm sm:text-base truncate">{performer.name}</div>
+                          <div className="text-xs sm:text-sm text-gray-600 truncate">{performer.type}</div>
                         </div>
                       </div>
                     ))}
@@ -2045,19 +2041,19 @@ const EventDetailPage = () => {
                 </div>
 
                 {/* Action Buttons */}
-                <div className="flex flex-wrap gap-4">
+                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                   <button
                     onClick={() => alert(`Booking tickets for ${eventData.title}`)}
-                    className="flex-1 min-w-[200px] bg-[#27bb97] hover:bg-[#1FA987] text-white font-semibold py-4 px-8 rounded-lg transition-colors flex items-center justify-center gap-3"
+                    className="flex-1 bg-[#27bb97] hover:bg-[#1FA987] text-white font-semibold py-3 sm:py-4 px-6 sm:px-8 rounded-lg transition-colors flex items-center justify-center gap-2 sm:gap-3 text-sm sm:text-base"
                   >
-                    <Ticket size={20} />
+                    <Ticket size={18} />
                     Book Tickets Now
                   </button>
                   <button
                     onClick={() => handleMessage(eventData)}
-                    className="px-6 py-4 border-2 border-[#27bb97] text-[#27bb97] font-semibold rounded-lg hover:bg-[#27bb97] hover:text-white transition-colors"
+                    className="px-4 sm:px-6 py-3 sm:py-4 border-2 border-[#27bb97] text-[#27bb97] font-semibold rounded-lg hover:bg-[#27bb97] hover:text-white transition-colors text-sm sm:text-base"
                   >
-                    <MessageCircle size={20} className="inline mr-2" />
+                    <MessageCircle size={18} className="inline mr-2" />
                     Contact Organizer
                   </button>
                 </div>
@@ -2066,70 +2062,70 @@ const EventDetailPage = () => {
           </div>
 
           {/* Event Features Grid */}
-          <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="bg-white p-4 rounded-lg border border-gray-200">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="p-2 bg-blue-100 rounded-lg">
-                  <Calendar size={20} className="text-blue-600" />
+          <div className="mt-6 sm:mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+            <div className="bg-white p-3 sm:p-4 rounded-lg border border-gray-200">
+              <div className="flex items-center gap-2 sm:gap-3 mb-2">
+                <div className="p-1.5 sm:p-2 bg-blue-100 rounded-lg">
+                  <Calendar size={18} className="text-blue-600" />
                 </div>
                 <div>
-                  <div className="font-semibold text-gray-900">Date & Time</div>
-                  <div className="text-sm text-gray-600">{eventData.date} • {eventData.time}</div>
+                  <div className="font-semibold text-gray-900 text-sm sm:text-base">Date & Time</div>
+                  <div className="text-xs sm:text-sm text-gray-600">{eventData.date} • {eventData.time}</div>
                 </div>
               </div>
             </div>
             
-            <div className="bg-white p-4 rounded-lg border border-gray-200">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="p-2 bg-green-100 rounded-lg">
-                  <MapPin size={20} className="text-green-600" />
+            <div className="bg-white p-3 sm:p-4 rounded-lg border border-gray-200">
+              <div className="flex items-center gap-2 sm:gap-3 mb-2">
+                <div className="p-1.5 sm:p-2 bg-green-100 rounded-lg">
+                  <MapPin size={18} className="text-green-600" />
                 </div>
                 <div>
-                  <div className="font-semibold text-gray-900">Venue</div>
-                  <div className="text-sm text-gray-600">{eventData.description}</div>
+                  <div className="font-semibold text-gray-900 text-sm sm:text-base">Venue</div>
+                  <div className="text-xs sm:text-sm text-gray-600 truncate">{eventData.description}</div>
                 </div>
               </div>
             </div>
             
-            <div className="bg-white p-4 rounded-lg border border-gray-200">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="p-2 bg-purple-100 rounded-lg">
-                  <Users size={20} className="text-purple-600" />
+            <div className="bg-white p-3 sm:p-4 rounded-lg border border-gray-200">
+              <div className="flex items-center gap-2 sm:gap-3 mb-2">
+                <div className="p-1.5 sm:p-2 bg-purple-100 rounded-lg">
+                  <Users size={18} className="text-purple-600" />
                 </div>
                 <div>
-                  <div className="font-semibold text-gray-900">Organizer</div>
-                  <div className="text-sm text-gray-600">{eventData.postedBy}</div>
+                  <div className="font-semibold text-gray-900 text-sm sm:text-base">Organizer</div>
+                  <div className="text-xs sm:text-sm text-gray-600">{eventData.postedBy}</div>
                 </div>
               </div>
             </div>
             
-            <div className="bg-white p-4 rounded-lg border border-gray-200">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="p-2 bg-orange-100 rounded-lg">
-                  <FaTag size={20} className="text-orange-600" />
+            <div className="bg-white p-3 sm:p-4 rounded-lg border border-gray-200">
+              <div className="flex items-center gap-2 sm:gap-3 mb-2">
+                <div className="p-1.5 sm:p-2 bg-orange-100 rounded-lg">
+                  <FaTag size={18} className="text-orange-600" />
                 </div>
                 <div>
-                  <div className="font-semibold text-gray-900">Category</div>
-                  <div className="text-sm text-gray-600">{eventData.category}</div>
+                  <div className="font-semibold text-gray-900 text-sm sm:text-base">Category</div>
+                  <div className="text-xs sm:text-sm text-gray-600">{eventData.category}</div>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Google Maps Section - ADDED HERE */}
+          {/* Google Maps Section */}
           <EventMap eventData={eventData} />
 
           {/* Search Section for Related Events */}
-          <div className="mt-12">
-            <div className="bg-white rounded-lg p-6 border border-gray-200">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">Find Similar Events</h2>
+          <div className="mt-8 sm:mt-12">
+            <div className="bg-white rounded-lg p-4 sm:p-6 border border-gray-200">
+              <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4">Find Similar Events</h2>
               
               {/* Search Bar */}
-              <div className="flex flex-col lg:flex-row items-center gap-3 mb-6">
+              <div className="flex flex-col lg:flex-row items-stretch lg:items-center gap-3 mb-4 sm:mb-6">
                 <div className="w-full lg:w-auto">
                   <div className="relative">
                     <select
-                      className="w-full pl-3 pr-10 py-3 text-base border border-gray-200 rounded-lg lg:rounded-l-lg lg:rounded-r-none text-gray-700 focus:outline-none appearance-none bg-white"
+                      className="w-full pl-3 pr-10 py-3 text-sm sm:text-base border border-gray-200 rounded-lg lg:rounded-l-lg lg:rounded-r-none text-gray-700 focus:outline-none appearance-none bg-white"
                       value={eventType}
                       onChange={(e) => setEventType(e.target.value)}
                     >
@@ -2149,7 +2145,7 @@ const EventDetailPage = () => {
                     <input
                       type="text"
                       placeholder="Enter location..."
-                      className="w-full pl-10 pr-3 py-3 text-base border border-gray-200 bg-white text-gray-800 focus:outline-none rounded-lg lg:rounded-none"
+                      className="w-full pl-10 pr-3 py-3 text-sm sm:text-base border border-gray-200 bg-white text-gray-800 focus:outline-none rounded-lg lg:rounded-none"
                       value={location}
                       onChange={(e) => setLocation(e.target.value)}
                     />
@@ -2159,7 +2155,7 @@ const EventDetailPage = () => {
                 <div className="w-full lg:w-auto">
                   <div className="relative">
                     <select
-                      className="w-full pl-3 pr-10 py-3 text-base border border-gray-200 rounded-lg lg:rounded-none text-gray-700 focus:outline-none appearance-none bg-white"
+                      className="w-full pl-3 pr-10 py-3 text-sm sm:text-base border border-gray-200 rounded-lg lg:rounded-none text-gray-700 focus:outline-none appearance-none bg-white"
                       value={budget}
                       onChange={(e) => setBudget(e.target.value)}
                     >
@@ -2175,10 +2171,11 @@ const EventDetailPage = () => {
 
                 <button
                   onClick={handleSearch}
-                  className="w-full lg:w-auto px-6 flex items-center justify-center gap-2 bg-[#27bb97] text-white font-semibold rounded-lg lg:rounded-r-lg py-3 hover:bg-[#1FA987] shadow-lg hover:shadow-xl transition-all duration-200"
+                  className="w-full lg:w-auto px-4 sm:px-6 flex items-center justify-center gap-2 bg-[#27bb97] text-white font-semibold rounded-lg lg:rounded-r-lg py-3 hover:bg-[#1FA987] shadow-lg hover:shadow-xl transition-all duration-200 text-sm sm:text-base"
                 >
                   <Search className="w-4 h-4" />
-                  Search Events
+                  <span className="hidden xs:inline">Search Events</span>
+                  <span className="xs:hidden">Search</span>
                 </button>
               </div>
             </div>
@@ -2187,15 +2184,15 @@ const EventDetailPage = () => {
       </div>
 
       {/* Related Events Section */}
-      <div className="py-8 px-4 sm:px-8 lg:px-20">
-        <div className="">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Similar Events You Might Like</h2>
+      <div className="py-6 sm:py-8 px-3 sm:px-6 lg:px-8 xl:px-12 bg-gray-50">
+        <div className="max-w-7xl mx-auto">
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 sm:mb-6">Similar Events You Might Like</h2>
           
           {/* Tabs */}
-          <div className="flex border-b border-gray-200 mb-6">
+          <div className="flex overflow-x-auto border-b border-gray-200 mb-4 sm:mb-6 scrollbar-hide">
             <button
               onClick={() => setMainTab("upcoming")}
-              className={`pb-4 px-6 font-medium transition-colors ${
+              className={`pb-3 px-3 sm:px-6 font-medium transition-colors whitespace-nowrap ${
                 mainTab === "upcoming"
                   ? "text-gray-900 border-b-2 border-blue-600"
                   : "text-gray-500 hover:text-gray-700"
@@ -2205,7 +2202,7 @@ const EventDetailPage = () => {
             </button>
             <button
               onClick={() => setMainTab("nearby")}
-              className={`pb-4 px-6 font-medium transition-colors ${
+              className={`pb-3 px-3 sm:px-6 font-medium transition-colors whitespace-nowrap ${
                 mainTab === "nearby"
                   ? "text-gray-900 border-b-2 border-blue-600"
                   : "text-gray-500 hover:text-gray-700"
@@ -2215,7 +2212,7 @@ const EventDetailPage = () => {
             </button>
             <button
               onClick={() => setMainTab("category")}
-              className={`pb-4 px-6 font-medium transition-colors ${
+              className={`pb-3 px-3 sm:px-6 font-medium transition-colors whitespace-nowrap ${
                 mainTab === "category"
                   ? "text-gray-900 border-b-2 border-blue-600"
                   : "text-gray-500 hover:text-gray-700"
@@ -2226,10 +2223,10 @@ const EventDetailPage = () => {
           </div>
 
           {/* Event Cards Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-4 sm:gap-6">
             {allEvents
               .filter(event => event.id !== eventData.id)
-              .slice(0, 14)
+              .slice(0, isMobile ? 2 : isTablet ? 3 : 14)
               .map((event) => (
                 <EventCard key={event.id} event={event} />
               ))}

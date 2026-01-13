@@ -801,7 +801,7 @@ const EventsShowcase = () => {
             </div>
 
             {/* Events Grid with responsive columns */}
-            <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-5 lg:gap-6">
+            <div className="grid grid-cols-1 xs:grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-5 lg:gap-6">
               {filteredEvents.map((event) => (
                 <DiscoverEventCard key={event.id} event={event} onEventClick={() => handleEventClick(event)} />
               ))}

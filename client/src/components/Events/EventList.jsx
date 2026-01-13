@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import {
   Calendar,
@@ -24,6 +24,8 @@ import {
   User,
   Images,
   Tag,
+  Menu,
+  X,
 } from "lucide-react";
 import {
   FaMapMarkerAlt,
@@ -495,6 +497,9 @@ const itemsPerPageOptions = [4, 8, 12, 16];
 const EventList = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const [isMobile, setIsMobile] = useState(false);
+  const [isTablet, setIsTablet] = useState(false);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
 
   // State for search filters
   const [searchType, setSearchType] = useState("All Events");
@@ -517,6 +522,19 @@ const EventList = () => {
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(4);
+
+  useEffect(() => {
+    const checkScreenSize = () => {
+      const width = window.innerWidth;
+      setIsMobile(width < 768);
+      setIsTablet(width >= 768 && width < 1024);
+    };
+    
+    checkScreenSize();
+    window.addEventListener('resize', checkScreenSize);
+    
+    return () => window.removeEventListener('resize', checkScreenSize);
+  }, []);
 
   // Toggle more amenities view
   const toggleAmenities = (eventId) => {
@@ -629,7 +647,7 @@ const EventList = () => {
   // Generate page numbers for pagination
   const getPageNumbers = () => {
     const pageNumbers = [];
-    const maxVisiblePages = 5;
+    const maxVisiblePages = isMobile ? 3 : 5;
 
     if (totalPages <= maxVisiblePages) {
       for (let i = 1; i <= totalPages; i++) {
@@ -736,7 +754,7 @@ const EventList = () => {
           />
         ))}
       </div>
-      <span className="text-sm text-gray-600">({reviews})</span>
+      <span className="text-xs sm:text-sm text-gray-600">({reviews})</span>
     </div>
   );
 
@@ -758,17 +776,18 @@ const EventList = () => {
 
     return (
       <div
-        className="bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 group cursor-pointer"
+        className="bg-white rounded-lg sm:rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 group cursor-pointer w-full"
         onClick={handleCardClick}
       >
-        <div className="flex flex-col sm:flex-row">
+        <div className="flex flex-col lg:flex-row">
           {/* Enhanced Image Gallery Section */}
-          <div className="sm:w-2/5 h-48 sm:h-auto relative">
+          <div className="lg:w-2/5 h-48 sm:h-56 lg:h-auto relative">
             <div className="relative w-full h-full overflow-hidden">
               <img
                 src={event.images[currentIndex]}
                 alt={`${event.title} - Image ${currentIndex + 1}`}
                 className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                loading="lazy"
               />
 
               {/* Image Navigation Arrows */}
@@ -802,8 +821,8 @@ const EventList = () => {
                 </div>
               )}
 
-              {/* Image Thumbnails Preview */}
-              {totalImages > 1 && (
+              {/* Image Thumbnails Preview (only on larger screens) */}
+              {totalImages > 1 && !isMobile && (
                 <div className="absolute bottom-2 left-2 right-2">
                   <div className="flex gap-1 justify-center">
                     {event.images.slice(0, 4).map((img, index) => (
@@ -907,25 +926,27 @@ const EventList = () => {
           </div>
 
           {/* Content Section */}
-          <div className="sm:w-3/5 p-5 flex flex-col justify-between">
+          <div className="lg:w-3/5 p-4 sm:p-5 flex flex-col justify-between">
             {/* Header with Price and Badges */}
             <div>
-              <div className="flex items-start justify-between mb-3">
+              <div className="flex flex-col sm:flex-row sm:items-start justify-between mb-3 gap-3">
                 <div className="flex-1 pr-4">
                   <h3
-                    className="text-lg font-bold text-gray-800 mb-2 leading-tight hover:text-blue-600 transition-colors cursor-pointer"
+                    className="text-lg sm:text-xl font-bold text-gray-800 mb-2 leading-tight hover:text-blue-600 transition-colors cursor-pointer"
                     onClick={handleTitleClick}
                   >
-                    {event.title.length > 60
-                      ? `${event.title.slice(0, 60)}...`
+                    {isMobile && event.title.length > 50
+                      ? `${event.title.slice(0, 50)}...`
+                      : isTablet && event.title.length > 70
+                      ? `${event.title.slice(0, 70)}...`
                       : event.title}
                   </h3>
 
                   {/* Location and Quick Info */}
-                  <div className="flex items-center gap-3 text-sm text-gray-600 mb-2 flex-wrap">
+                  <div className="flex flex-wrap items-center gap-3 text-xs sm:text-sm text-gray-600 mb-2">
                     <div className="flex items-center gap-1">
                       <MapPin size={14} />
-                      <span>{event.location}</span>
+                      <span className="truncate">{event.location}</span>
                     </div>
                     <div className="flex items-center gap-1">
                       <User size={14} />
@@ -938,44 +959,45 @@ const EventList = () => {
                   </div>
 
                   {/* Rating and Response Info */}
-                  <div className="flex items-center gap-4 mb-3">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mb-3">
                     <RatingStars
                       rating={event.rating}
                       reviews={event.reviews}
                     />
-                    <div className="text-sm text-gray-600">
+                    <div className="text-xs sm:text-sm text-gray-600">
                       ⚡ {event.responseRate} response •{" "}
                       {event.responseTime}
                     </div>
                   </div>
 
                   {/* Quick Stats */}
-                  <div className="flex items-center gap-4 mb-3">
-                    <div className="flex items-center gap-1 text-sm text-gray-700">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3">
+                    <div className="flex items-center gap-1 text-xs sm:text-sm text-gray-700">
                       <Calendar size={16} />
-                      <span>{event.displayDate}</span>
+                      <span className="truncate">{event.displayDate}</span>
                     </div>
-                    <div className="flex items-center gap-1 text-sm text-gray-700">
+                    <div className="flex items-center gap-1 text-xs sm:text-sm text-gray-700">
                       <Clock size={16} />
                       <span>{event.time}</span>
                     </div>
-                    <div className="flex items-center gap-1 text-sm text-gray-700">
+                    <div className="flex items-center gap-1 text-xs sm:text-sm text-gray-700">
                       <Users size={16} />
                       <span>{event.attendees}</span>
                     </div>
-                    <div className="text-sm text-gray-700">
-                      👥 {event.ageLimit}
+                    <div className="flex items-center gap-1 text-xs sm:text-sm text-gray-700">
+                      <span className="text-gray-600">👥</span>
+                      <span>{event.ageLimit}</span>
                     </div>
                   </div>
                 </div>
 
                 {/* Price Section */}
                 <div className="text-right">
-                  <div className="text-2xl font-bold text-blue-600 mb-1">
+                  <div className="text-xl sm:text-2xl font-bold text-blue-600 mb-1">
                     {event.price === 0 ? "FREE" : `₹${event.price.toLocaleString()}`}
-                    {event.price > 0 && <span className="text-sm font-normal text-gray-600">/person</span>}
+                    {event.price > 0 && <span className="text-xs sm:text-sm font-normal text-gray-600">/person</span>}
                   </div>
-                  <div className="text-sm text-gray-500">
+                  <div className="text-xs sm:text-sm text-gray-500">
                     {event.ticketsLeft} tickets left
                   </div>
                 </div>
@@ -985,7 +1007,7 @@ const EventList = () => {
               <div className="grid grid-cols-3 gap-2 text-xs mb-4 p-3 bg-gray-50 rounded-lg">
                 <div className="text-center">
                   <div className="font-semibold text-gray-900">Category</div>
-                  <div className="text-gray-600">{event.category}</div>
+                  <div className="text-gray-600 truncate">{event.category}</div>
                 </div>
                 <div className="text-center">
                   <div className="font-semibold text-gray-900">Duration</div>
@@ -1003,16 +1025,16 @@ const EventList = () => {
                   Event Features
                 </h4>
                 <div className="flex flex-wrap gap-1">
-                  {event.amenities.slice(0, 6).map((amenity, index) => (
+                  {event.amenities.slice(0, isMobile ? 4 : 6).map((amenity, index) => (
                     <span
                       key={index}
-                      className="flex items-center gap-1.5 text-xs text-blue-700 px-3 py-2 rounded-lg border-blue-100 hover:bg-blue-100 transition-colors"
+                      className="flex items-center gap-1.5 text-xs text-blue-700 px-2 py-1.5 rounded-lg border-blue-100 hover:bg-blue-100 transition-colors"
                     >
                       {amenityIcons[amenity] || <FaMusic size={14} />}
-                      {amenity}
+                      <span className="truncate max-w-[120px]">{amenity}</span>
                     </span>
                   ))}
-                  {event.amenities.length > 6 && (
+                  {event.amenities.length > (isMobile ? 4 : 6) && (
                     <div className="relative">
                       <button
                         onClick={(e) => {
@@ -1021,15 +1043,15 @@ const EventList = () => {
                         }}
                         className="flex items-center gap-1.5 text-xs bg-gray-100 text-gray-600 px-3 py-2 rounded-lg border border-gray-200 hover:bg-gray-200 transition-colors"
                       >
-                        +{event.amenities.length - 6} more
+                        +{event.amenities.length - (isMobile ? 4 : 6)} more
                       </button>
 
                       {showMoreAmenities[event.id] && (
-                        <div className="absolute top-full left-0 mt-2 z-20 bg-white border border-gray-200 rounded-lg shadow-xl p-4 min-w-[250px]">
+                        <div className="absolute top-full left-0 mt-2 z-20 bg-white border border-gray-200 rounded-lg shadow-xl p-4 min-w-[250px] max-w-[90vw]">
                           <div className="text-sm font-semibold text-gray-900 mb-3">
                             All Features
                           </div>
-                          <div className="grid grid-cols-2 gap-2">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-[200px] overflow-y-auto">
                             {event.amenities.map((amenity, index) => (
                               <span
                                 key={index}
@@ -1071,13 +1093,13 @@ const EventList = () => {
             </div>
 
             {/* Enhanced Action Section with Smart Buttons */}
-            <div className="flex items-center justify-between pt-4 border-t border-gray-200">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-4 border-t border-gray-200">
               {/* Contact Info */}
               <div className="flex items-center gap-4 text-sm text-gray-500">
                 {showContact[event.id] ? (
                   <div className="flex items-center gap-1">
                     <Phone size={14} />
-                    <span className="font-medium">{event.contact}</span>
+                    <span className="font-medium text-xs sm:text-sm">{event.contact}</span>
                   </div>
                 ) : (
                   <button
@@ -1085,7 +1107,7 @@ const EventList = () => {
                       e.stopPropagation();
                       toggleContact(event.id);
                     }}
-                    className="text-blue-600 hover:text-blue-700 hover:underline transition-colors"
+                    className="text-blue-600 hover:text-blue-700 hover:underline transition-colors text-xs sm:text-sm"
                   >
                     Show Contact
                   </button>
@@ -1101,7 +1123,7 @@ const EventList = () => {
                     handleCall(event);
                   }}
                   disabled={!event.availableForCall}
-                  className={`flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 border ${
+                  className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 border ${
                     event.availableForCall
                       ? "bg-green-100 text-green-700 border-green-200 hover:bg-green-200 hover:shadow-sm"
                       : "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
@@ -1113,7 +1135,7 @@ const EventList = () => {
                   }
                 >
                   <Phone size={16} />
-                  Call
+                  <span className="hidden xs:inline">Call</span>
                 </button>
 
                 {/* Message Button - Always Active */}
@@ -1122,10 +1144,10 @@ const EventList = () => {
                     e.stopPropagation();
                     handleMessage(event);
                   }}
-                  className="flex items-center gap-2 bg-[#2D8690] hover:bg-[#25676D] text-white px-4 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 shadow-sm hover:shadow-md"
+                  className="flex items-center gap-2 bg-[#2D8690] hover:bg-[#25676D] text-white px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all duration-200 shadow-sm hover:shadow-md"
                 >
                   <MessageCircle size={16} />
-                  Message
+                  <span className="hidden xs:inline">Message</span>
                 </button>
 
                 {/* Book Now Button */}
@@ -1134,14 +1156,14 @@ const EventList = () => {
                     e.stopPropagation();
                     navigate(`/event/${event.id}`, { state: { event } });
                   }}
-                  className={`flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 border ${
+                  className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 border ${
                     likedEvents[event.id]
                       ? "bg-blue-100 text-blue-700 border-blue-200 hover:bg-blue-200"
                       : "bg-[#27bb97] hover:bg-[#1fa582] text-white border-[#27bb97]"
                   } hover:shadow-sm`}
                 >
                   <FaTicketAlt size={16} />
-                  Book Now
+                  <span className="hidden xs:inline">Book Now</span>
                 </button>
               </div>
             </div>
@@ -1156,93 +1178,115 @@ const EventList = () => {
       <EventsSubNav />
 
       {/* Breadcrumb Navigation */}
-          <div className="flex items-center gap-2 text-sm pt-4 sm:px-8 lg:px-4 mt-2 ml-2">
-            <span className="font-semibold text-gray-900">
-              Indian Events
-            </span>
-            <span className="text-gray-400">→</span>
-            <span className="text-gray-500">
-              {searchType} in {eventLocation}
-            </span>
-          </div>
-      {/* Events Section */}
-      <div className="min-h-screen sm:p-6 lg:p-4 mt-4  ">
-        <div className="">
-          {/* Tabs */}
-          <div className="flex flex-col lg:flex-row  lg:items-center w-full lg:w-[85%] border-gray-200 gap-4">
-            <div className="flex gap-4 lg:gap-8">
-              <button
-                onClick={() => setMainTab("upcoming")}
-                className={` pb-4 lg:pb-5 px-3 font-medium transition-colors ${
-                  mainTab === "upcoming"
-                    ? "text-gray-900 border-t-4 border-red-500 rounded-t-lg bg-white -mb-0.5"
-                    : "text-gray-500 hover:text-gray-700"
-                }`}
-              >
-                Upcoming Events
-              </button>
-              <button
-                onClick={() => setMainTab("today")}
-                className={`pb-3 px-1 font-medium transition-colors ${
-                  mainTab === "today"
-                    ? "text-gray-900 border-t-4 border-red-500 rounded-t-lg bg-white -mb-0.5"
-                    : "text-gray-500 hover:text-gray-700"
-                }`}
-              >
-                Today's Events
-              </button>
-              <button
-                onClick={() => setMainTab("weekend")}
-                className={`pb-3 px-1 font-medium transition-colors ${
-                  mainTab === "weekend"
-                    ? "text-gray-900 border-t-4 border-red-500 rounded-t-lg bg-white -mb-0.5"
-                    : "text-gray-500 hover:text-gray-700"
-                }`}
-              >
-                This Weekend
-              </button>
-              <button
-                onClick={() => setMainTab("free")}
-                className={`pb-3 px-1 font-medium transition-colors ${
-                  mainTab === "free"
-                    ? "text-gray-900 border-t-4 border-red-500 rounded-t-lg bg-white -mb-0.5"
-                    : "text-gray-500 hover:text-gray-700"
-                }`}
-              >
-                Free Events
-              </button>
+      <div className="flex items-center gap-2 text-xs sm:text-sm pt-4 px-3 sm:px-4 lg:px-6 mt-2 ml-2">
+        <span className="font-semibold text-gray-900 truncate">
+          Indian Events
+        </span>
+        <span className="text-gray-400">→</span>
+        <span className="text-gray-500 truncate">
+          {searchType} in {eventLocation}
+        </span>
+      </div>
+
+      {/* Mobile Filter Button */}
+      {isMobile && (
+        <div className="sticky top-0 z-40 bg-white border-b border-gray-200 px-4 py-3">
+          <div className="flex items-center justify-between">
+            <button
+              onClick={() => setShowMobileMenu(!showMobileMenu)}
+              className="flex items-center gap-2 text-gray-700"
+            >
+              <Menu size={20} />
+              <span className="text-sm font-medium">Filters & Tabs</span>
+            </button>
+            <div className="text-sm text-gray-600">
+              {allEvents.length} Events
             </div>
-            <div className="lg:-mt-2 ml-65">
-              <button className="flex items-center gap-2 bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded text-sm font-medium transition-colors  justify-center">
-                <FaMap />
-                Switch to Calendar View
-              </button>
+          </div>
+        </div>
+      )}
+
+      {/* Events Section */}
+      <div className="min-h-screen p-3 sm:p-4 lg:p-6 mt-4">
+        <div className="max-w-7xl mx-auto">
+          {/* Tabs - Hidden on mobile when menu is collapsed */}
+          <div className={`${isMobile && !showMobileMenu ? 'hidden' : 'block'}`}>
+            <div className="flex flex-col lg:flex-row lg:items-center w-full lg:w-[85%] border-gray-200 gap-4 mb-6">
+              <div className="flex overflow-x-auto gap-4 lg:gap-8 pb-2 scrollbar-hide">
+                <button
+                  onClick={() => setMainTab("upcoming")}
+                  className={`pb-2 px-2 font-medium transition-colors whitespace-nowrap ${
+                    mainTab === "upcoming"
+                      ? "text-gray-900 border-t-4 border-red-500 rounded-t-lg bg-white"
+                      : "text-gray-500 hover:text-gray-700"
+                  }`}
+                >
+                  Upcoming Events
+                </button>
+                <button
+                  onClick={() => setMainTab("today")}
+                  className={`pb-2 px-2 font-medium transition-colors whitespace-nowrap ${
+                    mainTab === "today"
+                      ? "text-gray-900 border-t-4 border-red-500 rounded-t-lg bg-white"
+                      : "text-gray-500 hover:text-gray-700"
+                  }`}
+                >
+                  Today's Events
+                </button>
+                <button
+                  onClick={() => setMainTab("weekend")}
+                  className={`pb-2 px-2 font-medium transition-colors whitespace-nowrap ${
+                    mainTab === "weekend"
+                      ? "text-gray-900 border-t-4 border-red-500 rounded-t-lg bg-white"
+                      : "text-gray-500 hover:text-gray-700"
+                  }`}
+                >
+                  This Weekend
+                </button>
+                <button
+                  onClick={() => setMainTab("free")}
+                  className={`pb-2 px-2 font-medium transition-colors whitespace-nowrap ${
+                    mainTab === "free"
+                      ? "text-gray-900 border-t-4 border-red-500 rounded-t-lg bg-white"
+                      : "text-gray-500 hover:text-gray-700"
+                  }`}
+                >
+                  Free Events
+                </button>
+              </div>
+              <div className="lg:-mt-2 ml-auto lg:ml-0">
+                <button className="flex items-center gap-2 bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded text-sm font-medium transition-colors justify-center w-full lg:w-auto">
+                  <FaMap />
+                  <span className="hidden sm:inline">Switch to Calendar View</span>
+                  <span className="sm:hidden">Calendar View</span>
+                </button>
+              </div>
             </div>
           </div>
 
           {/* Main Content */}
-          <div className="flex flex-col lg:flex-row gap-8">
-            {/* Left side - 70% */}
+          <div className="flex flex-col lg:flex-row gap-6">
+            {/* Left side - 100% on mobile/tablet, 70% on desktop */}
             <div className="w-full lg:w-[70%]">
               {/* White background section for header */}
               <div className="bg-white p-4 rounded-lg">
                 {/* Header with Sort */}
                 <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-6 gap-4">
                   <div>
-                    <h1 className="text-xl lg:text-2xl font-semibold text-gray-900 mb-1">
+                    <h1 className="text-lg sm:text-xl lg:text-2xl font-semibold text-gray-900 mb-1">
                       Events in {eventLocation}
                     </h1>
-                    <p className="text-gray-600 text-sm">
+                    <p className="text-gray-600 text-xs sm:text-sm">
                       {allEvents.length} Events available in your city
                     </p>
                   </div>
                   <div className="flex items-center gap-4">
                     <div className="flex items-center gap-2">
-                      <span className="text-sm text-gray-600">Sort by</span>
+                      <span className="text-xs sm:text-sm text-gray-600">Sort by</span>
                       <select
                         value={sortBy}
                         onChange={(e) => setSortBy(e.target.value)}
-                        className="border border-gray-300 rounded px-3 py-1.5 text-sm text-gray-700 focus:outline-none custom-select"
+                        className="border border-gray-300 rounded px-2 sm:px-3 py-1.5 text-xs sm:text-sm text-gray-700 focus:outline-none custom-select w-full sm:w-auto"
                       >
                         <option value="featured">Featured first</option>
                         <option value="date">Date</option>
@@ -1257,10 +1301,10 @@ const EventList = () => {
                 <div className="h-[1px] bg-gray-400 w-full my-4" />
                 {/* Nearby Locations */}
                 <div className="">
-                  <h2 className="text-base font-semibold text-gray-900 mb-2">
+                  <h2 className="text-sm sm:text-base font-semibold text-gray-900 mb-2">
                     Popular event locations in {eventLocation}
                   </h2>
-                  <div className="flex flex-wrap gap-3">
+                  <div className="flex flex-wrap gap-2">
                     {[
                       "Concert Halls",
                       "Stadiums",
@@ -1271,10 +1315,10 @@ const EventList = () => {
                     ].map((location) => (
                       <button
                         key={location}
-                        className="flex items-center gap-1 px-2 bg-gray-100 border border-gray-200 rounded-full transition-colors hover:bg-gray-200"
+                        className="flex items-center gap-1 px-2 py-1 bg-gray-100 border border-gray-200 rounded-full transition-colors hover:bg-gray-200 text-xs sm:text-sm"
                       >
-                        <FaMapMarkerAlt className="text-gray-500 text-sm" />
-                        <span className="text-sm text-gray-700 hover:text-blue-500 cursor-pointer">
+                        <FaMapMarkerAlt className="text-gray-500 text-xs" />
+                        <span className="text-gray-700 hover:text-blue-500 cursor-pointer truncate">
                           {location}
                         </span>
                       </button>
@@ -1284,22 +1328,22 @@ const EventList = () => {
               </div>
 
               {/* Enhanced Event Cards Grid */}
-              <div className="events-section grid grid-cols-1 gap-6 cursor-pointer mt-6">
+              <div className="events-section grid grid-cols-1 gap-4 sm:gap-6 cursor-pointer mt-6">
                 {getCurrentEvents().map((event) => (
                   <EventCard key={event.id} event={event} />
                 ))}
               </div>
 
               {/* Pagination */}
-              <div className="mt-8 bg-white rounded-lg p-6 shadow-sm border border-gray-200">
+              <div className="mt-6 sm:mt-8 bg-white rounded-lg p-4 sm:p-6 shadow-sm border border-gray-200">
                 <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
                   {/* Items per page selector */}
                   <div className="flex items-center gap-3">
-                    <span className="text-sm text-gray-600">Show:</span>
+                    <span className="text-xs sm:text-sm text-gray-600">Show:</span>
                     <select
                       value={itemsPerPage}
                       onChange={(e) => handleItemsPerPageChange(e.target.value)}
-                      className="border border-gray-300 rounded px-3 py-1.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="border border-gray-300 rounded px-2 sm:px-3 py-1.5 text-xs sm:text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-32"
                     >
                       {itemsPerPageOptions.map((option) => (
                         <option key={option} value={option}>
@@ -1310,36 +1354,36 @@ const EventList = () => {
                   </div>
 
                   {/* Page info */}
-                  <div className="text-sm text-gray-600">
+                  <div className="text-xs sm:text-sm text-gray-600 text-center">
                     Showing {(currentPage - 1) * itemsPerPage + 1} to{" "}
                     {Math.min(currentPage * itemsPerPage, allEvents.length)}{" "}
                     of {allEvents.length} events
                   </div>
 
                   {/* Pagination controls */}
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1 sm:gap-2">
                     <button
                       onClick={() => handlePageChange(currentPage - 1)}
                       disabled={currentPage === 1}
-                      className={`flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                      className={`flex items-center gap-1 px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors ${
                         currentPage === 1
                           ? "text-gray-400 cursor-not-allowed bg-gray-100"
                           : "text-gray-700 hover:bg-gray-100 border border-gray-300"
                       }`}
                     >
-                      <ChevronLeft size={16} />
-                      Previous
+                      <ChevronLeft size={14} className="sm:w-4 sm:h-4" />
+                      <span className="hidden sm:inline">Previous</span>
                     </button>
 
                     <div className="flex items-center gap-1">
                       {getPageNumbers().map((page, index) => (
                         <React.Fragment key={index}>
                           {page === "..." ? (
-                            <span className="px-3 py-2 text-gray-500">...</span>
+                            <span className="px-2 sm:px-3 py-1.5 sm:py-2 text-gray-500">...</span>
                           ) : (
                             <button
                               onClick={() => handlePageChange(page)}
-                              className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                              className={`px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors min-w-[2rem] sm:min-w-[2.5rem] ${
                                 currentPage === page
                                   ? "bg-blue-600 text-white shadow-sm"
                                   : "text-gray-700 hover:bg-gray-100 border border-gray-300"
@@ -1355,25 +1399,25 @@ const EventList = () => {
                     <button
                       onClick={() => handlePageChange(currentPage + 1)}
                       disabled={currentPage === totalPages}
-                      className={`flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                      className={`flex items-center gap-1 px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors ${
                         currentPage === totalPages
                           ? "text-gray-400 cursor-not-allowed bg-gray-100"
                           : "text-gray-700 hover:bg-gray-100 border border-gray-300"
                       }`}
                     >
-                      Next
-                      <ChevronRight size={16} />
+                      <span className="hidden sm:inline">Next</span>
+                      <ChevronRight size={14} className="sm:w-4 sm:h-4" />
                     </button>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Right side - 30% */}
-            <div className="w-full lg:w-[30%] space-y-6">
+            {/* Right side - Hidden on mobile/tablet, 30% on desktop */}
+            <div className={`${isMobile ? 'hidden' : isTablet ? 'hidden' : 'w-full lg:w-[30%] space-y-6'}`}>
               {/* Categories near Location */}
-              <div className="bg-white rounded-lg p-6 shadow-sm">
-                <h2 className="text-lg font-semibold text-gray-900 mb-2">
+              <div className="bg-white rounded-lg p-4 sm:p-6 shadow-sm">
+                <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-2">
                   Event Categories in {eventLocation}
                 </h2>
                 <div className="h-[1px] bg-gray-300 w-full mb-2"></div>
@@ -1397,8 +1441,8 @@ const EventList = () => {
               </div>
 
               {/* Popular Venues */}
-              <div className="bg-white rounded-lg p-6 shadow-sm">
-                <h2 className="text-lg font-semibold text-gray-900 mb-2">
+              <div className="bg-white rounded-lg p-4 sm:p-6 shadow-sm">
+                <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-2">
                   Popular Venues
                 </h2>
                 <div className="h-[1px] bg-gray-300 w-full mb-2"></div>
@@ -1422,8 +1466,8 @@ const EventList = () => {
               </div>
 
               {/* Upcoming Festivals */}
-              <div className="bg-white rounded-lg p-6 shadow-sm">
-                <h2 className="text-lg font-semibold text-gray-900 mb-2">
+              <div className="bg-white rounded-lg p-4 sm:p-6 shadow-sm">
+                <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-2">
                   Upcoming Festivals
                 </h2>
                 <div className="h-[1px] bg-gray-300 w-full mb-2"></div>
@@ -1447,8 +1491,8 @@ const EventList = () => {
               </div>
 
               {/* Top Organizers */}
-              <div className="bg-white rounded-lg p-6 shadow-sm">
-                <h2 className="text-lg font-semibold text-gray-900 mb-2">
+              <div className="bg-white rounded-lg p-4 sm:p-6 shadow-sm">
+                <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-2">
                   Top Event Organizers
                 </h2>
                 <div className="h-[1px] bg-gray-300 w-full mb-4"></div>
@@ -1482,18 +1526,18 @@ const EventList = () => {
                     >
                       <div className="flex items-start gap-4">
                         <div
-                          className={`w-12 h-12 rounded-md flex items-center justify-center text-white font-semibold text-xl ${organizer.initialBg}`}
+                          className={`w-10 h-10 sm:w-12 sm:h-12 rounded-md flex items-center justify-center text-white font-semibold text-lg sm:text-xl ${organizer.initialBg}`}
                         >
                           {organizer.initial}
                         </div>
                         <div>
                           <a
                             href="#"
-                            className="text-blue-600 font-semibold hover:underline"
+                            className="text-blue-600 font-semibold hover:underline text-sm sm:text-base"
                           >
                             {organizer.name}
                           </a>
-                          <p className="text-sm text-gray-700">
+                          <p className="text-xs sm:text-sm text-gray-700">
                             {organizer.events}
                           </p>
                           <div className="flex items-center gap-1 mt-1">
@@ -1508,11 +1552,11 @@ const EventList = () => {
               </div>
 
               {/* Free Events This Week */}
-              <div className="bg-white rounded-lg shadow-sm p-5 border border-gray-200">
-                <h2 className="text-lg font-semibold text-gray-900 mb-3">
+              <div className="bg-white rounded-lg shadow-sm p-4 sm:p-5 border border-gray-200">
+                <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-3">
                   Free Events This Week
                 </h2>
-                <div className="space-y-5">
+                <div className="space-y-4 sm:space-y-5">
                   {allEvents
                     .filter(e => e.price === 0)
                     .slice(0, 3)
@@ -1527,7 +1571,7 @@ const EventList = () => {
                         >
                           {event.title}
                         </a>
-                        <div className="flex flex-wrap items-center gap-3 text-sm text-gray-600 mb-2">
+                        <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-xs sm:text-sm text-gray-600 mb-2">
                           <div className="flex items-center gap-1">
                             <Calendar size={12} />
                             {event.displayDate}
@@ -1537,7 +1581,7 @@ const EventList = () => {
                             {event.location}
                           </div>
                         </div>
-                        <div className="text-sm text-gray-700">
+                        <div className="text-xs sm:text-sm text-gray-700">
                           <span className="font-medium">Time:</span> {event.time}
                         </div>
                       </div>
@@ -1546,12 +1590,12 @@ const EventList = () => {
               </div>
 
               {/* Newsletter Subscription */}
-              <div className="bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl p-6 text-white text-center">
-                <h3 className="text-lg font-bold mb-3">Never Miss an Event!</h3>
-                <p className="text-sm mb-4 opacity-90">
+              <div className="bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl p-5 sm:p-6 text-white text-center">
+                <h3 className="text-base sm:text-lg font-bold mb-3">Never Miss an Event!</h3>
+                <p className="text-xs sm:text-sm mb-4 opacity-90">
                   Get weekly updates on the best events in your city
                 </p>
-                <div className="flex gap-2">
+                <div className="flex flex-col sm:flex-row gap-2">
                   <input
                     type="email"
                     placeholder="Your email"

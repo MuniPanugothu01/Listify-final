@@ -331,7 +331,7 @@ const Category = () => {
   };
 
   return (
-    <div className="min-h-screen mt-4 px-4 py-4">
+    <div className="min-h-screen px-4 py-4">
       <div className="">
         {/* Header Section */}
         <div className="text-center">
