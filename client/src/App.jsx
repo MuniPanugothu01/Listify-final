@@ -28,6 +28,10 @@ import NannyService from "./components/TakeCare/NannyCareServices/NannyService.j
 import BabysitterService from "./components/TakeCare/BabysitterCareServices/BabysitterService.jsx";
 import CookServices from "./components/TakeCare/CookServices/CookServices.jsx";
 import HousekeeperServices from "./components/TakeCare/HousekeeperServices/HousekeeperServices.jsx";
+import TutorServices from "./components/TakeCare/TutorServices/TutorServices.jsx";
+import ElderCareServices from "./components/TakeCare/ElderCareServices/ElderCareServices.jsx"
+import PetCareService from "./components/TakeCare/PetCareServices/PetCareServices.jsx";
+import CareCenterServices from "./components/TakeCare/CareCenterServices/CareCenterServices.jsx";
 
 
 // Roommates
@@ -161,6 +165,10 @@ const App = () => {
             <Route path="/takecare/babysitter" element={<BabysitterService />} />
             <Route path="/takecare/cook" element={<CookServices />} />
             <Route path="/takecare/housekeeper" element={<HousekeeperServices />} />
+            <Route path="/takecare/tutor" element={<TutorServices />} />
+            <Route path="/takecare/eldercare" element={<ElderCareServices/>}/>
+            <Route path="/takecare/petcare" element={<PetCareService />} />
+            <Route path="/takecare/carecenter" element={<CareCenterServices />} />
 
             {/* Roommates */}
             <Route path="/roommates" element={<Roommates />} />
