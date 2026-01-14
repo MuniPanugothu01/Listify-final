@@ -1,6 +1,8 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import { Heart, Image, Star, Fuel, Settings } from "lucide-react";
 import { CiStar } from "react-icons/ci";
+
 
 const FeaturedCars = () => {
   const cars = [
@@ -243,9 +245,11 @@ const FeaturedCars = () => {
 
       {/* View All Button */}
       <div className="mt-8 text-center">
+       <Link to="/car-listings">
         <button className="px-8 py-3 bg-gradient-to-r from-[#27bb97] to-[#1fa987] hover:from-[#27bb97]/90 hover:to-[#1fa987]/90 text-white font-semibold rounded-lg transition-all duration-300 hover:shadow-lg hover:scale-105">
           View All Cars →
         </button>
+       </Link>
       </div>
     </div>
   );
