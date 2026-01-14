@@ -129,7 +129,7 @@ const CarDetails = () => {
                   <FaPlus className="w-3.5 h-3.5 text-zinc-600" />
                 </button>
               </div>
-              <button className="bg-[#27bb97] ml-5 hover:bg-[#1fa987] text-white px-6 py-3 rounded-full font-semibold transition shadow-md text-sm whitespace-nowrap capitalize cursor-pointer">
+              <button className="bg-[#27bb97] ml-5 hover:bg-[#1fa987] text-white px-6 py-3 rounded-md font-semibold transition shadow-md text-sm whitespace-nowrap uppercase cursor-pointer">
                 book Now
               </button>
             </div>

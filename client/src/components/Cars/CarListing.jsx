@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom"; // Added Link import
 // react icons
 import {
   Heart,
@@ -896,175 +897,218 @@ const CarListing = () => {
             <div>
               {cars.map((car, index) => (
                 <div key={car.id}>
-                  <div className="p-4 lg:p-6 hover:bg-gray-50 transition-colors">
-                    <div className="flex flex-col lg:flex-row overflow-hidden">
-                      {/* Image - Responsive */}
-                      <div className="relative w-full lg:w-72 h-48 lg:h-44 flex-shrink-0 lg:mt-3 mb-4 lg:mb-0">
-                        <img
-                          src={car.image}
-                          alt={car.name}
-                          className="w-full h-full object-cover rounded-md"
-                        />
-                        <button className="absolute top-3 right-3 w-8 h-8 bg-black bg-opacity-40 rounded-full flex items-center justify-center hover:bg-opacity-60 transition">
-                          <Heart className="w-4 h-4 text-white" />
-                        </button>
-                        <div className="absolute bottom-3 left-3">
-                          <button className="px-2 py-1 bg-opacity-70 text-white text-xs rounded backdrop-blur-sm flex items-center gap-1 hover:bg-opacity-80 transition">
-                            <IoImagesOutline className="w-3.5 h-3.5" />
-                            <span>5</span>
+                  {/* Make the entire card clickable */}
+                  <Link to={`/car-details/`} className="block">
+                    <div className="p-4 lg:p-6 hover:bg-gray-50 transition-colors cursor-pointer">
+                      <div className="flex flex-col lg:flex-row overflow-hidden">
+                        {/* Image - Responsive */}
+                        <div className="relative w-full lg:w-72 h-48 lg:h-44 flex-shrink-0 lg:mt-3 mb-4 lg:mb-0">
+                          <img
+                            src={car.image}
+                            alt={car.name}
+                            className="w-full h-full object-cover rounded-md"
+                          />
+                          <button 
+                            className="absolute top-3 right-3 w-8 h-8 bg-black bg-opacity-40 rounded-full flex items-center justify-center hover:bg-opacity-60 transition"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              // Handle favorite logic
+                            }}
+                          >
+                            <Heart className="w-4 h-4 text-white" />
                           </button>
-                        </div>
-                      </div>
-
-                      {/* Content */}
-                      <div className="flex-1 p-2 lg:p-4 flex flex-col">
-                        {/* Title and Price Indicator */}
-                        <div className="flex flex-col lg:flex-row lg:items-start justify-between mb-2">
-                          <div>
-                            <h3 className="text-lg font-bold text-blue-500 mb-1">
-                              {car.name}
-                            </h3>
-                            <div className="flex flex-wrap gap-2 text-sm mb-2 lg:mb-0">
-                              <span className="text-gray-600">{car.type}</span>
-                              <span className="text-gray-600">
-                                {car.condition}
-                              </span>
-                              <span className="text-gray-600">
-                                {car.action === "Rent Now"
-                                  ? "Buy Now"
-                                  : "Auction"}
-                              </span>
-                            </div>
-                          </div>
-                          <div className="lg:hidden text-lg font-bold text-blue-500 mb-2">
-                            {car.price > 50000
-                              ? "$$$"
-                              : car.price > 30000
-                              ? "$$"
-                              : "$"}
-                          </div>
-                        </div>
-
-                        {/* Specs Grid - Responsive */}
-                        <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-3 lg:gap-x-6 lg:gap-y-2 mt-2 lg:mt-3 text-sm">
-                          <div>
-                            <div className="text-gray-400 mb-0.5">
-                              Kilometers:
-                            </div>
-                            <div className="text-gray-700 font-medium">
-                              {car.mileage.replace(" km", ",000 km")}
-                            </div>
-                          </div>
-                          <div>
-                            <div className="text-gray-400 mb-0.5">Engine:</div>
-                            <div className="text-gray-700 font-medium">
-                              AMG 4.0L8
-                            </div>
-                          </div>
-                          <div className="col-span-2 lg:col-span-1">
-                            <div className="text-gray-400 mb-0.5">
-                              Horsepower:
-                            </div>
-                            <div className="text-gray-700 font-semibold">486</div>
-                          </div>
-
-                          {/* Location with REAL SVG FLAG */}
-                          <div className="col-span-2 lg:col-span-1">
-                            <div className="text-gray-400 mb-0.5">
-                              Location:
-                            </div>
-                            <div className="text-gray-700 font-medium flex items-center gap-2">
-                              <ReactCountryFlag
-                                countryCode={getCountryCode(car.location)}
-                                svg
-                                style={{
-                                  width: "1.4em",
-                                  height: "1em",
-                                }}
-                                title={getCountryName(car.location)}
-                              />
-                              <div>{car.location}</div>
-                            </div>
-                          </div>
-
-                          <div>
-                            <div className="text-gray-400 mb-0.5">
-                              Acceleration:
-                            </div>
-                            <div className="text-gray-700 font-medium">
-                              4.0 sec
-                            </div>
-                          </div>
-                          <div>
-                            <div className="text-gray-400 mb-0.5">
-                              Condition:
-                            </div>
-                            <div className="text-[#1fa987] font-medium">
-                              Excellent
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Price & Action - Responsive */}
-                      <div className="w-full lg:w-48 p-4 flex flex-col lg:flex-col justify-between items-center border-t lg:border-l lg:border-t-0 border-gray-300 mt-4 lg:mt-0 lg:ml-5">
-                        <button
-                          className={`w-full py-2.5 rounded-md font-semibold text-sm transition cursor-pointer mb-3 ${
-                            car.action === "Rent Now"
-                              ? "bg-[#27bb97] text-white hover:bg-[#1fa987]"
-                              : "bg-white border border-[#1fa987] text-[#1fa987] hover:bg-green-100"
-                          }`}
-                        >
-                          {car.action === "Rent Now" ? "Buy Now" : "Make Bid"}
-                        </button>
-
-                        {/* Conditional price display based on action type */}
-                        {car.action === "Rent Now" ? (
-                          // For "Buy Now" - Show price as a button with bg-[#f2f5f3]
-                          <button className="w-full py-2 rounded-lg font-bold text-xl mb-4 bg-[#f2f5f3] text-gray-600">
-                            ${car.price.toLocaleString()}
-                          </button>
-                        ) : (
-                          // For "Make Bid" - Show -/+ buttons with price in between
-                          <div className="flex items-center border border-gray-300 rounded-md mb-2 w-full">
-                            <button className="w-10 h-10 border-r border-gray-300 flex items-center justify-center hover:bg-gray-50 text-gray-600 rounded-l-lg transition">
-                              −
+                          <div className="absolute bottom-3 left-3">
+                            <button 
+                              className="px-2 py-1 bg-opacity-70 text-white text-xs rounded backdrop-blur-sm flex items-center gap-1 hover:bg-opacity-80 transition"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                // Handle image gallery logic
+                              }}
+                            >
+                              <IoImagesOutline className="w-3.5 h-3.5" />
+                              <span>5</span>
                             </button>
-                            <div className="flex-1 h-10 flex items-center justify-center text-xl font-bold text-gray-900 bg-white">
+                          </div>
+                        </div>
+
+                        {/* Content */}
+                        <div className="flex-1 p-2 lg:p-4 flex flex-col">
+                          {/* Title and Price Indicator */}
+                          <div className="flex flex-col lg:flex-row lg:items-start justify-between mb-2">
+                            <div>
+                              <h3 className="text-lg font-bold text-blue-500 mb-1 hover:underline">
+                                {car.name}
+                              </h3>
+                              <div className="flex flex-wrap gap-2 text-sm mb-2 lg:mb-0">
+                                <span className="text-gray-600">{car.type}</span>
+                                <span className="text-gray-600">
+                                  {car.condition}
+                                </span>
+                                <span className="text-gray-600">
+                                  {car.action === "Rent Now"
+                                    ? "Buy Now"
+                                    : "Auction"}
+                                </span>
+                              </div>
+                            </div>
+                            <div className="lg:hidden text-lg font-bold text-blue-500 mb-2">
+                              {car.price > 50000
+                                ? "$$$"
+                                : car.price > 30000
+                                ? "$$"
+                                : "$"}
+                            </div>
+                          </div>
+
+                          {/* Specs Grid - Responsive */}
+                          <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-3 lg:gap-x-6 lg:gap-y-2 mt-2 lg:mt-3 text-sm">
+                            <div>
+                              <div className="text-gray-400 mb-0.5">
+                                Kilometers:
+                              </div>
+                              <div className="text-gray-700 font-medium">
+                                {car.mileage.replace(" km", ",000 km")}
+                              </div>
+                            </div>
+                            <div>
+                              <div className="text-gray-400 mb-0.5">Engine:</div>
+                              <div className="text-gray-700 font-medium">
+                                AMG 4.0L8
+                              </div>
+                            </div>
+                            <div className="col-span-2 lg:col-span-1">
+                              <div className="text-gray-400 mb-0.5">
+                                Horsepower:
+                              </div>
+                              <div className="text-gray-700 font-semibold">486</div>
+                            </div>
+
+                            {/* Location with REAL SVG FLAG */}
+                            <div className="col-span-2 lg:col-span-1">
+                              <div className="text-gray-400 mb-0.5">
+                                Location:
+                              </div>
+                              <div className="text-gray-700 font-medium flex items-center gap-2">
+                                <ReactCountryFlag
+                                  countryCode={getCountryCode(car.location)}
+                                  svg
+                                  style={{
+                                    width: "1.4em",
+                                    height: "1em",
+                                  }}
+                                  title={getCountryName(car.location)}
+                                />
+                                <div>{car.location}</div>
+                              </div>
+                            </div>
+
+                            <div>
+                              <div className="text-gray-400 mb-0.5">
+                                Acceleration:
+                              </div>
+                              <div className="text-gray-700 font-medium">
+                                4.0 sec
+                              </div>
+                            </div>
+                            <div>
+                              <div className="text-gray-400 mb-0.5">
+                                Condition:
+                              </div>
+                              <div className="text-[#1fa987] font-medium">
+                                Excellent
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Price & Action - Responsive */}
+                        <div className="w-full lg:w-48 p-4 flex flex-col lg:flex-col justify-between items-center border-t lg:border-l lg:border-t-0 border-gray-300 mt-4 lg:mt-0 lg:ml-5">
+                          <button
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              // Handle buy/bid action
+                            }}
+                            className={`w-full py-2.5 rounded-md font-semibold text-sm transition cursor-pointer mb-3 ${
+                              car.action === "Rent Now"
+                                ? "bg-[#27bb97] text-white hover:bg-[#1fa987]"
+                                : "bg-white border border-[#1fa987] text-[#1fa987] hover:bg-green-100"
+                            }`}
+                          >
+                            {car.action === "Rent Now" ? "Buy Now" : "Make Bid"}
+                          </button>
+
+                          {/* Conditional price display based on action type */}
+                          {car.action === "Rent Now" ? (
+                            // For "Buy Now" - Show price as a button with bg-[#f2f5f3]
+                            <button 
+                              className="w-full py-2 rounded-lg font-bold text-xl mb-4 bg-[#f2f5f3] text-gray-600"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                // Handle price click
+                              }}
+                            >
                               ${car.price.toLocaleString()}
-                            </div>
-                            <button className="w-10 h-10 border-l border-gray-300 flex items-center justify-center hover:bg-gray-50 text-gray-600 rounded-r-lg transition">
-                              +
                             </button>
-                          </div>
-                        )}
-
-                        <div className="flex items-center gap-1 mt-2">
-                          <div className="flex">
-                            {[...Array(5)].map((_, i) => (
-                              <span
-                                key={i}
-                                className={`text-base ${
-                                  i < car.rating
-                                    ? "text-orange-400"
-                                    : "text-gray-300"
-                                }`}
+                          ) : (
+                            // For "Make Bid" - Show -/+ buttons with price in between
+                            <div className="flex items-center border border-gray-300 rounded-md mb-2 w-full">
+                              <button 
+                                className="w-10 h-10 border-r border-gray-300 flex items-center justify-center hover:bg-gray-50 text-gray-600 rounded-l-lg transition"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  // Handle decrement
+                                }}
                               >
-                                ★
-                              </span>
-                            ))}
-                          </div>
-                          <span className="text-xs text-gray-500">
-                            ({car.reviews} Reviews)
-                          </span>
-                          {car.verified && (
-                            <CheckCircle className="w-4 h-4 text-[#1fa987]" />
+                                −
+                              </button>
+                              <div className="flex-1 h-10 flex items-center justify-center text-xl font-bold text-gray-900 bg-white">
+                                ${car.price.toLocaleString()}
+                              </div>
+                              <button 
+                                className="w-10 h-10 border-l border-gray-300 flex items-center justify-center hover:bg-gray-50 text-gray-600 rounded-r-lg transition"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  // Handle increment
+                                }}
+                              >
+                                +
+                              </button>
+                            </div>
                           )}
+
+                          <div className="flex items-center gap-1 mt-2">
+                            <div className="flex">
+                              {[...Array(5)].map((_, i) => (
+                                <span
+                                  key={i}
+                                  className={`text-base ${
+                                    i < car.rating
+                                      ? "text-orange-400"
+                                      : "text-gray-300"
+                                  }`}
+                                >
+                                  ★
+                                </span>
+                              ))}
+                            </div>
+                            <span className="text-xs text-gray-500">
+                              ({car.reviews} Reviews)
+                            </span>
+                            {car.verified && (
+                              <CheckCircle className="w-4 h-4 text-[#1fa987]" />
+                            )}
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-
+                  </Link>
+                  
                   {/* Horizontal line after each card except the last one */}
                   {index < cars.length - 1 && (
                     <hr className="border-gray-200 border mx-4 lg:mx-6" />
