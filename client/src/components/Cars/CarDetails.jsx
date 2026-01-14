@@ -17,12 +17,11 @@ import { GiAutomaticSas } from "react-icons/gi";
 import { IoSpeedometerOutline } from "react-icons/io5";
 import { BsArrowRight } from "react-icons/bs";
 import { BsArrowLeft } from "react-icons/bs";
+import { GoArrowUpLeft } from "react-icons/go";
 
 const CarDetails = () => {
   const [quantity, setQuantity] = useState(1);
   const [selectedColor, setSelectedColor] = useState("red");
-
-
 
   return (
     <div className="min-h-screen bg-[#F9FAFB] py-6">
@@ -299,44 +298,191 @@ const CarDetails = () => {
         </div>
 
         {/* Similar Cars */}
-        <div className="mt-24">
-          <div className="flex items-center justify-between mb-10">
-            <h2 className="text-5xl font-semibold">You may also like</h2>
-            <div className="flex gap-6">
-              <button className="w-11 h-11 rounded-full bg-zinc-100 hover:bg-zinc-200 flex items-center justify-center transition shadow-sm cursor-pointer">
-                <BsArrowLeft className="w-4 h-4 text-zinc-600" />
+        <div className="mt-24 px-4">
+          <div className="flex items-center justify-between mb-8">
+            <h2 className="text-3xl sm:text-3xl md:text-4xl font-bold text-gray-900 capitalize">
+              You may also like
+            </h2>
+            <div className="flex gap-3">
+              <button className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center transition cursor-pointer">
+                <BsArrowLeft className="w-3 h-3 md:w-4 md:h-4 text-gray-700" />
               </button>
-              <button className="w-11 h-11 rounded-full bg-[#27bb97] hover:bg-[#1fa987] text-white flex items-center justify-center transition shadow-md cursor-pointer">
-                <BsArrowRight  className="w-4 h-4" />
+              <button className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-[#27bb97] hover:bg-[#1fa987] text-white flex items-center justify-center transition cursor-pointer">
+                <BsArrowRight className="w-3 h-3 md:w-4 md:h-4" />
               </button>
             </div>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-5">
-          
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 md:gap-5">
+            {/* Card 1 */}
+            <div className="bg-white rounded-md shadow-sm hover:shadow-md transition-shadow cursor-pointer overflow-hidden">
+              <div className="p-3 sm:p-4 md:p-5">
+                <div className="w-full h-40 sm:h-48 md:h-40 mb-4 flex items-center justify-center bg-gray-50 rounded-md">
+                  <img
+                    src="/cars/cardetail1.jpg"
+                    alt="Horizon Mirage Convertible"
+                    className="w-full h-full object-cover rounded-md"
+                  />
+                </div>
+                <h3 className="text-center font-semibold text-gray-900 text-sm sm:text-base leading-tight mb-2">
+                  Horizon Mirage
+                  <br />
+                  Convertible
+                </h3>
+                <p className="text-center text-gray-600 text-sm sm:text-base font-medium">
+                  $59/day
+                </p>
+              </div>
+            </div>
+
+            {/* Card 2 - Highlighted with Green Background */}
+            <div className="bg-[#27bb97] rounded-md shadow-md transition-shadow cursor-pointer overflow-hidden">
+              <div className="p-3 sm:p-4 md:p-5">
+                <div className="w-full h-40 sm:h-48 md:h-40 mb-4 flex items-center justify-center bg-white rounded-lg">
+                  <img
+                    src="/cars/cardetail.webp"
+                    alt="Vanguard Phoenix C-Class "
+                    className="w-full h-full object-cover rounded-md"
+                  />
+                </div>
+                <h3 className="text-center font-semibold text-white text-sm sm:text-base leading-tight mb-2">
+                  Vanguard Phoenix
+                  <br />
+                  C-Class
+                </h3>
+                <p className="text-center text-white text-sm sm:text-base font-medium">
+                  $49/day
+                </p>
+              </div>
+            </div>
+
+            {/* Card 3 */}
+            <div className="bg-white rounded-md sm:rounded-xl shadow-sm hover:shadow-md transition-shadow cursor-pointer overflow-hidden">
+              <div className="p-3 sm:p-4 md:p-5">
+                <div className="w-full h-40 sm:h-48 md:h-40 mb-4 flex items-center justify-center bg-gray-50 rounded-md sm:rounded-lg">
+                  <img
+                    src="/cars/cardetail.webp"
+                    alt="Apex Autos Typhoon Model 3"
+                    className="w-full h-full object-cover rounded-md"
+                  />
+                </div>
+                <h3 className="text-center font-semibold text-gray-900 text-sm sm:text-base leading-tight mb-2">
+                  Apex Autos Typhoon
+                  <br />
+                  Model 3
+                </h3>
+                <p className="text-center text-gray-600 text-sm sm:text-base font-medium">
+                  $59/day
+                </p>
+              </div>
+            </div>
+
+            {/* Card 4 */}
+            <div className="bg-white rounded-md sm:rounded-xl shadow-sm hover:shadow-md transition-shadow cursor-pointer overflow-hidden">
+              <div className="p-3 sm:p-4 md:p-5">
+                <div className="w-full h-40 sm:h-48 md:h-40 mb-4 flex items-center justify-center bg-gray-50 rounded-md sm:rounded-lg">
+                  <img
+                    src="/cars/cardetail.webp"
+                    alt="Radiant Solstice Convertible"
+                    className="w-full h-full object-cover rounded-md"
+                  />
+                </div>
+                <h3 className="text-center font-semibold text-gray-900 text-sm sm:text-base leading-tight mb-2">
+                  Radiant Solstice
+                  <br />
+                  Convertible
+                </h3>
+                <p className="text-center text-gray-600 text-sm sm:text-base font-medium">
+                  $79/day
+                </p>
+              </div>
+            </div>
+
+            {/* Card 5 */}
+            <div className="bg-white rounded-md sm:rounded-xl shadow-sm hover:shadow-md transition-shadow cursor-pointer overflow-hidden">
+              <div className="p-3 sm:p-4 md:p-5">
+                <div className="w-full h-40 sm:h-48 md:h-40 mb-4 flex items-center justify-center bg-gray-50 rounded-md sm:rounded-lg">
+                  <img
+                    src="/cars/cardetail.webp"
+                    alt="Aurora X5 Nebula Minivan"
+                    className="w-full h-full object-cover rounded-md"
+                  />
+                </div>
+                <h3 className="text-center font-semibold text-gray-900 text-sm sm:text-base leading-tight mb-2">
+                  Aurora X5 Nebula
+                  <br />
+                  Minivan
+                </h3>
+                <p className="text-center text-gray-600 text-sm sm:text-base font-medium">
+                  $59/day
+                </p>
+              </div>
+            </div>
           </div>
         </div>
 
+        {/* View More Button */}
+        <div className="text-center mt-16">
+          <button
+            className="
+      inline-flex
+      items-center
+      gap-2
+      px-4 py-3
+      border-2 border-[#27bb97]
+      text-[#27bb97]
+      font-semibold
+      rounded-lg
+      hover:bg-[#27bb97]
+      hover:text-white
+      transition-all
+      duration-300
+      hover:shadow-lg
+      cursor-pointer
+      uppercase
+    "
+          >
+            <GoArrowUpLeft size={24} />
+            back to cars
+          </button>
+        </div>
+
+{/* another style of button  */}
+
+
+{/* <div className="mt-8 px-4">
+          <button className="inline-flex items-center gap-2 px-4 py-2 text-[#27bb97] hover:text-[#1fa987] hover:underline transition cursor-pointer rounded-lg hover:bg-gray-50">
+            <BsArrowLeft className="w-5 h-5" />
+            <span className="font-medium ">Back to Cars</span>
+          </button>
+        </div> */}
+
+
         {/* CTA Banner */}
-        <div className="mt-24 bg-zinc-950 rounded-[2.5rem] p-20 text-center text-white relative overflow-hidden shadow-2xl">
-          <div className="absolute inset-0 opacity-5">
-            <div className="absolute top-0 right-0 w-96 h-96 bg-white rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2"></div>
+        <div className="mt-24 rounded-lg p-8 md:p-12 lg:p-20 text-center text-white relative overflow-hidden shadow-2xl">
+          {/* Background Image */}
+          <img
+            src="/cars/cardetailfinal.webp"
+            alt="Car on open road"
+            className="absolute inset-0 w-full h-full object-cover object-center"
+          />
+
+          {/* Overlay for better text readability */}
+          <div className="absolute inset-0 bg-black/50"></div>
+
+          <div className="absolute inset-0 opacity-10">
+            <div className="absolute top-0 right-0 w-64 md:w-80 lg:w-96 h-64 md:h-80 lg:h-96 bg-white rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2"></div>
           </div>
+
           <div className="relative z-10">
-            <h2 className="text-5xl font-bold mb-4 leading-tight">
-              Book Your Adventure
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold leading-tight mb-4">
+              <span className="block">Book Your Adventure</span>
+              <span className="block">Today and Feel the Power</span>
+              <span className="block">of the Open Road.</span>
             </h2>
-            <p className="text-xl mb-10 text-zinc-300 leading-relaxed">
-              Today and Feel the Power
-              <br />
-              of the Open Road.
-            </p>
-            <button className="bg-red-500 hover:bg-red-600 text-white px-8 py-3 rounded-full font-semibold transition shadow-lg text-sm tracking-wide">
+            <button className="bg-[#27bb97] hover:bg-[#1fa987] text-white px-6 py-3 md:px-8 md:py-4 rounded-full font-semibold transition shadow-lg text-sm md:text-base tracking-wide cursor-pointer mt-8">
               GET STARTED WITH US
             </button>
-          </div>
-          <div className="absolute right-10 bottom-0 opacity-10 text-[180px]">
-            🚗
           </div>
         </div>
       </div>
