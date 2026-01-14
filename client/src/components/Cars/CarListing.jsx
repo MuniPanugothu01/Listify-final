@@ -29,8 +29,9 @@ const CarListing = () => {
   const [viewMode, setViewMode] = useState("grid");
   const [priceRange, setPriceRange] = useState([21000, 80000]);
   const [selectedTypes, setSelectedTypes] = useState([]);
-  const [isConditionOpen, setIsConditionOpen] = useState(true); // Added this line
+  const [isConditionOpen, setIsConditionOpen] = useState(true);
   const [isEngineOpen, setIsEngineOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Mobile sidebar state
 
   const handleTypeSelect = (typeName) => {
     if (selectedTypes.includes(typeName)) {
@@ -217,6 +218,7 @@ const CarListing = () => {
     },
   ];
 
+  // Use your original carTypes data
   const carTypes = [
     { name: "Hatchback", count: 78, icon: "/cars/sedanlogo.png" },
     { name: "Sedan", count: 125, icon: "/cars/sedanlogo.png" },
@@ -239,15 +241,15 @@ const CarListing = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Full Width Search Bar at Top */}
-      <div className="w-ful">
+      <div className="w-full">
         <div className="max-w-7xl mx-auto px-4 py-4">
-          <div className="relative flex items-center bg-white border border-gray-100 rounded-md shadow-sm ">
+          <div className="relative flex items-center bg-white border border-gray-100 rounded-md shadow-sm">
             <Search className="absolute left-5 text-gray-400 w-5 h-5" />
 
             {/* Filter Tags  */}
-            <div className="flex items-center gap-2 pl-14 pr-4 py-3 flex-1">
+            <div className="flex items-center gap-2 pl-14 pr-4 py-3 flex-1 overflow-x-auto no-scrollbar">
               {/* Mercedes-Benz Tag */}
-              <div className="inline-flex items-center gap-2 bg-gray-100 rounded-md px-4 py-1.5">
+              <div className="inline-flex items-center gap-2 bg-gray-100 rounded-md px-4 py-1.5 flex-shrink-0">
                 <span className="text-sm font-medium text-gray-700">
                   Mercedes-Benz
                 </span>
@@ -257,7 +259,7 @@ const CarListing = () => {
               </div>
 
               {/* Year Tag */}
-              <div className="inline-flex items-center gap-2 bg-gray-100 rounded-md px-4 py-1.5">
+              <div className="inline-flex items-center gap-2 bg-gray-100 rounded-md px-4 py-1.5 flex-shrink-0">
                 <span className="text-sm font-medium text-gray-700">
                   2016 - 2018
                 </span>
@@ -269,13 +271,23 @@ const CarListing = () => {
 
             {/* Right Side Buttons */}
             <div className="flex items-center gap-3 pr-4">
-              <button className="flex items-center gap-2 text-blue-500 hover:text-blue-600 font-medium text-sm">
+              {/* Mobile Filters Button - Only shows on mobile */}
+              <button
+                onClick={() => setIsSidebarOpen(true)}
+                className="flex items-center gap-2 text-blue-500 hover:text-blue-600 font-medium text-sm lg:hidden"
+              >
+                <MdFilterList className="w-5 h-5" />
+                Filters
+              </button>
+
+              {/* Desktop Filters Button - Only shows on desktop */}
+              <button className="hidden lg:flex items-center gap-2 text-blue-500 hover:text-blue-600 font-medium text-sm">
                 <MdFilterList className="w-5 h-5" />
                 Filters
               </button>
 
               {/* vertical line */}
-              <div className="h-6 w-px bg-gray-300 mx-2"></div>
+              <div className="h-6 w-px bg-gray-300 mx-2 hidden lg:block"></div>
 
               <button className="p-2 text-gray-400 hover:text-gray-600">
                 <svg
@@ -297,22 +309,38 @@ const CarListing = () => {
         </div>
       </div>
 
-      {/* Main Container with max-w-7xl - INCREASED GAP BETWEEN SIDEBAR AND CARDS */}
-      <div className="max-w-7xl mx-auto flex gap-8 px-4 py-4">
-        {" "}
-        {/* Added gap-8 and padding */}
-        {/* Sidebar - Added margin-right */}
-        <div className="w-72 bg-white p-6 overflow-y-auto border-r rounded-md shadow-sm mr-2">
-          {" "}
-          {/* Added mr-4 and rounded-lg shadow-sm */}
+      {/* Main Container with max-w-7xl - Responsive layout */}
+      <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-8 px-4 py-4">
+        {/* Mobile Overlay - Only shows when sidebar is open on mobile */}
+        {isSidebarOpen && (
+          <div
+            onClick={() => setIsSidebarOpen(false)}
+            className="fixed inset-0 bg-black/40 z-30 lg:hidden"
+          />
+        )}
+
+        {/* Sidebar - Responsive with slide animation */}
+        <div
+          className={`
+            fixed inset-y-0 left-0 z-40 w-72 bg-white p-6
+            transform transition-transform duration-300
+            ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}
+            lg:static lg:translate-x-0 lg:w-72 lg:block lg:z-10
+            border-r rounded-md shadow-sm overflow-hidden
+          `}
+          style={{ top: "0", height: "280vh" }}
+        >
           <div className="mb-6">
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-semibold text-gray-900">Filters</h3>
-              <HiOutlineXMark className="text-gray-800 hover:text-gray-600 cursor-pointer" />
+              <HiOutlineXMark
+                onClick={() => setIsSidebarOpen(false)}
+                className="text-gray-800 hover:text-gray-600 cursor-pointer lg:hidden"
+              />
             </div>
             <div className="border-t border-gray-400 mt-4"></div>
           </div>
-          {/* Type of Car - UPDATED WITH CHECKMARK AT TOP-RIGHT */}
+          {/* Type of Car - ORIGINAL STYLE */}
           <div className="mb-6">
             <div className="flex items-center justify-between mb-3">
               <h4 className="font-medium text-gray-700 text-sm">Type of Car</h4>
@@ -333,15 +361,15 @@ const CarListing = () => {
                     key={type.name}
                     onClick={() => handleTypeSelect(type.name)}
                     className={`
-            rounded-lg p-1 text-center transition-all duration-200
-            flex flex-col items-center justify-center cursor-pointer relative
-            bg-[#f2f5f3]
-            ${
-              isSelected
-                ? "ring-2 hover:bg-blue-50 bg-blue-50 ring-blue-300 ring-opacity-50"
-                : "hover:bg-blue-50"
-            }
-          `}
+                      rounded-lg p-1 text-center transition-all duration-200
+                      flex flex-col items-center justify-center cursor-pointer relative
+                      bg-[#f2f5f3]
+                      ${
+                        isSelected
+                          ? "ring-2 hover:bg-blue-50 bg-blue-50 ring-blue-300 ring-opacity-50"
+                          : "hover:bg-blue-50"
+                      }
+                    `}
                   >
                     {/* Checkmark indicator at top-right */}
                     {isSelected && (
@@ -350,15 +378,29 @@ const CarListing = () => {
                       </div>
                     )}
 
-                    {/* Image Icon */}
+                    {/* Image Icon - ORIGINAL STYLE */}
                     <div className="w-12 h-12 flex items-center justify-center mt-1">
-                      <img
-                        src={type.icon}
-                        alt={type.name}
-                        className="max-w-full max-h-full object-contain"
-                      />
+                      {/* Try to load the image, fallback to icon if it fails */}
+                      <div className="w-10 h-10 flex items-center justify-center">
+                        <img
+                          src={type.icon}
+                          alt={type.name}
+                          className="max-w-full max-h-full object-contain"
+                          onError={(e) => {
+                            // If image fails to load, show a fallback icon
+                            e.target.style.display = 'none';
+                            e.target.parentElement.innerHTML = `
+                              <div class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
+                                <svg class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                </svg>
+                              </div>
+                            `;
+                          }}
+                        />
+                      </div>
                     </div>
-                    <div className="text-xs font-medium text-gray-500 mb-0.5">
+                    <div className="text-xs font-medium text-gray-500 mb-0.5 mt-1">
                       {type.name}
                     </div>
                     {/* <div className="text-xs text-gray-500">{type.count}</div> */}
@@ -645,7 +687,7 @@ const CarListing = () => {
           </div>
           {/* vertical line */}
           <div className="border-t border-gray-300 my-6"></div>
-          {/* Color */}
+          {/* Color with scrollbar */}
           <div className="mb-6">
             <div className="flex items-center justify-between mb-3">
               <h4 className="font-medium text-gray-700 text-sm">Color</h4>
@@ -659,27 +701,23 @@ const CarListing = () => {
               </button>
             </div>
 
-            {/* Scrollable color list with ultra-thin scrollbar */}
-            <div className="max-h-48 overflow-y-auto scrollbar-thin">
-              <div className="pr-2">
-                {" "}
-                {/* Added padding to prevent content from touching scrollbar */}
-                <div className="space-y-2">
-                  {colors.map((color) => (
-                    <label key={color.name} className="flex items-center py-1">
-                      <input
-                        type="checkbox"
-                        className="w-4 h-4 text-blue-600 rounded"
-                      />
-                      <div
-                        className={`ml-2 w-5 h-5 rounded ${color.color} border border-gray-200`}
-                      ></div>
-                      <span className="ml-2 text-sm text-gray-700">
-                        {color.name}
-                      </span>
-                    </label>
-                  ))}
-                </div>
+            {/* Color list with professional ultra-thin scrollbar */}
+            <div className="max-h-48 overflow-y-auto pr-2 scrollbar-thin">
+              <div className="space-y-2">
+                {colors.map((color) => (
+                  <label key={color.name} className="flex items-center py-1">
+                    <input
+                      type="checkbox"
+                      className="w-4 h-4 text-blue-600 rounded"
+                    />
+                    <div
+                      className={`ml-2 w-5 h-5 rounded ${color.color} border border-gray-200`}
+                    ></div>
+                    <span className="ml-2 text-sm text-gray-700">
+                      {color.name}
+                    </span>
+                  </label>
+                ))}
               </div>
             </div>
           </div>
@@ -736,25 +774,22 @@ const CarListing = () => {
                 </label>
                 <label className="flex items-center">
                   <input
-                    type="radio"
-                    name="engine"
-                    className="w-4 h-4 text-blue-600"
+                    type="checkbox"
+                    className="w-4 h-4 text-blue-600 rounded"
                   />
                   <span className="ml-2 text-sm text-gray-700">V12</span>
                 </label>
                 <label className="flex items-center">
                   <input
-                    type="radio"
-                    name="engine"
-                    className="w-4 h-4 text-blue-600"
+                    type="checkbox"
+                    className="w-4 h-4 text-blue-600 rounded"
                   />
                   <span className="ml-2 text-sm text-gray-700">Inline-4</span>
                 </label>
                 <label className="flex items-center">
                   <input
-                    type="radio"
-                    name="engine"
-                    className="w-4 h-4 text-blue-600"
+                    type="checkbox"
+                    className="w-4 h-4 text-blue-600 rounded"
                   />
                   <span className="ml-2 text-sm text-gray-700">Electric</span>
                 </label>
@@ -788,13 +823,14 @@ const CarListing = () => {
             Apply Filters
           </button>
         </div>
+
         {/* Main Content Container */}
-        <div className="flex-1">
+        <div className={`flex-1 ${isSidebarOpen ? "lg:block" : "block"}`}>
           {/* White Background Container for Toolbar and Cards */}
           <div className="bg-white rounded-md shadow-sm">
             {/* Toolbar with bottom border */}
-            <div className="p-4  border-b border-gray-300">
-              <div className="flex items-center justify-between">
+            <div className="p-4 border-b border-gray-300">
+              <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
                 <div className="text-sm text-gray-600">
                   <span className="font-medium text-gray-900">
                     Search Results
@@ -803,7 +839,7 @@ const CarListing = () => {
                 </div>
 
                 {/* View toggle (List | Grid) */}
-                <div className="flex items-center  rounded-md overflow-hidden -mr-85">
+                <div className="flex items-center rounded-md overflow-hidden border border-gray-300">
                   <div className="px-3 py-2 text-[#27bb97] cursor-pointer">
                     <FaList className="w-4 h-4" />
                   </div>
@@ -816,10 +852,10 @@ const CarListing = () => {
                   </div>
                 </div>
 
-                <div className="flex gap-3">
+                <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
                   <div className="flex items-center border border-gray-300 rounded-md overflow-hidden">
                     {/* Select */}
-                    <select className="px-4 py-2 text-sm focus:outline-none appearance-none bg-white">
+                    <select className="px-4 py-2 text-sm focus:outline-none appearance-none bg-white w-full">
                       <option>10 Per Page</option>
                       <option>20 Per Page</option>
                       <option>50 Per Page</option>
@@ -837,7 +873,7 @@ const CarListing = () => {
 
                   <div className="flex items-center border border-gray-300 rounded-md overflow-hidden">
                     {/* Select */}
-                    <select className="px-4 py-2 text-sm focus:outline-none appearance-none bg-white">
+                    <select className="px-4 py-2 text-sm focus:outline-none appearance-none bg-white w-full">
                       <option className="capitalize">Date (Down)</option>
                       <option>Price (Low to High)</option>
                       <option>Price (High to Low)</option>
@@ -856,14 +892,14 @@ const CarListing = () => {
               </div>
             </div>
 
-            {/* Car List with horizontal lines between cards */}
+            {/* Car List without scrollbar */}
             <div>
               {cars.map((car, index) => (
                 <div key={car.id}>
-                  <div className="p-6 hover:bg-gray-50 transition-colors">
-                    <div className="flex overflow-hidden">
-                      {/* Image - INCREASED WIDTH */}
-                      <div className="relative w-72 h-44 flex-shrink-0 mt-3">
+                  <div className="p-4 lg:p-6 hover:bg-gray-50 transition-colors">
+                    <div className="flex flex-col lg:flex-row overflow-hidden">
+                      {/* Image - Responsive */}
+                      <div className="relative w-full lg:w-72 h-48 lg:h-44 flex-shrink-0 lg:mt-3 mb-4 lg:mb-0">
                         <img
                           src={car.image}
                           alt={car.name}
@@ -881,19 +917,14 @@ const CarListing = () => {
                       </div>
 
                       {/* Content */}
-                      <div className="flex-1 p-4 flex flex-col">
+                      <div className="flex-1 p-2 lg:p-4 flex flex-col">
                         {/* Title and Price Indicator */}
-                        <div className="flex items-start justify-between mb-2">
+                        <div className="flex flex-col lg:flex-row lg:items-start justify-between mb-2">
                           <div>
                             <h3 className="text-lg font-bold text-blue-500 mb-1">
-                              {car.name} -{" "}
-                              {car.price > 50000
-                                ? "$$$"
-                                : car.price > 30000
-                                ? "$$"
-                                : "$"}
+                              {car.name}
                             </h3>
-                            <div className="flex gap-2 text-sm">
+                            <div className="flex flex-wrap gap-2 text-sm mb-2 lg:mb-0">
                               <span className="text-gray-600">{car.type}</span>
                               <span className="text-gray-600">
                                 {car.condition}
@@ -905,10 +936,17 @@ const CarListing = () => {
                               </span>
                             </div>
                           </div>
+                          <div className="lg:hidden text-lg font-bold text-blue-500 mb-2">
+                            {car.price > 50000
+                              ? "$$$"
+                              : car.price > 30000
+                              ? "$$"
+                              : "$"}
+                          </div>
                         </div>
 
-                        {/* Specs Grid - WITH REAL SVG FLAGS */}
-                        <div className="grid grid-cols-3 gap-x-6 gap-y-2 mt-3 text-sm">
+                        {/* Specs Grid - Responsive */}
+                        <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-3 lg:gap-x-6 lg:gap-y-2 mt-2 lg:mt-3 text-sm">
                           <div>
                             <div className="text-gray-400 mb-0.5">
                               Kilometers:
@@ -923,7 +961,7 @@ const CarListing = () => {
                               AMG 4.0L8
                             </div>
                           </div>
-                          <div>
+                          <div className="col-span-2 lg:col-span-1">
                             <div className="text-gray-400 mb-0.5">
                               Horsepower:
                             </div>
@@ -931,7 +969,7 @@ const CarListing = () => {
                           </div>
 
                           {/* Location with REAL SVG FLAG */}
-                          <div>
+                          <div className="col-span-2 lg:col-span-1">
                             <div className="text-gray-400 mb-0.5">
                               Location:
                             </div>
@@ -945,9 +983,7 @@ const CarListing = () => {
                                 }}
                                 title={getCountryName(car.location)}
                               />
-                              <div>
-                                <div>{car.location}</div>
-                              </div>
+                              <div>{car.location}</div>
                             </div>
                           </div>
 
@@ -970,8 +1006,8 @@ const CarListing = () => {
                         </div>
                       </div>
 
-                      {/* Price & Action */}
-                      <div className="w-48 p-4 flex flex-col justify-between items-center border-l ml-5 border-gray-300">
+                      {/* Price & Action - Responsive */}
+                      <div className="w-full lg:w-48 p-4 flex flex-col lg:flex-col justify-between items-center border-t lg:border-l lg:border-t-0 border-gray-300 mt-4 lg:mt-0 lg:ml-5">
                         <button
                           className={`w-full py-2.5 rounded-md font-semibold text-sm transition cursor-pointer mb-3 ${
                             car.action === "Rent Now"
@@ -990,11 +1026,11 @@ const CarListing = () => {
                           </button>
                         ) : (
                           // For "Make Bid" - Show -/+ buttons with price in between
-                          <div className="flex items-center border border-gray-300 rounded-md mb-2">
+                          <div className="flex items-center border border-gray-300 rounded-md mb-2 w-full">
                             <button className="w-10 h-10 border-r border-gray-300 flex items-center justify-center hover:bg-gray-50 text-gray-600 rounded-l-lg transition">
                               −
                             </button>
-                            <div className="w-20 h-10 flex items-center justify-center text-xl font-bold text-gray-900 bg-white">
+                            <div className="flex-1 h-10 flex items-center justify-center text-xl font-bold text-gray-900 bg-white">
                               ${car.price.toLocaleString()}
                             </div>
                             <button className="w-10 h-10 border-l border-gray-300 flex items-center justify-center hover:bg-gray-50 text-gray-600 rounded-r-lg transition">
@@ -1003,7 +1039,7 @@ const CarListing = () => {
                           </div>
                         )}
 
-                        <div className="flex items-center gap-1">
+                        <div className="flex items-center gap-1 mt-2">
                           <div className="flex">
                             {[...Array(5)].map((_, i) => (
                               <span
@@ -1031,7 +1067,7 @@ const CarListing = () => {
 
                   {/* Horizontal line after each card except the last one */}
                   {index < cars.length - 1 && (
-                    <hr className="border-gray-200 border mx-6" />
+                    <hr className="border-gray-200 border mx-4 lg:mx-6" />
                   )}
                 </div>
               ))}
@@ -1067,5 +1103,5 @@ const CarListing = () => {
     </div>
   );
 };
-<div />;
+
 export default CarListing;
