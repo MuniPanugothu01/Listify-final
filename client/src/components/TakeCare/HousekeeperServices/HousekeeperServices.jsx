@@ -6,6 +6,7 @@ import HousekeeperHowItWorks from './HousekeeperHowItWorks';
 import HousekeeperProfile from './HousekeeperProfile';
 import HousekeeperJobs from './HousekeeperJobs';
 import CareServices from '../CareServices';
+
 import HousekeeperFaq from './HousekeeperFaq';
 import HousekeeperContact from './HousekeeperContact';
 
@@ -18,7 +19,7 @@ const HousekeeperServices = () => {
         <HousekeeperHowItWorks/>
         <HousekeeperProfile/>
         <HousekeeperJobs/>
-         <CareServices />
+        <CareServices />
         <HousekeeperFaq/>
         <HousekeeperContact/>
     </div>

@@ -50,7 +50,7 @@ const CareServices = () => {
       color: "from-purple-500 to-violet-500"
     },
     {
-      id: "care-center",
+      id: "carecenter",
       title: "Care Center",
       description: "Discover or List a Care Center",
       image: "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=200&h=200&fit=crop&crop=face",
@@ -64,7 +64,7 @@ const CareServices = () => {
       color: "from-indigo-500 to-blue-500"
     },
     {
-      id: "pet-care",
+      id: "petcare",
       title: "Pet Care",
       description: "Find a Pet Care Provider or Job",
       image: "https://images.unsplash.com/photo-1558788353-f76d92427f16?w=200&h=200&fit=crop&crop=face",
