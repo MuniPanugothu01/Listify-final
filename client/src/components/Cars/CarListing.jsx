@@ -867,7 +867,7 @@ const CarListing = () => {
                         <img
                           src={car.image}
                           alt={car.name}
-                          className="w-full h-full object-cover rounded-lg"
+                          className="w-full h-full object-cover rounded-md"
                         />
                         <button className="absolute top-3 right-3 w-8 h-8 bg-black bg-opacity-40 rounded-full flex items-center justify-center hover:bg-opacity-60 transition">
                           <Heart className="w-4 h-4 text-white" />
