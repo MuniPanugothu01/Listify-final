@@ -19,6 +19,11 @@ import { HiOutlineXMark } from "react-icons/hi2";
 import { IoCheckmarkCircleSharp } from "react-icons/io5";
 import { IoChevronDown, IoClose, IoCalendarOutline } from "react-icons/io5";
 import { IoIosArrowUp } from "react-icons/io";
+import { IoIosArrowDown } from "react-icons/io";
+import { FaList } from "react-icons/fa6";
+import { AiTwotoneAppstore } from "react-icons/ai";
+import { IoMdClose } from "react-icons/io";
+import { MdFilterList } from "react-icons/md";
 
 const CarListing = () => {
   const [viewMode, setViewMode] = useState("grid");
@@ -236,23 +241,56 @@ const CarListing = () => {
       {/* Full Width Search Bar at Top */}
       <div className="w-ful">
         <div className="max-w-7xl mx-auto px-4 py-4">
-          <div className="relative">
-            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-            <input
-              type="text"
-              placeholder="Search cars by brand, model, year, or location..."
-              className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
+          <div className="relative flex items-center bg-white border border-gray-100 rounded-md shadow-sm ">
+            <Search className="absolute left-5 text-gray-400 w-5 h-5" />
 
-            <div className="absolute right-4 top-1/2 transform -translate-y-1/2 flex items-center gap-2">
-              {/* Vertical separator line */}
-              <div className="h-6 w-px bg-gray-300 mr-2"></div>
+            {/* Filter Tags  */}
+            <div className="flex items-center gap-2 pl-14 pr-4 py-3 flex-1">
+              {/* Mercedes-Benz Tag */}
+              <div className="inline-flex items-center gap-2 bg-gray-100 rounded-md px-4 py-1.5">
+                <span className="text-sm font-medium text-gray-700">
+                  Mercedes-Benz
+                </span>
+                <button className="w-4 h-4 rounded-full bg-gray-400 hover:bg-gray-500 flex items-center justify-center text-white">
+                  <IoMdClose className="w-3 h-3" />
+                </button>
+              </div>
 
-              <button className="p-2 text-gray-600 hover:text-blue-500">
-                <List className="w-5 h-5" />
+              {/* Year Tag */}
+              <div className="inline-flex items-center gap-2 bg-gray-100 rounded-md px-4 py-1.5">
+                <span className="text-sm font-medium text-gray-700">
+                  2016 - 2018
+                </span>
+                <button className="w-4 h-4 rounded-full bg-gray-400 hover:bg-gray-500 flex items-center justify-center text-white">
+                  <IoMdClose className="w-3 h-3" />
+                </button>
+              </div>
+            </div>
+
+            {/* Right Side Buttons */}
+            <div className="flex items-center gap-3 pr-4">
+              <button className="flex items-center gap-2 text-blue-500 hover:text-blue-600 font-medium text-sm">
+                <MdFilterList className="w-5 h-5" />
+                Filters
               </button>
-              <button className="p-2 text-blue-500">
-                <Grid className="w-5 h-5" />
+
+              {/* vertical line */}
+              <div className="h-6 w-px bg-gray-300 mx-2"></div>
+
+              <button className="p-2 text-gray-400 hover:text-gray-600">
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"
+                  />
+                </svg>
               </button>
             </div>
           </div>
@@ -260,11 +298,11 @@ const CarListing = () => {
       </div>
 
       {/* Main Container with max-w-7xl - INCREASED GAP BETWEEN SIDEBAR AND CARDS */}
-      <div className="max-w-7xl mx-auto flex gap-8 px-4 py-6">
+      <div className="max-w-7xl mx-auto flex gap-8 px-4 py-4">
         {" "}
         {/* Added gap-8 and padding */}
         {/* Sidebar - Added margin-right */}
-        <div className="w-72 bg-white p-6 overflow-y-auto border-r rounded-lg shadow-sm mr-4">
+        <div className="w-72 bg-white p-6 overflow-y-auto border-r rounded-md shadow-sm mr-2">
           {" "}
           {/* Added mr-4 and rounded-lg shadow-sm */}
           <div className="mb-6">
@@ -753,7 +791,7 @@ const CarListing = () => {
         {/* Main Content Container */}
         <div className="flex-1">
           {/* White Background Container for Toolbar and Cards */}
-          <div className="bg-white rounded-lg shadow-sm">
+          <div className="bg-white rounded-md shadow-sm">
             {/* Toolbar with bottom border */}
             <div className="p-4  border-b border-gray-300">
               <div className="flex items-center justify-between">
@@ -761,19 +799,59 @@ const CarListing = () => {
                   <span className="font-medium text-gray-900">
                     Search Results
                   </span>{" "}
-                  (126)
+                  <span className="text-gray-400">(126)</span>
                 </div>
+
+                {/* View toggle (List | Grid) */}
+                <div className="flex items-center  rounded-md overflow-hidden -mr-85">
+                  <div className="px-3 py-2 text-[#27bb97] cursor-pointer">
+                    <FaList className="w-4 h-4" />
+                  </div>
+
+                  {/* Vertical divider */}
+                  <div className="h-6 border-l border-gray-300"></div>
+
+                  <div className="px-3 py-2 text-gray-600 hover:text-blue-500 cursor-pointer">
+                    <AiTwotoneAppstore className="w-4 h-4" />
+                  </div>
+                </div>
+
                 <div className="flex gap-3">
-                  <select className="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <option>10 Per Page</option>
-                    <option>20 Per Page</option>
-                    <option>50 Per Page</option>
-                  </select>
-                  <select className="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <option>Date (Recent)</option>
-                    <option>Price (Low to High)</option>
-                    <option>Price (High to Low)</option>
-                  </select>
+                  <div className="flex items-center border border-gray-300 rounded-md overflow-hidden">
+                    {/* Select */}
+                    <select className="px-4 py-2 text-sm focus:outline-none appearance-none bg-white">
+                      <option>10 Per Page</option>
+                      <option>20 Per Page</option>
+                      <option>50 Per Page</option>
+                    </select>
+
+                    {/* Vertical divider */}
+                    <div className="h-6 border-l border-gray-300"></div>
+
+                    {/* Arrows */}
+                    <div className="px-2 flex flex-col items-center justify-center text-gray-500 leading-none">
+                      <IoIosArrowUp className="w-3 h-3 -mb-0.5" />
+                      <IoIosArrowDown className="w-3 h-3 -mt-0.5" />
+                    </div>
+                  </div>
+
+                  <div className="flex items-center border border-gray-300 rounded-md overflow-hidden">
+                    {/* Select */}
+                    <select className="px-4 py-2 text-sm focus:outline-none appearance-none bg-white">
+                      <option className="capitalize">Date (Down)</option>
+                      <option>Price (Low to High)</option>
+                      <option>Price (High to Low)</option>
+                    </select>
+
+                    {/* Vertical divider */}
+                    <div className="h-6 border-l border-gray-300"></div>
+
+                    {/* Stacked arrows */}
+                    <div className="px-2 flex flex-col items-center justify-center text-gray-400 leading-none pointer-events-none">
+                      <IoIosArrowUp className="w-3 h-3 -mb-0.5" />
+                      <IoIosArrowDown className="w-3 h-3 -mt-0.5" />
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -785,7 +863,7 @@ const CarListing = () => {
                   <div className="p-6 hover:bg-gray-50 transition-colors">
                     <div className="flex overflow-hidden">
                       {/* Image - INCREASED WIDTH */}
-                      <div className="relative w-72 h-44 flex-shrink-0">
+                      <div className="relative w-72 h-44 flex-shrink-0 mt-3">
                         <img
                           src={car.image}
                           alt={car.name}
@@ -807,7 +885,7 @@ const CarListing = () => {
                         {/* Title and Price Indicator */}
                         <div className="flex items-start justify-between mb-2">
                           <div>
-                            <h3 className="text-base font-semibold text-blue-500 mb-1">
+                            <h3 className="text-lg font-bold text-blue-500 mb-1">
                               {car.name} -{" "}
                               {car.price > 50000
                                 ? "$$$"
@@ -815,7 +893,7 @@ const CarListing = () => {
                                 ? "$$"
                                 : "$"}
                             </h3>
-                            <div className="flex gap-2 text-xs">
+                            <div className="flex gap-2 text-sm">
                               <span className="text-gray-600">{car.type}</span>
                               <span className="text-gray-600">
                                 {car.condition}
@@ -830,7 +908,7 @@ const CarListing = () => {
                         </div>
 
                         {/* Specs Grid - WITH REAL SVG FLAGS */}
-                        <div className="grid grid-cols-3 gap-x-6 gap-y-2 mt-3 text-xs">
+                        <div className="grid grid-cols-3 gap-x-6 gap-y-2 mt-3 text-sm">
                           <div>
                             <div className="text-gray-400 mb-0.5">
                               Kilometers:
@@ -849,7 +927,7 @@ const CarListing = () => {
                             <div className="text-gray-400 mb-0.5">
                               Horsepower:
                             </div>
-                            <div className="text-gray-700 font-medium">486</div>
+                            <div className="text-gray-700 font-semibold">486</div>
                           </div>
 
                           {/* Location with REAL SVG FLAG */}
@@ -869,9 +947,6 @@ const CarListing = () => {
                               />
                               <div>
                                 <div>{car.location}</div>
-                                <div className="text-[10px] text-gray-500">
-                                  {getCountryName(car.location)}
-                                </div>
                               </div>
                             </div>
                           </div>
@@ -992,5 +1067,5 @@ const CarListing = () => {
     </div>
   );
 };
-
+<div />;
 export default CarListing;
