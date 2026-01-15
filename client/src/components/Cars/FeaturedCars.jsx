@@ -244,13 +244,17 @@ const FeaturedCars = () => {
       </div>
 
       {/* View All Button */}
-      <div className="mt-8 text-center">
-       <Link to="/car-listings">
-        <button className="px-8 py-3 bg-gradient-to-r from-[#27bb97] to-[#1fa987] hover:from-[#27bb97]/90 hover:to-[#1fa987]/90 text-white font-semibold rounded-lg transition-all duration-300 hover:shadow-lg hover:scale-105">
-          View All Cars →
-        </button>
-       </Link>
-      </div>
+         <div className="text-center mt-16">
+           <Link to="/car-listings">
+             <button
+               className="px-8 py-3 border-2 border-[#27bb97] text-[#27bb97] font-semibold rounded-lg
+                        hover:bg-[#27bb97] hover:text-white transition-all duration-300
+                        hover:shadow-lg capitalize cursor-pointer"
+             >
+               View All cars →
+             </button>
+           </Link>
+         </div>
     </div>
   );
 };

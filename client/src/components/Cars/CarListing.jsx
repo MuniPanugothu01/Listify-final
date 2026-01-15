@@ -27,9 +27,6 @@ import { IoMdClose } from "react-icons/io";
 import { MdFilterList } from "react-icons/md";
 import { GoArrowUpLeft } from "react-icons/go";
 
-
-
-
 const CarListing = () => {
   const [viewMode, setViewMode] = useState("grid");
   const [priceRange, setPriceRange] = useState([21000, 80000]);
@@ -248,18 +245,15 @@ const CarListing = () => {
       {/* Full Width Search Bar at Top */}
       <div className="w-full">
         <div className="max-w-7xl mx-auto px-4 py-4">
-
-
-{/* button back to cars page */}
-<div>
-  <Link to="/cars">
-    <button className="inline-flex items-center gap-2 text-[#27bb97] hover:text-[#1fa987] hover:underline capitalize cursor-pointer">
-      <GoArrowUpLeft />
-      back to home
-    </button>
-  </Link>
-</div>
-
+          {/* button back to cars page */}
+          <div>
+            <Link to="/cars">
+              <button className="inline-flex items-center gap-2 text-[#27bb97] hover:text-[#1fa987] hover:underline capitalize cursor-pointer">
+                <GoArrowUpLeft />
+                back to home
+              </button>
+            </Link>
+          </div>
 
           <div className="relative flex items-center bg-white border border-gray-100 rounded-md shadow-sm">
             <Search className="absolute left-5 text-gray-400 w-5 h-5" />
@@ -406,7 +400,7 @@ const CarListing = () => {
                           className="max-w-full max-h-full object-contain"
                           onError={(e) => {
                             // If image fails to load, show a fallback icon
-                            e.target.style.display = 'none';
+                            e.target.style.display = "none";
                             e.target.parentElement.innerHTML = `
                               <div class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
                                 <svg class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -925,7 +919,7 @@ const CarListing = () => {
                             alt={car.name}
                             className="w-full h-full object-cover rounded-md"
                           />
-                          <button 
+                          <button
                             className="absolute top-3 right-3 w-8 h-8 bg-black bg-opacity-40 rounded-full flex items-center justify-center hover:bg-opacity-60 transition"
                             onClick={(e) => {
                               e.preventDefault();
@@ -936,7 +930,7 @@ const CarListing = () => {
                             <Heart className="w-4 h-4 text-white" />
                           </button>
                           <div className="absolute bottom-3 left-3">
-                            <button 
+                            <button
                               className="px-2 py-1 bg-opacity-70 text-white text-xs rounded backdrop-blur-sm flex items-center gap-1 hover:bg-opacity-80 transition"
                               onClick={(e) => {
                                 e.preventDefault();
@@ -959,7 +953,9 @@ const CarListing = () => {
                                 {car.name}
                               </h3>
                               <div className="flex flex-wrap gap-2 text-sm mb-2 lg:mb-0">
-                                <span className="text-gray-600">{car.type}</span>
+                                <span className="text-gray-600">
+                                  {car.type}
+                                </span>
                                 <span className="text-gray-600">
                                   {car.condition}
                                 </span>
@@ -990,7 +986,9 @@ const CarListing = () => {
                               </div>
                             </div>
                             <div>
-                              <div className="text-gray-400 mb-0.5">Engine:</div>
+                              <div className="text-gray-400 mb-0.5">
+                                Engine:
+                              </div>
                               <div className="text-gray-700 font-medium">
                                 AMG 4.0L8
                               </div>
@@ -999,7 +997,9 @@ const CarListing = () => {
                               <div className="text-gray-400 mb-0.5">
                                 Horsepower:
                               </div>
-                              <div className="text-gray-700 font-semibold">486</div>
+                              <div className="text-gray-700 font-semibold">
+                                486
+                              </div>
                             </div>
 
                             {/* Location with REAL SVG FLAG */}
@@ -1060,7 +1060,7 @@ const CarListing = () => {
                           {/* Conditional price display based on action type */}
                           {car.action === "Rent Now" ? (
                             // For "Buy Now" - Show price as a button with bg-[#f2f5f3]
-                            <button 
+                            <button
                               className="w-full py-2 rounded-lg font-bold text-xl mb-4 bg-[#f2f5f3] text-gray-600"
                               onClick={(e) => {
                                 e.preventDefault();
@@ -1073,7 +1073,7 @@ const CarListing = () => {
                           ) : (
                             // For "Make Bid" - Show -/+ buttons with price in between
                             <div className="flex items-center border border-gray-300 rounded-md mb-2 w-full">
-                              <button 
+                              <button
                                 className="w-10 h-10 border-r border-gray-300 flex items-center justify-center hover:bg-gray-50 text-gray-600 rounded-l-lg transition"
                                 onClick={(e) => {
                                   e.preventDefault();
@@ -1086,7 +1086,7 @@ const CarListing = () => {
                               <div className="flex-1 h-10 flex items-center justify-center text-xl font-bold text-gray-900 bg-white">
                                 ${car.price.toLocaleString()}
                               </div>
-                              <button 
+                              <button
                                 className="w-10 h-10 border-l border-gray-300 flex items-center justify-center hover:bg-gray-50 text-gray-600 rounded-r-lg transition"
                                 onClick={(e) => {
                                   e.preventDefault();
@@ -1125,7 +1125,7 @@ const CarListing = () => {
                       </div>
                     </div>
                   </Link>
-                  
+
                   {/* Horizontal line after each card except the last one */}
                   {index < cars.length - 1 && (
                     <hr className="border-gray-200 border mx-4 lg:mx-6" />
