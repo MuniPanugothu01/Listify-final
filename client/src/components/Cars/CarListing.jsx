@@ -25,6 +25,10 @@ import { FaList } from "react-icons/fa6";
 import { AiTwotoneAppstore } from "react-icons/ai";
 import { IoMdClose } from "react-icons/io";
 import { MdFilterList } from "react-icons/md";
+import { GoArrowUpLeft } from "react-icons/go";
+
+
+
 
 const CarListing = () => {
   const [viewMode, setViewMode] = useState("grid");
@@ -244,6 +248,19 @@ const CarListing = () => {
       {/* Full Width Search Bar at Top */}
       <div className="w-full">
         <div className="max-w-7xl mx-auto px-4 py-4">
+
+
+{/* button back to cars page */}
+<div>
+  <Link to="/cars">
+    <button className="inline-flex items-center gap-2 text-[#27bb97] hover:text-[#1fa987] hover:underline capitalize cursor-pointer">
+      <GoArrowUpLeft />
+      back to home
+    </button>
+  </Link>
+</div>
+
+
           <div className="relative flex items-center bg-white border border-gray-100 rounded-md shadow-sm">
             <Search className="absolute left-5 text-gray-400 w-5 h-5" />
 

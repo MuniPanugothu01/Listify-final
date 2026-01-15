@@ -8,7 +8,7 @@ const HeroSection = () => {
   const [price, setPrice] = useState("");
 
   return (
-    <div className="relative bg-blue-100 h-[80vh] w-full">
+    <div className="relative bg-[#eef0fc] h-[80vh] w-full">
       <div className="relative z-10 container mx-auto px-4 pt-16 pb-8">
         {/* Header */}
         <div className="text-center mb-12">
@@ -16,18 +16,17 @@ const HeroSection = () => {
             Find Your Dream Car
           </h1>
         </div>
-
+  
         {/* two buttons */}
-        
-<div className="flex justify-center gap-2">
-  <button className="text-black border border-[#27bb97] bg-white/60 backdrop-blur-sm hover:bg-[#27bb97] hover:text-white px-6 py-3 rounded-lg cursor-pointer transition-all duration-200 capitalize">
-    for sale
-  </button>
-  <button className="text-black border border-[#27bb97] bg-white/60 backdrop-blur-sm hover:bg-[#27bb97] hover:text-white px-6 py-3 rounded-lg cursor-pointer transition-all duration-200 capitalize">
-    for rent
-  </button>
-</div>
 
+        <div className="flex justify-center gap-2">
+          <button className="text-black border border-[#27bb97] bg-white/60 backdrop-blur-sm hover:bg-[#27bb97] hover:text-white px-6 py-3 rounded-lg cursor-pointer transition-all duration-200 capitalize">
+            for sale
+          </button>
+          <button className="text-black border border-[#27bb97] bg-white/60 backdrop-blur-sm hover:bg-[#27bb97] hover:text-white px-6 py-3 rounded-lg cursor-pointer transition-all duration-200 capitalize">
+            for rent
+          </button>
+        </div>
 
         {/* Search Bar */}
         <div className="max-w-5xl flex items-center gap-5 mx-auto bg-white rounded-full shadow-xl px-6 py-3">
@@ -43,8 +42,6 @@ const HeroSection = () => {
               />
               <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
                 <FaChevronDown />
-
-                
               </div>
             </div>
 
