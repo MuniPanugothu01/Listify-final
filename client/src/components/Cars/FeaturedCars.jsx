@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { Heart, Image, Star, Fuel, Settings } from "lucide-react";
 import { CiStar } from "react-icons/ci";
 
-
 const FeaturedCars = () => {
   const cars = [
     {
@@ -244,17 +243,17 @@ const FeaturedCars = () => {
       </div>
 
       {/* View All Button */}
-         <div className="text-center mt-16">
-           <Link to="/car-listings">
-             <button
-               className="px-8 py-3 border-2 border-[#27bb97] text-[#27bb97] font-semibold rounded-lg
+      <div className="text-center mt-16">
+        <Link to="/car-listings">
+          <button
+            className="px-8 py-3 border-2 border-[#27bb97] text-[#27bb97] font-semibold rounded-lg
                         hover:bg-[#27bb97] hover:text-white transition-all duration-300
                         hover:shadow-lg capitalize cursor-pointer"
-             >
-               View All cars →
-             </button>
-           </Link>
-         </div>
+          >
+            View All cars →
+          </button>
+        </Link>
+      </div>
     </div>
   );
 };
