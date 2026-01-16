@@ -12,7 +12,6 @@ const CareCenterContact = () => (
               Our team is here to help you find quality care centers or answer questions about listing your facility.
             </p>
           </div>
-          
           <div className="space-y-4 sm:space-y-6">
             {/* General Inquiries */}
             <div className="flex items-center gap-3 xs:gap-4 p-3 xs:p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors duration-200">
