@@ -295,7 +295,7 @@ export default function Carousel() {
   };
 
   return (
-    <div className="lg:min-h-[850px]  overflow-x-hidden relative">
+    <div className="lg:min-h-[650px]  overflow-x-hidden relative">
       {/* Dark Overlay when search is active */}
       <div
         className={`fixed inset-0 bg-black z-40 transition-all duration-500 ease-in-out ${

@@ -182,7 +182,7 @@ const CareCenterAbout = () => {
                       <div className="absolute inset-0 border-4 border-dashed border-gray-300 rounded-full animate-pulse"></div>
                       <div className="relative rounded-full overflow-hidden w-64 h-64 lg:w-72 lg:h-72 xl:w-80 xl:h-80 border-8 border-white shadow-xl">
                         <img
-                          src="/care-centers-about.jpg"
+                          src="/care-center-2.jpg"
                           alt="Modern care center facility"
                           className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-500"
                           loading="lazy"

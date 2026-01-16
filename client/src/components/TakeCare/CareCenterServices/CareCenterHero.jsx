@@ -14,7 +14,7 @@ const CareCenterHero = () => {
       <div 
         className="absolute inset-0 bg-cover bg-center lg:bg-fixed"
         style={{
-          backgroundImage: `url('/care-centers-hero.jpg')`,
+          backgroundImage: `url('/care-center-1.jpg')`,
         }}
       />
       

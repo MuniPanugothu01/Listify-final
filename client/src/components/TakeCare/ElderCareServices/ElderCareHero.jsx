@@ -13,9 +13,9 @@ const ElderCareHero = () => {
     <section className="relative min-h-[60vh] sm:min-h-[70vh] lg:min-h-[80vh] flex items-center justify-center overflow-hidden">
       {/* Background Image */}
       <div 
-        className="absolute inset-0 bg-cover bg-center lg:bg-fixed"
+        className="absolute inset-0 bg-cover lg:bg-fixed"
         style={{
-          backgroundImage: `url('/elder-care-hero.jpg')`,
+          backgroundImage: `url('/elder-care-1.jpg')`,
         }}
       />
       

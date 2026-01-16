@@ -182,7 +182,7 @@ const ElderCareAbout = () => {
                       <div className="absolute inset-0 border-4 border-dashed border-gray-300 rounded-full animate-pulse"></div>
                       <div className="relative rounded-full overflow-hidden w-64 h-64 lg:w-72 lg:h-72 xl:w-80 xl:h-80 border-8 border-white shadow-xl">
                         <img
-                          src="/nanny-care-2.jpg"
+                          src="/elder-care-2.jpg"
                           alt="Compassionate elder caregiver"
                           className="w-full h-full object-cover object-right hover:scale-105 transition-transform duration-500"
                           loading="lazy"
