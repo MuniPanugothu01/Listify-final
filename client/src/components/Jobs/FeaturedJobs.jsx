@@ -180,7 +180,7 @@ export default function FeaturedJobs() {
   }, [isDragging, startX, scrollLeft, jobs.length, cardsPerRow]);
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6 md:p-10 relative">
+    <div className="min-h-screen bg-gray-100 p-6 md:p-10 relative -mt-12">
       {/* Title */}
       <div className="text-center mb-10">
         <h1 className="text-3xl md:text-[40px] font-bold text-gray-900">Featured Jobs</h1>
