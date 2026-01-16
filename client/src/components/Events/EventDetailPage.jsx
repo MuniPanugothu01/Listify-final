@@ -96,6 +96,10 @@ import { GiGrass, GiWashingMachine } from "react-icons/gi";
 import { IoIosWater } from "react-icons/io";
 import { TbShirt } from "react-icons/tb";
 
+// Primary color constants
+const PRIMARY_COLOR = "#27bb97";
+const PRIMARY_HOVER = "#1FA987";
+
 // Enhanced sample events data with multiple photos
 const allEvents = [
   {
@@ -1140,7 +1144,7 @@ const EventMap = ({ eventData }) => {
               href={getDirectionsUrl()}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-xs sm:text-sm"
+              className={`flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-2 bg-[${PRIMARY_COLOR}] text-white rounded-lg hover:bg-[${PRIMARY_HOVER}] transition-colors text-xs sm:text-sm`}
             >
               <FaDirections className="text-xs sm:text-sm" />
               {isMobile ? "Directions" : "Get Directions"}
@@ -1255,14 +1259,14 @@ const EventMap = ({ eventData }) => {
                         href={getGoogleMapsUrl()}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 sm:gap-2 bg-blue-600 text-white px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg hover:bg-blue-700 transition-colors text-xs sm:text-sm"
+                        className={`inline-flex items-center gap-1 sm:gap-2 bg-[${PRIMARY_COLOR}] text-white px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg hover:bg-[${PRIMARY_HOVER}] transition-colors text-xs sm:text-sm`}
                       >
                         <FaMap className="text-xs sm:text-sm" />
                         View on Map
                       </a>
                       <button
                         onClick={() => setShowInteractiveMap(true)}
-                        className="inline-flex items-center gap-1 sm:gap-2 border border-blue-600 text-blue-600 px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg hover:bg-blue-50 transition-colors text-xs sm:text-sm"
+                        className={`inline-flex items-center gap-1 sm:gap-2 border border-[${PRIMARY_COLOR}] text-[${PRIMARY_COLOR}] px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg hover:bg-blue-50 transition-colors text-xs sm:text-sm`}
                       >
                         <FaDirections className="text-xs sm:text-sm" />
                         {isMobile ? "Interactive" : "Interactive Map"}
@@ -1804,7 +1808,7 @@ const EventDetailPage = () => {
                     e.stopPropagation();
                     handleMessage(event);
                   }}
-                  className="flex items-center gap-1 sm:gap-2 bg-[#27bb97] hover:bg-[#1FA987] text-white px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all duration-200 shadow-sm hover:shadow-md"
+                  className={`flex items-center gap-1 sm:gap-2 bg-[${PRIMARY_COLOR}] hover:bg-[${PRIMARY_HOVER}] text-white px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all duration-200 shadow-sm hover:shadow-md`}
                 >
                   <MessageCircle size={16} />
                   <span className="hidden xs:inline">Message</span>
@@ -1815,7 +1819,7 @@ const EventDetailPage = () => {
                     e.stopPropagation();
                     handleCardClick();
                   }}
-                  className="flex items-center gap-1 sm:gap-2 bg-blue-600 hover:bg-blue-700 text-white px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all duration-200 shadow-sm hover:shadow-md"
+                  className={`flex items-center gap-1 sm:gap-2 bg-[${PRIMARY_COLOR}] hover:bg-[${PRIMARY_HOVER}] text-white px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all duration-200 shadow-sm hover:shadow-md`}
                 >
                   <Ticket size={16} />
                   <span className="hidden xs:inline">Book Now</span>
@@ -1844,7 +1848,7 @@ const EventDetailPage = () => {
           <h2 className="text-2xl font-bold text-gray-800 mb-4">Event not found</h2>
           <button
             onClick={() => navigate('/events')}
-            className="bg-[#27bb97] text-white px-6 py-3 rounded-lg hover:bg-[#1FA987] transition-colors"
+            className={`bg-[${PRIMARY_COLOR}] text-white px-6 py-3 rounded-lg hover:bg-[${PRIMARY_HOVER}] transition-colors`}
           >
             Browse All Events
           </button>
@@ -2044,14 +2048,14 @@ const EventDetailPage = () => {
                 <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                   <button
                     onClick={() => alert(`Booking tickets for ${eventData.title}`)}
-                    className="flex-1 bg-[#27bb97] hover:bg-[#1FA987] text-white font-semibold py-3 sm:py-4 px-6 sm:px-8 rounded-lg transition-colors flex items-center justify-center gap-2 sm:gap-3 text-sm sm:text-base"
+                    className={`flex-1 bg-[${PRIMARY_COLOR}] hover:bg-[${PRIMARY_HOVER}] text-white font-semibold py-3 sm:py-4 px-6 sm:px-8 rounded-lg transition-colors flex items-center justify-center gap-2 sm:gap-3 text-sm sm:text-base`}
                   >
                     <Ticket size={18} />
                     Book Tickets Now
                   </button>
                   <button
                     onClick={() => handleMessage(eventData)}
-                    className="px-4 sm:px-6 py-3 sm:py-4 border-2 border-[#27bb97] text-[#27bb97] font-semibold rounded-lg hover:bg-[#27bb97] hover:text-white transition-colors text-sm sm:text-base"
+                    className={`px-4 sm:px-6 py-3 sm:py-4 border-2 border-[${PRIMARY_COLOR}] text-[${PRIMARY_COLOR}] font-semibold rounded-lg hover:bg-[${PRIMARY_COLOR}] hover:text-white transition-colors text-sm sm:text-base`}
                   >
                     <MessageCircle size={18} className="inline mr-2" />
                     Contact Organizer
@@ -2171,7 +2175,7 @@ const EventDetailPage = () => {
 
                 <button
                   onClick={handleSearch}
-                  className="w-full lg:w-auto px-4 sm:px-6 flex items-center justify-center gap-2 bg-[#27bb97] text-white font-semibold rounded-lg lg:rounded-r-lg py-3 hover:bg-[#1FA987] shadow-lg hover:shadow-xl transition-all duration-200 text-sm sm:text-base"
+                  className={`w-full lg:w-auto px-4 sm:px-6 flex items-center justify-center gap-2 bg-[${PRIMARY_COLOR}] text-white font-semibold rounded-lg lg:rounded-r-lg py-3 hover:bg-[${PRIMARY_HOVER}] shadow-lg hover:shadow-xl transition-all duration-200 text-sm sm:text-base`}
                 >
                   <Search className="w-4 h-4" />
                   <span className="hidden xs:inline">Search Events</span>
@@ -2194,7 +2198,7 @@ const EventDetailPage = () => {
               onClick={() => setMainTab("upcoming")}
               className={`pb-3 px-3 sm:px-6 font-medium transition-colors whitespace-nowrap ${
                 mainTab === "upcoming"
-                  ? "text-gray-900 border-b-2 border-blue-600"
+                  ? "text-gray-900 border-b-2 border-[${PRIMARY_COLOR}]"
                   : "text-gray-500 hover:text-gray-700"
               }`}
             >
@@ -2204,7 +2208,7 @@ const EventDetailPage = () => {
               onClick={() => setMainTab("nearby")}
               className={`pb-3 px-3 sm:px-6 font-medium transition-colors whitespace-nowrap ${
                 mainTab === "nearby"
-                  ? "text-gray-900 border-b-2 border-blue-600"
+                  ? "text-gray-900 border-b-2 border-[${PRIMARY_COLOR}]"
                   : "text-gray-500 hover:text-gray-700"
               }`}
             >
@@ -2214,7 +2218,7 @@ const EventDetailPage = () => {
               onClick={() => setMainTab("category")}
               className={`pb-3 px-3 sm:px-6 font-medium transition-colors whitespace-nowrap ${
                 mainTab === "category"
-                  ? "text-gray-900 border-b-2 border-blue-600"
+                  ? "text-gray-900 border-b-2 border-[${PRIMARY_COLOR}]"
                   : "text-gray-500 hover:text-gray-700"
               }`}
             >

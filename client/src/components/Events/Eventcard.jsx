@@ -408,7 +408,7 @@ const UpcomingEventsSection = ({ onEventClick }) => {
         <h1 className="text-black font-bold sm:font-extrabold text-center text-2xl sm:text-3xl md:text-4xl">
           Upcoming Events You Can't Miss!
         </h1>
-        <div className="h-1 w-16 sm:w-20 bg-gradient-to-r from-[#25676D] to-[#2D8690] mt-2 sm:mt-3 rounded-full mx-auto"></div>
+        <div className="h-1 w-16 sm:w-20 bg-gradient-to-r from-[#27bb97] to-[#1fa582] mt-2 sm:mt-3 rounded-full mx-auto"></div>
         <p className="text-center text-gray-600 mt-2 sm:mt-3 text-sm sm:text-base md:text-lg max-w-2xl mx-auto px-4">
           Discover exciting upcoming events featuring music, sports, entertainment, and more. Book your tickets early!
         </p>
@@ -444,7 +444,7 @@ const UpcomingEventsSection = ({ onEventClick }) => {
                       <h3 className="text-lg sm:text-xl font-bold text-gray-800">
                         {event.title}
                       </h3>
-                      <div className="text-blue-600 px-3 py-1 font-bold text-lg sm:text-xl">
+                      <div className="text-[#27bb97] px-3 py-1 font-bold text-lg sm:text-xl">
                         {event.isFree ? 'FREE' : `₹${event.price.toLocaleString()}`}
                       </div>
                     </div>
@@ -462,7 +462,7 @@ const UpcomingEventsSection = ({ onEventClick }) => {
                     {/* Event Type and Category */}
                     <div className="flex items-center justify-between mb-3 sm:mb-4">
                       <div>
-                        <span className="inline-block px-2 py-1 sm:px-3 sm:py-1 bg-orange-100 text-orange-600 text-xs font-semibold rounded-full">
+                        <span className="inline-block px-2 py-1 sm:px-3 sm:py-1 bg-[#27bb97]/10 text-[#27bb97] text-xs font-semibold rounded-full">
                           {event.category}
                         </span>
                       </div>
@@ -499,7 +499,7 @@ const UpcomingEventsSection = ({ onEventClick }) => {
                         <FaMapMarkerAlt size={12} className="sm:w-4 sm:h-4" />
                         <span className="line-clamp-2 sm:line-clamp-1">{event.location}</span>
                       </div>
-                      <button className="w-full sm:w-auto bg-[#2D8690] hover:bg-[#25676D] text-white px-4 py-2 sm:px-5 sm:py-2 rounded-full text-xs sm:text-sm font-medium transition-colors text-center">
+                      <button className="w-full sm:w-auto bg-[#27bb97] hover:bg-[#1fa582] text-white px-4 py-2 sm:px-5 sm:py-2 rounded-full text-xs sm:text-sm font-medium transition-colors text-center">
                         Book Now
                       </button>
                     </div>
@@ -636,7 +636,7 @@ const EventsShowcase = () => {
             <div className="flex flex-col sm:flex-row items-center justify-between mb-6 sm:mb-8 gap-4">
               <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-800 text-center sm:text-left w-full sm:w-auto">
                 POPULAR EVENTS
-                <div className="h-1 w-16 sm:w-20 bg-gradient-to-r from-[#25676D] to-[#2D8690] rounded-full mx-auto sm:mx-0 mt-2 sm:mt-3"></div>
+                <div className="h-1 w-16 sm:w-20 bg-gradient-to-r from-[#27bb97] to-[#1fa582] rounded-full mx-auto sm:mx-0 mt-2 sm:mt-3"></div>
               </h2>
 
               <div className="flex gap-2">
@@ -673,7 +673,7 @@ const EventsShowcase = () => {
             <div className="flex justify-center mt-6 sm:mt-8">
               <button 
                 onClick={handleViewMorePopular}
-                className="bg-[#27bb97] hover:bg-[#1fa582] text-white px-6 py-3 sm:px-8 sm:py-4 rounded-lg sm:rounded-xl font-medium sm:font-semibold transition-all duration-300 transform hover:-translate-y-0.5 sm:hover:-translate-y-1 hover:shadow-lg flex items-center gap-2 sm:gap-3 group cursor-pointer text-sm sm:text-base"
+                className="border border-[#27bb97] hover:bg-[#27bb97] text-[#27bb97] hover:text-white px-6 py-3 sm:px-8 sm:py-4 rounded-lg sm:rounded-xl font-medium sm:font-semibold transition-all duration-300 transform hover:-translate-y-0.5 sm:hover:-translate-y-1 hover:shadow-lg flex items-center gap-2 sm:gap-3 group cursor-pointer text-sm sm:text-base"
               >
                 View More Popular Events
                 <FaArrowRight className="w-3 h-3 sm:w-4 sm:h-4 group-hover:translate-x-1 transition-transform" />
@@ -688,7 +688,7 @@ const EventsShowcase = () => {
             </h2>
             
             {/* Gradient Divider */}
-            <div className="h-1 w-16 sm:w-20 bg-gradient-to-r from-[#25676D] to-[#2D8690] mt-2 sm:mt-3 rounded-full mx-auto mb-6 sm:mb-8"></div>
+            <div className="h-1 w-16 sm:w-20 bg-gradient-to-r from-[#27bb97] to-[#1fa582] mt-2 sm:mt-3 rounded-full mx-auto mb-6 sm:mb-8"></div>
 
             <p className="text-center text-gray-600 mb-6 sm:mb-8 text-sm sm:text-base md:text-lg max-w-2xl mx-auto px-4">
               Find your perfect event with our advanced filters and search options
@@ -735,7 +735,7 @@ const EventsShowcase = () => {
                   {/* Clear Filters */}
                   <button
                     onClick={clearFilters}
-                    className="px-4 sm:px-6 py-2.5 sm:py-3 bg-gray-500 hover:bg-gray-600 text-white rounded-lg sm:rounded-xl transition-colors font-medium text-sm sm:text-base"
+                    className="px-4 sm:px-6 py-2.5 sm:py-3 bg-[#27bb97]/80 hover:bg-[#1fa582] text-white rounded-lg sm:rounded-xl transition-colors font-medium text-sm sm:text-base"
                   >
                     Clear All
                   </button>

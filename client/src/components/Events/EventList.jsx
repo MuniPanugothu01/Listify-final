@@ -721,7 +721,7 @@ const EventList = () => {
   const Badge = ({ children, type = "default" }) => {
     const styles = {
       verified: "bg-green-100 text-green-800 border-green-200",
-      featured: "bg-yellow-100 text-yellow-800 border-yellow-200",
+      featured: "bg-[#27bb97]/10 text-[#27bb97] border-[#27bb97]/20",
       discount: "bg-orange-100 text-orange-800 border-orange-200",
       free: "bg-green-100 text-green-800 border-green-200",
       default: "bg-gray-100 text-gray-800 border-gray-200",
@@ -776,7 +776,7 @@ const EventList = () => {
 
     return (
       <div
-        className="bg-white rounded-lg sm:rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 group cursor-pointer w-full"
+        className="bg-white rounded-lg sm:rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 group cursor-pointer w-full "
         onClick={handleCardClick}
       >
         <div className="flex flex-col lg:flex-row">
@@ -932,7 +932,7 @@ const EventList = () => {
               <div className="flex flex-col sm:flex-row sm:items-start justify-between mb-3 gap-3">
                 <div className="flex-1 pr-4">
                   <h3
-                    className="text-lg sm:text-xl font-bold text-gray-800 mb-2 leading-tight hover:text-blue-600 transition-colors cursor-pointer"
+                    className="text-lg sm:text-xl font-bold text-gray-800 mb-2 leading-tight hover:text-[#27bb97] transition-colors cursor-pointer"
                     onClick={handleTitleClick}
                   >
                     {isMobile && event.title.length > 50
@@ -993,7 +993,7 @@ const EventList = () => {
 
                 {/* Price Section */}
                 <div className="text-right">
-                  <div className="text-xl sm:text-2xl font-bold text-blue-600 mb-1">
+                  <div className="text-xl sm:text-2xl font-bold text-[#27bb97] mb-1">
                     {event.price === 0 ? "FREE" : `₹${event.price.toLocaleString()}`}
                     {event.price > 0 && <span className="text-xs sm:text-sm font-normal text-gray-600">/person</span>}
                   </div>
@@ -1028,7 +1028,7 @@ const EventList = () => {
                   {event.amenities.slice(0, isMobile ? 4 : 6).map((amenity, index) => (
                     <span
                       key={index}
-                      className="flex items-center gap-1.5 text-xs text-blue-700 px-2 py-1.5 rounded-lg border-blue-100 hover:bg-blue-100 transition-colors"
+                      className="flex items-center gap-1.5 text-xs text-[#27bb97] px-2 py-1.5 rounded-lg border-[#27bb97]/20 hover:bg-[#27bb97]/10 transition-colors"
                     >
                       {amenityIcons[amenity] || <FaMusic size={14} />}
                       <span className="truncate max-w-[120px]">{amenity}</span>
@@ -1107,7 +1107,7 @@ const EventList = () => {
                       e.stopPropagation();
                       toggleContact(event.id);
                     }}
-                    className="text-blue-600 hover:text-blue-700 hover:underline transition-colors text-xs sm:text-sm"
+                    className="text-[#27bb97] hover:text-[#1fa582] hover:underline transition-colors text-xs sm:text-sm"
                   >
                     Show Contact
                   </button>
@@ -1144,7 +1144,7 @@ const EventList = () => {
                     e.stopPropagation();
                     handleMessage(event);
                   }}
-                  className="flex items-center gap-2 bg-[#2D8690] hover:bg-[#25676D] text-white px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all duration-200 shadow-sm hover:shadow-md"
+                  className="flex items-center gap-2 bg-[#27bb97] hover:bg-[#1fa582] text-white px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all duration-200 shadow-sm hover:shadow-md"
                 >
                   <MessageCircle size={16} />
                   <span className="hidden xs:inline">Message</span>
@@ -1217,7 +1217,7 @@ const EventList = () => {
                   onClick={() => setMainTab("upcoming")}
                   className={`pb-2 px-2 font-medium transition-colors whitespace-nowrap ${
                     mainTab === "upcoming"
-                      ? "text-gray-900 border-t-4 border-red-500 rounded-t-lg bg-white"
+                      ? "text-gray-900 border-t-4 border-[#27bb97] rounded-t-lg bg-white"
                       : "text-gray-500 hover:text-gray-700"
                   }`}
                 >
@@ -1227,7 +1227,7 @@ const EventList = () => {
                   onClick={() => setMainTab("today")}
                   className={`pb-2 px-2 font-medium transition-colors whitespace-nowrap ${
                     mainTab === "today"
-                      ? "text-gray-900 border-t-4 border-red-500 rounded-t-lg bg-white"
+                      ? "text-gray-900 border-t-4 border-[#27bb97] rounded-t-lg bg-white"
                       : "text-gray-500 hover:text-gray-700"
                   }`}
                 >
@@ -1237,7 +1237,7 @@ const EventList = () => {
                   onClick={() => setMainTab("weekend")}
                   className={`pb-2 px-2 font-medium transition-colors whitespace-nowrap ${
                     mainTab === "weekend"
-                      ? "text-gray-900 border-t-4 border-red-500 rounded-t-lg bg-white"
+                      ? "text-gray-900 border-t-4 border-[#27bb97] rounded-t-lg bg-white"
                       : "text-gray-500 hover:text-gray-700"
                   }`}
                 >
@@ -1247,7 +1247,7 @@ const EventList = () => {
                   onClick={() => setMainTab("free")}
                   className={`pb-2 px-2 font-medium transition-colors whitespace-nowrap ${
                     mainTab === "free"
-                      ? "text-gray-900 border-t-4 border-red-500 rounded-t-lg bg-white"
+                      ? "text-gray-900 border-t-4 border-[#27bb97] rounded-t-lg bg-white"
                       : "text-gray-500 hover:text-gray-700"
                   }`}
                 >
@@ -1255,7 +1255,7 @@ const EventList = () => {
                 </button>
               </div>
               <div className="lg:-mt-2 ml-auto lg:ml-0">
-                <button className="flex items-center gap-2 bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded text-sm font-medium transition-colors justify-center w-full lg:w-auto">
+                <button className="flex items-center gap-2 bg-[#27bb97] hover:bg-[#1fa582] text-white px-4 py-2 rounded text-sm font-medium transition-colors justify-center w-full lg:w-auto">
                   <FaMap />
                   <span className="hidden sm:inline">Switch to Calendar View</span>
                   <span className="sm:hidden">Calendar View</span>
@@ -1318,7 +1318,7 @@ const EventList = () => {
                         className="flex items-center gap-1 px-2 py-1 bg-gray-100 border border-gray-200 rounded-full transition-colors hover:bg-gray-200 text-xs sm:text-sm"
                       >
                         <FaMapMarkerAlt className="text-gray-500 text-xs" />
-                        <span className="text-gray-700 hover:text-blue-500 cursor-pointer truncate">
+                        <span className="text-gray-700 hover:text-[#27bb97] cursor-pointer truncate">
                           {location}
                         </span>
                       </button>
@@ -1343,7 +1343,7 @@ const EventList = () => {
                     <select
                       value={itemsPerPage}
                       onChange={(e) => handleItemsPerPageChange(e.target.value)}
-                      className="border border-gray-300 rounded px-2 sm:px-3 py-1.5 text-xs sm:text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-32"
+                      className="border border-gray-300 rounded px-2 sm:px-3 py-1.5 text-xs sm:text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#27bb97] focus:border-[#27bb97] w-32"
                     >
                       {itemsPerPageOptions.map((option) => (
                         <option key={option} value={option}>
@@ -1385,7 +1385,7 @@ const EventList = () => {
                               onClick={() => handlePageChange(page)}
                               className={`px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors min-w-[2rem] sm:min-w-[2.5rem] ${
                                 currentPage === page
-                                  ? "bg-blue-600 text-white shadow-sm"
+                                  ? "bg-[#27bb97] text-white shadow-sm"
                                   : "text-gray-700 hover:bg-gray-100 border border-gray-300"
                               }`}
                             >
@@ -1432,7 +1432,7 @@ const EventList = () => {
                     <a
                       key={category}
                       href="#"
-                      className="text-blue-600 hover:text-blue-700 hover:underline text-sm transition-colors"
+                      className="text-[#27bb97] hover:text-[#1fa582] hover:underline text-sm transition-colors"
                     >
                       {category}
                     </a>
@@ -1457,7 +1457,7 @@ const EventList = () => {
                     <a
                       key={venue}
                       href="#"
-                      className="text-blue-600 hover:text-blue-700 hover:underline text-sm transition-colors"
+                      className="text-[#27bb97] hover:text-[#1fa582] hover:underline text-sm transition-colors"
                     >
                       {venue}
                     </a>
@@ -1482,7 +1482,7 @@ const EventList = () => {
                     <a
                       key={festival.name}
                       href="#"
-                      className="text-blue-600 hover:text-blue-700 hover:underline text-sm transition-colors"
+                      className="text-[#27bb97] hover:text-[#1fa582] hover:underline text-sm transition-colors"
                     >
                       {festival.name} <span className="text-gray-500">({festival.date})</span>
                     </a>
@@ -1502,21 +1502,21 @@ const EventList = () => {
                       name: "BookMyShow",
                       events: "1250+ events",
                       rating: "4.8",
-                      initialBg: "bg-blue-300",
+                      initialBg: "bg-[#27bb97]/20",
                       initial: "B",
                     },
                     {
                       name: "Insider.in",
                       events: "980+ events",
                       rating: "4.7",
-                      initialBg: "bg-green-300",
+                      initialBg: "bg-[#1fa582]/20",
                       initial: "I",
                     },
                     {
                       name: "Townscript",
                       events: "750+ events",
                       rating: "4.6",
-                      initialBg: "bg-purple-300",
+                      initialBg: "bg-[#27bb97]/20",
                       initial: "T",
                     },
                   ].map((organizer, index) => (
@@ -1526,14 +1526,14 @@ const EventList = () => {
                     >
                       <div className="flex items-start gap-4">
                         <div
-                          className={`w-10 h-10 sm:w-12 sm:h-12 rounded-md flex items-center justify-center text-white font-semibold text-lg sm:text-xl ${organizer.initialBg}`}
+                          className={`w-10 h-10 sm:w-12 sm:h-12 rounded-md flex items-center justify-center text-[#27bb97] font-semibold text-lg sm:text-xl ${organizer.initialBg} border border-[#27bb97]/30`}
                         >
                           {organizer.initial}
                         </div>
                         <div>
                           <a
                             href="#"
-                            className="text-blue-600 font-semibold hover:underline text-sm sm:text-base"
+                            className="text-[#27bb97] font-semibold hover:underline text-sm sm:text-base"
                           >
                             {organizer.name}
                           </a>
@@ -1567,7 +1567,7 @@ const EventList = () => {
                       >
                         <a
                           href="#"
-                          className="text-blue-700 font-medium hover:underline text-sm leading-5 block mb-1"
+                          className="text-[#27bb97] font-medium hover:underline text-sm leading-5 block mb-1"
                         >
                           {event.title}
                         </a>
@@ -1590,7 +1590,7 @@ const EventList = () => {
               </div>
 
               {/* Newsletter Subscription */}
-              <div className="bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl p-5 sm:p-6 text-white text-center">
+              <div className="bg-gradient-to-r from-[#27bb97] to-[#1fa582] rounded-xl p-5 sm:p-6 text-white text-center">
                 <h3 className="text-base sm:text-lg font-bold mb-3">Never Miss an Event!</h3>
                 <p className="text-xs sm:text-sm mb-4 opacity-90">
                   Get weekly updates on the best events in your city
@@ -1601,7 +1601,7 @@ const EventList = () => {
                     placeholder="Your email"
                     className="flex-1 px-3 py-2 rounded text-sm text-gray-800"
                   />
-                  <button className="bg-white text-blue-600 px-4 py-2 rounded text-sm font-semibold hover:bg-gray-100">
+                  <button className="bg-white text-[#27bb97] px-4 py-2 rounded text-sm font-semibold hover:bg-gray-100">
                     Subscribe
                   </button>
                 </div>

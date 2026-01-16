@@ -306,7 +306,7 @@ export default function EventsHero() {
 
             {/* Search Button */}
             <div className="xs:col-span-2 lg:col-span-1 flex items-end mt-1">
-              <button className="w-full bg-[#25676D] text-white font-medium px-4 sm:px-6 lg:px-8 py-2.5 sm:py-3 lg:py-3.5 rounded-lg hover:bg-[#1e555a] transition flex items-center justify-center gap-2 text-sm sm:text-base">
+              <button className="w-full bg-[#27bb97] text-white font-medium px-4 sm:px-6 lg:px-8 py-2.5 sm:py-3 lg:py-3.5 rounded-lg hover:bg-[#1fa987] transition flex items-center justify-center gap-2 text-sm sm:text-base">
                 <Search className="w-4 h-4 sm:w-5 sm:h-5" />
                 <span className="whitespace-nowrap">Search</span>
               </button>

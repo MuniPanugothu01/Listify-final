@@ -283,14 +283,14 @@ const EventsPopular = () => {
             <span>{event.time}</span>
           </div>
 
-          <h3 className="text-base sm:text-lg font-bold text-gray-900 group-hover:text-blue-600 transition line-clamp-2">
+          <h3 className="text-base sm:text-lg font-bold text-gray-900 group-hover:text-[#27bb97] transition line-clamp-2">
             {event.title}
           </h3>
           <p className="text-xs sm:text-sm text-gray-600 mt-1 line-clamp-1">{event.location}</p>
 
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-0 mt-3 sm:mt-4">
             <div>
-              <p className="text-lg sm:text-xl font-bold text-gray-900">{event.displayPrice}</p>
+              <p className="text-lg sm:text-xl font-bold text-[#27bb97]">{event.displayPrice}</p>
               {event.attendees && (
                 <p className="text-xs text-gray-500 mt-0.5">
                   {event.attendees} interested
@@ -299,16 +299,16 @@ const EventsPopular = () => {
             </div>
             <button 
               onClick={handleButtonClick}
-              className="bg-gray-100 hover:bg-blue-600 hover:text-white text-gray-700 font-medium text-xs sm:text-sm px-3 sm:px-4 py-2 rounded-md transition w-full sm:w-auto"
+              className="bg-[#27bb97] hover:bg-[#1fa582] text-white font-medium text-xs sm:text-sm px-3 sm:px-4 py-2 rounded-md transition w-full sm:w-auto"
             >
               {isMobile ? 'Info' : 'More Info'}
             </button>
           </div>
 
           <div className="flex flex-wrap gap-1.5 mt-3 sm:mt-4">
-            <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">#{event.tag}</span>
+            <span className="text-xs bg-[#27bb97]/10 text-[#27bb97] px-2 py-1 rounded-full">#{event.tag}</span>
             {event.category && (
-              <span className="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded-full">
+              <span className="text-xs bg-[#27bb97]/10 text-[#27bb97] px-2 py-1 rounded-full">
                 #{event.category}
               </span>
             )}
@@ -350,15 +350,15 @@ const EventsPopular = () => {
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-2 sm:mb-3 lg:mb-4">
             Just Listed Events
           </h1>
-          <p className="text-sm sm:text-base lg:text-lg text-pink-600">
+          <p className="text-sm sm:text-base lg:text-lg text-[#27bb97]">
             Explore events near you
           </p>
         </div>
 
-        <EventSection title="Today" events={todayEvents} badgeColor="bg-blue-600" />
-        <EventSection title="Tomorrow" events={tomorrowEvents} badgeColor="bg-green-600" />
-        <EventSection title="This Weekend" events={thisWeekendEvents} badgeColor="bg-teal-600" />
-        <EventSection title="Upcoming" events={upcomingEvents} badgeColor="bg-purple-600" />
+        <EventSection title="Today" events={todayEvents} badgeColor="bg-[#27bb97]" />
+        <EventSection title="Tomorrow" events={tomorrowEvents} badgeColor="bg-[#1fa582]" />
+        <EventSection title="This Weekend" events={thisWeekendEvents} badgeColor="bg-[#27bb97]/80" />
+        <EventSection title="Upcoming" events={upcomingEvents} badgeColor="bg-[#1fa582]/80" />
 
         {allEvents.length === 0 && (
           <div className="text-center py-8 sm:py-10 lg:py-12">
