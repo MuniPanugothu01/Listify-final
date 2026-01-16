@@ -8,11 +8,13 @@ import BrowseCategories2 from "../../components/Cars/BrowseCategories2";
 import TrendingCars from "../../components/Cars/TrendingCars";
 import WhyChooseUs from "../../components/Cars/WhyChooseUs";
 import AllCarsCard from "../../components/Cars/AllCarsCard";
+import HeroSection2 from "../../components/Cars/HeroSection2";
 
 const CarsPage = () => {
   return (
     <div>
-      <HeroSection />
+      {/* <HeroSection /> */}
+      <HeroSection2/>
       {/* <BrowseCategories /> */}
       <BrowseCategories2 />
 
