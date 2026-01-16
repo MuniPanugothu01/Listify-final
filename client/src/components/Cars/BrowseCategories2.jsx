@@ -10,9 +10,9 @@ const BrowseCategories2 = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto my-20 px-4">
+    <div className="max-w-7xl mx-auto my-40 px-4">
       {/* text */}
-      <div className="font-bold text-3xl sm:text-4xl md:text-5xl capitalize mt-28">
+      <div className="font-bold text-3xl sm:text-4xl md:text-5xl capitalize mt-5">
         car categories
       </div>
 
