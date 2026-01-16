@@ -938,8 +938,8 @@ export default function JobSeekerInterface() {
               </div>
             </div>
 
-            {/* Upload Resume Banner */}
-            <div className="bg-gray-50 border border-gray-200 rounded-xl p-6 shadow-sm mb-6">
+            {/* Upload Resume Banner - Decorative Arrow */}
+            <div className="bg-gray-50 border border-gray-200 rounded-xl p-6 shadow-sm mb-6 overflow-hidden group">
               <h2 className="text-gray-800 text-xl font-semibold mb-3 leading-relaxed">
                 Not able to find the right job in USA & Canada?
               </h2>
@@ -948,23 +948,48 @@ export default function JobSeekerInterface() {
                 Upload your resume and let verified employers find you.
               </p>
 
-              <button
-                className="
-    bg-[#27bb97]
-    hover:bg-[#1fa987]
-    active:bg-[#159a7a]
-    text-white
-    px-8 py-3
-    rounded-lg
-    font-semibold
-    transition
-    shadow-sm
-  "
-              >
-                Upload Resume
-              </button>
-            </div>
+              <div className="flex items-center justify-between">
+                <button
+                  className="
+        bg-[#27bb97]
+        hover:bg-[#1fa987]
+        active:bg-[#159a7a]
+        text-white
+        px-8 py-3
+        rounded-lg
+        font-semibold
+        transition-all
+        duration-200
+        shadow-sm
+        hover:shadow-md
+        transform
+        hover:-translate-y-0.5
+      "
+                >
+                  Upload Resume
+                </button>
 
+                {/* Animated Arrow - Hidden on Mobile */}
+                <div className="hidden lg:flex items-center opacity-0 group-hover:opacity-100 transition-all duration-500 translate-x-4 group-hover:translate-x-0">
+                  <span className="text-sm text-gray-500 mr-2">
+                    Explore More
+                  </span>
+                  <svg
+                    className="w-5 h-5 text-gray-500 transform group-hover:translate-x-1 transition-transform duration-300"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M14 5l7 7m0 0l-7 7m7-7H3"
+                    />
+                  </svg>
+                </div>
+              </div>
+            </div>
             {/* Job Alert Banner */}
             <div className="bg-gray-50 border border-gray-200 rounded-xl p-6 mb-6">
               <h2 className="text-gray-800 text-xl font-semibold mb-2">
