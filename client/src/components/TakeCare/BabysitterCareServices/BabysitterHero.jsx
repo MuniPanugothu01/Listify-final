@@ -15,7 +15,7 @@ const BabysitterHero = () => {
       <div 
         className="absolute inset-0 bg-cover bg-center lg:bg-fixed"
         style={{
-          backgroundImage: `url('/nany-care-1.jpg')`,
+          backgroundImage: `url('/babby-sitter-1.jpg')`,
         }}
       />
       

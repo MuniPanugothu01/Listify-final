@@ -43,50 +43,21 @@ const NannyHowItWorks = () => {
           {steps.map((step, index) => (
             <div
               key={index}
-              className="relative bg-white rounded-lg xs:rounded-xl sm:rounded-2xl p-4 xs:p-5 sm:p-6 border border-gray-200 hover:border-[#27BB97] transition-all duration-300 hover:shadow-lg sm:hover:shadow-xl group flex flex-col items-center"
+              className="relative bg-white rounded-lg xs:rounded-xl sm:rounded-2xl p-6 xs:p-7 sm:p-8 lg:p-10 border border-gray-200 hover:border-[#27BB97] transition-all duration-300 hover:shadow-lg sm:hover:shadow-xl group flex flex-col items-center"
             >
-              {/* Step Number */}
-              <div className="absolute -top-3 -right-3 w-8 h-8 xs:w-10 xs:h-10 bg-[#27BB97] text-white rounded-full flex items-center justify-center text-sm xs:text-base font-bold shadow-md">
-                {index + 1}
-              </div>
-              
               {/* Icon */}
               <div className="text-[#27BB97] mb-4 xs:mb-5 sm:mb-6">
-                <div className="p-3 xs:p-4 bg-[#27BB97]/10 rounded-xl xs:rounded-2xl group-hover:scale-105 sm:group-hover:scale-110 transition-transform duration-300">
-                  {step.icon}
-                </div>
+                {step.icon}
               </div>
               
               {/* Content */}
-              <h3 className="text-lg xs:text-xl sm:text-xl font-bold text-gray-900 text-center mb-2 xs:mb-3 line-clamp-1">
+              <h3 className="text-lg xs:text-xl sm:text-xl font-bold text-gray-900 text-center mb-3 xs:mb-4 line-clamp-1">
                 {step.title}
               </h3>
               <p className="text-gray-600 text-center text-xs xs:text-sm sm:text-sm leading-relaxed flex-grow">
                 {step.description}
               </p>
-              
-              {/* Bottom border effect */}
-              <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 group-hover:w-16 xs:group-hover:w-20 sm:group-hover:w-24 h-1 bg-[#27BB97] transition-all duration-300 rounded-t-full"></div>
             </div>
-          ))}
-        </div>
-
-        {/* Connecting lines for desktop */}
-        <div className="hidden lg:flex items-center justify-center mb-8 sm:mb-10 lg:mb-12 px-4 sm:px-8">
-          {steps.map((_, index) => (
-            <React.Fragment key={index}>
-              <div className="h-0.5 bg-gray-300 flex-1 max-w-16 sm:max-w-20"></div>
-              {index < steps.length - 1 && (
-                <div className="w-3 h-3 bg-[#27BB97] rounded-full mx-2"></div>
-              )}
-            </React.Fragment>
-          ))}
-        </div>
-
-        {/* Mobile step indicators */}
-        <div className="lg:hidden flex justify-center gap-2 mb-6 sm:mb-8">
-          {steps.map((_, index) => (
-            <div key={index} className="w-2 h-2 bg-gray-300 rounded-full"></div>
           ))}
         </div>
 
@@ -95,9 +66,6 @@ const NannyHowItWorks = () => {
           {/* Find a Job Card */}
           <div className="bg-gradient-to-br from-white to-gray-50 rounded-xl sm:rounded-2xl p-5 xs:p-6 sm:p-7 lg:p-8 shadow-md sm:shadow-lg hover:shadow-xl lg:hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 sm:hover:-translate-y-2 border border-gray-200">
             <div className="text-center mb-4 xs:mb-5 sm:mb-6">
-              <div className="w-12 h-12 xs:w-14 xs:h-14 sm:w-16 sm:h-16 bg-gradient-to-r from-[#27BB97] to-[#1EA583] rounded-full flex items-center justify-center mx-auto mb-3 xs:mb-4 shadow-md">
-                <UserPlus className="w-6 h-6 xs:w-7 xs:h-7 sm:w-8 sm:h-8 text-white" />
-              </div>
               <h3 className="text-xl xs:text-2xl sm:text-2xl font-bold text-gray-900 mb-2 xs:mb-3 line-clamp-1">
                 Find a Job Today
               </h3>
@@ -105,7 +73,7 @@ const NannyHowItWorks = () => {
                 Ready to be an exceptional nanny? Set up your profile and apply for nanny jobs to bring joy and care.
               </p>
             </div>
-            <button className="w-full bg-gradient-to-r from-[#27BB97] to-[#1EA583] hover:from-[#1EA583] hover:to-[#168F6F] text-white font-semibold py-2.5 xs:py-3 sm:py-3 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 shadow-sm hover:shadow-lg text-sm xs:text-base sm:text-base focus:outline-none focus:ring-2 focus:ring-[#27BB97] focus:ring-offset-2">
+            <button className="w-full bg-gradient-to-r from-[#27BB97] to-[#1EA583] hover:from-[#1EA583] hover:to-[#168F6F] text-white font-semibold py-3 xs:py-3.5 sm:py-4 rounded-full transition-all duration-300 flex items-center justify-center gap-2 shadow-sm hover:shadow-lg text-sm xs:text-base sm:text-base focus:outline-none focus:ring-2 focus:ring-[#27BB97] focus:ring-offset-2">
               Create Your Nanny Profile
               <ArrowRight className="w-4 h-4 xs:w-5 xs:h-5 flex-shrink-0" />
             </button>
@@ -114,9 +82,6 @@ const NannyHowItWorks = () => {
           {/* Hire a Nanny Card */}
           <div className="bg-gradient-to-br from-white to-gray-50 rounded-xl sm:rounded-2xl p-5 xs:p-6 sm:p-7 lg:p-8 shadow-md sm:shadow-lg hover:shadow-xl lg:hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 sm:hover:-translate-y-2 border border-gray-200">
             <div className="text-center mb-4 xs:mb-5 sm:mb-6">
-              <div className="w-12 h-12 xs:w-14 xs:h-14 sm:w-16 sm:h-16 bg-gradient-to-r from-[#27BB97] to-[#1EA583] rounded-full flex items-center justify-center mx-auto mb-3 xs:mb-4 shadow-md">
-                <ClipboardCheck className="w-6 h-6 xs:w-7 xs:h-7 sm:w-8 sm:h-8 text-white" />
-              </div>
               <h3 className="text-xl xs:text-2xl sm:text-2xl font-bold text-gray-900 mb-2 xs:mb-3 line-clamp-1">
                 Hire a Nanny
               </h3>
@@ -124,7 +89,7 @@ const NannyHowItWorks = () => {
                 Seeking trusted nanny? Create a profile and find nannies to bring joy and care to your children.
               </p>
             </div>
-            <button className="w-full bg-gradient-to-r from-[#27BB97] to-[#1EA583] hover:from-[#1EA583] hover:to-[#168F6F] text-white font-semibold py-2.5 xs:py-3 sm:py-3 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 shadow-sm hover:shadow-lg text-sm xs:text-base sm:text-base focus:outline-none focus:ring-2 focus:ring-[#27BB97] focus:ring-offset-2">
+            <button className="w-full bg-gradient-to-r from-[#27BB97] to-[#1EA583] hover:from-[#1EA583] hover:to-[#168F6F] text-white font-semibold py-3 xs:py-3.5 sm:py-4 rounded-full transition-all duration-300 flex items-center justify-center gap-2 shadow-sm hover:shadow-lg text-sm xs:text-base sm:text-base focus:outline-none focus:ring-2 focus:ring-[#27BB97] focus:ring-offset-2">
               Post Your Nanny Job
               <ArrowRight className="w-4 h-4 xs:w-5 xs:h-5 flex-shrink-0" />
             </button>

@@ -12,9 +12,10 @@ const PetCareHero = () => {
     <section className="relative min-h-[60vh] sm:min-h-[70vh] lg:min-h-[80vh] flex items-center justify-center overflow-hidden">
       {/* Background Image */}
       <div 
-        className="absolute inset-0 bg-cover bg-center lg:bg-fixed"
+        className="absolute inset-0 bg-cover bg-center "
         style={{
-          backgroundImage: `url('/pet-care-hero.jpg')`,
+          backgroundImage: `url('/pet-care-1.jpg')`,
+          loading: "lazy",
         }}
       />
       
