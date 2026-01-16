@@ -489,6 +489,9 @@ const RentalsListings = () => {
   const [showPropertyDropdown, setShowPropertyDropdown] = useState(false);
   const [showPlusDropdown, setShowPlusDropdown] = useState(false);
 
+  // Mobile sidebar state
+  const [showRightSidebar, setShowRightSidebar] = useState({});
+
   const [subChecks, setSubChecks] = useState({
     property: {
       Apartment: true,
@@ -509,6 +512,14 @@ const RentalsListings = () => {
       "Utilities Included": false,
     },
   });
+
+  // Toggle right sidebar sections on mobile
+  const toggleRightSidebar = (section) => {
+    setShowRightSidebar((prev) => ({
+      ...prev,
+      [section]: !prev[section],
+    }));
+  };
 
   // Toggle sub checkboxes
   const handleSubToggle = (mainId, subLabel) => {
@@ -738,22 +749,22 @@ const RentalsListings = () => {
     const currentIndex = currentImageIndex[property.id] || 0;
     const totalImages = property.images.length;
 
-    const handleCardClick = () => {
-      navigate("/rental-details", {
-        state: {
-          property,
-          fromListings: true,
-          searchParams: {
-            searchType,
-            locationType,
-            location,
-            radius,
-            budget,
-            propertyType,
-          },
-        },
-      });
-    };
+  const handleCardClick = () => {
+  navigate("/rental-details", {
+    state: {
+      property,
+      fromListings: true,
+      searchParams: {
+        searchType,
+        locationType,
+        location,
+        radius,
+        budget,
+        propertyType,
+      },
+    },
+  });
+};
 
     const handleTitleClick = (e) => {
       e.stopPropagation();
@@ -926,7 +937,7 @@ const RentalsListings = () => {
           </div>
 
           {/* Content Section */}
-          <div className="sm:w-3/5 p-5 flex flex-col justify-between">
+          <div className="sm:w-3/5 p-4 sm:p-5 flex flex-col justify-between">
             {/* Header with Price and Badges */}
             <div>
               <div className="flex items-start justify-between mb-3">
@@ -940,13 +951,13 @@ const RentalsListings = () => {
                       : property.title}
                   </h3>
 
-                  {/* Location and Quick Info */}
-                  <div className="flex items-center gap-3 text-sm text-gray-600 mb-2 flex-wrap">
+                  {/* Location and Quick Info - IMPROVED FOR MOBILE */}
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 text-sm text-gray-600 mb-2 flex-wrap">
                     <div className="flex items-center gap-1">
                       <MapPin size={14} />
-                      <span>{property.location}</span>
+                      <span className="text-sm">{property.location}</span>
                     </div>
-                    <div className="flex items-center gap-1">
+                    <div className="hidden sm:flex items-center gap-1">
                       <Building size={14} />
                       <span>{property.propertyType}</span>
                     </div>
@@ -956,8 +967,8 @@ const RentalsListings = () => {
                     </div>
                   </div>
 
-                  {/* Rating and Response Info */}
-                  <div className="flex items-center gap-4 mb-3">
+                  {/* Rating and Response Info - IMPROVED FOR MOBILE */}
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mb-3">
                     <RatingStars
                       rating={property.rating}
                       reviews={property.reviews}
@@ -968,8 +979,8 @@ const RentalsListings = () => {
                     </div>
                   </div>
 
-                  {/* Quick Stats */}
-                  <div className="flex items-center gap-4 mb-3">
+                  {/* Quick Stats - IMPROVED FOR MOBILE */}
+                  <div className="flex flex-wrap items-center gap-2 sm:gap-4 mb-3">
                     <div className="flex items-center gap-1 text-sm text-gray-700">
                       <Home size={16} />
                       <span>{property.bedrooms} bed</span>
@@ -988,9 +999,9 @@ const RentalsListings = () => {
                   </div>
                 </div>
 
-                {/* Price Section */}
+                {/* Price Section - IMPROVED FOR MOBILE */}
                 <div className="text-right">
-                  <div className="text-2xl font-bold text-blue-600 mb-1">
+                  <div className="text-xl sm:text-2xl font-bold text-blue-600 mb-1">
                     ${property.price.toLocaleString()}
                     <span className="text-sm font-normal text-gray-600">
                       /month
@@ -1002,8 +1013,8 @@ const RentalsListings = () => {
                 </div>
               </div>
 
-              {/* Property Details in Compact Grid */}
-              <div className="grid grid-cols-3 gap-2 text-xs mb-4 p-3 bg-gray-50 rounded-lg">
+              {/* Property Details in Compact Grid - IMPROVED FOR MOBILE */}
+              <div className="grid grid-cols-3 gap-2 text-xs mb-3 sm:mb-4 p-3 bg-gray-50 rounded-lg">
                 <div className="text-center">
                   <div className="font-semibold text-gray-900">Type</div>
                   <div className="text-gray-600">{property.propertyType}</div>
@@ -1018,31 +1029,41 @@ const RentalsListings = () => {
                 </div>
               </div>
 
-              {/* Premium Amenities with Icons */}
-              <div className="mb-4">
+              {/* Premium Amenities with Icons - IMPROVED FOR MOBILE */}
+              <div className="mb-3 sm:mb-4">
                 <h4 className="text-sm font-semibold text-gray-900 mb-2">
                   Key Amenities
                 </h4>
                 <div className="flex flex-wrap gap-1">
-                  {property.amenities.slice(0, 6).map((amenity, index) => (
-                    <span
-                      key={index}
-                      className="flex items-center gap-1.5 text-xs text-blue-700 px-3 py-2 rounded-lg border-blue-100 hover:bg-blue-100 transition-colors"
-                    >
-                      {amenityIcons[amenity] || <FaBolt size={14} />}
-                      {amenity}
-                    </span>
-                  ))}
-                  {property.amenities.length > 6 && (
+                  {property.amenities.slice(0, 4).map(
+                    (
+                      amenity,
+                      index // Show fewer on mobile
+                    ) => (
+                      <span
+                        key={index}
+                        className="flex items-center gap-1.5 text-xs text-blue-700 px-2 py-1.5 sm:px-3 sm:py-2 rounded-lg border-blue-100 hover:bg-blue-100 transition-colors"
+                      >
+                        {amenityIcons[amenity] || <FaBolt size={14} />}
+                        <span className="hidden sm:inline">{amenity}</span>
+                        <span className="sm:hidden">
+                          {amenity.length > 10
+                            ? amenity.slice(0, 10) + "..."
+                            : amenity}
+                        </span>
+                      </span>
+                    )
+                  )}
+                  {property.amenities.length > 4 && (
                     <div className="relative">
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
                           toggleAmenities(property.id);
                         }}
-                        className="flex items-center gap-1.5 text-xs bg-gray-100 text-gray-600 px-3 py-2 rounded-lg border border-gray-200 hover:bg-gray-200 transition-colors"
+                        className="flex items-center gap-1.5 text-xs bg-gray-100 text-gray-600 px-2 py-1.5 sm:px-3 sm:py-2 rounded-lg border border-gray-200 hover:bg-gray-200 transition-colors"
                       >
-                        +{property.amenities.length - 6} more
+                        +{property.amenities.length - 4} more
                       </button>
 
                       {showMoreAmenities[property.id] && (
@@ -1068,20 +1089,22 @@ const RentalsListings = () => {
                 </div>
               </div>
 
-              {/* Description Line */}
-              <div className="text-sm text-gray-600 mb-4 leading-relaxed">
+              {/* Description Line - IMPROVED FOR MOBILE */}
+              <div className="text-sm text-gray-600 mb-3 sm:mb-4 leading-relaxed">
                 <p className="line-clamp-2">{property.details}</p>
               </div>
             </div>
 
-            {/* Enhanced Action Section */}
-            <div className="flex items-center justify-between pt-4 border-t border-gray-200">
+            {/* Enhanced Action Section - IMPROVED FOR MOBILE */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 sm:pt-4 border-t border-gray-200">
               {/* Contact Info */}
-              <div className="flex items-center gap-4 text-sm text-gray-500">
+              <div className="flex items-center gap-4 text-sm text-gray-500 mb-3 sm:mb-0">
                 {showContact[property.id] ? (
                   <div className="flex items-center gap-1">
                     <Phone size={14} />
-                    <span className="font-medium">{property.contact}</span>
+                    <span className="font-medium text-sm">
+                      {property.contact}
+                    </span>
                   </div>
                 ) : (
                   <button
@@ -1089,15 +1112,15 @@ const RentalsListings = () => {
                       e.stopPropagation();
                       toggleContact(property.id);
                     }}
-                    className="text-blue-600 hover:text-blue-700 hover:underline transition-colors"
+                    className="text-blue-600 hover:text-blue-700 hover:underline transition-colors text-sm"
                   >
                     Show Contact
                   </button>
                 )}
               </div>
 
-              {/* Action Buttons */}
-              <div className="flex gap-2">
+              {/* Action Buttons - IMPROVED FOR MOBILE */}
+              <div className="flex gap-2 flex-wrap">
                 {/* Call Button */}
                 <button
                   onClick={(e) => {
@@ -1105,7 +1128,7 @@ const RentalsListings = () => {
                     handleCall(property);
                   }}
                   disabled={!property.availableForCall}
-                  className={`flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 border ${
+                  className={`flex items-center justify-center gap-1 sm:gap-2 px-3 py-2 sm:py-2.5 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 border flex-1 sm:flex-none ${
                     property.availableForCall
                       ? "bg-green-100 text-green-700 border-green-200 hover:bg-green-200 hover:shadow-sm"
                       : "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
@@ -1116,8 +1139,8 @@ const RentalsListings = () => {
                       : "Client unavailable for calls"
                   }
                 >
-                  <Phone size={16} />
-                  Call
+                  <Phone size={14} />
+                  <span className="hidden sm:inline">Call</span>
                 </button>
 
                 {/* Message Button */}
@@ -1126,10 +1149,11 @@ const RentalsListings = () => {
                     e.stopPropagation();
                     handleMessage(property);
                   }}
-                  className="flex items-center gap-2 bg-[#27bb97] hover:bg-[#1FA987] text-white px-4 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 shadow-sm hover:shadow-md"
+                  className="flex items-center justify-center gap-1 sm:gap-2 bg-[#27bb97] hover:bg-[#1FA987] text-white px-3 py-2 sm:py-2.5 rounded-lg text-xs sm:text-sm font-semibold transition-all duration-200 shadow-sm hover:shadow-md flex-1 sm:flex-none"
                 >
-                  <MessageCircle size={16} />
-                  Message
+                  <MessageCircle size={14} />
+                  <span className="hidden sm:inline">Message</span>
+                  <span className="sm:hidden">Msg</span>
                 </button>
 
                 {/* Save Button */}
@@ -1138,19 +1162,20 @@ const RentalsListings = () => {
                     e.stopPropagation();
                     toggleLike(property.id);
                   }}
-                  className={`flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 border ${
+                  className={`flex items-center justify-center gap-1 sm:gap-2 px-3 py-2 sm:py-2.5 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 border flex-1 sm:flex-none ${
                     likedProperties[property.id]
                       ? "bg-red-100 text-red-700 border-red-200 hover:bg-red-200"
                       : "bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200"
                   } hover:shadow-sm`}
                 >
                   <Heart
-                    size={16}
+                    size={14}
                     fill={
                       likedProperties[property.id] ? "currentColor" : "none"
                     }
                   />
-                  Save ({property.saves})
+                  <span className="hidden sm:inline">Save</span>
+                  <span className="sm:hidden">({property.saves})</span>
                 </button>
               </div>
             </div>
@@ -1166,10 +1191,12 @@ const RentalsListings = () => {
       <div className="pt-10 pb-6 px-4 sm:px-8 lg:px-20">
         <div className="">
           {/* Breadcrumb Navigation */}
-          <div className="flex items-center gap-2 text-sm mb-6">
-            <span className="font-semibold text-gray-900">Toronto Rentals</span>
+          <div className="flex items-center gap-2 text-sm mb-6 overflow-x-auto pb-1">
+            <span className="font-semibold text-gray-900 whitespace-nowrap">
+              Toronto Rentals
+            </span>
             <span className="text-gray-400">→</span>
-            <span className="text-gray-500">
+            <span className="text-gray-500 whitespace-nowrap">
               {searchType} in {location}
             </span>
           </div>
@@ -1177,7 +1204,7 @@ const RentalsListings = () => {
           {/* Search Bar */}
           <div className="mb-6">
             <div className="flex flex-col lg:flex-row items-center gap-3">
-              <div className="flex flex-col sm:flex-row items-center w-full lg:w-auto">
+              <div className="flex flex-col sm:flex-row items-center w-full lg:w-auto gap-2">
                 {/* Property Type Dropdown */}
                 {searchType === "Apartments for Rent" && (
                   <div className="w-full sm:w-auto">
@@ -1186,17 +1213,17 @@ const RentalsListings = () => {
                         onClick={() =>
                           setShowPropertyDropdown(!showPropertyDropdown)
                         }
-                        className="w-full flex justify-between items-center pl-3 pr-10 py-3 text-base border lg:rounded-l-lg lg:rounded-r-none border-gray-200 rounded-lg lg:rounded-none text-gray-700 focus:outline-none bg-white"
+                        className="w-full flex justify-between items-center pl-3 pr-10 py-3 text-base border border-gray-200 rounded-lg text-gray-700 focus:outline-none bg-white"
                       >
-                        <span>{propertyType}</span>
+                        <span className="truncate">{propertyType}</span>
                         <ChevronDown
-                          className={`w-4 h-4 text-gray-400 transition-transform ${
+                          className={`w-4 h-4 text-gray-400 transition-transform flex-shrink-0 ${
                             showPropertyDropdown ? "rotate-180" : ""
                           }`}
                         />
                       </button>
                       {showPropertyDropdown && (
-                        <div className="absolute top-full left-0 z-20 bg-white border border-gray-200 rounded-lg shadow-lg w-[600px] p-4 max-h-96 overflow-y-auto">
+                        <div className="absolute top-full left-0 z-20 bg-white border border-gray-200 rounded-lg shadow-lg w-full lg:w-[600px] p-4 max-h-96 overflow-y-auto">
                           {/* Rent / Buy Tabs */}
                           <div className="mb-4 flex border-b pb-2">
                             <button
@@ -1225,7 +1252,7 @@ const RentalsListings = () => {
                           {dropdownTab === "rent" && (
                             <>
                               {/* Two Column Layout */}
-                              <div className="grid grid-cols-2 gap-8">
+                              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-8">
                                 {/* Left Column - Residential Rentals */}
                                 <div>
                                   <div className="mb-4">
@@ -1364,7 +1391,7 @@ const RentalsListings = () => {
                 <div className="w-full sm:w-auto">
                   <div className="relative">
                     <select
-                      className="w-full pl-3 pr-10 py-3 text-base border border-gray-200 rounded-lg lg:rounded-none text-gray-700 
+                      className="w-full pl-3 pr-10 py-3 text-base border border-gray-200 rounded-lg text-gray-700 
                              focus:outline-none appearance-none bg-white"
                       value={locationType}
                       onChange={(e) => setLocationType(e.target.value)}
@@ -1387,7 +1414,7 @@ const RentalsListings = () => {
                       type="text"
                       placeholder="Enter location..."
                       className="w-full pl-10 pr-3 py-3 text-base border border-gray-200 bg-white text-gray-800 
-                             focus:outline-none rounded-lg lg:rounded-none"
+                             focus:outline-none rounded-lg"
                       value={location}
                       onChange={(e) => setLocation(e.target.value)}
                     />
@@ -1398,7 +1425,7 @@ const RentalsListings = () => {
                 <div className="w-full sm:w-auto">
                   <div className="relative">
                     <select
-                      className="w-full pl-3 pr-10 py-3 text-base border border-gray-200 rounded-lg lg:rounded-none text-gray-700 
+                      className="w-full pl-3 pr-10 py-3 text-base border border-gray-200 rounded-lg text-gray-700 
                              focus:outline-none appearance-none bg-white"
                       value={radius}
                       onChange={(e) => setRadius(e.target.value)}
@@ -1417,7 +1444,7 @@ const RentalsListings = () => {
                 <div className="w-full sm:w-auto">
                   <div className="relative">
                     <select
-                      className="w-full pl-3 pr-10 py-3 text-base border border-gray-200 rounded-lg lg:rounded-r-lg lg:rounded-l-none text-gray-700 
+                      className="w-full pl-3 pr-10 py-3 text-base border border-gray-200 rounded-lg text-gray-700 
                              focus:outline-none appearance-none bg-white"
                       value={budget}
                       onChange={(e) => setBudget(e.target.value)}
@@ -1434,7 +1461,7 @@ const RentalsListings = () => {
               </div>
 
               {/* Action Buttons */}
-              <div className="flex items-center gap-3 w-full lg:w-auto justify-center lg:justify-start">
+              <div className="flex items-center gap-3 w-full lg:w-auto justify-center lg:justify-start flex-wrap">
                 <button
                   onClick={handleSearch}
                   className="w-full lg:w-fit px-6 flex items-center justify-center gap-2 bg-[#2563EB]
@@ -1442,7 +1469,8 @@ const RentalsListings = () => {
                            shadow-lg hover:shadow-xl transition-all duration-200 cursor-pointer"
                 >
                   <Search className="w-4 h-4" />
-                  View Results
+                  <span className="hidden sm:inline">View Results</span>
+                  <span className="sm:hidden">Search</span>
                 </button>
 
                 {/* Plus/Minus Filter Button */}
@@ -1854,38 +1882,40 @@ const RentalsListings = () => {
                   className="w-full lg:w-fit items-center px-6 py-3 justify-center bg-red-500 text-white 
                            rounded-lg hover:bg-red-600 transition-all duration-200 cursor-pointer"
                 >
-                  Save Changes
+                  <span className="hidden sm:inline">Save Changes</span>
+                  <span className="sm:hidden">Save</span>
                 </button>
               </div>
             </div>
           </div>
 
           {/* Get Matched Section */}
-          <div className="w-full h-auto lg:h-[45vh] mt-10 bg-white flex flex-col lg:flex-row items-center justify-between p-8 lg:px-16 rounded-2xl shadow-lg overflow-hidden">
+          <div className="w-full h-auto lg:h-[45vh] mt-10 bg-white flex flex-col lg:flex-row items-center justify-between p-6 sm:p-8 lg:px-16 rounded-2xl shadow-lg overflow-hidden">
             <div className="w-full lg:w-1/2 text-black space-y-4 mb-6 lg:mb-0">
-              <h2 className="text-3xl lg:text-4xl font-bold leading-snug -mt-10">
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold leading-snug">
                 Find Your Perfect Rental in Toronto
               </h2>
-              <p className="text-lg opacity-90">
+              <p className="text-base sm:text-lg opacity-90">
                 Browse thousands of verified rentals with photos, virtual tours,
                 and honest reviews.
               </p>
               <div className="">
                 <button
-                  className="mt-3 outline-none inline-flex items-center justify-between bg-[#27bb97] hover:bg-[#1FA987] 
-                  min-w-[200px] border-0 rounded shadow-[0_4px_12px_rgba(0,0,0,0.1)] box-border 
+                  className="mt-3 outline-none inline-flex items-center justify-center sm:justify-between bg-[#27bb97] hover:bg-[#1FA987] 
+                   sm:min-w-[200px] border-0 rounded shadow-[0_4px_12px_rgba(0,0,0,0.1)] box-border 
                   px-5 py-4 text-white text-xs font-semibold tracking-[1.2px] uppercase 
                   overflow-hidden cursor-pointer hover:opacity-95 transition-opacity"
                 >
-                  Browse All Rentals
+                  <span className="hidden sm:inline">Browse All Rentals</span>
+                  <span className="sm:hidden">View Rentals</span>
                 </button>
               </div>
             </div>
-            <div className="w-full lg:w-1/2 h-64 lg:h-[85%] flex justify-center lg:justify-end">
+            <div className="w-full lg:w-1/2 h-56 sm:h-64 lg:h-[85%] flex justify-center lg:justify-end mt-4 lg:mt-0">
               <img
                 src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800&h=600&fit=crop"
                 alt="Toronto Rentals"
-                className="w-full lg:w-[90%] h-[120%] object-cover rounded-xl -mt-8"
+                className="w-full lg:w-[90%] h-[120%] object-cover rounded-xl"
               />
             </div>
           </div>
@@ -1893,11 +1923,11 @@ const RentalsListings = () => {
       </div>
 
       {/* Properties Section */}
-      <div className="min-h-screen bg-gray-100 p-4 sm:p-6 lg:p-8 mt-10">
+      <div className="min-h-screen bg-gray-100 p-4 sm:p-6 lg:p-8 mt-8 sm:mt-10">
         <div className="">
           {/* Tabs */}
           <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between w-full lg:w-[80%] border-gray-200 gap-4">
-            <div className="flex gap-4 lg:gap-8 ">
+            <div className="flex gap-4 lg:gap-8 flex-wrap">
               <button
                 onClick={() => setMainTab("all")}
                 className={` pb-4 lg:pb-5 px-3 font-medium transition-colors ${
@@ -1930,15 +1960,16 @@ const RentalsListings = () => {
               </button>
             </div>
             <div className="lg:ml-108 lg:-mt-2">
-              <button className="flex items-center gap-2 bg-[#27bb97] hover:bg-[#1FA987] text-white px-4 py-2 rounded text-sm font-medium transition-colors w-full lg:w-auto justify-center cursor-pointer">
+              <button className="w-full lg:w-auto flex items-center justify-center gap-2 bg-[#27bb97] hover:bg-[#1FA987] text-white px-4 py-2 rounded text-sm font-medium transition-colors cursor-pointer">
                 <FaMap />
-                Switch to Map View
+                <span className="hidden sm:inline">Switch to Map View</span>
+                <span className="sm:hidden">Map View</span>
               </button>
             </div>
           </div>
 
           {/* Main Content */}
-          <div className="flex flex-col lg:flex-row gap-8 mt-6">
+          <div className="flex flex-col lg:flex-row gap-6 sm:gap-8 mt-6">
             {/* Left side - 70% */}
             <div className="w-full lg:w-[70%]">
               {/* White background section for header and neighborhoods */}
@@ -1955,7 +1986,9 @@ const RentalsListings = () => {
                   </div>
                   <div className="flex items-center gap-4">
                     <div className="flex items-center gap-2">
-                      <span className="text-sm text-gray-600">Sort by</span>
+                      <span className="text-sm text-gray-600 hidden sm:inline">
+                        Sort by
+                      </span>
                       <select
                         value={sortBy}
                         onChange={(e) => setSortBy(e.target.value)}
@@ -1980,7 +2013,7 @@ const RentalsListings = () => {
                   <h2 className="text-base font-semibold text-gray-900 mb-2">
                     Popular neighborhoods in Toronto
                   </h2>
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap gap-2 overflow-x-auto pb-2">
                     {[
                       "Downtown",
                       "Yorkville",
@@ -1995,7 +2028,7 @@ const RentalsListings = () => {
                     ].map((neighborhood) => (
                       <button
                         key={neighborhood}
-                        className="flex items-center gap-1 px-2 py-1 bg-gray-100 border border-gray-200 rounded-full transition-colors hover:bg-gray-200 text-sm"
+                        className="flex items-center gap-1 px-2 py-1 bg-gray-100 border border-gray-200 rounded-full transition-colors hover:bg-gray-200 text-sm whitespace-nowrap"
                       >
                         <FaMapMarkerAlt className="text-gray-500 text-sm" />
                         <span className="text-gray-700 hover:text-blue-500 cursor-pointer">
@@ -2008,14 +2041,14 @@ const RentalsListings = () => {
               </div>
 
               {/* Enhanced Rental Cards Grid */}
-              <div className="properties-section grid grid-cols-1 gap-6 cursor-pointer mt-6">
+              <div className="properties-section grid grid-cols-1 gap-4 sm:gap-6 cursor-pointer mt-6">
                 {getCurrentProperties().map((property) => (
                   <RentalCard key={property.id} property={property} />
                 ))}
               </div>
 
               {/* Pagination */}
-              <div className="mt-8 bg-white rounded-lg p-6 shadow-sm border border-gray-200">
+              <div className="mt-8 bg-white rounded-lg p-4 sm:p-6 shadow-sm border border-gray-200">
                 <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
                   {/* Items per page selector */}
                   <div className="flex items-center gap-3">
@@ -2041,7 +2074,7 @@ const RentalsListings = () => {
                   </div>
 
                   {/* Pagination controls */}
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-wrap justify-center">
                     <button
                       onClick={() => handlePageChange(currentPage - 1)}
                       disabled={currentPage === 1}
@@ -2052,18 +2085,19 @@ const RentalsListings = () => {
                       }`}
                     >
                       <ChevronLeft size={16} />
-                      Previous
+                      <span className="hidden sm:inline">Previous</span>
+                      <span className="sm:hidden">Prev</span>
                     </button>
 
                     <div className="flex items-center gap-1">
                       {getPageNumbers().map((page, index) => (
                         <React.Fragment key={index}>
                           {page === "..." ? (
-                            <span className="px-3 py-2 text-gray-500">...</span>
+                            <span className="px-2 py-1 text-gray-500">...</span>
                           ) : (
                             <button
                               onClick={() => handlePageChange(page)}
-                              className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                              className={`px-2 sm:px-3 py-1 sm:py-2 rounded-lg text-sm font-medium transition-colors ${
                                 currentPage === page
                                   ? "bg-blue-600 text-white shadow-sm"
                                   : "text-gray-700 hover:bg-gray-100 border border-gray-300"
@@ -2085,7 +2119,7 @@ const RentalsListings = () => {
                           : "text-gray-700 hover:bg-gray-100 border border-gray-300"
                       }`}
                     >
-                      Next
+                      <span className="hidden sm:inline">Next</span>
                       <ChevronRight size={16} />
                     </button>
                   </div>
@@ -2095,340 +2129,553 @@ const RentalsListings = () => {
 
             {/* Right side - 30% */}
             <div className="w-full lg:w-[30%]">
-              {/* Popular Areas in Toronto */}
-              <div className="bg-white rounded-lg p-6 shadow-sm">
-                <h2 className="text-lg font-semibold text-gray-900 mb-2">
-                  Popular Areas in Toronto
-                </h2>
-                <div className="h-[1px] bg-gray-300 w-full mb-2"></div>
-                <div className="flex flex-col gap-2.5">
-                  {[
-                    "Rentals in Downtown Toronto",
-                    "Rentals in North York",
-                    "Rentals in Scarborough",
-                    "Rentals in Etobicoke",
-                    "Rentals in Mississauga",
-                  ].map((area) => (
-                    <a
-                      key={area}
-                      href="#"
-                      className="text-blue-600 hover:text-blue-700 hover:underline text-sm transition-colors"
-                    >
-                      {area}
-                    </a>
-                  ))}
-                </div>
-              </div>
+              {/* Popular Areas in Toronto - IMPROVED MOBILE COLLAPSIBLE */}
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-4">
+                <button
+                  onClick={() => toggleRightSidebar("popularAreas")}
+                  className="lg:hidden w-full px-4 py-3 flex justify-between items-center"
+                >
+                  <div className="text-left">
+                    <h2 className="text-base font-semibold text-gray-800">
+                      Popular Areas in Toronto
+                    </h2>
+                    <p className="text-xs text-gray-500 mt-0.5">
+                      Browse rentals by location
+                    </p>
+                  </div>
+                  <ChevronDown
+                    className={`w-4 h-4 text-gray-500 transition-transform ${
+                      showRightSidebar.popularAreas ? "rotate-180" : ""
+                    }`}
+                  />
+                </button>
 
-              {/* Property Types in Toronto */}
-              <div className="bg-white rounded-lg p-6 shadow-sm mt-6">
-                <h2 className="text-lg font-semibold text-gray-900 mb-2">
-                  Property Types in Toronto
-                </h2>
-                <div className="h-[1px] bg-gray-300 w-full mb-2"></div>
-                <div className="flex flex-col gap-2.5">
-                  {[
-                    "Apartments for Rent",
-                    "Condos for Rent",
-                    "Houses for Rent",
-                    "Townhouses for Rent",
-                    "Basement Apartments",
-                  ].map((type) => (
-                    <a
-                      key={type}
-                      href="#"
-                      className="text-blue-600 hover:text-blue-700 hover:underline text-sm transition-colors"
-                    >
-                      {type}
-                    </a>
-                  ))}
-                </div>
-              </div>
-
-              {/* Price Ranges */}
-              <div className="bg-white rounded-lg p-6 shadow-sm mt-6">
-                <h2 className="text-lg font-semibold text-gray-900 mb-2">
-                  Price Ranges
-                </h2>
-                <div className="h-[1px] bg-gray-300 w-full mb-2"></div>
-                <div className="flex flex-col gap-2.5">
-                  {[
-                    "Under $1,500/month",
-                    "$1,500 - $2,000/month",
-                    "$2,000 - $2,500/month",
-                    "$2,500 - $3,000/month",
-                    "Over $3,000/month",
-                  ].map((range) => (
-                    <a
-                      key={range}
-                      href="#"
-                      className="text-blue-600 hover:text-blue-700 hover:underline text-sm transition-colors"
-                    >
-                      {range}
-                    </a>
-                  ))}
-                </div>
-              </div>
-
-              {/* Student Housing near Universities */}
-              <div className="bg-white rounded-lg p-6 shadow-sm mt-6">
-                <h2 className="text-lg font-semibold text-gray-900 mb-2">
-                  Student Housing near Universities
-                </h2>
-                <div className="h-[1px] bg-gray-300 w-full mb-2"></div>
-                <div className="flex flex-col gap-2.5">
-                  {[
-                    { name: "University of Toronto", count: 245 },
-                    { name: "York University", count: 189 },
-                    { name: "Ryerson University", count: 167 },
-                    { name: "OCAD University", count: 98 },
-                    { name: "George Brown College", count: 156 },
-                  ].map((uni) => (
-                    <a
-                      key={uni.name}
-                      href="#"
-                      className="text-blue-600 hover:text-blue-700 hover:underline text-sm transition-colors"
-                    >
-                      {uni.name}{" "}
-                      <span className="text-gray-900">({uni.count})</span>
-                    </a>
-                  ))}
-                </div>
-              </div>
-
-              {/* Nearby Cities */}
-              <div className="bg-white rounded-lg p-6 shadow-sm mt-6">
-                <h2 className="text-lg font-semibold text-gray-900 mb-2">
-                  Nearby Cities
-                </h2>
-                <div className="h-[1px] bg-gray-300 w-full mb-2"></div>
-                <div className="flex flex-col gap-2.5">
-                  {[
-                    "Rentals in Mississauga, ON",
-                    "Rentals in Brampton, ON",
-                    "Rentals in Vaughan, ON",
-                    "Rentals in Markham, ON",
-                    "Rentals in Richmond Hill, ON",
-                  ].map((city) => (
-                    <a
-                      key={city}
-                      href="#"
-                      className="text-blue-600 hover:text-blue-700 hover:underline text-sm transition-colors"
-                    >
-                      {city}
-                    </a>
-                  ))}
-                </div>
-              </div>
-
-              {/* Property Managers in Toronto */}
-              <div className="bg-white rounded-lg p-6 shadow-sm mt-6">
-                <h2 className="text-lg font-semibold text-gray-900 mb-2">
-                  Property Managers in Toronto
-                </h2>
-                <div className="h-[1px] bg-gray-300 w-full mb-4"></div>
-                <div className="flex flex-col gap-6">
-                  {[
-                    {
-                      name: "Toronto Luxury Living",
-                      properties: "45 properties",
-                      location: "Downtown Toronto",
-                      phone: "416-123-4567",
-                      initialBg: "bg-blue-300",
-                      initial: "T",
-                    },
-                    {
-                      name: "Urban Living Group",
-                      properties: "32 properties",
-                      location: "Liberty Village",
-                      phone: "416-987-6543",
-                      initialBg: "bg-green-300",
-                      initial: "U",
-                    },
-                    {
-                      name: "Family Homes Toronto",
-                      properties: "28 properties",
-                      location: "Scarborough",
-                      phone: "416-456-7890",
-                      initialBg: "bg-purple-300",
-                      initial: "F",
-                    },
-                  ].map((manager, index) => (
-                    <div
-                      key={index}
-                      className="border-b border-gray-200 pb-4 last:border-b-0 last:pb-0"
-                    >
-                      {/* Row Top */}
-                      <div className="flex items-start gap-4">
-                        {/* Initial Box */}
-                        <div
-                          className={`w-12 h-12 rounded-md flex items-center justify-center text-white font-semibold text-xl ${manager.initialBg}`}
+                <div
+                  className={`${
+                    showRightSidebar.popularAreas ? "block" : "hidden"
+                  } lg:block`}
+                >
+                  <div className="px-4 lg:px-6 py-4">
+                    <h2 className="hidden lg:block text-lg font-semibold text-gray-900 mb-2">
+                      Popular Areas in Toronto
+                    </h2>
+                    <div className="h-[1px] bg-gray-300 w-full mb-2 hidden lg:block"></div>
+                    <div className="flex flex-col gap-2.5">
+                      {[
+                        "Rentals in Downtown Toronto",
+                        "Rentals in North York",
+                        "Rentals in Scarborough",
+                        "Rentals in Etobicoke",
+                        "Rentals in Mississauga",
+                      ].map((area) => (
+                        <a
+                          key={area}
+                          href="#"
+                          className="text-blue-600 hover:text-blue-700 hover:underline text-sm transition-colors py-1"
                         >
-                          {manager.initial}
-                        </div>
-
-                        {/* Manager Info */}
-                        <div>
-                          <a
-                            href="#"
-                            className="text-blue-600 font-semibold hover:underline"
-                          >
-                            {manager.name}
-                          </a>
-                          <p className="text-sm text-gray-700">
-                            {manager.properties}
-                          </p>
-                        </div>
-                      </div>
-
-                      {/* Bottom Row */}
-                      <div className="flex items-center justify-between mt-3">
-                        <div className="flex flex-col gap-1 text-sm text-gray-700">
-                          <div className="flex items-center gap-2">
-                            <span className="text-gray-500">📍</span>
-                            {manager.location}
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <span className="text-gray-500">📞</span>
-                            {manager.phone}
-                          </div>
-                        </div>
-
-                        {/* Buttons */}
-                        <div className="flex gap-2">
-                          <button className="px-3 py-1.5 border border-gray-300 rounded-md text-sm hover:bg-gray-100 transition">
-                            View Listings
-                          </button>
-                        </div>
-                      </div>
+                          {area}
+                        </a>
+                      ))}
                     </div>
-                  ))}
-                </div>
-
-                {/* Footer Link */}
-                <div className="text-center mt-4">
-                  <a
-                    href="#"
-                    className="text-blue-600 text-sm hover:underline flex items-center justify-center gap-1"
-                  >
-                    View More Managers in Toronto →
-                  </a>
+                  </div>
                 </div>
               </div>
 
-              {/* Open Houses in Toronto */}
-              <div className="bg-white rounded-lg shadow-sm p-5 border border-gray-200 mt-10">
-                <h2 className="text-lg font-semibold text-gray-900 mb-3">
-                  Open Houses in Toronto
-                </h2>
-                <div className="space-y-5">
-                  {[
-                    {
-                      title: "123 King Street West, Toronto, ON",
-                      timeAgo: "3 hrs ago",
-                      location: "Financial District",
-                      agent: "Luxury Rentals Inc",
-                      price: "3,800",
-                      propertyType: "Condo",
-                      bedrooms: "2",
-                      houseTime: "Today, 2 PM - 6 PM",
-                    },
-                    {
-                      title: "456 Queen Street East, Toronto, ON",
-                      timeAgo: "1 day ago",
-                      location: "Leslieville",
-                      agent: "Urban Spaces",
-                      price: "2,900",
-                      propertyType: "House",
-                      bedrooms: "3",
-                      houseTime: "Tomorrow, 12 PM - 4 PM",
-                    },
-                  ].map((item, index) => (
-                    <div
-                      key={index}
-                      className="pb-4 border-b border-gray-200 last:border-0 last:pb-0"
-                    >
-                      {/* Property Title */}
+              {/* Property Types in Toronto - IMPROVED MOBILE COLLAPSIBLE */}
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-4">
+                <button
+                  onClick={() => toggleRightSidebar("propertyTypes")}
+                  className="lg:hidden w-full px-4 py-3 flex justify-between items-center"
+                >
+                  <div className="text-left">
+                    <h2 className="text-base font-semibold text-gray-800">
+                      Property Types in Toronto
+                    </h2>
+                    <p className="text-xs text-gray-500 mt-0.5">
+                      Filter by property type
+                    </p>
+                  </div>
+                  <ChevronDown
+                    className={`w-4 h-4 text-gray-500 transition-transform ${
+                      showRightSidebar.propertyTypes ? "rotate-180" : ""
+                    }`}
+                  />
+                </button>
+
+                <div
+                  className={`${
+                    showRightSidebar.propertyTypes ? "block" : "hidden"
+                  } lg:block`}
+                >
+                  <div className="px-4 lg:px-6 py-4">
+                    <h2 className="hidden lg:block text-lg font-semibold text-gray-900 mb-2">
+                      Property Types in Toronto
+                    </h2>
+                    <div className="h-[1px] bg-gray-300 w-full mb-2 hidden lg:block"></div>
+                    <div className="flex flex-col gap-2.5">
+                      {[
+                        "Apartments for Rent",
+                        "Condos for Rent",
+                        "Houses for Rent",
+                        "Townhouses for Rent",
+                        "Basement Apartments",
+                      ].map((type) => (
+                        <a
+                          key={type}
+                          href="#"
+                          className="text-blue-600 hover:text-blue-700 hover:underline text-sm transition-colors py-1"
+                        >
+                          {type}
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Price Ranges - IMPROVED MOBILE COLLAPSIBLE */}
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-4">
+                <button
+                  onClick={() => toggleRightSidebar("priceRanges")}
+                  className="lg:hidden w-full px-4 py-3 flex justify-between items-center"
+                >
+                  <div className="text-left">
+                    <h2 className="text-base font-semibold text-gray-800">
+                      Price Ranges
+                    </h2>
+                    <p className="text-xs text-gray-500 mt-0.5">
+                      Filter by monthly rent
+                    </p>
+                  </div>
+                  <ChevronDown
+                    className={`w-4 h-4 text-gray-500 transition-transform ${
+                      showRightSidebar.priceRanges ? "rotate-180" : ""
+                    }`}
+                  />
+                </button>
+
+                <div
+                  className={`${
+                    showRightSidebar.priceRanges ? "block" : "hidden"
+                  } lg:block`}
+                >
+                  <div className="px-4 lg:px-6 py-4">
+                    <h2 className="hidden lg:block text-lg font-semibold text-gray-900 mb-2">
+                      Price Ranges
+                    </h2>
+                    <div className="h-[1px] bg-gray-300 w-full mb-2 hidden lg:block"></div>
+                    <div className="flex flex-col gap-2.5">
+                      {[
+                        "Under $1,500/month",
+                        "$1,500 - $2,000/month",
+                        "$2,000 - $2,500/month",
+                        "$2,500 - $3,000/month",
+                        "Over $3,000/month",
+                      ].map((range) => (
+                        <a
+                          key={range}
+                          href="#"
+                          className="text-blue-600 hover:text-blue-700 hover:underline text-sm transition-colors py-1"
+                        >
+                          {range}
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Student Housing near Universities - IMPROVED MOBILE COLLAPSIBLE */}
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-4">
+                <button
+                  onClick={() => toggleRightSidebar("studentHousing")}
+                  className="lg:hidden w-full px-4 py-3 flex justify-between items-center"
+                >
+                  <div className="text-left">
+                    <h2 className="text-base font-semibold text-gray-800">
+                      Student Housing near Universities
+                    </h2>
+                    <p className="text-xs text-gray-500 mt-0.5">
+                      Housing near campuses
+                    </p>
+                  </div>
+                  <ChevronDown
+                    className={`w-4 h-4 text-gray-500 transition-transform ${
+                      showRightSidebar.studentHousing ? "rotate-180" : ""
+                    }`}
+                  />
+                </button>
+
+                <div
+                  className={`${
+                    showRightSidebar.studentHousing ? "block" : "hidden"
+                  } lg:block`}
+                >
+                  <div className="px-4 lg:px-6 py-4">
+                    <h2 className="hidden lg:block text-lg font-semibold text-gray-900 mb-2">
+                      Student Housing near Universities
+                    </h2>
+                    <div className="h-[1px] bg-gray-300 w-full mb-2 hidden lg:block"></div>
+                    <div className="flex flex-col gap-2.5">
+                      {[
+                        { name: "University of Toronto", count: 245 },
+                        { name: "York University", count: 189 },
+                        { name: "Ryerson University", count: 167 },
+                        { name: "OCAD University", count: 98 },
+                        { name: "George Brown College", count: 156 },
+                      ].map((uni) => (
+                        <a
+                          key={uni.name}
+                          href="#"
+                          className="text-blue-600 hover:text-blue-700 hover:underline text-sm transition-colors py-1"
+                        >
+                          {uni.name}{" "}
+                          <span className="text-gray-900">({uni.count})</span>
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Nearby Cities - IMPROVED MOBILE COLLAPSIBLE */}
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-4">
+                <button
+                  onClick={() => toggleRightSidebar("nearbyCities")}
+                  className="lg:hidden w-full px-4 py-3 flex justify-between items-center"
+                >
+                  <div className="text-left">
+                    <h2 className="text-base font-semibold text-gray-800">
+                      Nearby Cities
+                    </h2>
+                    <p className="text-xs text-gray-500 mt-0.5">
+                      Rentals in nearby areas
+                    </p>
+                  </div>
+                  <ChevronDown
+                    className={`w-4 h-4 text-gray-500 transition-transform ${
+                      showRightSidebar.nearbyCities ? "rotate-180" : ""
+                    }`}
+                  />
+                </button>
+
+                <div
+                  className={`${
+                    showRightSidebar.nearbyCities ? "block" : "hidden"
+                  } lg:block`}
+                >
+                  <div className="px-4 lg:px-6 py-4">
+                    <h2 className="hidden lg:block text-lg font-semibold text-gray-900 mb-2">
+                      Nearby Cities
+                    </h2>
+                    <div className="h-[1px] bg-gray-300 w-full mb-2 hidden lg:block"></div>
+                    <div className="flex flex-col gap-2.5">
+                      {[
+                        "Rentals in Mississauga, ON",
+                        "Rentals in Brampton, ON",
+                        "Rentals in Vaughan, ON",
+                        "Rentals in Markham, ON",
+                        "Rentals in Richmond Hill, ON",
+                      ].map((city) => (
+                        <a
+                          key={city}
+                          href="#"
+                          className="text-blue-600 hover:text-blue-700 hover:underline text-sm transition-colors py-1"
+                        >
+                          {city}
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Property Managers in Toronto - IMPROVED MOBILE COLLAPSIBLE */}
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-4">
+                <button
+                  onClick={() => toggleRightSidebar("propertyManagers")}
+                  className="lg:hidden w-full px-4 py-3 flex justify-between items-center"
+                >
+                  <div className="text-left">
+                    <h2 className="text-base font-semibold text-gray-800">
+                      Property Managers in Toronto
+                    </h2>
+                    <p className="text-xs text-gray-500 mt-0.5">
+                      Verified rental managers
+                    </p>
+                  </div>
+                  <ChevronDown
+                    className={`w-4 h-4 text-gray-500 transition-transform ${
+                      showRightSidebar.propertyManagers ? "rotate-180" : ""
+                    }`}
+                  />
+                </button>
+
+                <div
+                  className={`${
+                    showRightSidebar.propertyManagers ? "block" : "hidden"
+                  } lg:block`}
+                >
+                  <div className="px-4 lg:px-6 py-4">
+                    <h2 className="hidden lg:block text-lg font-semibold text-gray-900 mb-2">
+                      Property Managers in Toronto
+                    </h2>
+                    <div className="h-[1px] bg-gray-300 w-full mb-4 hidden lg:block"></div>
+                    <div className="flex flex-col gap-4">
+                      {[
+                        {
+                          name: "Toronto Luxury Living",
+                          properties: "45 properties",
+                          location: "Downtown Toronto",
+                          phone: "416-123-4567",
+                          initialBg: "bg-blue-300",
+                          initial: "T",
+                        },
+                        {
+                          name: "Urban Living Group",
+                          properties: "32 properties",
+                          location: "Liberty Village",
+                          phone: "416-987-6543",
+                          initialBg: "bg-green-300",
+                          initial: "U",
+                        },
+                        {
+                          name: "Family Homes Toronto",
+                          properties: "28 properties",
+                          location: "Scarborough",
+                          phone: "416-456-7890",
+                          initialBg: "bg-purple-300",
+                          initial: "F",
+                        },
+                      ].map((manager, index) => (
+                        <div
+                          key={index}
+                          className="border-b border-gray-200 pb-4 last:border-b-0 last:pb-0"
+                        >
+                          {/* Row Top */}
+                          <div className="flex items-start gap-3">
+                            {/* Initial Box */}
+                            <div
+                              className={`w-10 h-10 sm:w-12 sm:h-12 rounded-md flex items-center justify-center text-white font-semibold text-lg sm:text-xl ${manager.initialBg}`}
+                            >
+                              {manager.initial}
+                            </div>
+
+                            {/* Manager Info */}
+                            <div className="flex-1">
+                              <a
+                                href="#"
+                                className="text-blue-600 font-semibold hover:underline text-sm sm:text-base"
+                              >
+                                {manager.name}
+                              </a>
+                              <p className="text-xs sm:text-sm text-gray-700">
+                                {manager.properties}
+                              </p>
+                            </div>
+                          </div>
+
+                          {/* Bottom Row */}
+                          <div className="flex flex-col sm:flex-row sm:items-center justify-between mt-3 gap-2">
+                            <div className="flex flex-col gap-1 text-xs sm:text-sm text-gray-700">
+                              <div className="flex items-center gap-2">
+                                <span className="text-gray-500">📍</span>
+                                {manager.location}
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <span className="text-gray-500">📞</span>
+                                {manager.phone}
+                              </div>
+                            </div>
+
+                            {/* Buttons */}
+                            <div className="flex gap-2 mt-2 sm:mt-0">
+                              <button className="px-2 sm:px-3 py-1 sm:py-1.5 border border-gray-300 rounded-md text-xs sm:text-sm hover:bg-gray-100 transition">
+                                View Listings
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Footer Link */}
+                    <div className="text-center mt-4">
                       <a
                         href="#"
-                        className="text-blue-700 font-medium hover:underline text-sm leading-5 block mb-1"
+                        className="text-blue-600 text-sm hover:underline flex items-center justify-center gap-1"
                       >
-                        {item.title}
+                        View More Managers in Toronto →
                       </a>
-
-                      {/* Row with Time, Location, Agent */}
-                      <div className="flex flex-wrap items-center gap-3 text-sm text-gray-600 mb-2">
-                        <div className="flex items-center gap-1">
-                          <span>🕒</span> {item.timeAgo}
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <span>📍</span> {item.location}
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <span>👤</span> {item.agent}
-                        </div>
-                      </div>
-
-                      {/* Price + Badges */}
-                      <div className="flex flex-wrap items-center gap-2 mb-2">
-                        <span className="bg-green-100 text-green-700 font-semibold px-2 py-0.5 rounded text-xs border border-green-200">
-                          ${item.price}/month
-                        </span>
-                        <span className="bg-gray-100 text-gray-700 px-2 py-0.5 rounded text-xs border">
-                          {item.propertyType}
-                        </span>
-                        <span className="bg-gray-100 text-gray-700 px-2 py-0.5 rounded text-xs border">
-                          {item.bedrooms} beds
-                        </span>
-                      </div>
-
-                      {/* Open House Time */}
-                      <div className="text-sm text-gray-700">
-                        <span className="font-medium">Open house:</span>{" "}
-                        {item.houseTime}
-                      </div>
                     </div>
-                  ))}
+                  </div>
                 </div>
               </div>
 
-              {/* Rental Tips */}
-              <div className="bg-blue-50 rounded-lg p-6 shadow-sm mt-6">
-                <h2 className="text-lg font-semibold text-gray-900 mb-2">
-                  💡 Rental Tips
-                </h2>
-                <div className="h-[1px] bg-blue-200 w-full mb-4"></div>
-                <ul className="space-y-3 text-sm text-gray-700">
-                  <li className="flex items-start gap-2">
-                    <span className="text-blue-600">✓</span>
-                    <span>Always verify the landlord/agent credentials</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-blue-600">✓</span>
-                    <span>
-                      Read the lease agreement carefully before signing
-                    </span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-blue-600">✓</span>
-                    <span>Take photos during move-in inspection</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-blue-600">✓</span>
-                    <span>Ask about utility costs and inclusions</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-blue-600">✓</span>
-                    <span>Check building amenities and restrictions</span>
-                  </li>
-                </ul>
+              {/* Open Houses in Toronto - IMPROVED MOBILE COLLAPSIBLE */}
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-4">
+                <button
+                  onClick={() => toggleRightSidebar("openHouses")}
+                  className="lg:hidden w-full px-4 py-3 flex justify-between items-center"
+                >
+                  <div className="text-left">
+                    <h2 className="text-base font-semibold text-gray-800">
+                      Open Houses in Toronto
+                    </h2>
+                    <p className="text-xs text-gray-500 mt-0.5">
+                      Upcoming property viewings
+                    </p>
+                  </div>
+                  <ChevronDown
+                    className={`w-4 h-4 text-gray-500 transition-transform ${
+                      showRightSidebar.openHouses ? "rotate-180" : ""
+                    }`}
+                  />
+                </button>
+
+                <div
+                  className={`${
+                    showRightSidebar.openHouses ? "block" : "hidden"
+                  } lg:block`}
+                >
+                  <div className="px-4 lg:px-5 py-4">
+                    <h2 className="hidden lg:block text-lg font-semibold text-gray-900 mb-3">
+                      Open Houses in Toronto
+                    </h2>
+                    <div className="space-y-4">
+                      {[
+                        {
+                          title: "123 King Street West, Toronto, ON",
+                          timeAgo: "3 hrs ago",
+                          location: "Financial District",
+                          agent: "Luxury Rentals Inc",
+                          price: "3,800",
+                          propertyType: "Condo",
+                          bedrooms: "2",
+                          houseTime: "Today, 2 PM - 6 PM",
+                        },
+                        {
+                          title: "456 Queen Street East, Toronto, ON",
+                          timeAgo: "1 day ago",
+                          location: "Leslieville",
+                          agent: "Urban Spaces",
+                          price: "2,900",
+                          propertyType: "House",
+                          bedrooms: "3",
+                          houseTime: "Tomorrow, 12 PM - 4 PM",
+                        },
+                      ].map((item, index) => (
+                        <div
+                          key={index}
+                          className="pb-4 border-b border-gray-200 last:border-0 last:pb-0"
+                        >
+                          {/* Property Title */}
+                          <a
+                            href="#"
+                            className="text-blue-700 font-medium hover:underline text-sm leading-5 block mb-1"
+                          >
+                            {item.title}
+                          </a>
+
+                          {/* Row with Time, Location, Agent */}
+                          <div className="flex flex-wrap items-center gap-2 text-xs sm:text-sm text-gray-600 mb-2">
+                            <div className="flex items-center gap-1">
+                              <span>🕒</span> {item.timeAgo}
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <span>📍</span> {item.location}
+                            </div>
+                          </div>
+
+                          {/* Price + Badges */}
+                          <div className="flex flex-wrap items-center gap-2 mb-2">
+                            <span className="bg-green-100 text-green-700 font-semibold px-2 py-0.5 rounded text-xs border border-green-200">
+                              ${item.price}/month
+                            </span>
+                            <span className="bg-gray-100 text-gray-700 px-2 py-0.5 rounded text-xs border">
+                              {item.propertyType}
+                            </span>
+                            <span className="bg-gray-100 text-gray-700 px-2 py-0.5 rounded text-xs border">
+                              {item.bedrooms} beds
+                            </span>
+                          </div>
+
+                          {/* Open House Time */}
+                          <div className="text-xs sm:text-sm text-gray-700">
+                            <span className="font-medium">Open house:</span>{" "}
+                            {item.houseTime}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Rental Tips - IMPROVED MOBILE COLLAPSIBLE */}
+              <div className="bg-blue-50 rounded-lg shadow-sm border border-gray-200 mb-4">
+                <button
+                  onClick={() => toggleRightSidebar("rentalTips")}
+                  className="lg:hidden w-full px-4 py-3 flex justify-between items-center"
+                >
+                  <div className="text-left">
+                    <h2 className="text-base font-semibold text-gray-800">
+                      💡 Rental Tips
+                    </h2>
+                    <p className="text-xs text-gray-500 mt-0.5">
+                      Essential rental advice
+                    </p>
+                  </div>
+                  <ChevronDown
+                    className={`w-4 h-4 text-gray-500 transition-transform ${
+                      showRightSidebar.rentalTips ? "rotate-180" : ""
+                    }`}
+                  />
+                </button>
+
+                <div
+                  className={`${
+                    showRightSidebar.rentalTips ? "block" : "hidden"
+                  } lg:block`}
+                >
+                  <div className="px-4 lg:px-6 py-4">
+                    <h2 className="hidden lg:block text-lg font-semibold text-gray-900 mb-2">
+                      💡 Rental Tips
+                    </h2>
+                    <div className="h-[1px] bg-blue-200 w-full mb-4 hidden lg:block"></div>
+                    <ul className="space-y-2 sm:space-y-3 text-xs sm:text-sm text-gray-700">
+                      <li className="flex items-start gap-2">
+                        <span className="text-blue-600">✓</span>
+                        <span>
+                          Always verify the landlord/agent credentials
+                        </span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="text-blue-600">✓</span>
+                        <span>
+                          Read the lease agreement carefully before signing
+                        </span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="text-blue-600">✓</span>
+                        <span>Take photos during move-in inspection</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="text-blue-600">✓</span>
+                        <span>Ask about utility costs and inclusions</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="text-blue-600">✓</span>
+                        <span>Check building amenities and restrictions</span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-
-      <Footer />
     </div>
   );
 };

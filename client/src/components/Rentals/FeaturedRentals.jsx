@@ -17,7 +17,7 @@ const FeaturedRentals = () => {
   const navigate = useNavigate();
 
   const handleExploreRentals = () => {
-    navigate("/rentals-details"); // This will navigate to the RentalsListings page
+    navigate("/rentals-listings"); // This will navigate to the RentalsListings page
   };
 
   // ✅ Rental property data stored locally (fixes undefined.filter)
