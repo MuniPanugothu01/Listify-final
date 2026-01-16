@@ -12,6 +12,8 @@ import {
   FaMapMarkerAlt,
   FaCalendarAlt,
   FaArrowRight,
+  FaChevronDown,
+  FaChevronUp,
 } from "react-icons/fa";
 
 export default function JobSeekerInterface() {
@@ -20,6 +22,8 @@ export default function JobSeekerInterface() {
   const [visibleJobs, setVisibleJobs] = useState(6); // CHANGED: Show 6 jobs initially
   const [loading, setLoading] = useState(false);
   const [allJobsLoaded, setAllJobsLoaded] = useState(false);
+  const [showProfiles, setShowProfiles] = useState(false);
+  const [showArticles, setShowArticles] = useState(false);
 
   // Updated profiles array with progress values
   const profiles = [
@@ -501,7 +505,7 @@ export default function JobSeekerInterface() {
   return (
     <div className="bg-gray-50 min-h-screen">
       {/* Header */}
-      <div className="px-6 py-4">
+      <div className="px-4 sm:px-6 py-4">
         <div className="flex items-center text-sm text-gray-600">
           <span className="font-medium">Local Jobs</span>
           <span className="mx-2">→</span>
@@ -509,29 +513,29 @@ export default function JobSeekerInterface() {
         </div>
       </div>
 
-      <div className="px-6 py-8 -mt-4">
-        {/* MAIN LAYOUT */}
+      <div className="px-4 sm:px-6 py-6 lg:py-8 -mt-4">
+        {/* MAIN LAYOUT - THIS IS ALREADY PERFECT */}
         <div className="grid grid-cols-1 lg:grid-cols-[66%_34%] gap-6">
           {/* LEFT SIDE (66%) */}
           <div className="w-full">
             {/* Search Section */}
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-2 mb-6">
-              <div className="flex gap-4 mb-2">
+              <div className="flex flex-col sm:flex-row gap-4 mb-2">
                 <input
                   type="text"
                   placeholder="Job role"
                   value={jobRole}
                   onChange={(e) => setJobRole(e.target.value)}
-                  className="flex-1 px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="flex-1 px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
                 />
                 <input
                   type="text"
                   placeholder="Location"
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
-                  className="flex-1 px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="flex-1 px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
                 />
-                <button className="px-8 py-3 bg-[#27bb97] hover:bg-[#1fa987] text-white rounded-md font-medium cursor-pointer">
+                <button className="px-6 sm:px-8 py-3 bg-[#27bb97] hover:bg-[#1fa987] text-white rounded-md font-medium cursor-pointer text-sm sm:text-base">
                   Search
                 </button>
               </div>
@@ -539,26 +543,26 @@ export default function JobSeekerInterface() {
 
             {/* Buttons */}
             <div className="flex flex-col items-center gap-4 mb-6">
-              <div className="flex items-center gap-2">
-                <button className="px-6 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">
+              <div className="flex flex-wrap justify-center gap-2">
+                <button className="px-4 sm:px-6 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 text-sm sm:text-base min-h-[44px]">
                   Find Jobs
                 </button>
-                <button className="px-6 py-2 bg-blue-100 border border-blue-300 text-blue-700 rounded-md hover:bg-blue-200">
+                <button className="px-4 sm:px-6 py-2 bg-blue-100 border border-blue-300 text-blue-700 rounded-md hover:bg-blue-200 text-sm sm:text-base min-h-[44px]">
                   Hire Talent
                 </button>
               </div>
 
-              <button className="px-6 py-2 border border-blue-500 text-blue-600 rounded-full hover:bg-blue-50">
+              <button className="px-4 sm:px-6 py-2 border border-blue-500 text-blue-600 rounded-full hover:bg-blue-50 text-sm sm:text-base min-h-[44px]">
                 Profile Creators
               </button>
             </div>
 
-            <div className="bg-yellow-50 relative border-orange-400 border-b border-dashed border-gray-300 p-6 rounded-r-lg mb-6">
+            <div className="bg-yellow-50 relative border-orange-400 border-b border-dashed border-gray-300 p-4 sm:p-6 rounded-r-lg mb-6">
               <div className="bg-orange-400 h-full w-[3px] absolute left-0 top-0" />
-              <h2 className="text-xl font-semibold text-gray-800 mb-2">
+              <h2 className="text-lg sm:text-xl font-semibold text-gray-800 mb-2">
                 Browse Latest Job Seekers in the USA and Canada – Connect Now!
               </h2>
-              <p className="text-gray-600">
+              <p className="text-gray-600 text-sm sm:text-base">
                 Access {jobCards.length} Ads of Qualified Jobs Candidates.
               </p>
             </div>
@@ -568,22 +572,24 @@ export default function JobSeekerInterface() {
               {jobCards.slice(0, visibleJobs).map((job, index) => (
                 <div
                   key={job.id}
-                  className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-all duration-300 ease-in-out hover:scale-[1.005] group "
+                  className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6 hover:shadow-md transition-all duration-300 ease-in-out hover:scale-[1.005] group"
                   style={{
                     animationDelay: `${index * 100}ms`,
                     animation: `fadeInUp 0.5s ease-out ${index * 100}ms both`,
                   }}
                 >
-                  <div className="flex items-center border-b-2 border-dotted mb-7 cursor-pointer">
+                  {/* Mobile: Stacked layout, Desktop: Original side-by-side layout */}
+                  <div className="flex flex-col lg:flex-row lg:items-center border-b-2 border-dotted mb-7 cursor-pointer">
                     <div className="flex-1">
-                      {/* Card Title with Link - Changes to green on hover */}
+                      {/* Card Title - Mobile: smaller, Desktop: original */}
                       <a href={job.link || "#"} className="inline-block">
-                        <h3 className="text-2xl font-semibold text-gray-800 mb-1 group-hover:text-[#1fa987] transition-colors duration-300 cursor-pointer ">
+                        <h3 className="text-xl font-semibold text-gray-800 mb-1 group-hover:text-[#1fa987] transition-colors duration-300 cursor-pointer lg:text-2xl">
                           {job.title}
                         </h3>
                       </a>
 
-                      <div className="flex items-center gap-4 text-sm text-gray-600 mb-6">
+                      {/* Location & Time - Mobile: stacked, Desktop: side-by-side */}
+                      <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-sm text-gray-600 mb-6">
                         <div className="flex items-center gap-1 font-medium">
                           <FaMapMarkerAlt className="w-4 h-4" />
                           <span>{job.location}</span>
@@ -597,8 +603,8 @@ export default function JobSeekerInterface() {
                       {/* dots line */}
                       <div className="w-full border-b border-dotted border-gray-300 -mt-2"></div>
 
-                      {/* work experience */}
-                      <div className="grid grid-cols-4 mb-10 pb-6 mt-5 border-b border-gray-200">
+                      {/* Work info grid - Mobile: 2 columns, Desktop: 4 columns */}
+                      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-6 lg:mb-10 pb-6 mt-5 border-b border-gray-200">
                         {/* Work History */}
                         <div className="flex flex-col items-start">
                           <img
@@ -606,8 +612,8 @@ export default function JobSeekerInterface() {
                             alt="Work History"
                             className="h-10 w-10"
                           />
-                          <p className="text-sm text-gray-500">Work History</p>
-                          <p className="font-semibold text-gray-800">
+                          <p className="text-sm text-gray-500 mt-2">Work History</p>
+                          <p className="font-semibold text-gray-800 lg:text-base">
                             {job.workHistory}
                           </p>
                         </div>
@@ -619,75 +625,86 @@ export default function JobSeekerInterface() {
                             alt="Current Position"
                             className="h-10 w-10"
                           />
-                          <p className="text-sm text-gray-500">
-                            Current Position
-                          </p>
-                          <p className="font-semibold text-blue-600">
+                          <p className="text-sm text-gray-500 mt-2">Current Position</p>
+                          <p className="font-semibold text-blue-600 lg:text-base">
                             {job.currentPosition}
                           </p>
                         </div>
 
-                        {/* Industry */}
-                        <div className="flex flex-col items-start">
+                        {/* Industry - Hidden on mobile, shown on desktop */}
+                        <div className="hidden lg:flex flex-col items-start">
                           <img
                             src="/JobsImg/factory.png"
                             alt="Industry"
                             className="h-10 w-10"
                           />
-                          <p className="text-sm text-gray-500">Industry</p>
+                          <p className="text-sm text-gray-500 mt-2">Industry</p>
                           <p className="font-semibold text-gray-800">
                             {job.industry}
                           </p>
                         </div>
 
-                        {/* Functional Area */}
-                        <div className="flex flex-col items-start">
+                        {/* Functional Area - Hidden on mobile, shown on desktop */}
+                        <div className="hidden lg:flex flex-col items-start">
                           <img
                             src="/JobsImg/factory.png"
                             alt="Functional Area"
                             className="h-10 w-10"
                           />
-                          <p className="text-sm text-gray-500">
-                            Functional Area
-                          </p>
+                          <p className="text-sm text-gray-500 mt-2">Functional Area</p>
                           <p className="font-semibold text-gray-800">
                             {job.functionalArea}
                           </p>
                         </div>
                       </div>
 
-                      {/* skills and more details */}
-                      <div className="font-normal mb-10 -mt-8">
-                        <p className="font-semibold text-gray-800 text-[14px]">
+                      {/* Industry & Functional Area - Shown as badges on mobile */}
+                      <div className="lg:hidden flex flex-wrap gap-2 mb-8">
+                        <span className="px-3 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
+                          {job.industry}
+                        </span>
+                        <span className="px-3 py-1 bg-green-100 text-green-800 text-xs rounded-full">
+                          {job.functionalArea}
+                        </span>
+                      </div>
+
+                      {/* skills and more details - Better mobile readability */}
+                      <div className="font-normal mb-6 lg:mb-10 -mt-6 lg:-mt-8">
+                        <p className="font-semibold text-gray-800 text-sm lg:text-[14px] mb-2">
                           Skills:{" "}
-                          <span className="text-gray-500 text-[14px]">
+                          <span className="text-gray-500 text-sm lg:text-[14px] font-normal">
                             {job.skills}
                           </span>
                         </p>
-                        <p className="font-semibold text-gray-800 text-[14px]">
+                        <p className="font-semibold text-gray-800 text-sm lg:text-[14px]">
                           More on Me:{" "}
-                          <span className="text-gray-500 text-[14px]">
+                          <span className="text-gray-500 text-sm lg:text-[14px] font-normal">
                             {job.description}
                           </span>
                         </p>
                       </div>
                     </div>
-                    <div className="h-[280px] w-[1px] bg-gray-300" />
-                    <div className="p-4">
-                      <p>Expected Salary</p>
-                      <h1 className="text-[20px] font-bold">
+                    
+                    {/* Vertical Divider - HIDDEN ON MOBILE, SHOWN ON DESKTOP */}
+                    <div className="hidden lg:block h-[280px] w-[1px] bg-gray-300" />
+                    
+                    {/* Salary section - Mobile: below content, Desktop: side panel */}
+                    <div className="lg:p-4 mt-4 lg:mt-0">
+                      <p className="text-sm lg:text-base">Expected Salary</p>
+                      <h1 className="text-xl lg:text-[20px] font-bold">
                         {job.salary}{" "}
-                        <span className="text-[12px] text-gray-500">
+                        <span className="text-xs lg:text-[12px] text-gray-500">
                           {job.salaryPeriod}
                         </span>
                       </h1>
+                   
                     </div>
                   </div>
 
-                  {/* footer buttons */}
-                  <div className="flex items-center justify-between">
+                  {/* footer buttons - Mobile: stacked, Desktop: side-by-side */}
+                  <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
                     {/* Left icons */}
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 w-full sm:w-auto">
                       <button className="p-2 border rounded-md transition-all duration-200 ease-in-out hover:bg-gray-100 hover:scale-105 hover:shadow-sm active:scale-95 cursor-pointer">
                         ❤️
                       </button>
@@ -698,12 +715,12 @@ export default function JobSeekerInterface() {
                     </div>
 
                     {/* Right actions */}
-                    <div className="flex items-center gap-3">
-                      <button className="px-6 py-2 border rounded-md transition-all duration-200 ease-in-out hover:bg-gray-50 hover:border-gray-400 hover:scale-105 active:scale-95 cursor-pointer">
+                    <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
+                      <button className="w-full sm:w-auto px-6 py-2 border rounded-md transition-all duration-200 ease-in-out hover:bg-gray-50 hover:border-gray-400 hover:scale-105 active:scale-95 cursor-pointer text-sm sm:text-base">
                         View More
                       </button>
 
-                      <button className="px-8 py-2 bg-[#27bb97] text-white rounded-md font-semibold transition-all duration-200 ease-in-out hover:bg-[#1fa987] hover:scale-105 hover:shadow-md active:scale-95 cursor-pointer">
+                      <button className="w-full sm:w-auto px-6 lg:px-8 py-2 bg-[#27bb97] text-white rounded-md font-semibold transition-all duration-200 ease-in-out hover:bg-[#1fa987] hover:scale-105 hover:shadow-md active:scale-95 cursor-pointer text-sm sm:text-base">
                         Hire Now
                       </button>
                     </div>
@@ -718,7 +735,7 @@ export default function JobSeekerInterface() {
                 <button
                   onClick={handleViewMore}
                   disabled={loading}
-                  className="px-8 py-3 bg-[#27bb97] text-white rounded-lg font-medium transition-all duration-300 ease-in-out hover:bg-[#1fa987] hover:shadow-lg hover:scale-105 active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed group"
+                  className="px-6 sm:px-8 py-3 bg-[#27bb97] text-white rounded-lg font-medium transition-all duration-300 ease-in-out hover:bg-[#1fa987] hover:shadow-lg hover:scale-105 active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed group w-full sm:w-auto min-h-[44px]"
                 >
                   {loading ? (
                     <div className="flex items-center justify-center gap-2">
@@ -750,14 +767,14 @@ export default function JobSeekerInterface() {
           </div>
 
           {/* RIGHT SIDE (34%) */}
-          <div className="w-full mb-6">
+          <div className="w-full mb-6 space-y-6 lg:space-y-0">
             {/* "Are you hiring? Find talent now!" section */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
-              <h3 className="text-xl font-semibold text-gray-800 mb-6">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-800 mb-4 sm:mb-6">
                 Are you hiring? Find talent now!
               </h3>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 mb-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 mb-6 sm:mb-8">
                 {[
                   {
                     label: "Post your job ad",
@@ -795,33 +812,35 @@ export default function JobSeekerInterface() {
                     className="flex items-center gap-3 p-3 cursor-pointer hover:text-blue-600"
                   >
                     <div
-                      className={`w-12 h-12 ${item.bg} rounded-full flex items-center justify-center`}
+                      className={`w-10 h-10 sm:w-12 sm:h-12 ${item.bg} rounded-full flex items-center justify-center flex-shrink-0`}
                     >
-                      <item.icon className={`w-6 h-6 ${item.color}`} />
+                      <item.icon className={`w-5 h-5 sm:w-6 sm:h-6 ${item.color}`} />
                     </div>
                     <span className="text-sm font-medium">{item.label}</span>
                   </div>
                 ))}
               </div>
 
-              <div className="bg-gradient-to-r from-blue-100 to-blue-100 border border-dashed border-blue-300 p-6 text-center">
-                <p className="text-gray-700 mb-1">
+              <div className="bg-gradient-to-r from-blue-100 to-blue-100 border border-dashed border-blue-300 p-4 sm:p-6 text-center">
+                <p className="text-gray-700 mb-1 text-sm sm:text-base">
                   Need help? Contact us today
                 </p>
-                <p className="text-blue-600 font-bold text-xl mb-4">
+                <p className="text-blue-600 font-bold text-lg sm:text-xl mb-4">
                   +1-512-580-7444
                 </p>
-                <span className="font-semibold">Eager to give it a try?</span>{" "}
-                <button className="px-5 py-2 bg-white border-2 border-dashed border-green-500 text-green-600 font-semibold rounded-2xl">
+                <span className="font-semibold text-sm sm:text-base">
+                  Eager to give it a try?
+                </span>{" "}
+                <button className="px-4 sm:px-5 py-2 bg-white border-2 border-dashed border-green-500 text-green-600 font-semibold rounded-2xl text-sm sm:text-base mt-2 sm:mt-0">
                   Get 10% off
                 </button>
               </div>
 
               {/* dots line */}
-              <div className="w-full border-b border-dotted border-gray-300 mt-5"></div>
+              <div className="w-full border-b border-dotted border-gray-300 mt-4 sm:mt-5"></div>
 
               <div className="flex justify-end mt-3">
-                <button className="group flex items-center gap-2 text-green-700 capitalize transition-colors duration-200 hover:text-green-800 hover:underline underline-offset-4 cursor-pointer">
+                <button className="group flex items-center gap-2 text-green-700 capitalize transition-colors duration-200 hover:text-green-800 hover:underline underline-offset-4 cursor-pointer text-sm sm:text-base">
                   view more
                   <FaLongArrowAltRight className="transition-transform duration-200 group-hover:translate-x-1 cursor-pointer" />
                 </button>
@@ -829,142 +848,167 @@ export default function JobSeekerInterface() {
             </div>
 
             {/* Yellow Pay Section */}
-            <div className="bg-yellow-400 rounded-lg p-6 flex justify-between items-center mb-6">
-              <p className="font-semibold text-sm">
+            <div className="bg-yellow-400 rounded-lg p-4 sm:p-6 flex mb-4 mt-5 justify-between items-center">
+              <p className="font-semibold text-xs sm:text-sm">
                 Unlock recruiters' contact details for just $10
               </p>
-              <button className="px-4 py-1 bg-black text-yellow-400 rounded font-bold text-sm">
+              <button className="px-3 sm:px-4 py-1 bg-black text-yellow-400 rounded font-bold text-xs sm:text-sm min-h-[44px]">
                 PAY
               </button>
             </div>
 
-            {/* Latest job seeker profiles section with progress bars */}
-            <div className="border border-gray-300 rounded-lg overflow-hidden shadow-sm mb-6">
-              <div className="bg-white border-b border-gray-300 px-6 py-4">
-                <h1 className="text-2xl font-bold text-gray-900">
-                  Latest job seeker profiles
-                </h1>
-                <p className="text-sm text-gray-500 mt-1">
-                  Profile completion status
-                </p>
+            {/* Latest job seeker profiles section with progress bars - COLLAPSIBLE ON MOBILE */}
+            <div className="border border-gray-300 rounded-lg overflow-hidden shadow-sm mb-4">
+              <button
+                onClick={() => setShowProfiles(!showProfiles)}
+                className="w-full lg:hidden px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center bg-white border-b border-gray-200"
+              >
+                <div>
+                  <h1 className="text-lg sm:text-xl font-bold text-gray-900 text-left">
+                    Latest job seeker profiles
+                  </h1>
+                  <p className="text-xs sm:text-sm text-gray-500 mt-1 text-left">
+                    Profile completion status
+                  </p>
+                </div>
+                {showProfiles ? (
+                  <FaChevronUp className="w-5 h-5 text-gray-500" />
+                ) : (
+                  <FaChevronDown className="w-5 h-5 text-gray-500" />
+                )}
+              </button>
+
+              <div className="hidden lg:block">
+                <div className="bg-white border-b border-gray-300 px-6 py-4">
+                  <h1 className="text-2xl font-bold text-gray-900">
+                    Latest job seeker profiles
+                  </h1>
+                  <p className="text-sm text-gray-500 mt-1">
+                    Profile completion status
+                  </p>
+                </div>
               </div>
 
-              <div className="divide-y divide-gray-200">
-                {profiles.map((profile) => (
-                  <div
-                    key={profile.id}
-                    className="px-6 py-4 hover:bg-gray-50 transition-colors group"
-                  >
-                    <div className="flex items-start gap-4">
-                      {/* Profile Image */}
-                      <div className="w-14 h-14 rounded-full overflow-hidden flex-shrink-0 border-2 border-gray-200">
-                        <img
-                          src={profile.image}
-                          alt={profile.title}
-                          className="w-full h-full object-cover"
-                          onError={(e) => {
-                            e.target.onerror = null;
-                            e.target.src = `https://ui-avatars.com/api/?name=${
-                              profile.title.split(" ")[0]
-                            }&background=random&color=fff&size=56`;
-                          }}
-                        />
-                      </div>
+              <div className={`${showProfiles ? 'block' : 'hidden lg:block'}`}>
+                <div className="divide-y divide-gray-200">
+                  {profiles.map((profile) => (
+                    <div
+                      key={profile.id}
+                      className="px-4 sm:px-6 py-3 sm:py-4 hover:bg-gray-50 transition-colors group"
+                    >
+                      <div className="flex items-start gap-3 sm:gap-4">
+                        {/* Profile Image */}
+                        <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full overflow-hidden flex-shrink-0 border-2 border-gray-200">
+                          <img
+                            src={profile.image}
+                            alt={profile.title}
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              e.target.onerror = null;
+                              e.target.src = `https://ui-avatars.com/api/?name=${
+                                profile.title.split(" ")[0]
+                              }&background=random&color=fff&size=56`;
+                            }}
+                          />
+                        </div>
 
-                      <div className="flex-1">
-                        <div className="flex justify-between items-start cursor-pointer">
-                          <div>
-                            <h2 className="text-lg font-bold text-black mb-1 group-hover:text-[#1fa987] transition-colors duration-200">
-                              {profile.title}
-                            </h2>
-                            <div className="flex items-center gap-4 text-sm text-gray-600 mb-2">
-                              <div className="flex items-center gap-1">
-                                <FaMapMarkerAlt className="w-4 h-4 text-gray-400" />
-                                <span>{profile.location}</span>
-                              </div>
-                              <div className="flex items-center gap-1">
-                                <FaFileAlt className="w-4 h-4 text-gray-400" />
-                                <span>Updated {profile.updated}</span>
+                        <div className="flex-1">
+                          <div className="flex justify-between items-start cursor-pointer">
+                            <div>
+                              <h2 className="text-base sm:text-lg font-bold text-black mb-1 group-hover:text-[#1fa987] transition-colors duration-200">
+                                {profile.title}
+                              </h2>
+                              <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 text-xs sm:text-sm text-gray-600 mb-2">
+                                <div className="flex items-center gap-1">
+                                  <FaMapMarkerAlt className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400" />
+                                  <span>{profile.location}</span>
+                                </div>
+                                <div className="flex items-center gap-1">
+                                  <FaFileAlt className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400" />
+                                  <span>Updated {profile.updated}</span>
+                                </div>
                               </div>
                             </div>
+                            <div className="text-right">
+                              <span
+                                className={`px-2 py-1 text-xs font-semibold rounded-full ${
+                                  profile.progress >= 90
+                                    ? "bg-green-100 text-green-800"
+                                    : profile.progress >= 75
+                                    ? "bg-blue-100 text-blue-800"
+                                    : "bg-yellow-100 text-yellow-800"
+                                }`}
+                              >
+                                {profile.progress}%
+                              </span>
+                              <p className="text-xs text-gray-500 mt-1">
+                                Complete
+                              </p>
+                            </div>
                           </div>
-                          <div className="text-right">
-                            <span
-                              className={`px-2 py-1 text-xs font-semibold rounded-full ${
-                                profile.progress >= 90
-                                  ? "bg-green-100 text-green-800"
-                                  : profile.progress >= 75
-                                  ? "bg-blue-100 text-blue-800"
-                                  : "bg-yellow-100 text-yellow-800"
-                              }`}
-                            >
-                              {profile.progress}%
-                            </span>
-                            <p className="text-xs text-gray-500 mt-1">
-                              Complete
-                            </p>
-                          </div>
-                        </div>
 
-                        {/* Progress Bar */}
-                        <div className="mt-2">
-                          <div className="flex justify-between text-xs text-gray-500 mb-1">
-                            <span>Profile completion</span>
-                            <span>{profile.progress}%</span>
+                          {/* Progress Bar */}
+                          <div className="mt-2">
+                            <div className="flex justify-between text-xs text-gray-500 mb-1">
+                              <span>Profile completion</span>
+                              <span>{profile.progress}%</span>
+                            </div>
+                            <div className="w-full bg-gray-200 rounded-full h-2">
+                              <div
+                                className={`h-2 rounded-full ${
+                                  profile.progress >= 90
+                                    ? "bg-green-500"
+                                    : profile.progress >= 75
+                                    ? "bg-blue-500"
+                                    : "bg-yellow-500"
+                                }`}
+                                style={{ width: `${profile.progress}%` }}
+                              ></div>
+                            </div>
                           </div>
-                          <div className="w-full bg-gray-200 rounded-full h-2">
-                            <div
-                              className={`h-2 rounded-full ${
-                                profile.progress >= 90
-                                  ? "bg-green-500"
-                                  : profile.progress >= 75
-                                  ? "bg-blue-500"
-                                  : "bg-yellow-500"
-                              }`}
-                              style={{ width: `${profile.progress}%` }}
-                            ></div>
-                          </div>
-                        </div>
 
-                        {/* Last Active */}
-                        <div className="flex items-center gap-1 text-xs text-gray-500 mt-2">
-                          <CiClock2 className="w-3 h-3" />
-                          <span>Last active: {profile.lastActive}</span>
+                          {/* Last Active */}
+                          <div className="flex items-center gap-1 text-xs text-gray-500 mt-2">
+                            <CiClock2 className="w-3 h-3" />
+                            <span>Last active: {profile.lastActive}</span>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
             </div>
 
             {/* Upload Resume Banner - Decorative Arrow */}
-            <div className="bg-gray-50 border border-gray-200 rounded-xl p-6 shadow-sm mb-6 overflow-hidden group">
-              <h2 className="text-gray-800 text-xl font-semibold mb-3 leading-relaxed">
+            <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 sm:p-6 shadow-sm overflow-hidden group mb-4">
+              <h2 className="text-gray-800 text-lg sm:text-xl font-semibold mb-3 leading-relaxed">
                 Not able to find the right job in USA & Canada?
               </h2>
 
-              <p className="text-gray-600 text-sm mb-6">
+              <p className="text-gray-600 text-sm mb-4 sm:mb-6">
                 Upload your resume and let verified employers find you.
               </p>
 
               <div className="flex items-center justify-between">
                 <button
                   className="
-        bg-[#27bb97]
-        hover:bg-[#1fa987]
-        active:bg-[#159a7a]
-        text-white
-        px-8 py-3
-        rounded-lg
-        font-semibold
-        transition-all
-        duration-200
-        shadow-sm
-        hover:shadow-md
-        transform
-        hover:-translate-y-0.5
-      "
+                    bg-[#27bb97]
+                    hover:bg-[#1fa987]
+                    active:bg-[#159a7a]
+                    text-white
+                    px-6 sm:px-8 py-3
+                    rounded-lg
+                    font-semibold
+                    transition-all
+                    duration-200
+                    shadow-sm
+                    hover:shadow-md
+                    transform
+                    hover:-translate-y-0.5
+                    text-sm sm:text-base
+                    min-h-[44px]
+                  "
                 >
                   Upload Resume
                 </button>
@@ -990,101 +1034,124 @@ export default function JobSeekerInterface() {
                 </div>
               </div>
             </div>
+
             {/* Job Alert Banner */}
-            <div className="bg-gray-50 border border-gray-200 rounded-xl p-6 mb-6">
-              <h2 className="text-gray-800 text-xl font-semibold mb-2">
+            <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 sm:p-6 mb-4">
+              <h2 className="text-gray-800 text-lg sm:text-xl font-semibold mb-2">
                 Get matching jobs in your inbox
               </h2>
-              <p className="text-gray-500 text-sm mb-5">
+              <p className="text-gray-500 text-sm mb-4 sm:mb-5">
                 No spam. Only relevant jobs. Unsubscribe anytime.
               </p>
               <button
                 className="
-    bg-[#27bb97]
-    hover:bg-[#1fa987]
-    text-white
-    px-7 py-3
-    rounded-lg
-    font-semibold
-    transition
-  "
+                  bg-[#27bb97]
+                  hover:bg-[#1fa987]
+                  text-white
+                  px-6 sm:px-7 py-3
+                  rounded-lg
+                  font-semibold
+                  transition
+                  text-sm sm:text-base
+                  min-h-[44px]
+                "
               >
                 Set Job Alert
               </button>
             </div>
 
             {/* Post Job Need Banner */}
-            <div className="bg-[#27bb97]/10 border border-[#27bb97]/30 rounded-xl p-6 mb-6">
-              <h2 className="text-gray-800 text-xl font-semibold mb-2">
+            <div className="bg-[#27bb97]/10 border border-[#27bb97]/30 rounded-xl p-4 sm:p-6 mb-4">
+              <h2 className="text-gray-800 text-lg sm:text-xl font-semibold mb-2">
                 Post your job need & get noticed faster
               </h2>
-              <p className="text-gray-600 text-sm mb-5">
+              <p className="text-gray-600 text-sm mb-4 sm:mb-5">
                 Rank higher and reach recruiters directly
               </p>
               <button
                 className="
-    bg-[#27bb97]
-    hover:bg-[#1fa987]
-    text-white
-    px-7 py-3
-    rounded-lg
-    font-semibold
-    transition
-  "
+                  bg-[#27bb97]
+                  hover:bg-[#1fa987]
+                  text-white
+                  px-6 sm:px-7 py-3
+                  rounded-lg
+                  font-semibold
+                  transition
+                  text-sm sm:text-base
+                  min-h-[44px]
+                "
               >
                 Post Job Need (Free)
               </button>
             </div>
 
-            {/* Latest Articles section */}
-            <div className="border border-gray-300 rounded-lg overflow-hidden shadow-sm mb-6">
-              <div className="bg-white px-6 py-4 border-b border-gray-200">
-                <h1 className="text-2xl font-bold text-gray-900">
+            {/* Latest Articles section - COLLAPSIBLE ON MOBILE */}
+            <div className="border border-gray-300 rounded-lg overflow-hidden shadow-sm">
+              <button
+                onClick={() => setShowArticles(!showArticles)}
+                className="w-full lg:hidden px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center bg-white border-b border-gray-200"
+              >
+                <h1 className="text-lg sm:text-xl font-bold text-gray-900">
                   Latest Articles
                 </h1>
+                {showArticles ? (
+                  <FaChevronUp className="w-5 h-5 text-gray-500" />
+                ) : (
+                  <FaChevronDown className="w-5 h-5 text-gray-500" />
+                )}
+              </button>
+
+              <div className="hidden lg:block">
+                <div className="bg-white px-6 py-4 border-b border-gray-200">
+                  <h1 className="text-2xl font-bold text-gray-900">
+                    Latest Articles
+                  </h1>
+                </div>
               </div>
 
-              <div className="divide-y divide-gray-200">
-                {articles.map((article) => (
-                  <div key={article.id} className="px-6 py-5">
-                    <h2 className="text-lg text-blue-500 mb-1 hover:underline cursor-pointer">
-                      {article.title}
-                    </h2>
-                    <p className="text-sm text-gray-600 mb-3">
-                      by {article.author}
-                    </p>
+              <div className={`${showArticles ? 'block' : 'hidden lg:block'}`}>
+                <div className="divide-y divide-gray-200">
+                  {articles.map((article) => (
+                    <div key={article.id} className="px-4 sm:px-6 py-4 sm:py-5">
+                      <h2 className="text-base sm:text-lg text-blue-500 mb-1 hover:underline cursor-pointer">
+                        {article.title}
+                      </h2>
+                      <p className="text-xs sm:text-sm text-gray-600 mb-3">
+                        by {article.author}
+                      </p>
 
-                    <div className="flex gap-4">
-                      <img
-                        src={article.image}
-                        alt={article.title}
-                        className="w-44 h-32 object-cover rounded flex-shrink-0"
-                      />
+                      <div className="flex flex-col sm:flex-row gap-4">
+                        <img
+                          src={article.image}
+                          alt={article.title}
+                          className="w-full sm:w-44 h-48 sm:h-32 object-cover rounded flex-shrink-0"
+                        />
 
-                      <div className="flex-1">
-                        <p className="text-sm text-gray-700 leading-relaxed">
-                          {article.description}
-                          <a
-                            href="#"
-                            className="text-blue-500 hover:underline ml-1"
-                          >
-                            {article.readMoreLink}
-                          </a>
-                        </p>
+                        <div className="flex-1">
+                          <p className="text-xs sm:text-sm text-gray-700 leading-relaxed">
+                            {article.description}
+                            <a
+                              href="#"
+                              className="text-blue-500 hover:underline ml-1"
+                            >
+                              {article.readMoreLink}
+                            </a>
+                          </p>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
 
-              <div className="px-6 py-4 border-t border-gray-200 flex justify-end">
-                <a
-                  href="#"
-                  className="flex items-center gap-2 text-blue-500 hover:underline"
-                >
-                  View More <span className="font-semibold">Articles</span>
-                  <FaArrowRight className="w-4 h-4" />
-                </a>
+                <div className="px-4 sm:px-6 py-3 sm:py-4 border-t border-gray-200 flex justify-end">
+                  <a
+                    href="#"
+                    className="flex items-center gap-2 text-blue-500 hover:underline text-sm sm:text-base"
+                  >
+                    View More <span className="font-semibold">Articles</span>
+                    <FaArrowRight className="w-4 h-4" />
+                  </a>
+                </div>
               </div>
             </div>
           </div>
