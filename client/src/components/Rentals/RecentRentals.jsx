@@ -448,7 +448,7 @@ const RecentRentals = () => {
   );
 
   return (
-    <div className="py-16 -mt-25" id="recent-rentals">
+    <div className="py-16 -mt-12" id="recent-rentals">
       {/* Decorative Background */}
       <div className="absolute left-0 right-0 h-64 bg-gradient-to-b from-blue-50/20 to-transparent -z-10"></div>
 
