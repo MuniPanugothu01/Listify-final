@@ -65,7 +65,7 @@ const FeaturedCars = () => {
   ];
 
   return (
-    <div className="max-w-9xl min-h-screen mx-auto mt-10 p-4 md:p-7">
+    <div className="max-w-9xl min-h-screen mx-auto -mt-25 p-4 md:p-7">
       {/* Header Section */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 mb-8">
         {/* Left: title */}

@@ -7,7 +7,7 @@ export default function HeroSection2() {
   const [activeTab, setActiveTab] = useState("explore");
 
   return (
-    <div className="w-full relative">
+    <div className="w-full relative mt-0 z-0">
       {/* Hero Section with Background */}
       <div
         className="relative w-full h-[50vh] min-h-[500px] max-h-[600px] bg-cover bg-center bg-no-repeat"
