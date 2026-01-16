@@ -9,6 +9,7 @@ import {
   FaInfoCircle,
   FaCheckCircle,
   FaStar,
+  FaFilter,
 } from "react-icons/fa";
 
 export default function JobSeekerResumesDetail() {
@@ -22,6 +23,7 @@ export default function JobSeekerResumesDetail() {
   const [openIndustry, setOpenIndustry] = useState(true);
   const [openExperience, setOpenExperience] = useState(true);
   const [openWorkAuthorization, setOpenWorkAuthorization] = useState(true);
+  const [showMobileFilters, setShowMobileFilters] = useState(false); // NEW: Mobile filter drawer state
 
   // New states for view more functionality
   const [visibleJobs, setVisibleJobs] = useState(6); // Changed to show only 6 initially
@@ -177,7 +179,7 @@ export default function JobSeekerResumesDetail() {
     },
   ];
 
-  // Filter data arrays remain the same...
+  // Filter data arrays
   const jobRoles = [
     "Business Analyst",
     "Administrative assistant",
@@ -388,49 +390,98 @@ export default function JobSeekerResumesDetail() {
   const hasMoreJobs = visibleJobs < allJobSeekers.length;
 
   return (
-    <div className="min-h-screen bg-[#f5f5f5] ">
-      {/* Hero Section with Background */}
-      <div className="relative bg-gradient-to-br from-[#2d3e50] via-[#34495e] to-[#1a252f] text-white overflow-hidden min-h-[50vh]">
-        {/* Background image */}
-        <div className="absolute inset-0 rounded-full h-[calc(100%+60px)]">
+    <div className="min-h-screen bg-[#f5f5f5]">
+      {/* Hero Section with Background - IMPROVED FOR MOBILE */}
+      <div className="relative bg-gradient-to-br from-[#2d3e50] via-[#34495e] to-[#1a252f] text-white overflow-hidden min-h-[40vh] md:min-h-[50vh]">
+        {/* Background image with improved mobile positioning */}
+        <div className="absolute inset-0">
           <img
             src="/JobsImg/Seekercarrer.jpg"
-            alt="Background"
-            className="w-full h-full  object-cover opacity-70"
+            alt="Job Seekers Background"
+            className="w-full h-full object-cover opacity-70"
+            style={{
+              objectPosition: "center 30%",
+            }}
           />
+          {/* Dark overlay for better text readability on mobile */}
+          <div className="absolute inset-0 bg-black/30 md:bg-black/20"></div>
+        </div>
+
+        {/* Hero content centered for mobile */}
+        <div className="relative z-10 h-full flex flex-col justify-center px-4 py-8 md:py-12">
+          <div className="max-w-6xl mx-auto w-full text-center md:text-left">
+            <h1 className="text-2xl md:text-4xl font-bold mb-3 md:mb-4">
+              Find Top Talent for Your Team
+            </h1>
+            <p className="text-base md:text-lg opacity-90 max-w-2xl mx-auto md:mx-0">
+              Connect with qualified professionals ready to join your
+              organization
+            </p>
+          </div>
         </div>
       </div>
 
-      {/* Search Container */}
-      <div className="relative -mt-16 z-10">
-        <div className="max-w-[1400px] mx-auto px-6">
+      {/* Search Container - IMPROVED FOR MOBILE */}
+      <div className="relative -mt-12 md:-mt-16 z-20">
+        <div className="max-w-[1400px] mx-auto px-3 md:px-6">
           <div className="max-w-[900px] mx-auto">
-            <div className="bg-[#3d4f5f]/30 backdrop-blur-sm p-6 rounded-lg">
-              <div className="flex gap-3">
-                <input
-                  type="text"
-                  placeholder="Search Job roles"
-                  className="flex-1 px-4 py-3 rounded bg-white text-gray-800 text-[15px] placeholder-gray-500 border-0 focus:outline-none focus:ring-2 focus:ring-[#27bb97]"
-                />
+            <div className="bg-[#3d4f5f]/90 md:bg-[#3d4f5f]/30 backdrop-blur-sm p-4 md:p-6 rounded-xl md:rounded-lg shadow-lg md:shadow-none">
+              {/* Mobile: Stack inputs vertically, Desktop: Keep horizontal */}
+              <div className="flex flex-col md:flex-row gap-3">
+                {/* Search input */}
                 <div className="relative flex-1">
+                  <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+                    <FaSearch className="w-4 h-4 md:w-5 md:h-5" />
+                  </div>
+                  <input
+                    type="text"
+                    placeholder="Search Job roles or skills"
+                    className="w-full pl-10 pr-4 py-3 md:py-3.5 rounded-lg bg-white text-gray-800 text-sm md:text-[15px] placeholder-gray-500 border-0 focus:outline-none focus:ring-2 focus:ring-[#27bb97] shadow-sm"
+                  />
+                </div>
+
+                {/* Location input */}
+                <div className="relative flex-1">
+                  <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+                    <FaMapMarkerAlt className="w-4 h-4 md:w-5 md:h-5" />
+                  </div>
                   <input
                     list="country-options"
-                    className="w-full px-4 py-3 rounded bg-white text-gray-800 text-[15px] border-0 appearance-none focus:outline-none focus:ring-2 focus:ring-[#27bb97] pr-10"
-                    placeholder="Type or select country"
+                    className="w-full pl-10 pr-10 py-3 md:py-3.5 rounded-lg bg-white text-gray-800 text-sm md:text-[15px] border-0 appearance-none focus:outline-none focus:ring-2 focus:ring-[#27bb97] shadow-sm"
+                    placeholder="Location or country"
                   />
-                  <datalist id="country-options">
-                    <option>USA / Canada</option>
-                    <option>Europe</option>
-                    <option>Asia</option>
-                  </datalist>
                   <FaChevronDown
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"
                     size={16}
                   />
                 </div>
-                <button className="bg-[#27bb97] hover:bg-[#1fa987] px-8 rounded transition-colors flex items-center justify-center">
+
+                {/* Search button */}
+                <button className="bg-[#27bb97] hover:bg-[#1fa987] px-6 md:px-8 py-3 md:py-3.5 rounded-lg transition-colors flex items-center justify-center gap-2 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200">
                   <FaSearch size={18} className="text-white" />
+                  <span className="text-white font-semibold text-sm md:text-base hidden md:inline">
+                    Search
+                  </span>
                 </button>
+              </div>
+
+              {/* Quick filters for mobile */}
+              <div className="mt-4 md:hidden">
+                <div className="flex gap-2 overflow-x-auto pb-2">
+                  {[
+                    "Business Analyst",
+                    "Software Engineer",
+                    "Data Scientist",
+                    "UX Designer",
+                  ].map((tag) => (
+                    <button
+                      key={tag}
+                      className="flex-shrink-0 px-3 py-1.5 bg-white/20 backdrop-blur-sm rounded-full text-xs font-medium text-white hover:bg-white/30 transition-colors"
+                    >
+                      {tag}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
@@ -438,34 +489,37 @@ export default function JobSeekerResumesDetail() {
       </div>
 
       {/* Header Navigation */}
-      <div className="text-black mt-10">
-        <div className="max-w-[1400px] mx-auto px-6 py-3">
-          <div className="flex items-center gap-2 text-[15px]">
-            <span className="font-medium">Jobs</span>
+      <div className="text-black mt-8 md:mt-10">
+        <div className="max-w-[1400px] mx-auto px-4 md:px-6 py-3">
+          <div className="flex items-center gap-1 md:gap-2 text-sm md:text-[15px] overflow-x-auto pb-1">
+            <span className="font-medium whitespace-nowrap">Jobs</span>
             <span className="text-gray-500">››</span>
-            <span>Job Seekers Resume</span>
+            <span className="whitespace-nowrap">Job Seekers Resume</span>
             <span className="text-gray-500">››</span>
-            <span className="text-gray-500">Resumes Listing</span>
+            <span className="text-gray-500 whitespace-nowrap">
+              Resumes Listing
+            </span>
           </div>
         </div>
       </div>
 
-      {/* Main Content Area */}
-      <div className="max-w-[1400px] mx-auto px-6 pt-8 pb-8">
-        {/* Active Filters */}
-        {activeFilters.length > 0 && (
-          <div className="mb-6 px-6 py-4 border border-gray-200 rounded-lg bg-gray-50">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-gray-600 font-medium">
-                  Active Filters:
-                </span>
+      {/* Active Filters - IMPROVED FOR MOBILE */}
+      {activeFilters.length > 0 && (
+        <div className="mb-6 px-4 md:px-6 py-3 md:py-4 border border-gray-200 rounded-lg bg-gray-50">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-gray-600 font-medium whitespace-nowrap">
+                Active Filters:
+              </span>
+              <div className="flex flex-wrap gap-2">
                 {activeFilters.map((filter, index) => (
                   <div
                     key={index}
                     className="flex items-center gap-1 bg-white px-3 py-1.5 rounded-full border border-gray-200 shadow-sm"
                   >
-                    <span className="text-sm text-gray-700">{filter}</span>
+                    <span className="text-xs md:text-sm text-gray-700 truncate max-w-[100px]">
+                      {filter}
+                    </span>
                     <button
                       onClick={() => removeFilter(filter)}
                       className="text-gray-400 hover:text-gray-600 transition-colors"
@@ -475,19 +529,553 @@ export default function JobSeekerResumesDetail() {
                   </div>
                 ))}
               </div>
+            </div>
+            <button
+              onClick={clearAllFilters}
+              className="text-[#27bb97] hover:text-[#1fa987] text-sm font-medium transition-colors whitespace-nowrap self-end md:self-auto"
+            >
+              Clear All Filters
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* MOBILE FILTER BUTTON */}
+      <div className="flex lg:hidden mb-6 px-4 md:px-6">
+        <button
+          onClick={() => setShowMobileFilters(true)}
+          className="w-full py-3.5 rounded-xl border border-gray-300 bg-white font-semibold shadow-sm flex items-center justify-center gap-2 text-gray-700 hover:bg-gray-50 transition-colors active:scale-[0.98]"
+        >
+          <FaFilter className="w-4 h-4" />
+          <span className="text-sm">Filters</span>
+          {activeFilters.length > 0 && (
+            <span className="ml-1 px-2 py-0.5 bg-[#27bb97] text-white text-xs rounded-full">
+              {activeFilters.length}
+            </span>
+          )}
+        </button>
+      </div>
+
+      {/* MOBILE FILTER DRAWER */}
+      <div
+        className={`fixed inset-0 z-50 lg:hidden transition-opacity duration-300 ${
+          showMobileFilters ? "opacity-100 visible" : "opacity-0 invisible"
+        }`}
+      >
+        <div
+          className="absolute inset-0 bg-black/40 transition-opacity duration-300"
+          onClick={() => setShowMobileFilters(false)}
+        />
+
+        <div
+          className={`absolute left-0 top-0 h-full w-[85%] max-w-sm bg-white overflow-y-auto transition-transform duration-300 ${
+            showMobileFilters ? "translate-x-0" : "-translate-x-full"
+          }`}
+        >
+          {/* Mobile Filter Header */}
+          <div className="sticky top-0 z-10 bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center">
+            <h3 className="font-bold text-gray-900 text-lg">Filters</h3>
+            <button
+              onClick={() => setShowMobileFilters(false)}
+              className="text-gray-500 hover:text-gray-700"
+            >
+              <FaTimes className="w-5 h-5" />
+            </button>
+          </div>
+
+          {/* REUSE YOUR FILTER SIDEBAR JSX HERE */}
+          <div className="px-6 py-4">
+            <div className="bg-white">
+              {/* JOB ROLE */}
+              <div className="mb-6">
+                <button
+                  className="w-full flex justify-between items-center mb-3 group"
+                  onClick={() => setOpenJobRole(!openJobRole)}
+                >
+                  <h4 className="text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    Job Role
+                  </h4>
+                  <FaChevronDown
+                    className={`w-3 h-3 text-gray-500 transition-all duration-200 group-hover:text-gray-700 ${
+                      openJobRole ? "rotate-180" : "rotate-0"
+                    }`}
+                  />
+                </button>
+                {openJobRole && (
+                  <>
+                    <div className="mb-3">
+                      <input
+                        type="text"
+                        placeholder="Search Job Roles"
+                        className="w-full px-3 py-1.5 text-xs border border-gray-300 rounded focus:outline-none focus:border-[#27bb97] focus:ring-1 focus:ring-[#27bb97]"
+                      />
+                    </div>
+                    <div className="max-h-40 overflow-y-auto pr-1">
+                      {jobRoles.map((role, idx) => (
+                        <label
+                          key={idx}
+                          className="flex items-center justify-between py-1.5 hover:bg-gray-50 transition-colors duration-150 cursor-pointer"
+                        >
+                          <div className="flex items-center">
+                            <div className="relative">
+                              <input
+                                type="checkbox"
+                                className="peer sr-only"
+                                checked={selectedRoles.includes(role)}
+                                onChange={() => toggleRole(role)}
+                              />
+                              <div className="w-3.5 h-3.5 border border-gray-300 rounded-sm peer-checked:border-[#27bb97] peer-checked:bg-[#27bb97] flex items-center justify-center mr-2">
+                                <svg
+                                  className="w-2.5 h-2.5 text-white opacity-0 peer-checked:opacity-100"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth="3"
+                                    d="M5 13l4 4L19 7"
+                                  />
+                                </svg>
+                              </div>
+                            </div>
+                            <span className="text-xs text-gray-700 truncate">
+                              {role}
+                            </span>
+                          </div>
+                        </label>
+                      ))}
+                    </div>
+                  </>
+                )}
+              </div>
+
+              {/* SKILLS */}
+              <div className="mb-6">
+                <button
+                  className="w-full flex justify-between items-center mb-3 group"
+                  onClick={() => setOpenSkills(!openSkills)}
+                >
+                  <h4 className="text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    Skills
+                  </h4>
+                  <FaChevronDown
+                    className={`w-3 h-3 text-gray-500 transition-all duration-200 group-hover:text-gray-700 ${
+                      openSkills ? "rotate-180" : "rotate-0"
+                    }`}
+                  />
+                </button>
+                {openSkills && (
+                  <>
+                    <div className="mb-3">
+                      <input
+                        type="text"
+                        placeholder="Search Skills"
+                        className="w-full px-3 py-1.5 text-xs border border-gray-300 rounded focus:outline-none focus:border-[#27bb97] focus:ring-1 focus:ring-[#27bb97]"
+                      />
+                    </div>
+                    <div className="max-h-40 overflow-y-auto pr-1">
+                      {skills.map((skill, idx) => (
+                        <label
+                          key={idx}
+                          className="flex items-center justify-between py-1.5 hover:bg-gray-50 transition-colors duration-150 cursor-pointer"
+                        >
+                          <div className="flex items-center">
+                            <div className="relative">
+                              <input type="checkbox" className="peer sr-only" />
+                              <div className="w-3.5 h-3.5 border border-gray-300 rounded-sm peer-checked:border-[#27bb97] peer-checked:bg-[#27bb97] flex items-center justify-center mr-2">
+                                <svg
+                                  className="w-2.5 h-2.5 text-white opacity-0 peer-checked:opacity-100"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth="3"
+                                    d="M5 13l4 4L19 7"
+                                  />
+                                </svg>
+                              </div>
+                            </div>
+                            <span className="text-xs text-gray-700">
+                              {skill.label}
+                            </span>
+                          </div>
+                          <span className="text-xs text-gray-400">
+                            {skill.count}
+                          </span>
+                        </label>
+                      ))}
+                    </div>
+                  </>
+                )}
+              </div>
+
+              {/* EDUCATION */}
+              <div className="mb-6">
+                <button
+                  className="w-full flex justify-between items-center mb-3 group"
+                  onClick={() => setOpenEducation(!openEducation)}
+                >
+                  <h4 className="text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    Education
+                  </h4>
+                  <FaChevronDown
+                    className={`w-3 h-3 text-gray-500 transition-all duration-200 group-hover:text-gray-700 ${
+                      openEducation ? "rotate-180" : "rotate-0"
+                    }`}
+                  />
+                </button>
+                {openEducation && (
+                  <div className="max-h-40 overflow-y-auto pr-1">
+                    {educationLevels.map((education, idx) => (
+                      <label
+                        key={idx}
+                        className="flex items-center justify-between py-1.5 hover:bg-gray-50 transition-colors duration-150 cursor-pointer"
+                      >
+                        <div className="flex items-center">
+                          <div className="relative">
+                            <input type="checkbox" className="peer sr-only" />
+                            <div className="w-3.5 h-3.5 border border-gray-300 rounded-sm peer-checked:border-[#27bb97] peer-checked:bg-[#27bb97] flex items-center justify-center mr-2">
+                              <svg
+                                className="w-2.5 h-2.5 text-white opacity-0 peer-checked:opacity-100"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth="3"
+                                  d="M5 13l4 4L19 7"
+                                />
+                              </svg>
+                            </div>
+                          </div>
+                          <span className="text-xs text-gray-700">
+                            {education.label}
+                          </span>
+                        </div>
+                        <span className="text-xs text-gray-400">
+                          {education.count}
+                        </span>
+                      </label>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* JOB TYPE */}
+              <div className="mb-6">
+                <button
+                  className="w-full flex justify-between items-center mb-3 group"
+                  onClick={() => setOpenJobType(!openJobType)}
+                >
+                  <h4 className="text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    Job Type
+                  </h4>
+                  <FaChevronDown
+                    className={`w-3 h-3 text-gray-500 transition-all duration-200 group-hover:text-gray-700 ${
+                      openJobType ? "rotate-180" : "rotate-0"
+                    }`}
+                  />
+                </button>
+                {openJobType && (
+                  <div className="max-h-40 overflow-y-auto pr-1">
+                    {jobTypes.map((jobType, idx) => (
+                      <label
+                        key={idx}
+                        className="flex items-center justify-between py-1.5 hover:bg-gray-50 transition-colors duration-150 cursor-pointer"
+                      >
+                        <div className="flex items-center">
+                          <div className="relative">
+                            <input type="checkbox" className="peer sr-only" />
+                            <div className="w-3.5 h-3.5 border border-gray-300 rounded-sm peer-checked:border-[#27bb97] peer-checked:bg-[#27bb97] flex items-center justify-center mr-2">
+                              <svg
+                                className="w-2.5 h-2.5 text-white opacity-0 peer-checked:opacity-100"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth="3"
+                                  d="M5 13l4 4L19 7"
+                                />
+                              </svg>
+                            </div>
+                          </div>
+                          <span className="text-xs text-gray-700">
+                            {jobType.label}
+                          </span>
+                        </div>
+                        <span className="text-xs text-gray-400">
+                          {jobType.count}
+                        </span>
+                      </label>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* DATE POSTED */}
+              <div className="mb-6">
+                <button
+                  className="w-full flex justify-between items-center mb-3 group"
+                  onClick={() => setOpenDatePosted(!openDatePosted)}
+                >
+                  <h4 className="text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    Date Posted
+                  </h4>
+                  <FaChevronDown
+                    className={`w-3 h-3 text-gray-500 transition-all duration-200 group-hover:text-gray-700 ${
+                      openDatePosted ? "rotate-180" : "rotate-0"
+                    }`}
+                  />
+                </button>
+                {openDatePosted && (
+                  <div className="max-h-40 overflow-y-auto pr-1">
+                    {datePostedOptions.map((dateOption, idx) => (
+                      <label
+                        key={idx}
+                        className="flex items-center justify-between py-1.5 hover:bg-gray-50 transition-colors duration-150 cursor-pointer"
+                      >
+                        <div className="flex items-center">
+                          <div className="relative">
+                            <input type="checkbox" className="peer sr-only" />
+                            <div className="w-3.5 h-3.5 border border-gray-300 rounded-sm peer-checked:border-[#27bb97] peer-checked:bg-[#27bb97] flex items-center justify-center mr-2">
+                              <svg
+                                className="w-2.5 h-2.5 text-white opacity-0 peer-checked:opacity-100"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth="3"
+                                  d="M5 13l4 4L19 7"
+                                />
+                              </svg>
+                            </div>
+                          </div>
+                          <span className="text-xs text-gray-700">
+                            {dateOption.label}
+                          </span>
+                        </div>
+                        <span className="text-xs text-gray-400">
+                          {dateOption.count}
+                        </span>
+                      </label>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* INDUSTRY */}
+              <div className="mb-6">
+                <button
+                  className="w-full flex justify-between items-center mb-3 group"
+                  onClick={() => setOpenIndustry(!openIndustry)}
+                >
+                  <h4 className="text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    Industry
+                  </h4>
+                  <FaChevronDown
+                    className={`w-3 h-3 text-gray-500 transition-all duration-200 group-hover:text-gray-700 ${
+                      openIndustry ? "rotate-180" : "rotate-0"
+                    }`}
+                  />
+                </button>
+                {openIndustry && (
+                  <>
+                    <div className="mb-3">
+                      <input
+                        type="text"
+                        placeholder="Search Industries"
+                        className="w-full px-3 py-1.5 text-xs border border-gray-300 rounded focus:outline-none focus:border-[#27bb97] focus:ring-1 focus:ring-[#27bb97]"
+                      />
+                    </div>
+                    <div className="max-h-40 overflow-y-auto pr-1">
+                      {industries.map((industry, idx) => (
+                        <label
+                          key={idx}
+                          className="flex items-center justify-between py-1.5 hover:bg-gray-50 transition-colors duration-150 cursor-pointer"
+                        >
+                          <div className="flex items-center">
+                            <div className="relative">
+                              <input type="checkbox" className="peer sr-only" />
+                              <div className="w-3.5 h-3.5 border border-gray-300 rounded-sm peer-checked:border-[#27bb97] peer-checked:bg-[#27bb97] flex items-center justify-center mr-2">
+                                <svg
+                                  className="w-2.5 h-2.5 text-white opacity-0 peer-checked:opacity-100"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth="3"
+                                    d="M5 13l4 4L19 7"
+                                  />
+                                </svg>
+                              </div>
+                            </div>
+                            <span className="text-xs text-gray-700">
+                              {industry.label}
+                            </span>
+                          </div>
+                          <span className="text-xs text-gray-400">
+                            {industry.count}
+                          </span>
+                        </label>
+                      ))}
+                    </div>
+                  </>
+                )}
+              </div>
+
+              {/* EXPERIENCE */}
+              <div className="mb-6">
+                <button
+                  className="w-full flex justify-between items-center mb-3 group"
+                  onClick={() => setOpenExperience(!openExperience)}
+                >
+                  <h4 className="text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    Experience
+                  </h4>
+                  <FaChevronDown
+                    className={`w-3 h-3 text-gray-500 transition-all duration-200 group-hover:text-gray-700 ${
+                      openExperience ? "rotate-180" : "rotate-0"
+                    }`}
+                  />
+                </button>
+                {openExperience && (
+                  <div className="max-h-40 overflow-y-auto pr-1">
+                    {experienceLevels.map((experience, idx) => (
+                      <label
+                        key={idx}
+                        className="flex items-center justify-between py-1.5 hover:bg-gray-50 transition-colors duration-150 cursor-pointer"
+                      >
+                        <div className="flex items-center">
+                          <div className="relative">
+                            <input type="checkbox" className="peer sr-only" />
+                            <div className="w-3.5 h-3.5 border border-gray-300 rounded-sm peer-checked:border-[#27bb97] peer-checked:bg-[#27bb97] flex items-center justify-center mr-2">
+                              <svg
+                                className="w-2.5 h-2.5 text-white opacity-0 peer-checked:opacity-100"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth="3"
+                                  d="M5 13l4 4L19 7"
+                                />
+                              </svg>
+                            </div>
+                          </div>
+                          <span className="text-xs text-gray-700">
+                            {experience.label}
+                          </span>
+                        </div>
+                        <span className="text-xs text-gray-400">
+                          {experience.count}
+                        </span>
+                      </label>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* WORK AUTHORIZATION */}
+              <div className="mb-6">
+                <button
+                  className="w-full flex justify-between items-center mb-3 group"
+                  onClick={() =>
+                    setOpenWorkAuthorization(!openWorkAuthorization)
+                  }
+                >
+                  <h4 className="text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    Work Authorization
+                  </h4>
+                  <FaChevronDown
+                    className={`w-3 h-3 text-gray-500 transition-all duration-200 group-hover:text-gray-700 ${
+                      openWorkAuthorization ? "rotate-180" : "rotate-0"
+                    }`}
+                  />
+                </button>
+                {openWorkAuthorization && (
+                  <div className="max-h-40 overflow-y-auto pr-1">
+                    {workAuthorizationOptions.map((auth, idx) => (
+                      <label
+                        key={idx}
+                        className="flex items-center justify-between py-1.5 hover:bg-gray-50 transition-colors duration-150 cursor-pointer"
+                      >
+                        <div className="flex items-center">
+                          <div className="relative">
+                            <input type="checkbox" className="peer sr-only" />
+                            <div className="w-3.5 h-3.5 border border-gray-300 rounded-sm peer-checked:border-[#27bb97] peer-checked:bg-[#27bb97] flex items-center justify-center mr-2">
+                              <svg
+                                className="w-2.5 h-2.5 text-white opacity-0 peer-checked:opacity-100"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth="3"
+                                  d="M5 13l4 4L19 7"
+                                />
+                              </svg>
+                            </div>
+                          </div>
+                          <span className="text-xs text-gray-700">
+                            {auth.label}
+                          </span>
+                        </div>
+                        <span className="text-xs text-gray-400">
+                          {auth.count}
+                        </span>
+                      </label>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Mobile Filter Footer */}
+          <div className="sticky bottom-0 bg-white border-t border-gray-200 p-4">
+            <div className="flex gap-3">
               <button
                 onClick={clearAllFilters}
-                className="text-[#27bb97] hover:text-[#1fa987] text-sm font-medium transition-colors"
+                className="flex-1 py-3 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors"
               >
                 Clear All
               </button>
+              <button
+                onClick={() => setShowMobileFilters(false)}
+                className="flex-1 py-3 bg-[#27bb97] text-white rounded-lg font-medium hover:bg-[#1fa987] transition-colors"
+              >
+                Apply Filters
+              </button>
             </div>
           </div>
-        )}
+        </div>
+      </div>
 
-        <div className="flex gap-6">
-          {/* Left Sidebar - Filter - Made sticky */}
-          <div className="w-72 flex-shrink-0">
+      {/* MAIN CONTENT CONTAINER */}
+      <div className="max-w-[1400px] mx-auto px-4 md:px-6 pt-6 md:pt-8 pb-8">
+        <div className="flex flex-col lg:flex-row gap-6">
+          {/* Left Sidebar - Filter (Hidden on mobile) */}
+          <div className="hidden lg:block w-72 flex-shrink-0">
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 sticky top-6">
               {/* Sticky Header */}
               <div className="sticky top-0 z-10 bg-white border-b border-gray-200 px-6 py-4">
@@ -1052,14 +1640,16 @@ export default function JobSeekerResumesDetail() {
 
           {/* Center Content - Job Listings */}
           <div className="flex-1">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold text-gray-900">
-                Job Seekers in USA/Canada
-                <span className="block text-sm font-normal text-gray-500 mt-1">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 gap-3">
+              <div>
+                <h2 className="text-xl md:text-2xl font-bold text-gray-900">
+                  Job Seekers in USA/Canada
+                </h2>
+                <p className="text-sm md:text-base text-gray-500 mt-1 md:mt-2">
                   Discover qualified candidates for your open positions
-                </span>
-              </h2>
-              <div className="text-sm text-gray-500">
+                </p>
+              </div>
+              <div className="text-sm text-gray-500 bg-white px-3 py-2 rounded-lg border border-gray-200">
                 Showing{" "}
                 <span className="font-semibold text-gray-800">
                   {visibleJobSeekers.length}
@@ -1072,28 +1662,31 @@ export default function JobSeekerResumesDetail() {
               </div>
             </div>
 
-            <div className="space-y-5">
+            <div className="space-y-4 md:space-y-5">
               {visibleJobSeekers.map((seeker) => (
                 <div
                   key={seeker.id}
-                  className="bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-lg transition-all duration-300 relative overflow-hidden group hover:border-gray-200"
+                  className="bg-white rounded-xl md:rounded-xl shadow-sm border border-gray-100 hover:shadow-lg transition-all duration-300 relative overflow-hidden group hover:border-gray-200 active:scale-[0.995] md:active:scale-100"
                 >
                   {seeker.featured && (
                     <div className="absolute top-0 left-0 z-10">
-                      <div className="bg-gradient-to-r from-[#27bb97] to-[#1fa987] text-white px-4 py-1.5 text-xs font-semibold tracking-wide rounded-br-lg shadow-sm">
+                      <div className="bg-gradient-to-r from-[#27bb97] to-[#1fa987] text-white px-3 md:px-4 py-1 md:py-1.5 text-xs font-semibold tracking-wide rounded-br-lg shadow-sm">
                         <span className="flex items-center gap-1">
                           <FaStar className="w-3 h-3" />
-                          Featured Profile
+                          <span className="hidden sm:inline">
+                            Featured Profile
+                          </span>
+                          <span className="sm:hidden">Featured</span>
                         </span>
                       </div>
                     </div>
                   )}
 
-                  <div className="p-7">
-                    <div className="flex gap-6">
+                  <div className="p-4 md:p-7">
+                    <div className="flex flex-col sm:flex-row gap-4 md:gap-6">
                       {/* Avatar with Professional Badge */}
-                      <div className="flex-shrink-0 relative">
-                        <div className="w-20 h-20 rounded-xl overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100 border-2 border-white shadow-sm">
+                      <div className="flex-shrink-0 relative self-center sm:self-start">
+                        <div className="w-16 h-16 md:w-20 md:h-20 rounded-xl overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100 border-2 border-white shadow-sm">
                           <img
                             src={seeker.image}
                             alt={`${seeker.name}'s profile`}
@@ -1109,8 +1702,8 @@ export default function JobSeekerResumesDetail() {
                           />
                         </div>
                         {seeker.featured && (
-                          <div className="absolute -bottom-1 -right-1 w-7 h-7 bg-[#27bb97] rounded-full border-2 border-white flex items-center justify-center shadow-sm">
-                            <FaCheckCircle className="w-3.5 h-3.5 text-white" />
+                          <div className="absolute -bottom-1 -right-1 w-6 h-6 md:w-7 md:h-7 bg-[#27bb97] rounded-full border-2 border-white flex items-center justify-center shadow-sm">
+                            <FaCheckCircle className="w-3 h-3 md:w-3.5 md:h-3.5 text-white" />
                           </div>
                         )}
                       </div>
@@ -1118,25 +1711,25 @@ export default function JobSeekerResumesDetail() {
                       {/* Content */}
                       <div className="flex-1 min-w-0">
                         {/* Header Section */}
-                        <div className="flex justify-between items-start mb-4">
-                          <div>
-                            <h3 className="text-xl font-bold text-gray-900 mb-1 group-hover:text-[#27bb97] transition-colors duration-200">
+                        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3 mb-4">
+                          <div className="flex-1">
+                            <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-1 group-hover:text-[#27bb97] transition-colors duration-200">
                               {seeker.role}
                             </h3>
-                            <div className="flex items-center gap-4 text-sm text-gray-600">
+                            <div className="flex flex-col sm:flex-row sm:items-center gap-2 md:gap-4 text-sm text-gray-600">
                               <span className="flex items-center gap-2">
-                                <div className="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center">
-                                  <FaUser className="w-4 h-4 text-gray-500" />
+                                <div className="w-6 h-6 md:w-8 md:h-8 rounded-lg bg-gray-50 flex items-center justify-center">
+                                  <FaUser className="w-3 h-3 md:w-4 md:h-4 text-gray-500" />
                                 </div>
-                                <span className="font-medium">
+                                <span className="font-medium text-sm md:text-base">
                                   {seeker.name}
                                 </span>
                               </span>
                               <span className="flex items-center gap-2">
-                                <div className="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center">
-                                  <FaMapMarkerAlt className="w-4 h-4 text-gray-500" />
+                                <div className="w-6 h-6 md:w-8 md:h-8 rounded-lg bg-gray-50 flex items-center justify-center">
+                                  <FaMapMarkerAlt className="w-3 h-3 md:w-4 md:h-4 text-gray-500" />
                                 </div>
-                                <span className="font-medium">
+                                <span className="font-medium text-sm md:text-base">
                                   {seeker.location}
                                 </span>
                               </span>
@@ -1144,8 +1737,8 @@ export default function JobSeekerResumesDetail() {
                           </div>
 
                           {/* Quick Stats */}
-                          <div className="flex flex-col items-end">
-                            <div className="text-xs text-gray-500 mb-1">
+                          <div className="flex flex-row sm:flex-col items-center sm:items-end gap-3 sm:gap-0">
+                            <div className="text-xs text-gray-500 mb-1 hidden sm:block">
                               Profile Score
                             </div>
                             <div className="flex items-center gap-1">
@@ -1153,7 +1746,7 @@ export default function JobSeekerResumesDetail() {
                                 {[1, 2, 3, 4, 5].map((star) => (
                                   <FaStar
                                     key={star}
-                                    className={`w-4 h-4 ${
+                                    className={`w-3 h-3 md:w-4 md:h-4 ${
                                       star <= 4
                                         ? "text-yellow-400"
                                         : "text-gray-300"
@@ -1169,27 +1762,27 @@ export default function JobSeekerResumesDetail() {
                         </div>
 
                         {/* Badges Section */}
-                        <div className="flex flex-wrap gap-2 mb-5">
-                          <span className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-100">
-                            <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
-                            {seeker.experience} Experience
+                        <div className="flex flex-wrap gap-2 mb-4 md:mb-5">
+                          <span className="inline-flex items-center px-2.5 py-1 md:px-3 md:py-1.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-100">
+                            <span className="w-1.5 h-1.5 md:w-2 md:h-2 bg-blue-500 rounded-full mr-1 md:mr-2"></span>
+                            {seeker.experience}
                           </span>
-                          <span className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium bg-green-50 text-green-700 border border-green-100">
-                            <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+                          <span className="inline-flex items-center px-2.5 py-1 md:px-3 md:py-1.5 rounded-full text-xs font-medium bg-green-50 text-green-700 border border-green-100">
+                            <span className="w-1.5 h-1.5 md:w-2 md:h-2 bg-green-500 rounded-full mr-1 md:mr-2"></span>
                             {seeker.education}
                           </span>
-                          <span className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium bg-purple-50 text-purple-700 border border-purple-100">
-                            <span className="w-2 h-2 bg-purple-500 rounded-full mr-2"></span>
+                          <span className="inline-flex items-center px-2.5 py-1 md:px-3 md:py-1.5 rounded-full text-xs font-medium bg-purple-50 text-purple-700 border border-purple-100 hidden sm:inline-flex">
+                            <span className="w-1.5 h-1.5 md:w-2 md:h-2 bg-purple-500 rounded-full mr-1 md:mr-2"></span>
                             {seeker.category}
                           </span>
                         </div>
 
                         {/* Description Section */}
-                        <div className="mb-5">
-                          <div className="flex items-center gap-2 mb-3">
-                            <div className="w-6 h-6 rounded-md bg-gray-50 flex items-center justify-center">
+                        <div className="mb-4 md:mb-5">
+                          <div className="flex items-center gap-2 mb-2 md:mb-3">
+                            <div className="w-5 h-5 md:w-6 md:h-6 rounded-md bg-gray-50 flex items-center justify-center">
                               <svg
-                                className="w-4 h-4 text-gray-500"
+                                className="w-3 h-3 md:w-4 md:h-4 text-gray-500"
                                 fill="none"
                                 stroke="currentColor"
                                 viewBox="0 0 24 24"
@@ -1206,17 +1799,17 @@ export default function JobSeekerResumesDetail() {
                               Professional Summary
                             </h4>
                           </div>
-                          <p className="text-sm text-gray-600 leading-relaxed bg-gray-50 rounded-lg p-4 border border-gray-100">
+                          <p className="text-sm text-gray-600 leading-relaxed bg-gray-50 rounded-lg p-3 md:p-4 border border-gray-100 line-clamp-3 md:line-clamp-none">
                             {seeker.description}
                           </p>
                         </div>
 
                         {/* Skills Section */}
-                        <div className="mb-6">
-                          <div className="flex items-center gap-2 mb-3">
-                            <div className="w-6 h-6 rounded-md bg-gray-50 flex items-center justify-center">
+                        <div className="mb-4 md:mb-6">
+                          <div className="flex items-center gap-2 mb-2 md:mb-3">
+                            <div className="w-5 h-5 md:w-6 md:h-6 rounded-md bg-gray-50 flex items-center justify-center">
                               <svg
-                                className="w-4 h-4 text-gray-500"
+                                className="w-3 h-3 md:w-4 md:h-4 text-gray-500"
                                 fill="none"
                                 stroke="currentColor"
                                 viewBox="0 0 24 24"
@@ -1233,29 +1826,29 @@ export default function JobSeekerResumesDetail() {
                               Core Competencies
                             </h4>
                           </div>
-                          <div className="flex flex-wrap gap-2">
+                          <div className="flex flex-wrap gap-1.5 md:gap-2">
                             {seeker.skills
                               .split(",")
-                              .slice(0, 6)
+                              .slice(0, 4)
                               .map((skill, index) => (
                                 <span
                                   key={index}
-                                  className="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-medium bg-gray-50 text-gray-700 border border-gray-200 hover:bg-gray-100 transition-colors"
+                                  className="inline-flex items-center px-2.5 py-1 md:px-3 md:py-1.5 rounded-lg text-xs font-medium bg-gray-50 text-gray-700 border border-gray-200 hover:bg-gray-100 transition-colors"
                                 >
                                   {skill.trim()}
                                 </span>
                               ))}
-                            {seeker.skills.split(",").length > 6 && (
-                              <span className="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-medium bg-gray-100 text-gray-600 border border-gray-200">
-                                +{seeker.skills.split(",").length - 6} more
+                            {seeker.skills.split(",").length > 4 && (
+                              <span className="inline-flex items-center px-2.5 py-1 md:px-3 md:py-1.5 rounded-lg text-xs font-medium bg-gray-100 text-gray-600 border border-gray-200">
+                                +{seeker.skills.split(",").length - 4} more
                               </span>
                             )}
                           </div>
                         </div>
 
                         {/* Action Buttons */}
-                        <div className="flex justify-between items-center pt-5 border-t border-gray-100">
-                          <button className="flex items-center gap-2 px-5 py-2.5 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 group-hover:border-[#27bb97] group-hover:text-[#27bb97]">
+                        <div className="flex flex-col sm:flex-row justify-between items-center gap-3 pt-4 md:pt-5 border-t border-gray-100">
+                          <button className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2.5 md:px-5 md:py-2.5 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 group-hover:border-[#27bb97] group-hover:text-[#27bb97] active:scale-[0.98]">
                             <svg
                               className="w-4 h-4"
                               fill="none"
@@ -1275,11 +1868,11 @@ export default function JobSeekerResumesDetail() {
                                 d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
                               />
                             </svg>
-                            View Full Profile
+                            View Profile
                           </button>
 
-                          <div className="flex items-center gap-3">
-                            <button className="flex items-center gap-2 px-5 py-2.5 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-all duration-200">
+                          <div className="flex flex-row sm:flex-row items-center gap-2 w-full sm:w-auto">
+                            <button className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2.5 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 active:scale-[0.98]">
                               <svg
                                 className="w-4 h-4"
                                 fill="none"
@@ -1293,10 +1886,10 @@ export default function JobSeekerResumesDetail() {
                                   d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
                                 />
                               </svg>
-                              Save Profile
+                              Save
                             </button>
 
-                            <button className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-[#27bb97] to-[#1fa987] text-white rounded-lg text-sm font-semibold hover:from-[#1fa987] hover:to-[#189977] transition-all duration-200 shadow-sm hover:shadow-md">
+                            <button className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-[#27bb97] to-[#1fa987] text-white rounded-lg text-sm font-semibold hover:from-[#1fa987] hover:to-[#189977] transition-all duration-200 shadow-sm hover:shadow-md active:scale-[0.98]">
                               <svg
                                 className="w-4 h-4"
                                 fill="none"
@@ -1310,7 +1903,7 @@ export default function JobSeekerResumesDetail() {
                                   d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
                                 />
                               </svg>
-                              Download Resume
+                              Resume
                             </button>
                           </div>
                         </div>
@@ -1321,25 +1914,27 @@ export default function JobSeekerResumesDetail() {
               ))}
             </div>
 
-            {/* View More Button in the middle of the cards - Only show if we have more cards to show */}
+            {/* View More Button */}
             {hasMoreJobs && (
-              <div className="mt-10 text-center">
+              <div className="mt-8 md:mt-10 text-center">
                 <div className="relative">
                   <button
                     onClick={handleViewMore}
                     disabled={loading}
-                    className="relative px-8 py-3.5 bg-gradient-to-r from-[#27bb97] to-[#1fa987] text-white rounded-xl text-[15px] font-semibold transition-all duration-300 hover:from-[#1fa987] hover:to-[#189977] disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center mx-auto gap-3 shadow-sm hover:shadow-md hover:-translate-y-0.5"
+                    className="w-full max-w-md px-6 py-3.5 md:px-8 md:py-3.5 bg-gradient-to-r from-[#27bb97] to-[#1fa987] text-white rounded-xl text-sm md:text-[15px] font-semibold transition-all duration-300 hover:from-[#1fa987] hover:to-[#189977] disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center mx-auto gap-3 shadow-sm hover:shadow-md hover:-translate-y-0.5 active:scale-[0.98]"
                   >
                     {loading ? (
                       <>
-                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                        Loading More Profiles...
+                        <div className="w-4 h-4 md:w-5 md:h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        <span className="text-sm md:text-base">
+                          Loading More Profiles...
+                        </span>
                       </>
                     ) : (
                       <>
                         <span>View More Job Seekers</span>
                         <svg
-                          className="w-5 h-5"
+                          className="w-4 h-4 md:w-5 md:h-5"
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"
@@ -1354,9 +1949,9 @@ export default function JobSeekerResumesDetail() {
                       </>
                     )}
                   </button>
-                  <div className="text-sm text-gray-500 mt-3">
+                  <div className="text-xs md:text-sm text-gray-500 mt-2 md:mt-3">
                     Showing {visibleJobSeekers.length} of {allJobSeekers.length}{" "}
-                    profiles • Click to view all
+                    profiles
                   </div>
                 </div>
               </div>
@@ -1364,14 +1959,14 @@ export default function JobSeekerResumesDetail() {
           </div>
 
           {/* Right Sidebar */}
-          <div className="w-[320px] flex-shrink-0">
-            <div className="space-y-5 sticky top-6">
+          <div className="w-full lg:w-[320px] flex-shrink-0">
+            <div className="space-y-4 md:space-y-5 lg:sticky lg:top-6">
               {/* Card 1 - Primary CTA */}
-              <div className="bg-white rounded-xl shadow-md border border-gray-100 p-7 text-center hover:shadow-lg transition-shadow duration-300 group">
-                <div className="mb-6">
-                  <div className="inline-flex items-center justify-center w-12 h-12 bg-green-50 rounded-full mb-4 group-hover:bg-green-100 transition-colors duration-300">
+              <div className="bg-white rounded-xl shadow-md border border-gray-100 p-4 md:p-6 lg:p-7 text-center hover:shadow-lg transition-shadow duration-300 group">
+                <div className="mb-4 md:mb-6">
+                  <div className="inline-flex items-center justify-center w-10 h-10 md:w-12 md:h-12 bg-green-50 rounded-full mb-3 md:mb-4 group-hover:bg-green-100 transition-colors duration-300">
                     <svg
-                      className="w-6 h-6 text-green-600"
+                      className="w-5 h-5 md:w-6 md:h-6 text-green-600"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -1384,24 +1979,24 @@ export default function JobSeekerResumesDetail() {
                       />
                     </svg>
                   </div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-[#27bb97] transition-colors duration-200">
-                    Start Recruiting Top Talent Today
+                  <h3 className="text-base md:text-lg font-semibold text-gray-900 mb-2 group-hover:text-[#27bb97] transition-colors duration-200">
+                    Start Recruiting Top Talent
                   </h3>
-                  <p className="text-gray-600 text-sm leading-relaxed">
+                  <p className="text-xs md:text-sm text-gray-600 leading-relaxed">
                     Access premium candidates with verified credentials
                   </p>
                 </div>
-                <button className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white py-3.5 rounded-lg text-[15px] font-semibold transition-all duration-300 shadow-sm hover:shadow-md">
+                <button className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white py-3 md:py-3.5 rounded-lg text-sm md:text-[15px] font-semibold transition-all duration-300 shadow-sm hover:shadow-md active:scale-[0.98]">
                   Explore Resume Packages
                 </button>
               </div>
 
               {/* Card 2 - Secondary CTA */}
-              <div className="bg-white rounded-xl shadow-md border border-gray-100 p-7 text-center hover:shadow-lg transition-shadow duration-300 group">
-                <div className="mb-6">
-                  <div className="inline-flex items-center justify-center w-12 h-12 bg-blue-50 rounded-full mb-4 group-hover:bg-blue-100 transition-colors duration-300">
+              <div className="bg-white rounded-xl shadow-md border border-gray-100 p-4 md:p-6 lg:p-7 text-center hover:shadow-lg transition-shadow duration-300 group">
+                <div className="mb-4 md:mb-6">
+                  <div className="inline-flex items-center justify-center w-10 h-10 md:w-12 md:h-12 bg-blue-50 rounded-full mb-3 md:mb-4 group-hover:bg-blue-100 transition-colors duration-300">
                     <svg
-                      className="w-6 h-6 text-blue-600"
+                      className="w-5 h-5 md:w-6 md:h-6 text-blue-600"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -1414,21 +2009,21 @@ export default function JobSeekerResumesDetail() {
                       />
                     </svg>
                   </div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-[#27bb97] transition-colors duration-200">
+                  <h3 className="text-base md:text-lg font-semibold text-gray-900 mb-2 group-hover:text-[#27bb97] transition-colors duration-200">
                     Need to Hire Quickly?
                   </h3>
-                  <p className="text-gray-600 text-sm leading-relaxed">
+                  <p className="text-xs md:text-sm text-gray-600 leading-relaxed">
                     Post your job and get quality applications within 24 hours
                   </p>
                 </div>
-                <button className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white py-3.5 rounded-lg text-[15px] font-semibold transition-all duration-300 shadow-sm hover:shadow-md">
+                <button className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white py-3 md:py-3.5 rounded-lg text-sm md:text-[15px] font-semibold transition-all duration-300 shadow-sm hover:shadow-md active:scale-[0.98]">
                   Post Your Job Ad
                 </button>
               </div>
 
               {/* Card 3 - Trust Building */}
-              <div className="bg-white rounded-xl shadow-md border border-gray-100 p-7 text-center hover:shadow-lg transition-shadow duration-300 group">
-                <div className="flex items-center justify-center gap-3 mb-6">
+              <div className="bg-white rounded-xl shadow-md border border-gray-100 p-4 md:p-6 lg:p-7 text-center hover:shadow-lg transition-shadow duration-300 group">
+                <div className="flex items-center justify-center gap-3 mb-4 md:mb-6">
                   <div className="flex -space-x-2">
                     {[1, 2, 3].map((i) => (
                       <div
@@ -1458,20 +2053,22 @@ export default function JobSeekerResumesDetail() {
                     </p>
                   </div>
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-3 group-hover:text-[#27bb97] transition-colors duration-200">
-                  Hire with Confidence
-                </h3>
-                <p className="text-gray-600 text-sm leading-relaxed mb-6">
-                  Sulekha Jobs delivers pre-screened, top-tier talent matched to
-                  your needs
-                </p>
-                <button className="w-full bg-[#27bb97] hover:bg-[#1fa987] text-white py-3.5 rounded-lg text-[15px] font-semibold transition-all duration-300 shadow-sm hover:shadow-md">
+                <div className="mb-4 md:mb-6">
+                  <h3 className="text-base md:text-lg font-semibold text-gray-900 mb-2 md:mb-3 group-hover:text-[#27bb97] transition-colors duration-200">
+                    Hire with Confidence
+                  </h3>
+                  <p className="text-xs md:text-sm text-gray-600 leading-relaxed">
+                    Sulekha Jobs delivers pre-screened, top-tier talent matched
+                    to your needs
+                  </p>
+                </div>
+                <button className="w-full bg-[#27bb97] hover:bg-[#1fa987] text-white py-3 md:py-3.5 rounded-lg text-sm md:text-[15px] font-semibold transition-all duration-300 shadow-sm hover:shadow-md active:scale-[0.98]">
                   View Recruiter Profiles
                 </button>
               </div>
 
               {/* Card 4 - Feature Highlight */}
-              <div className="bg-gradient-to-br from-gray-50 to-white rounded-xl border border-gray-200 p-6 group hover:shadow-md transition-all duration-300">
+              <div className="bg-gradient-to-br from-gray-50 to-white rounded-xl border border-gray-200 p-4 md:p-6 group hover:shadow-md transition-all duration-300">
                 <div className="flex items-start gap-4">
                   <div className="flex-shrink-0">
                     <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center group-hover:bg-green-200 transition-colors duration-300">
@@ -1494,13 +2091,13 @@ export default function JobSeekerResumesDetail() {
                     <h4 className="font-semibold text-gray-900 mb-1 group-hover:text-[#27bb97] transition-colors duration-200">
                       Direct Candidate Access
                     </h4>
-                    <p className="text-sm text-gray-600 leading-relaxed">
+                    <p className="text-xs md:text-sm text-gray-600 leading-relaxed">
                       Shortlist resumes and contact candidates directly. No
                       middlemen, faster hiring.
                     </p>
                     <a
                       href="#"
-                      className="inline-flex items-center text-green-600 hover:text-green-700 font-medium text-sm mt-3 transition-colors"
+                      className="inline-flex items-center text-green-600 hover:text-green-700 font-medium text-xs md:text-sm mt-3 transition-colors"
                     >
                       Learn more
                       <svg
@@ -1522,27 +2119,43 @@ export default function JobSeekerResumesDetail() {
               </div>
 
               {/* Latest Job applicant Profile */}
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-                <div className="border-b border-gray-200 p-4">
-                  <h1 className="text-lg font-semibold text-gray-800">
-                    Latest Job Applicant Profiles
+              <div className="bg-white rounded-xl md:rounded-lg shadow-sm border border-gray-200">
+                <div className="border-b border-gray-200 px-4 md:px-6 py-4 bg-gray-50">
+                  <h1 className="text-base md:text-lg font-semibold text-gray-800">
+                    Latest Applicants
                   </h1>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Recent job applicants
+                  </p>
                 </div>
 
-                <div className="divide-y divide-gray-100">
+                <div
+                  className="divide-y divide-gray-100 max-h-[300px] overflow-y-auto
+    [&::-webkit-scrollbar]:w-1.5
+    [&::-webkit-scrollbar-track]:bg-gray-50
+    [&::-webkit-scrollbar-thumb]:bg-gray-300
+    [&::-webkit-scrollbar-thumb]:rounded-full
+    [&::-webkit-scrollbar-thumb:hover]:bg-gray-400
+    [&::-webkit-scrollbar]:hover:w-2
+    scrollbar-width:thin
+    scrollbar-color:#d1d5db #f3f4f6
+    scrollbar-gutter:stable
+    scroll-behavior:smooth"
+                >
                   {applicants.map((applicant, index) => (
                     <div
                       key={index}
-                      className="p-4 hover:bg-gray-50 transition-colors cursor-pointer group"
+                      className="px-4 md:px-6 py-3 md:py-4 hover:bg-gray-50 transition-colors cursor-pointer group active:bg-gray-100"
                     >
-                      <h2 className="text-sm font-semibold text-gray-800 mb-2 group-hover:text-[#27bb97] transition-colors duration-200">
+                      <h2 className="text-sm font-semibold text-gray-800 mb-2 group-hover:text-[#27bb97] transition-colors duration-200 line-clamp-1">
                         {applicant.title}
                       </h2>
-                      <div className="flex items-center gap-3 text-xs text-gray-500">
+                      <div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-3 text-xs text-gray-500">
                         <span className="flex items-center gap-1">
                           <FaClock className="w-3 h-3" />
                           Updated {applicant.time}
                         </span>
+                        <span className="hidden md:inline">•</span>
                         <span className="flex items-center gap-1">
                           <FaMapMarkerAlt className="w-3 h-3" />
                           {applicant.location}
@@ -1554,18 +2167,18 @@ export default function JobSeekerResumesDetail() {
               </div>
 
               {/* Latest Job Seeker Profiles */}
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-                <div className="border-b border-gray-200 px-6 py-4 bg-gray-50">
-                  <h1 className="text-lg font-semibold text-gray-800">
-                    Latest Job Seeker Profiles
+              <div className="bg-white rounded-xl md:rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                <div className="border-b border-gray-200 px-4 md:px-6 py-4 bg-gray-50">
+                  <h1 className="text-base md:text-lg font-semibold text-gray-800">
+                    Latest Profiles
                   </h1>
                   <p className="text-xs text-gray-500 mt-1">
-                    Recently updated candidate profiles
+                    Recently updated candidates
                   </p>
                 </div>
 
                 <div
-                  className="divide-y divide-gray-100 max-h-[400px] overflow-y-auto 
+                  className="divide-y divide-gray-100 max-h-[300px] overflow-y-auto
     [&::-webkit-scrollbar]:w-1.5
     [&::-webkit-scrollbar-track]:bg-gray-50
     [&::-webkit-scrollbar-thumb]:bg-gray-300
@@ -1573,32 +2186,37 @@ export default function JobSeekerResumesDetail() {
     [&::-webkit-scrollbar-thumb:hover]:bg-gray-400
     [&::-webkit-scrollbar]:hover:w-2
     scrollbar-width:thin
-    scrollbar-color:#d1d5db #f3f4f6"
+    scrollbar-color:#d1d5db #f3f4f6
+    scrollbar-gutter:stable
+    scroll-behavior:smooth"
                 >
-                  {profiles.map((profile, index) => (
+                  {profiles.slice(0, 5).map((profile, index) => (
                     <div
                       key={index}
-                      className="px-6 py-4 hover:bg-gray-50 transition-colors cursor-pointer group"
+                      className="px-4 md:px-6 py-3 md:py-4 hover:bg-gray-50 transition-colors cursor-pointer group active:bg-gray-100"
                     >
                       <div className="flex justify-between items-start">
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-2">
-                            <h2 className="text-sm font-semibold text-gray-900 group-hover:text-[#27bb97] transition-colors duration-200">
+                            <h2 className="text-sm font-semibold text-gray-900 group-hover:text-[#27bb97] transition-colors duration-200 line-clamp-1">
                               {profile.title}
                             </h2>
                             {profile.verified && (
-                              <span className="flex items-center gap-1 text-xs bg-green-50 text-green-700 px-2 py-0.5 rounded-full">
+                              <span className="flex-shrink-0 flex items-center gap-1 text-xs bg-green-50 text-green-700 px-2 py-0.5 rounded-full">
                                 <FaCheckCircle className="w-3 h-3" />
-                                Verified
+                                <span className="hidden md:inline">
+                                  Verified
+                                </span>
                               </span>
                             )}
                           </div>
 
-                          <div className="flex items-center gap-3 text-xs text-gray-500 mb-2">
+                          <div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-3 text-xs text-gray-500 mb-2">
                             <span className="flex items-center gap-1">
                               <FaClock className="w-3 h-3" />
-                              Updated {profile.updatedTime}
+                              {profile.updatedTime}
                             </span>
+                            <span className="hidden md:inline">•</span>
                             <span className="flex items-center gap-1">
                               <FaMapMarkerAlt className="w-3 h-3" />
                               {profile.location}
@@ -1613,17 +2231,13 @@ export default function JobSeekerResumesDetail() {
                             <span className="text-xs text-gray-400">/5</span>
                           </div>
                         </div>
-
-                        <div className="ml-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <FaInfoCircle className="w-5 h-5 text-gray-300 group-hover:text-gray-400 transition-colors" />
-                        </div>
                       </div>
                     </div>
                   ))}
                 </div>
 
-                <div className="border-t border-gray-200 px-6 py-3 bg-gray-50">
-                  <button className="w-full text-center text-sm text-[#27bb97] hover:text-[#1fa987] font-medium transition-colors">
+                <div className="border-t border-gray-200 px-4 md:px-6 py-3 bg-gray-50">
+                  <button className="w-full text-center text-sm text-[#27bb97] hover:text-[#1fa987] font-medium transition-colors active:text-[#189977]">
                     View All Profiles →
                   </button>
                 </div>
