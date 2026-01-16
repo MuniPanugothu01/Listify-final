@@ -2240,5 +2240,4 @@ const EventDetailPage = () => {
     </div>
   );
 };
-
 export default EventDetailPage;
