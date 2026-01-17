@@ -18,6 +18,10 @@ import Footer from "./pages/Home/Footer.jsx";
 import Gallery from "./pages/Home/Gallery.jsx";
 import Carousel from "./pages/Home/Carousel.jsx";
 
+// signin page
+import Signin from './pages/Home/Signin.jsx'
+
+
 import ContactUs from "./pages/ContactPage/ContactUS.jsx";
 import AboutUs from "./pages/AboutPage/AboutUs.jsx";
 import OurServicesPage from "./pages/OurServices/OurServicesPage.jsx";
@@ -153,6 +157,12 @@ const App = () => {
                 </>
               }
             />
+{/* signin route */}
+
+
+<Route path="/signin" element={<Signin/>} />
+
+    
             {/* Contacts Page */}
             <Route path="/contact-us" element={<ContactUs />} />
             <Route path="/about-us" element={<AboutUs />} />
