@@ -903,6 +903,7 @@ Come join us for an electrifying evening with Aurthohin, Tanzir Tuhin (X-Sironam
               </div>
             </div>
 
+
             {/* Amenities Section */}
             <div className="bg-white rounded-3xl p-8 shadow-xl border border-gray-100">
               <h2 className="text-3xl font-bold mb-6">Event Amenities</h2>
