@@ -19,8 +19,7 @@ import Gallery from "./pages/Home/Gallery.jsx";
 import Carousel from "./pages/Home/Carousel.jsx";
 
 // signin page
-import Signin from './pages/Home/Signin.jsx'
-
+import Signin from "./pages/Home/Signin.jsx";
 
 import ContactUs from "./pages/ContactPage/ContactUS.jsx";
 import AboutUs from "./pages/AboutPage/AboutUs.jsx";
@@ -33,10 +32,9 @@ import BabysitterService from "./components/TakeCare/BabysitterCareServices/Baby
 import CookServices from "./components/TakeCare/CookServices/CookServices.jsx";
 import HousekeeperServices from "./components/TakeCare/HousekeeperServices/HousekeeperServices.jsx";
 import TutorServices from "./components/TakeCare/TutorServices/TutorServices.jsx";
-import ElderCareServices from "./components/TakeCare/ElderCareServices/ElderCareServices.jsx"
+import ElderCareServices from "./components/TakeCare/ElderCareServices/ElderCareServices.jsx";
 import PetCareService from "./components/TakeCare/PetCareServices/PetCareServices.jsx";
 import CareCenterServices from "./components/TakeCare/CareCenterServices/CareCenterServices.jsx";
-
 
 // Roommates
 import Roommates from "./pages/Roommates/Roommates.jsx";
@@ -91,7 +89,7 @@ const Layout = ({ children }) => {
   ];
 
   const shouldShowFooter = !noFooterPaths.some((path) =>
-    location.pathname.startsWith(path)
+    location.pathname.startsWith(path),
   );
 
   return (
@@ -157,12 +155,10 @@ const App = () => {
                 </>
               }
             />
-{/* signin route */}
+            {/* signin route */}
 
+            <Route path="/signin" element={<Signin />} />
 
-<Route path="/signin" element={<Signin/>} />
-
-    
             {/* Contacts Page */}
             <Route path="/contact-us" element={<ContactUs />} />
             <Route path="/about-us" element={<AboutUs />} />
@@ -172,13 +168,22 @@ const App = () => {
             {/* TakeCare */}
             <Route path="/takecare" element={<TakeCare />} />
             <Route path="/takecare/:serviceId" element={<NannyService />} />
-            <Route path="/takecare/babysitter" element={<BabysitterService />} />
+            <Route
+              path="/takecare/babysitter"
+              element={<BabysitterService />}
+            />
             <Route path="/takecare/cook" element={<CookServices />} />
-            <Route path="/takecare/housekeeper" element={<HousekeeperServices />} />
+            <Route
+              path="/takecare/housekeeper"
+              element={<HousekeeperServices />}
+            />
             <Route path="/takecare/tutor" element={<TutorServices />} />
-            <Route path="/takecare/eldercare" element={<ElderCareServices/>}/>
+            <Route path="/takecare/eldercare" element={<ElderCareServices />} />
             <Route path="/takecare/petcare" element={<PetCareService />} />
-            <Route path="/takecare/carecenter" element={<CareCenterServices />} />
+            <Route
+              path="/takecare/carecenter"
+              element={<CareCenterServices />}
+            />
 
             {/* Roommates */}
             <Route path="/roommates" element={<Roommates />} />
@@ -211,8 +216,8 @@ const App = () => {
 
             {/* Cars categories */}
             <Route path="/cars" element={<CarsPage />} />
-        <Route path="/car-listings" element={<CarListing />} />
-        <Route path="/car-details" element={<CarDetails />} />
+            <Route path="/car-listings" element={<CarListing />} />
+            <Route path="/car-details" element={<CarDetails />} />
 
             {/* Profile */}
             <Route path="/profile" element={<Profile />} />

@@ -192,7 +192,7 @@ This position is based in our San Francisco office with a hybrid work model (3 d
     <div className="min-h-screen bg-gradient-to-b from-[#F8FAFC] to-white">
       {/* Header Navigation */}
       <header className="bg-white shadow-md border-b border-gray-100 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <button
               onClick={() => navigate(-1)}
@@ -236,7 +236,7 @@ This position is based in our San Francisco office with a hybrid work model (3 d
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className=" px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left Column - Main Content */}
           <div className="lg:col-span-2 space-y-8">
