@@ -1,5 +1,7 @@
 import React from 'react';
 import { ShoppingBag } from 'lucide-react';
+import ForSaleRecommended from './ForSaleRecommend.jsx';
+import ForSaleFaq from './ForSaleFaq.jsx';
 
 export default function ForSale() {
   const collections = [
@@ -150,6 +152,13 @@ export default function ForSale() {
           </button>
         </div>
       </div>
+
+
+          <ForSaleRecommended/>
+
+
+          <ForSaleFaq/>
+
     </div>
   );
 }
