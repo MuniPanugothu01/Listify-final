@@ -1204,10 +1204,10 @@ const RentalsListings = () => {
           {/* Search Bar */}
           <div className="mb-6">
             <div className="flex flex-col lg:flex-row items-center gap-3">
-              <div className="flex flex-col sm:flex-row items-center w-full lg:w-auto gap-2">
+              <div className="flex flex-col lg:flex-row items-center w-full lg:w-auto gap-2">
                 {/* Property Type Dropdown */}
                 {searchType === "Apartments for Rent" && (
-                  <div className="w-full sm:w-auto">
+                  <div className="w-full lg:w-auto">
                     <div className="relative">
                       <button
                         onClick={() =>
@@ -1388,7 +1388,7 @@ const RentalsListings = () => {
                 )}
 
                 {/* Location Type */}
-                <div className="w-full sm:w-auto">
+                <div className="w-full lg:w-auto">
                   <div className="relative">
                     <select
                       className="w-full pl-3 pr-10 py-3 text-base border border-gray-200 rounded-lg text-gray-700 
@@ -1407,7 +1407,7 @@ const RentalsListings = () => {
                 </div>
 
                 {/* Location Input */}
-                <div className="w-full sm:w-auto">
+                <div className="w-full lg:w-auto">
                   <div className="relative">
                     <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
                     <input
@@ -1422,7 +1422,7 @@ const RentalsListings = () => {
                 </div>
 
                 {/* Radius */}
-                <div className="w-full sm:w-auto">
+                <div className="w-full lg:w-auto">
                   <div className="relative">
                     <select
                       className="w-full pl-3 pr-10 py-3 text-base border border-gray-200 rounded-lg text-gray-700 
@@ -1441,7 +1441,7 @@ const RentalsListings = () => {
                 </div>
 
                 {/* Budget */}
-                <div className="w-full sm:w-auto">
+                <div className="w-full lg:w-auto">
                   <div className="relative">
                     <select
                       className="w-full pl-3 pr-10 py-3 text-base border border-gray-200 rounded-lg text-gray-700 
@@ -1461,7 +1461,7 @@ const RentalsListings = () => {
               </div>
 
               {/* Action Buttons */}
-              <div className="flex items-center gap-3 w-full lg:w-auto justify-center lg:justify-start flex-wrap">
+              <div className="flex items-center gap-3 w-full lg:w-auto justify-center lg:justify-start ">
                 <button
                   onClick={handleSearch}
                   className="w-full lg:w-fit px-6 flex items-center justify-center gap-2 bg-[#2563EB]

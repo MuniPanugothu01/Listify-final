@@ -11,6 +11,14 @@
 
 
 
+/* body {
+  font-family: "Montserrat", sans-serif;
+} */
+
+
+
+
+
 /* Add this to your global CSS */
 html.lenis, html.lenis body {
   height: auto;
