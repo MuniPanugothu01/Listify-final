@@ -57,28 +57,17 @@ const HowItWorks = () => {
               className="relative h-48 sm:h-56 bg-cover bg-center"
               style={{ backgroundImage: `url(${step.bgImage})` }}
             >
-              {/* Content Overlay */}
-              <div className="absolute inset-0 flex flex-col items-center justify-center p-4 sm:p-6 text-white">
-                {/* Icon Container */}
-                <div className="relative mb-4 sm:mb-5">
-                  <div className="w-16 h-16 xs:w-18 xs:h-18 sm:w-20 sm:h-20 rounded-full overflow-hidden border-4 border-white/30 bg-black/30 backdrop-blur-sm flex items-center justify-center group-hover:scale-110 group-hover:border-white/50 transition-all duration-300 mx-auto">
-                    <div className="text-white">
-                      {step.icon}
-                    </div>
-                  </div>
-                  
-                
-                </div>
-
-                {/* Title */}
-                <h3 className="text-lg xs:text-xl sm:text-2xl font-bold mb-2 sm:mb-3 text-center leading-tight drop-shadow-lg">
-                  {step.title}
-                </h3>
-              </div>
+            
             </div>
 
             {/* Description Box */}
             <div className="bg-white p-4 sm:p-6 border border-gray-200 border-t-0 rounded-b-xl sm:rounded-b-2xl group-hover:border-[#27BB97] transition-colors duration-300">
+
+               <h3 className="text-[#27BB97] text-lg xs:text-xl sm:text-2xl font-medium mb-2 sm:mb-3 text-center">
+                  {step.title}
+                </h3>
+
+
               <p className="text-gray-600 text-xs xs:text-sm sm:text-sm text-center leading-tight">
                 {step.description}
               </p>
