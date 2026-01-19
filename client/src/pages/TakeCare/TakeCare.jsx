@@ -60,7 +60,7 @@ const TakeCare = () => {
         "Elder Care Center Jobs",
         "Adult Daycare"
       ],
-      image: "https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=400&h=300&fit=crop"
+      image: "elder-care-5.jpg"
     }
   ];
 
@@ -97,7 +97,7 @@ const TakeCare = () => {
       id: "eldercare-provider",
       title: "Eldercare provider/Nurse",
       description: "Connect with trusted Elder care providers. Learn more about the most-reliable elder care providers.",
-      image: "https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=400&h=300&fit=crop",
+      image: "elder-care-3.jpg",
       color: "from-purple-500 to-violet-500"
     },
     {
@@ -168,7 +168,7 @@ const TakeCare = () => {
       price: "$$",
       location: "Midtown",
       distance: "2.1 mi",
-      image: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1",
+      image: "care-center-2.jpg",
       features: ["Montessori", "STEM Program", "Outdoor Play", "Art Classes"],
       availability: "Enrolling Now",
       verified: true,
