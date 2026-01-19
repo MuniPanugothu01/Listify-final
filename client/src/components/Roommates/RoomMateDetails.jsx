@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
   Home,
   Bath,
@@ -35,6 +36,7 @@ import {
   FaUtensils,
   FaDumbbell,
 } from "react-icons/fa";
+import { GoArrowUpLeft } from "react-icons/go";
 import { GiGrass, GiWashingMachine } from "react-icons/gi";
 import { IoIosWater } from "react-icons/io";
 import { TbShirt } from "react-icons/tb";
@@ -980,8 +982,19 @@ const RoomMateDetails = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white pb-20 lg:pb-0">
       <RoommateSubNav />
+
+
+  {/* Desktop "Back to Home" link */}
+        <div className="hidden lg:block ml-10 mt-2">
+          <Link to="/roommates">
+            <p className="flex items-center gap-2 text-[#27bb97] capitalize hover:underline">
+              <GoArrowUpLeft />
+              back to home
+            </p>
+          </Link>
+        </div>
 
       {/* Header Section */}
       <div className="pt-10 pb-6 px-4 sm:px-8 lg:px-20">
@@ -999,11 +1012,11 @@ const RoomMateDetails = () => {
 
           {/* Search Bar */}
           <div className="mb-6">
-            <div className="flex flex-col lg:flex-row items-center gap-3">
-              <div className="flex flex-col sm:flex-row items-center w-full lg:w-auto">
+            <div className="flex flex-col  lg:flex-row items-center gap-3">
+              <div className="flex flex-col lg:flex-row items-center w-full lg:w-auto gap-1">
                 {/* Property Type Dropdown - Only show when Rooms for Rent is selected */}
                 {searchType === "Rooms for Rent" && (
-                  <div className="w-full sm:w-auto">
+                  <div className="w-full lg:w-auto">
                     <div className="relative">
                       <button
                         onClick={() =>
@@ -1019,7 +1032,7 @@ const RoomMateDetails = () => {
                         />
                       </button>
                       {showPropertyDropdown && (
-                        <div className="absolute top-full left-0 z-20 bg-white border border-gray-200 rounded-lg shadow-lg lg:w-[600px] p-4 max-h-96 overflow-y-auto">
+                        <div className="absolute top-full left-0 z-20 bg-white border border-gray-200 rounded-lg shadow-lg lg:w-[800px] p-4 max-h-96 overflow-x-auto">
                           {/* I Need / I Offer Tabs */}
                           <div className="mb-4 hidden lg:flex border-b pb-2">
                             <button
@@ -1728,7 +1741,7 @@ const RoomMateDetails = () => {
                 )}
 
                 {/* Location Type */}
-                <div className="w-full sm:w-auto">
+                <div className="w-full lg:w-auto ">
                   <div className="relative">
                     <select
                       className="w-full pl-3 pr-10 py-3 text-base border border-gray-200 rounded-lg lg:rounded-none text-gray-700 
@@ -1747,7 +1760,7 @@ const RoomMateDetails = () => {
                 </div>
 
                 {/* Location Input */}
-                <div className="w-full sm:w-auto">
+                <div className="w-full lg:w-auto">
                   <div className="relative">
                     <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
                     <input
@@ -1762,7 +1775,7 @@ const RoomMateDetails = () => {
                 </div>
 
                 {/* Radius */}
-                <div className="w-full sm:w-auto">
+                <div className="w-full lg:w-auto">
                   <div className="relative">
                     <select
                       className="w-full pl-3 pr-10 py-3 text-base border border-gray-200 rounded-lg lg:rounded-none text-gray-700 
@@ -1781,7 +1794,7 @@ const RoomMateDetails = () => {
                 </div>
 
                 {/* Budget */}
-                <div className="w-full sm:w-auto">
+                <div className="w-full lg:w-auto">
                   <div className="relative">
                     <select
                       className="w-full pl-3 pr-10 py-3 text-base border border-gray-200 rounded-lg lg:rounded-r-lg lg:rounded-l-none text-gray-700 
@@ -1801,10 +1814,10 @@ const RoomMateDetails = () => {
               </div>
 
               {/* Action Buttons */}
-              <div className="flex items-center gap-3 w-full lg:w-auto justify-center lg:justify-start">
+              <div className="flex items-center gap-2 w-full lg:w-auto justify-center lg:justify-start">
                 <button
                   onClick={handleSearch}
-                  className="w-full lg:w-fit px-6 flex items-center justify-center gap-2 bg-[#2563EB]
+                  className="w-full lg:w-fit px-4 flex items-center justify-center gap-2 bg-[#2563EB]
                            text-white font-semibold rounded-lg py-3 hover:bg-[#1E40AF] 
                            shadow-lg hover:shadow-xl transition-all duration-200 cursor-pointer"
                 >
@@ -2850,6 +2863,46 @@ const RoomMateDetails = () => {
               {/* Rest of your right side components... */}
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* Mobile Bottom "Back to Home" Button - Fixed at bottom center */}
+      {/* This will show on mobile (lg:hidden) and hide on desktop */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 p-4 bg-gradient-to-t from-white via-white to-transparent">
+        <div className="flex justify-center">
+          <Link to="/roommates">
+            <div
+              className="
+                flex 
+                items-center 
+                justify-center 
+                gap-2 
+                text-[#27bb97] 
+                capitalize 
+                bg-white 
+                px-6 
+                py-3 
+                rounded-lg 
+                shadow-lg 
+                border 
+                border-gray-300
+                hover:bg-gray-50
+                transition-all
+                duration-200
+                whitespace-nowrap
+                text-base
+                font-medium
+                w-fit
+                mx-auto
+                hover:shadow-xl
+                hover:-translate-y-0.5
+                active:translate-y-0
+              "
+            >
+              <GoArrowUpLeft className="w-5 h-5" />
+              <span>back to home</span>
+            </div>
+          </Link>
         </div>
       </div>
     </div>

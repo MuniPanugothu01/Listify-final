@@ -460,23 +460,25 @@ const CarDetails = () => {
           </button>
         </div> */}
 
-        {/* CTA Banner */}
-        <div className="mt-24 rounded-lg p-8 md:p-12 lg:p-20 text-center text-white relative overflow-hidden shadow-2xl">
+        {/* CTA Banner */} 
+        <div className="mt-24 relative h-[600px] text-white overflow-hidden rounded-xl flex flex-col items-center justify-center">
           {/* Background Image */}
+        
           <img
-            src="/cars/cardetailfinal.webp"
+            src="/cars/c1.jpg"
             alt="Car on open road"
-            className="absolute inset-0 w-full h-full object-cover object-center"
-          />
+            className="absolute inset-0  w-full h-full object-cover "
+          /> 
+        
 
           {/* Overlay for better text readability */}
-          <div className="absolute inset-0 bg-black/50"></div>
+          {/* <div className="absolute inset-0 bg-black/50"></div> */}
 
           <div className="absolute inset-0 opacity-10">
             <div className="absolute top-0 right-0 w-64 md:w-80 lg:w-96 h-64 md:h-80 lg:h-96 bg-white rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2"></div>
           </div>
 
-          <div className="relative z-10">
+          <div className="relative z-50 text-center ">
             <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold leading-tight mb-4">
               <span className="block">Book Your Adventure</span>
               <span className="block">Today and Feel the Power</span>
