@@ -87,7 +87,7 @@ const HeroPage = () => {
   return (
     <>
       {/* Hero Section */}
-      <section className="relative w-full h-[40vh] sm:h-[45vh] md:h-[50vh] min-h-[400px] sm:min-h-[450px] md:min-h-[750px] flex items-center justify-center overflow-hidden">
+      <section className="relative w-full h-[40vh] sm:h-[45vh] md:h-[50vh] min-h-[400px] sm:min-h-[450px] md:min-h-[550px] flex items-center justify-center overflow-hidden">
         <div
           className="absolute inset-0 bg-cover bg-center"
           style={{

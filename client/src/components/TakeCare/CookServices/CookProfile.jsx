@@ -9,7 +9,7 @@ export default function CookProfile() {
       title: "Register with your email, password, and personal details to create a profile. Use Neighborhood-Based Matching to connect with local clients effortlessly.",
       buttonText: "Sign Up",
       buttonColor: "bg-[#27BB97] hover:bg-[#1FA987]",
-      bgImage: "/babycare-1.jpg"
+      bgImage: "/cook-1.jpg"
     },
     {
       icon: <Image className="w-6 h-6 xs:w-7 xs:h-7 sm:w-8 sm:h-8" />,
@@ -17,7 +17,7 @@ export default function CookProfile() {
       title: "Add a professional photo in kitchen attire to make your profile stand out and attract more culinary opportunities.",
       buttonText: "Upload a Photo",
       buttonColor: "bg-[#27BB97] hover:bg-[#1FA987]",
-      bgImage: "/babycare-2.jpg"
+      bgImage: "/cook-2.jpg"
     },
     {
       icon: <Lightbulb className="w-6 h-6 xs:w-7 xs:h-7 sm:w-8 sm:h-8" />,
@@ -25,7 +25,7 @@ export default function CookProfile() {
       title: "List your culinary skills, certifications, cuisines, and availability. Real-time updates show clients when you're available.",
       buttonText: "Highlight Skills",
       buttonColor: "bg-[#27BB97] hover:bg-[#1FA987]",
-      bgImage: "/babycare-3.jpg"
+      bgImage: "/cook-3.jpg"
     },
     {
       icon: <Award className="w-6 h-6 xs:w-7 xs:h-7 sm:w-8 sm:h-8" />,
@@ -33,7 +33,7 @@ export default function CookProfile() {
       title: "Verify your email and phone number to build trust. Reach more clients through our Mobile App for last-minute bookings.",
       buttonText: "Verification Check",
       buttonColor: "bg-[#27BB97] hover:bg-[#1FA987]",
-      bgImage: "/babycare-4.jpg"
+      bgImage: "/cook-4.jpg"
     },
     {
       icon: <Send className="w-6 h-6 xs:w-7 xs:h-7 sm:w-8 sm:h-8" />,
@@ -41,7 +41,7 @@ export default function CookProfile() {
       title: "Review your profile for accuracy. Use Smart Dashboard Features to manage cooking requests and track your culinary schedule.",
       buttonText: "Submit & Review",
       buttonColor: "bg-[#27BB97] hover:bg-[#1FA987]",
-      bgImage: "/babycare-5.jpg"
+      bgImage: "/cook-5.jpg"
     }
   ];
 

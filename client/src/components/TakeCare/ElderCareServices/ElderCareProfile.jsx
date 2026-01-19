@@ -9,7 +9,7 @@ export default function ElderCareProfile() {
       title: "Register with your email, password, and personal details to create a profile. Use Specialized Care Matching to connect with families effortlessly.",
       buttonText: "Sign Up",
       buttonColor: "bg-[#27BB97] hover:bg-[#1FA987]",
-      bgImage: "/babycare-1.jpg"
+      bgImage: "/elder-care-1.jpg"
     },
     {
       icon: <Image className="w-6 h-6 xs:w-7 xs:h-7 sm:w-8 sm:h-8" />,
@@ -17,7 +17,7 @@ export default function ElderCareProfile() {
       title: "Add a compassionate photo to make your profile stand out and attract more caregiving opportunities.",
       buttonText: "Upload a Photo",
       buttonColor: "bg-[#27BB97] hover:bg-[#1FA987]",
-      bgImage: "/babycare-2.jpg"
+      bgImage: "/elder-care-2.jpg"
     },
     {
       icon: <Lightbulb className="w-6 h-6 xs:w-7 xs:h-7 sm:w-8 sm:h-8" />,
@@ -25,7 +25,7 @@ export default function ElderCareProfile() {
       title: "List your caregiving skills, certifications, specialties, and availability. Real-time updates show families when you're available.",
       buttonText: "Highlight Skills",
       buttonColor: "bg-[#27BB97] hover:bg-[#1FA987]",
-      bgImage: "/babycare-3.jpg"
+      bgImage: "/elder-care-3.jpg"
     },
     {
       icon: <Award className="w-6 h-6 xs:w-7 xs:h-7 sm:w-8 sm:h-8" />,
@@ -33,7 +33,7 @@ export default function ElderCareProfile() {
       title: "Verify your email and phone number to build trust. Reach more families through our Mobile App for flexible care schedules.",
       buttonText: "Verification Check",
       buttonColor: "bg-[#27BB97] hover:bg-[#1FA987]",
-      bgImage: "/babycare-4.jpg"
+      bgImage: "/elder-care-4.jpg"
     },
     {
       icon: <Send className="w-6 h-6 xs:w-7 xs:h-7 sm:w-8 sm:h-8" />,
@@ -41,7 +41,7 @@ export default function ElderCareProfile() {
       title: "Review your profile for accuracy. Use Smart Dashboard Features to manage care requests and track your caregiving schedule.",
       buttonText: "Submit & Review",
       buttonColor: "bg-[#27BB97] hover:bg-[#1FA987]",
-      bgImage: "/babycare-5.jpg"
+      bgImage: "/elder-care-5.jpg"
     }
   ];
 

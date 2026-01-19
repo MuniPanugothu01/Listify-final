@@ -60,7 +60,7 @@ const CareServices = () => {
       id: "eldercare",
       title: "Eldercare",
       description: "Offer or Arrange Senior Care",
-      image: "https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=200&h=200&fit=crop&crop=face",
+      image: "/elder-care.jpg",
       color: "from-indigo-500 to-blue-500"
     },
     {
@@ -79,23 +79,11 @@ const CareServices = () => {
   };
 
   const currentServiceId = getCurrentServiceId();
-  const isOnNannyPage = currentServiceId === 'nanny';
   
   // Filter out current service if we're on its specific page
   const services = isOnSpecificServicePage 
     ? allServices.filter(service => service.id !== currentServiceId)
     : allServices;
-
-  // Debug log to check what's happening
-  useEffect(() => {
-    console.log('====================================');
-    console.log('Current path:', currentPath);
-    console.log('Current service ID:', currentServiceId);
-    console.log('Is on specific service page:', isOnSpecificServicePage);
-    console.log('Is on Nanny page:', isOnNannyPage);
-    console.log('Services showing:', services.length);
-    console.log('====================================');
-  }, [currentPath, currentServiceId, isOnSpecificServicePage, isOnNannyPage, services.length]);
 
   // Update scroll button visibility
   const updateScrollButtons = () => {
@@ -116,8 +104,16 @@ const CareServices = () => {
     }
   }, [services]); // Re-run when services change
 
-  // Handle card click to navigate to specific service page
+  // Handle card click to navigate to specific service page with scroll to top
   const handleServiceClick = (serviceId) => {
+    // Scroll to top first
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: 'smooth'
+    });
+    
+    // Then navigate to the service page
     navigate(`/takecare/${serviceId}`);
   };
 

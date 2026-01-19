@@ -34,9 +34,9 @@ export default function VidProLogin() {
               {/* Logo */}
               <div className="flex items-center gap-2 text-white">
                 <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
-                  <span className="text-slate-900 font-bold text-xl">V</span>
+                  <span className="text-slate-900 font-bold text-xl">L</span>
                 </div>
-                <span className="text-2xl font-bold capitalize">lisitify</span>
+                <span className="text-2xl font-bold capitalize">listify</span>
               </div>
 
               {/* Back to Website */}
@@ -68,7 +68,7 @@ export default function VidProLogin() {
         </div>
 
         {/* Right Side - Login Form Container with Semi-transparent Background */}
-        <div className="w-full lg:w-1/2 flex items-center justify-center min-h-screen p-8 -mt-16">
+        <div className="w-full lg:w-1/2 flex items-center justify-center min-h-screen p-8  ">
           {/* Login Form Card with frosted glass effect */}
           <div className="w-[90vw] lg:w-[87vh] h-[85vh] lg:h-[89vh] rounded-md flex items-center justify-center bg-white/95 backdrop-blur-sm border border-white/20 p-8 shadow-2xl">
             <div className="w-full max-w-md">

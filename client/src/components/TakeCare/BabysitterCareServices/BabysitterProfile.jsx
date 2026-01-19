@@ -9,7 +9,7 @@ export default function BabysitterProfile() {
       title: "Register with your email, password, and personal details to create a profile. Use Neighborhood-Based Matching to connect with local families effortlessly.",
       buttonText: "Sign Up",
       buttonColor: "bg-[#27BB97] hover:bg-[#1FA987]",
-      bgImage: "/babycare-1.jpg"
+      bgImage: "/babby-sitter-1.jpg"
     },
     {
       icon: <Image className="w-6 h-6 xs:w-7 xs:h-7 sm:w-8 sm:h-8" />,
@@ -17,7 +17,7 @@ export default function BabysitterProfile() {
       title: "Add a friendly, welcoming photo to make your profile stand out to attract more families for date nights and part-time care.",
       buttonText: "Upload a Photo",
       buttonColor: "bg-[#27BB97] hover:bg-[#1FA987]",
-      bgImage: "/babycare-2.jpg"
+      bgImage: "/babby-sitter-2.jpg"
     },
     {
       icon: <Lightbulb className="w-6 h-6 xs:w-7 xs:h-7 sm:w-8 sm:h-8" />,
@@ -25,7 +25,7 @@ export default function BabysitterProfile() {
       title: "List your babysitting skills, certifications, and flexible availability. Real-time updates show families when you're free.",
       buttonText: "Highlight Skills",
       buttonColor: "bg-[#27BB97] hover:bg-[#1FA987]",
-      bgImage: "/babycare-3.jpg"
+      bgImage: "/babby-sitter-3.jpg"
     },
     {
       icon: <Award className="w-6 h-6 xs:w-7 xs:h-7 sm:w-8 sm:h-8" />,
@@ -33,7 +33,7 @@ export default function BabysitterProfile() {
       title: "Verify your email and phone number to build trust. Reach more families through our Mobile App for last-minute bookings.",
       buttonText: "Verification Check",
       buttonColor: "bg-[#27BB97] hover:bg-[#1FA987]",
-      bgImage: "/babycare-4.jpg"
+      bgImage: "/babby-sitter-4.jpg"
     },
     {
       icon: <Send className="w-6 h-6 xs:w-7 xs:h-7 sm:w-8 sm:h-8" />,
@@ -41,7 +41,7 @@ export default function BabysitterProfile() {
       title: "Review your profile for accuracy. Use Smart Dashboard Features to manage babysitting requests and track your schedule.",
       buttonText: "Submit & Review",
       buttonColor: "bg-[#27BB97] hover:bg-[#1FA987]",
-      bgImage: "/babycare-5.jpg"
+      bgImage: "/babby-sitter-5.jpg"
     }
   ];
 
