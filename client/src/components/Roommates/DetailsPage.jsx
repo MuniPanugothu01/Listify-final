@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import {
   ChevronLeft,
   ChevronRight,
@@ -6,6 +7,8 @@ import {
   ShoppingCart,
   Search,
 } from "lucide-react";
+import { GoArrowUpLeft } from "react-icons/go";
+
 import RoommateSubNav from "./RoommateSubNav";
 // react-icons
 import { FaArrowRight } from "react-icons/fa";
@@ -47,58 +50,66 @@ const DetailsPage = () => {
       id: 1,
       name: "Birchview Gardens",
       location: "Piscataway, NJ, US, 8854",
-      image: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=300&h=200&fit=crop",
-      price: "$1,200"
+      image:
+        "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=300&h=200&fit=crop",
+      price: "$1,200",
     },
     {
       id: 2,
       name: "Riverside Apartments",
       location: "New York, NY, US, 10001",
-      image: "https://images.unsplash.com/photo-1513584684374-8bab748fbf90?w=300&h=200&fit=crop",
-      price: "$1,500"
+      image:
+        "https://images.unsplash.com/photo-1513584684374-8bab748fbf90?w=300&h=200&fit=crop",
+      price: "$1,500",
     },
     {
       id: 3,
       name: "Central Park Residences",
       location: "Manhattan, NY, US, 10022",
-      image: "https://images.unsplash.com/photo-1484154218962-a197022b5858?w=300&h=200&fit=crop",
-      price: "$1,800"
+      image:
+        "https://images.unsplash.com/photo-1484154218962-a197022b5858?w=300&h=200&fit=crop",
+      price: "$1,800",
     },
     {
       id: 4,
       name: "Harbor View Lofts",
       location: "Brooklyn, NY, US, 11201",
-      image: "https://images.unsplash.com/photo-1549517045-bc93de075e53?w=300&h=200&fit=crop",
-      price: "$1,350"
+      image:
+        "https://images.unsplash.com/photo-1549517045-bc93de075e53?w=300&h=200&fit=crop",
+      price: "$1,350",
     },
     {
       id: 5,
       name: "Metro Heights",
       location: "Queens, NY, US, 11355",
-      image: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=300&h=200&fit=crop",
-      price: "$1,100"
+      image:
+        "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=300&h=200&fit=crop",
+      price: "$1,100",
     },
     {
       id: 6,
       name: "Garden District",
       location: "Jersey City, NJ, US, 07302",
-      image: "https://images.unsplash.com/photo-1574362848149-11496d93a7c7?w=300&h=200&fit=crop",
-      price: "$1,400"
+      image:
+        "https://images.unsplash.com/photo-1574362848149-11496d93a7c7?w=300&h=200&fit=crop",
+      price: "$1,400",
     },
     {
       id: 7,
       name: "University Commons",
       location: "Boston, MA, US, 02134",
-      image: "https://images.unsplash.com/photo-1558036117-15e82a2f9e10?w=300&h=200&fit=crop",
-      price: "$1,250"
+      image:
+        "https://images.unsplash.com/photo-1558036117-15e82a2f9e10?w=300&h=200&fit=crop",
+      price: "$1,250",
     },
     {
       id: 8,
       name: "Downtown Plaza",
       location: "Chicago, IL, US, 60601",
-      image: "https://images.unsplash.com/photo-1502005229762-cf1b2da7c5d6?w=300&h=200&fit=crop",
-      price: "$1,600"
-    }
+      image:
+        "https://images.unsplash.com/photo-1502005229762-cf1b2da7c5d6?w=300&h=200&fit=crop",
+      price: "$1,600",
+    },
   ];
 
   const handlePrevImage = () => {
@@ -112,8 +123,18 @@ const DetailsPage = () => {
   const tabs = ["Map", "Transportation", "Neighbourhood", "Hospitals"];
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white pb-20 lg:pb-0">
       <RoommateSubNav />
+
+      {/* Desktop "Back to Home" link */}
+      <div className="hidden lg:block ml-10 mt-2">
+        <Link to="/roommate-details">
+          <p className="flex items-center gap-2 text-[#27bb97] capitalize hover:underline">
+            <GoArrowUpLeft />
+            back to home
+          </p>
+        </Link>
+      </div>
 
       {/* Header */}
       <header className=" border-gray-200">
@@ -621,7 +642,6 @@ const DetailsPage = () => {
 
         {/* ⭐ Neighborhood Info Section - Full width below both columns */}
         <div className="mt-10 w-full">
-
           {/* Tabs */}
           <div className="border rounded-xl shadow-sm bg-white">
             <div className="flex border-b">
@@ -639,20 +659,24 @@ const DetailsPage = () => {
                 </button>
               ))}
             </div>
-            
+
             {/* Tab Content */}
             <div className="p-6 min-h-[300px]">
               {activeTab === "Map" && (
                 <div className="flex flex-col items-center justify-center h-64 bg-gray-100 rounded-lg">
                   <p className="text-gray-500 mb-4">Interactive Map View</p>
                   <div className="w-full h-48 bg-blue-50 border border-blue-200 rounded flex items-center justify-center">
-                    <span className="text-blue-400">Map will be displayed here</span>
+                    <span className="text-blue-400">
+                      Map will be displayed here
+                    </span>
                   </div>
                 </div>
               )}
               {activeTab === "Transportation" && (
                 <div className="space-y-4">
-                  <h3 className="font-semibold text-lg">Public Transportation</h3>
+                  <h3 className="font-semibold text-lg">
+                    Public Transportation
+                  </h3>
                   <ul className="space-y-2">
                     <li className="flex items-center gap-2">
                       <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
@@ -671,7 +695,9 @@ const DetailsPage = () => {
               )}
               {activeTab === "Neighbourhood" && (
                 <div className="space-y-4">
-                  <h3 className="font-semibold text-lg">Neighbourhood Amenities</h3>
+                  <h3 className="font-semibold text-lg">
+                    Neighbourhood Amenities
+                  </h3>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="flex items-center gap-2">
                       <span className="text-green-500">🛒</span>
@@ -694,19 +720,27 @@ const DetailsPage = () => {
               )}
               {activeTab === "Hospitals" && (
                 <div className="space-y-4">
-                  <h3 className="font-semibold text-lg">Nearby Medical Facilities</h3>
+                  <h3 className="font-semibold text-lg">
+                    Nearby Medical Facilities
+                  </h3>
                   <ul className="space-y-3">
                     <li className="p-3 border rounded-lg">
                       <h4 className="font-medium">City General Hospital</h4>
-                      <p className="text-sm text-gray-600">1.2 miles • 24/7 Emergency</p>
+                      <p className="text-sm text-gray-600">
+                        1.2 miles • 24/7 Emergency
+                      </p>
                     </li>
                     <li className="p-3 border rounded-lg">
                       <h4 className="font-medium">Community Health Center</h4>
-                      <p className="text-sm text-gray-600">0.8 miles • Primary Care</p>
+                      <p className="text-sm text-gray-600">
+                        0.8 miles • Primary Care
+                      </p>
                     </li>
                     <li className="p-3 border rounded-lg">
                       <h4 className="font-medium">Urgent Care Clinic</h4>
-                      <p className="text-sm text-gray-600">0.5 miles • Walk-ins Welcome</p>
+                      <p className="text-sm text-gray-600">
+                        0.5 miles • Walk-ins Welcome
+                      </p>
                     </li>
                   </ul>
                 </div>
@@ -727,7 +761,10 @@ const DetailsPage = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {apartments.map((apartment) => (
-                <div key={apartment.id} className="border rounded-xl p-3 shadow-sm hover:shadow-md transition cursor-pointer group">
+                <div
+                  key={apartment.id}
+                  className="border rounded-xl p-3 shadow-sm hover:shadow-md transition cursor-pointer group"
+                >
                   <div className="relative overflow-hidden rounded-lg">
                     <img
                       src={apartment.image}
@@ -744,12 +781,54 @@ const DetailsPage = () => {
                   </p>
                   <div className="flex items-center justify-between mt-2">
                     <span className="text-gray-500 text-sm">⭐ 4.5</span>
-                    <span className="text-gray-500 text-sm">2 Beds • 1 Bath</span>
+                    <span className="text-gray-500 text-sm">
+                      2 Beds • 1 Bath
+                    </span>
                   </div>
                 </div>
               ))}
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* Mobile Bottom "Back to Home" Button - Fixed at bottom center */}
+      {/* This will show on mobile (lg:hidden) and hide on desktop */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 p-4 bg-gradient-to-t from-white via-white to-transparent">
+        <div className="flex justify-center">
+          <Link to="/roommates">
+            <div
+              className="
+                flex 
+                items-center 
+                justify-center 
+                gap-2 
+                text-[#27bb97] 
+                capitalize 
+                bg-white 
+                px-6 
+                py-3 
+                rounded-lg 
+                shadow-lg 
+                border 
+                border-gray-300
+                hover:bg-gray-50
+                transition-all
+                duration-200
+                whitespace-nowrap
+                text-base
+                font-medium
+                w-fit
+                mx-auto
+                hover:shadow-xl
+                hover:-translate-y-0.5
+                active:translate-y-0
+              "
+            >
+              <GoArrowUpLeft className="w-5 h-5" />
+              <span>back to home</span>
+            </div>
+          </Link>
         </div>
       </div>
     </div>

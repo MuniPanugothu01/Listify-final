@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
   ChevronLeft,
   ChevronRight,
@@ -58,6 +59,7 @@ import {
 } from "react-icons/fa";
 import { GiWashingMachine, GiGrass, GiGate } from "react-icons/gi";
 import { IoIosWater } from "react-icons/io";
+import { GoArrowUpLeft } from "react-icons/go";
 
 const RentalDetailsPage = () => {
   const location = useLocation();
@@ -96,13 +98,13 @@ const RentalDetailsPage = () => {
 
   const handlePrevImage = () => {
     setSelectedImage((prev) =>
-      prev === 0 ? property.images.length - 1 : prev - 1
+      prev === 0 ? property.images.length - 1 : prev - 1,
     );
   };
 
   const handleNextImage = () => {
     setSelectedImage((prev) =>
-      prev === property.images.length - 1 ? 0 : prev + 1
+      prev === property.images.length - 1 ? 0 : prev + 1,
     );
   };
 
@@ -184,89 +186,99 @@ const RentalDetailsPage = () => {
 
   return (
     <div className="min-h-screen bg-white">
-    {/* Header */}
-<header className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">
-  <div className="px-4 sm:px-6 lg:px-20 py-4 flex items-center justify-between">
-    {/* Breadcrumb Navigation - Mobile/Tablet responsive changes */}
-    <div className="flex items-center gap-2 text-sm text-gray-600">
-      <button
-        onClick={() => navigate("/rentals", { state: { searchParams } })}
-        className="hover:text-blue-600 font-medium"
-      >
-        {/* Mobile: Show shortened text */}
-        <span className="lg:hidden">Rentals</span>
-        {/* Tablet & Desktop: Show full text */}
-        <span className="hidden lg:inline">Toronto Rentals</span>
-      </button>
-      <ChevronRight className="w-4 h-4" />
-      <button
-        onClick={() => navigate("/rentals", { state: { searchParams } })}
-        className="hover:text-blue-600 font-medium"
-      >
-        {/* Mobile: Show just city name */}
-        <span className="sm:hidden">
-          {searchParams?.location?.split(',')[0] || "Toronto"}
-        </span>
-        {/* Tablet & Desktop: Show full location */}
-        <span className="hidden sm:inline">
-          {searchParams?.location || "Toronto, ON"}
-        </span>
-      </button>
-      <ChevronRight className="w-4 h-4" />
-      {/* Property title with responsive truncation */}
-      <span className="text-gray-500">
-        {/* Mobile: Very short truncation */}
-        <span className="sm:hidden truncate max-w-[60px]">
-          {property.title.length > 8 
-            ? `${property.title.substring(0, 8)}...` 
-            : property.title}
-        </span>
-        {/* Tablet: Medium truncation */}
-        <span className="hidden sm:block lg:hidden truncate max-w-[100px]">
-          {property.title.length > 15 
-            ? `${property.title.substring(0, 15)}...` 
-            : property.title}
-        </span>
-        {/* Desktop: Original styling */}
-        <span className="hidden lg:inline truncate max-w-md">
-          {property.title}
-        </span>
-      </span>
-    </div>
+      {/* Desktop "Back to Home" link */}
+      <div className="hidden lg:block ml-10 mt-2">
+        <Link to="/rentals-listings">
+          <p className="flex items-center gap-2 text-[#27bb97] capitalize hover:underline">
+            <GoArrowUpLeft />
+            back to home
+          </p>
+        </Link>
+      </div>
 
-    {/* Action Buttons - Only spacing adjustments for mobile */}
-    <div className="flex items-center space-x-4">
-      <button
-        onClick={() => {
-          if (navigator.share) {
-            navigator.share({
-              title: property.title,
-              text: property.description,
-              url: window.location.href,
-            });
-          } else {
-            navigator.clipboard.writeText(window.location.href);
-            alert("Link copied to clipboard!");
-          }
-        }}
-        className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-      >
-        <Share2 className="w-5 h-5 text-gray-700" />
-      </button>
-      <button
-        onClick={() => setLiked(!liked)}
-        className={`p-2 hover:bg-gray-100 rounded-full transition-colors ${
-          liked ? "text-red-500" : "text-gray-700"
-        }`}
-      >
-        <Heart
-          className="w-5 h-5"
-          fill={liked ? "currentColor" : "none"}
-        />
-      </button>
-    </div>
-  </div>
-</header>
+      {/* Header */}
+      <header className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">
+        <div className="px-4 sm:px-6 lg:px-20 py-4 flex items-center justify-between">
+          {/* Breadcrumb Navigation - Mobile/Tablet responsive changes */}
+          <div className="flex items-center gap-2 text-sm text-gray-600">
+            <button
+              onClick={() => navigate("/rentals", { state: { searchParams } })}
+              className="hover:text-blue-600 font-medium"
+            >
+              {/* Mobile: Show shortened text */}
+              <span className="lg:hidden">Rentals</span>
+              {/* Tablet & Desktop: Show full text */}
+              <span className="hidden lg:inline">Toronto Rentals</span>
+            </button>
+            <ChevronRight className="w-4 h-4" />
+            <button
+              onClick={() => navigate("/rentals", { state: { searchParams } })}
+              className="hover:text-blue-600 font-medium"
+            >
+              {/* Mobile: Show just city name */}
+              <span className="sm:hidden">
+                {searchParams?.location?.split(",")[0] || "Toronto"}
+              </span>
+              {/* Tablet & Desktop: Show full location */}
+              <span className="hidden sm:inline">
+                {searchParams?.location || "Toronto, ON"}
+              </span>
+            </button>
+            <ChevronRight className="w-4 h-4" />
+            {/* Property title with responsive truncation */}
+            <span className="text-gray-500">
+              {/* Mobile: Very short truncation */}
+              <span className="sm:hidden truncate max-w-[60px]">
+                {property.title.length > 8
+                  ? `${property.title.substring(0, 8)}...`
+                  : property.title}
+              </span>
+              {/* Tablet: Medium truncation */}
+              <span className="hidden sm:block lg:hidden truncate max-w-[100px]">
+                {property.title.length > 15
+                  ? `${property.title.substring(0, 15)}...`
+                  : property.title}
+              </span>
+              {/* Desktop: Original styling */}
+              <span className="hidden lg:inline truncate max-w-md">
+                {property.title}
+              </span>
+            </span>
+          </div>
+
+          {/* Action Buttons - Only spacing adjustments for mobile */}
+          <div className="flex items-center space-x-4">
+            <button
+              onClick={() => {
+                if (navigator.share) {
+                  navigator.share({
+                    title: property.title,
+                    text: property.description,
+                    url: window.location.href,
+                  });
+                } else {
+                  navigator.clipboard.writeText(window.location.href);
+                  alert("Link copied to clipboard!");
+                }
+              }}
+              className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+            >
+              <Share2 className="w-5 h-5 text-gray-700" />
+            </button>
+            <button
+              onClick={() => setLiked(!liked)}
+              className={`p-2 hover:bg-gray-100 rounded-full transition-colors ${
+                liked ? "text-red-500" : "text-gray-700"
+              }`}
+            >
+              <Heart
+                className="w-5 h-5"
+                fill={liked ? "currentColor" : "none"}
+              />
+            </button>
+          </div>
+        </div>
+      </header>
 
       {/* Main Content */}
       <div className="px-4 sm:px-6 lg:px-20 py-8">
@@ -837,6 +849,46 @@ const RentalDetailsPage = () => {
               </div>
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* Mobile Bottom "Back to Home" Button - Fixed at bottom center */}
+      {/* This will show on mobile (lg:hidden) and hide on desktop */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 p-4 bg-gradient-to-t from-white via-white to-transparent">
+        <div className="flex justify-center">
+          <Link to="/rentals-listings">
+            <div
+              className="
+                flex 
+                items-center 
+                justify-center 
+                gap-2 
+                text-[#27bb97] 
+                capitalize 
+                bg-white 
+                px-6 
+                py-3 
+                rounded-lg 
+                shadow-lg 
+                border 
+                border-gray-300
+                hover:bg-gray-50
+                transition-all
+                duration-200
+                whitespace-nowrap
+                text-base
+                font-medium
+                w-fit
+                mx-auto
+                hover:shadow-xl
+                hover:-translate-y-0.5
+                active:translate-y-0
+              "
+            >
+              <GoArrowUpLeft className="w-5 h-5" />
+              <span>back to home</span>
+            </div>
+          </Link>
         </div>
       </div>
     </div>
