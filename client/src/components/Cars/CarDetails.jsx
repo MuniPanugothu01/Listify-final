@@ -31,11 +31,6 @@ const CarDetails = () => {
         HOME / CARS / CARS DETAIL
       </div>
 
-      {/* Title */}
-      <div className=" px-6 pb-2">
-        <h1 className="text-6xl font-bold tracking-tight">Car Details</h1>
-      </div>
-
       {/* Main Content */}
       <div className=" px-6 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-10 gap-8 lg:gap-12">
@@ -298,130 +293,129 @@ const CarDetails = () => {
           </div>
         </div>
 
-   {/* Similar Cars */}
-<div className="mt-24 px-4">
-  <div className="flex items-center justify-between mb-8">
-    <h2 className="text-3xl sm:text-3xl md:text-4xl font-bold text-gray-900 capitalize">
-      You may also like
-    </h2>
-    <div className="flex gap-3">
-      <button className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center transition cursor-pointer">
-        <BsArrowLeft className="w-3 h-3 md:w-4 md:h-4 text-gray-700" />
-      </button>
-      <button className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-[#27bb97] hover:bg-[#1fa987] text-white flex items-center justify-center transition cursor-pointer">
-        <BsArrowRight className="w-3 h-3 md:w-4 md:h-4" />
-      </button>
-    </div>
-  </div>
+        {/* Similar Cars */}
+        <div className="mt-24 px-4">
+          <div className="flex items-center justify-between mb-8">
+            <h2 className="text-3xl sm:text-3xl md:text-4xl font-bold text-gray-900 capitalize">
+              You may also like
+            </h2>
+            <div className="flex gap-3">
+              <button className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center transition cursor-pointer">
+                <BsArrowLeft className="w-3 h-3 md:w-4 md:h-4 text-gray-700" />
+              </button>
+              <button className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-[#27bb97] hover:bg-[#1fa987] text-white flex items-center justify-center transition cursor-pointer">
+                <BsArrowRight className="w-3 h-3 md:w-4 md:h-4" />
+              </button>
+            </div>
+          </div>
 
-  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 md:gap-5">
-    {/* Card 1 */}
-    <div className="group bg-white rounded-md shadow-sm hover:shadow-md transition-shadow cursor-pointer overflow-hidden">
-      <div className="p-3 sm:p-4 md:p-5">
-        <div className="w-full h-40 sm:h-48 md:h-40 mb-4 flex items-center justify-center bg-gray-50 rounded-md overflow-hidden">
-          <img
-            src="/cars/cardetail1.jpg"
-            alt="Horizon Mirage Convertible"
-            className="w-full h-full object-cover rounded-md transition-transform duration-500 ease-out group-hover:scale-105"
-          />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 md:gap-5">
+            {/* Card 1 */}
+            <div className="group bg-white rounded-md shadow-sm hover:shadow-md transition-shadow cursor-pointer overflow-hidden">
+              <div className="p-3 sm:p-4 md:p-5">
+                <div className="w-full h-40 sm:h-48 md:h-40 mb-4 flex items-center justify-center bg-gray-50 rounded-md overflow-hidden">
+                  <img
+                    src="/cars/cardetail1.jpg"
+                    alt="Horizon Mirage Convertible"
+                    className="w-full h-full object-cover rounded-md transition-transform duration-500 ease-out group-hover:scale-105"
+                  />
+                </div>
+                <h3 className="text-center font-semibold text-gray-900 text-sm sm:text-base leading-tight mb-2">
+                  Horizon Mirage
+                  <br />
+                  Convertible
+                </h3>
+                <p className="text-center text-gray-600 text-sm sm:text-base font-medium">
+                  $59/day
+                </p>
+              </div>
+            </div>
+
+            {/* Card 2 - Highlighted */}
+            <div className="group bg-[#27bb97] rounded-md shadow-md transition-shadow cursor-pointer overflow-hidden">
+              <div className="p-3 sm:p-4 md:p-5">
+                <div className="w-full h-40 sm:h-48 md:h-40 mb-4 flex items-center justify-center bg-white rounded-lg overflow-hidden">
+                  <img
+                    src="/cars/cardetail.webp"
+                    alt="Vanguard Phoenix C-Class"
+                    className="w-full h-full object-cover rounded-md transition-transform duration-500 ease-out group-hover:scale-105"
+                  />
+                </div>
+                <h3 className="text-center font-semibold text-white text-sm sm:text-base leading-tight mb-2">
+                  Vanguard Phoenix
+                  <br />
+                  C-Class
+                </h3>
+                <p className="text-center text-white text-sm sm:text-base font-medium">
+                  $49/day
+                </p>
+              </div>
+            </div>
+
+            {/* Card 3 */}
+            <div className="group bg-white rounded-md sm:rounded-xl shadow-sm hover:shadow-md transition-shadow cursor-pointer overflow-hidden">
+              <div className="p-3 sm:p-4 md:p-5">
+                <div className="w-full h-40 sm:h-48 md:h-40 mb-4 flex items-center justify-center bg-gray-50 rounded-md sm:rounded-lg overflow-hidden">
+                  <img
+                    src="/cars/cardetail.webp"
+                    alt="Apex Autos Typhoon Model 3"
+                    className="w-full h-full object-cover rounded-md transition-transform duration-500 ease-out group-hover:scale-105"
+                  />
+                </div>
+                <h3 className="text-center font-semibold text-gray-900 text-sm sm:text-base leading-tight mb-2">
+                  Apex Autos Typhoon
+                  <br />
+                  Model 3
+                </h3>
+                <p className="text-center text-gray-600 text-sm sm:text-base font-medium">
+                  $59/day
+                </p>
+              </div>
+            </div>
+
+            {/* Card 4 */}
+            <div className="group bg-white rounded-md sm:rounded-xl shadow-sm hover:shadow-md transition-shadow cursor-pointer overflow-hidden">
+              <div className="p-3 sm:p-4 md:p-5">
+                <div className="w-full h-40 sm:h-48 md:h-40 mb-4 flex items-center justify-center bg-gray-50 rounded-md sm:rounded-lg overflow-hidden">
+                  <img
+                    src="/cars/cardetail.webp"
+                    alt="Radiant Solstice Convertible"
+                    className="w-full h-full object-cover rounded-md transition-transform duration-500 ease-out group-hover:scale-105"
+                  />
+                </div>
+                <h3 className="text-center font-semibold text-gray-900 text-sm sm:text-base leading-tight mb-2">
+                  Radiant Solstice
+                  <br />
+                  Convertible
+                </h3>
+                <p className="text-center text-gray-600 text-sm sm:text-base font-medium">
+                  $79/day
+                </p>
+              </div>
+            </div>
+
+            {/* Card 5 */}
+            <div className="group bg-white rounded-md sm:rounded-xl shadow-sm hover:shadow-md transition-shadow cursor-pointer overflow-hidden">
+              <div className="p-3 sm:p-4 md:p-5">
+                <div className="w-full h-40 sm:h-48 md:h-40 mb-4 flex items-center justify-center bg-gray-50 rounded-md sm:rounded-lg overflow-hidden">
+                  <img
+                    src="/cars/cardetail.webp"
+                    alt="Aurora X5 Nebula Minivan"
+                    className="w-full h-full object-cover rounded-md transition-transform duration-500 ease-out group-hover:scale-105"
+                  />
+                </div>
+                <h3 className="text-center font-semibold text-gray-900 text-sm sm:text-base leading-tight mb-2">
+                  Aurora X5 Nebula
+                  <br />
+                  Minivan
+                </h3>
+                <p className="text-center text-gray-600 text-sm sm:text-base font-medium">
+                  $59/day
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
-        <h3 className="text-center font-semibold text-gray-900 text-sm sm:text-base leading-tight mb-2">
-          Horizon Mirage
-          <br />
-          Convertible
-        </h3>
-        <p className="text-center text-gray-600 text-sm sm:text-base font-medium">
-          $59/day
-        </p>
-      </div>
-    </div>
-
-    {/* Card 2 - Highlighted */}
-    <div className="group bg-[#27bb97] rounded-md shadow-md transition-shadow cursor-pointer overflow-hidden">
-      <div className="p-3 sm:p-4 md:p-5">
-        <div className="w-full h-40 sm:h-48 md:h-40 mb-4 flex items-center justify-center bg-white rounded-lg overflow-hidden">
-          <img
-            src="/cars/cardetail.webp"
-            alt="Vanguard Phoenix C-Class"
-            className="w-full h-full object-cover rounded-md transition-transform duration-500 ease-out group-hover:scale-105"
-          />
-        </div>
-        <h3 className="text-center font-semibold text-white text-sm sm:text-base leading-tight mb-2">
-          Vanguard Phoenix
-          <br />
-          C-Class
-        </h3>
-        <p className="text-center text-white text-sm sm:text-base font-medium">
-          $49/day
-        </p>
-      </div>
-    </div>
-
-    {/* Card 3 */}
-    <div className="group bg-white rounded-md sm:rounded-xl shadow-sm hover:shadow-md transition-shadow cursor-pointer overflow-hidden">
-      <div className="p-3 sm:p-4 md:p-5">
-        <div className="w-full h-40 sm:h-48 md:h-40 mb-4 flex items-center justify-center bg-gray-50 rounded-md sm:rounded-lg overflow-hidden">
-          <img
-            src="/cars/cardetail.webp"
-            alt="Apex Autos Typhoon Model 3"
-            className="w-full h-full object-cover rounded-md transition-transform duration-500 ease-out group-hover:scale-105"
-          />
-        </div>
-        <h3 className="text-center font-semibold text-gray-900 text-sm sm:text-base leading-tight mb-2">
-          Apex Autos Typhoon
-          <br />
-          Model 3
-        </h3>
-        <p className="text-center text-gray-600 text-sm sm:text-base font-medium">
-          $59/day
-        </p>
-      </div>
-    </div>
-
-    {/* Card 4 */}
-    <div className="group bg-white rounded-md sm:rounded-xl shadow-sm hover:shadow-md transition-shadow cursor-pointer overflow-hidden">
-      <div className="p-3 sm:p-4 md:p-5">
-        <div className="w-full h-40 sm:h-48 md:h-40 mb-4 flex items-center justify-center bg-gray-50 rounded-md sm:rounded-lg overflow-hidden">
-          <img
-            src="/cars/cardetail.webp"
-            alt="Radiant Solstice Convertible"
-            className="w-full h-full object-cover rounded-md transition-transform duration-500 ease-out group-hover:scale-105"
-          />
-        </div>
-        <h3 className="text-center font-semibold text-gray-900 text-sm sm:text-base leading-tight mb-2">
-          Radiant Solstice
-          <br />
-          Convertible
-        </h3>
-        <p className="text-center text-gray-600 text-sm sm:text-base font-medium">
-          $79/day
-        </p>
-      </div>
-    </div>
-
-    {/* Card 5 */}
-    <div className="group bg-white rounded-md sm:rounded-xl shadow-sm hover:shadow-md transition-shadow cursor-pointer overflow-hidden">
-      <div className="p-3 sm:p-4 md:p-5">
-        <div className="w-full h-40 sm:h-48 md:h-40 mb-4 flex items-center justify-center bg-gray-50 rounded-md sm:rounded-lg overflow-hidden">
-          <img
-            src="/cars/cardetail.webp"
-            alt="Aurora X5 Nebula Minivan"
-            className="w-full h-full object-cover rounded-md transition-transform duration-500 ease-out group-hover:scale-105"
-          />
-        </div>
-        <h3 className="text-center font-semibold text-gray-900 text-sm sm:text-base leading-tight mb-2">
-          Aurora X5 Nebula
-          <br />
-          Minivan
-        </h3>
-        <p className="text-center text-gray-600 text-sm sm:text-base font-medium">
-          $59/day
-        </p>
-      </div>
-    </div>
-  </div>
-</div>
-
 
         {/* View More Button */}
         <div className="text-center mt-16">
@@ -461,22 +455,23 @@ const CarDetails = () => {
         </div> */}
 
         {/* CTA Banner */}
-        <div className="mt-24 rounded-lg p-8 md:p-12 lg:p-20 text-center text-white relative overflow-hidden shadow-2xl">
+        <div className="mt-24 relative h-[600px] text-white overflow-hidden rounded-xl flex flex-col items-center justify-center">
           {/* Background Image */}
+
           <img
-            src="/cars/cardetailfinal.webp"
+            src="/cars/c1.jpg"
             alt="Car on open road"
-            className="absolute inset-0 w-full h-full object-cover object-center"
+            className="absolute inset-0  w-full h-full object-cover "
           />
 
           {/* Overlay for better text readability */}
-          <div className="absolute inset-0 bg-black/50"></div>
+          {/* <div className="absolute inset-0 bg-black/50"></div> */}
 
           <div className="absolute inset-0 opacity-10">
             <div className="absolute top-0 right-0 w-64 md:w-80 lg:w-96 h-64 md:h-80 lg:h-96 bg-white rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2"></div>
           </div>
 
-          <div className="relative z-10">
+          <div className="relative z-50 text-center ">
             <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold leading-tight mb-4">
               <span className="block">Book Your Adventure</span>
               <span className="block">Today and Feel the Power</span>

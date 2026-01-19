@@ -9,7 +9,7 @@ export default function TutorProfile() {
       title: "Register with your email, password, and personal details to create a profile. Use Subject-Based Matching to connect with students effortlessly.",
       buttonText: "Sign Up",
       buttonColor: "bg-[#27BB97] hover:bg-[#1FA987]",
-      bgImage: "/babycare-1.jpg"
+      bgImage: "/tutor-1.jpg"
     },
     {
       icon: <Image className="w-6 h-6 xs:w-7 xs:h-7 sm:w-8 sm:h-8" />,
@@ -17,7 +17,7 @@ export default function TutorProfile() {
       title: "Add a professional photo to make your profile stand out and attract more teaching opportunities.",
       buttonText: "Upload a Photo",
       buttonColor: "bg-[#27BB97] hover:bg-[#1FA987]",
-      bgImage: "/babycare-2.jpg"
+      bgImage: "/tutor-2.jpg"
     },
     {
       icon: <Lightbulb className="w-6 h-6 xs:w-7 xs:h-7 sm:w-8 sm:h-8" />,
@@ -25,7 +25,7 @@ export default function TutorProfile() {
       title: "List your teaching skills, qualifications, subjects, and availability. Real-time updates show students when you're available.",
       buttonText: "Highlight Skills",
       buttonColor: "bg-[#27BB97] hover:bg-[#1FA987]",
-      bgImage: "/babycare-3.jpg"
+      bgImage: "/tutor-3.jpg"
     },
     {
       icon: <Award className="w-6 h-6 xs:w-7 xs:h-7 sm:w-8 sm:h-8" />,
@@ -33,7 +33,7 @@ export default function TutorProfile() {
       title: "Verify your email and phone number to build trust. Reach more students through our Mobile App for flexible scheduling.",
       buttonText: "Verification Check",
       buttonColor: "bg-[#27BB97] hover:bg-[#1FA987]",
-      bgImage: "/babycare-4.jpg"
+      bgImage: "/tutor-4.jpg"
     },
     {
       icon: <Send className="w-6 h-6 xs:w-7 xs:h-7 sm:w-8 sm:h-8" />,
@@ -41,7 +41,7 @@ export default function TutorProfile() {
       title: "Review your profile for accuracy. Use Smart Dashboard Features to manage tutoring requests and track your teaching schedule.",
       buttonText: "Submit & Review",
       buttonColor: "bg-[#27BB97] hover:bg-[#1FA987]",
-      bgImage: "/babycare-5.jpg"
+      bgImage: "/tutor-5.jpg"
     }
   ];
 

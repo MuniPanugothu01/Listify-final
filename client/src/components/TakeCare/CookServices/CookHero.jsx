@@ -13,9 +13,9 @@ const CookHero = () => {
     <section className="relative min-h-[60vh] sm:min-h-[70vh] lg:min-h-[80vh] flex items-center justify-center overflow-hidden">
       {/* Background Image - Fixed on desktop, scroll on mobile for performance */}
       <div 
-        className="absolute inset-0  bg-center bg-fit bg-contain "
+        className="absolute inset-0  bg-center bg-fit bg-cover "
         style={{
-          backgroundImage: `url('/cook-1.jpg')`,
+          backgroundImage: `url('/cook-4.jpg')`,
         }}
       />
       

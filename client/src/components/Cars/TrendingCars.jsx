@@ -283,10 +283,10 @@ const TrendingCars = () => {
             <img
               src="/cars/tesla.webp"
               alt="Tesla Background"
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover object-bottom"
             />
             {/* Dark overlay for text readability */}
-            <div className="absolute inset-0 bg-black/50"></div>
+            {/* <div className="absolute inset-0 bg-black/50"></div> */}
           </div>
 
           {/* Content */}

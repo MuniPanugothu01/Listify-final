@@ -488,8 +488,33 @@ export default function JobSeekerResumesDetail() {
         </div>
       </div>
 
+      {/* Back to Home Button for Large Screens */}
+      <div className="hidden lg:block max-w-[1400px] mx-auto px-4 md:px-6 mt-6">
+        <div className="flex items-center">
+          <a
+            href="/jobs"
+            className="flex items-center gap-2 text-[#27bb97] hover:text-[#1fa987] transition-colors hover:underline"
+          >
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M10 19l-7-7m0 0l7-7m-7 7h18"
+              />
+            </svg>
+            <span className="text-sm font-medium">Back to Home</span>
+          </a>
+        </div>
+      </div>
+
       {/* Header Navigation */}
-      <div className="text-black mt-8 md:mt-10">
+      <div className="text-black mt-4 lg:mt-8 md:mt-10">
         <div className="max-w-[1400px] mx-auto px-4 md:px-6 py-3">
           <div className="flex items-center gap-1 md:gap-2 text-sm md:text-[15px] overflow-x-auto pb-1">
             <span className="font-medium whitespace-nowrap">Jobs</span>
@@ -1696,7 +1721,7 @@ export default function JobSeekerResumesDetail() {
                               e.target.parentElement.classList.add(
                                 "bg-gradient-to-br",
                                 "from-[#4db8b8]",
-                                "to-[#3a9d9d]"
+                                "to-[#3a9d9d]",
                               );
                             }}
                           />
@@ -2244,6 +2269,30 @@ export default function JobSeekerResumesDetail() {
               </div>
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* Sticky Back to Home Button for Mobile/Tablet */}
+      <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 lg:hidden">
+        <div className="bg-white rounded-2xl shadow-lg border border-gray-200 px-4 py-3">
+          <a href="/jobs">
+            <div className="flex items-center gap-2 text-[#27bb97] font-medium">
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M10 19l-7-7m0 0l7-7m-7 7h18"
+                />
+              </svg>
+              <span className="text-sm">Back to Home</span>
+            </div>
+          </a>
         </div>
       </div>
     </div>

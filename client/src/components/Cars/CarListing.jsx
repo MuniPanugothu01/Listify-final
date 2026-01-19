@@ -245,8 +245,8 @@ const CarListing = () => {
       {/* Full Width Search Bar at Top */}
       <div className="w-full">
         <div className="max-w-7xl mx-auto px-4 py-4">
-          {/* button back to cars page */}
-          <div>
+          {/* button back to cars page - Desktop Version */}
+          <div className="hidden lg:block">
             <Link to="/cars">
               <button className="inline-flex items-center gap-2 text-[#27bb97] hover:text-[#1fa987] hover:underline capitalize cursor-pointer">
                 <GoArrowUpLeft />
@@ -970,8 +970,8 @@ const CarListing = () => {
                               {car.price > 50000
                                 ? "$$$"
                                 : car.price > 30000
-                                ? "$$"
-                                : "$"}
+                                  ? "$$"
+                                  : "$"}
                             </div>
                           </div>
 
@@ -1159,6 +1159,46 @@ const CarListing = () => {
               ›
             </button>
           </div>
+        </div>
+      </div>
+
+      {/* Mobile Bottom "Back to Home" Button - Fixed at bottom center */}
+      {/* This will show on mobile (lg:hidden) and hide on desktop */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 p-4 bg-gradient-to-t from-white via-white to-transparent">
+        <div className="flex justify-center">
+          <Link to="/cars">
+            <div
+              className="
+                flex 
+                items-center 
+                justify-center 
+                gap-2 
+                text-[#27bb97] 
+                capitalize 
+                bg-white 
+                px-6 
+                py-3 
+                rounded-lg 
+                shadow-lg 
+                border 
+                border-gray-300
+                hover:bg-gray-50
+                transition-all
+                duration-200
+                whitespace-nowrap
+                text-base
+                font-medium
+                w-fit
+                mx-auto
+                hover:shadow-xl
+                hover:-translate-y-0.5
+                active:translate-y-0
+              "
+            >
+              <GoArrowUpLeft className="w-5 h-5" />
+              <span>back to home</span>
+            </div>
+          </Link>
         </div>
       </div>
     </div>

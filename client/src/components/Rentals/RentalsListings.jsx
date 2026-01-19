@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
   Home,
   Bath,
@@ -41,6 +42,7 @@ import {
 import { GiGrass, GiWashingMachine } from "react-icons/gi";
 import { IoIosWater } from "react-icons/io";
 import { TbShirt } from "react-icons/tb";
+import { GoArrowUpLeft } from "react-icons/go";
 import Footer from "../../pages/Home/Footer.jsx";
 
 // Enhanced sample rental properties data with multiple photos
@@ -617,7 +619,7 @@ const RentalsListings = () => {
   // Handle message
   const handleMessage = (property) => {
     alert(
-      `Opening chat with ${property.postedBy}. This would redirect to your messaging system.`
+      `Opening chat with ${property.postedBy}. This would redirect to your messaging system.`,
     );
   };
 
@@ -744,27 +746,27 @@ const RentalsListings = () => {
     </div>
   );
 
-  // Enhanced Property Card Component for Rentals
+  // Enhanced Property Card Component for Rentals with improved mobile responsiveness
   const RentalCard = ({ property }) => {
     const currentIndex = currentImageIndex[property.id] || 0;
     const totalImages = property.images.length;
 
-  const handleCardClick = () => {
-  navigate("/rental-details", {
-    state: {
-      property,
-      fromListings: true,
-      searchParams: {
-        searchType,
-        locationType,
-        location,
-        radius,
-        budget,
-        propertyType,
-      },
-    },
-  });
-};
+    const handleCardClick = () => {
+      navigate("/rental-details", {
+        state: {
+          property,
+          fromListings: true,
+          searchParams: {
+            searchType,
+            locationType,
+            location,
+            radius,
+            budget,
+            propertyType,
+          },
+        },
+      });
+    };
 
     const handleTitleClick = (e) => {
       e.stopPropagation();
@@ -790,7 +792,7 @@ const RentalsListings = () => {
         onClick={handleCardClick}
       >
         <div className="flex flex-col sm:flex-row">
-          {/* Enhanced Image Gallery Section */}
+          {/* Enhanced Image Gallery Section - Improved Mobile Responsiveness */}
           <div className="sm:w-2/5 h-48 sm:h-auto relative">
             <div className="relative w-full h-full overflow-hidden">
               <img
@@ -799,7 +801,7 @@ const RentalsListings = () => {
                 className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
               />
 
-              {/* Image Navigation Arrows */}
+              {/* Image Navigation Arrows - Smaller on mobile */}
               {totalImages > 1 && (
                 <>
                   <button
@@ -807,58 +809,60 @@ const RentalsListings = () => {
                       e.stopPropagation();
                       prevImage(property.id, totalImages);
                     }}
-                    className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-1.5 rounded-full transition-all duration-200"
+                    className="absolute left-1 sm:left-2 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-1 sm:p-1.5 rounded-full transition-all duration-200"
                   >
-                    <ChevronLeft size={16} />
+                    <ChevronLeft size={14} className="sm:w-4 sm:h-4" />
                   </button>
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
                       nextImage(property.id, totalImages);
                     }}
-                    className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-1.5 rounded-full transition-all duration-200"
+                    className="absolute right-1 sm:right-2 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-1 sm:p-1.5 rounded-full transition-all duration-200"
                   >
-                    <ChevronRight size={16} />
+                    <ChevronRight size={14} className="sm:w-4 sm:h-4" />
                   </button>
                 </>
               )}
 
-              {/* Image Counter */}
+              {/* Image Counter - Smaller on mobile */}
               {totalImages > 1 && (
-                <div className="absolute top-2 left-2 bg-black/70 text-white px-2 py-1 rounded text-xs">
+                <div className="absolute top-1 sm:top-2 left-1 sm:left-2 bg-black/70 text-white px-1.5 sm:px-2 py-0.5 sm:py-1 rounded text-xs">
                   {currentIndex + 1} / {totalImages}
                 </div>
               )}
 
-              {/* Image Thumbnails Preview */}
+              {/* Image Thumbnails Preview - Hidden on very small screens */}
               {totalImages > 1 && (
-                <div className="absolute bottom-2 left-2 right-2">
-                  <div className="flex gap-1 justify-center">
-                    {property.images.slice(0, 4).map((img, index) => (
-                      <button
-                        key={index}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setCurrentImageIndex((prev) => ({
-                            ...prev,
-                            [property.id]: index,
-                          }));
-                        }}
-                        className={`w-8 h-8 rounded border-2 ${
-                          index === currentIndex
-                            ? "border-white"
-                            : "border-transparent"
-                        } overflow-hidden`}
-                      >
-                        <img
-                          src={img}
-                          alt={`Thumbnail ${index + 1}`}
-                          className="w-full h-full object-cover"
-                        />
-                      </button>
-                    ))}
+                <div className="absolute bottom-1 sm:bottom-2 left-1 sm:left-2 right-1 sm:right-2">
+                  <div className="flex gap-0.5 sm:gap-1 justify-center">
+                    {property.images
+                      .slice(0, Math.min(4, totalImages))
+                      .map((img, index) => (
+                        <button
+                          key={index}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setCurrentImageIndex((prev) => ({
+                              ...prev,
+                              [property.id]: index,
+                            }));
+                          }}
+                          className={`w-6 h-6 sm:w-8 sm:h-8 rounded border-2 ${
+                            index === currentIndex
+                              ? "border-white"
+                              : "border-transparent"
+                          } overflow-hidden`}
+                        >
+                          <img
+                            src={img}
+                            alt={`Thumbnail ${index + 1}`}
+                            className="w-full h-full object-cover"
+                          />
+                        </button>
+                      ))}
                     {totalImages > 4 && (
-                      <div className="w-8 h-8 bg-black/70 text-white text-xs flex items-center justify-center rounded border-2 border-transparent">
+                      <div className="w-6 h-6 sm:w-8 sm:h-8 bg-black/70 text-white text-xs flex items-center justify-center rounded border-2 border-transparent">
                         +{totalImages - 4}
                       </div>
                     )}
@@ -867,33 +871,46 @@ const RentalsListings = () => {
               )}
             </div>
 
-            {/* Top Left Badges */}
-            <div className="absolute top-3 left-3 flex flex-col gap-2">
-              {property.verified && <Badge type="verified">Verified</Badge>}
-              {property.immediate && <Badge type="immediate">Immediate</Badge>}
+            {/* Top Left Badges - Stacked vertically on mobile */}
+            <div className="absolute top-1 sm:top-3 left-1 sm:left-3 flex flex-col gap-1 sm:gap-2">
+              {property.verified && (
+                <div className="flex">
+                  <Badge type="verified">Verified</Badge>
+                </div>
+              )}
+              {property.immediate && (
+                <div className="flex">
+                  <Badge type="immediate">Immediate</Badge>
+                </div>
+              )}
               {property.discount && (
-                <Badge type="discount">{property.discount}</Badge>
+                <div className="flex">
+                  <Badge type="discount">{property.discount}</Badge>
+                </div>
               )}
               {property.petFriendly && (
-                <Badge type="default">🐾 Pet Friendly</Badge>
+                <div className="flex">
+                  <Badge type="default">🐾 Pet Friendly</Badge>
+                </div>
               )}
             </div>
 
-            {/* Like and Share Buttons */}
-            <div className="absolute top-3 right-3 flex gap-2">
+            {/* Like and Share Buttons - Smaller on mobile */}
+            <div className="absolute top-1 sm:top-3 right-1 sm:right-3 flex gap-1 sm:gap-2">
               <button
                 onClick={(e) => {
                   e.stopPropagation();
                   toggleLike(property.id);
                 }}
-                className={`p-2 rounded-full shadow-lg transition-all duration-200 ${
+                className={`p-1.5 sm:p-2 rounded-full shadow-lg transition-all duration-200 ${
                   likedProperties[property.id]
                     ? "bg-red-500 text-white"
                     : "bg-white text-gray-600 hover:bg-gray-100"
                 }`}
               >
                 <Heart
-                  size={18}
+                  size={16}
+                  className="sm:w-4 sm:h-5"
                   fill={likedProperties[property.id] ? "currentColor" : "none"}
                 />
               </button>
@@ -902,126 +919,144 @@ const RentalsListings = () => {
                   e.stopPropagation();
                   handleShare(property);
                 }}
-                className="p-2 bg-white text-gray-600 rounded-full shadow-lg hover:bg-gray-100 transition-all duration-200"
+                className="p-1.5 sm:p-2 bg-white text-gray-600 rounded-full shadow-lg hover:bg-gray-100 transition-all duration-200"
               >
-                <Share2 size={18} />
+                <Share2 size={16} className="sm:w-4 sm:h-5" />
               </button>
             </div>
 
-            {/* Enhanced Distance Information */}
-            <div className="absolute bottom-12 left-3 right-3">
-              <div className="flex flex-col gap-1">
+            {/* Enhanced Distance Information - Improved mobile layout */}
+            <div className="absolute bottom-8 sm:bottom-12 left-1 sm:left-3 right-1 sm:right-3">
+              <div className="flex flex-col gap-0.5 sm:gap-1">
                 {/* Public Transport Distances */}
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-1 sm:gap-2">
                   {property.distance && (
-                    <div className="bg-black/70 backdrop-blur-sm px-2 py-1 rounded text-xs text-white flex items-center gap-1">
-                      🚇 {property.distance}
+                    <div className="bg-black/70 backdrop-blur-sm px-1.5 sm:px-2 py-0.5 sm:py-1 rounded text-xs text-white flex items-center gap-0.5 sm:gap-1">
+                      <span className="text-xs">🚇</span>
+                      <span className="text-[10px] sm:text-xs">
+                        {property.distance}
+                      </span>
                     </div>
                   )}
                   {property.busStopDistance && (
-                    <div className="bg-black/70 backdrop-blur-sm px-2 py-1 rounded text-xs text-white flex items-center gap-1">
-                      🚌 {property.busStopDistance}
+                    <div className="bg-black/70 backdrop-blur-sm px-1.5 sm:px-2 py-0.5 sm:py-1 rounded text-xs text-white flex items-center gap-0.5 sm:gap-1">
+                      <span className="text-xs">🚌</span>
+                      <span className="text-[10px] sm:text-xs">
+                        {property.busStopDistance}
+                      </span>
                     </div>
                   )}
                 </div>
 
                 {/* Views and Photos */}
                 <div className="flex justify-between items-center">
-                  <div className="flex items-center -mb-12 gap-1 px-2 py-1 rounded text-xs text-white">
-                    <Eye size={12} />
-                    <span>{property.views} views</span>
+                  <div className="flex items-center gap-0.5 sm:gap-1 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded text-xs text-white bg-black/40">
+                    <Eye size={10} className="sm:w-3 sm:h-3" />
+                    <span className="text-[10px] sm:text-xs">
+                      {property.views} views
+                    </span>
                   </div>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Content Section */}
-          <div className="sm:w-3/5 p-4 sm:p-5 flex flex-col justify-between">
+          {/* Content Section - Improved mobile spacing and typography */}
+          <div className="sm:w-3/5 p-3 sm:p-4 md:p-5 flex flex-col justify-between">
             {/* Header with Price and Badges */}
             <div>
-              <div className="flex items-start justify-between mb-3">
-                <div className="flex-1 pr-4">
+              <div className="flex flex-col sm:flex-row sm:items-start justify-between mb-2 sm:mb-3 gap-2 sm:gap-0">
+                <div className="flex-1 pr-0 sm:pr-4">
                   <h3
-                    className="text-lg font-bold text-gray-800 mb-2 leading-tight hover:text-blue-600 transition-colors cursor-pointer"
+                    className="text-base sm:text-lg font-bold text-gray-800 mb-1 sm:mb-2 leading-tight hover:text-blue-600 transition-colors cursor-pointer line-clamp-2"
                     onClick={handleTitleClick}
                   >
-                    {property.title.length > 60
-                      ? `${property.title.slice(0, 60)}...`
+                    {property.title.length > (window.innerWidth < 640 ? 40 : 60)
+                      ? `${property.title.slice(0, window.innerWidth < 640 ? 40 : 60)}...`
                       : property.title}
                   </h3>
 
-                  {/* Location and Quick Info - IMPROVED FOR MOBILE */}
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 text-sm text-gray-600 mb-2 flex-wrap">
-                    <div className="flex items-center gap-1">
-                      <MapPin size={14} />
-                      <span className="text-sm">{property.location}</span>
+                  {/* Location and Quick Info - Improved mobile layout */}
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 md:gap-3 text-xs sm:text-sm text-gray-600 mb-1 sm:mb-2 flex-wrap">
+                    <div className="flex items-center gap-0.5 sm:gap-1">
+                      <MapPin size={12} className="sm:w-3.5 sm:h-3.5" />
+                      <span className="text-xs sm:text-sm">
+                        {property.location.split(",")[0]}
+                      </span>
                     </div>
-                    <div className="hidden sm:flex items-center gap-1">
-                      <Building size={14} />
-                      <span>{property.propertyType}</span>
+                    <div className="hidden sm:flex items-center gap-0.5 sm:gap-1">
+                      <Building size={12} className="sm:w-3.5 sm:h-3.5" />
+                      <span className="text-xs sm:text-sm">
+                        {property.propertyType}
+                      </span>
                     </div>
-                    <div className="flex items-center gap-1">
-                      <Clock size={14} />
-                      <span>{property.posted}</span>
+                    <div className="flex items-center gap-0.5 sm:gap-1">
+                      <Clock size={12} className="sm:w-3.5 sm:h-3.5" />
+                      <span className="text-xs sm:text-sm">
+                        {property.posted}
+                      </span>
                     </div>
                   </div>
 
-                  {/* Rating and Response Info - IMPROVED FOR MOBILE */}
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mb-3">
+                  {/* Rating and Response Info - Stack on mobile */}
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 md:gap-3 mb-2 sm:mb-3">
                     <RatingStars
                       rating={property.rating}
                       reviews={property.reviews}
                     />
-                    <div className="text-sm text-gray-600">
+                    <div className="text-xs sm:text-sm text-gray-600">
                       ⚡ {property.responseRate} response •{" "}
                       {property.responseTime}
                     </div>
                   </div>
 
-                  {/* Quick Stats - IMPROVED FOR MOBILE */}
-                  <div className="flex flex-wrap items-center gap-2 sm:gap-4 mb-3">
-                    <div className="flex items-center gap-1 text-sm text-gray-700">
-                      <Home size={16} />
+                  {/* Quick Stats - Better mobile layout */}
+                  <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 md:gap-4 mb-2 sm:mb-3">
+                    <div className="flex items-center gap-0.5 sm:gap-1 text-xs sm:text-sm text-gray-700">
+                      <Home size={14} className="sm:w-4 sm:h-4" />
                       <span>{property.bedrooms} bed</span>
                     </div>
-                    <div className="flex items-center gap-1 text-sm text-gray-700">
-                      <Bath size={16} />
+                    <div className="flex items-center gap-0.5 sm:gap-1 text-xs sm:text-sm text-gray-700">
+                      <Bath size={14} className="sm:w-4 sm:h-4" />
                       <span>{property.bathrooms} bath</span>
                     </div>
-                    <div className="flex items-center gap-1 text-sm text-gray-700">
-                      <Maximize2 size={16} />
+                    <div className="flex items-center gap-0.5 sm:gap-1 text-xs sm:text-sm text-gray-700">
+                      <Maximize2 size={14} className="sm:w-4 sm:h-4" />
                       <span>{property.sqft} sqft</span>
                     </div>
-                    <div className="text-sm text-gray-700">
+                    <div className="text-xs sm:text-sm text-gray-700">
                       📅 {property.leaseTerm}
                     </div>
                   </div>
                 </div>
 
-                {/* Price Section - IMPROVED FOR MOBILE */}
-                <div className="text-right">
-                  <div className="text-xl sm:text-2xl font-bold text-blue-600 mb-1">
+                {/* Price Section - Stack below on mobile */}
+                <div className="text-left sm:text-right">
+                  <div className="text-lg sm:text-xl md:text-2xl font-bold text-blue-600 mb-0.5 sm:mb-1">
                     ${property.price.toLocaleString()}
-                    <span className="text-sm font-normal text-gray-600">
+                    <span className="text-xs sm:text-sm font-normal text-gray-600">
                       /month
                     </span>
                   </div>
-                  <div className="text-sm text-gray-500">
+                  <div className="text-xs sm:text-sm text-gray-500">
                     Available: {property.availableFrom}
                   </div>
                 </div>
               </div>
 
-              {/* Property Details in Compact Grid - IMPROVED FOR MOBILE */}
-              <div className="grid grid-cols-3 gap-2 text-xs mb-3 sm:mb-4 p-3 bg-gray-50 rounded-lg">
+              {/* Property Details in Compact Grid - Better mobile spacing */}
+              <div className="grid grid-cols-3 gap-1 sm:gap-2 text-xs mb-2 sm:mb-3 md:mb-4 p-2 sm:p-3 bg-gray-50 rounded-lg">
                 <div className="text-center">
                   <div className="font-semibold text-gray-900">Type</div>
-                  <div className="text-gray-600">{property.propertyType}</div>
+                  <div className="text-gray-600 text-xs truncate px-1">
+                    {property.propertyType}
+                  </div>
                 </div>
                 <div className="text-center">
                   <div className="font-semibold text-gray-900">Lease</div>
-                  <div className="text-gray-600">{property.leaseTerm}</div>
+                  <div className="text-gray-600 text-xs truncate px-1">
+                    {property.leaseTerm}
+                  </div>
                 </div>
                 <div className="text-center">
                   <div className="font-semibold text-gray-900">Saves</div>
@@ -1029,56 +1064,67 @@ const RentalsListings = () => {
                 </div>
               </div>
 
-              {/* Premium Amenities with Icons - IMPROVED FOR MOBILE */}
-              <div className="mb-3 sm:mb-4">
-                <h4 className="text-sm font-semibold text-gray-900 mb-2">
+              {/* Premium Amenities with Icons - Improved mobile layout */}
+              <div className="mb-2 sm:mb-3 md:mb-4">
+                <h4 className="text-xs sm:text-sm font-semibold text-gray-900 mb-1 sm:mb-2">
                   Key Amenities
                 </h4>
                 <div className="flex flex-wrap gap-1">
-                  {property.amenities.slice(0, 4).map(
-                    (
-                      amenity,
-                      index // Show fewer on mobile
-                    ) => (
+                  {property.amenities
+                    .slice(0, window.innerWidth < 640 ? 3 : 4)
+                    .map((amenity, index) => (
                       <span
                         key={index}
-                        className="flex items-center gap-1.5 text-xs text-blue-700 px-2 py-1.5 sm:px-3 sm:py-2 rounded-lg border-blue-100 hover:bg-blue-100 transition-colors"
+                        className="flex items-center gap-1 text-xs text-blue-700 px-1.5 sm:px-2 py-1 sm:py-1.5 md:py-2 rounded-lg border-blue-100 hover:bg-blue-100 transition-colors"
                       >
-                        {amenityIcons[amenity] || <FaBolt size={14} />}
-                        <span className="hidden sm:inline">{amenity}</span>
-                        <span className="sm:hidden">
+                        {amenityIcons[amenity] || (
+                          <FaBolt size={12} className="sm:w-3.5 sm:h-3.5" />
+                        )}
+                        <span className="hidden xs:inline sm:hidden">
+                          {amenity.length > 8
+                            ? amenity.slice(0, 8) + "..."
+                            : amenity}
+                        </span>
+                        <span className="hidden sm:inline xs:hidden">
                           {amenity.length > 10
                             ? amenity.slice(0, 10) + "..."
                             : amenity}
                         </span>
                       </span>
-                    )
-                  )}
-                  {property.amenities.length > 4 && (
+                    ))}
+                  {property.amenities.length >
+                    (window.innerWidth < 640 ? 3 : 4) && (
                     <div className="relative">
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
                           toggleAmenities(property.id);
                         }}
-                        className="flex items-center gap-1.5 text-xs bg-gray-100 text-gray-600 px-2 py-1.5 sm:px-3 sm:py-2 rounded-lg border border-gray-200 hover:bg-gray-200 transition-colors"
+                        className="flex items-center gap-1 text-xs bg-gray-100 text-gray-600 px-1.5 sm:px-2 py-1 sm:py-1.5 md:py-2 rounded-lg border border-gray-200 hover:bg-gray-200 transition-colors"
                       >
-                        +{property.amenities.length - 4} more
+                        +
+                        {property.amenities.length -
+                          (window.innerWidth < 640 ? 3 : 4)}{" "}
+                        more
                       </button>
 
                       {showMoreAmenities[property.id] && (
-                        <div className="absolute top-full left-0 mt-2 z-20 bg-white border border-gray-200 rounded-lg shadow-xl p-4 min-w-[250px]">
-                          <div className="text-sm font-semibold text-gray-900 mb-3">
+                        <div className="absolute top-full left-0 mt-1 sm:mt-2 z-20 bg-white border border-gray-200 rounded-lg shadow-xl p-3 sm:p-4 min-w-[200px] sm:min-w-[250px]">
+                          <div className="text-xs sm:text-sm font-semibold text-gray-900 mb-2 sm:mb-3">
                             All Amenities
                           </div>
-                          <div className="grid grid-cols-2 gap-2">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 sm:gap-2">
                             {property.amenities.map((amenity, index) => (
                               <span
                                 key={index}
-                                className="flex items-center gap-1.5 text-xs bg-gray-50 text-gray-700 px-2 py-1.5 rounded border border-gray-200"
+                                className="flex items-center gap-1 text-xs bg-gray-50 text-gray-700 px-2 py-1.5 rounded border border-gray-200"
                               >
-                                {amenityIcons[amenity] || <FaBolt size={12} />}
-                                {amenity}
+                                {amenityIcons[amenity] || (
+                                  <FaBolt size={10} className="sm:w-3 sm:h-3" />
+                                )}
+                                {amenity.length > 15
+                                  ? amenity.slice(0, 15) + "..."
+                                  : amenity}
                               </span>
                             ))}
                           </div>
@@ -1089,20 +1135,22 @@ const RentalsListings = () => {
                 </div>
               </div>
 
-              {/* Description Line - IMPROVED FOR MOBILE */}
-              <div className="text-sm text-gray-600 mb-3 sm:mb-4 leading-relaxed">
-                <p className="line-clamp-2">{property.details}</p>
+              {/* Description Line - Better mobile line clamping */}
+              <div className="text-xs sm:text-sm text-gray-600 mb-2 sm:mb-3 md:mb-4 leading-relaxed">
+                <p className="line-clamp-2 sm:line-clamp-3">
+                  {property.details}
+                </p>
               </div>
             </div>
 
-            {/* Enhanced Action Section - IMPROVED FOR MOBILE */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 sm:pt-4 border-t border-gray-200">
+            {/* Enhanced Action Section - Improved mobile layout */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3 pt-2 sm:pt-3 md:pt-4 border-t border-gray-200">
               {/* Contact Info */}
-              <div className="flex items-center gap-4 text-sm text-gray-500 mb-3 sm:mb-0">
+              <div className="flex items-center gap-2 sm:gap-4 text-xs sm:text-sm text-gray-500 mb-2 sm:mb-0">
                 {showContact[property.id] ? (
-                  <div className="flex items-center gap-1">
-                    <Phone size={14} />
-                    <span className="font-medium text-sm">
+                  <div className="flex items-center gap-0.5 sm:gap-1">
+                    <Phone size={12} className="sm:w-3.5 sm:h-3.5" />
+                    <span className="font-medium text-xs sm:text-sm">
                       {property.contact}
                     </span>
                   </div>
@@ -1112,15 +1160,15 @@ const RentalsListings = () => {
                       e.stopPropagation();
                       toggleContact(property.id);
                     }}
-                    className="text-blue-600 hover:text-blue-700 hover:underline transition-colors text-sm"
+                    className="text-blue-600 hover:text-blue-700 hover:underline transition-colors text-xs sm:text-sm"
                   >
                     Show Contact
                   </button>
                 )}
               </div>
 
-              {/* Action Buttons - IMPROVED FOR MOBILE */}
-              <div className="flex gap-2 flex-wrap">
+              {/* Action Buttons - Better mobile layout */}
+              <div className="flex gap-1.5 sm:gap-2 flex-wrap">
                 {/* Call Button */}
                 <button
                   onClick={(e) => {
@@ -1128,7 +1176,7 @@ const RentalsListings = () => {
                     handleCall(property);
                   }}
                   disabled={!property.availableForCall}
-                  className={`flex items-center justify-center gap-1 sm:gap-2 px-3 py-2 sm:py-2.5 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 border flex-1 sm:flex-none ${
+                  className={`flex items-center justify-center gap-0.5 sm:gap-1 md:gap-2 px-2 sm:px-3 py-1.5 sm:py-2 md:py-2.5 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 border flex-1 sm:flex-none ${
                     property.availableForCall
                       ? "bg-green-100 text-green-700 border-green-200 hover:bg-green-200 hover:shadow-sm"
                       : "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
@@ -1139,7 +1187,7 @@ const RentalsListings = () => {
                       : "Client unavailable for calls"
                   }
                 >
-                  <Phone size={14} />
+                  <Phone size={12} className="sm:w-3.5 sm:h-3.5" />
                   <span className="hidden sm:inline">Call</span>
                 </button>
 
@@ -1149,9 +1197,9 @@ const RentalsListings = () => {
                     e.stopPropagation();
                     handleMessage(property);
                   }}
-                  className="flex items-center justify-center gap-1 sm:gap-2 bg-[#27bb97] hover:bg-[#1FA987] text-white px-3 py-2 sm:py-2.5 rounded-lg text-xs sm:text-sm font-semibold transition-all duration-200 shadow-sm hover:shadow-md flex-1 sm:flex-none"
+                  className="flex items-center justify-center gap-0.5 sm:gap-1 md:gap-2 bg-[#27bb97] hover:bg-[#1FA987] text-white px-2 sm:px-3 py-1.5 sm:py-2 md:py-2.5 rounded-lg text-xs sm:text-sm font-semibold transition-all duration-200 shadow-sm hover:shadow-md flex-1 sm:flex-none"
                 >
-                  <MessageCircle size={14} />
+                  <MessageCircle size={12} className="sm:w-3.5 sm:h-3.5" />
                   <span className="hidden sm:inline">Message</span>
                   <span className="sm:hidden">Msg</span>
                 </button>
@@ -1162,14 +1210,15 @@ const RentalsListings = () => {
                     e.stopPropagation();
                     toggleLike(property.id);
                   }}
-                  className={`flex items-center justify-center gap-1 sm:gap-2 px-3 py-2 sm:py-2.5 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 border flex-1 sm:flex-none ${
+                  className={`flex items-center justify-center gap-0.5 sm:gap-1 md:gap-2 px-2 sm:px-3 py-1.5 sm:py-2 md:py-2.5 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 border flex-1 sm:flex-none ${
                     likedProperties[property.id]
                       ? "bg-red-100 text-red-700 border-red-200 hover:bg-red-200"
                       : "bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200"
                   } hover:shadow-sm`}
                 >
                   <Heart
-                    size={14}
+                    size={12}
+                    className="sm:w-3.5 sm:h-3.5"
                     fill={
                       likedProperties[property.id] ? "currentColor" : "none"
                     }
@@ -1186,7 +1235,17 @@ const RentalsListings = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white pb-20 lg:pb-0">
+      {/* Desktop "Back to Home" link */}
+      <div className="hidden lg:block ml-10 mt-2">
+        <Link to="/rentals">
+          <p className="flex items-center gap-2 text-[#27bb97] capitalize hover:underline">
+            <GoArrowUpLeft />
+            back to home
+          </p>
+        </Link>
+      </div>
+
       {/* Header Section */}
       <div className="pt-10 pb-6 px-4 sm:px-8 lg:px-20">
         <div className="">
@@ -1204,10 +1263,10 @@ const RentalsListings = () => {
           {/* Search Bar */}
           <div className="mb-6">
             <div className="flex flex-col lg:flex-row items-center gap-3">
-              <div className="flex flex-col sm:flex-row items-center w-full lg:w-auto gap-2">
+              <div className="flex flex-col lg:flex-row items-center w-full lg:w-auto gap-2">
                 {/* Property Type Dropdown */}
                 {searchType === "Apartments for Rent" && (
-                  <div className="w-full sm:w-auto">
+                  <div className="w-full lg:w-auto">
                     <div className="relative">
                       <button
                         onClick={() =>
@@ -1279,7 +1338,7 @@ const RentalsListings = () => {
                                               onChange={() =>
                                                 handleSubToggle(
                                                   "property",
-                                                  type
+                                                  type,
                                                 )
                                               }
                                               className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
@@ -1288,7 +1347,7 @@ const RentalsListings = () => {
                                               {type}
                                             </span>
                                           </label>
-                                        )
+                                        ),
                                       )}
                                     </div>
                                   </div>
@@ -1324,7 +1383,7 @@ const RentalsListings = () => {
                                               {type}
                                             </span>
                                           </label>
-                                        )
+                                        ),
                                       )}
                                     </div>
                                   </div>
@@ -1358,7 +1417,7 @@ const RentalsListings = () => {
                                           onChange={() =>
                                             handleSubToggle(
                                               "amenities",
-                                              amenity
+                                              amenity,
                                             )
                                           }
                                           className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
@@ -1367,7 +1426,7 @@ const RentalsListings = () => {
                                           {amenity}
                                         </span>
                                       </label>
-                                    )
+                                    ),
                                   )}
                                 </div>
                               </div>
@@ -1388,7 +1447,7 @@ const RentalsListings = () => {
                 )}
 
                 {/* Location Type */}
-                <div className="w-full sm:w-auto">
+                <div className="w-full lg:w-auto">
                   <div className="relative">
                     <select
                       className="w-full pl-3 pr-10 py-3 text-base border border-gray-200 rounded-lg text-gray-700 
@@ -1407,7 +1466,7 @@ const RentalsListings = () => {
                 </div>
 
                 {/* Location Input */}
-                <div className="w-full sm:w-auto">
+                <div className="w-full lg:w-auto">
                   <div className="relative">
                     <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
                     <input
@@ -1422,7 +1481,7 @@ const RentalsListings = () => {
                 </div>
 
                 {/* Radius */}
-                <div className="w-full sm:w-auto">
+                <div className="w-full lg:w-auto">
                   <div className="relative">
                     <select
                       className="w-full pl-3 pr-10 py-3 text-base border border-gray-200 rounded-lg text-gray-700 
@@ -1441,7 +1500,7 @@ const RentalsListings = () => {
                 </div>
 
                 {/* Budget */}
-                <div className="w-full sm:w-auto">
+                <div className="w-full lg:w-auto">
                   <div className="relative">
                     <select
                       className="w-full pl-3 pr-10 py-3 text-base border border-gray-200 rounded-lg text-gray-700 
@@ -1461,7 +1520,7 @@ const RentalsListings = () => {
               </div>
 
               {/* Action Buttons */}
-              <div className="flex items-center gap-3 w-full lg:w-auto justify-center lg:justify-start flex-wrap">
+              <div className="flex items-center gap-3 w-full lg:w-auto justify-center lg:justify-start ">
                 <button
                   onClick={handleSearch}
                   className="w-full lg:w-fit px-6 flex items-center justify-center gap-2 bg-[#2563EB]
@@ -2041,7 +2100,7 @@ const RentalsListings = () => {
               </div>
 
               {/* Enhanced Rental Cards Grid */}
-              <div className="properties-section grid grid-cols-1 gap-4 sm:gap-6 cursor-pointer mt-6">
+              <div className="properties-section grid grid-cols-1 gap-3 sm:gap-4 md:gap-6 cursor-pointer mt-4 sm:mt-6">
                 {getCurrentProperties().map((property) => (
                   <RentalCard key={property.id} property={property} />
                 ))}
@@ -2674,6 +2733,44 @@ const RentalsListings = () => {
               </div>
             </div>
           </div>
+        </div>
+      </div>
+      {/* This will show on mobile (lg:hidden) and hide on desktop */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 p-4 bg-gradient-to-t from-white via-white to-transparent">
+        <div className="flex justify-center">
+          <Link to="/rentals">
+            <div
+              className="
+                flex 
+                items-center 
+                justify-center 
+                gap-2 
+                text-[#27bb97] 
+                capitalize 
+                bg-white 
+                px-6 
+                py-3 
+                rounded-lg 
+                shadow-lg 
+                border 
+                border-gray-300
+                hover:bg-gray-50
+                transition-all
+                duration-200
+                whitespace-nowrap
+                text-base
+                font-medium
+                w-fit
+                mx-auto
+                hover:shadow-xl
+                hover:-translate-y-0.5
+                active:translate-y-0
+              "
+            >
+              <GoArrowUpLeft className="w-5 h-5" />
+              <span>back to home</span>
+            </div>
+          </Link>
         </div>
       </div>
     </div>
