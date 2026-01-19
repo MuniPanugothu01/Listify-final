@@ -37,6 +37,10 @@ import PetCareService from "./components/TakeCare/PetCareServices/PetCareService
 import CareCenterServices from "./components/TakeCare/CareCenterServices/CareCenterServices.jsx";
 
 
+// For Sale
+import ForSale from "./components/ForSale/ForSale.jsx";
+
+
 // Roommates
 import Roommates from "./pages/Roommates/Roommates.jsx";
 import RoomMateDetails from "./components/Roommates/RoomMateDetails.jsx";
@@ -182,6 +186,10 @@ const App = () => {
             <Route path="/takecare/eldercare" element={<ElderCareServices />} />
             <Route path="/takecare/petcare" element={<PetCareService />} />
             <Route path="/takecare/carecenter" element={<CareCenterServices />} />
+
+
+            {/* For Sale */}
+            <Route path="/forsale" element={<ForSale />} />
 
             {/* Roommates */}
             <Route path="/roommates" element={<Roommates />} />
