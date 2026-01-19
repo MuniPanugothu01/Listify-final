@@ -94,7 +94,7 @@ export default function ForSaleRecommended() {
       </div>
 
       {/* Build Your Home Section */}
-      <div className="relative h-[400px] md:h-[500px] overflow-hidden">
+      {/* <div className="relative h-[400px] md:h-[500px] overflow-hidden">
         <img
           src="https://images.unsplash.com/photo-1556912167-f556f1f39fdf?w=1600&h=900&fit=crop"
           alt="Comfortable interior room"
@@ -113,7 +113,7 @@ export default function ForSaleRecommended() {
             Get Started
           </button>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }
