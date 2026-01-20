@@ -156,6 +156,7 @@ const App = () => {
                   <WhyUs />
                   <TrendingCategories />
                   <Reviews />
+
                   <Questions />
                 </>
               }
@@ -163,6 +164,8 @@ const App = () => {
             {/* signin route */}
 
             <Route path="/signin" element={<Signin />} />
+            <Route path="/faq" element={< Questions/>} />
+
 
             {/* Contacts Page */}
             <Route path="/contact-us" element={<ContactUs />} />

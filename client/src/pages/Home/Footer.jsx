@@ -39,35 +39,40 @@ const Footer = () => {
 
   // Production data
   const marketplaceLinks = [
-    { name: "Buy", path: "/buy", description: "Find great deals" },
-    { name: "Sell", path: "/sell", description: "Sell your items" },
-    {
-      name: "Services",
-      path: "/services",
-      description: "Professional services",
-    },
+    { name: "Roommates", path: "/roommates", description: "Find great deals" },
+    { name: "Rentals", path: "/rentals", description: "Sell your items" },
+    { name: "Services", path: "/services", description: "Professional services", },
     { name: "Jobs", path: "/jobs", description: "Career opportunities" },
-    { name: "Housing", path: "/housing", description: "Rent & properties" },
-    { name: "Community", path: "/community", description: "Local events" },
+    { name: "Events", path: "/events", description: "Events" },
+    { name: "Take Care", path: "/takecare", description: " " },
+    { name: "Cars", path: "/cars", description: " " },
+    { name: "For Sale", path: "/forsale", description: " " },
   ];
 
   const supportLinks = [
-    { name: "Help Center", path: "/help" },
-    { name: "Safety Tips", path: "/safety" },
-    { name: "Contact Us", path: "/contact" },
+    { name: "Help Center", path: "/contact-us" },
+    { name: "Safety Tips", path: "/contact-us" },
+    { name: "Contact Us", path: "/contact-us" },
     { name: "FAQ", path: "/faq" },
-    { name: "Seller Guide", path: "/seller-guide" },
-    { name: "Buyer Guide", path: "/buyer-guide" },
   ];
 
   const companyLinks = [
-    { name: "About Us", path: "/about" },
-    { name: "Careers", path: "/careers" },
-    { name: "Press", path: "/press" },
-    { name: "Blog", path: "/blog" },
-    { name: "Team", path: "/team" },
-    { name: "Partners", path: "/partners" },
+    { name: "About Us", path: "/about-us" },
+    { name: "services", path: "/our-services" },
+    { name: "posd-add", path: "/post-add" },
+    { name: "contact", path: "/contact-us" }, 
   ];
+
+  const legalLinks = [
+    "Terms of Service",
+    "Privacy Policy",
+    "Cookie Policy",
+    "Disclaimer",
+  ];
+
+  const handleFooterLinkClick = () => {
+    scrollToTop();
+  };
 
   return (
     <footer className="bg-gray-100 border-t border-gray-200 pt-16 pb-8 mt-14 px-4 sm:px-6 lg:px-8 relative overflow-hidden ">
@@ -90,22 +95,6 @@ const Footer = () => {
               and discover everything you need right in your neighborhood with
               safety and convenience.
             </p>
-
-            {/* Trust Badges */}
-            {/* <div className="flex flex-wrap gap-3 mb-6">
-              <div className="flex items-center space-x-2 bg-green-50 px-3 py-2 rounded-lg border border-green-200">
-                <CheckCircle className="w-4 h-4 text-green-600" />
-                <span className="text-green-700 text-xs font-medium">Verified Sellers</span>
-              </div>
-              <div className="flex items-center space-x-2 bg-blue-50 px-3 py-2 rounded-lg border border-blue-200">
-                <Shield className="w-4 h-4 text-blue-600" />
-                <span className="text-blue-700 text-xs font-medium">Secure Payments</span>
-              </div>
-              <div className="flex items-center space-x-2 bg-[#FFCE32] bg-opacity-20 px-3 py-2 rounded-lg border border-[#FFCE32] border-opacity-30">
-                <Star className="w-4 h-4 text-gray-800" />
-                <span className="text-gray-800 text-xs font-medium">Top Rated</span>
-              </div>
-            </div> */}
 
             {/* Contact Info */}
             <div className="space-y-3">
@@ -134,6 +123,7 @@ const Footer = () => {
                 <li key={item.name}>
                   <Link
                     to={item.path}
+                    onClick={handleFooterLinkClick}
                     className="group flex items-center space-x-2 text-gray-600 hover:text-blue-600 transition-all duration-200 text-sm"
                   >
                     <ChevronRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
@@ -154,6 +144,7 @@ const Footer = () => {
                 <li key={item.name}>
                   <Link
                     to={item.path}
+                    onClick={handleFooterLinkClick}
                     className="group flex items-center space-x-2 text-gray-600 hover:text-green-600 transition-all duration-200 text-sm"
                   >
                     <ChevronRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
@@ -174,6 +165,7 @@ const Footer = () => {
                 <li key={item.name}>
                   <Link
                     to={item.path}
+                    onClick={handleFooterLinkClick}
                     className="group flex items-center space-x-2 text-gray-600 hover:text-blue-600 transition-all duration-200 text-sm"
                   >
                     <ChevronRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
@@ -226,11 +218,17 @@ const Footer = () => {
                 Get Our App
               </h4>
               <div className="space-y-3">
-                <button className="w-full flex items-center justify-center space-x-3 bg-black  text-white py-3 px-4 rounded-lg transition-all duration-200 text-sm cursor-pointer shadow-lg ">
+                <button 
+                  onClick={scrollToTop}
+                  className="w-full flex items-center justify-center space-x-3 bg-black  text-white py-3 px-4 rounded-lg transition-all duration-200 text-sm cursor-pointer shadow-lg "
+                >
                   <Download className="w-4 h-4" />
                   <span>App Store</span>
                 </button>
-                <button className="w-full flex items-center justify-center space-x-3 bg-black  text-white py-3 px-4 rounded-lg transition-all duration-200 text-sm cursor-pointer shadow-lg hover:shadow-xl">
+                <button 
+                  onClick={scrollToTop}
+                  className="w-full flex items-center justify-center space-x-3 bg-black  text-white py-3 px-4 rounded-lg transition-all duration-200 text-sm cursor-pointer shadow-lg hover:shadow-xl"
+                >
                   <Download className="w-4 h-4" />
                   <span>Google Play</span>
                 </button>
@@ -248,15 +246,11 @@ const Footer = () => {
               reserved.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
-              {[
-                "Terms of Service",
-                "Privacy Policy",
-                "Cookie Policy",
-                "Disclaimer",
-              ].map((item) => (
+              {legalLinks.map((item) => (
                 <Link
                   key={item}
                   to={`/${item.toLowerCase().replace(/\s+/g, "-")}`}
+                  onClick={handleFooterLinkClick}
                   className="text-gray-500 hover:text-blue-600 transition-colors duration-200 text-sm"
                 >
                   {item}
