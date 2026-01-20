@@ -58,9 +58,9 @@ const Footer = () => {
 
   const companyLinks = [
     { name: "About Us", path: "/about-us" },
-    { name: "services", path: "/our-services" },
-    { name: "posd-add", path: "/post-add" },
-    { name: "contact", path: "/contact-us" }, 
+    { name: "Services", path: "/our-services" },
+    { name: "Post-add", path: "/post-add" },
+    { name: "Contact", path: "/contact-us" }, 
   ];
 
   const legalLinks = [
@@ -75,7 +75,7 @@ const Footer = () => {
   };
 
   return (
-    <footer className="bg-gray-300 border-t border-gray-200 pt-8 pb-8  px-4 sm:px-6 lg:px-8 relative overflow-hidden ">
+    <footer className="bg-gray-300 border-t border-gray-200 pt-8 pb-8 mt-4  px-4 sm:px-6 lg:px-8 relative overflow-hidden ">
       <div className="max-w-7xl mx-auto relative z-10">
         {/* Main Footer Content */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 mb-12">
@@ -84,13 +84,13 @@ const Footer = () => {
             <div className="flex items-center space-x-3 mb-6">
               <div>
                 <h2 className="text-gray-900 font-bold text-2xl">Listify</h2>
-                <p className="text-gray-600 text-sm">
+                <p className="text-gray-600 text-md">
                   Your Trusted Local Marketplace
                 </p>
               </div>
             </div>
 
-            <p className="text-gray-600 text-sm mb-6 leading-relaxed max-w-md">
+            <p className="text-gray-600 text-md mb-6 leading-relaxed max-w-md">
               Connecting communities through trusted local commerce. Buy, sell,
               and discover everything you need right in your neighborhood with
               safety and convenience.
@@ -100,22 +100,22 @@ const Footer = () => {
             <div className="space-y-3">
               <div className="flex items-center space-x-3 text-gray-600">
                 <MapPin className="w-4 h-4 text-[#27BB97]" />
-                <span className="text-sm">123 Market Street, Suite 100</span>
+                <span className="text-md">123 Market Street, Suite 100</span>
               </div>
               <div className="flex items-center space-x-3 text-gray-600">
                 <Phone className="w-4 h-4 text-[#27BB97]" />
-                <span className="text-sm">+1 (555) 123-4567</span>
+                <span className="text-md">+1 (555) 123-4567</span>
               </div>
               <div className="flex items-center space-x-3 text-gray-600">
                 <Mail className="w-4 h-4 text-[#27BB97]" />
-                <span className="text-sm">support@listify.com</span>
+                <span className="text-md">support@listify.com</span>
               </div>
             </div>
           </div>
 
           {/* Marketplace Links */}
           <div className="col-span-1 lg:col-span-1">
-            <h3 className="text-gray-900 font-bold mb-6 text-sm uppercase tracking-wider pl-5 ">
+            <h3 className="text-gray-900 font-bold mb-6 text-md uppercase tracking-wider pl-5 ">
               Marketplace
             </h3>
             <ul className="space-y-3">
@@ -124,7 +124,7 @@ const Footer = () => {
                   <Link
                     to={item.path}
                     onClick={handleFooterLinkClick}
-                    className="group flex items-center space-x-2 text-gray-600 hover:text-blue-600 transition-all duration-200 text-sm"
+                    className="group flex items-center space-x-2 text-gray-600 hover:text-blue-600 transition-all duration-200 text-md"
                   >
                     <ChevronRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
                     <span className="group-hover:font-medium">{item.name}</span>
@@ -136,7 +136,7 @@ const Footer = () => {
 
           {/* Support Links */}
           <div className="col-span-1 lg:col-span-1">
-            <h3 className="text-gray-900 font-bold mb-6 text-sm uppercase tracking-wider  pl-5">
+            <h3 className="text-gray-900 font-bold mb-6 text-md uppercase tracking-wider  pl-5">
               Support
             </h3>
             <ul className="space-y-3">
@@ -145,7 +145,7 @@ const Footer = () => {
                   <Link
                     to={item.path}
                     onClick={handleFooterLinkClick}
-                    className="group flex items-center space-x-2 text-gray-600 hover:text-green-600 transition-all duration-200 text-sm"
+                    className="group flex items-center space-x-2 text-gray-600 hover:text-green-600 transition-all duration-200 text-md"
                   >
                     <ChevronRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
                     <span className="group-hover:font-medium">{item.name}</span>
@@ -157,7 +157,7 @@ const Footer = () => {
 
           {/* Company Links */}
           <div className="col-span-1 lg:col-span-1">
-            <h3 className="text-gray-900 font-bold mb-6 text-sm uppercase tracking-wider pl-5">
+            <h3 className="text-gray-900 font-bold mb-6 text-md uppercase tracking-wider pl-5">
               Company
             </h3>
             <ul className="space-y-3">
@@ -166,7 +166,7 @@ const Footer = () => {
                   <Link
                     to={item.path}
                     onClick={handleFooterLinkClick}
-                    className="group flex items-center space-x-2 text-gray-600 hover:text-blue-600 transition-all duration-200 text-sm"
+                    className="group flex items-center space-x-2 text-gray-600 hover:text-blue-600 transition-all duration-200 text-md"
                   >
                     <ChevronRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
                     <span className="group-hover:font-medium">{item.name}</span>
@@ -178,13 +178,13 @@ const Footer = () => {
 
           {/* Newsletter & Apps */}
           <div className="col-span-1 lg:col-span-1">
-            <h3 className="text-gray-900 font-bold mb-6 text-sm uppercase tracking-wider">
+            <h3 className="text-gray-900 font-bold mb-6 text-md uppercase tracking-wider">
               Stay Connected
             </h3>
 
             {/* Newsletter */}
             <div className="mb-8">
-              <p className="text-gray-600 text-sm mb-4">
+              <p className="text-gray-600 text-md mb-4">
                 Get the latest updates and exclusive offers
               </p>
               <form onSubmit={handleSubscribe} className="space-y-3">
@@ -194,7 +194,7 @@ const Footer = () => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="your email"
-                    className="w-full pl-2 pr-24 py-3 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FFCE32] focus:border-[#FFCE32] transition-all duration-200 bg-white"
+                    className="w-full pl-2 pr-24 py-3 text-md border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FFCE32] focus:border-[#FFCE32] transition-all duration-200 bg-white"
                     required
                   />
                   <button
@@ -205,7 +205,7 @@ const Footer = () => {
                   </button>
                 </div>
                 {isSubscribed && (
-                  <p className="text-green-600 text-xs font-medium animate-pulse">
+                  <p className="text-green-600 text-md font-medium animate-pulse">
                     ✅ Thank you for subscribing!
                   </p>
                 )}
@@ -214,7 +214,7 @@ const Footer = () => {
 
             {/* Mobile Apps */}
             <div>
-              <h4 className="text-gray-900 font-semibold mb-3 text-sm">
+              <h4 className="text-gray-900 font-semibold mb-3 text-md">
                 Get Our App
               </h4>
               <div className="space-y-3">
@@ -240,7 +240,7 @@ const Footer = () => {
         {/* Bottom Section */}
         <div className="flex flex-col lg:flex-row justify-between items-center space-y-6 lg:space-y-0 pt-8 border-t border-gray-200">
           {/* Copyright & Legal */}
-          <div className="flex flex-col md:flex-row items-center space-y-3 md:space-y-0 md:space-x-8 text-gray-500 text-sm">
+          <div className="flex flex-col md:flex-row items-center space-y-3 md:space-y-0 md:space-x-8 text-gray-500 text-md">
             <p className="text-center md:text-left">
               © {new Date().getFullYear()} Listify Marketplace. All rights
               reserved.
@@ -251,7 +251,7 @@ const Footer = () => {
                   key={item}
                   to={`/${item.toLowerCase().replace(/\s+/g, "-")}`}
                   onClick={handleFooterLinkClick}
-                  className="text-gray-600 hover:text-green-600 transition-colors duration-200 text-sm"
+                  className="text-gray-600 hover:text-green-600 transition-colors duration-200 text-md"
                 >
                   {item}
                 </Link>
@@ -305,7 +305,7 @@ const Footer = () => {
             {/* Scroll to Top */}
             <button
               onClick={scrollToTop}
-              className="flex items-center space-x-2 bg-[#27BB97] text-gray-900 px-4 py-2.5 rounded-lg transition-all duration-200 hover:shadow-lg text-sm font-medium cursor-pointer"
+              className="flex items-center space-x-2 bg-[#27BB97] text-gray-900 px-4 py-2.5 rounded-lg transition-all duration-200 hover:shadow-lg text-md font-medium cursor-pointer"
               aria-label="Scroll to top"
             >
               <ArrowUp className="w-4 h-4" />
