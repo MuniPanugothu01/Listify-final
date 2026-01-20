@@ -841,7 +841,7 @@ const PostaddPage = () => {
   const renderCategoryStep = () => (
     <div className="space-y-8">
       <div className="text-center mb-10">
-        <h1 className="text-4xl font-bold text-black mb-4">Post Your Ad on Sulekha</h1>
+        <h1 className="text-4xl font-bold text-black mb-4">Post Your Ad on Listify</h1>
         <p className="text-lg text-gray-700 max-w-2xl mx-auto">
           Reach thousands of potential customers. Select a category that best describes what you want to post.
         </p>

@@ -80,6 +80,17 @@ import Profile from "./pages/Home/Profile.jsx";
 import ChatBot from "./components/ChatBot.jsx";
 import { ScrollProgress } from "./components/ui/scroll-progress.jsx";
 
+// ScrollToTop Component - Automatically scrolls to top on route change
+const ScrollToTop = () => {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
+  return null;
+};
+
 // Layout wrapper for Footer visibility
 const Layout = ({ children }) => {
   const location = useLocation();
@@ -138,6 +149,7 @@ const App = () => {
 
   return (
     <Router>
+      <ScrollToTop />
       <div className="relative">
         <Navbar />
 
@@ -156,6 +168,7 @@ const App = () => {
                   <WhyUs />
                   <TrendingCategories />
                   <Reviews />
+
                   <Questions />
                 </>
               }
@@ -163,6 +176,8 @@ const App = () => {
             {/* signin route */}
 
             <Route path="/signin" element={<Signin />} />
+            <Route path="/faq" element={< Questions/>} />
+
 
             {/* Contacts Page */}
             <Route path="/contact-us" element={<ContactUs />} />
