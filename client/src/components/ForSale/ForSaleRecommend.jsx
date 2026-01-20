@@ -16,13 +16,7 @@ export default function ForSaleRecommended() {
       title: 'Dining Furnitures',
       image: 'https://images.unsplash.com/photo-1617806118233-18e1de247200?w=800&h=600&fit=crop',
       buttonText: 'View all products'
-    },
-     {
-      title: 'Dining Furnitures',
-      image: 'https://images.unsplash.com/photo-1617806118233-18e1de247200?w=800&h=600&fit=crop',
-      buttonText: 'View all products'
     }
-
   ];
 
   return (
@@ -95,15 +89,7 @@ export default function ForSaleRecommended() {
                 </button>
               </div>
             </div>
-
-
-{/* fifth card */}
-
-
-<div className='w-full'>
-  <img src={recommendedProducts[4].image} alt="" />
-</div>
-
+            
           </div>
 
 
