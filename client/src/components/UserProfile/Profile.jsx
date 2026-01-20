@@ -402,7 +402,7 @@ export default function Profile() {
                     <h3 className="text-xl md:text-2xl font-semibold text-gray-900 mb-3">No saved items yet</h3>
                     <p className="text-gray-600 mb-8 max-w-md mx-auto">Start saving properties you love to view them later!</p>
                     <button 
-                      onClick={() => navigate('/categories')}
+                      onClick={() => navigate('/roommate-details')}
                       className="px-6 py-3 bg-emerald-500 text-white rounded-xl hover:bg-emerald-600 transition-colors font-semibold"
                     >
                       Browse Properties
