@@ -76,20 +76,17 @@ const Navbar = () => {
   ];
 
   const mainMenuItems = [
-    { name: "Home", path: "/" },
-    { name: "About Us", path: "/about-us" },
-    { name: "Our Services", path: "/our-services" },
-    { name: "Contact Us", path: "/contact-us" },
-  ];
-
-  const moreMenuItems = [
     { name: "Roommates", path: "/roommates" },
     { name: "Rentals", path: "/rentals" },
-    { name: "Jobs", path: "/jobs" },
     { name: "Events", path: "/events" },
     { name: "Services", path: "/services" },
+    
+  ];
+  
+  const moreMenuItems = [
     { name: "TakeCare", path: "/takecare" },
     { name: "Cars", path: "/cars" },
+    { name: "TakeCare", path: "/takecare" },
     { name: "For sale", path: "/forsale" },
   ];
 
@@ -707,7 +704,7 @@ const Navbar = () => {
                       isScrolled ? "text-white" : "text-gray-700"
                     }`}
                   >
-                    All Categories
+                    More
                     <FaChevronDown className="h-3 w-3 sm:h-4 sm:w-4 ml-1 transition-transform duration-300" />
                   </a>
 

@@ -75,7 +75,7 @@ const Footer = () => {
   };
 
   return (
-    <footer className="bg-gray-100 border-t border-gray-200 pt-16 pb-8 mt-14 px-4 sm:px-6 lg:px-8 relative overflow-hidden ">
+    <footer className="bg-gray-300 border-t border-gray-200 pt-8 pb-8  px-4 sm:px-6 lg:px-8 relative overflow-hidden ">
       <div className="max-w-7xl mx-auto relative z-10">
         {/* Main Footer Content */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 mb-12">
@@ -84,7 +84,7 @@ const Footer = () => {
             <div className="flex items-center space-x-3 mb-6">
               <div>
                 <h2 className="text-gray-900 font-bold text-2xl">Listify</h2>
-                <p className="text-gray-500 text-sm">
+                <p className="text-gray-600 text-sm">
                   Your Trusted Local Marketplace
                 </p>
               </div>
@@ -115,7 +115,7 @@ const Footer = () => {
 
           {/* Marketplace Links */}
           <div className="col-span-1 lg:col-span-1">
-            <h3 className="text-gray-900 font-bold mb-6 text-sm uppercase tracking-wider pl-5 sm:mt-2">
+            <h3 className="text-gray-900 font-bold mb-6 text-sm uppercase tracking-wider pl-5 ">
               Marketplace
             </h3>
             <ul className="space-y-3">
@@ -214,7 +214,7 @@ const Footer = () => {
 
             {/* Mobile Apps */}
             <div>
-              <h4 className="text-gray-700 font-semibold mb-3 text-sm">
+              <h4 className="text-gray-900 font-semibold mb-3 text-sm">
                 Get Our App
               </h4>
               <div className="space-y-3">
@@ -251,7 +251,7 @@ const Footer = () => {
                   key={item}
                   to={`/${item.toLowerCase().replace(/\s+/g, "-")}`}
                   onClick={handleFooterLinkClick}
-                  className="text-gray-500 hover:text-blue-600 transition-colors duration-200 text-sm"
+                  className="text-gray-600 hover:text-blue-600 transition-colors duration-200 text-sm"
                 >
                   {item}
                 </Link>
@@ -292,7 +292,7 @@ const Footer = () => {
                 <a
                   key={social.label}
                   href={social.href}
-                  className={`text-gray-400 ${social.color} transition-all duration-200 p-2 rounded-lg hover:bg-gray-100`}
+                  className={`text-gray-600 ${social.color} transition-all duration-200 p-2 rounded-lg hover:bg-gray-100`}
                   aria-label={`Follow us on ${social.label}`}
                   target="_blank"
                   rel="noopener noreferrer"

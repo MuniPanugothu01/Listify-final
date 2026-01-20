@@ -64,7 +64,7 @@ export default function ForSale() {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <div className="relative h-[550px] md:h-[600px] lg:h-[700px] overflow-hidden">
+      <div className="relative h-[550px] md:h-[600px] lg:h-[550px] overflow-hidden">
         <img
           src="/for-sale-2.jpg"
           alt="Modern living room"
