@@ -251,7 +251,7 @@ const Footer = () => {
                   key={item}
                   to={`/${item.toLowerCase().replace(/\s+/g, "-")}`}
                   onClick={handleFooterLinkClick}
-                  className="text-gray-600 hover:text-blue-600 transition-colors duration-200 text-sm"
+                  className="text-gray-600 hover:text-green-600 transition-colors duration-200 text-sm"
                 >
                   {item}
                 </Link>
