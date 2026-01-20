@@ -173,7 +173,6 @@ const FeaturedData = () => {
     ? filteredProperties
     : filteredProperties.slice(0, 6);
 
-
   return (
     <div className="mt-20 px-4 md:px-8 lg:px-16">
       <div>
@@ -187,6 +186,7 @@ const FeaturedData = () => {
         </p>
 
         {/* Property Cards Grid */}
+    <Link to="/details">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-7xl mx-auto cursor-pointer mt-10">
           {displayedProperties.map((property) => (
             <div
@@ -269,23 +269,20 @@ const FeaturedData = () => {
               </div>
             </div>
           ))}
-        </div>
+        </div></Link>
 
         {/* Browse More Properties Button - Always visible */}
         <div className="flex justify-center mt-12">
           <Link to="/roommate-details">
             {" "}
-           <button className="px-8 py-3 border-2 border-[#27bb97] text-[#27bb97] font-semibold rounded-lg
+            <button
+              className="px-8 py-3 border-2 border-[#27bb97] text-[#27bb97] font-semibold rounded-lg
   flex items-center gap-2
-  hover:bg-[#27bb97] hover:text-white transition-all duration-300 hover:shadow-lg cursor-pointer">
-  
-  Browse More Properties in London
-  <GoArrowUpRight className="text-lg" />
-</button>
-
-
-
-            
+  hover:bg-[#27bb97] hover:text-white transition-all duration-300 hover:shadow-lg cursor-pointer"
+            >
+              Browse More Properties in London
+              <GoArrowUpRight className="text-lg" />
+            </button>
           </Link>
         </div>
       </div>
