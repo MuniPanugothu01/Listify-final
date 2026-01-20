@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import {
   ChevronLeft,
   ChevronRight,
@@ -157,7 +158,7 @@ const RecentDataOne = () => {
 
   const prevSlide = () => {
     setCurrentIndex(
-      (prev) => (prev - 3 + properties.length) % properties.length
+      (prev) => (prev - 3 + properties.length) % properties.length,
     );
   };
 
@@ -171,13 +172,13 @@ const RecentDataOne = () => {
     setShowAllProperties(false);
     // Scroll to top of the section for better UX
     window.scrollTo({
-      top: document.getElementById('recent-properties').offsetTop - 100,
-      behavior: 'smooth'
+      top: document.getElementById("recent-properties").offsetTop - 100,
+      behavior: "smooth",
     });
   };
 
-  const visibleProperties = showAllProperties 
-    ? properties 
+  const visibleProperties = showAllProperties
+    ? properties
     : properties.slice(currentIndex, currentIndex + 3);
 
   const PropertyCard = ({ property }) => (
@@ -208,7 +209,7 @@ const RecentDataOne = () => {
       </div>
 
       {/* Content Section */}
-      <div className="p-5">
+      <div className="p-3">
         {/* Price and Rating */}
         <div className="flex justify-between items-start mb-3">
           <div>
@@ -226,9 +227,7 @@ const RecentDataOne = () => {
             <span className="text-sm font-semibold text-gray-800">
               {property.rating}
             </span>
-            <span className="text-xs text-gray-500">
-              ({property.reviews})
-            </span>
+            <span className="text-xs text-gray-500">({property.reviews})</span>
           </div>
         </div>
 
@@ -242,9 +241,7 @@ const RecentDataOne = () => {
           <MapPin className="w-4 h-4" />
           <span className="text-sm">{property.location}</span>
           <span className="text-xs text-gray-400">•</span>
-          <span className="text-xs text-gray-500">
-            {property.distance}
-          </span>
+          <span className="text-xs text-gray-500">{property.distance}</span>
         </div>
 
         {/* Amenities */}
@@ -260,7 +257,7 @@ const RecentDataOne = () => {
         </div>
 
         {/* Footer */}
-        <div className="flex justify-between items-center pt-3 border-t border-gray-100">
+        <div className="flex justify-between items-center pt-2 border-t border-gray-100">
           <div className="flex items-center gap-2">
             {property.verified && (
               <span className="px-2 py-1 bg-green-100 text-green-700 text-xs font-medium rounded">
@@ -298,21 +295,22 @@ const RecentDataOne = () => {
       {/* Navigation Header with View More */}
       <div className="max-w-7xl mx-auto px-6 mt-6">
         <div className="flex justify-end items-end mb-4">
-          {/* View More Link */}
+          {/* View More Link - Direct redirect without onClick handler */}
           {!showAllProperties && (
-            <button
-              onClick={handleViewMore}
-              className="flex items-center gap-2 text-[#25676D] font-semibold hover:text-[#1a4d52] hover:underline transition-colors"
-            >
-              View More
-              <FaArrowRightLong className="w-4 h-4" />
-            </button>
+            <Link to="/roommate-details">
+              <button className="flex items-center gap-2 text-[#25676D] font-semibold hover:text-[#1a4d52] hover:underline transition-colors cursor-pointer">
+                View More Rentals
+                <FaArrowRightLong className="w-4 h-4" />
+              </button>
+            </Link>
           )}
         </div>
 
         {/* Cards Grid */}
         <div className="relative">
-          <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 ${showAllProperties ? 'mb-8' : ''}`}>
+          <div
+            className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 ${showAllProperties ? "mb-8" : ""}`}
+          >
             {visibleProperties.map((property) => (
               <PropertyCard key={property.id} property={property} />
             ))}
@@ -336,21 +334,6 @@ const RecentDataOne = () => {
             </button>
           </div>
         )}
-
-        {/* View Less Link - Show when viewing all properties */}
-        {showAllProperties && (
-          <div className="flex justify-center mt-8">
-            <button
-              onClick={handleViewLess}
-              className="flex items-center gap-2 text-[#25676D] font-semibold hover:text-[#1a4d52] hover:underline transition-colors"
-            >
-              <FaArrowLeftLong className="w-4 h-4" />
-              View Less
-            </button>
-          </div>
-        )}
-
-      
       </div>
     </div>
   );

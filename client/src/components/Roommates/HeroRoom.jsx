@@ -76,7 +76,7 @@ export default function HeroRoom() {
                   <div className="cursor-pointer group ">
                     <div className="bg-white/10 backdrop-blur-sm group-hover:bg-white/20 border border-white/30 rounded-2xl p-6 w-full sm:w-48 flex flex-col items-center transition duration-300 shadow-lg hover:shadow-xl">
                       <DoorOpen className="w-12 h-12 mb-3 text-white drop-shadow" />
-                      <p className="font-medium text-white text-lg">
+                      <p className="font-medium text-white text-md">
                         Room for Rent
                       </p>
                     </div>
@@ -85,7 +85,7 @@ export default function HeroRoom() {
                   <div className="cursor-pointer group">
                     <div className="bg-white/10 backdrop-blur-sm group-hover:bg-white/20 border border-white/30 rounded-2xl p-6 w-full sm:w-48 flex flex-col items-center transition duration-300 shadow-lg hover:shadow-xl">
                       <Building2 className="w-12 h-12 mb-3 text-white drop-shadow" />
-                      <p className="font-medium text-white text-lg">
+                      <p className="font-medium text-white text-md">
                         Property for Rent
                       </p>
                     </div>

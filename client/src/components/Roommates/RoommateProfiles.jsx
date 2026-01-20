@@ -322,8 +322,8 @@ const RoommateProfiles = () => {
                 <button
                   onClick={() => handleContactView(profile)}
                   className="flex-1 flex items-center justify-center gap-2 
-                             bg-[#25676D] text-white py-2.5 rounded-lg 
-                             font-semibold text-sm hover:bg-[#1a4d52] transition-colors
+                             bg-[#27bb97] text-white py-2.5 rounded-lg 
+                             font-semibold text-sm hover:bg-[#1fa987] transition-colors
                              disabled:bg-gray-300 disabled:cursor-not-allowed"
                   disabled={!profile.phone}
                 >
@@ -375,7 +375,7 @@ const RoommateProfiles = () => {
         <p className="text-gray-600 mb-4">
           Want better matches? Take our compatibility quiz!
         </p>
-        <button className="bg-[#25676D] text-white px-6 py-3 rounded-lg font-semibold hover:bg-[#1a4d52] transition-colors flex items-center gap-2 mx-auto">
+        <button className="bg-[#27bb97] text-white px-6 py-3 rounded-lg font-semibold hover:bg-[#1fa987] transition-colors flex items-center gap-2 mx-auto cursor-pointer">
           <Info size={16} />
           Take Compatibility Quiz
         </button>

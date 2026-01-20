@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { Home, Bath, Maximize2, MapPin } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-
+import { Link } from "react-router-dom";
+import { GoArrowUpRight } from "react-icons/go";
 const FeaturedData = () => {
   const [activeFilter, setActiveFilter] = useState("all");
   const [showAll, setShowAll] = useState(false);
@@ -168,11 +169,10 @@ const FeaturedData = () => {
   });
 
   // Show only first 6 properties initially, then all when "View More" is clicked
-  const displayedProperties = showAll ? filteredProperties : filteredProperties.slice(0, 6);
+  const displayedProperties = showAll
+    ? filteredProperties
+    : filteredProperties.slice(0, 6);
 
-  const handleBrowseMore = () => {
-    navigate("/roommate-details");
-  };
 
   return (
     <div className="mt-20 px-4 md:px-8 lg:px-16">
@@ -271,23 +271,22 @@ const FeaturedData = () => {
           ))}
         </div>
 
-        {/* View More / Browse More Button */}
+        {/* Browse More Properties Button - Always visible */}
         <div className="flex justify-center mt-12">
-          {!showAll ? (
-            <button
-              onClick={() => setShowAll(true)}
-              className="bg-blue-100 hover:bg-blue-200 text-blue-600 px-8 py-3 rounded-lg font-medium transition-colors cursor-pointer"
-            >
-              View More
-            </button>
-          ) : (
-            <button 
-              onClick={handleBrowseMore}
-              className="bg-blue-100 hover:bg-blue-200 text-blue-600 px-8 py-3 rounded-lg font-medium transition-colors cursor-pointer"
-            >
-              Browse More Properties in London
-            </button>
-          )}
+          <Link to="/roommate-details">
+            {" "}
+           <button className="px-8 py-3 border-2 border-[#27bb97] text-[#27bb97] font-semibold rounded-lg
+  flex items-center gap-2
+  hover:bg-[#27bb97] hover:text-white transition-all duration-300 hover:shadow-lg cursor-pointer">
+  
+  Browse More Properties in London
+  <GoArrowUpRight className="text-lg" />
+</button>
+
+
+
+            
+          </Link>
         </div>
       </div>
     </div>
