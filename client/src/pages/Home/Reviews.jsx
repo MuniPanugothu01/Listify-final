@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect, useCallback } from "react";
-import { FaChevronLeft, FaChevronRight, FaStar } from "react-icons/fa";
+import React, { useState, useRef, useEffect } from "react";
+import { FaStar } from "react-icons/fa";
 
 const professionalImages = {
   teamMembers: [
@@ -59,35 +59,41 @@ const data = {
   ],
 };
 
-// ⭐ Star Rating Component
 const StarRating = ({ rating }) => (
-  <div className="flex justify-center space-x-1 mb-2 sm:mb-3">
+  <div className="flex justify-center space-x-1 mb-4">
     {[...Array(5)].map((_, index) => (
       <FaStar
         key={index}
-        className={`text-sm sm:text-base md:text-lg ${index < rating ? "text-yellow-300" : "text-gray-300"}`}
+        className={`text-base sm:text-lg ${index < rating ? "text-yellow-300" : "text-gray-300"}`}
       />
     ))}
   </div>
 );
 
-// 🧱 Single Review Card
 const ReviewCard = ({ name, position, description, rating, imageSrc }) => (
-  <div className="flex-shrink-0 w-64 sm:w-72 md:w-80 mx-2 sm:mx-3 md:mx-4 bg-white rounded-xl sm:rounded-2xl shadow-lg sm:shadow-xl md:shadow-2xl text-center overflow-hidden">
-    <div className="relative w-full h-36 sm:h-40 md:h-48 overflow-hidden">
-      <img src={imageSrc} alt={name} className="w-full h-full object-cover" />
-      <div
-        className="absolute bottom-0 left-0 w-full h-1/3 bg-white transform -skew-y-3 origin-bottom-left"
-        style={{ transform: "translateY(106%) skewY(-9deg)" }}
-      ></div>
-    </div>
+  <div className="flex-shrink-0 w-72 sm:w-80 md:w-96 mx-4">
+    <div className="bg-white rounded-3xl shadow-xl px-6 pt-16 pb-8 text-center relative min-h-[380px]">
+      {/* Image on top - full visible */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-28 h-28 sm:w-32 sm:h-32 rounded-full overflow-hidden border-8 border-white shadow-xl">
+        <img
+          src={imageSrc}
+          alt={name}
+          className="w-full h-full object-cover"
+        />
+      </div>
 
-    <div className="p-4 sm:p-5 md:p-6 pt-5 sm:pt-6 md:pt-8 relative -mt-3 sm:-mt-4">
-      <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-800 mb-1 sm:mb-2">{name}</h3>
-      <div className="w-8 sm:w-10 md:w-12 h-0.5 sm:h-1 bg-[#27BB97] mx-auto mb-2 sm:mb-3 rounded-full"></div>
-      <p className="text-black font-semibold text-xs sm:text-sm uppercase tracking-wide mb-2 sm:mb-3">{position}</p>
+      <h3 className="text-xl sm:text-2xl font-bold text-gray-800">
+        {name}
+      </h3>
+      <p className="text-black font-semibold text-xs sm:text-sm uppercase tracking-wide mt-2 mb-4">
+        {position}
+      </p>
+
       <StarRating rating={rating} />
-      <p className="text-gray-600 text-sm sm:text-base leading-relaxed mb-4 sm:mb-5 md:mb-6">{description}</p>
+
+      <p className="text-gray-600 text-sm sm:text-base leading-relaxed">
+        {description}
+      </p>
     </div>
   </div>
 );
@@ -95,112 +101,162 @@ const ReviewCard = ({ name, position, description, rating, imageSrc }) => (
 const Reviews = () => {
   const { teamMembers } = data;
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isDragging, setIsDragging] = useState(false);
-  const [startX, setStartX] = useState(0);
-  const [scrollLeft, setScrollLeft] = useState(0);
+  const [isTransitioning, setIsTransitioning] = useState(false);
   const containerRef = useRef(null);
-  const cardsContainerRef = useRef(null);
+  const autoScrollRef = useRef(null);
 
-  // Calculate visible cards based on screen size
+  // Get visible cards based on screen size
   const getVisibleCards = () => {
     if (typeof window === 'undefined') return 1;
-    
-    if (window.innerWidth >= 1024) return 3; // desktop
-    if (window.innerWidth >= 768) return 2;  // tablet
-    return 1; // mobile
+    if (window.innerWidth >= 1024) return 3;
+    if (window.innerWidth >= 768) return 2;
+    return 1;
   };
 
   const visibleCards = getVisibleCards();
-  
-  // Calculate max index based on visible cards
-  const maxIndex = Math.max(0, teamMembers.length - visibleCards);
+  const totalCards = teamMembers.length;
 
-  const handleNext = () => {
-    setCurrentIndex((prev) => (prev + 1) % (maxIndex + 1));
-  };
-
-  const handlePrev = () => {
-    setCurrentIndex((prev) => (prev - 1 + (maxIndex + 1)) % (maxIndex + 1));
-  };
-
-  // Calculate card width based on screen size
+  // Calculate card width including margins
   const getCardWidth = () => {
-    if (typeof window === 'undefined') return 320;
+    if (!containerRef.current) return 320;
+    const container = containerRef.current;
+    const cards = container.querySelectorAll('.flex-shrink-0');
+    if (cards.length === 0) return 320;
     
-    if (window.innerWidth >= 1024) return 320; // desktop
-    if (window.innerWidth >= 768) return 304;  // tablet
-    return 272; // mobile
+    const firstCard = cards[0];
+    const cardStyle = window.getComputedStyle(firstCard);
+    const width = parseFloat(cardStyle.width);
+    const marginLeft = parseFloat(cardStyle.marginLeft) || 0;
+    const marginRight = parseFloat(cardStyle.marginRight) || 0;
+    
+    return width + marginLeft + marginRight;
   };
 
-  const cardWidth = getCardWidth();
+  // Clone cards for infinite scroll effect
+  const clonedCards = [...teamMembers, ...teamMembers.slice(0, visibleCards)];
 
-  // Handle mouse down for dragging
-  const handleMouseDown = useCallback((e) => {
-    if (!containerRef.current) return;
-    
-    setIsDragging(true);
-    setStartX(e.pageX - containerRef.current.offsetLeft);
-    setScrollLeft(containerRef.current.scrollLeft || 0);
-    
-    // Prevent text selection while dragging
-    e.preventDefault();
-  }, []);
-
-  // Handle mouse move for dragging
-  const handleMouseMove = useCallback((e) => {
-    if (!isDragging || !containerRef.current) return;
-    
-    e.preventDefault();
-    const x = e.pageX - containerRef.current.offsetLeft;
-    const walk = (x - startX) * 2; // Multiply by 2 for faster scroll
-    
-    // Update scroll position
-    containerRef.current.scrollLeft = scrollLeft - walk;
-    
-    // Update current index based on scroll position
-    const newIndex = Math.round(containerRef.current.scrollLeft / cardWidth);
-    setCurrentIndex(Math.min(Math.max(0, newIndex), maxIndex));
-  }, [isDragging, startX, scrollLeft, cardWidth, maxIndex]);
-
-  // Handle mouse up/leave for dragging
-  const handleMouseUpOrLeave = useCallback(() => {
-    setIsDragging(false);
-  }, []);
-
-  // Handle scroll events
-  const handleScroll = useCallback(() => {
-    if (!containerRef.current) return;
-    
-    const newIndex = Math.round(containerRef.current.scrollLeft / cardWidth);
-    setCurrentIndex(Math.min(Math.max(0, newIndex), maxIndex));
-  }, [cardWidth, maxIndex]);
-
-  // Add event listeners for dragging
+  // Auto scroll every 2 seconds with smooth infinite scroll
   useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
+    if (!containerRef.current) return;
 
-    container.addEventListener('mousedown', handleMouseDown);
-    container.addEventListener('mousemove', handleMouseMove);
-    container.addEventListener('mouseup', handleMouseUpOrLeave);
-    container.addEventListener('mouseleave', handleMouseUpOrLeave);
-    container.addEventListener('scroll', handleScroll);
+    let isAnimating = false;
+
+    const scrollToIndex = (index) => {
+      if (isAnimating || !containerRef.current) return;
+      
+      isAnimating = true;
+      setIsTransitioning(true);
+      
+      const container = containerRef.current;
+      const cardWidth = getCardWidth();
+      const scrollPosition = index * cardWidth;
+      
+      container.style.scrollBehavior = 'smooth';
+      container.scrollLeft = scrollPosition;
+      
+      // Update the visible index (modulo totalCards for infinite effect)
+      const actualIndex = index % totalCards;
+      setCurrentIndex(actualIndex);
+      
+      // Reset scroll position when reaching the cloned section
+      const resetTimer = setTimeout(() => {
+        if (index >= totalCards) {
+          container.style.scrollBehavior = 'auto';
+          container.scrollLeft = (index - totalCards) * cardWidth;
+        }
+        isAnimating = false;
+        setIsTransitioning(false);
+      }, 500); // Match this with CSS transition duration
+      
+      return () => clearTimeout(resetTimer);
+    };
+
+    let currentScrollIndex = 0;
+
+    autoScrollRef.current = setInterval(() => {
+      if (isAnimating) return;
+      
+      currentScrollIndex++;
+      
+      // If we're at the end of cloned cards, reset to beginning
+      if (currentScrollIndex >= clonedCards.length - visibleCards) {
+        currentScrollIndex = 0;
+        containerRef.current.style.scrollBehavior = 'auto';
+        containerRef.current.scrollLeft = 0;
+        setTimeout(() => {
+          if (containerRef.current) {
+            containerRef.current.style.scrollBehavior = 'smooth';
+          }
+        }, 50);
+      }
+      
+      scrollToIndex(currentScrollIndex);
+    }, 2000); // Auto scroll every 2 seconds
 
     return () => {
-      container.removeEventListener('mousedown', handleMouseDown);
-      container.removeEventListener('mousemove', handleMouseMove);
-      container.removeEventListener('mouseup', handleMouseUpOrLeave);
-      container.removeEventListener('mouseleave', handleMouseUpOrLeave);
-      container.removeEventListener('scroll', handleScroll);
+      if (autoScrollRef.current) {
+        clearInterval(autoScrollRef.current);
+      }
     };
-  }, [handleMouseDown, handleMouseMove, handleMouseUpOrLeave, handleScroll]);
+  }, [totalCards, visibleCards, clonedCards.length]);
 
-  // Update scroll position when currentIndex changes from buttons
+  // Handle manual click on dots
+  const handleDotClick = (index) => {
+    if (isTransitioning) return;
+    
+    const container = containerRef.current;
+    const cardWidth = getCardWidth();
+    
+    if (container && cardWidth > 0) {
+      setIsTransitioning(true);
+      container.style.scrollBehavior = 'smooth';
+      container.scrollLeft = index * cardWidth;
+      setCurrentIndex(index);
+      
+      // Reset transition state
+      setTimeout(() => {
+        setIsTransitioning(false);
+      }, 500);
+    }
+    
+    // Reset auto-scroll timer
+    if (autoScrollRef.current) {
+      clearInterval(autoScrollRef.current);
+      autoScrollRef.current = setInterval(() => {
+        if (containerRef.current) {
+          const cardWidth = getCardWidth();
+          const currentScroll = containerRef.current.scrollLeft;
+          const nextScroll = currentScroll + cardWidth;
+          const maxScroll = (clonedCards.length - visibleCards) * cardWidth;
+          
+          if (nextScroll >= maxScroll) {
+            containerRef.current.style.scrollBehavior = 'auto';
+            containerRef.current.scrollLeft = 0;
+            setTimeout(() => {
+              if (containerRef.current) {
+                containerRef.current.style.scrollBehavior = 'smooth';
+              }
+            }, 50);
+          } else {
+            containerRef.current.style.scrollBehavior = 'smooth';
+            containerRef.current.scrollLeft = nextScroll;
+          }
+        }
+      }, 2000);
+    }
+  };
+
+  // Center the container initially
   useEffect(() => {
     if (containerRef.current) {
-      containerRef.current.scrollLeft = currentIndex * cardWidth;
+      const container = containerRef.current;
+      const cardWidth = getCardWidth();
+      if (cardWidth > 0) {
+        // Start at the first card (not cloned section)
+        container.scrollLeft = 0;
+      }
     }
-  }, [currentIndex, cardWidth]);
+  }, []);
 
   return (
     <div className="bg-gray-100 py-10 sm:py-14 md:py-16 lg:py-20 px-3 sm:px-4 md:px-6 lg:px-8">
@@ -216,27 +272,21 @@ const Reviews = () => {
         </div>
 
         <div className="relative">
-          {/* Cards Container with Scrollbar and Drag Support */}
-          <div 
+          {/* Carousel Container */}
+          <div
             ref={containerRef}
-            className="overflow-x-auto mb-6 sm:mb-7 md:mb-8 scrollbar-hide"
+            className="overflow-x-auto scrollbar-hide"
             style={{ 
-              cursor: isDragging ? 'grabbing' : 'grab',
+              scrollbarWidth: 'none',
+              msOverflowStyle: 'none',
               scrollBehavior: 'smooth'
             }}
           >
-            <div 
-              ref={cardsContainerRef}
-              className="flex pb-4"
-              style={{ 
-                width: `${teamMembers.length * (cardWidth + 16)}px`, // 16px for margins
-                paddingLeft: '1rem',
-                paddingRight: '1rem'
-              }}
-            >
-              {teamMembers.map((member, index) => (
+            <div className="flex items-stretch py-12 mt-8">
+              {/* Render cloned cards for infinite scroll effect */}
+              {clonedCards.map((member, index) => (
                 <ReviewCard
-                  key={index}
+                  key={`${member.name}-${index}`}
                   {...member}
                   imageSrc={professionalImages.teamMembers[index % professionalImages.teamMembers.length]}
                 />
@@ -244,50 +294,19 @@ const Reviews = () => {
             </div>
           </div>
 
-          {/* Navigation Buttons - Below Cards Side by Side */}
-          <div className="flex justify-center items-center space-x-3 sm:space-x-4">
-            {/* ⬅️ Prev Button */}
-            <button
-              onClick={handlePrev}
-              disabled={currentIndex === 0}
-              className={`bg-white text-gray-800 w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 rounded-full shadow-md sm:shadow-lg flex items-center justify-center border border-[#C89A5E]/20 hover:bg-gray-100 transition-all duration-300 ${
-                currentIndex === 0 ? 'opacity-50 cursor-not-allowed' : 'hover:text-white'
-              }`}
-              aria-label="Previous review"
-            >
-              <FaChevronLeft className="text-sm sm:text-base md:text-lg" />
-            </button>
-
-            {/* Indicator Dots */}
-            <div className="flex space-x-2">
-              {Array.from({ length: maxIndex + 1 }).map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentIndex(index)}
-                  className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                    index === currentIndex ? 'bg-[#27BB97] w-6' : 'bg-gray-300'
-                  }`}
-                  aria-label={`Go to review ${index + 1}`}
-                />
-              ))}
-            </div>
-
-            {/* ➡️ Next Button */}
-            <button
-              onClick={handleNext}
-              disabled={currentIndex === maxIndex}
-              className={`bg-white text-gray-800 w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 rounded-full shadow-md sm:shadow-lg flex items-center justify-center border border-[#C89A5E]/20 hover:bg-gray-100 transition-all duration-300 ${
-                currentIndex === maxIndex ? 'opacity-50 cursor-not-allowed' : 'hover:text-white'
-              }`}
-              aria-label="Next review"
-            >
-              <FaChevronRight className="text-sm sm:text-base md:text-lg" />
-            </button>
-          </div>
-
-          {/* Instructions for dragging (visible on desktop) */}
-          <div className="text-center mt-4 text-sm text-gray-500 hidden md:block">
-            <p>Drag with mouse to scroll • Click buttons or dots to navigate</p>
+          {/* Dots Indicator (only for original cards) */}
+          <div className="flex justify-center items-center mt-8 space-x-3">
+            {Array.from({ length: totalCards }).map((_, index) => (
+              <button
+                key={index}
+                onClick={() => handleDotClick(index)}
+                className={`h-2 rounded-full transition-all duration-300 ${
+                  index === currentIndex ? 'bg-[#27BB97] w-8' : 'bg-gray-300 w-2 hover:bg-gray-400'
+                }`}
+                aria-label={`Go to slide ${index + 1}`}
+                disabled={isTransitioning}
+              />
+            ))}
           </div>
         </div>
       </section>

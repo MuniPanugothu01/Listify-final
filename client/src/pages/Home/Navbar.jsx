@@ -17,8 +17,7 @@ import {
   FaChevronRight,
   FaMapMarkerAlt,
   FaSearch,
-  FaHeart, // Added heart icon
-  FaRegHeart, // Added outlined heart icon for alternative
+  FaRegHeart, // Outlined heart icon
 } from "react-icons/fa";
 
 import NavSearchBar from "./NavSearchBar";
@@ -41,7 +40,6 @@ const Navbar = () => {
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   const [showMoreDropdown, setShowMoreDropdown] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState("");
-  const [isHeartFilled, setIsHeartFilled] = useState(false); // State for heart toggle
   
   const profileDropdownRef = useRef(null);
   const navigate = useNavigate();
@@ -71,7 +69,7 @@ const Navbar = () => {
 
   const profileMenuItems = [
     { name: "Dashboard", path: "/profile", icon: CgProfile },
-    { name: "Saved Items", path: "/saved", icon: FaHeart }, // Updated to include heart icon
+    { name: "Saved Items", path: "/saved", icon: FaRegHeart },
     { name: "Settings", path: "/settings", icon: FaTools },
     { name: "My Listings", path: "/my-listings", icon: FaBuilding },
     { name: "Messages", path: "/messages", icon: FaUserFriends },
@@ -107,14 +105,6 @@ const Navbar = () => {
     }
     scrollToTop();
     closeProfileDropdown();
-  };
-
-  // Handle heart icon click for saved items
-  const handleHeartClick = (e) => {
-    e.preventDefault();
-    setIsHeartFilled(!isHeartFilled);
-    navigate("/profile");
-    scrollToTop();
   };
 
   // Close dropdown when clicking outside
@@ -176,24 +166,6 @@ const Navbar = () => {
       to {
         transform: translateY(0);
         opacity: 1;
-      }
-    }
-
-    @keyframes heartBeat {
-      0% {
-        transform: scale(1);
-      }
-      25% {
-        transform: scale(1.2);
-      }
-      50% {
-        transform: scale(1);
-      }
-      75% {
-        transform: scale(1.1);
-      }
-      100% {
-        transform: scale(1);
       }
     }
 
@@ -277,20 +249,6 @@ const Navbar = () => {
 
     .navbar-scrolled .profile-button:hover {
       background-color: rgba(255, 255, 255, 0.1);
-    }
-
-    .heart-icon {
-      transition: all 0.3s ease;
-    }
-
-    .heart-icon:hover {
-      animation: heartBeat 0.5s ease;
-      color: #ff4757;
-    }
-
-    .heart-filled {
-      color: #ff4757;
-      filter: drop-shadow(0 0 8px rgba(255, 71, 87, 0.4));
     }
   `;
 
@@ -385,42 +343,26 @@ const Navbar = () => {
               
               {/* Right side actions */}
               <div className="flex items-center space-x-2 md:space-x-3 lg:space-x-4 ml-10 lg:ml-20">
-                {/* Saved Items (Heart Icon) */}
+                {/* Heart Icon (Saved Items) */}
                 <Link 
-                  to="/profile" 
-                  onClick={(e) => {
-                    handleHeartClick(e);
-                    scrollToTop();
-                  }}
-                  className="hidden lg:flex items-center gap-1 sm:gap-2 relative"
+                  to="/saved"
+                  onClick={scrollToTop}
+                  className="hidden lg:flex items-center gap-1 sm:gap-2"
                 >
-                  <div className={`heart-icon ${isHeartFilled ? 'heart-filled' : ''}`}>
-                    {isHeartFilled ? (
-                      <FaHeart className="text-lg sm:text-xl md:text-2xl " />
-                    ) : (
-                      <FaRegHeart className={`text-lg sm:text-xl md:text-2xl transition-colors ${
-                        isScrolled ? 'text-white/80 ' : 'text-gray-600'
-                      }`} />
-                    )}
-                  </div>
+                  <FaRegHeart className={`text-lg sm:text-xl md:text-2xl ${
+                    isScrolled ? "text-white" : "text-gray-700"
+                  }`} />
                   <span className={`text-xs md:text-sm lg:text-base whitespace-nowrap font-medium ${
-                    isScrolled ? 'text-white' : 'text-gray-700'
+                    isScrolled ? "text-white" : "text-gray-700"
                   }`}>
                   </span>
-                  
-                  {/* Notification badge (optional) */}
-                  {false && ( // Change to true if you want to show badge
-                    <span className="absolute -top-1 -right-1 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
-                      3
-                    </span>
-                  )}
                 </Link>
 
                 {/* Create Listing Button */}
                 <Link to="/post-add" className="hidden lg:block">
                   <button 
                     onClick={scrollToTop}
-                    className="flex items-center gap-1 sm:gap-2 bg-[#27bb97] text-white px-3 sm:px-4 py-2 sm:py-2.5 md:py-3 lg:py-3.5 rounded-lg text-xs md:text-sm lg:text-base whitespace-nowrap hover:bg-[#1fa987] transition cursor-pointer font-semibold"
+                    className="flex items-center gap-1 sm:gap-2 bg-[#27bb97] text-white px-3 sm:px-4 py-2 sm:py-2.5 md:py-3 lg:py-3.5 rounded-lg text-xs md:text-sm lg:text-base whitespace-nowrap hover:bg-[#1fa987] transition cursor-pointer font-bold"
                   >
                     <LuPencilLine className="text-white text-sm sm:text-base md:text-lg" />
                     <span className="hidden sm:inline">Post add</span>
@@ -469,9 +411,6 @@ const Navbar = () => {
                           >
                             <item.icon className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
                             <span className="truncate">{item.name}</span>
-                            {item.path === "/profile" && isHeartFilled && (
-                              <FaHeart className="h-3 w-3 text-red-500 ml-auto" />
-                            )}
                             {item.path === "/logout" && (
                               <span className="ml-auto text-xs text-gray-400 hidden sm:inline">⌘Q</span>
                             )}
@@ -494,38 +433,22 @@ const Navbar = () => {
 
             {/* Mobile menu button and search icon */}
             <div className="md:hidden flex items-center space-x-2 sm:space-x-3">
-              {/* Mobile Saved Items (Heart Icon) */}
+              {/* Mobile Heart Icon */}
               <Link 
-                to="/profile" 
-                onClick={(e) => {
-                  handleHeartClick(e);
-                  scrollToTop();
-                }}
-                className="flex items-center relative"
+                to="/saved"
+                onClick={scrollToTop}
+                className="flex items-center"
               >
-                <div className={`heart-icon ${isHeartFilled ? 'heart-filled' : ''}`}>
-                  {isHeartFilled ? (
-                    <FaHeart className="text-lg sm:text-xl " />
-                  ) : (
-                    <FaRegHeart className={`text-lg sm:text-xl ${
-                      isScrolled ? 'text-white/80' : 'text-gray-600'
-                    }`} />
-                  )}
-                </div>
-                
-                {/* Notification badge for mobile (optional) */}
-                {false && (
-                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] rounded-full w-3 h-3 flex items-center justify-center">
-                    3
-                  </span>
-                )}
+                <FaRegHeart className={`text-lg sm:text-xl ${
+                  isScrolled ? "text-white" : "text-gray-700"
+                }`} />
               </Link>
 
               {/* Mobile Create Listing Button */}
               <Link to="/post-add">
                 <button 
                   onClick={scrollToTop}
-                  className="flex items-center gap-1 bg-[#27bb97] text-white px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm whitespace-nowrap hover:bg-[#1fa987] transition cursor-pointer font-semibold"
+                  className="flex items-center gap-1 bg-[#27bb97] text-white px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm whitespace-nowrap hover:bg-[#1fa987] transition cursor-pointer font-bold"
                 >
                   <LuPencilLine className="text-white text-sm sm:text-base" />
                   <span className="hidden sm:inline">Post Ad</span>
@@ -607,7 +530,7 @@ const Navbar = () => {
                   }`}
                 >
                   <div className="flex items-center gap-2">
-                    <FaHeart className="h-4 w-4 sm:h-5 sm:w-5 text-red-500" />
+                    <FaRegHeart className="h-4 w-4 sm:h-5 sm:w-5 text-gray-700" />
                     <span>Saved Items</span>
                   </div>
                 </Link>

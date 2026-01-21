@@ -7,6 +7,7 @@ import {
 } from "react-router-dom";
 
 import Navbar from "./pages/Home/Navbar.jsx";
+import Carousel from "./pages/Home/Carousel.jsx";
 import HeroSection from "./pages/Home/HeroSection.jsx";
 import Heading from "./pages/Home/Heading.jsx";
 import TrendingCategories from "./pages/Home/TrendingCategories.jsx";
@@ -16,7 +17,6 @@ import Questions from "./pages/Home/Questions.jsx";
 import Reviews from "./pages/Home/Reviews.jsx";
 import Footer from "./pages/Home/Footer.jsx";
 import Gallery from "./pages/Home/Gallery.jsx";
-import Carousel from "./pages/Home/Carousel.jsx";
 
 // signin page
 import Signin from "./pages/Home/Signin.jsx";
