@@ -55,7 +55,7 @@ const Questions = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-[#c89a5e]/20 mt-8 sm:mt-10 md:mt-12 lg:mt-10 rounded-[5%] sm:rounded-[8%] lg:rounded-[10%] py-6 sm:py-7 md:py-8 lg:py-10 flex flex-col items-center justify-center px-3 sm:px-4 md:px-6 lg:px-8 xl:px-10 text-black">
+    <div className="min-h-screen  mt-8 sm:mt-10 md:mt-12 lg:mt-10 rounded-[5%] sm:rounded-[8%] lg:rounded-[10%] py-6 sm:py-7 md:py-8 lg:py-10 flex flex-col items-center justify-center px-3 sm:px-4 md:px-6 lg:px-8 xl:px-10 text-black">
       {/* Header Section */}
       <div className="flex flex-col items-center text-center mb-6 sm:mb-8 md:mb-10">
         <h1
@@ -86,7 +86,7 @@ const Questions = () => {
           </div>
 
           <Link to="/contact-us">
-            <button className="bg-[#2F3A63] border-2 border-[#2F3A63] text-sm sm:text-base md:text-[17px] cursor-pointer shadow-lg sm:shadow-xl px-3 sm:px-4 py-2 sm:py-3 rounded-lg sm:rounded-xl text-white flex items-center justify-center gap-1 sm:gap-2 w-full sm:w-auto hover:bg-[#242f5a] transition-colors duration-300">
+            <button className="bg-[#27BB97]  text-sm sm:text-base md:text-[17px] cursor-pointer shadow-lg sm:shadow-xl px-3 sm:px-4 py-2 sm:py-3 rounded-lg sm:rounded-xl text-white flex items-center justify-center gap-1 sm:gap-2 w-full sm:w-auto transition-colors duration-300">
               <GoArrowUpRight size={18} className="sm:w-5 sm:h-5" />
               Contact Us
             </button>

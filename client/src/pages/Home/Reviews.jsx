@@ -18,43 +18,57 @@ const data = {
       name: "Sarah Johnson",
       position: "Small Business Owner",
       description:
-        "Listify helped me grow my local business like never before. The platform is so much better than Craigslist for professional services!",
+        "Listify helped me grow my local business like never before. The platform is so much better than other listing websites for professional services!",
       rating: 5,
     },
     {
       name: "Michael Chen",
       position: "Freelance Developer",
       description:
-        "Finally, a platform that combines the simplicity of Craigslist with the professionalism needed for service-based work.",
+        "Finally, a platform that combines simplicity with the professionalism needed for service-based work. Listify stands out from the rest!",
       rating: 5,
     },
     {
       name: "Emily Rodriguez",
       position: "Real Estate Agent",
       description:
-        "Listify's property section outperforms both Craigslist and Sulekha. The verification system builds instant trust with clients.",
+        "Listify's property section outperforms all other platforms. The verification system builds instant trust with clients.",
       rating: 4,
     },
     {
       name: "David Thompson",
       position: "Local Service Provider",
       description:
-        "Security and trust were always issues on Craigslist. Listify's verification system makes every transaction safe.",
+        "Security and trust were always issues on other platforms. Listify's verification system makes every transaction safe and reliable.",
       rating: 5,
     },
     {
       name: "Lisa Wang",
       position: "Community Manager",
       description:
-        "Listify brings communities together better than any platform I've used, including Sulekha's local services.",
+        "Listify brings communities together better than any platform I've used. It's truly the best for local connections and services.",
       rating: 4,
     },
     {
       name: "James Wilson",
       position: "Marketing Consultant",
       description:
-        "Listify offers the reach of Craigslist with the sophistication that Sulekha tries to achieve but falls short on.",
+        "Listify offers incredible reach with sophisticated features that other platforms try to achieve but fall short on.",
       rating: 5,
+    },
+    {
+      name: "Priya Sharma",
+      position: "Event Planner",
+      description:
+        "As an event planner, Listify has been a game-changer. The local focus and user-friendly interface make it my go-to platform.",
+      rating: 5,
+    },
+    {
+      name: "Robert Garcia",
+      position: "Automotive Specialist",
+      description:
+        "Listify's automobile section is fantastic. Better organization and more serious buyers than any other listing site I've tried.",
+      rating: 4,
     },
   ],
 };
