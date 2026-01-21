@@ -137,7 +137,7 @@ export default function CarsSubNav() {
       <div className="px-4 sm:px-6 lg:px-8">
         {/* Main Navigation */}
         <div className="flex items-center justify-between py-3">
-          <div className="flex items-center gap-3 overflow-x-auto no-scrollbar flex-1">
+          <div className="flex items-center gap-3 overflow-x-auto no-scrollbar">
             {subNavItems.map((item, index) => {
               const IconComponent = item.icon;
               return (
@@ -146,8 +146,8 @@ export default function CarsSubNav() {
                   onClick={() => handleCategoryClick(item)}
                   className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm transition-all whitespace-nowrap min-w-max cursor-pointer ${
                     item.name === "Home" 
-                      ? "bg-[#27bb97] text-white hover:bg-[#1FA987]" 
-                      : "text-gray-700 hover:bg-teal-50 hover:text-teal-500"
+                      ? "bg-[#27bb97] text-white " 
+                      : "text-gray-700 hover:text-teal-500"
                   } ${item.iconOnly ? "px-3" : "px-4"}`}
                   title={item.name}
                 >
