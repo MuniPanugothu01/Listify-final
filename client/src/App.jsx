@@ -166,7 +166,7 @@ const App = () => {
                   {/* <Gallery /> */}
                   <Category />
                   <WhyUs />
-                  <TrendingCategories />
+                  {/* <TrendingCategories /> */}
                   <Reviews />
 
                   <Questions />
