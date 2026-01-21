@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 // react icons
 import { GoArrowRight } from "react-icons/go";
 
@@ -12,162 +13,178 @@ const TrendingCars = () => {
           Trending vehicles
         </h1>
 
-        <button className="flex items-center gap-2 px-4 h-10 bg-[#27bb97] hover:bg-[#1fa987] text-white rounded-full cursor-pointer">
-          <span>View All</span>
-          <GoArrowRight size={18} />
-        </button>
+        <Link to="/car-listings">
+          <button className="flex items-center gap-2 px-4 h-10 bg-[#27bb97] hover:bg-[#1fa987] text-white rounded-full cursor-pointer">
+            <span>View All</span>
+            <GoArrowRight size={18} />
+          </button>
+        </Link>
       </div>
 
       {/* cards */}
-      <div className="flex flex-wrap mt-10 gap-4 justify-center">
-        {/* card-01 (SPECIAL BUTTON – unchanged style) */}
-        <div
-          className="group relative w-66 h-70 bg-white rounded-lg overflow-hidden
+      <Link to="/car-details">
+        <div className="flex flex-wrap mt-10 gap-4 justify-center">
+          {/* card-01 (SPECIAL BUTTON – unchanged style) */}
+          <div
+            className="group relative w-66 h-70 bg-white rounded-lg overflow-hidden
                   transition-all duration-300 ease-out
                   hover:scale-[1.02] hover:shadow-xl cursor-pointer"
-        >
-          <h1 className="absolute p-4 uppercase font-bold z-10">bmw i4</h1>
+          >
+            <h1 className="absolute p-4 uppercase font-bold z-10">bmw i4</h1>
 
-          <img
-            src="/cars/trendcar.webp"
-            alt=""
-            className="absolute h-full w-full top-0 left-0 object-cover
+            <img
+              src="/cars/trendcar.webp"
+              alt=""
+              className="absolute h-full w-full top-0 left-0 object-cover
                  transition-transform duration-500 ease-out
                  group-hover:scale-110"
-          />
+            />
 
-          <div className="absolute bottom-4 left-4 right-4 z-10 flex items-center justify-between">
-            <p className="text-black capitalize">$150/day</p>
+            <div className="absolute bottom-4 left-4 right-4 z-10 flex items-center justify-between">
+              <p className="text-black capitalize">$150/day</p>
 
-            {/* original style */}
-            <button
-              className="px-4 h-10 rounded-full text-white
+              {/* original style */}
+              <button
+                className="px-4 h-10 rounded-full text-white
                    bg-[#27bb97] hover:bg-[#1fa987]
                    transition-all duration-300 ease-out
                    hover:-translate-y-0.5 hover:shadow-lg
                    active:scale-95"
-            >
-              Book Now
-            </button>
+              >
+                Book Now
+              </button>
+            </div>
           </div>
-        </div>
 
-        {/* card-02 */}
-        <div
-          className="group relative w-66 h-70 bg-white rounded-lg overflow-hidden
+          {/* card-02 */}
+          <div
+            className="group relative w-66 h-70 bg-white rounded-lg overflow-hidden
                   transition-all duration-300 ease-out
                   hover:scale-[1.02] hover:shadow-xl cursor-pointer"
-        >
-          <h1 className="p-4 uppercase font-bold relative z-10">audi a7</h1>
+          >
+            <h1 className="p-4 uppercase font-bold relative z-10">audi a7</h1>
 
-          <img
-            src="/cars/trendingaudi.png"
-            alt=""
-            className="absolute w-50 top-20 left-8 object-cover
+            <img
+              src="/cars/trendingaudi.png"
+              alt=""
+              className="absolute w-50 top-20 left-8 object-cover
                  transition-transform duration-500 ease-out
                  group-hover:scale-110"
-          />
+            />
 
-          <div className="absolute bottom-4 left-4 right-4 z-10 flex items-center justify-between">
-            <p className="text-black capitalize">$150/day</p>
+            <div className="absolute bottom-4 left-4 right-4 z-10 flex items-center justify-between">
+              <p className="text-black capitalize">$150/day</p>
 
-            <button
-              className="px-4 h-10 rounded-full
+              <button
+                className="px-4 h-10 rounded-full
                    bg-white text-black
                    border border-gray-300
                    transition-all duration-300 ease-out
                    hover:border-[#1fa987]
                    hover:-translate-y-0.5 hover:shadow-md
                    active:scale-95"
-            >
-              Book Now
-            </button>
+              >
+                Book Now
+              </button>
+            </div>
           </div>
-        </div>
 
-        {/* card-03 */}
-        <div
-          className="group relative w-66 h-70 bg-white rounded-lg overflow-hidden
+          {/* card-03 */}
+          <div
+            className="group relative w-66 h-70 bg-white rounded-lg overflow-hidden
                   transition-all duration-300 ease-out
                   hover:scale-[1.02] hover:shadow-xl cursor-pointer"
-        >
-          <h1 className="p-4 uppercase font-bold relative z-10">
-            mercedes e-class
-          </h1>
+          >
+            <h1 className="p-4 uppercase font-bold relative z-10">
+              mercedes e-class
+            </h1>
 
-          <img
-            src="/cars/mercedestrending.png"
-            alt=""
-            className="absolute w-50 top-20 left-8 object-cover
+            <img
+              src="/cars/mercedestrending.png"
+              alt=""
+              className="absolute w-50 top-20 left-8 object-cover
                  transition-transform duration-500 ease-out
                  group-hover:scale-110"
-          />
+            />
 
-          <div className="absolute bottom-4 left-4 right-4 z-10 flex items-center justify-between">
-            <p className="text-black capitalize">$150/day</p>
+            <div className="absolute bottom-4 left-4 right-4 z-10 flex items-center justify-between">
+              <p className="text-black capitalize">$150/day</p>
 
-            <button
-              className="px-4 h-10 rounded-full
+              <button
+                className="px-4 h-10 rounded-full
                    bg-white text-black
                    border border-gray-300
                    transition-all duration-300 ease-out
                    hover:border-[#1fa987]
                    hover:-translate-y-0.5 hover:shadow-md
                    active:scale-95"
-            >
-              Book Now
-            </button>
+              >
+                Book Now
+              </button>
+            </div>
           </div>
-        </div>
 
-        {/* card-04 */}
-        <div
-          className="group relative w-66 h-70 bg-white rounded-lg overflow-hidden
+          {/* card-04 */}
+          <div
+            className="group relative w-66 h-70 bg-white rounded-lg overflow-hidden
                   transition-all duration-300 ease-out
                   hover:scale-[1.02] hover:shadow-xl cursor-pointer"
-        >
-          <h1 className="absolute p-4 uppercase font-bold z-10">porsche 911</h1>
+          >
+            <h1 className="absolute p-4 uppercase font-bold z-10">
+              porsche 911
+            </h1>
 
-          <img
-            src="/cars/trendcar.webp"
-            alt=""
-            className="absolute h-full w-full top-0 left-0 object-cover
+            <img
+              src="/cars/trendcar.webp"
+              alt=""
+              className="absolute h-full w-full top-0 left-0 object-cover
                  transition-transform duration-500 ease-out
                  group-hover:scale-110"
-          />
+            />
 
-          <div className="absolute bottom-4 left-4 right-4 z-10 flex items-center justify-between">
-            <p className="text-black capitalize">$150/day</p>
+            <div className="absolute bottom-4 left-4 right-4 z-10 flex items-center justify-between">
+              <p className="text-black capitalize">$150/day</p>
 
-            <button
-              className="px-4 h-10 rounded-full
+              <button
+                className="px-4 h-10 rounded-full
                    bg-white text-black
                    border border-gray-300
                    transition-all duration-300 ease-out
                    hover:border-[#1fa987]
                    hover:-translate-y-0.5 hover:shadow-md
                    active:scale-95"
-            >
-              Book Now
-            </button>
+              >
+                Book Now
+              </button>
+            </div>
           </div>
         </div>
-      </div>
+      </Link>
 
       {/* Promotional Banner Section */}
       <div className="mt-16">
         {/* Feature Benefits Bar */}
         <div className="bg-black text-white p-8 grid grid-cols-1 md:grid-cols-4 gap-6">
           {/* Seamless Booking */}
-          <div 
+          <div
             className={`flex items-start gap-4 p-4 rounded-lg cursor-pointer transition-all duration-200 ${
-              selectedFeature === 'seamless' ? 'bg-gray-800/50' : 'hover:bg-gray-900/30'
+              selectedFeature === "seamless"
+                ? "bg-gray-800/50"
+                : "hover:bg-gray-900/30"
             }`}
-            onClick={() => setSelectedFeature(selectedFeature === 'seamless' ? null : 'seamless')}
+            onClick={() =>
+              setSelectedFeature(
+                selectedFeature === "seamless" ? null : "seamless",
+              )
+            }
           >
-            <div className={`w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 ${
-              selectedFeature === 'seamless' ? 'bg-gray-700 border-gray-600' : 'border-2 border-white'
-            }`}>
+            <div
+              className={`w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 ${
+                selectedFeature === "seamless"
+                  ? "bg-gray-700 border-gray-600"
+                  : "border-2 border-white"
+              }`}
+            >
               <svg
                 className="w-6 h-6"
                 fill="none"
@@ -188,15 +205,25 @@ const TrendingCars = () => {
           </div>
 
           {/* Premium Privileges */}
-          <div 
+          <div
             className={`flex items-start gap-4 p-4 rounded-lg cursor-pointer transition-all duration-200 ${
-              selectedFeature === 'premium' ? 'bg-gray-800/50' : 'hover:bg-gray-900/30'
+              selectedFeature === "premium"
+                ? "bg-gray-800/50"
+                : "hover:bg-gray-900/30"
             }`}
-            onClick={() => setSelectedFeature(selectedFeature === 'premium' ? null : 'premium')}
+            onClick={() =>
+              setSelectedFeature(
+                selectedFeature === "premium" ? null : "premium",
+              )
+            }
           >
-            <div className={`w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 ${
-              selectedFeature === 'premium' ? 'bg-gray-700 border-gray-600' : 'border-2 border-white'
-            }`}>
+            <div
+              className={`w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 ${
+                selectedFeature === "premium"
+                  ? "bg-gray-700 border-gray-600"
+                  : "border-2 border-white"
+              }`}
+            >
               <svg
                 className="w-6 h-6"
                 fill="none"
@@ -218,15 +245,25 @@ const TrendingCars = () => {
           </div>
 
           {/* Flexible Cancellation */}
-          <div 
+          <div
             className={`flex items-start gap-4 p-4 rounded-lg cursor-pointer transition-all duration-200 ${
-              selectedFeature === 'flexible' ? 'bg-gray-800/50' : 'hover:bg-gray-900/30'
+              selectedFeature === "flexible"
+                ? "bg-gray-800/50"
+                : "hover:bg-gray-900/30"
             }`}
-            onClick={() => setSelectedFeature(selectedFeature === 'flexible' ? null : 'flexible')}
+            onClick={() =>
+              setSelectedFeature(
+                selectedFeature === "flexible" ? null : "flexible",
+              )
+            }
           >
-            <div className={`w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 ${
-              selectedFeature === 'flexible' ? 'bg-gray-700 border-gray-600' : 'border-2 border-white'
-            }`}>
+            <div
+              className={`w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 ${
+                selectedFeature === "flexible"
+                  ? "bg-gray-700 border-gray-600"
+                  : "border-2 border-white"
+              }`}
+            >
               <svg
                 className="w-6 h-6"
                 fill="none"
@@ -256,15 +293,23 @@ const TrendingCars = () => {
           </div>
 
           {/* No Recharging Fees */}
-          <div 
+          <div
             className={`flex items-start gap-4 p-4 rounded-lg cursor-pointer transition-all duration-200 ${
-              selectedFeature === 'nofee' ? 'bg-gray-800/50' : 'hover:bg-gray-900/30'
+              selectedFeature === "nofee"
+                ? "bg-gray-800/50"
+                : "hover:bg-gray-900/30"
             }`}
-            onClick={() => setSelectedFeature(selectedFeature === 'nofee' ? null : 'nofee')}
+            onClick={() =>
+              setSelectedFeature(selectedFeature === "nofee" ? null : "nofee")
+            }
           >
-            <div className={`w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 ${
-              selectedFeature === 'nofee' ? 'bg-gray-700 border-gray-600' : 'border-2 border-white'
-            }`}>
+            <div
+              className={`w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 ${
+                selectedFeature === "nofee"
+                  ? "bg-gray-700 border-gray-600"
+                  : "border-2 border-white"
+              }`}
+            >
               <div className="relative">
                 <span className="text-xs font-bold">NO FEE</span>
               </div>

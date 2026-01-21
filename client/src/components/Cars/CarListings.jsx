@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import { Heart, Navigation, Fuel, Gauge, Settings } from "lucide-react";
 // react icons
 import { GoArrowUpRight } from "react-icons/go";
@@ -54,6 +55,7 @@ export default function CarListings() {
         </div>
 
         {/* Car Cards Grid */}
+       <Link to="/car-details">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-5">
           {/* Card 1 - Toyota Camry */}
           <div
@@ -266,7 +268,10 @@ export default function CarListings() {
               </div>
             </div>
           </div>
+
+          
         </div>
+       </Link>
       </div>
     </div>
   );

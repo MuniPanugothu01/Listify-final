@@ -90,6 +90,7 @@ const FeaturedCars = () => {
       </div>
 
       {/* Main Content Grid */}
+    <Link to="/car-details">
       <div className="flex flex-col lg:flex-row gap-6 w-full">
         {/* Featured Car - Left 50% */}
         <div className="lg:w-1/2 h-full">
@@ -241,6 +242,7 @@ const FeaturedCars = () => {
           </div>
         </div>
       </div>
+    </Link>
 
       {/* View All Button */}
       <div className="text-center mt-16">
@@ -254,6 +256,7 @@ const FeaturedCars = () => {
           </button>
         </Link>
       </div>
+
     </div>
   );
 };
