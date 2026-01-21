@@ -61,6 +61,7 @@ const Navbar = () => {
   
   const moreMenuItems = [
     { name: "TakeCare", path: "/takecare" },
+    { name: "Jobs", path: "/jobs" },
     { name: "Cars", path: "/cars" },
     { name: "For sale", path: "/forsale" },
   ];
@@ -347,8 +348,7 @@ const Navbar = () => {
                     className="flex items-center gap-1 sm:gap-2 bg-[#27bb97] text-white px-3 sm:px-4 py-2 sm:py-2.5 md:py-3 lg:py-3.5 rounded-lg text-xs md:text-sm lg:text-base whitespace-nowrap hover:bg-[#1fa987] transition cursor-pointer"
                   >
                     <LuPencilLine className="text-white text-sm sm:text-base md:text-lg" />
-                    <span className="hidden sm:inline">Create a Listing</span>
-                    <span className="sm:hidden">Post</span>
+                    <span className="hidden sm:inline">Post add</span>
                   </button>
                 </Link>
 
@@ -362,7 +362,6 @@ const Navbar = () => {
                         : "border-gray-300 text-gray-700"
                     }`}
                   >
-                    <HiOutlineBars3BottomRight className="text-base sm:text-lg md:text-[20px] lg:text-[22px]" />
                     <CgProfile className="text-base sm:text-lg md:text-[20px] lg:text-[22px]" />
                   </button>
 
