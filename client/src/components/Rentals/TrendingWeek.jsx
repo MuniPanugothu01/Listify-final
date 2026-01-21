@@ -1,5 +1,14 @@
 import React from "react";
-import { Heart, Star, MapPin, CheckCircle, Users, Bath, Square, Calendar } from "lucide-react";
+import {
+  Heart,
+  Star,
+  MapPin,
+  CheckCircle,
+  Users,
+  Bath,
+  Square,
+  Calendar,
+} from "lucide-react";
 
 const trendingData = [
   {
@@ -20,7 +29,7 @@ const trendingData = [
     amenities: ["Furnished", "Pool", "Gym", "Concierge"],
     featured: true,
     type: "Apartment",
-    label: "For Rent"
+    label: "For Rent",
   },
   {
     id: 2,
@@ -40,7 +49,7 @@ const trendingData = [
     amenities: ["Garage", "Garden", "Hardwood Floors"],
     featured: false,
     type: "House",
-    label: "For Rent"
+    label: "For Rent",
   },
   {
     id: 3,
@@ -60,7 +69,7 @@ const trendingData = [
     amenities: ["Water View", "Patio", "Modern Kitchen"],
     featured: false,
     type: "Townhouse",
-    label: "For Rent"
+    label: "For Rent",
   },
   {
     id: 4,
@@ -80,7 +89,7 @@ const trendingData = [
     amenities: ["Rooftop Terrace", "Wine Cellar", "Smart Home", "Valet"],
     featured: true,
     type: "Condominium",
-    label: "For Rent"
+    label: "For Rent",
   },
   {
     id: 5,
@@ -100,7 +109,7 @@ const trendingData = [
     amenities: ["Exposed Brick", "High Ceilings", "Industrial Design"],
     featured: false,
     type: "Loft",
-    label: "For Rent"
+    label: "For Rent",
   },
   {
     id: 6,
@@ -120,7 +129,7 @@ const trendingData = [
     amenities: ["Double Garage", "Finished Basement", "Large Backyard"],
     featured: false,
     type: "House",
-    label: "For Rent"
+    label: "For Rent",
   },
   {
     id: 7,
@@ -140,7 +149,7 @@ const trendingData = [
     amenities: ["Lake Access", "Dock", "Hot Tub", "Gourmet Kitchen"],
     featured: true,
     type: "House",
-    label: "For Rent"
+    label: "For Rent",
   },
   {
     id: 8,
@@ -160,7 +169,7 @@ const trendingData = [
     amenities: ["All Utilities", "Furnished Option", "Gym Access"],
     featured: false,
     type: "Studio",
-    label: "For Rent"
+    label: "For Rent",
   },
 ];
 
@@ -174,11 +183,12 @@ const TrendingWeek = () => {
             Trending Rental Homes This Week
           </h2>
           <p className="text-gray-600 mt-2 max-w-2xl">
-            Discover the most viewed, saved, and contacted rental properties in NYC this week
+            Discover the most viewed, saved, and contacted rental properties in
+            NYC this week
           </p>
         </div>
 
-        <button className="text-[#25676D] hover:text-[#14494D] font-semibold text-sm cursor-pointer whitespace-nowrap flex items-center gap-1 transition-colors duration-200">
+        <button className="text-[#27bb97] hover:text-[#1fa987] font-semibold text-sm cursor-pointer whitespace-nowrap flex items-center gap-1 transition-colors duration-200">
           View All Trending
           <span className="text-lg">→</span>
         </button>
@@ -190,8 +200,8 @@ const TrendingWeek = () => {
           <div
             key={property.id}
             className="bg-white rounded-xl shadow-sm hover:shadow-lg 
-                       transition-all duration-300 hover:-translate-y-2 
-                       border border-gray-100 overflow-hidden group cursor-pointer"
+                       transition-all duration-300 hover:-translate-y-1 
+                       border border-gray-100 overflow-hidden group"
           >
             {/* Image Container */}
             <div className="relative h-48 w-full overflow-hidden">
@@ -201,26 +211,6 @@ const TrendingWeek = () => {
                 className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
               />
 
-              {/* Property Type Badge */}
-              <div className="absolute top-3 left-3 bg-white/95 backdrop-blur-sm px-2.5 py-1.5 rounded-lg shadow text-xs font-semibold text-blue-600">
-                {property.type}
-              </div>
-
-              {/* Featured Badge */}
-              {property.featured && (
-                <div className="absolute top-3 right-3 bg-gradient-to-r from-blue-600 to-[#27bb97] text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">
-                  FEATURED
-                </div>
-              )}
-
-              {/* Verified Badge */}
-              {property.verified && (
-                <div className="absolute top-12 left-3 bg-white/95 backdrop-blur-sm px-2.5 py-1.5 rounded-lg shadow text-xs font-semibold text-green-600 flex items-center gap-1.5">
-                  <CheckCircle size={14} className="fill-green-100" />
-                  Verified
-                </div>
-              )}
-
               {/* Label Badge */}
               <div className="absolute bottom-3 right-3 bg-white/90 backdrop-blur-sm px-2.5 py-1 rounded-lg shadow text-xs font-semibold text-gray-700">
                 {property.label}
@@ -228,18 +218,21 @@ const TrendingWeek = () => {
 
               {/* Save Button */}
               <button className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm p-2 rounded-full shadow hover:bg-white transition-all duration-200 hover:scale-110 group/save">
-                <Heart size={18} className="text-gray-600 group-hover/save:text-red-500" />
+                <Heart
+                  size={18}
+                  className="text-gray-600 group-hover/save:text-red-500"
+                />
               </button>
             </div>
 
             {/* Content */}
-            <div className="p-4 space-y-3">
+            <div className="p-3 space-y-2">
               {/* Title and Price */}
               <div className="flex justify-between items-start gap-2">
                 <h3 className="font-semibold text-gray-900 text-base leading-tight flex-1">
                   {property.title}
                 </h3>
-                <p className="text-[#25676D] font-bold text-lg whitespace-nowrap">
+                <p className="text-[#27bb97] font-bold text-lg whitespace-nowrap">
                   {property.price}
                 </p>
               </div>
@@ -248,9 +241,13 @@ const TrendingWeek = () => {
               <div className="flex items-center gap-2">
                 <div className="flex items-center gap-1 text-yellow-500">
                   <Star size={15} fill="currentColor" stroke="currentColor" />
-                  <span className="text-gray-800 font-semibold text-sm">{property.rating}</span>
+                  <span className="text-gray-800 font-semibold text-sm">
+                    {property.rating}
+                  </span>
                 </div>
-                <span className="text-gray-500 text-sm">({property.reviews} reviews)</span>
+                <span className="text-gray-500 text-sm">
+                  ({property.reviews} reviews)
+                </span>
                 <span className="text-gray-400 text-sm">•</span>
                 <span className="text-gray-500 text-sm">{property.saves}</span>
               </div>
@@ -258,21 +255,28 @@ const TrendingWeek = () => {
               {/* Location */}
               <div className="flex items-center gap-2 text-sm text-gray-600">
                 <MapPin size={15} className="text-gray-400" />
-                <span>{property.area} • {property.distance}</span>
+                <span>
+                  {property.area} • {property.distance}
+                </span>
               </div>
 
               {/* Availability Date - Moved to card body */}
               <div className="flex items-center justify-between ">
-                <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium ${
-                  property.available === "Immediate" || property.available === "Seasonal"
-                    ? " text-green-700 border border-green-100"
-                    : " text-blue-700 border border-blue-100  "
-                }`}>
+                <div
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium ${
+                    property.available === "Immediate" ||
+                    property.available === "Seasonal"
+                      ? " text-green-700 border border-green-100"
+                      : " text-blue-700 border border-blue-100  "
+                  }`}
+                >
                   <Calendar size={12} />
                   <span>
-                    {property.available === "Immediate" ? "Available Now" : 
-                     property.available === "Seasonal" ? "Seasonal Rental" : 
-                     `Available ${property.available}`}
+                    {property.available === "Immediate"
+                      ? "Available Now"
+                      : property.available === "Seasonal"
+                        ? "Seasonal Rental"
+                        : `Available ${property.available}`}
                   </span>
                 </div>
               </div>
@@ -281,11 +285,16 @@ const TrendingWeek = () => {
               <div className="flex items-center gap-4 text-xs text-gray-500 pt-2">
                 <div className="flex items-center gap-1">
                   <Users size={14} className="text-gray-400" />
-                  <span>{property.bedrooms} bed{property.bedrooms !== 1 ? 's' : ''}</span>
+                  <span>
+                    {property.bedrooms} bed{property.bedrooms !== 1 ? "s" : ""}
+                  </span>
                 </div>
                 <div className="flex items-center gap-1">
                   <Bath size={14} className="text-gray-400" />
-                  <span>{property.bathrooms} bath{property.bathrooms !== 1 ? 's' : ''}</span>
+                  <span>
+                    {property.bathrooms} bath
+                    {property.bathrooms !== 1 ? "s" : ""}
+                  </span>
                 </div>
                 <div className="flex items-center gap-1">
                   <Square size={14} className="text-gray-400" />
@@ -315,7 +324,7 @@ const TrendingWeek = () => {
               )}
 
               {/* Action Button */}
-              <button className="w-full bg-[#27bb97] hover:bg-[#27bb80] text-white py-2.5 rounded-lg font-medium text-sm transition-colors duration-200 mt-3">
+              <button className="w-full bg-[#27bb97] hover:bg-[#1fa987] text-white py-2.5 rounded-lg font-medium text-sm transition-colors duration-200 mt-3 cursor-pointer">
                 Schedule Viewing
               </button>
             </div>

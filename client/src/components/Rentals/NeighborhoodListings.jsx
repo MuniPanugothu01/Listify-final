@@ -7,23 +7,40 @@ import { MdApartment, MdOutlineBed } from "react-icons/md";
 // -----------------------------------------------------
 const NeighborhoodCard = ({ name, city, state, distance, image }) => {
   const [isHovered, setIsHovered] = useState(false);
+  const cardRef = useRef(null);
 
   // Mock data for rental statistics
   const avgRent = Math.floor(Math.random() * 2000) + 1500;
   const listingsCount = Math.floor(Math.random() * 50) + 20;
   const avgBedrooms = (Math.random() * 2 + 1).toFixed(1);
 
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+    if (cardRef.current) {
+      cardRef.current.style.transform = 'translateY(-8px) scale(1.02)';
+      cardRef.current.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+    }
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+    if (cardRef.current) {
+      cardRef.current.style.transform = 'translateY(0) scale(1)';
+    }
+  };
+
   return (
     <div
+      ref={cardRef}
       className="
         relative bg-white rounded-xl border border-gray-200 
-        overflow-hidden shadow-sm hover:shadow-xl 
-        transition-all duration-300 min-w-[240px] 
-        cursor-pointer flex-shrink-0
-        transform hover:-translate-y-1
+        overflow-hidden shadow-sm hover:shadow-2xl 
+        transition-all duration-500 ease-out
+        min-w-[240px] cursor-pointer flex-shrink-0
+        transform-gpu
       "
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
     >
       {/* Image Container with Overlay */}
       <div className="relative w-full h-32 overflow-hidden">
@@ -31,27 +48,31 @@ const NeighborhoodCard = ({ name, city, state, distance, image }) => {
           src={image} 
           alt={`${name} neighborhood in ${city}, ${state}`}
           className={`
-            w-full h-full object-cover transition-transform duration-500
-            ${isHovered ? 'scale-110' : 'scale-100'}
+            w-full h-full object-cover transition-all duration-700 ease-out
+            ${isHovered ? 'scale-110 rotate-1' : 'scale-100'}
           `}
           loading="lazy"
         />
         
-        {/* Gradient Overlay on Hover */}
+        {/* Gradient Overlay */}
         <div className={`
-          absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent
-          transition-opacity duration-300
-          ${isHovered ? 'opacity-100' : 'opacity-40'}
+          absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent
+          transition-all duration-500 ease-out
+          ${isHovered ? 'opacity-100' : 'opacity-60'}
         `} />
         
         {/* Distance Badge */}
-        <div className="absolute top-3 right-3">
+        <div className={`
+          absolute top-3 right-3 transition-all duration-300 ease-out
+          ${isHovered ? 'scale-110 rotate-12' : 'scale-100'}
+        `}>
           <div className="
             bg-white/95 backdrop-blur-sm px-3 py-1 
             rounded-full text-xs font-semibold text-gray-800
-            flex items-center gap-1
+            flex items-center gap-1 transition-all duration-300
+            hover:bg-[#27bb97] hover:text-white
           ">
-            <FiNavigation className="w-3 h-3" />
+            <FiNavigation className="w-3 h-3 transition-transform duration-300" />
             {distance} mi
           </div>
         </div>
@@ -59,17 +80,23 @@ const NeighborhoodCard = ({ name, city, state, distance, image }) => {
         {/* Hover Title Overlay */}
         <div className={`
           absolute bottom-0 left-0 right-0 p-4
-          transition-all duration-300 transform
-          ${isHovered ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}
+          transition-all duration-500 ease-out transform
+          ${isHovered ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}
         `}>
           <h3 className="
             text-white text-lg font-bold mb-1
-            drop-shadow-lg
+            drop-shadow-lg transform transition-transform duration-300
+            ${isHovered ? 'translate-x-0' : 'translate-x-2'}
           ">
             {name}
           </h3>
-          <div className="flex items-center text-white/90 text-sm">
-            <FiMapPin className="w-4 h-4 mr-1" />
+          <div className="flex items-center text-white/90 text-sm
+            transform transition-transform duration-300 delay-75
+            ${isHovered ? 'translate-x-0' : 'translate-x-2'}
+          ">
+            <FiMapPin className="w-4 h-4 mr-1 transition-transform duration-300
+              ${isHovered ? 'scale-110' : 'scale-100'}" 
+            />
             <span>{city}, {state}</span>
           </div>
         </div>
@@ -79,13 +106,17 @@ const NeighborhoodCard = ({ name, city, state, distance, image }) => {
       <div className="p-4">
         {/* Always Visible Title */}
         <div className={`
-          transition-all duration-300
-          ${isHovered ? 'opacity-0 h-0' : 'opacity-100 h-auto'}
+          transition-all duration-300 ease-out overflow-hidden
+          ${isHovered ? 'opacity-0 max-h-0' : 'opacity-100 max-h-20'}
         `}>
-          <h3 className="text-gray-900 font-semibold text-base mb-1">
+          <h3 className="text-gray-900 font-semibold text-base mb-1 transform transition-transform duration-300
+            ${isHovered ? 'translate-y-4' : 'translate-y-0'}
+          ">
             {name}
           </h3>
-          <div className="flex items-center gap-2 text-sm text-gray-500">
+          <div className="flex items-center gap-2 text-sm text-gray-500 transform transition-transform duration-300 delay-75
+            ${isHovered ? 'translate-y-4' : 'translate-y-0'}
+          ">
             <FiNavigation className="w-4 h-4 flex-shrink-0" />
             <span className="truncate">
               {city}, {state}
@@ -95,57 +126,88 @@ const NeighborhoodCard = ({ name, city, state, distance, image }) => {
 
         {/* Hover Content - Rental Stats */}
         <div className={`
-          transition-all duration-300 overflow-hidden
-          ${isHovered ? 'max-h-48 opacity-100' : 'max-h-0 opacity-0'}
+          transition-all duration-500 ease-out overflow-hidden
+          ${isHovered ? 'max-h-48 opacity-100 mt-0' : 'max-h-0 opacity-0 mt-4'}
         `}>
           {/* Divider */}
-          <div className="border-t border-gray-100 my-3"></div>
+          <div className={`
+            border-t border-gray-100 my-3 transition-all duration-300
+            ${isHovered ? 'opacity-100' : 'opacity-0'}
+          `}></div>
           
           {/* Rental Statistics */}
           <div className="space-y-3">
             {/* Average Rent */}
-            <div className="flex items-center justify-between">
+            <div className={`
+              flex items-center justify-between transform transition-all duration-300
+              ${isHovered ? 'translate-x-0 opacity-100' : 'translate-x-4 opacity-0'}
+            `}>
               <div className="flex items-center gap-2 text-gray-600">
-                <MdApartment className="w-4 h-4 text-[#27bb97]" />
+                <MdApartment className="w-4 h-4 text-[#27bb97] transition-transform duration-300
+                  ${isHovered ? 'scale-110' : 'scale-100'}" 
+                />
                 <span className="text-sm">Avg Rent</span>
               </div>
-              <div className="text-gray-900 font-semibold">
+              <div className="text-gray-900 font-semibold transform transition-transform duration-300
+                ${isHovered ? 'scale-105' : 'scale-100'}"
+              >
                 ${avgRent.toLocaleString()}
                 <span className="text-xs text-gray-500 ml-1">/mo</span>
               </div>
             </div>
 
             {/* Listings Count */}
-            <div className="flex items-center justify-between">
+            <div className={`
+              flex items-center justify-between transform transition-all duration-300 delay-75
+              ${isHovered ? 'translate-x-0 opacity-100' : 'translate-x-4 opacity-0'}
+            `}>
               <div className="flex items-center gap-2 text-gray-600">
-                <FiTrendingUp className="w-4 h-4 text-[#27bb97]" />
+                <FiTrendingUp className="w-4 h-4 text-[#27bb97] transition-transform duration-300
+                  ${isHovered ? 'scale-110' : 'scale-100'}" 
+                />
                 <span className="text-sm">Listings</span>
               </div>
-              <div className="text-gray-900 font-semibold">{listingsCount}+</div>
+              <div className="text-gray-900 font-semibold transform transition-transform duration-300
+                ${isHovered ? 'scale-105' : 'scale-100'}"
+              >
+                {listingsCount}+
+              </div>
             </div>
 
             {/* Average Bedrooms */}
-            <div className="flex items-center justify-between">
+            <div className={`
+              flex items-center justify-between transform transition-all duration-300 delay-100
+              ${isHovered ? 'translate-x-0 opacity-100' : 'translate-x-4 opacity-0'}
+            `}>
               <div className="flex items-center gap-2 text-gray-600">
-                <MdOutlineBed className="w-4 h-4 text-[#27bb97]" />
+                <MdOutlineBed className="w-4 h-4 text-[#27bb97] transition-transform duration-300
+                  ${isHovered ? 'scale-110' : 'scale-100'}" 
+                />
                 <span className="text-sm">Avg Beds</span>
               </div>
-              <div className="text-gray-900 font-semibold">{avgBedrooms}</div>
+              <div className="text-gray-900 font-semibold transform transition-transform duration-300
+                ${isHovered ? 'scale-105' : 'scale-100'}"
+              >
+                {avgBedrooms}
+              </div>
             </div>
           </div>
 
           {/* Explore Button */}
-          <button className="
+          <button className={`
             w-full mt-4 py-2 px-4 
-            bg-[#27bb97] text-white 
+            bg-gradient-to-r from-[#27bb97] to-[#1fa888] text-white 
             rounded-lg font-medium text-sm
-            hover:bg-[#1fa888] 
-            active:scale-95
-            transition-all duration-200
+            hover:from-[#1fa888] hover:to-[#27bb97]
+            transition-all duration-300 ease-out
             flex items-center justify-center gap-2
-          ">
+            transform ${isHovered ? 'translate-y-0 opacity-100 scale-100' : 'translate-y-4 opacity-0 scale-95'}
+            shadow-lg hover:shadow-xl
+            active:scale-95
+          `}>
             Explore Rentals
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-4 h-4 transition-transform duration-300 hover:translate-x-1" 
+              fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
             </svg>
           </button>
@@ -155,8 +217,15 @@ const NeighborhoodCard = ({ name, city, state, distance, image }) => {
       {/* Hover Border Effect */}
       <div className={`
         absolute inset-0 border-2 border-[#27bb97] rounded-xl
-        transition-opacity duration-300 pointer-events-none
-        ${isHovered ? 'opacity-100' : 'opacity-0'}
+        transition-all duration-500 ease-out pointer-events-none
+        ${isHovered ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}
+      `} />
+
+      {/* Glow Effect */}
+      <div className={`
+        absolute inset-0 rounded-xl
+        transition-all duration-500 ease-out pointer-events-none
+        ${isHovered ? 'shadow-[0_0_30px_rgba(39,187,151,0.3)]' : 'shadow-none'}
       `} />
     </div>
   );
@@ -167,22 +236,33 @@ const NeighborhoodCard = ({ name, city, state, distance, image }) => {
 // -----------------------------------------------------
 const ScrollButton = ({ direction, onClick }) => {
   const Icon = direction === "left" ? FiChevronLeft : FiChevronRight;
+  const [isHovered, setIsHovered] = useState(false);
   
   return (
     <button
       onClick={onClick}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
       className="
         hidden md:flex absolute top-1/2 -translate-y-1/2 
-        bg-white border border-gray-300 text-gray-600 
-        hover:bg-gray-100 hover:text-black hover:border-[#27bb97]
-        hover:scale-110 active:scale-95
+        bg-white/90 backdrop-blur-sm border border-gray-300 text-gray-600 
+        hover:bg-white hover:text-[#27bb97] hover:border-[#27bb97]
+        transition-all duration-300 ease-out
         rounded-full w-12 h-12 items-center justify-center 
-        shadow-lg transition-all duration-200 z-10 cursor-pointer
+        shadow-lg z-10 cursor-pointer
         focus:outline-none focus:ring-2 focus:ring-[#27bb97] focus:ring-offset-2
+        transform-gpu
       "
       aria-label={`Scroll ${direction}`}
+      style={{
+        transform: isHovered 
+          ? `translateY(-50%) scale(1.1) ${direction === 'left' ? 'translateX(-4px)' : 'translateX(4px)'}`
+          : 'translateY(-50%) scale(1)'
+      }}
     >
-      <Icon className="w-6 h-6" />
+      <Icon className="w-6 h-6 transition-transform duration-300
+        ${isHovered ? 'scale-110' : 'scale-100'}" 
+      />
     </button>
   );
 };
@@ -351,10 +431,10 @@ export default function NeighborhoodListings() {
 
         {/* Scroll Indicator */}
         <div className="flex justify-center mt-8">
-          <div className="flex items-center gap-2 text-gray-500 text-sm">
-            <span className="animate-pulse">←→</span>
+          <div className="flex items-center gap-2 text-gray-500 text-sm animate-pulse">
+            <span className="transition-transform duration-1000 hover:scale-110">←</span>
             <span>Scroll to explore more neighborhoods</span>
-            <span className="animate-pulse">←→</span>
+            <span className="transition-transform duration-1000 hover:scale-110">→</span>
           </div>
         </div>
       </div>

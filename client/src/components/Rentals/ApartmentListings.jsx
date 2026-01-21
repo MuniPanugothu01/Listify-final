@@ -1,45 +1,45 @@
 import React from 'react';
 import { MapPin, Star, ChevronRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
-const ApartmentCard = ({ image, title, city, state, zip, rating = 4.5 }) => (
-  <div className="
-    group cursor-pointer bg-white rounded-lg border border-gray-200 
-    overflow-hidden hover:shadow-md hover:border-[#27bb97]
-    transition-all duration-200
-  ">
-    
+const ApartmentCard = ({ image, title, city, state, zip, rating = 4.5, onClick }) => (
+  <div 
+    className="
+      group cursor-pointer bg-white rounded-lg border border-gray-200 
+      overflow-hidden transition-all duration-300 
+      hover:shadow-md hover:-translate-y-1
+    "
+    onClick={onClick}
+  >
     {/* Card Wrapper */}
-<div className="
-  group cursor-pointer bg-white rounded-lg border border-gray-200 
-  overflow-hidden transition-all duration-300 
-  hover:shadow-md hover:-translate-y-1
-">
+    <div className="
+      group cursor-pointer bg-white rounded-lg border border-gray-200 
+      overflow-hidden transition-all duration-300 
+      hover:shadow-md hover:-translate-y-1
+    ">
+      {/* Image */}
+      <div className="relative overflow-hidden">
+        <img 
+          src={image} 
+          alt={title}
+          className="
+            w-full h-40 object-cover 
+            transition-transform duration-500 ease-out 
+            group-hover:scale-105
+          "
+        />
 
-  {/* Image */}
-  <div className="relative overflow-hidden">
-    <img 
-      src={image} 
-      alt={title}
-      className="
-        w-full h-40 object-cover 
-        transition-transform duration-500 ease-out 
-        group-hover:scale-105
-      "
-    />
-
-    {/* Verified Badge */}
-    <div className="absolute top-3 right-3">
-      <span className="bg-[#27bb97] text-white text-xs font-semibold px-3 py-1 rounded-full">
-        Verified
-      </span>
+        {/* Verified Badge */}
+        <div className="absolute top-3 right-3">
+          <span className="bg-[#27bb97] text-white text-xs font-semibold px-3 py-1 rounded-full">
+            Verified
+          </span>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
-
 
     {/* Content */}
     <div className="p-4">
-
       {/* Title + Rating */}
       <div className="flex justify-between items-center mb-2">
         <h3 className="text-gray-900 font-semibold text-base line-clamp-1">
@@ -65,19 +65,24 @@ const ApartmentCard = ({ image, title, city, state, zip, rating = 4.5 }) => (
         </span>
 
         <button className="
-         opacity-0 group-hover:opacity-100 transition-opacity duration-200
-        flex items-center gap-1 text-[#27bb97] text-sm font-medium
+          opacity-0 group-hover:opacity-100 transition-opacity duration-200
+          flex items-center gap-1 text-[#27bb97] text-sm font-medium
         ">
           View Details
           <ChevronRight className="w-4 h-4" />
         </button>
       </div>
-
     </div>
   </div>
 );
 
 export default function ApartmentListings() {
+  const navigate = useNavigate();
+
+  const handleCardClick = () => {
+    navigate('/rentals-listings');
+  };
+
   const apartments = [
     {
       image: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800",
@@ -132,7 +137,6 @@ export default function ApartmentListings() {
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-6xl mx-auto">
-
         <h1 className="text-3xl font-semibold text-gray-800 mb-6">
           Explore Apartments in and around New York, NY
         </h1>
@@ -144,10 +148,13 @@ export default function ApartmentListings() {
         {/* Apartments Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {apartments.map((apt, index) => (
-            <ApartmentCard key={index} {...apt} />
+            <ApartmentCard 
+              key={index} 
+              {...apt} 
+              onClick={handleCardClick}
+            />
           ))}
         </div>
-
       </div>
     </div>
   );

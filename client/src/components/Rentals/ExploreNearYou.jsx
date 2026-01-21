@@ -1,4 +1,5 @@
 import React, { useState, useRef } from "react";
+import { Link } from "react-router-dom";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const exploreItems = [
@@ -59,6 +60,7 @@ export default function ExploreNearYou() {
         <div className="w-20 h-1 bg-blue-600 rounded-md mt-2 mb-8"></div>
 
         {/* Cards Container with relative positioning */}
+     <Link to="/rentals-listings">
         <div className="relative group">
           {/* Navigation Buttons positioned over the cards */}
           <button
@@ -130,7 +132,7 @@ export default function ExploreNearYou() {
               </a>
             ))}
           </div>
-        </div>
+        </div></Link>
 
         {/* Mobile Navigation Dots */}
         <div className="flex justify-center gap-2 mt-6 md:hidden">

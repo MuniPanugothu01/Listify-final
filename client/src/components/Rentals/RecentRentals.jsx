@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   FaChevronLeft,
   FaChevronRight,
@@ -7,13 +7,12 @@ import {
   FaRegHeart,
   FaShareAlt,
   FaArrowRight,
-  FaArrowLeft,
 } from "react-icons/fa";
+import { Link, useNavigate } from "react-router-dom";
 
 const RecentRentals = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [showAllProperties, setShowAllProperties] = useState(false);
-  const [isScrolling, setIsScrolling] = useState(false);
+  const navigate = useNavigate();
 
   // 15 Properties Data with HD images
   const properties = [
@@ -259,77 +258,84 @@ const RecentRentals = () => {
     },
   ];
 
-  // Smooth scrolling function
-  const smoothScrollToSection = (sectionId) => {
-    if (isScrolling) return;
-
-    setIsScrolling(true);
-    const element = document.getElementById(sectionId);
-    if (element) {
-      const headerOffset = 100; // Adjust based on your header height
-      const elementPosition = element.getBoundingClientRect().top;
-      const offsetPosition =
-        elementPosition + window.pageYOffset - headerOffset;
-
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: "smooth",
-      });
-    }
-
-    setTimeout(() => setIsScrolling(false), 1000);
-  };
-
-  // Scroll to top when showing all properties
-  useEffect(() => {
-    if (showAllProperties) {
-      setTimeout(() => {
-        smoothScrollToSection("recent-rentals");
-      }, 100);
-    }
-  }, [showAllProperties]);
-
   const nextSlide = () => {
-    if (properties.length <= 3) return;
     const maxIndex = properties.length - 3;
-    setCurrentIndex((prev) => (prev + 3) % (maxIndex + 1));
+    if (currentIndex < maxIndex) {
+      setCurrentIndex((prev) => prev + 3);
+    } else {
+      setCurrentIndex(0);
+    }
   };
 
   const prevSlide = () => {
-    if (properties.length <= 3) return;
-    const maxIndex = properties.length - 3;
-    setCurrentIndex((prev) => (prev - 3 + maxIndex + 1) % (maxIndex + 1));
+    if (currentIndex > 0) {
+      setCurrentIndex((prev) => prev - 3);
+    } else {
+      setCurrentIndex(Math.max(0, properties.length - 3));
+    }
   };
 
-  const handleViewMore = (e) => {
-    e.preventDefault();
-    setShowAllProperties(true);
+  const handleQuickView = (property) => {
+    // Format property data to match RentalDetailsPage structure
+    const formattedProperty = {
+      id: property.id,
+      title: property.title,
+      price: parseInt(property.price.replace(/[^0-9]/g, "")) || 0,
+      location: property.location,
+      distance: property.distance,
+      rating: property.rating,
+      reviews: property.reviews,
+      amenities: property.amenities,
+      verified: property.verified,
+      discount: property.discount,
+      availableFrom: property.availableFrom,
+      images: [
+        property.image,
+        "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800&h=600&fit=crop",
+      ],
+      immediate: property.availableFrom.toLowerCase().includes("immediate"),
+      petFriendly: property.amenities.some((amenity) =>
+        amenity.toLowerCase().includes("pet"),
+      ),
+      propertyType: "Apartment",
+      bedrooms: parseInt(
+        property.title.match(/(\d+)BHK/)?.[1] ||
+          property.title.match(/(\d+)\s*Bed/)?.[1] ||
+          "2",
+      ),
+      bathrooms: parseInt(property.title.match(/(\d+)\s*Bath/)?.[1] || "1"),
+      sqft: 1200,
+      leaseTerm: "12 months",
+      details: `Beautiful ${property.title} in ${property.location}. ${property.distance}. Features ${property.amenities.slice(0, 3).join(", ")} and more.`,
+      postedBy: "Property Owner",
+      responseRate: "95%",
+      views: Math.floor(Math.random() * 1000) + 500,
+      saves: Math.floor(Math.random() * 100) + 20,
+      contact: "+1-234-567-8900",
+      availableForCall: true,
+      neighborhood: property.location.split(",")[0],
+      busStopDistance: "Bus stop: 0.2 miles",
+      posted: "2 days ago",
+    };
+
+    // Navigate to rental-details page with property data
+    navigate("/rental-details", {
+      state: {
+        property: formattedProperty,
+        searchParams: {
+          location: property.location,
+          price: property.price,
+        },
+      },
+    });
   };
 
-  const handleViewLess = (e) => {
-    e.preventDefault();
-    setShowAllProperties(false);
-
-    // Scroll back to the section after state update
-    setTimeout(() => {
-      smoothScrollToSection("recent-rentals");
-    }, 100);
-  };
-
-  const scrollToSection = (sectionId) => {
-    smoothScrollToSection(sectionId);
-  };
-
-  const visibleProperties = showAllProperties
-    ? properties
-    : properties.slice(currentIndex, currentIndex + 3);
+  const visibleProperties = properties.slice(currentIndex, currentIndex + 3);
 
   // Property Card Component
   const PropertyCard = ({ property }) => (
-    <div
-      className="bg-white rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300 overflow-hidden group transform hover:-translate-y-2"
-      onClick={() => scrollToSection("property-details")}
-    >
+    <div className="bg-white rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300 overflow-hidden group transform hover:-translate-y-2">
       {/* Image */}
       <div className="relative overflow-hidden">
         <img
@@ -360,7 +366,7 @@ const RecentRentals = () => {
           <button
             onClick={(e) => {
               e.stopPropagation();
-              smoothScrollToSection("property-details");
+              handleQuickView(property);
             }}
             className="px-4 py-2 bg-white text-gray-800 text-sm font-semibold rounded-lg shadow-lg hover:bg-gray-50 transition cursor-pointer"
           >
@@ -405,7 +411,7 @@ const RecentRentals = () => {
         </div>
 
         {/* Amenities */}
-        <div className="flex flex-wrap gap-2 mb-4">
+        <div className="flex flex-wrap gap-2 mb-2">
           {property.amenities?.map((amenity, i) => (
             <span
               key={i}
@@ -417,7 +423,7 @@ const RecentRentals = () => {
         </div>
 
         {/* Footer */}
-        <div className="flex justify-between items-center border-t pt-3">
+        <div className="flex justify-between items-center border-t pt-2">
           <div className="flex items-center gap-2">
             {property.verified ? (
               <span className="px-3 py-1 bg-gradient-to-r from-green-100 to-emerald-100 text-green-700 text-xs rounded-full font-semibold flex items-center gap-1">
@@ -436,9 +442,9 @@ const RecentRentals = () => {
           <button
             onClick={(e) => {
               e.stopPropagation();
-              smoothScrollToSection("contact-form");
+              handleQuickView(property);
             }}
-            className="px-4 py-2 bg-gradient-to-r bg-[#27bb97] text-white text-sm font-semibold rounded-lg hover:bg-[#1FA987]  transition-all shadow-md hover:shadow-lg cursor-pointer"
+            className="px-4 py-2 bg-gradient-to-r bg-[#27bb97] text-white text-sm font-semibold rounded-lg hover:bg-[#1FA987] transition-all shadow-md hover:shadow-lg cursor-pointer"
           >
             Book Now
           </button>
@@ -448,13 +454,13 @@ const RecentRentals = () => {
   );
 
   return (
-    <div className="py-16 -mt-12" id="recent-rentals">
+    <div className="py-16 -mt-14" id="recent-rentals">
       {/* Decorative Background */}
       <div className="absolute left-0 right-0 h-64 bg-gradient-to-b from-blue-50/20 to-transparent -z-10"></div>
 
       {/* Heading */}
-      <div className="text-center max-w-3xl mx-auto mb-12 relative">
-        <h1 className="font-extrabold text-4xl mb-6 text-gray-900">
+      <div className="text-center max-w-3xl mx-auto mb-4 relative">
+        <h1 className="font-extrabold text-4xl mb-3 text-gray-900">
           Recent <span className="text-[#25676D]">Rentals in new York</span>
         </h1>
         <div className="h-2 w-32 bg-gradient-to-r from-[#25676D] via-[#2D8690] to-[#25676D] mx-auto rounded-full mb-4"></div>
@@ -464,78 +470,57 @@ const RecentRentals = () => {
         </p>
       </div>
 
-      {/* View More Button */}
-      <div className="max-w-7xl mx-auto px-6 mb-2 flex justify-end">
-        {!showAllProperties && (
-          <button
-            onClick={handleViewMore}
-            className="flex items-center gap-2 px-6 py-3  text-[#25676D] font-semibold  hover:underline cursor-pointer transition"
-          >
+      {/* View More Button - Just a Link to rentals-listings page */}
+      <div className="max-w-7xl mx-auto px-6 mb-1 flex justify-end">
+        <Link to="/rentals-listings">
+          <button className="flex items-center gap-2 px-6 py-3 text-[#25676D] font-semibold hover:underline cursor-pointer transition">
             View All Properties <FaArrowRight className="w-4 h-4" />
           </button>
-        )}
+        </Link>
       </div>
 
-      {/* Cards Grid */}
-      <div className="max-w-7xl mx-auto px-6 cursor-pointer ">
+      {/* Cards Grid - Always 3 cards */}
+      <div className="max-w-7xl mx-auto ">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {visibleProperties.map((p) => (
             <PropertyCard key={p.id} property={p} />
           ))}
         </div>
 
-        {/* Navigation Buttons */}
-        {!showAllProperties && properties.length > 3 && (
-          <div className="flex justify-center gap-6 mt-12">
-            <button
-              onClick={prevSlide}
-              className="p-4 bg-white border-2 border-gray-200 rounded-full shadow-lg hover:shadow-xl hover:scale-105 hover:border-[#25676D] transition-all group"
-            >
-              <FaChevronLeft className="w-6 h-6 text-gray-600 group-hover:text-[#25676D]" />
-            </button>
+        {/* Carousel Navigation Buttons - Centered below cards */}
+        <div className="flex justify-center items-center gap-6 mt-6">
+          <button
+            onClick={prevSlide}
+            className="p-4 bg-white border-2 border-gray-200 rounded-full shadow-lg hover:shadow-xl hover:scale-105 hover:border-[#25676D] transition-all group"
+          >
+            <FaChevronLeft className="w-6 h-6 text-gray-600 group-hover:text-[#25676D]" />
+          </button>
 
-            {/* Page Indicators */}
-            <div className="flex items-center gap-2">
-              {Array.from({ length: Math.ceil(properties.length / 3) }).map(
-                (_, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setCurrentIndex(i * 3)}
-                    className={`w-3 h-3 rounded-full transition-all ${
-                      currentIndex === i * 3
-                        ? "bg-[#25676D] w-8"
-                        : "bg-gray-300 hover:bg-gray-400"
-                    }`}
-                  />
-                )
-              )}
-            </div>
-
-            <button
-              onClick={nextSlide}
-              className="p-4 bg-white border-2 border-gray-200 rounded-full shadow-lg hover:shadow-xl hover:scale-105 hover:border-[#25676D] transition-all group"
-            >
-              <FaChevronRight className="w-6 h-6 text-gray-600 group-hover:text-[#25676D] cursor-pointer" />
-            </button>
+          {/* Page Indicators */}
+          <div className="flex items-center gap-2">
+            {Array.from({ length: Math.ceil(properties.length / 3) }).map(
+              (_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setCurrentIndex(i * 3)}
+                  className={`w-3 h-3 rounded-full transition-all ${
+                    currentIndex === i * 3
+                      ? "bg-[#25676D] w-8"
+                      : "bg-gray-300 hover:bg-gray-400"
+                  }`}
+                />
+              ),
+            )}
           </div>
-        )}
 
-        {/* View Less Button */}
-        {showAllProperties && (
-          <div className="flex justify-center mt-12">
-            <button
-              onClick={handleViewLess}
-              className="flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-gray-800 to-gray-900 text-white font-semibold rounded-full hover:from-gray-900 hover:to-black transition-all shadow-lg hover:shadow-xl hover:scale-105"
-            >
-              <FaArrowLeft className="w-5 h-5 " /> View Less
-            </button>
-          </div>
-        )}
+          <button
+            onClick={nextSlide}
+            className="p-4 bg-white border-2 border-gray-200 rounded-full shadow-lg hover:shadow-xl hover:scale-105 hover:border-[#25676D] transition-all group"
+          >
+            <FaChevronRight className="w-6 h-6 text-gray-600 group-hover:text-[#25676D] cursor-pointer" />
+          </button>
+        </div>
       </div>
-
-      {/* Dummy sections for smooth scrolling demo */}
-      <div id="property-details" className="h-20"></div>
-      <div id="contact-form" className="h-20"></div>
     </div>
   );
 };

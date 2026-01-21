@@ -1,5 +1,5 @@
 import React from "react";
-
+import { Link } from "react-router-dom";
 const locationIcon = "https://cdn-icons-png.flaticon.com/512/535/535239.png";
 const homeIcon = "https://cdn-icons-png.flaticon.com/512/619/619032.png";
 
@@ -58,6 +58,7 @@ export default function RentalsByArea() {
         </div>
 
         {/* Cards Grid - Now 3 columns on large screens */}
+       <Link to="/rentals-listings">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
           {areas.map((area, index) => (
             <div
@@ -127,6 +128,8 @@ export default function RentalsByArea() {
             </div>
           ))}
         </div>
+       </Link>
+
 
         {/* Additional text section moved to right side */}
         <div className="mt-12 flex flex-col md:flex-row items-center justify-between">
