@@ -17,6 +17,7 @@ import {
   FaChevronRight,
   FaMapMarkerAlt,
   FaSearch,
+  FaPlus,
   FaRegHeart, // Outlined heart icon
 } from "react-icons/fa";
 
@@ -364,7 +365,7 @@ const Navbar = () => {
                     onClick={scrollToTop}
                     className="flex items-center gap-1 sm:gap-2 bg-[#27bb97] text-white px-3 sm:px-4 py-2 sm:py-2.5 md:py-3 lg:py-3.5 rounded-lg text-xs md:text-sm lg:text-base whitespace-nowrap hover:bg-[#1fa987] transition cursor-pointer font-bold"
                   >
-                    <LuPencilLine className="text-white text-sm sm:text-base md:text-lg" />
+                    <FaPlus className="text-white text-sm sm:text-base md:text-lg" />
                     <span className="hidden sm:inline">Post add</span>
                   </button>
                 </Link>
@@ -392,7 +393,7 @@ const Navbar = () => {
                       <div className="p-3 sm:p-4 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-200">
                         <div className="flex items-center gap-2 sm:gap-3">
                           <div className="w-8 h-8 sm:w-10 sm:h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                            <CgProfile className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600" />
+                            <CgProfile className="h-4 w-4 sm:h-5 sm:w-5 text-[#27BB97]" />
                           </div>
                           <div className="flex-1 min-w-0">
                             <h3 className="font-semibold text-gray-900 text-sm sm:text-base truncate">John Doe</h3>
@@ -412,19 +413,13 @@ const Navbar = () => {
                             <item.icon className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
                             <span className="truncate">{item.name}</span>
                             {item.path === "/logout" && (
-                              <span className="ml-auto text-xs text-gray-400 hidden sm:inline">⌘Q</span>
+                              <span className="ml-auto text-xs text-gray-400 hidden sm:inline"></span>
                             )}
                           </button>
                         ))}
                       </div>
 
-                      {/* Footer */}
-                      <div className="p-2 sm:p-3 bg-gray-50 border-t border-gray-200">
-                        <div className="flex items-center justify-between text-xs text-gray-500">
-                          <span>Version 1.0.0</span>
-                          <span>© 2024 Listify</span>
-                        </div>
-                      </div>
+                     
                     </div>
                   )}
                 </div>
@@ -450,8 +445,8 @@ const Navbar = () => {
                   onClick={scrollToTop}
                   className="flex items-center gap-1 bg-[#27bb97] text-white px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm whitespace-nowrap hover:bg-[#1fa987] transition cursor-pointer font-bold"
                 >
-                  <LuPencilLine className="text-white text-sm sm:text-base" />
-                  <span className="hidden sm:inline">Post Ad</span>
+                  <FaPlus className="text-white text-sm sm:text-base" />
+                  <span className="hidden sm:inline">Post add</span>
                 </button>
               </Link>
 

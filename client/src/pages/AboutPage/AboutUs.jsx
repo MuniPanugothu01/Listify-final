@@ -564,7 +564,7 @@ const AboutUs = () => {
       </section>
 
       {/* ENHANCED TIMELINE */}
-      <section className="py-12 sm:py-16 lg:py-20 bg-gray-50">
+      {/* <section className="py-12 sm:py-16 lg:py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8 sm:mb-12 lg:mb-16 scroll-animate">
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-3 sm:mb-4">
@@ -608,10 +608,10 @@ const AboutUs = () => {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* TEAM */}
-      <section className="py-12 sm:py-16 lg:py-20 bg-gray-50">
+      {/* <section className="py-12 sm:py-16 lg:py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8 sm:mb-12 lg:mb-16 scroll-animate">
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-3 sm:mb-4">
@@ -648,10 +648,10 @@ const AboutUs = () => {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* TESTIMONIALS */}
-      <section className="py-12 sm:py-16 lg:py-20 bg-white">
+      {/* <section className="py-12 sm:py-16 lg:py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8 sm:mb-12 lg:mb-16 scroll-animate">
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-3 sm:mb-4">
@@ -694,10 +694,10 @@ const AboutUs = () => {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* CTA */}
-      <section className="py-12 sm:py-16 lg:py-20 relative overflow-hidden">
+      {/* <section className="py-12 sm:py-16 lg:py-20 relative overflow-hidden">
         <div className="absolute inset-0">
           <img
             src="https://images.unsplash.com/photo-1521791136064-7986c2920216?w=1920&q=90"
@@ -739,7 +739,7 @@ const AboutUs = () => {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
     </div>
   );
 };
