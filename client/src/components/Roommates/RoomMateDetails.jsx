@@ -85,8 +85,8 @@ const allProperties = [
     verified: true,
     immediate: true,
     discount: "No Brokerage",
-    distance: "0.2 mi from PATH",
-    busStopDistance: "0.4 mi from Bus Stop",
+    // distance: "0.2 mi from PATH",
+    // busStopDistance: "0.4 mi from Bus Stop",
     contact: "+1 (555) 123-4567",
     views: 128,
     saves: 15,
@@ -134,8 +134,8 @@ const allProperties = [
     verified: true,
     immediate: false,
     discount: "No Fee",
-    distance: "0.5 mi from Subway",
-    busStopDistance: "0.1 mi from Bus Stop",
+    // distance: "0.5 mi from Subway",
+    // busStopDistance: "0.1 mi from Bus Stop",
     contact: "+1 (555) 987-6543",
     views: 89,
     saves: 22,
@@ -182,8 +182,8 @@ const allProperties = [
     verified: false,
     immediate: true,
     discount: "First Month Free",
-    distance: "0.3 mi from Station",
-    busStopDistance: "0.2 mi from Bus Stop",
+    // distance: "0.3 mi from Station",
+    // busStopDistance: "0.2 mi from Bus Stop",
     contact: "+1 (555) 456-7890",
     views: 156,
     saves: 18,
@@ -229,8 +229,8 @@ const allProperties = [
     verified: true,
     immediate: false,
     discount: "Utilities Included",
-    distance: "0.4 mi from Subway",
-    busStopDistance: "0.4 mi from Bus Stop",
+    // distance: "0.4 mi from Subway",
+    // busStopDistance: "0.4 mi from Bus Stop",
     contact: "+1 (555) 234-5678",
     views: 203,
     saves: 31,
@@ -679,15 +679,7 @@ const RoomMateDetails = () => {
               )}
             </div>
 
-            {/* Top Left Badges */}
-            <div className="absolute top-3 left-3 flex flex-col gap-2">
-              {property.verified && <Badge type="verified">Verified</Badge>}
-              {property.immediate && <Badge type="immediate">Immediate</Badge>}
-              {property.discount && (
-                <Badge type="discount">{property.discount}</Badge>
-              )}
-            </div>
-
+        
             {/* Like and Share Buttons */}
             <div className="absolute top-3 right-3 flex gap-2">
               <button
@@ -840,14 +832,14 @@ const RoomMateDetails = () => {
 
               {/* Premium Amenities with Icons */}
               <div className="mb-4">
-                <h4 className="text-sm font-semibold text-gray-900 mb-2">
+                <h4 className="text-sm font-semibold text-gray-700 mb-2">
                   Key Amenities
                 </h4>
                 <div className="flex flex-wrap gap-1">
                   {property.amenities.slice(0, 6).map((amenity, index) => (
                     <span
                       key={index}
-                      className="flex items-center gap-1.5 text-xs text-blue-700 px-3 py-2 rounded-lg border-blue-100 hover:bg-blue-100 transition-colors"
+                      className="flex items-center gap-1.5 text-xs text-blue-500 px-3 py-2 rounded-lg border-blue-100 hover:bg-blue-100 transition-colors"
                     >
                       {amenityIcons[amenity] || <FaBolt size={14} />}
                       {amenity}
@@ -2375,7 +2367,7 @@ const RoomMateDetails = () => {
         <div className="">
           {/* Tabs */}
           <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between w-full lg:w-[65%] border-gray-200 gap-4">
-            <div className="flex gap-4 lg:gap-8 ">
+            <div className="flex gap-6 lg:gap-3 ">
               <button
                 onClick={() => setMainTab("offered")}
                 className={` pb-4 lg:pb-5 px-3 font-medium transition-colors ${
