@@ -1,11 +1,15 @@
 import React, { useState, useEffect, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import { Users, Home, ShoppingCart, Briefcase, Music } from "lucide-react";
 
 const Category = () => {
+  const navigate = useNavigate();
+  
   const categories = [
     {
       id: 1,
       title: "Roommates",
+      path: "/roommates",
       image: "https://www.shutterstock.com/image-photo/laughing-phone-sharing-friends-on-260nw-2701402047.jpg",
       icon: Users,
       subcategories: [
@@ -19,6 +23,7 @@ const Category = () => {
     {
       id: 2,
       title: "Rentals",
+      path: "/rentals",
       image: "https://hips.hearstapps.com/hmg-prod/images/designed-by-arlyn-hernandez-photo-by-sara-ligorria-tramp-5-652db3f539ed5.jpg",
       icon: Home,
       subcategories: [
@@ -32,6 +37,7 @@ const Category = () => {
     {
       id: 3,
       title: "Electronics",
+      path: "/electronics",
       image: "https://thumbs.dreamstime.com/b/modern-electronics-store-showcasing-macbook-air-laptops-smartphones-technology-accessories-lviv-ukraine-march-high-end-macbook-368559879.jpg",
       icon: ShoppingCart,
       subcategories: [
@@ -45,6 +51,7 @@ const Category = () => {
     {
       id: 4,
       title: "Houses",
+      path: "/rentals",
       image: "https://thumbs.dreamstime.com/b/real-estate-exterior-front-house-sunny-day-big-custom-made-luxury-nicely-landscaped-yard-summer-modern-beautiful-289420329.jpg",
       icon: Home,
       subcategories: [
@@ -58,6 +65,7 @@ const Category = () => {
     {
       id: 5,
       title: "Cars",
+      path: "/cars",
       image: "https://www.huntermoss.com/images/best-cars-for-road-trips/a-img.webp",
       icon: Briefcase,
       subcategories: [
@@ -71,6 +79,7 @@ const Category = () => {
     {
       id: 6,
       title: "Local Services",
+      path: "/services",
       image: "https://www.professionalhomerepair.net/images/services/handyman-tools.webp",
       icon: Briefcase,
       subcategories: [
@@ -84,6 +93,7 @@ const Category = () => {
     {
       id: 7,
       title: "Take Care",
+      path: "/takecare",
       image: "https://www.hopehospice.com/wp-content/uploads/2020/06/blog-banner-caregiver-help-2.jpg",
       icon: Users,
       subcategories: [
@@ -97,6 +107,7 @@ const Category = () => {
     {
       id: 8,
       title: "Jobs",
+      path: "/jobs",
       image: "https://plus.unsplash.com/premium_photo-1661537653118-93a6f2a43d23?fm=jpg&q=60&w=3000",
       icon: Briefcase,
       subcategories: [
@@ -110,6 +121,7 @@ const Category = () => {
     {
       id: 9,
       title: "Events",
+      path: "/events",
       image: "https://thumbs.dreamstime.com/b/dj-celebrating-stage-arms-raised-vibrant-concert-dynamic-scene-standing-triumphantly-high-celebration-as-373546700.jpg",
       icon: Music,
       subcategories: [
@@ -123,6 +135,7 @@ const Category = () => {
     {
       id: 10,
       title: "Marketplace",
+      path: "/services",
       image: "https://images.squarespace-cdn.com/content/v1/5726544ef85082b93e0f14c1/1698529986360-L5UIUBKQ0HVZT4MZ1UCZ/new+york+city+flea+markets.jpg?format=2500w",
       icon: ShoppingCart,
       subcategories: [
@@ -136,6 +149,7 @@ const Category = () => {
     {
       id: 11,
       title: "For Sale",
+      path: "/forsale",
       image: "https://lookaside.fbsbx.com/lookaside/crawler/media/?media_id=10219937815529239",
       icon: ShoppingCart,
       subcategories: [
@@ -149,6 +163,7 @@ const Category = () => {
     {
       id: 12,
       title: "Pets",
+      path: "/pets",
       image: "https://www.akc.org/wp-content/uploads/2017/11/Golden-Retriever-puppy-outdoors.jpg",
       icon: Users,
       subcategories: [
@@ -161,49 +176,60 @@ const Category = () => {
     },
   ];
 
-  // State to track if we should show all cards
   const [showAll, setShowAll] = useState(false);
-  // State to track which card is expanded (for mobile only)
   const [expandedCard, setExpandedCard] = useState(null);
-  // State to track screen size
   const [isMobile, setIsMobile] = useState(false);
-  
-  // Responsive initial cards count
+  const [initialCardsCount, setInitialCardsCount] = useState(8);
+  const [tapCount, setTapCount] = useState({}); // Track tap count per card
+
   const getInitialCardsCount = () => {
     if (typeof window !== 'undefined') {
-      if (window.innerWidth >= 1280) return 8; // xl screens
-      if (window.innerWidth >= 1024) return 6; // lg screens
-      if (window.innerWidth >= 640) return 6;  // sm/md screens
-      return 4; // mobile
+      if (window.innerWidth >= 1280) return 8;
+      if (window.innerWidth >= 1024) return 6;
+      if (window.innerWidth >= 640) return 6;
+      return 4;
     }
-    return 8; // default
+    return 8;
   };
 
-  const [initialCardsCount, setInitialCardsCount] = useState(8);
-
-  // Check if device is mobile (less than 768px)
   const checkIsMobile = useCallback(() => {
     return typeof window !== 'undefined' && window.innerWidth < 768;
   }, []);
 
-  // Handle card click for mobile only
-  const handleCardClick = (id, event) => {
-    if (!isMobile) return; // Only handle clicks on mobile
-    
+  // Handle card click - different behavior for mobile and desktop
+  const handleCardClick = (category, event) => {
     event.stopPropagation();
     
-    // Toggle expanded state
-    if (expandedCard === id) {
-      setExpandedCard(null);
+    if (isMobile) {
+      // Mobile behavior: first tap expands, second tap navigates
+      if (expandedCard === category.id) {
+        // Already expanded, navigate on second tap
+        navigate(category.path);
+      } else {
+        // First tap, expand the card
+        setExpandedCard(category.id);
+      }
     } else {
-      setExpandedCard(id);
+      // Desktop behavior: click navigates directly
+      navigate(category.path);
     }
+  };
+
+  // Handle "More in" button click
+  const handleMoreButtonClick = (path, event) => {
+    event.stopPropagation();
+    navigate(path);
+  };
+
+  // Handle subcategory click
+  const handleSubcategoryClick = (path, event) => {
+    event.stopPropagation();
+    navigate(path);
   };
 
   // Handle click outside to collapse (mobile only)
   const handleClickOutside = useCallback((event) => {
     if (isMobile && expandedCard !== null) {
-      // Check if click is outside any category card
       const isClickInsideCard = event.target.closest('.category-card');
       if (!isClickInsideCard) {
         setExpandedCard(null);
@@ -211,20 +237,19 @@ const Category = () => {
     }
   }, [expandedCard, isMobile]);
 
-  // Update screen size and initial cards count on window resize
+  // Update screen size
   useEffect(() => {
     const handleResize = () => {
       const mobile = checkIsMobile();
       setIsMobile(mobile);
       setInitialCardsCount(getInitialCardsCount());
       
-      // If switching from mobile to desktop, collapse any expanded card
       if (!mobile) {
         setExpandedCard(null);
       }
     };
     
-    handleResize(); // Set initial value
+    handleResize();
     window.addEventListener('resize', handleResize);
     document.addEventListener('click', handleClickOutside);
     
@@ -244,7 +269,7 @@ const Category = () => {
       <div
         key={category.id}
         className="category-card group relative h-48 sm:h-56 md:h-64 lg:h-72 xl:h-80 w-full overflow-hidden cursor-pointer rounded-lg sm:rounded-xl shadow-lg hover:shadow-2xl transition-all duration-700 ease-in-out transform hover:scale-[1.02]"
-        onClick={(e) => handleCardClick(category.id, e)}
+        onClick={(e) => handleCardClick(category, e)}
       >
         {/* Background Image */}
         <img
@@ -262,8 +287,6 @@ const Category = () => {
 
         {/* Title at Bottom - Hides on Hover (desktop) or when expanded (mobile) */}
         <div className={`absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/70 to-transparent p-3 sm:p-4 md:p-5 transition-all duration-700 ${
-          // On desktop: hide on hover
-          // On mobile: hide when expanded
           (!isMobile && 'opacity-100 group-hover:opacity-0 group-hover:translate-y-4') ||
           (isMobile && (isExpanded ? 'opacity-0 translate-y-4' : 'opacity-100'))
         }`}>
@@ -279,10 +302,15 @@ const Category = () => {
           </div>
         )}
 
+        {/* Mobile Navigation Indicator when expanded */}
+        {isMobile && isExpanded && (
+          <div className="absolute top-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded-full">
+            Tap again to go
+          </div>
+        )}
+
         {/* Hover/Click Overlay - Slides Up with Subcategories */}
         <div className={`absolute inset-0 bg-gradient-to-b from-black/80 via-black/65 to-black/90 flex flex-col justify-center items-center pt-4 sm:pt-5 md:pt-6 transition-all duration-800 ease-in-out ${
-          // Desktop: show on hover
-          // Mobile: show when expanded
           (!isMobile && 'translate-y-full group-hover:translate-y-0') ||
           (isMobile && (isExpanded ? 'translate-y-0' : 'translate-y-full'))
         }`}>
@@ -291,11 +319,10 @@ const Category = () => {
               <li
                 key={index}
                 className={`text-white/90 text-xs sm:text-sm cursor-pointer px-2 sm:px-3 md:px-4 py-0.5 sm:py-1 rounded-md hover:text-white hover:bg-gray-700 transition-all duration-500 ease-out ${
-                  // Desktop: animated on hover
-                  // Mobile: show immediately when expanded
                   (!isMobile && 'translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100') ||
                   (isMobile && (isExpanded ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'))
                 }`}
+                onClick={(e) => handleSubcategoryClick(category.path, e)}
                 style={{ 
                   transitionDelay: !isMobile ? `${index * 80}ms` : '0ms' 
                 }}
@@ -306,8 +333,11 @@ const Category = () => {
           </ul>
 
           {/* More Button */}
-          <button className="bg-[#27bb97] absolute bottom-0 hover:bg-[#1fa987] h-8 sm:h-9 md:h-10 w-full text-white font-medium text-xs sm:text-sm md:text-[15px] transition-colors duration-300">
-            More in {category.title}
+          <button 
+            onClick={(e) => handleMoreButtonClick(category.path, e)}
+            className="bg-[#27bb97] absolute bottom-0 hover:bg-[#1fa987] h-8 sm:h-9 md:h-10 w-full text-white font-medium text-xs sm:text-sm md:text-[15px] transition-colors duration-300"
+          >
+            Explore {category.title}
           </button>
 
           {/* Close button for mobile */}
@@ -317,7 +347,7 @@ const Category = () => {
                 e.stopPropagation();
                 setExpandedCard(null);
               }}
-              className="absolute top-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded-full hover:bg-black/90 transition-colors duration-300"
+              className="absolute top-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded-full hover:bg-black/90 transition-colors duration-300"
             >
               Close
             </button>
@@ -342,19 +372,18 @@ const Category = () => {
             OUR CATEGORIES
           </h1>
           <p className="font-semibold max-w-3xl mx-auto leading-relaxed mt-4 sm:mt-5 md:mt-6 lg:mt-7 text-sm sm:text-base md:text-lg px-3 sm:px-4">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptates
-            quae totam porro maxime dolorem delectus consequatur vero odio
-            incidunt ut.
+            Browse through our diverse categories to find exactly what you're looking for. 
+            From housing and services to jobs and marketplace items, everything is just a click away.
           </p>
           {/* Mobile instructions */}
           {isMobile && (
             <p className="text-sm text-gray-600 mt-2">
-              Tap on a card to see details
+              Tap a card to expand, tap again to navigate, or tap "Explore" button
             </p>
           )}
         </div>
 
-        {/* Grid: Responsive columns */}
+        {/* Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 md:gap-5 lg:gap-6 max-w-7xl mx-auto mt-6 sm:mt-8 md:mt-10 lg:mt-12">
           {displayedCategories.map(renderCard)}
         </div>
