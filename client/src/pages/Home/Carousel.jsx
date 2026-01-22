@@ -490,8 +490,8 @@ export default function Carousel() {
                   <button
                     onClick={handleSearchClick}
                     className="
-                      absolute right-2 sm:right-3 z-10 top-1/2 -translate-y-1/2 
-                      bg-[#27bb97] text-white px-3 sm:px-4 md:px-6 py-2 sm:py-3 md:py-4 
+                      absolute right-0 z-10
+                      bg-[#27bb97] text-white px-3  py-3.5 sm:px-4 md:px-5 sm:py-4 md:py-5 
                       rounded-lg sm:rounded-xl text-xs sm:text-sm 
                       cursor-pointer transition-all duration-300 
                       hover:bg-[#1fa987] hover:shadow-lg 
@@ -503,7 +503,7 @@ export default function Carousel() {
                   <input
                     type="text"
                     placeholder="Search for a listing..."
-                    className="w-full pl-20 sm:pl-24 md:pl-28 pr-24 sm:pr-28 md:pr-32 py-2.5 sm:py-3 md:py-4 
+                    className="w-full   md:pl-4  py-2.5 sm:py-3 md:py-4 
                       backdrop-blur-3xl bg-black/10 border-2 border-[#27BB97]/30 
                       rounded-lg sm:rounded-xl focus:outline-none placeholder:text-gray-600 
                       text-gray-800 cursor-text transition-all duration-500 

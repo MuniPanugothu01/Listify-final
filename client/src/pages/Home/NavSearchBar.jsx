@@ -329,7 +329,7 @@ const NavSearchBar = ({ selectedLocation, setSelectedLocation, isScrolled }) => 
           <div className="relative flex-1 min-w-0">
             <input
               type="text"
-              placeholder="Search by service or category"
+              placeholder=""
               className={`w-full pl-7 sm:pl-8 md:pl-10 pr-2 sm:pr-3 md:pr-4 py-2 sm:py-2.5 md:py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#c89a5e] text-xs sm:text-sm cursor-pointer search-input ${
                 isScrolled 
                   ? "bg-white/10 border-white/20 text-white placeholder-white/70" 
