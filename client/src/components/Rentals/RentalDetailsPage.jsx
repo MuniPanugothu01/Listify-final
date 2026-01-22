@@ -342,35 +342,38 @@ const RentalDetailsPage = () => {
           <div className="space-y-6">
             {/* Title and Price */}
             <div className="space-y-4">
-              <div className="flex justify-between items-start gap-4">
-                <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 leading-tight">
+              <div className="block lg:flex lg:justify-between lg:items-start">
+                {/* Title - always first */}
+                <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 leading-tight mb-3 lg:mb-0">
                   {property.title}
                 </h1>
-                <div className="text-right">
-                  <div className="text-3xl lg:text-4xl font-bold text-blue-600">
+
+                {/* Price - always below title on mobile, next to it on desktop */}
+                <div className="lg:text-right">
+                  <div className="text-3xl lg:text-4xl font-bold text-blue-500">
                     ${property.price.toLocaleString()}
-                    <span className="text-lg font-normal text-gray-600">
+                    <span className="text-lg font-normal text-gray-400">
                       /month
                     </span>
                   </div>
-                  <div className="text-sm text-gray-500">
+                  <div className="text-sm text-gray-400">
                     Available from {property.availableFrom}
                   </div>
                 </div>
               </div>
 
               {/* Location and Quick Info */}
-              <div className="flex items-center gap-3 text-gray-600 flex-wrap">
-                <div className="flex items-center gap-2">
-                  <MapPin className="w-5 h-5 text-red-500" />
+              <div className="flex items-center gap-3 text-gray-400 flex-wrap sm:mb-5">
+                <div className="flex items-center gap-1 text-[14px]">
+                  <MapPin className="w-4 h-4" />
                   <span>{property.location}</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Building className="w-5 h-5 text-gray-500" />
+                <div className="flex items-center gap-1 text-[14px]">
+                  <Building className="w-4 h-4 text-gray-500 text-[14px]" />
                   <span>{property.propertyType}</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Clock className="w-5 h-5 text-gray-500" />
+                <div className="flex items-center gap-1 text-[14px]">
+                  <Clock className="w-4 h-4 text-gray-400" />
                   <span>Posted {property.posted}</span>
                 </div>
               </div>
@@ -378,24 +381,24 @@ const RentalDetailsPage = () => {
               {/* Verified Badges */}
               <div className="flex flex-wrap gap-2">
                 {property.verified && (
-                  <span className="inline-flex items-center gap-1 px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">
+                  <span className="inline-flex items-center gap-1 px-3 py-1  text-green-400 rounded-full text-sm font-medium">
                     <CheckCircle className="w-4 h-4" />
                     Verified Listing
                   </span>
                 )}
                 {property.immediate && (
-                  <span className="inline-flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">
+                  <span className="inline-flex items-center gap-1 px-3 py-1  text-blue-400 rounded-full text-sm font-medium">
                     <Clock className="w-4 h-4" />
                     Immediate Availability
                   </span>
                 )}
                 {property.discount && (
-                  <span className="inline-flex items-center gap-1 px-3 py-1 bg-orange-100 text-orange-800 rounded-full text-sm font-medium">
+                  <span className="inline-flex items-center gap-1 px-3 py-1  text-orange-400 rounded-full text-sm font-medium">
                     {property.discount}
                   </span>
                 )}
                 {property.petFriendly && (
-                  <span className="inline-flex items-center gap-1 px-3 py-1 bg-pink-100 text-pink-800 rounded-full text-sm font-medium">
+                  <span className="inline-flex items-center gap-1 px-3 py-1  text-pink-400 rounded-full text-sm font-medium">
                     <Dog className="w-4 h-4" />
                     Pet Friendly
                   </span>
@@ -406,64 +409,65 @@ const RentalDetailsPage = () => {
             {/* Key Features */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 p-4 bg-gray-50 rounded-xl">
               <div className="text-center">
-                <div className="flex items-center justify-center gap-2 text-gray-700">
+                <div className="flex items-center justify-center gap-2 text-gray-400">
                   <Home className="w-5 h-5" />
-                  <span className="text-lg font-semibold">
+                  <span className="text-lg font-semibold text-gray-400">
                     {property.bedrooms}
                   </span>
                 </div>
-                <div className="text-sm text-gray-500 mt-1">Bedrooms</div>
+                <div className="text-sm text-gray-400 mt-1">Bedrooms</div>
               </div>
               <div className="text-center">
-                <div className="flex items-center justify-center gap-2 text-gray-700">
+                <div className="flex items-center justify-center gap-2 text-gray-400">
                   <Bath className="w-5 h-5" />
-                  <span className="text-lg font-semibold">
+                  <span className="text-lg font-semibold text-gray-400">
                     {property.bathrooms}
                   </span>
                 </div>
-                <div className="text-sm text-gray-500 mt-1">Bathrooms</div>
+                <div className="text-sm text-gray-400 mt-1">Bathrooms</div>
               </div>
               <div className="text-center">
-                <div className="flex items-center justify-center gap-2 text-gray-700">
+                <div className="flex items-center justify-center gap-2 text-gray-400">
                   <Maximize2 className="w-5 h-5" />
-                  <span className="text-lg font-semibold">
+                  <span className="text-lg font-semibold text-gray-400">
                     {property.sqft} sqft
                   </span>
                 </div>
-                <div className="text-sm text-gray-500 mt-1">Square Feet</div>
+                <div className="text-sm text-gray-400 mt-1">Square Feet</div>
               </div>
               <div className="text-center">
-                <div className="flex items-center justify-center gap-2 text-gray-700">
+                <div className="flex items-center justify-center gap-1 text-gray-400">
                   <Calendar className="w-5 h-5" />
-                  <span className="text-lg font-semibold">
+                  <span className="text-lg font-semibold text-gray-400">
                     {property.leaseTerm}
                   </span>
                 </div>
-                <div className="text-sm text-gray-500 mt-1">Lease Term</div>
+                <div className="text-sm text-gray-400 mt-1">Lease Term</div>
               </div>
             </div>
 
             {/* Description */}
-            <div className="space-y-3">
-              <h2 className="text-xl font-semibold text-gray-900">
+            <div className="space-y-1">
+              <h2 className="text-xl font-semibold text-gray-700">
                 Description
               </h2>
-              <p className="text-gray-700 leading-relaxed">
+              <p className="text-gray-400 leading-relaxed">
                 {property.details}
               </p>
             </div>
 
             {/* Posted By Info */}
-            <div className="flex items-center justify-between p-4 bg-blue-50 rounded-xl">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-blue-50 rounded-xl gap-4">
+              {/* Agent info - always first */}
               <div className="flex items-center gap-3">
                 <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                  <User className="w-6 h-6 text-blue-600" />
+                  <User className="w-6 h-6 text-blue-500" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900">
+                  <h3 className="font-semibold text-gray-700">
                     {property.postedBy}
                   </h3>
-                  <div className="flex items-center gap-4 text-sm text-gray-600 mt-1">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-4 text-sm text-gray-400 mt-1">
                     <div className="flex items-center gap-1">
                       <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
                       <span>
@@ -471,38 +475,40 @@ const RentalDetailsPage = () => {
                       </span>
                     </div>
                     <div className="flex items-center gap-1">
-                      <CheckCircle className="w-4 h-4 text-green-500" />
+                      <CheckCircle className="w-4 h-4 text-green-400" />
                       <span>{property.responseRate} response rate</span>
+                    </div>
+                    {/* Views & Saves - on next line for mobile, right side for tablet/desktop */}
+
+                    <div className="flex items-center gap-2 sm:ml-auto">
+                      <span className="text-sm text-gray-400">
+                        {property.views} views
+                      </span>
+                      <span className="text-sm text-gray-400">•</span>
+                      <span className="text-sm text-gray-400">
+                        {property.saves} saves
+                      </span>
                     </div>
                   </div>
                 </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-gray-500">
-                  {property.views} views
-                </span>
-                <span className="text-sm text-gray-500">•</span>
-                <span className="text-sm text-gray-500">
-                  {property.saves} saves
-                </span>
               </div>
             </div>
 
             {/* Contact Section */}
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold text-gray-900">
+                <h3 className="text-lg font-semibold text-gray-700">
                   Contact Information
                 </h3>
                 {showContact ? (
-                  <div className="flex items-center gap-2 text-green-600">
+                  <div className="flex items-center gap-2 text-green-500">
                     <Phone className="w-4 h-4" />
                     <span className="font-medium">{property.contact}</span>
                   </div>
                 ) : (
                   <button
                     onClick={() => setShowContact(true)}
-                    className="text-blue-600 hover:text-blue-700 font-medium"
+                    className="text-blue-400 hover:text-blue-500 font-medium"
                   >
                     Show Contact
                   </button>
@@ -563,8 +569,8 @@ const RentalDetailsPage = () => {
                   onClick={() => setActiveTab(tab)}
                   className={`px-6 py-4 font-medium transition-colors whitespace-nowrap ${
                     activeTab === tab
-                      ? "text-blue-600 border-b-2 border-blue-600"
-                      : "text-gray-600 hover:text-blue-600"
+                      ? "text-blue-500 border-b-2 border-blue-500"
+                      : "text-gray-500 hover:text-blue-500"
                   }`}
                 >
                   {tab}
@@ -577,58 +583,58 @@ const RentalDetailsPage = () => {
               {activeTab === "Overview" && (
                 <div className="space-y-6">
                   <div>
-                    <h3 className="text-xl font-semibold text-gray-900 mb-4">
+                    <h3 className="text-xl font-semibold text-gray-700 mb-4">
                       Property Overview
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div className="space-y-3">
                         <div className="flex justify-between">
-                          <span className="text-gray-600">Property Type:</span>
-                          <span className="font-medium">
+                          <span className="text-gray-400">Property Type:</span>
+                          <span className="font-medium text-gray-600">
                             {property.propertyType}
                           </span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-gray-600">Available From:</span>
-                          <span className="font-medium">
+                          <span className="text-gray-400">Available From:</span>
+                          <span className="font-medium text-gray-600">
                             {property.availableFrom}
                           </span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-gray-600">Lease Term:</span>
-                          <span className="font-medium">
+                          <span className="text-gray-400">Lease Term:</span>
+                          <span className="font-medium text-gray-600">
                             {property.leaseTerm}
                           </span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-gray-600">Square Footage:</span>
-                          <span className="font-medium">
+                          <span className="text-gray-400">Square Footage:</span>
+                          <span className="font-medium text-gray-600">
                             {property.sqft} sqft
                           </span>
                         </div>
                       </div>
                       <div className="space-y-3">
                         <div className="flex justify-between">
-                          <span className="text-gray-600">Bedrooms:</span>
-                          <span className="font-medium">
+                          <span className="text-gray-400">Bedrooms:</span>
+                          <span className="font-medium text-gray-600">
                             {property.bedrooms}
                           </span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-gray-600">Bathrooms:</span>
-                          <span className="font-medium">
+                          <span className="text-gray-400">Bathrooms:</span>
+                          <span className="font-medium text-gray-600">
                             {property.bathrooms}
                           </span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-gray-600">Pet Policy:</span>
-                          <span className="font-medium">
+                          <span className="text-gray-400">Pet Policy:</span>
+                          <span className="font-medium text-gray-600">
                             {property.petFriendly ? "Pet Friendly" : "No Pets"}
                           </span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-gray-600">Furnished:</span>
-                          <span className="font-medium">
+                          <span className="text-gray-400">Furnished:</span>
+                          <span className="font-medium text-gray-600">
                             {property.amenities.includes("Furnished")
                               ? "Yes"
                               : "No"}
@@ -640,7 +646,7 @@ const RentalDetailsPage = () => {
 
                   {/* House Rules */}
                   <div>
-                    <h3 className="text-xl font-semibold text-gray-900 mb-4">
+                    <h3 className="text-xl font-semibold text-gray-700 mb-4">
                       House Rules
                     </h3>
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
@@ -650,7 +656,7 @@ const RentalDetailsPage = () => {
                           className="flex items-center gap-3 p-3 border border-gray-200 rounded-lg"
                         >
                           {rule.icon}
-                          <span className="font-medium">{rule.rule}</span>
+                          <span className="font-medium text-gray-500">{rule.rule}</span>
                         </div>
                       ))}
                     </div>
@@ -660,7 +666,7 @@ const RentalDetailsPage = () => {
 
               {activeTab === "Amenities" && (
                 <div className="space-y-6">
-                  <h3 className="text-xl font-semibold text-gray-900">
+                  <h3 className="text-xl font-semibold text-gray-700">
                     All Amenities
                   </h3>
                   <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -681,37 +687,37 @@ const RentalDetailsPage = () => {
 
               {activeTab === "Neighborhood" && (
                 <div className="space-y-6">
-                  <h3 className="text-xl font-semibold text-gray-900">
+                  <h3 className="text-xl font-semibold text-gray-800">
                     Neighborhood Information
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="space-y-4">
-                      <h4 className="font-semibold text-lg">What's Nearby</h4>
+                      <h4 className="font-semibold text-lg text-gray-700">What's Nearby</h4>
                       <ul className="space-y-3">
                         <li className="flex items-center gap-3">
                           <span className="w-2 h-2 bg-green-500 rounded-full"></span>
-                          <span>Supermarkets: 3 within 0.5 miles</span>
+                          <span className="text-gray-400">Supermarkets: 3 within 0.5 miles</span>
                         </li>
                         <li className="flex items-center gap-3">
                           <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
-                          <span>Restaurants: 15+ within walking distance</span>
+                          <span className="text-gray-400">Restaurants: 15+ within walking distance</span>
                         </li>
                         <li className="flex items-center gap-3">
                           <span className="w-2 h-2 bg-purple-500 rounded-full"></span>
-                          <span>Parks: 2 parks within 1 mile</span>
+                          <span className="text-gray-400">Parks: 2 parks within 1 mile</span>
                         </li>
                         <li className="flex items-center gap-3">
                           <span className="w-2 h-2 bg-red-500 rounded-full"></span>
-                          <span>Schools: 4 schools in the area</span>
+                          <span className="text-gray-400">Schools: 4 schools in the area</span>
                         </li>
                       </ul>
                     </div>
                     <div className="space-y-4">
-                      <h4 className="font-semibold text-lg">
+                      <h4 className="font-semibold text-lg text-gray-700">
                         Local Attractions
                       </h4>
                       <div className="p-4 bg-blue-50 rounded-lg">
-                        <p className="text-gray-700">
+                        <p className="text-gray-600">
                           Located in the heart of {property.neighborhood}, this
                           property offers easy access to local attractions,
                           shopping centers, and entertainment venues. Perfect
@@ -726,15 +732,15 @@ const RentalDetailsPage = () => {
 
               {activeTab === "Transportation" && (
                 <div className="space-y-6">
-                  <h3 className="text-xl font-semibold text-gray-900">
+                  <h3 className="text-xl font-semibold text-gray-700">
                     Transportation
                   </h3>
                   <div className="space-y-4">
                     <div className="p-4 bg-gray-50 rounded-lg">
-                      <h4 className="font-semibold mb-2">
+                      <h4 className="font-semibold mb-2 text-gray-600">
                         Public Transportation
                       </h4>
-                      <div className="space-y-2">
+                      <div className="space-y-2 text-gray-500">
                         {property.distance && (
                           <div className="flex items-center gap-3">
                             <span className="text-xl">🚇</span>
@@ -750,8 +756,8 @@ const RentalDetailsPage = () => {
                       </div>
                     </div>
                     <div className="p-4 bg-gray-50 rounded-lg">
-                      <h4 className="font-semibold mb-2">Parking</h4>
-                      <p className="text-gray-700">
+                      <h4 className="font-semibold mb-2 text-gray-600">Parking</h4>
+                      <p className="text-gray-400">
                         {property.amenities.includes("Parking")
                           ? "Parking available on premises"
                           : "Street parking only"}
@@ -767,7 +773,7 @@ const RentalDetailsPage = () => {
         {/* Similar Properties Section */}
         <div className="mt-12">
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold text-gray-900">
+            <h2 className="text-2xl font-bold text-gray-700">
               Similar Properties in {property.location}
             </h2>
             <button
