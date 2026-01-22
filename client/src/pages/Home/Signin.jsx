@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Eye, EyeOff, ArrowLeft } from "lucide-react";
+import { Link } from "react-router-dom";
 
 import { HiDotsHorizontal } from "react-icons/hi";
 
@@ -40,10 +41,12 @@ export default function VidProLogin() {
               </div>
 
               {/* Back to Website */}
+              <Link to="/">  
               <button className="flex items-center gap-1 ml-10 text-gray-400 hover:text-gray-300 transition-colors cursor-pointer">
                 <ArrowLeft size={20} />
                 <span className="font-medium">Back to Website</span>
               </button>
+              </Link>
             </div>
 
             {/* Main Text Content - Centered */}
