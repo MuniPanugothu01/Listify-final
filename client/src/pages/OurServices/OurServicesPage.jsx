@@ -594,7 +594,7 @@ const OurServicesPage = () => {
       </section>
 
       {/* How Listify Works Section */}
-      <section className="py-12 sm:py-16 lg:py-20 bg-gradient-to-b from-white to-gray-50">
+      {/* <section className="py-12 sm:py-16 lg:py-20 bg-gradient-to-b from-white to-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8 sm:mb-12 lg:mb-16 scroll-animate">
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-3 sm:mb-4">
@@ -613,7 +613,6 @@ const OurServicesPage = () => {
               >
                 <div className={`grid lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12 items-center ${step.imagePosition === 'right' ? 'lg:flex-row-reverse' : ''}`}>
                   
-                  {/* Image Column */}
                   <div className="relative group">
                     <div className="relative overflow-hidden rounded-xl sm:rounded-2xl shadow-xl sm:shadow-2xl">
                       <img
@@ -625,7 +624,6 @@ const OurServicesPage = () => {
                     </div>
                   </div>
 
-                  {/* Content Column */}
                   <div className="">
                     <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-4 sm:mb-6">
                       {step.title}
@@ -653,7 +651,7 @@ const OurServicesPage = () => {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/*  Why Trust Listify Section */}
       {/* <section className="py-12 sm:py-16 lg:py-20 bg-gradient-to-b from-white to-gray-50 relative overflow-hidden">

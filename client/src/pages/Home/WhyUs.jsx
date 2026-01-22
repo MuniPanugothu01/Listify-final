@@ -6,7 +6,7 @@ const WhyUs = () => {
     <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 pt-8 sm:pt-10 md:pt-12 lg:pt-15">
       {/* Enhanced Section Heading */}
       <div className="text-center mb-8 sm:mb-10 md:mb-12 lg:mb-16">
-        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black text-gray-900 mb-3 sm:mb-4 tracking-tight uppercase">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-6xl font-black text-gray-900 mb-3 sm:mb-4 tracking-tight uppercase">
           Why Listify?
         </h1>
         <div className="w-16 sm:w-20 md:w-24 h-1 sm:h-1.5 bg-[#27BB97] mx-auto rounded-full"></div>
