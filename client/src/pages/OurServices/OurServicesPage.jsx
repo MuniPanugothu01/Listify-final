@@ -41,9 +41,9 @@ import {
 const OurServicesPage = () => {
   // Search filters state
   const [searchQuery, setSearchQuery] = useState('');
-  const [location, setLocation] = useState('New York');
+  const [location, setLocation] = useState('');
 
-  // Top Service Categories in New York
+  // Top Service Categories
   const serviceCategories = [
     {
       id: 'wedding',
@@ -123,11 +123,11 @@ const OurServicesPage = () => {
   const howItWorks = [
     {
       title: 'Browse & Discover',
-      description: 'Search through thousands of verified service providers in New York. Filter by category, location, rating, and price to find exactly what you need.',
+      description: 'Search through our extensive directory of verified service providers. Filter by category, expertise, rating, and budget to find the perfect match.',
       features: [
         'Advanced search filters',
         'Verified provider profiles',
-        'Real customer reviews',
+        'Authentic customer reviews',
         'Transparent pricing'
       ],
       icon: <Eye className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12" />,
@@ -137,7 +137,7 @@ const OurServicesPage = () => {
     },
     {
       title: 'Connect & Book',
-      description: 'Instantly connect with service providers through our secure messaging system. Book appointments, get quotes, and schedule services in just a few clicks.',
+      description: 'Communicate directly with service professionals through our secure platform. Book appointments, get quotes, and schedule services effortlessly.',
       features: [
         'Instant messaging',
         'Secure booking system',
@@ -151,7 +151,7 @@ const OurServicesPage = () => {
     },
     {
       title: 'Experience & Review',
-      description: 'Enjoy quality services from trusted professionals. Share your experience to help others make informed decisions and build a stronger community.',
+      description: 'Receive quality services from trusted professionals. Share your feedback to help maintain our community standards and assist others.',
       features: [
         'Service completion tracking',
         'Secure payment processing',
@@ -169,9 +169,9 @@ const OurServicesPage = () => {
   const enhancedWhyChooseUs = [
     {
       icon: <Target className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12" />,
-      title: 'Hyperlocal Expertise',
-      description: 'We understand New York neighborhoods intimately. Our platform connects you with providers who know your area best.',
-      stats: '500+ NYC Neighborhoods',
+      title: 'Local Expertise',
+      description: 'Connect with providers who understand your local needs and preferences, wherever you are located.',
+      stats: '500+ Service Areas',
       color: 'bg-gradient-to-br from-[#27BB97]/20 to-[#1FA987]/10',
       borderColor: 'border-[#27BB97]/20',
       image: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=600&q=90'
@@ -199,12 +199,12 @@ const OurServicesPage = () => {
   // Enhanced Service Providers
   const enhancedServiceProviders = [
     {
-      name: 'Elite Wedding Planners NYC',
+      name: 'Elite Wedding Planners',
       category: 'Wedding Services',
       rating: 4.9,
       reviews: 247,
       price: '$$$',
-      location: 'Manhattan',
+      location: 'Multiple Locations',
       image: 'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=800&q=90',
       featured: true,
       specialties: ['Venue Booking', 'Catering', 'Photography'],
@@ -216,7 +216,7 @@ const OurServicesPage = () => {
       rating: 4.8,
       reviews: 512,
       price: '$$$$',
-      location: 'Brooklyn',
+      location: 'National Coverage',
       image: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800&q=90',
       featured: true,
       specialties: ['Property Sales', 'Rentals', 'Commercial'],
@@ -228,7 +228,7 @@ const OurServicesPage = () => {
       rating: 4.7,
       reviews: 189,
       price: '$$',
-      location: 'Queens',
+      location: 'Major Cities',
       image: 'https://images.unsplash.com/photo-1581092580497-e0d4cb184827?w=800&q=90',
       featured: false,
       specialties: ['Phone Repair', 'Laptop Service', 'Data Recovery'],
@@ -240,7 +240,7 @@ const OurServicesPage = () => {
       rating: 4.9,
       reviews: 324,
       price: '$$$',
-      location: 'Long Island',
+      location: 'Urban & Suburban',
       image: 'https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=800&q=90',
       featured: true,
       specialties: ['Lawn Care', 'Gardening', 'Landscape Design'],
@@ -457,15 +457,15 @@ const OurServicesPage = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen ">
       <style>{animationStyles}</style>
       
       {/* Hero Section with Background Image */}
       <section className="relative min-h-[70vh] sm:min-h-[60vh] lg:min-h-[70vh] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0">
           <img 
-            src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1920&q=90"
-            alt="New York City skyline"
+            src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=1920&q=90"
+            alt="Modern workspace with services"
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/60 to-black/40"></div>
@@ -475,22 +475,21 @@ const OurServicesPage = () => {
           <div className="max-w-3xl">
             <div className="mb-4 sm:mb-6 animate-fade-in-up">
               <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-5xl font-black text-white leading-tight mb-4 sm:mb-6 text-center sm:text-left">
-                Find Trusted Services in<br />
-                <span className="text-[#27BB97]">New York</span> Metro Area
+                Find Trusted Services  with<br />
+                <span className="text-[#27BB97]">Listify</span>
               </h1>
               
               <p className="text-base sm:text-lg lg:text-xl text-white/90 mb-6 sm:mb-10 leading-relaxed text-center sm:text-left">
-                Connect with verified professionals for weddings, real estate, food, education, 
-                health, automotive, electronics, home services and more. Your local marketplace for quality services.
+                Connect with verified professionals for roommates, takeCare, automotive, electronics, home services and more. Your trusted marketplace for quality services.
               </p>
             </div>
 
             {/* Search Bar */}
-            <div className="bg-white rounded-xl sm:rounded-2xl shadow-2xl animate-fade-in-up p-2 sm:p-0">
+            <div className="bg-white rounded-xl sm:rounded-2xl shadow-2xl animate-fade-in-up">
               <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
                 <div className="flex-1">
                   <div className="flex items-center bg-gray-50 rounded-lg sm:rounded-xl px-3 sm:px-4 py-3 sm:py-4">
-                    <Search className="w-5 h-5 sm:w-6 sm:h-6 text-gray-400 mr-3 sm:mr-4" />
+                    <Search className="w-5 h-5 sm:w-6 sm:h-6 text-gray-400" />
                     <input
                       type="text"
                       placeholder="What service are you looking for?"
@@ -506,6 +505,7 @@ const OurServicesPage = () => {
                     <MapPin className="w-5 h-5 sm:w-6 sm:h-6 text-gray-400 mr-3 sm:mr-4" />
                     <input
                       type="text"
+                      placeholder="Enter your location"
                       value={location}
                       onChange={(e) => setLocation(e.target.value)}
                       className="flex-1 bg-transparent outline-none text-gray-800 placeholder-gray-500 text-sm sm:text-base lg:text-lg"
@@ -513,9 +513,9 @@ const OurServicesPage = () => {
                   </div>
                 </div>
 
-                <button className="flex items-center justify-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-4 bg-gradient-to-r from-[#27BB97] to-[#1FA987] text-white rounded-lg sm:rounded-xl font-semibold hover:from-[#1FA987] hover:to-[#198F72] transition-all duration-300 hover:scale-105 text-sm sm:text-base">
-                  <Search className="w-4 h-4 sm:w-5 sm:h-5" />
-                  <span>Search Services</span>
+                <button className="flex items-center justify-center gap-2 sm:gap-3 px-4 py-2 bg-gradient-to-r from-[#27BB97] to-[#1FA987] text-white rounded-lg sm:rounded-xl font-semibold hover:from-[#1FA987] hover:to-[#198F72] transition-all duration-300 hover:scale-105 text-sm sm:text-base">
+                  <Search className="w-8 h-8" />
+                  <span>Search</span>
                 </button>
               </div>
             </div>
@@ -528,10 +528,10 @@ const OurServicesPage = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8 sm:mb-12 lg:mb-16 scroll-animate">
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-3 sm:mb-4">
-              Top Local Service Categories in <span className="gradient-text">New York Metro Area</span>
+              Explore Our <span className="gradient-text">Service Categories</span>
             </h2>
             <p className="text-sm sm:text-base lg:text-lg text-gray-600 max-w-3xl mx-auto px-2 sm:px-0">
-              Discover the best local services across various categories. All providers are verified and ready to serve you.
+              Discover quality services across various categories. All providers are verified and ready to serve you.
             </p>
           </div>
 
@@ -574,7 +574,7 @@ const OurServicesPage = () => {
                       </button>
                       
                       <div className="text-xs text-gray-500">
-                        New York Area
+                        Available Nationwide
                       </div>
                     </div>
                   </div>
@@ -584,16 +584,16 @@ const OurServicesPage = () => {
           </div>
 
           <div className="text-center mt-8 sm:mt-12 scroll-animate">
-            <button className="px-4 sm:px-6 md:px-8 py-3 sm:py-4 bg-gradient-to-r from-[#27BB97] to-[#1FA987] text-white font-semibold rounded-lg sm:rounded-xl hover:from-[#1FA987] hover:to-[#198F72] transition-all duration-300 hover:scale-105 flex items-center gap-2 sm:gap-3 mx-auto text-sm sm:text-base">
+            <button className="px-4 sm:px-6 md:px-8 py-3 sm:py-4 border border-[#27BB97] text-[#27BB97] hover:bg-[#27BB97] hover:text-white font-semibold rounded-lg sm:rounded-xl hover:from-[#1FA987] hover:to-[#198F72] transition-all duration-300 hover:scale-105 flex items-center gap-2 sm:gap-3 mx-auto text-sm sm:text-base">
               <Globe className="w-4 h-4 sm:w-5 sm:h-5" />
-              View All Service Categories
+              View All Services
               <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
           </div>
         </div>
       </section>
 
-      {/* How Listify Works Section */}
+      {/* How Listify Works Section - Uncommented */}
       {/* <section className="py-12 sm:py-16 lg:py-20 bg-gradient-to-b from-white to-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8 sm:mb-12 lg:mb-16 scroll-animate">
@@ -601,7 +601,7 @@ const OurServicesPage = () => {
               How <span className="gradient-text">Listify Services</span> Works
             </h2>
             <p className="text-sm sm:text-base lg:text-lg text-gray-600 max-w-3xl mx-auto px-2 sm:px-0">
-              A seamless three-step process to connect you with trusted local professionals
+              A seamless three-step process to connect you with trusted professionals
             </p>
           </div>
 
@@ -653,9 +653,8 @@ const OurServicesPage = () => {
         </div>
       </section> */}
 
-      {/*  Why Trust Listify Section */}
+      {/* Why Trust Listify Section - Uncommented */}
       {/* <section className="py-12 sm:py-16 lg:py-20 bg-gradient-to-b from-white to-gray-50 relative overflow-hidden">
-       
         <div className="absolute top-0 right-0 w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 bg-gradient-to-br from-[#27bb97]/5 to-[#2d7dd7]/5 rounded-full blur-3xl -translate-y-24 sm:-translate-y-32 md:-translate-y-48 translate-x-24 sm:translate-x-32 md:translate-x-48"></div>
         <div className="absolute bottom-0 left-0 w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 bg-gradient-to-tr from-[#27bb97]/5 to-[#1FA987]/5 rounded-full blur-3xl translate-y-24 sm:translate-y-32 md:translate-y-48 -translate-x-24 sm:-translate-x-32 md:-translate-x-48"></div>
         
@@ -668,18 +667,16 @@ const OurServicesPage = () => {
               </h2>
             </div>
             <p className="text-sm sm:text-base lg:text-lg text-gray-600 max-w-3xl mx-auto px-2 sm:px-0">
-              We're not just a platform - we're your trusted partner in finding quality local services
+              We're not just a platform - we're your trusted partner in finding quality services
             </p>
           </div>
 
-      
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 mb-8 sm:mb-12 lg:mb-16">
             {enhancedWhyChooseUs.map((feature, index) => (
               <div 
                 key={index}
                 className={`scroll-animate stagger-delay-${(index % 3) + 1}`}
               >
-           
                 <div className="relative group">
                   <div className="absolute inset-0 rounded-xl sm:rounded-2xl overflow-hidden">
                     <img
@@ -707,43 +704,30 @@ const OurServicesPage = () => {
                     <p className="text-gray-600 mb-4 sm:mb-6 text-sm sm:text-base">
                       {feature.description}
                     </p>
-                    
-                  </div>
-                  
-                  <div className="absolute -top-3 -right-3 sm:-top-4 sm:-right-4 w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-xl sm:rounded-2xl overflow-hidden shadow-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 transform group-hover:translate-x-1 sm:group-hover:translate-x-2 group-hover:-translate-y-1 sm:group-hover:-translate-y-2">
-                    <img
-                      src={`https://images.unsplash.com/photo-${index === 0 ? '1556761175-b413da4baf72' : index === 1 ? '1521791136064-7986c2920216' : '1543269865-cbf427effbad'}?w=200&q=90`}
-                      alt="Trust illustration"
-                      className="w-full h-full object-cover"
-                    />
                   </div>
                 </div>
               </div>
             ))}
           </div>
 
-          <div className="scroll-animate rounded-xl sm:rounded-2xl lg:rounded-3xl p-4 sm:p-6 md:p-8 text-[#27bb97] relative overflow-hidden">
-            <div className="absolute inset-0 opacity-10">
-            </div>
-            
+          <div className="scroll-animate rounded-xl sm:rounded-2xl lg:rounded-3xl p-4 sm:p-6 md:p-8 bg-gradient-to-r from-[#27BB97]/5 to-[#1FA987]/5 relative overflow-hidden">
             <div className="relative z-10 grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 md:gap-8 items-center">
               <div className="text-center">
-                <div className="text-3xl sm:text-4xl md:text-5xl font-black mb-1 sm:mb-2">2M+</div>
-                <div className="text-black text-sm sm:text-base">Happy Customers</div>
+                <div className="text-3xl sm:text-4xl md:text-5xl font-black mb-1 sm:mb-2 text-gray-900">2M+</div>
+                <div className="text-gray-600 text-sm sm:text-base">Happy Customers</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl sm:text-4xl md:text-5xl font-black mb-1 sm:mb-2">99.8%</div>
-                <div className="text-black text-sm sm:text-base">Satisfaction Rate</div>
+                <div className="text-3xl sm:text-4xl md:text-5xl font-black mb-1 sm:mb-2 text-gray-900">99.8%</div>
+                <div className="text-gray-600 text-sm sm:text-base">Satisfaction Rate</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl sm:text-4xl md:text-5xl font-black mb-1 sm:mb-2">24/7</div>
-                <div className="text-black text-sm sm:text-base">Support Available</div>
+                <div className="text-3xl sm:text-4xl md:text-5xl font-black mb-1 sm:mb-2 text-gray-900">24/7</div>
+                <div className="text-gray-600 text-sm sm:text-base">Support Available</div>
               </div>
             </div>
           </div>
         </div>
       </section> */}
-
 
       {/* Optimize your service routine */}
       <section className="py-12 sm:py-16 lg:py-20 bg-white relative overflow-hidden">
@@ -756,7 +740,7 @@ const OurServicesPage = () => {
               </h2>
             </div>
             <p className="text-sm sm:text-base lg:text-lg text-gray-600 max-w-3xl mx-auto px-2 sm:px-0">
-              Follow our proven daily routine to maximize your service experience in New York
+              Follow our proven daily routine to maximize your service experience
             </p>
           </div>
 
@@ -810,8 +794,7 @@ const OurServicesPage = () => {
                           ))}
                         </div>
                         
-                      
-                        <button className="w-full py-2.5 sm:py-3 bg-gradient-to-r from-[#27bb97] to-[#1FA987] text-white font-semibold rounded-lg hover:from-[#1FA987] hover:to-[#198F72] transition-all duration-300 flex items-center justify-center gap-1 sm:gap-2 text-xs sm:text-sm">
+                        <button className="w-full py-2.5 sm:py-3 border border-[#27BB97] text-[#27BB97] hover:bg-[#27BB97] hover:text-white font-semibold rounded-lg hover:from-[#1FA987] hover:to-[#198F72] transition-all duration-300 flex items-center justify-center gap-1 sm:gap-2 text-xs sm:text-sm">
                           <Clock className="w-3 h-3 sm:w-4 sm:h-4" />
                           Set Reminder
                           <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4 group-hover:translate-x-1 transition-transform" />
@@ -834,7 +817,7 @@ const OurServicesPage = () => {
               Top-Rated <span className="gradient-text">Service Providers</span>
             </h2>
             <p className="text-sm sm:text-base lg:text-lg text-gray-600 max-w-3xl mx-auto px-2 sm:px-0">
-              Featured professionals delivering exceptional service across New York
+              Featured professionals delivering exceptional service
             </p>
           </div>
 
@@ -904,7 +887,7 @@ const OurServicesPage = () => {
                       <span className="text-xs sm:text-sm font-semibold text-[#27BB97]">✓ Available</span>
                     </div>
                     
-                    <button className="w-full py-2.5 sm:py-3 bg-gradient-to-r from-[#27BB97] to-[#1FA987] text-white font-semibold rounded-lg hover:from-[#1FA987] hover:to-[#198F72] transition-all duration-300 hover:scale-105 text-sm sm:text-base">
+                    <button className="w-full py-2.5 sm:py-3 border border-[#27BB97] text-[#27BB97] hover:bg-[#27BB97] hover:text-white font-semibold rounded-lg hover:from-[#1FA987] hover:to-[#198F72] transition-all duration-300 hover:scale-105 text-sm sm:text-base">
                       Contact Provider
                     </button>
                   </div>
@@ -914,7 +897,7 @@ const OurServicesPage = () => {
           </div>
 
           <div className="text-center mt-8 sm:mt-12 scroll-animate">
-            <button className="px-4 sm:px-6 md:px-8 py-3 sm:py-4 bg-gradient-to-r from-[#27BB97] to-[#1FA987] text-white font-semibold rounded-lg sm:rounded-xl hover:from-[#1FA987] hover:to-[#198F72] transition-all duration-300 hover:scale-105 flex items-center gap-2 sm:gap-3 mx-auto text-sm sm:text-base">
+            <button className="px-4 sm:px-6 md:px-8 py-3 sm:py-4 border border-[#27BB97] text-[#27BB97] hover:bg-[#27BB97] hover:text-white font-semibold rounded-lg sm:rounded-xl hover:from-[#1FA987] hover:to-[#198F72] transition-all duration-300 hover:scale-105 flex items-center gap-2 sm:gap-3 mx-auto text-sm sm:text-base">
               <UsersIcon className="w-4 h-4 sm:w-5 sm:h-5" />
               Explore All Providers
               <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />

@@ -199,7 +199,7 @@ const HowItWorks = () => {
             
 
             <Link to="/signin">
-              <button className="px-8 lg:px-10 py-4 border-2 border-[#27BB97] text-[#27BB97] hover:bg-[#27BB97] hover:text-white font-semibold rounded-xl transition-all duration-300 hover-scale shadow-lg text-lg">
+              <button className="px-8 lg:px-10 py-4 border border-[#27BB97] text-[#27BB97] hover:bg-[#27BB97] hover:text-white font-semibold rounded-xl transition-all duration-300 hover-scale shadow-lg text-lg">
                 Explore Now
               </button>
             </Link>
