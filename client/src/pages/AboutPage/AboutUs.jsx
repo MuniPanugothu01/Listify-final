@@ -611,7 +611,7 @@ const AboutUs = () => {
       </section> */}
 
       {/* TEAM */}
-      {/* <section className="py-12 sm:py-16 lg:py-20 bg-gray-50">
+      <section className="py-12 sm:py-16 lg:py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8 sm:mb-12 lg:mb-16 scroll-animate">
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-3 sm:mb-4">
@@ -648,7 +648,7 @@ const AboutUs = () => {
             ))}
           </div>
         </div>
-      </section> */}
+      </section>
 
       {/* TESTIMONIALS */}
       {/* <section className="py-12 sm:py-16 lg:py-20 bg-white">
@@ -698,42 +698,26 @@ const AboutUs = () => {
 
       {/* CTA */}
       {/* <section className="py-12 sm:py-16 lg:py-20 relative overflow-hidden">
-        <div className="absolute inset-0">
-          <img
-            src="https://images.unsplash.com/photo-1521791136064-7986c2920216?w=1920&q=90"
-            alt="Community celebration"
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 opacity/10"></div>
-        </div>
-
         <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center relative z-10">
           <div className="scroll-animate">
-            <div className="bg-white/10 backdrop-blur-sm rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-12 border border-white/20">
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-4 sm:mb-6">
-                Join <span className="text-white font-black">2 Million+</span> Community Members
+            <div className=" rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-12 border border-white/20">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-black mb-4 sm:mb-6">
+                Join <span className="text-black font-black">2 Million+</span> Community Members
               </h2>
-              <p className="text-base sm:text-lg md:text-xl text-white/90 mb-6 sm:mb-8">
+              <p className="text-base sm:text-lg md:text-xl text-black mb-6 sm:mb-8">
                 Start connecting with your neighbors, discover local services, and build meaningful relationships today.
               </p>
 
-              <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
-                <button className="bg-white text-[#27bb97] px-4 sm:px-6 md:px-8 py-3 sm:py-4 rounded-lg sm:rounded-xl font-bold hover-lift">
+              <div className="justify-center items-center gap-4 sm:gap-6">
+                <button className="border border-gray-500 text-[#27bb97] px-4 sm:px-6 md:px-8 py-3 sm:py-4 rounded-lg sm:rounded-xl font-bold">
                   <span className="flex items-center justify-center gap-2 sm:gap-3 text-sm sm:text-base">
-                    Get Started Free
+                    Get Started
                     <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
-                  </span>
-                </button>
-
-                <button className="border-2 border-white text-white px-4 sm:px-6 md:px-8 py-3 sm:py-4 rounded-lg sm:rounded-xl font-bold hover-lift hover:bg-white/10">
-                  <span className="flex items-center justify-center gap-2 sm:gap-3 text-sm sm:text-base">
-                    Schedule Demo
-                    <Calendar className="w-4 h-4 sm:w-5 sm:h-5" />
                   </span>
                 </button>
               </div>
 
-              <p className="text-white/80 mt-6 sm:mt-8 text-xs sm:text-sm">
+              <p className="text-black mt-6 sm:mt-8 text-xs sm:text-sm">
                 No credit card required • Free forever for basic listings • Join the movement
               </p>
             </div>
