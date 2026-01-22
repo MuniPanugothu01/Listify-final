@@ -294,7 +294,7 @@ const Navbar = () => {
                     <Link
                       to={item.path}
                       onClick={scrollToTop}
-                      className={`nav-link text-xs md:text-sm lg:text-base hover:text-gray-900 px-1 whitespace-nowrap ${
+                      className={`nav-link text-xs font-bold md:text-sm lg:text-base hover:text-gray-900 px-1 whitespace-nowrap ${
                         isScrolled ? "text-white" : "text-gray-700"
                       }`}
                     >
@@ -309,7 +309,7 @@ const Navbar = () => {
                 >
                   <a
                     href="#"
-                    className={`nav-link text-xs md:text-sm lg:text-base px-1 whitespace-nowrap flex items-center hover:text-gray-900 ${
+                    className={`nav-link text-xs font-bold md:text-sm lg:text-base px-1 whitespace-nowrap flex items-center hover:text-gray-900 ${
                       isScrolled ? "text-white" : "text-gray-700"
                     }`}
                   >
@@ -333,7 +333,7 @@ const Navbar = () => {
                           setShowMoreDropdown(false);
                           scrollToTop();
                         }}
-                        className="block px-4 sm:px-5 py-2 sm:py-3 text-xs sm:text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                        className="block font-bold px-4 sm:px-5 py-2 sm:py-3 text-xs sm:text-sm text-gray-700 hover:bg-gray-100 transition-colors"
                       >
                         {item.name}
                       </Link>
@@ -481,7 +481,7 @@ const Navbar = () => {
                         setIsMobileMenuOpen(false);
                         scrollToTop();
                       }}
-                      className={`nav-link px-3 py-2 text-xs sm:text-sm hover:bg-gray-100 rounded ${
+                      className={`nav-link px-3 py-2 text-xs sm:text-sm hover:bg-gray-100 rounded font-bold ${
                         isScrolled 
                           ? "text-white hover:bg-white/10" 
                           : "text-gray-700"
@@ -500,7 +500,7 @@ const Navbar = () => {
                         setIsMobileMenuOpen(false);
                         scrollToTop();
                       }}
-                      className={`nav-link px-3 py-2 text-xs sm:text-sm hover:bg-gray-100 rounded ${
+                      className={`nav-link px-3 py-2 text-xs sm:text-sm hover:bg-gray-100 rounded font-bold ${
                         isScrolled 
                           ? "text-white hover:bg-white/10" 
                           : "text-gray-700"
@@ -518,7 +518,7 @@ const Navbar = () => {
                     setIsMobileMenuOpen(false);
                     scrollToTop();
                   }}
-                  className={`nav-link px-3 py-2 text-xs sm:text-sm hover:bg-gray-100 rounded ${
+                  className={`nav-link px-3 py-2 text-xs sm:text-sm hover:bg-gray-100 rounded font-bold ${
                     isScrolled 
                       ? "text-white hover:bg-white/10" 
                       : "text-gray-700"
@@ -537,7 +537,7 @@ const Navbar = () => {
                     setIsMobileMenuOpen(false);
                     scrollToTop();
                   }}
-                  className={`nav-link px-3 py-2 text-xs sm:text-sm hover:bg-gray-100 rounded ${
+                  className={`nav-link px-3 py-2 text-xs sm:text-sm hover:bg-gray-100 rounded font-bold ${
                     isScrolled 
                       ? "text-white hover:bg-white/10" 
                       : "text-gray-700"
