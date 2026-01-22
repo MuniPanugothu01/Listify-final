@@ -2037,22 +2037,22 @@ const RentalsListings = () => {
                 {/* Header with Sort */}
                 <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-6 gap-4">
                   <div>
-                    <h1 className="text-xl lg:text-2xl font-semibold text-gray-900 mb-1">
+                    <h1 className="text-xl lg:text-2xl font-semibold text-gray-700 mb-1">
                       Rentals in Toronto, ON
                     </h1>
-                    <p className="text-gray-600 text-sm">
+                    <p className="text-gray-400 text-sm">
                       {allRentals.length} properties available in Toronto
                     </p>
                   </div>
                   <div className="flex items-center gap-4">
                     <div className="flex items-center gap-2">
-                      <span className="text-sm text-gray-600 hidden sm:inline">
+                      <span className="text-sm text-gray-500 hidden sm:inline">
                         Sort by
                       </span>
                       <select
                         value={sortBy}
                         onChange={(e) => setSortBy(e.target.value)}
-                        className="border border-gray-300 rounded px-3 py-1.5 text-sm text-gray-700 focus:outline-none custom-select"
+                        className="border border-gray-300 rounded px-3 py-1.5 text-sm text-gray-500 focus:outline-none custom-select"
                       >
                         <option value="featured">Featured first</option>
                         <option value="newest">Latest first</option>
@@ -2070,7 +2070,7 @@ const RentalsListings = () => {
                 <div className="h-[1px] bg-gray-400 w-full my-4" />
                 {/* Nearby Neighborhoods */}
                 <div className="">
-                  <h2 className="text-base font-semibold text-gray-900 mb-2">
+                  <h2 className="text-base font-semibold text-gray-700 mb-2">
                     Popular neighborhoods in Toronto
                   </h2>
                   <div className="flex flex-wrap gap-2 overflow-x-auto pb-2">
@@ -2090,8 +2090,8 @@ const RentalsListings = () => {
                         key={neighborhood}
                         className="flex items-center gap-1 px-2 py-1 bg-gray-100 border border-gray-200 rounded-full transition-colors hover:bg-gray-200 text-sm whitespace-nowrap"
                       >
-                        <FaMapMarkerAlt className="text-gray-500 text-sm" />
-                        <span className="text-gray-700 hover:text-blue-500 cursor-pointer">
+                        <FaMapMarkerAlt className="text-gray-400 text-sm" />
+                        <span className="text-gray-400  cursor-pointer">
                           {neighborhood}
                         </span>
                       </button>
