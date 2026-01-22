@@ -456,7 +456,7 @@ const RoomMateDetails = () => {
   // Handle message
   const handleMessage = (property) => {
     alert(
-      `Opening chat with ${property.postedBy}. This would redirect to your messaging system.`
+      `Opening chat with ${property.postedBy}. This would redirect to your messaging system.`,
     );
   };
 
@@ -679,7 +679,6 @@ const RoomMateDetails = () => {
               )}
             </div>
 
-        
             {/* Like and Share Buttons */}
             <div className="absolute top-3 right-3 flex gap-2">
               <button
@@ -753,7 +752,7 @@ const RoomMateDetails = () => {
                   </h3>
 
                   {/* Location and Quick Info */}
-                  <div className="flex items-center gap-3 text-sm text-gray-600 mb-2 flex-wrap">
+                  <div className="flex items-center gap-3 text-xs text-gray-400 mb-2 flex-wrap">
                     <div className="flex items-center gap-1">
                       <MapPin size={14} />
                       <span>{property.location}</span>
@@ -774,7 +773,7 @@ const RoomMateDetails = () => {
                       rating={property.rating}
                       reviews={property.reviews}
                     />
-                    <div className="text-sm text-gray-600">
+                    <div className="text-sm text-gray-400">
                       ⚡ {property.responseRate} response •{" "}
                       {property.responseTime}
                     </div>
@@ -782,19 +781,19 @@ const RoomMateDetails = () => {
 
                   {/* Quick Stats */}
                   <div className="flex items-center gap-4 mb-3">
-                    <div className="flex items-center gap-1 text-sm text-gray-700">
+                    <div className="flex items-center gap-1 text-sm text-gray-400">
                       <Home size={16} />
                       <span>{property.beds} bed</span>
                     </div>
-                    <div className="flex items-center gap-1 text-sm text-gray-700">
+                    <div className="flex items-center gap-1 text-sm text-gray-400">
                       <Bath size={16} />
                       <span>{property.baths} bath</span>
                     </div>
-                    <div className="flex items-center gap-1 text-sm text-gray-700">
+                    <div className="flex items-center gap-1 text-sm text-gray-400">
                       <Maximize2 size={16} />
                       <span>{property.sqft} sqft</span>
                     </div>
-                    <div className="text-sm text-gray-700">
+                    <div className="text-sm text-gray-400">
                       🚽 {property.bathroom}
                     </div>
                   </div>
@@ -802,13 +801,13 @@ const RoomMateDetails = () => {
 
                 {/* Price Section */}
                 <div className="text-right">
-                  <div className="text-2xl font-bold text-blue-600 mb-1">
+                  <div className="text-2xl font-bold text-blue-500 mb-1">
                     ${property.price.toLocaleString()}
-                    <span className="text-sm font-normal text-gray-600">
+                    <span className="text-sm font-normal text-gray-400">
                       /month
                     </span>
                   </div>
-                  <div className="text-sm text-gray-500">
+                  <div className="text-sm text-gray-400">
                     Available: {property.availableFrom}
                   </div>
                 </div>
@@ -817,16 +816,16 @@ const RoomMateDetails = () => {
               {/* Room Details in Compact Grid */}
               <div className="grid grid-cols-3 gap-2 text-xs mb-4 p-3 bg-gray-50 rounded-lg">
                 <div className="text-center">
-                  <div className="font-semibold text-gray-900">Type</div>
-                  <div className="text-gray-600">{property.roomType}</div>
+                  <div className="font-semibold text-gray-700">Type</div>
+                  <div className="text-gray-400">{property.roomType}</div>
                 </div>
                 <div className="text-center">
-                  <div className="font-semibold text-gray-900">Gender</div>
-                  <div className="text-gray-600">{property.gender}</div>
+                  <div className="font-semibold text-gray-700">Gender</div>
+                  <div className="text-gray-400">{property.gender}</div>
                 </div>
                 <div className="text-center">
-                  <div className="font-semibold text-gray-900">Saves</div>
-                  <div className="text-gray-600">{property.saves}</div>
+                  <div className="font-semibold text-gray-700">Saves</div>
+                  <div className="text-gray-400">{property.saves}</div>
                 </div>
               </div>
 
@@ -835,53 +834,25 @@ const RoomMateDetails = () => {
                 <h4 className="text-sm font-semibold text-gray-700 mb-2">
                   Key Amenities
                 </h4>
-                <div className="flex flex-wrap gap-1">
+                <div className="flex flex-wrap gap-2">
                   {property.amenities.slice(0, 6).map((amenity, index) => (
                     <span
                       key={index}
-                      className="flex items-center gap-1.5 text-xs text-blue-500 px-3 py-2 rounded-lg border-blue-100 hover:bg-blue-100 transition-colors"
+                      className="flex items-center gap-1 text-xs text-blue-400 px-3 py-2 rounded-lg hover:bg-blue-100 transition-colors"
                     >
                       {amenityIcons[amenity] || <FaBolt size={14} />}
                       {amenity}
                     </span>
                   ))}
                   {property.amenities.length > 6 && (
-                    <div className="relative">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          toggleAmenities(property.id);
-                        }}
-                        className="flex items-center gap-1.5 text-xs bg-gray-100 text-gray-600 px-3 py-2 rounded-lg border border-gray-200 hover:bg-gray-200 transition-colors"
-                      >
-                        +{property.amenities.length - 6} more
-                      </button>
-
-                      {showMoreAmenities[property.id] && (
-                        <div className="absolute top-full left-0 mt-2 z-20 bg-white border border-gray-200 rounded-lg shadow-xl p-4 min-w-[250px]">
-                          <div className="text-sm font-semibold text-gray-900 mb-3">
-                            All Amenities
-                          </div>
-                          <div className="grid grid-cols-2 gap-2">
-                            {property.amenities.map((amenity, index) => (
-                              <span
-                                key={index}
-                                className="flex items-center gap-1.5 text-xs bg-gray-50 text-gray-700 px-2 py-1.5 rounded border border-gray-200"
-                              >
-                                {amenityIcons[amenity] || <FaBolt size={12} />}
-                                {amenity}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                    </div>
+                    <span className="flex items-center gap-1.5 text-xs bg-gray-100 text-gray-500 px-3 py-2 rounded-lg border border-gray-200">
+                      +{property.amenities.length - 6} more
+                    </span>
                   )}
                 </div>
               </div>
-
               {/* Description Line */}
-              <div className="text-sm text-gray-600 mb-4 leading-relaxed">
+              <div className="text-sm text-gray-400 mb-4 leading-relaxed">
                 <p className="line-clamp-2">{property.details}</p>
               </div>
             </div>
@@ -901,7 +872,7 @@ const RoomMateDetails = () => {
                       e.stopPropagation();
                       toggleContact(property.id);
                     }}
-                    className="text-blue-600 hover:text-blue-700 hover:underline transition-colors"
+                    className="text-blue-500 hover:text-blue-600 hover:underline transition-colors"
                   >
                     Show Contact
                   </button>
@@ -932,7 +903,6 @@ const RoomMateDetails = () => {
                   Call
                 </button>
 
-                
                 {/* Message Button - Always Active */}
                 <button
                   onClick={(e) => {
@@ -977,16 +947,15 @@ const RoomMateDetails = () => {
     <div className="min-h-screen bg-white pb-20 lg:pb-0">
       <RoommateSubNav />
 
-
-  {/* Desktop "Back to Home" link */}
-        <div className="hidden lg:block ml-10 mt-2">
-          <Link to="/roommates">
-            <p className="flex items-center gap-2 text-[#27bb97] capitalize hover:underline">
-              <GoArrowUpLeft />
-              back to home
-            </p>
-          </Link>
-        </div>
+      {/* Desktop "Back to Home" link */}
+      <div className="hidden lg:block ml-10 mt-2">
+        <Link to="/roommates">
+          <p className="flex items-center gap-2 text-[#27bb97] capitalize hover:underline">
+            <GoArrowUpLeft />
+            back to home
+          </p>
+        </Link>
+      </div>
 
       {/* Header Section */}
       <div className="pt-10 pb-6 px-4 sm:px-8 lg:px-20">
@@ -1079,7 +1048,7 @@ const RoomMateDetails = () => {
                                           onChange={() =>
                                             handleSubToggle(
                                               "property",
-                                              "Single Family Home"
+                                              "Single Family Home",
                                             )
                                           }
                                           className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
@@ -1097,7 +1066,7 @@ const RoomMateDetails = () => {
                                           onChange={() =>
                                             handleSubToggle(
                                               "property",
-                                              "Apartment"
+                                              "Apartment",
                                             )
                                           }
                                           className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
@@ -1128,7 +1097,7 @@ const RoomMateDetails = () => {
                                           onChange={() =>
                                             handleSubToggle(
                                               "property",
-                                              "Town House"
+                                              "Town House",
                                             )
                                           }
                                           className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
@@ -1157,7 +1126,7 @@ const RoomMateDetails = () => {
                                           onChange={() =>
                                             handleSubToggle(
                                               "property",
-                                              "Houses"
+                                              "Houses",
                                             )
                                           }
                                           className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
@@ -1175,7 +1144,7 @@ const RoomMateDetails = () => {
                                           onChange={() =>
                                             handleSubToggle(
                                               "property",
-                                              "Hostels"
+                                              "Hostels",
                                             )
                                           }
                                           className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
@@ -1195,7 +1164,7 @@ const RoomMateDetails = () => {
                                           onChange={() =>
                                             handleSubToggle(
                                               "property",
-                                              "Basement Apartment"
+                                              "Basement Apartment",
                                             )
                                           }
                                           className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
@@ -1231,7 +1200,7 @@ const RoomMateDetails = () => {
                                           onChange={() =>
                                             handleSubToggle(
                                               "room",
-                                              "Single Room"
+                                              "Single Room",
                                             )
                                           }
                                           className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
@@ -1249,7 +1218,7 @@ const RoomMateDetails = () => {
                                           onChange={() =>
                                             handleSubToggle(
                                               "room",
-                                              "Shared Room"
+                                              "Shared Room",
                                             )
                                           }
                                           className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
@@ -1267,7 +1236,7 @@ const RoomMateDetails = () => {
                                           onChange={() =>
                                             handleSubToggle(
                                               "room",
-                                              "Paying Guest"
+                                              "Paying Guest",
                                             )
                                           }
                                           className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
@@ -1307,7 +1276,7 @@ const RoomMateDetails = () => {
                                       onChange={() =>
                                         handleSubToggle(
                                           "parking",
-                                          "Parking garage for rent"
+                                          "Parking garage for rent",
                                         )
                                       }
                                       className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
@@ -1343,7 +1312,7 @@ const RoomMateDetails = () => {
                                       onChange={() =>
                                         handleSubToggle(
                                           "commercial",
-                                          "Office Space"
+                                          "Office Space",
                                         )
                                       }
                                       className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
@@ -1361,7 +1330,7 @@ const RoomMateDetails = () => {
                                       onChange={() =>
                                         handleSubToggle(
                                           "commercial",
-                                          "Retail Outlet"
+                                          "Retail Outlet",
                                         )
                                       }
                                       className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
@@ -1418,7 +1387,7 @@ const RoomMateDetails = () => {
                                           onChange={() =>
                                             handleSubToggle(
                                               "property",
-                                              "Single Family Home"
+                                              "Single Family Home",
                                             )
                                           }
                                           className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
@@ -1436,7 +1405,7 @@ const RoomMateDetails = () => {
                                           onChange={() =>
                                             handleSubToggle(
                                               "property",
-                                              "Apartment"
+                                              "Apartment",
                                             )
                                           }
                                           className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
@@ -1467,7 +1436,7 @@ const RoomMateDetails = () => {
                                           onChange={() =>
                                             handleSubToggle(
                                               "property",
-                                              "Town House"
+                                              "Town House",
                                             )
                                           }
                                           className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
@@ -1496,7 +1465,7 @@ const RoomMateDetails = () => {
                                           onChange={() =>
                                             handleSubToggle(
                                               "property",
-                                              "Houses"
+                                              "Houses",
                                             )
                                           }
                                           className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
@@ -1514,7 +1483,7 @@ const RoomMateDetails = () => {
                                           onChange={() =>
                                             handleSubToggle(
                                               "property",
-                                              "Hostels"
+                                              "Hostels",
                                             )
                                           }
                                           className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
@@ -1534,7 +1503,7 @@ const RoomMateDetails = () => {
                                           onChange={() =>
                                             handleSubToggle(
                                               "property",
-                                              "Basement Apartment"
+                                              "Basement Apartment",
                                             )
                                           }
                                           className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
@@ -1570,7 +1539,7 @@ const RoomMateDetails = () => {
                                           onChange={() =>
                                             handleSubToggle(
                                               "room",
-                                              "Single Room"
+                                              "Single Room",
                                             )
                                           }
                                           className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
@@ -1588,7 +1557,7 @@ const RoomMateDetails = () => {
                                           onChange={() =>
                                             handleSubToggle(
                                               "room",
-                                              "Shared Room"
+                                              "Shared Room",
                                             )
                                           }
                                           className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
@@ -1606,7 +1575,7 @@ const RoomMateDetails = () => {
                                           onChange={() =>
                                             handleSubToggle(
                                               "room",
-                                              "Paying Guest"
+                                              "Paying Guest",
                                             )
                                           }
                                           className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
@@ -1646,7 +1615,7 @@ const RoomMateDetails = () => {
                                       onChange={() =>
                                         handleSubToggle(
                                           "parking",
-                                          "Parking garage for rent"
+                                          "Parking garage for rent",
                                         )
                                       }
                                       className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
@@ -1682,7 +1651,7 @@ const RoomMateDetails = () => {
                                       onChange={() =>
                                         handleSubToggle(
                                           "commercial",
-                                          "Office Space"
+                                          "Office Space",
                                         )
                                       }
                                       className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
@@ -1700,7 +1669,7 @@ const RoomMateDetails = () => {
                                       onChange={() =>
                                         handleSubToggle(
                                           "commercial",
-                                          "Retail Outlet"
+                                          "Retail Outlet",
                                         )
                                       }
                                       className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
@@ -2406,22 +2375,24 @@ const RoomMateDetails = () => {
                 {/* Header with Sort */}
                 <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-6 gap-4">
                   <div>
-                    <h1 className="text-xl lg:text-2xl font-semibold text-gray-900 mb-1">
+                    <h1 className="text-xl lg:text-2xl font-semibold text-gray-700 mb-1">
                       Indian Roommates in New York
                     </h1>
-                    <p className="text-gray-600 text-sm">
+                    <p className="text-gray-400 text-sm">
                       {allProperties.length} Rooms available in your city
                     </p>
                   </div>
                   <div className="flex items-center gap-4">
                     <div className="flex items-center gap-2">
-                      <span className="text-sm text-gray-600">Sort by</span>
+                      <span className="text-sm text-gray-500">Sort by</span>
                       <select
                         value={sortBy}
                         onChange={(e) => setSortBy(e.target.value)}
-                        className="border border-gray-300 rounded px-3 py-1.5 text-sm text-gray-700 focus:outline-none custom-select"
+                        className="border border-gray-300 rounded px-3 py-1.5 text-sm text-gray-400 focus:outline-none custom-select"
                       >
-                        <option value="featured">Featured first</option>
+                        <option value="featured text-gray-400">
+                          Featured first
+                        </option>
                         <option value="newest">Latest first</option>
                         <option value="distance">Distance</option>
                         <option value="price-min-max">Price: Min to Max</option>
@@ -2430,10 +2401,10 @@ const RoomMateDetails = () => {
                     </div>
                   </div>
                 </div>
-                <div className="h-[1px] bg-gray-400 w-full my-4" />
+                <div className="h-[1px] bg-gray-300 w-full my-4" />
                 {/* Nearby Neighborhoods */}
                 <div className="">
-                  <h2 className="text-base font-semibold text-gray-900 mb-2">
+                  <h2 className="text-base font-semibold text-gray-700 mb-2">
                     Nearby neighborhoods in New York Metro Area
                   </h2>
                   <div className="flex flex-wrap gap-3">
@@ -2447,10 +2418,10 @@ const RoomMateDetails = () => {
                     ].map((neighborhood) => (
                       <button
                         key={neighborhood}
-                        className="flex items-center gap-1 px-2 bg-gray-100 border border-gray-200 rounded-full transition-colors hover:bg-gray-200"
+                        className="flex items-center gap-1 py-1 px-2 bg-gray-100 border border-gray-200 rounded-full transition-colors hover:bg-gray-200"
                       >
-                        <FaMapMarkerAlt className="text-gray-500 text-sm" />
-                        <span className="text-sm text-gray-700 hover:text-blue-500 cursor-pointer">
+                        <FaMapMarkerAlt className="text-gray-500 text-[11px]" />
+                        <span className="text-[11px] text-gray-500 cursor-pointer">
                           {neighborhood}
                         </span>
                       </button>
@@ -2573,7 +2544,6 @@ const RoomMateDetails = () => {
               </div>
 
               {/*  Room Types in New York */}
-
               <div className="bg-white rounded-lg p-6 shadow-sm mt-6">
                 <h2 className="text-lg font-semibold text-gray-900 mb-2">
                   Room Types in New York
@@ -2599,7 +2569,6 @@ const RoomMateDetails = () => {
               </div>
 
               {/* Popular Roommates Cities in New York */}
-
               <div className="bg-white rounded-lg p-6 shadow-sm mt-6">
                 <h2 className="text-lg font-semibold text-gray-900 mb-2">
                   Popular Roommates Cities in New York
@@ -2627,7 +2596,6 @@ const RoomMateDetails = () => {
               </div>
 
               {/* Student Housing near popular Universities */}
-
               <div className="bg-white rounded-lg p-6 shadow-sm mt-6">
                 <h2 className="text-lg font-semibold text-gray-900 mb-2">
                   Student Housing near popular Universities
