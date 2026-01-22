@@ -655,9 +655,9 @@ const OurServicesPage = () => {
         </div>
       </section>
 
-      {/* Enhanced Why Trust Listify Section */}
-      <section className="py-12 sm:py-16 lg:py-20 bg-gradient-to-b from-white to-gray-50 relative overflow-hidden">
-        {/* Background Decorative Elements */}
+      {/*  Why Trust Listify Section */}
+      {/* <section className="py-12 sm:py-16 lg:py-20 bg-gradient-to-b from-white to-gray-50 relative overflow-hidden">
+       
         <div className="absolute top-0 right-0 w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 bg-gradient-to-br from-[#27bb97]/5 to-[#2d7dd7]/5 rounded-full blur-3xl -translate-y-24 sm:-translate-y-32 md:-translate-y-48 translate-x-24 sm:translate-x-32 md:translate-x-48"></div>
         <div className="absolute bottom-0 left-0 w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 bg-gradient-to-tr from-[#27bb97]/5 to-[#1FA987]/5 rounded-full blur-3xl translate-y-24 sm:translate-y-32 md:translate-y-48 -translate-x-24 sm:-translate-x-32 md:-translate-x-48"></div>
         
@@ -674,16 +674,15 @@ const OurServicesPage = () => {
             </p>
           </div>
 
-          {/* Magic UI Cards with Images */}
+      
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 mb-8 sm:mb-12 lg:mb-16">
             {enhancedWhyChooseUs.map((feature, index) => (
               <div 
                 key={index}
                 className={`scroll-animate stagger-delay-${(index % 3) + 1}`}
               >
-                {/* Glass Morphism Card */}
+           
                 <div className="relative group">
-                  {/* Card Background with Image */}
                   <div className="absolute inset-0 rounded-xl sm:rounded-2xl overflow-hidden">
                     <img
                       src={feature.image}
@@ -693,9 +692,7 @@ const OurServicesPage = () => {
                     <div className="absolute inset-0 bg-gradient-to-br from-white/95 to-white/90 backdrop-blur-sm"></div>
                   </div>
                   
-                  {/* Main Card Content */}
                   <div className="relative bg-gradient-to-br from-white/80 to-white/60 backdrop-blur-lg rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8 border border-white/40 shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 h-full">
-                    {/* Floating Icon with Glow Effect */}
                     <div className="relative mb-4 sm:mb-6">
                       <div className="absolute -inset-3 sm:-inset-4 bg-gradient-to-r from-[#27bb97]/20 to-[#1FA987]/20 rounded-full blur-lg opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                       <div className={`${feature.color} w-16 h-16 sm:w-18 sm:h-18 md:w-20 md:h-20 rounded-xl sm:rounded-2xl flex items-center justify-center relative z-10 transform group-hover:scale-110 transition-transform duration-300`}>
@@ -715,7 +712,6 @@ const OurServicesPage = () => {
                     
                   </div>
                   
-                  {/* Floating Image Element */}
                   <div className="absolute -top-3 -right-3 sm:-top-4 sm:-right-4 w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-xl sm:rounded-2xl overflow-hidden shadow-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 transform group-hover:translate-x-1 sm:group-hover:translate-x-2 group-hover:-translate-y-1 sm:group-hover:-translate-y-2">
                     <img
                       src={`https://images.unsplash.com/photo-${index === 0 ? '1556761175-b413da4baf72' : index === 1 ? '1521791136064-7986c2920216' : '1543269865-cbf427effbad'}?w=200&q=90`}
@@ -728,11 +724,8 @@ const OurServicesPage = () => {
             ))}
           </div>
 
-          {/* Enhanced Testimonial Banner */}
           <div className="scroll-animate rounded-xl sm:rounded-2xl lg:rounded-3xl p-4 sm:p-6 md:p-8 text-[#27bb97] relative overflow-hidden">
-            {/* Background Pattern */}
             <div className="absolute inset-0 opacity-10">
-              {/* Pattern removed for simplicity */}
             </div>
             
             <div className="relative z-10 grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 md:gap-8 items-center">
@@ -751,9 +744,10 @@ const OurServicesPage = () => {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
 
-      {/* Enhanced Optimize Your Service Routine Section */}
+
+      {/* Optimize your service routine */}
       <section className="py-12 sm:py-16 lg:py-20 bg-white relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center mb-8 sm:mb-12 lg:mb-16 scroll-animate">
@@ -768,7 +762,6 @@ const OurServicesPage = () => {
             </p>
           </div>
 
-          {/* Horizontal Scroll Cards */}
           <div className="scroll-animate">
             <div className="flex overflow-x-auto pb-4 sm:pb-6 lg:pb-8 snap-x snap-mandatory gap-4 sm:gap-6 px-4 -mx-4 scrollbar-hide">
               {enhancedDailyRoutine.map((routine, index) => (
@@ -787,7 +780,6 @@ const OurServicesPage = () => {
                         />
                         <div className="absolute inset-0 bg-gradient-to-r from-[#27bb97]/90 to-[#1FA987]/90 mix-blend-multiply"></div>
                         
-                        {/* Time Badge */}
                         <div className="absolute top-3 sm:top-4 left-3 sm:left-4">
                           <div className="px-3 sm:px-4 py-1 sm:py-2 bg-white/20 backdrop-blur-sm rounded-full">
                             <span className="text-white font-bold text-xs sm:text-sm">{routine.timeSlot}</span>
@@ -795,7 +787,6 @@ const OurServicesPage = () => {
                         </div>
                       </div>
 
-                      {/* Card Content */}
                       <div className="p-4 sm:p-6">
                         <div className="mb-3 sm:mb-4">
                           <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-1 sm:mb-2">{routine.title}</h3>
@@ -808,7 +799,6 @@ const OurServicesPage = () => {
                           {routine.description}
                         </p>
                         
-                        {/* Steps */}
                         <div className="space-y-2 sm:space-y-3 mb-4 sm:mb-6">
                           {routine.steps.map((step, stepIndex) => (
                             <div key={stepIndex} className="flex items-start gap-2 sm:gap-3">
@@ -822,7 +812,7 @@ const OurServicesPage = () => {
                           ))}
                         </div>
                         
-                        {/* Button */}
+                      
                         <button className="w-full py-2.5 sm:py-3 bg-gradient-to-r from-[#27bb97] to-[#1FA987] text-white font-semibold rounded-lg hover:from-[#1FA987] hover:to-[#198F72] transition-all duration-300 flex items-center justify-center gap-1 sm:gap-2 text-xs sm:text-sm">
                           <Clock className="w-3 h-3 sm:w-4 sm:h-4" />
                           Set Reminder
@@ -838,7 +828,7 @@ const OurServicesPage = () => {
         </div>
       </section>
 
-      {/* Enhanced Featured Service Providers Section */}
+      {/* Service Providers Section */}
       <section className="py-12 sm:py-16 lg:py-20 bg-gradient-to-b from-white to-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8 sm:mb-12 lg:mb-16 scroll-animate">
@@ -857,7 +847,6 @@ const OurServicesPage = () => {
                 className={`scroll-animate stagger-delay-${(index % 4) + 1} hover-lift`}
               >
                 <div className="bg-white rounded-xl sm:rounded-2xl overflow-hidden shadow-lg sm:shadow-xl hover:shadow-2xl transition-all duration-300 border border-gray-100 h-full">
-                  {/* Provider Image with Overlay */}
                   <div className="relative h-40 sm:h-44 md:h-48 lg:h-56 overflow-hidden">
                     <img
                       src={provider.image}
@@ -865,10 +854,8 @@ const OurServicesPage = () => {
                       className="w-full h-full object-cover transform hover:scale-110 transition-transform duration-700"
                     />
                     
-                    {/* Gradient Overlay */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"></div>
                     
-                    {/* Featured Badge */}
                     {provider.featured && (
                       <div className="absolute top-3 sm:top-4 left-3 sm:left-4">
                         <span className="px-2 sm:px-3 py-1 bg-gradient-to-r from-[#27BB97] to-[#1FA987] text-white text-xs font-bold rounded-full shadow-lg">
@@ -877,7 +864,6 @@ const OurServicesPage = () => {
                       </div>
                     )}
                     
-                    {/* Price & Response Time */}
                     <div className="absolute bottom-3 sm:bottom-4 right-3 sm:right-4 flex flex-col items-end gap-1 sm:gap-2">
                       <span className="px-2 sm:px-3 py-1 bg-white/90 backdrop-blur-sm text-gray-800 text-xs sm:text-sm font-semibold rounded-full">
                         {provider.price}
@@ -888,14 +874,12 @@ const OurServicesPage = () => {
                     </div>
                   </div>
 
-                  {/* Provider Info */}
                   <div className="p-4 sm:p-6">
                     <div className="flex items-start justify-between mb-3 sm:mb-4">
                       <div className="flex-1">
                         <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-1">{provider.name}</h3>
                         <p className="text-xs sm:text-sm text-gray-500 mb-2">{provider.category}</p>
                         
-                        {/* Specialties */}
                         <div className="flex flex-wrap gap-1 sm:gap-2 mt-1 sm:mt-2">
                           {provider.specialties.slice(0, 2).map((specialty, i) => (
                             <span key={i} className="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full">
@@ -905,7 +889,6 @@ const OurServicesPage = () => {
                         </div>
                       </div>
                       
-                      {/* Rating */}
                       <div className="flex flex-col items-end">
                         <div className="flex items-center gap-1">
                           <Star className="w-3 h-3 sm:w-4 sm:h-4 text-yellow-400 fill-current" />
@@ -915,7 +898,6 @@ const OurServicesPage = () => {
                       </div>
                     </div>
                     
-                    {/* Location & Contact */}
                     <div className="flex items-center justify-between mb-4 sm:mb-6 pt-3 sm:pt-4 border-t border-gray-100">
                       <div className="flex items-center gap-1 sm:gap-2">
                         <MapPin className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400" />
@@ -933,7 +915,6 @@ const OurServicesPage = () => {
             ))}
           </div>
 
-          {/* View All Button */}
           <div className="text-center mt-8 sm:mt-12 scroll-animate">
             <button className="px-4 sm:px-6 md:px-8 py-3 sm:py-4 bg-gradient-to-r from-[#27BB97] to-[#1FA987] text-white font-semibold rounded-lg sm:rounded-xl hover:from-[#1FA987] hover:to-[#198F72] transition-all duration-300 hover:scale-105 flex items-center gap-2 sm:gap-3 mx-auto text-sm sm:text-base">
               <UsersIcon className="w-4 h-4 sm:w-5 sm:h-5" />
