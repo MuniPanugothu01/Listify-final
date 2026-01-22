@@ -81,8 +81,8 @@ const allRentals = [
     verified: true,
     immediate: true,
     discount: "No Broker Fee",
-    distance: "0.3 mi from Subway",
-    busStopDistance: "0.1 mi from Bus Stop",
+    // distance: "0.3 mi from Subway",
+    // busStopDistance: "0.1 mi from Bus Stop",
     contact: "+1 (416) 123-4567",
     views: 245,
     saves: 42,
@@ -127,8 +127,8 @@ const allRentals = [
     verified: true,
     immediate: false,
     discount: "Utilities Included",
-    distance: "0.5 mi from Campus",
-    busStopDistance: "0.2 mi from Bus Stop",
+    // distance: "0.5 mi from Campus",
+    // busStopDistance: "0.2 mi from Bus Stop",
     contact: "+1 (416) 987-6543",
     views: 189,
     saves: 31,
@@ -174,8 +174,8 @@ const allRentals = [
     verified: false,
     immediate: true,
     discount: "First Month Discount",
-    distance: "0.7 mi from GO Station",
-    busStopDistance: "0.3 mi from Bus Stop",
+    // distance: "0.7 mi from GO Station",
+    // busStopDistance: "0.3 mi from Bus Stop",
     contact: "+1 (416) 456-7890",
     views: 312,
     saves: 58,
@@ -221,8 +221,8 @@ const allRentals = [
     verified: true,
     immediate: true,
     discount: "No Deposit",
-    distance: "0.2 mi from Streetcar",
-    busStopDistance: "0.1 mi from Bus Stop",
+    // distance: "0.2 mi from Streetcar",
+    // busStopDistance: "0.1 mi from Bus Stop",
     contact: "+1 (416) 234-5678",
     views: 178,
     saves: 39,
@@ -268,8 +268,8 @@ const allRentals = [
     verified: true,
     immediate: false,
     discount: "Flexible Lease",
-    distance: "0.4 mi from Ferry",
-    busStopDistance: "0.2 mi from Streetcar",
+    // distance: "0.4 mi from Ferry",
+    // busStopDistance: "0.2 mi from Streetcar",
     contact: "+1 (416) 345-6789",
     views: 421,
     saves: 87,
@@ -314,8 +314,8 @@ const allRentals = [
     verified: false,
     immediate: true,
     discount: "All Inclusive",
-    distance: "0.8 mi from Subway",
-    busStopDistance: "0.4 mi from Bus Stop",
+    // distance: "0.8 mi from Subway",
+    // busStopDistance: "0.4 mi from Bus Stop",
     contact: "+1 (416) 567-8901",
     views: 156,
     saves: 23,
@@ -361,8 +361,8 @@ const allRentals = [
     verified: true,
     immediate: false,
     discount: "Negotiable",
-    distance: "0.3 mi from Streetcar",
-    busStopDistance: "0.2 mi from Bus Stop",
+    // distance: "0.3 mi from Streetcar",
+    // busStopDistance: "0.2 mi from Bus Stop",
     contact: "+1 (416) 678-9012",
     views: 267,
     saves: 46,
@@ -408,8 +408,8 @@ const allRentals = [
     verified: true,
     immediate: true,
     discount: "Corporate Rate",
-    distance: "0.1 mi from PATH",
-    busStopDistance: "0.1 mi from Streetcar",
+    // distance: "0.1 mi from PATH",
+    // busStopDistance: "0.1 mi from Streetcar",
     contact: "+1 (416) 789-0123",
     views: 189,
     saves: 52,
@@ -872,7 +872,7 @@ const RentalsListings = () => {
             </div>
 
             {/* Top Left Badges - Stacked vertically on mobile */}
-            <div className="absolute top-1 sm:top-3 left-1 sm:left-3 flex flex-col gap-1 sm:gap-2">
+            {/* <div className="absolute top-1 sm:top-3 left-1 sm:left-3 flex flex-col gap-1 sm:gap-2">
               {property.verified && (
                 <div className="flex">
                   <Badge type="verified">Verified</Badge>
@@ -893,7 +893,7 @@ const RentalsListings = () => {
                   <Badge type="default">🐾 Pet Friendly</Badge>
                 </div>
               )}
-            </div>
+            </div> */}
 
             {/* Like and Share Buttons - Smaller on mobile */}
             <div className="absolute top-1 sm:top-3 right-1 sm:right-3 flex gap-1 sm:gap-2">
@@ -977,7 +977,7 @@ const RentalsListings = () => {
                   </h3>
 
                   {/* Location and Quick Info - Improved mobile layout */}
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 md:gap-3 text-xs sm:text-sm text-gray-600 mb-1 sm:mb-2 flex-wrap">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 md:gap-3 sm:text-sm text-gray-400 mb-1 sm:mb-2 flex-wrap">
                     <div className="flex items-center gap-0.5 sm:gap-1">
                       <MapPin size={12} className="sm:w-3.5 sm:h-3.5" />
                       <span className="text-xs sm:text-sm">
@@ -999,12 +999,12 @@ const RentalsListings = () => {
                   </div>
 
                   {/* Rating and Response Info - Stack on mobile */}
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 md:gap-3 mb-2 sm:mb-3">
+                  <div className="flex flex-col text-gray-400 sm:flex-row sm:items-center gap-1 sm:gap-2 md:gap-3 mb-2 sm:mb-3">
                     <RatingStars
                       rating={property.rating}
                       reviews={property.reviews}
                     />
-                    <div className="text-xs sm:text-sm text-gray-600">
+                    <div className="text-xs sm:text-sm text-gray-400">
                       ⚡ {property.responseRate} response •{" "}
                       {property.responseTime}
                     </div>
@@ -1012,19 +1012,19 @@ const RentalsListings = () => {
 
                   {/* Quick Stats - Better mobile layout */}
                   <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 md:gap-4 mb-2 sm:mb-3">
-                    <div className="flex items-center gap-0.5 sm:gap-1 text-xs sm:text-sm text-gray-700">
+                    <div className="flex items-center gap-0.5 sm:gap-1 text-xs sm:text-sm text-gray-400">
                       <Home size={14} className="sm:w-4 sm:h-4" />
                       <span>{property.bedrooms} bed</span>
                     </div>
-                    <div className="flex items-center gap-0.5 sm:gap-1 text-xs sm:text-sm text-gray-700">
+                    <div className="flex items-center gap-0.5 sm:gap-1 text-xs sm:text-sm text-gray-400">
                       <Bath size={14} className="sm:w-4 sm:h-4" />
                       <span>{property.bathrooms} bath</span>
                     </div>
-                    <div className="flex items-center gap-0.5 sm:gap-1 text-xs sm:text-sm text-gray-700">
+                    <div className="flex items-center gap-0.5 sm:gap-1 text-xs sm:text-sm text-gray-400">
                       <Maximize2 size={14} className="sm:w-4 sm:h-4" />
                       <span>{property.sqft} sqft</span>
                     </div>
-                    <div className="text-xs sm:text-sm text-gray-700">
+                    <div className="text-xs sm:text-sm text-gray-400">
                       📅 {property.leaseTerm}
                     </div>
                   </div>
@@ -1034,11 +1034,11 @@ const RentalsListings = () => {
                 <div className="text-left sm:text-right">
                   <div className="text-lg sm:text-xl md:text-2xl font-bold text-blue-600 mb-0.5 sm:mb-1">
                     ${property.price.toLocaleString()}
-                    <span className="text-xs sm:text-sm font-normal text-gray-600">
+                    <span className="text-xs sm:text-sm font-normal text-gray-400">
                       /month
                     </span>
                   </div>
-                  <div className="text-xs sm:text-sm text-gray-500">
+                  <div className="text-xs sm:text-sm text-gray-400">
                     Available: {property.availableFrom}
                   </div>
                 </div>
@@ -1047,26 +1047,26 @@ const RentalsListings = () => {
               {/* Property Details in Compact Grid - Better mobile spacing */}
               <div className="grid grid-cols-3 gap-1 sm:gap-2 text-xs mb-2 sm:mb-3 md:mb-4 p-2 sm:p-3 bg-gray-50 rounded-lg">
                 <div className="text-center">
-                  <div className="font-semibold text-gray-900">Type</div>
-                  <div className="text-gray-600 text-xs truncate px-1">
+                  <div className="font-semibold text-gray-700">Type</div>
+                  <div className="text-gray-400 text-xs truncate px-1">
                     {property.propertyType}
                   </div>
                 </div>
                 <div className="text-center">
-                  <div className="font-semibold text-gray-900">Lease</div>
-                  <div className="text-gray-600 text-xs truncate px-1">
+                  <div className="font-semibold text-gray-700">Lease</div>
+                  <div className="text-gray-400 text-xs truncate px-1">
                     {property.leaseTerm}
                   </div>
                 </div>
                 <div className="text-center">
-                  <div className="font-semibold text-gray-900">Saves</div>
-                  <div className="text-gray-600">{property.saves}</div>
+                  <div className="font-semibold text-gray-700">Saves</div>
+                  <div className="text-gray-400">{property.saves}</div>
                 </div>
               </div>
 
               {/* Premium Amenities with Icons - Improved mobile layout */}
               <div className="mb-2 sm:mb-3 md:mb-4">
-                <h4 className="text-xs sm:text-sm font-semibold text-gray-900 mb-1 sm:mb-2">
+                <h4 className="text-xs sm:text-sm font-semibold text-gray-600 mb-1 sm:mb-2">
                   Key Amenities
                 </h4>
                 <div className="flex flex-wrap gap-1">
@@ -1075,7 +1075,7 @@ const RentalsListings = () => {
                     .map((amenity, index) => (
                       <span
                         key={index}
-                        className="flex items-center gap-1 text-xs text-blue-700 px-1.5 sm:px-2 py-1 sm:py-1.5 md:py-2 rounded-lg border-blue-100 hover:bg-blue-100 transition-colors"
+                        className="flex items-center gap-1 text-xs text-blue-400 px-1.5 sm:px-2 py-1 sm:py-1.5 md:py-2 rounded-lg border-blue-100 hover:bg-blue-100 transition-colors"
                       >
                         {amenityIcons[amenity] || (
                           <FaBolt size={12} className="sm:w-3.5 sm:h-3.5" />
@@ -1100,7 +1100,7 @@ const RentalsListings = () => {
                           e.stopPropagation();
                           toggleAmenities(property.id);
                         }}
-                        className="flex items-center gap-1 text-xs bg-gray-100 text-gray-600 px-1.5 sm:px-2 py-1 sm:py-1.5 md:py-2 rounded-lg border border-gray-200 hover:bg-gray-200 transition-colors"
+                        className="flex items-center gap-1 text-xs bg-gray-100 text-gray-500 px-1.5 sm:px-2 py-1 sm:py-1.5 md:py-2 rounded-lg border border-gray-200 hover:bg-gray-200 transition-colors"
                       >
                         +
                         {property.amenities.length -
@@ -1136,7 +1136,7 @@ const RentalsListings = () => {
               </div>
 
               {/* Description Line - Better mobile line clamping */}
-              <div className="text-xs sm:text-sm text-gray-600 mb-2 sm:mb-3 md:mb-4 leading-relaxed">
+              <div className="text-xs sm:text-sm text-gray-500 mb-2 sm:mb-3 md:mb-4 leading-relaxed">
                 <p className="line-clamp-2 sm:line-clamp-3">
                   {property.details}
                 </p>
@@ -1160,7 +1160,7 @@ const RentalsListings = () => {
                       e.stopPropagation();
                       toggleContact(property.id);
                     }}
-                    className="text-blue-600 hover:text-blue-700 hover:underline transition-colors text-xs sm:text-sm"
+                    className="text-blue-500 hover:text-blue-600 hover:underline transition-colors text-xs sm:text-sm"
                   >
                     Show Contact
                   </button>
@@ -1520,7 +1520,7 @@ const RentalsListings = () => {
               </div>
 
               {/* Action Buttons */}
-              <div className="flex items-center gap-3 w-full lg:w-auto justify-center lg:justify-start ">
+              <div className="flex items-center gap-2 w-full lg:w-auto justify-center lg:justify-start ">
                 <button
                   onClick={handleSearch}
                   className="w-full lg:w-fit px-6 flex items-center justify-center gap-2 bg-[#2563EB]
@@ -1528,7 +1528,7 @@ const RentalsListings = () => {
                            shadow-lg hover:shadow-xl transition-all duration-200 cursor-pointer"
                 >
                   <Search className="w-4 h-4" />
-                  <span className="hidden sm:inline">View Results</span>
+                  <span className="hidden sm:inline">ViewResults</span>
                   <span className="sm:hidden">Search</span>
                 </button>
 
@@ -1536,8 +1536,8 @@ const RentalsListings = () => {
                 <div className="relative w-full lg:w-auto">
                   <button
                     onClick={() => setShowPlusDropdown(!showPlusDropdown)}
-                    className="w-full lg:w-auto p-4 bg-white text-gray-700 border border-gray-300 
-               rounded-xl hover:bg-gray-50 hover:border-gray-400 hover:shadow-sm 
+                    className="w-full lg:w-auto p-3 bg-white text-gray-700 border border-gray-300 
+               rounded-lg hover:bg-gray-50 hover:border-gray-400 hover:shadow-sm 
                transition-all duration-200 flex items-center justify-center 
                shadow-xs focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
                   >
@@ -1867,6 +1867,7 @@ const RentalsListings = () => {
                                 </label>
                               ))}
                             </div>
+                            
                           </div>
 
                           {/* Quick Action Buttons */}
@@ -1938,10 +1939,10 @@ const RentalsListings = () => {
 
                 <button
                   onClick={handleSaveSearch}
-                  className="w-full lg:w-fit items-center px-6 py-3 justify-center bg-red-500 text-white 
-                           rounded-lg hover:bg-red-600 transition-all duration-200 cursor-pointer"
+                  className="w-full lg:w-fit items-center px-6 py-3 justify-center bg-[#27bb97] text-white 
+                           rounded-lg hover:bg-[#1fa987] transition-all duration-200 cursor-pointer"
                 >
-                  <span className="hidden sm:inline">Save Changes</span>
+                  <span className="hidden sm:inline">SaveChanges</span>
                   <span className="sm:hidden">Save</span>
                 </button>
               </div>
