@@ -309,7 +309,7 @@ const Navbar = () => {
                 >
                   <a
                     href="#"
-                    className={`nav-link text-xs font-semibold md:text-sm lg:text-base px-1 whitespace-nowrap flex items-center hover:text-gray-900 ${
+                    className={`nav-link text-xs font-semibold md:text-sm lg:text-base md:mt-1 lg:mt-0 whitespace-nowrap flex items-center hover:text-gray-900 ${
                       isScrolled ? "text-white" : "text-gray-700"
                     }`}
                   >
@@ -319,7 +319,7 @@ const Navbar = () => {
 
                   {/* More Dropdown */}
                   <div
-                    className={`absolute top-full left-0 mt-2 bg-white border border-gray-300 rounded-lg shadow-lg z-20 transition-all duration-300 ease-out ${
+                    className={`absolute top-full left-0 mt-2 md:mt-10 bg-white border border-gray-300 rounded-lg shadow-lg z-20 transition-all duration-300 ease-out ${
                       showMoreDropdown
                         ? "opacity-100 translate-y-0 scale-100 visible"
                         : "opacity-0 -translate-y-2 scale-95 invisible"

@@ -375,17 +375,6 @@ const NavSearchBar = ({ selectedLocation, setSelectedLocation, isScrolled }) => 
         </div>
       </div>
 
-      {/* Mobile Search Icon (shown in Navbar component) */}
-      <div className="md:hidden">
-        <button
-          onClick={handleSearchClick}
-          className={`p-1.5 sm:p-2 rounded-lg ${
-            isScrolled ? "text-white hover:bg-white/10" : "text-gray-700 hover:bg-gray-100"
-          }`}
-        >
-          <FaSearch className="h-4 w-4 sm:h-5 sm:w-5" />
-        </button>
-      </div>
 
       {/* Location Dropdown */}
       {showLocationDropdown && (

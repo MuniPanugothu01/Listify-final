@@ -12,7 +12,7 @@ import { MdCleaningServices } from "react-icons/md";
 import { GiCarWheel, GiHouseKeys, GiPartyPopper } from "react-icons/gi";
 import { useNavigate } from "react-router-dom"; // Import useNavigate for navigation
 
-export default function Carousel() {
+export default function Hero() {
   const [activeCategory, setActiveCategory] = useState(null);
   const [isSearchActive, setIsSearchActive] = useState(false);
   const [isCategoriesOpen, setIsCategoriesOpen] = useState(false);
@@ -476,7 +476,7 @@ export default function Carousel() {
 
               <p className="text-gray-600 text-sm sm:text-base md:text-lg">
                 Find houses for rent or sale, trusted nanny & home care, local
-                services, vehicles, and travel options — all in one place.
+                services, vehicles, and travel options - all in one place.
               </p>
             </div>
 

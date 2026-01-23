@@ -7,7 +7,7 @@ import {
 } from "react-router-dom";
 
 import Navbar from "./pages/Home/Navbar.jsx";
-import Carousel from "./pages/Home/Carousel.jsx";
+import Hero from "./pages/Home/Hero.jsx";
 import HeroSection from "./pages/Home/HeroSection.jsx";
 import Heading from "./pages/Home/Heading.jsx";
 import TrendingCategories from "./pages/Home/TrendingCategories.jsx";
@@ -161,7 +161,7 @@ const App = () => {
               path="/"
               element={
                 <>
-                  <Carousel />
+                  <Hero />
                   {/* <HeroSection /> */}
                   <Heading />
                   {/* <Gallery /> */}
