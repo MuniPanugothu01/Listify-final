@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 import {
   BrowserRouter as Router,
   Routes,
@@ -21,6 +22,7 @@ import Gallery from "./pages/Home/Gallery.jsx";
 
 // signin page
 import Signin from "./pages/Home/Signin.jsx";
+import SignUp from "./pages/Home/SignUp.jsx";
 
 import ContactUs from "./pages/ContactPage/ContactUS.jsx";
 import AboutUs from "./pages/AboutPage/AboutUs.jsx";
@@ -177,6 +179,7 @@ const App = () => {
             {/* signin route */}
 
             <Route path="/signin" element={<Signin />} />
+            <Route path="/signup" element={<SignUp />} />
             <Route path="/faq" element={< Questions/>} />
 
 
