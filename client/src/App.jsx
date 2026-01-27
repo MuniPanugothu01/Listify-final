@@ -265,7 +265,7 @@ const App = () => {
         </Layout>
 
         {/* Floating Buttons */}
-        <div className="fixed bottom-6 right-8 z-50 flex flex-col items-end space-y-4">
+        <div className="fixed bottom-6 right-8 z-50 flex flex-col items-end space-y-4 ">
           <div
             className={`transition-all duration-500 ${
               showScrollTop ? "translate-y-0" : "translate-y-2"
