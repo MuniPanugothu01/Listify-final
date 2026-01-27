@@ -65,7 +65,7 @@ const Navbar = () => {
     { name: "TakeCare", path: "/takecare" },
     { name: "Jobs", path: "/jobs" },
     { name: "Cars", path: "/cars" },
-    { name: "For sale", path: "/forsale" },
+    { name: "Electronics", path: "/electronics" },
   ];
 
   const profileMenuItems = [

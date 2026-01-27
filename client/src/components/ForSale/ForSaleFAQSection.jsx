@@ -6,28 +6,28 @@ export default function ForSaleFAQSection() {
 
   const faqs = [
     {
-      question: 'What is your return policy?',
-      answer: 'We offer a 30-day return policy for all products in original condition with packaging. For defective items, we provide a full refund or replacement.'
+      question: 'What is the warranty on used electronics?',
+      answer: 'We provide a 90-day warranty on all certified used electronics. For individual sellers, warranty terms are specified in each listing.'
     },
     {
-      question: 'Do you offer international shipping?',
-      answer: 'Yes, we ship to most countries worldwide. Shipping costs and delivery times vary by destination. Please check at checkout for specific rates.'
+      question: 'How do I test electronics before buying?',
+      answer: 'We recommend meeting in public places where you can test devices. For high-value items, consider meeting at electronics stores that offer testing facilities.'
     },
     {
-      question: 'How can I track my order?',
-      answer: 'Once your order ships, you will receive a tracking number via email and SMS. You can also track your order from your account dashboard on our website.'
+      question: 'Can I return electronics if they don\'t work?',
+      answer: 'Yes, all defective electronics can be returned within 7 days. Make sure to test thoroughly before purchase and keep all communication records.'
     },
     {
-      question: 'What payment methods do you accept?',
-      answer: 'We accept all major credit cards, PayPal, Apple Pay, Google Pay, and offer financing options through Affirm and Klarna for qualifying orders over $500.'
+      question: 'What payment methods are safest for electronics?',
+      answer: 'We recommend cash for transactions under $500. For higher amounts, use secure payment apps with purchase protection like PayPal Goods & Services.'
     },
     {
-      question: 'Do you price match?',
-      answer: 'Yes, we offer price matching on identical items from authorized retailers. Contact our customer service with the competitor\'s listing for verification.'
+      question: 'How do I verify electronics are not stolen?',
+      answer: 'Always ask for original purchase receipts and check IMEI/Serial numbers. Avoid deals that seem too good to be true.'
     },
     {
-      question: 'How do I contact customer service?',
-      answer: 'You can reach us 24/7 via live chat on our website, email at support@example.com, or call our toll-free number at 1-800-123-4567.'
+      question: 'Do you offer tech support for electronics?',
+      answer: 'While we don\'t provide direct tech support, our community forum has experienced members who can help with common electronics issues.'
     }
   ];
 
@@ -40,10 +40,10 @@ export default function ForSaleFAQSection() {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-8 sm:mb-12 lg:mb-16">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-3 sm:mb-4">
-            Frequently Asked <span className="gradient-text">Questions</span>
+            Electronics Buying <span className="gradient-text">Questions</span>
           </h2>
           <p className="text-sm sm:text-base md:text-lg text-gray-600 max-w-2xl mx-auto px-2">
-            Everything you need to know about shopping with us
+            Everything you need to know about buying electronics safely
           </p>
         </div>
 
@@ -76,7 +76,7 @@ export default function ForSaleFAQSection() {
 
         <div className="text-center mt-8 sm:mt-12">
           <div className="mb-4 sm:mb-6">
-            <p className="text-gray-600 text-sm sm:text-base mb-3 sm:mb-4">Still have questions?</p>
+            <p className="text-gray-600 text-sm sm:text-base mb-3 sm:mb-4">Still have electronics questions?</p>
             <div className="inline-flex flex-col sm:flex-row gap-3 sm:gap-4">
               <button 
                 className="px-6 sm:px-8 py-2.5 sm:py-3 rounded-full font-medium transition-colors text-sm sm:text-base"
@@ -91,7 +91,7 @@ export default function ForSaleFAQSection() {
                   e.target.style.backgroundColor = '#27BB97';
                 }}
               >
-                Contact Support
+                Ask Tech Community
               </button>
               <button 
                 className="px-6 sm:px-8 py-2.5 sm:py-3 rounded-full font-medium transition-colors text-sm sm:text-base"
@@ -109,7 +109,7 @@ export default function ForSaleFAQSection() {
                   e.target.style.color = '#27BB97';
                 }}
               >
-                Live Chat Now
+                Safety Guidelines
               </button>
             </div>
           </div>

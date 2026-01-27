@@ -1,22 +1,22 @@
 import React from 'react';
-import { Shield, Truck, MessageCircle, CreditCard, Star, Users } from 'lucide-react';
+import { Shield, Truck, MessageCircle, CreditCard, Star, Users, Package, Headphones } from 'lucide-react';
 
 export default function ForSaleOffers() {
   const offers = [
     {
-      icon: Users,
-      title: 'Local Community',
-      description: 'Buy and sell directly with people in your neighborhood. Trusted local transactions.'
+      icon: Package,
+      title: 'Device Testing',
+      description: 'Meet at safe locations to test electronics before purchase. Ensure everything works perfectly.'
     },
     {
-      icon: MessageCircle,
-      title: 'Direct Messaging',
-      description: 'Chat directly with sellers. Negotiate prices and arrange meetups securely.'
+      icon: Headphones,
+      title: 'Tech Support',
+      description: 'Get help from our community tech experts. Troubleshoot issues before and after purchase.'
     },
     {
       icon: Shield,
-      title: 'Safe Transactions',
-      description: 'Meet in public places. Cash on delivery. Verified user profiles for safety.'
+      title: 'Verified Sellers',
+      description: 'Buy from trusted sellers with verified profiles and positive reviews from other tech enthusiasts.'
     }
   ];
 
@@ -25,10 +25,10 @@ export default function ForSaleOffers() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-8 sm:mb-12 lg:mb-16">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-3 sm:mb-4">
-            Why Choose <span className="gradient-text">Our Marketplace</span>
+            Why Choose Our <span className="gradient-text">Electronics Marketplace</span>
           </h2>
           <p className="text-sm sm:text-base md:text-lg text-gray-600 max-w-2xl mx-auto px-2">
-            Connect directly with buyers and sellers in your community. No middlemen, no hidden fees.
+            Buy and sell electronics safely with our community-focused platform. Get the best deals on tech.
           </p>
         </div>
 
@@ -41,11 +41,11 @@ export default function ForSaleOffers() {
                   <div className="p-6 sm:p-8">
                     <div 
                       className="inline-flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 rounded-full mb-4 sm:mb-6"
-                      style={{ backgroundColor: '#E8F7F3' }} // Light green background
+                      style={{ backgroundColor: '#E8F7F3' }}
                     >
                       <Icon 
                         className="w-6 h-6 sm:w-8 sm:h-8" 
-                        style={{ color: '#27BB97' }} // Custom green for icons
+                        style={{ color: '#27BB97' }}
                       />
                     </div>
                     <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2 sm:mb-3">{offer.title}</h3>
@@ -63,33 +63,47 @@ export default function ForSaleOffers() {
             <div className="text-center p-3 sm:p-4 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors">
               <div className="flex items-center justify-center mb-1 sm:mb-2">
                 <CreditCard className="w-5 h-5 sm:w-6 sm:h-6 mr-2" style={{ color: '#27BB97' }} />
-                <span className="font-semibold text-gray-900 text-sm sm:text-base">Flexible Payment</span>
+                <span className="font-semibold text-gray-900 text-sm sm:text-base">Secure Payment</span>
               </div>
-              <p className="text-xs sm:text-sm text-gray-500">Cash, UPI, Bank Transfer</p>
+              <p className="text-xs sm:text-sm text-gray-500">Escrow for high-value items</p>
             </div>
             
             <div className="text-center p-3 sm:p-4 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors">
               <div className="flex items-center justify-center mb-1 sm:mb-2">
                 <Truck className="w-5 h-5 sm:w-6 sm:h-6 mr-2" style={{ color: '#27BB97' }} />
-                <span className="font-semibold text-gray-900 text-sm sm:text-base">Local Pickup</span>
+                <span className="font-semibold text-gray-900 text-sm sm:text-base">Meet & Test</span>
               </div>
-              <p className="text-xs sm:text-sm text-gray-500">Arrange convenient meetups</p>
+              <p className="text-xs sm:text-sm text-gray-500">Test devices before buying</p>
             </div>
             
             <div className="text-center p-3 sm:p-4 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors">
               <div className="flex items-center justify-center mb-1 sm:mb-2">
                 <Star className="w-5 h-5 sm:w-6 sm:h-6 mr-2" style={{ color: '#27BB97' }} />
-                <span className="font-semibold text-gray-900 text-sm sm:text-base">User Ratings</span>
+                <span className="font-semibold text-gray-900 text-sm sm:text-base">Seller Ratings</span>
               </div>
-              <p className="text-xs sm:text-sm text-gray-500">Trusted seller reviews</p>
+              <p className="text-xs sm:text-sm text-gray-500">Trusted tech seller reviews</p>
             </div>
             
             <div className="text-center p-3 sm:p-4 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors">
               <div className="flex items-center justify-center mb-1 sm:mb-2">
                 <Shield className="w-5 h-5 sm:w-6 sm:h-6 mr-2" style={{ color: '#27BB97' }} />
-                <span className="font-semibold text-gray-900 text-sm sm:text-base">Free Listing</span>
+                <span className="font-semibold text-gray-900 text-sm sm:text-base">IMEI Checks</span>
               </div>
-              <p className="text-xs sm:text-sm text-gray-500">Post ads at no cost</p>
+              <p className="text-xs sm:text-sm text-gray-500">Verify device authenticity</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Electronics Safety Tips */}
+        <div className="mt-8 sm:mt-12 p-4 sm:p-6 rounded-xl" style={{ backgroundColor: '#F0F9F7', border: '1px solid #27BB97' }}>
+          <div className="flex items-start">
+            <Shield className="w-5 h-5 sm:w-6 sm:h-6 mr-3 mt-1 flex-shrink-0" style={{ color: '#27BB97' }} />
+            <div>
+              <h4 className="font-semibold text-gray-900 text-sm sm:text-base mb-1">Electronics Safety Tips</h4>
+              <p className="text-xs sm:text-sm text-gray-600">
+                • Always meet in public places • Test devices thoroughly • Check IMEI/serial numbers • 
+                Ask for original purchase receipts • Use secure payment methods • Report suspicious listings
+              </p>
             </div>
           </div>
         </div>
@@ -110,7 +124,7 @@ export default function ForSaleOffers() {
                 e.target.style.backgroundColor = '#27BB97';
               }}
             >
-              List an Item for Free
+              List Electronics for Free
             </button>
             <button 
               className="px-6 sm:px-8 py-2.5 sm:py-3 rounded-full font-medium transition-colors text-sm sm:text-base"
@@ -128,7 +142,7 @@ export default function ForSaleOffers() {
                 e.target.style.color = '#27BB97';
               }}
             >
-              Browse Local Listings
+              Browse Tech Deals
             </button>
           </div>
         </div>

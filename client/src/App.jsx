@@ -208,7 +208,7 @@ const App = () => {
 
 
             {/* For Sale */}
-            <Route path="/forsale" element={<ForSale />} />
+            <Route path="/electronics" element={<ForSale />} />
 
             {/* Roommates */}
             <Route path="/roommates" element={<Roommates />} />

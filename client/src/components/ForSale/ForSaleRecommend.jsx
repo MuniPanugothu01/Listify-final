@@ -3,19 +3,19 @@ import React from 'react';
 export default function ForSaleRecommended() {
   const recommendedProducts = [
     {
-      title: 'Home Essentials',
-      image: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&h=600&fit=crop',
-      buttonText: 'Shop Home'
+      title: 'Smartphones & Tablets',
+      image: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=800&h=600&fit=crop',
+      buttonText: 'Shop Mobile'
     },
     {
-      title: 'Fashion Collection',
-      image: 'https://images.unsplash.com/photo-1544441893-675973e31985?w=800&h=600&fit=crop',
-      buttonText: 'Shop Fashion'
-    },
-    {
-      title: 'Electronics',
+      title: 'Laptops & Computers',
       image: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=800&h=600&fit=crop',
-      buttonText: 'Shop Electronics'
+      buttonText: 'Shop Laptops'
+    },
+    {
+      title: 'Audio & Headphones',
+      image: 'https://images.unsplash.com/photo-1583394838336-acd977736f90?w=800&h=600&fit=crop',
+      buttonText: 'Shop Audio'
     }
   ];
 
@@ -24,10 +24,10 @@ export default function ForSaleRecommended() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-8 sm:mb-12 lg:mb-16">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-3 sm:mb-4">
-            Recommended <span className="gradient-text">For You</span>
+            Recommended <span className="gradient-text">Electronics</span>
           </h2>
           <p className="text-sm sm:text-base md:text-lg text-gray-600 max-w-2xl mx-auto px-2">
-            Discover personalized recommendations across all categories based on your interests
+            Discover personalized electronics recommendations based on your tech preferences
           </p>
         </div>
 

@@ -4,58 +4,58 @@ import { ShoppingBag } from 'lucide-react';
 export default function CollectionForSale() {
   const collections = [
     {
-      category: 'Home & Living',
+      category: 'Smartphones',
       items: [
-        { name: 'Modern Sofa Set', price: '$299', image: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400&h=300&fit=crop' },
-        { name: 'Smart Coffee Table', price: '$129', image: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400&h=300&fit=crop' },
-        { name: 'Leather Recliner', price: '$199', image: 'https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?w=400&h=300&fit=crop' },
+        { name: 'iPhone 15 Pro Max', price: '$899', image: 'https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=400&h=300&fit=crop' },
+        { name: 'Samsung Galaxy S24', price: '$799', image: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&h=300&fit=crop' },
+        { name: 'Google Pixel 8 Pro', price: '$699', image: 'https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=400&h=300&fit=crop' },
       ],
-      colors: ['bg-yellow-600', 'bg-gray-800', 'bg-brown-700']
+      colors: ['bg-gray-800', 'bg-blue-900', 'bg-green-700']
     },
     {
-      category: 'Kitchen Essentials',
+      category: 'Laptops & Computers',
       items: [
-        { name: 'Cookware Set', price: '$89', image: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400&h=300&fit=crop' },
-        { name: 'Coffee Maker', price: '$45', image: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400&h=300&fit=crop' },
-        { name: 'Blender Set', price: '$65', image: 'https://images.unsplash.com/photo-1573408301185-9146fe634ad0?w=400&h=300&fit=crop' },
+        { name: 'MacBook Pro M3', price: '$1,299', image: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=400&h=300&fit=crop' },
+        { name: 'Dell XPS 15', price: '$1,199', image: 'https://images.unsplash.com/photo-1593640408182-31c70c8268f5?w=400&h=300&fit=crop' },
+        { name: 'HP Spectre x360', price: '$999', image: 'https://images.unsplash.com/photo-1541807084-5c52b6b3adef?w=400&h=300&fit=crop' },
       ],
-      colors: ['bg-silver-400', 'bg-red-500', 'bg-gray-300']
+      colors: ['bg-silver-400', 'bg-gray-600', 'bg-blue-800']
     },
     {
-      category: 'Fashion & Apparel',
+      category: 'Audio & Headphones',
       items: [
-        { name: 'Denim Jacket', price: '$45', image: 'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=400&h=300&fit=crop' },
-        { name: 'Designer Sneakers', price: '$85', image: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400&h=300&fit=crop' },
-        { name: 'Leather Handbag', price: '$95', image: 'https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=400&h=300&fit=crop' },
+        { name: 'Sony WH-1000XM5', price: '$349', image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=300&fit=crop' },
+        { name: 'AirPods Pro 2', price: '$249', image: 'https://images.unsplash.com/photo-1572569511254-d8f925fe2cbb?w=400&h=300&fit=crop' },
+        { name: 'Bose QuietComfort', price: '$329', image: 'https://images.unsplash.com/photo-1583394838336-acd977736f90?w=400&h=300&fit=crop' },
       ],
-      colors: ['bg-blue-600', 'bg-black', 'bg-brown-900']
+      colors: ['bg-black', 'bg-white border', 'bg-slate-700']
     },
     {
-      category: 'Electronics',
+      category: 'Gaming Consoles',
       items: [
-        { name: 'Smartphone', price: '$250', image: 'https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=400&h=300&fit=crop' },
-        { name: 'Laptop', price: '$450', image: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=400&h=300&fit=crop' },
-        { name: 'Headphones', price: '$75', image: 'https://images.unsplash.com/photo-1583394838336-acd977736f90?w=400&h=300&fit=crop' },
+        { name: 'PlayStation 5', price: '$499', image: 'https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?w=400&h=300&fit=crop' },
+        { name: 'Xbox Series X', price: '$499', image: 'https://images.unsplash.com/photo-1621259182978-fbf93132d53d?w=400&h=300&fit=crop' },
+        { name: 'Nintendo Switch OLED', price: '$349', image: 'https://images.unsplash.com/photo-1605901309584-818e25960a8f?w=400&h=300&fit=crop' },
       ],
-      colors: ['bg-gray-800', 'bg-slate-700', 'bg-blue-900']
+      colors: ['bg-blue-800', 'bg-green-700', 'bg-red-600']
     },
     {
-      category: 'Outdoor & Garden',
+      category: 'Smart Watches',
       items: [
-        { name: 'Patio Set', price: '$180', image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=300&fit=crop' },
-        { name: 'Garden Tools', price: '$55', image: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=400&h=300&fit=crop' },
-        { name: 'Outdoor Grill', price: '$120', image: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400&h=300&fit=crop' },
+        { name: 'Apple Watch Series 9', price: '$399', image: 'https://images.unsplash.com/photo-1579586337278-3f576cfc5113?w=400&h=300&fit=crop' },
+        { name: 'Samsung Galaxy Watch 6', price: '$299', image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=300&fit=crop' },
+        { name: 'Fitbit Sense 2', price: '$299', image: 'https://images.unsplash.com/photo-1523475496153-2d1d5d8f5cf4?w=400&h=300&fit=crop' },
       ],
-      colors: ['bg-green-800', 'bg-gray-600', 'bg-red-700']
+      colors: ['bg-gray-800', 'bg-black', 'bg-blue-600']
     },
     {
-      category: 'Sports & Fitness',
+      category: 'Cameras & Photography',
       items: [
-        { name: 'Yoga Mat', price: '$25', image: 'https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?w=400&h=300&fit=crop' },
-        { name: 'Dumbbells', price: '$45', image: 'https://images.unsplash.com/photo-1534367507877-0edd93bd013b?w=400&h=300&fit=crop' },
-        { name: 'Fitness Watch', price: '$85', image: 'https://images.unsplash.com/photo-1579586337278-3f576cfc5113?w=400&h=300&fit=crop' },
+        { name: 'Sony A7 IV', price: '$2,499', image: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=400&h=300&fit=crop' },
+        { name: 'Canon EOS R5', price: '$3,899', image: 'https://images.unsplash.com/photo-1502920917128-1aa500764cbd?w=400&h=300&fit=crop' },
+        { name: 'GoPro Hero 12', price: '$399', image: 'https://images.unsplash.com/photo-1512790182412-b19e6d62bc39?w=400&h=300&fit=crop' },
       ],
-      colors: ['bg-green-600', 'bg-black', 'bg-blue-700']
+      colors: ['bg-black', 'bg-red-600', 'bg-blue-800']
     },
   ];
 
@@ -64,10 +64,10 @@ export default function CollectionForSale() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-8 sm:mb-12 lg:mb-16">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-3 sm:mb-4">
-            Shop By <span className="gradient-text">Category</span>
+            Shop Electronics <span className="gradient-text">By Category</span>
           </h2>
           <p className="text-sm sm:text-base md:text-lg text-gray-600 max-w-2xl mx-auto px-2">
-            Explore diverse collections across all categories, from home essentials to personal care
+            Discover premium electronics across all categories, from smartphones to gaming consoles
           </p>
         </div>
 
@@ -81,11 +81,9 @@ export default function CollectionForSale() {
                     alt={collection.items[0].name}
                     className="w-full h-full object-cover transform transition-transform duration-500 hover:scale-110"
                   />
-                  {/* Used tag with custom green */}
                   <div className="absolute top-2 left-2 text-white text-xs px-2 py-1 rounded" style={{ backgroundColor: '#27BB97' }}>
                     Used
                   </div>
-                  {/* Shopping bag icon with custom green */}
                   <div className="absolute bottom-3 sm:bottom-4 left-3 sm:left-4 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white flex items-center justify-center shadow-md">
                     <ShoppingBag style={{ color: '#27BB97' }} className="w-5 h-5 sm:w-6 sm:h-6" />
                   </div>
@@ -105,7 +103,6 @@ export default function CollectionForSale() {
                       <p className="text-lg font-semibold text-gray-900">{collection.items[0].price}</p>
                       <p className="text-xs text-gray-500 mt-1">Good condition • 2 days ago</p>
                     </div>
-                    {/* View Details button with custom green */}
                     <button 
                       className="text-sm font-medium hover:underline transition-colors"
                       style={{ color: '#27BB97' }}
@@ -121,7 +118,6 @@ export default function CollectionForSale() {
           ))}
         </div>
 
-        {/* View All Categories button with custom green */}
         <div className="text-center mt-8 sm:mt-12">
           <button 
             className="px-6 sm:px-8 py-2.5 sm:py-3 rounded-full font-medium transition-colors text-sm sm:text-base"
@@ -139,10 +135,10 @@ export default function CollectionForSale() {
               e.target.style.color = '#27BB97';
             }}
           >
-            View All Categories
+            View All Electronics
           </button>
         </div>
       </div>
     </section>
   );
-} 
+}

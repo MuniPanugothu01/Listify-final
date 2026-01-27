@@ -3,52 +3,52 @@ import React from 'react';
 export default function ForSaleTestimonials() {
   const testimonials = [
     {
-      name: 'Sarah Miller',
-      role: 'Homeowner',
-      image: 'https://randomuser.me/api/portraits/women/44.jpg',
-      rating: 5,
-      text: 'Beautiful furniture that transformed my living space!',
-      product: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=300&h=200&fit=crop'
-    },
-    {
-      name: 'Michael Chen',
-      role: 'Fashion Enthusiast',
+      name: 'Alex Chen',
+      role: 'Tech Reviewer',
       image: 'https://randomuser.me/api/portraits/men/32.jpg',
       rating: 5,
-      text: 'Amazing clothing selection and perfect fit!',
-      product: 'https://images.unsplash.com/photo-1544441893-675973e31985?w=300&h=200&fit=crop'
+      text: 'Got a flawless iPhone at 40% off retail price! Perfect condition.',
+      product: 'https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=300&h=200&fit=crop'
     },
     {
-      name: 'Jessica Wilson',
-      role: 'Kitchen Lover',
-      image: 'https://randomuser.me/api/portraits/women/68.jpg',
+      name: 'Sarah Johnson',
+      role: 'Gaming Streamer',
+      image: 'https://randomuser.me/api/portraits/women/44.jpg',
       rating: 5,
-      text: 'Professional cookware at unbeatable prices!',
-      product: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=300&h=200&fit=crop'
+      text: 'PS5 in mint condition. Saved $200 compared to new!',
+      product: 'https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?w=300&h=200&fit=crop'
     },
     {
-      name: 'David Park',
-      role: 'Outdoor Enthusiast',
+      name: 'Michael Rodriguez',
+      role: 'Photographer',
       image: 'https://randomuser.me/api/portraits/men/22.jpg',
       rating: 5,
-      text: 'Perfect patio set for summer gatherings!',
-      product: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=300&h=200&fit=crop'
+      text: 'Professional camera gear at unbeatable prices!',
+      product: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=300&h=200&fit=crop'
     },
     {
       name: 'Priya Sharma',
-      role: 'Beauty Blogger',
-      image: 'https://randomuser.me/api/portraits/women/28.jpg',
+      role: 'Student',
+      image: 'https://randomuser.me/api/portraits/women/68.jpg',
       rating: 5,
-      text: 'Premium skincare products with visible results!',
-      product: 'https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?w=300&h=200&fit=crop'
+      text: 'Perfect laptop for my budget! Great battery life.',
+      product: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=300&h=200&fit=crop'
     },
     {
-      name: 'Robert Kim',
-      role: 'Fitness Coach',
+      name: 'David Kim',
+      role: 'Music Producer',
       image: 'https://randomuser.me/api/portraits/men/52.jpg',
       rating: 5,
-      text: 'Excellent fitness equipment for home workouts!',
-      product: 'https://images.unsplash.com/photo-1534367507877-0edd93bd013b?w=300&h=200&fit=crop'
+      text: 'Premium headphones like new at half price!',
+      product: 'https://images.unsplash.com/photo-1583394838336-acd977736f90?w=300&h=200&fit=crop'
+    },
+    {
+      name: 'Jessica Miller',
+      role: 'Smart Home Enthusiast',
+      image: 'https://randomuser.me/api/portraits/women/28.jpg',
+      rating: 5,
+      text: 'Smartwatch integration was seamless! Excellent support.',
+      product: 'https://images.unsplash.com/photo-1579586337278-3f576cfc5113?w=300&h=200&fit=crop'
     }
   ];
 
@@ -57,10 +57,10 @@ export default function ForSaleTestimonials() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-8 sm:mb-12 lg:mb-16">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-3 sm:mb-4">
-            What Our <span className="gradient-text">Customers Say</span>
+            Tech Enthusiasts <span className="gradient-text">Love Us</span>
           </h2>
           <p className="text-sm sm:text-base md:text-lg text-gray-600 max-w-2xl mx-auto px-2">
-            Hear from satisfied shoppers across all product categories
+            Hear from satisfied electronics buyers who found amazing deals
           </p>
         </div>
 
@@ -95,7 +95,7 @@ export default function ForSaleTestimonials() {
                 <div className="h-32 sm:h-36 md:h-40 overflow-hidden">
                   <img
                     src={testimonial.product}
-                    alt="Product"
+                    alt="Electronics Product"
                     className="w-full h-full object-cover transform transition-transform duration-500 hover:scale-110"
                   />
                 </div>
