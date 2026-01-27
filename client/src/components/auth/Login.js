@@ -1,55 +1,112 @@
-import React, { useState } from "react";
-import { Eye, EyeOff, ArrowLeft } from "lucide-react";
-import { Link } from "react-router-dom";
-
-import { HiDotsHorizontal } from "react-icons/hi";
-
+import React, { useState, useEffect } from 'react';
+import { Eye, EyeOff, ArrowLeft } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { HiDotsHorizontal } from 'react-icons/hi';
+import { useAuth } from '../../hooks/useAuth';
+import toast, { Toaster } from 'react-hot-toast';
 
 export default function VidProLogin() {
+  const navigate = useNavigate();
+  const {
+    login,
+    loading,
+    error,
+    success,
+    clearAuthError,
+    isAuthenticated,
+  } = useAuth();
+
   const [showPassword, setShowPassword] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+  });
   const [rememberMe, setRememberMe] = useState(false);
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error);
+      clearAuthError();
+    }
+  }, [error, clearAuthError]);
+
+  useEffect(() => {
+    if (success) {
+      toast.success('Login successful!');
+      setTimeout(() => {
+        navigate('/dashboard');
+      }, 1000);
+    }
+  }, [success, navigate]);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/dashboard');
+    }
+  }, [isAuthenticated, navigate]);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!formData.email || !formData.password) {
+      toast.error('Please fill in all fields');
+      return;
+    }
+
+    await login(formData);
+  };
 
   return (
     <div className="min-h-screen relative overflow-hidden">
-      {/* Full Screen Background Image Layer */}
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          duration: 4000,
+          style: {
+            background: '#363636',
+            color: '#fff',
+          },
+        }}
+      />
+
+      {/* Background Image Layer */}
       <div className="fixed inset-0 z-0">
         <img
           src="/signin.webp"
           alt="Geometric Background"
           className="w-full h-full object-cover"
         />
-        {/* Semi-transparent overlay to ensure text readability */}
         <div className="absolute inset-0 bg-gradient-to-r from-slate-900/90 via-slate-900/70 to-transparent lg:bg-gradient-to-r lg:from-slate-900/80 lg:via-slate-900/60 lg:to-transparent"></div>
       </div>
 
-      {/* Main Content Container */}
+      {/* Main Content */}
       <div className="relative z-10 flex min-h-screen">
-        {/* Left Side - Text Content Over Background */}
+        {/* Left Side */}
         <div className="hidden lg:flex lg:w-1/2 min-h-screen relative">
-          {/* Content Container */}
           <div className="relative z-20 w-full p-12 flex flex-col justify-between">
-            {/* Top Bar - Logo and Back Button */}
             <div className="flex items-center justify-between">
-              {/* Logo */}
               <div className="flex items-center gap-2 text-white">
                 <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
                   <span className="text-slate-900 font-bold text-xl">L</span>
                 </div>
                 <span className="text-2xl font-bold capitalize">listify</span>
               </div>
-
-              {/* Back to Website */}
-              <Link to="/">  
-              <button className="flex items-center gap-1 ml-10 text-gray-400 hover:text-gray-300 transition-colors cursor-pointer">
-                <ArrowLeft size={20} />
-                <span className="font-medium">Back to Website</span>
-              </button>
+              <Link to="/">
+                <button className="flex items-center gap-1 ml-10 text-gray-400 hover:text-gray-300 transition-colors cursor-pointer">
+                  <ArrowLeft size={20} />
+                  <span className="font-medium">Back to Website</span>
+                </button>
               </Link>
             </div>
 
-            {/* Main Text Content - Centered */}
             <div className="text-white max-w-xl mt-30">
               <p className="text-5xl font-bold leading-tight mb-3">
                 Edit Smarter. Export Faster. <br />
@@ -59,23 +116,18 @@ export default function VidProLogin() {
                 From quick social media clips to full-length videos, our
                 powerful editor lets you work seamlessly across devices.
               </p>
-
-              {/* Carousel Dots */}
-            <div className="flex items-center gap-1 -mt-22">
-  <div className="w-6 h-1 bg-white rounded-full"></div>
-  <HiDotsHorizontal className="text-white/50 w-6 h-6" />
-</div>
-
+              <div className="flex items-center gap-1 -mt-22">
+                <div className="w-6 h-1 bg-white rounded-full"></div>
+                <HiDotsHorizontal className="text-white/50 w-6 h-6" />
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Right Side - Login Form Container with Semi-transparent Background */}
-        <div className="w-full lg:w-1/2 flex items-center justify-center min-h-screen p-8  ">
-          {/* Login Form Card with frosted glass effect */}
+        {/* Right Side - Login Form */}
+        <div className="w-full lg:w-1/2 flex items-center justify-center min-h-screen p-8">
           <div className="w-[90vw] lg:w-[87vh] h-[85vh] lg:h-[89vh] rounded-md flex items-center justify-center bg-white/95 backdrop-blur-sm border border-white/20 p-8 shadow-2xl">
             <div className="w-full max-w-md">
-              {/* Welcome Text */}
               <div className="mb-8">
                 <h2 className="text-4xl font-bold text-gray-900 mb-2">
                   Welcome Back!
@@ -85,34 +137,35 @@ export default function VidProLogin() {
                 </p>
               </div>
 
-              {/* Login Form */}
-              <div className="space-y-5">
-                {/* Email Input */}
+              <form onSubmit={handleSubmit} className="space-y-5">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Email
                   </label>
                   <input
                     type="email"
+                    name="email"
                     placeholder="Input your email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    value={formData.email}
+                    onChange={handleChange}
                     className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-1 focus:ring-[#27bb97] focus:border-transparent bg-white/80"
+                    required
                   />
                 </div>
 
-                {/* Password Input */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2 ">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
                     Password
                   </label>
                   <div className="relative">
                     <input
-                      type={showPassword ? "text" : "password"}
+                      type={showPassword ? 'text' : 'password'}
+                      name="password"
                       placeholder="Input your password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
+                      value={formData.password}
+                      onChange={handleChange}
                       className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-1 focus:ring-[#27bb97] focus:border-transparent pr-12 bg-white/80"
+                      required
                     />
                     <button
                       type="button"
@@ -124,7 +177,6 @@ export default function VidProLogin() {
                   </div>
                 </div>
 
-                {/* Remember Me & Forgot Password */}
                 <div className="flex items-center justify-between">
                   <label className="flex items-center gap-2 cursor-pointer">
                     <input
@@ -135,17 +187,53 @@ export default function VidProLogin() {
                     />
                     <span className="text-sm text-gray-600">Remember Me</span>
                   </label>
-                  <button className="text-sm text-gray-600 hover:text-gray-900">
+                  <button
+                    type="button"
+                    onClick={() => navigate('/forgot-password')}
+                    className="text-sm text-gray-600 hover:text-gray-900"
+                  >
                     Forgot Password?
                   </button>
                 </div>
 
-                {/* Login Button */}
-                <button className="w-full bg-[#27bb97] hover:bg-[#1fa987] text-white py-3 rounded-lg font-medium transition-colors cursor-pointer">
-                  Login
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className={`w-full ${
+                    loading
+                      ? 'bg-gray-400 cursor-not-allowed'
+                      : 'bg-[#27bb97] hover:bg-[#1fa987]'
+                  } text-white py-3 rounded-lg font-medium transition-colors flex items-center justify-center`}
+                >
+                  {loading ? (
+                    <>
+                      <svg
+                        className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        ></circle>
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        ></path>
+                      </svg>
+                      Logging in...
+                    </>
+                  ) : (
+                    'Login'
+                  )}
                 </button>
 
-                {/* Divider */}
                 <div className="relative flex items-center justify-center my-6">
                   <div className="absolute inset-0 flex items-center">
                     <div className="w-full border-t border-gray-300"></div>
@@ -158,7 +246,10 @@ export default function VidProLogin() {
                 </div>
 
                 {/* Google Sign In */}
-                <button className="w-full flex items-center justify-center gap-3 bg-white border border-gray-300 hover:bg-gray-50 py-3 rounded-lg font-medium transition-colors cursor-pointer">
+                <button
+                  type="button"
+                  className="w-full flex items-center justify-center gap-3 bg-white border border-gray-300 hover:bg-gray-50 py-3 rounded-lg font-medium transition-colors cursor-pointer"
+                >
                   <svg
                     width="20"
                     height="20"
@@ -186,15 +277,15 @@ export default function VidProLogin() {
                   Continue with Google
                 </button>
 
-                {/* Sign Up Link */}
                 <div className="text-center mt-6">
                   <span className="text-gray-600">Don't have an account? </span>
-             <Link to="/signup">
-                  <button className="text-gray-900 font-medium hover:underline cursor-pointer">
-                    Sign up here
-                  </button></Link>
+                  <Link to="/signup">
+                    <button className="text-gray-900 font-medium hover:underline cursor-pointer">
+                      Sign up here
+                    </button>
+                  </Link>
                 </div>
-              </div>
+              </form>
             </div>
           </div>
         </div>
