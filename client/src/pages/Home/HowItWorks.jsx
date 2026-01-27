@@ -136,7 +136,7 @@ const HowItWorks = () => {
                 >
                   {/* Image */}
                   <div className="relative group">
-                    <div className="overflow-hidden rounded-2xl shadow-2xl">
+                    <div className="overflow-hidden shadow-2xl">
                       <img
                         src={step.image}
                         alt={step.title}

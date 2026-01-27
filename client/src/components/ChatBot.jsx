@@ -247,7 +247,7 @@ const ChatBot = () => {
           }}
         >
           {/* Header with Brand Colors */}
-          <div className="bg-[#2F3A63] rounded-t-2xl p-3 md:p-4 text-white">
+          <div className="bg-[#27BB97] rounded-t-2xl p-3 md:p-4 text-white">
             <div className="flex justify-between items-center">
               <div className="flex items-center space-x-2 md:space-x-3">
                 <div className="relative">
