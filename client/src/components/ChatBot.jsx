@@ -221,7 +221,7 @@ const ChatBot = () => {
 
   return (
     <div
-      className="fixed bottom-4 right-2 md:bottom-6  z-50  "
+      className="fixed bottom-4 right-2 md:bottom-6  z-50 "
       ref={chatContainerRef}
     >
       {/* Chat Window - Responsive positioning and sizing */}
@@ -471,9 +471,9 @@ const ChatBot = () => {
         className=" bg-white rounded-full cursor-pointer transform hover:scale-105 transition-all duration-300 relative group left-4"
         onClick={handleToggleChat}
       >
-        <div className="relative">
+        <div className="relative ">
           {/* Main Lottie Animation */}
-          <div className="relative  rounded-full shadow-2xl border border-gray-200   ">
+          <div className="relative  rounded-full shadow-2xl border border-gray-200 ">
             <Lottie
               lottieRef={lottieRef}
               animationData={chatIconAnimation}
@@ -485,6 +485,7 @@ const ChatBot = () => {
                 ...(window.innerWidth >= 768 && {
                   width: 56,
                   height: 56,
+                
                 }),
               }}
             />
@@ -492,21 +493,21 @@ const ChatBot = () => {
 
           {/* Notification Badge */}
           {unreadCount > 0 && (
-            <div className="absolute -top-1 -right-1 w-5 h-5 md:w-6 md:h-6 bg-red-500 text-white rounded-full text-xs flex items-center justify-center font-bold animate-bounce border-2 border-white shadow-lg">
+            <div className="  absolute -top-1 -right-1 w-5 h-5 md:w-6 md:h-6 bg-red-500 text-white rounded-full text-xs flex items-center justify-center font-bold animate-bounce border-2 border-white shadow-lg">
               {unreadCount}
             </div>
           )}
 
           {/* Enhanced Tooltip */}
-          <div className="absolute bottom-full right-0 mb-2 md:mb-3 hidden group-hover:block">
-            <div className="bg-[#2F3A63] text-white text-xs md:text-sm rounded-lg py-1.5 px-2 md:py-2 md:px-3 whitespace-nowrap shadow-xl">
+          <div className="absolute bottom-full right-0 mb-2 md:mb-3 hidden group-hover:block ">
+            <div className="bg-[#27BB97] text-white text-xs md:text-sm rounded-lg py-1.5 px-2 md:py-2 md:px-3 whitespace-nowrap shadow-xl">
               <div className="flex items-center space-x-1 md:space-x-2">
                 <MessageCircle size={12} className="md:w-3 md:h-3" />
                 <span>
                   {isOpen ? "Minimize chat" : "Need help? Chat with us!"}
                 </span>
               </div>
-              <div className="absolute top-full right-3 md:right-4 w-2 h-2 md:w-3 md:h-3 bg-[#2F3A63] transform rotate-45"></div>
+              <div className="absolute top-full right-3 md:right-4 w-2 h-2 md:w-3 md:h-3 bg-[#27BB97] transform rotate-45"></div>
             </div>
           </div>
         </div>
