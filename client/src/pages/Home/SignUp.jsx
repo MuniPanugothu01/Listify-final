@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Eye, EyeOff, ArrowLeft, Check } from "lucide-react";
+import React, { useState, useRef, useEffect } from "react";
+import { Eye, EyeOff, ArrowLeft } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { HiDotsHorizontal } from "react-icons/hi";
 import axios from "axios";
@@ -16,11 +16,35 @@ export default function SignUp() {
     confirmPassword: "",
   });
 
+  // OTP State
+  const [otp, setOtp] = useState(["", "", "", "", "", ""]);
+  const [showOtpScreen, setShowOtpScreen] = useState(false);
+  const [otpLoading, setOtpLoading] = useState(false);
+  const [resendLoading, setResendLoading] = useState(false);
+  const [countdown, setCountdown] = useState(0);
+  const [otpError, setOtpError] = useState("");
+  const inputRefs = useRef([]);
+
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
+
+  // Reset OTP when OTP screen opens/closes
+  useEffect(() => {
+    if (showOtpScreen) {
+      // Reset OTP to empty when OTP screen opens
+      setOtp(["", "", "", "", "", ""]);
+      setOtpError("");
+      // Focus first input after a small delay
+      setTimeout(() => {
+        if (inputRefs.current[0]) {
+          inputRefs.current[0].focus();
+        }
+      }, 100);
+    }
+  }, [showOtpScreen]);
 
   // Handle input changes
   const handleChange = (e) => {
@@ -36,6 +60,276 @@ export default function SignUp() {
         ...prev,
         [name]: "",
       }));
+    }
+  };
+
+  // FIXED: Improved OTP Handlers with better focus management
+  const handleOtpChange = (index, value) => {
+    if (!/^\d*$/.test(value)) return;
+
+    const newOtp = [...otp];
+    
+    // Handle single digit input
+    if (value.length === 1) {
+      newOtp[index] = value;
+      setOtp(newOtp);
+      setOtpError("");
+
+      // Auto-focus next input if value is entered and not the last box
+      if (index < 5) {
+        setTimeout(() => {
+          if (inputRefs.current[index + 1]) {
+            inputRefs.current[index + 1].focus();
+          }
+        }, 10);
+      }
+    } 
+    // Handle multiple digits (pasting or fast typing)
+    else if (value.length > 1) {
+      const digits = value.slice(0, 6).split("");
+      digits.forEach((digit, digitIndex) => {
+        const pos = index + digitIndex;
+        if (pos < 6) {
+          newOtp[pos] = digit;
+        }
+      });
+      setOtp(newOtp);
+      setOtpError("");
+
+      // Focus the next empty box or the last filled box
+      const nextEmptyIndex = newOtp.findIndex((digit, i) => i >= index && digit === "");
+      const targetIndex = nextEmptyIndex !== -1 ? nextEmptyIndex : Math.min(index + value.length, 5);
+      
+      setTimeout(() => {
+        if (inputRefs.current[targetIndex]) {
+          inputRefs.current[targetIndex].focus();
+        }
+      }, 10);
+    }
+    
+    // Handle deletion (empty value)
+    else if (value === "") {
+      newOtp[index] = "";
+      setOtp(newOtp);
+      // Don't auto-focus previous box on deletion, let user decide
+    }
+
+    // Auto-submit when all digits are entered
+    if (newOtp.every((digit) => digit !== "")) {
+      setTimeout(() => {
+        handleVerifyOtp(newOtp.join(""));
+      }, 100);
+    }
+  };
+
+  const handleKeyDown = (index, e) => {
+    // Prevent form submission on Enter key
+    if (e.key === "Enter") {
+      e.preventDefault();
+      // If all digits are filled, verify OTP
+      if (otp.every(digit => digit !== "")) {
+        handleVerifyOtp(otp.join(""));
+      }
+      return;
+    }
+
+    // Handle backspace - IMPROVED VERSION
+    if (e.key === "Backspace") {
+      e.preventDefault();
+      
+      const newOtp = [...otp];
+      
+      if (newOtp[index]) {
+        // If current box has value, clear it and stay in same box
+        newOtp[index] = "";
+        setOtp(newOtp);
+      } else if (index > 0) {
+        // If current box is empty, move to previous box and clear it
+        newOtp[index - 1] = "";
+        setOtp(newOtp);
+        
+        setTimeout(() => {
+          if (inputRefs.current[index - 1]) {
+            inputRefs.current[index - 1].focus();
+          }
+        }, 10);
+      }
+      return;
+    }
+    
+    // Handle arrow keys
+    if (e.key === "ArrowLeft" && index > 0) {
+      e.preventDefault();
+      setTimeout(() => {
+        if (inputRefs.current[index - 1]) {
+          inputRefs.current[index - 1].focus();
+        }
+      }, 10);
+    }
+    
+    if (e.key === "ArrowRight" && index < 5) {
+      e.preventDefault();
+      setTimeout(() => {
+        if (inputRefs.current[index + 1]) {
+          inputRefs.current[index + 1].focus();
+        }
+      }, 10);
+    }
+
+    // Handle Tab key
+    if (e.key === "Tab") {
+      if (!e.shiftKey && index < 5) {
+        e.preventDefault();
+        setTimeout(() => {
+          if (inputRefs.current[index + 1]) {
+            inputRefs.current[index + 1].focus();
+          }
+        }, 10);
+      } else if (e.shiftKey && index > 0) {
+        e.preventDefault();
+        setTimeout(() => {
+          if (inputRefs.current[index - 1]) {
+            inputRefs.current[index - 1].focus();
+          }
+        }, 10);
+      }
+    }
+  };
+
+  const handlePaste = (e) => {
+    e.preventDefault();
+    const pastedData = e.clipboardData.getData("text").slice(0, 6);
+    if (/^\d+$/.test(pastedData)) {
+      const newOtp = [...otp];
+      pastedData.split("").forEach((char, index) => {
+        if (index < 6) {
+          newOtp[index] = char;
+        }
+      });
+
+      setOtp(newOtp);
+      
+      // Focus the last filled box
+      const nextIndex = Math.min(pastedData.length, 5);
+      setTimeout(() => {
+        if (inputRefs.current[nextIndex]) {
+          inputRefs.current[nextIndex].focus();
+        }
+      }, 10);
+    }
+  };
+
+  // FIXED: Focus management for OTP inputs
+  const handleOtpFocus = (index, e) => {
+    // Select all text when focusing
+    e.target.select();
+    
+    // Ensure proper focus state
+    setTimeout(() => {
+      if (inputRefs.current[index]) {
+        inputRefs.current[index].focus();
+      }
+    }, 0);
+  };
+
+  // FIXED: Prevent focus loss issues
+  const handleOtpBlur = (e) => {
+    // Only prevent blur if we're in OTP screen
+    if (showOtpScreen) {
+      e.preventDefault();
+      // Small delay to ensure focus isn't lost during navigation
+      setTimeout(() => {
+        if (document.activeElement === document.body) {
+          // If focus went to body, try to focus the first OTP input
+          const firstEmptyIndex = otp.findIndex(digit => digit === "");
+          const targetIndex = firstEmptyIndex !== -1 ? firstEmptyIndex : 0;
+          if (inputRefs.current[targetIndex]) {
+            inputRefs.current[targetIndex].focus();
+          }
+        }
+      }, 10);
+    }
+  };
+
+  // NEW FUNCTION: Clear all OTP inputs
+  const clearOtpInputs = () => {
+    setOtp(["", "", "", "", "", ""]);
+    setOtpError("");
+    // Focus first input after clearing
+    setTimeout(() => {
+      if (inputRefs.current[0]) {
+        inputRefs.current[0].focus();
+      }
+    }, 10);
+  };
+
+  // Resend OTP Handler
+  const handleResendOtp = async () => {
+    setResendLoading(true);
+    try {
+      // API call to resend OTP
+      await axios.post("http://localhost:5000/api/auth/register/resend-otp", {
+        email: formData.email,
+      });
+
+      setCountdown(60);
+      // Clear OTP inputs when resending
+      clearOtpInputs();
+      
+      toast.success("New OTP sent to your email");
+    } catch (error) {
+      console.error("Resend OTP error:", error);
+      toast.error(error.response?.data?.message || "Failed to resend OTP");
+    } finally {
+      setResendLoading(false);
+    }
+  };
+
+  // Verify OTP Handler - UPDATED to clear on error
+  const handleVerifyOtp = async (otpValue = otp.join("")) => {
+    if (otpValue.length !== 6) {
+      setOtpError("Please enter the complete 6-digit OTP");
+      return;
+    }
+
+    setOtpLoading(true);
+    setOtpError("");
+
+    try {
+      // API call to verify OTP and complete registration
+      const response = await axios.post(
+        "http://localhost:5000/api/auth/register/verify",
+        {
+          email: formData.email,
+          otp: otpValue,
+        },
+      );
+
+      if (response.data.success) {
+        toast.success("Account created successfully!");
+
+        // Store token in localStorage
+        localStorage.setItem("authToken", response.data.token);
+        localStorage.setItem("user", JSON.stringify(response.data.user));
+
+        // Redirect to dashboard after 2 seconds
+        setTimeout(() => {
+          navigate("/dashboard");
+        }, 2000);
+      }
+    } catch (error) {
+      console.error("OTP verification error:", error);
+      const errorMessage = error.response?.data?.message || "Invalid OTP. Please try again.";
+      setOtpError(errorMessage);
+      toast.error(errorMessage);
+      
+      // NEW: Clear OTP inputs when wrong OTP is entered
+      if (errorMessage.includes("Invalid OTP") || errorMessage.includes("invalid") || errorMessage.includes("wrong")) {
+        // Clear OTP inputs
+        clearOtpInputs();
+      }
+    } finally {
+      setOtpLoading(false);
     }
   };
 
@@ -75,7 +369,7 @@ export default function SignUp() {
     return Object.keys(newErrors).length === 0;
   };
 
-  // Handle form submission
+  // Handle form submission (initiate registration)
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -87,27 +381,29 @@ export default function SignUp() {
     setLoading(true);
 
     try {
-      // API call to register endpoint
+      // API call to initiate registration (send OTP)
       const response = await axios.post(
-        "http://localhost:5000/api/auth/register",
+        "http://localhost:5000/api/auth/register/initiate",
         {
           name: formData.name,
           email: formData.email,
           password: formData.password,
+          confirmPassword: formData.confirmPassword,
         },
       );
 
       if (response.data.success) {
-        toast.success("Account created successfully!");
-
-        // Store token in localStorage
-        localStorage.setItem("authToken", response.data.token);
-        localStorage.setItem("user", JSON.stringify(response.data.user));
-
-        // Redirect to dashboard after 2 seconds
+        toast.success("OTP sent to your email!");
+        
+        // Reset OTP state for new registration
+        setOtp(["", "", "", "", "", ""]);
+        setOtpError("");
+        setCountdown(60);
+        
+        // Show OTP screen after a short delay
         setTimeout(() => {
-          navigate("/dashboard");
-        }, 2000);
+          setShowOtpScreen(true);
+        }, 300);
       }
     } catch (error) {
       console.error("Registration error:", error);
@@ -151,6 +447,180 @@ export default function SignUp() {
 
   const passwordStrength = getPasswordStrength();
 
+  // Countdown timer effect
+  useEffect(() => {
+    if (countdown > 0) {
+      const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [countdown]);
+
+  // Close OTP screen and reset form - UPDATED to clear OTP
+  const handleBackToRegistration = () => {
+    // Clear OTP inputs before closing
+    setOtp(["", "", "", "", "", ""]);
+    setOtpError("");
+    setShowOtpScreen(false);
+  };
+
+  // OTP Screen Component - UPDATED with clear functionality
+  const OtpScreen = () => (
+    <div 
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm"
+      onClick={(e) => {
+        // Close modal if clicking on backdrop
+        if (e.target === e.currentTarget) {
+          handleBackToRegistration();
+        }
+      }}
+    >
+      <div className="bg-white rounded-2xl p-8 w-full max-w-md mx-4 shadow-2xl">
+        <div className="text-center mb-8">
+          <h2 className="text-3xl font-bold text-gray-900 mb-2">Verify OTP</h2>
+          <p className="text-gray-600">
+            Enter the 6-digit code sent to <br />
+            <span className="font-semibold text-gray-800">
+              {formData.email}
+            </span>
+          </p>
+        </div>
+
+        {otpError && (
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+            <p className="text-red-600 text-sm text-center">{otpError}</p>
+            {/* Show clear button when there's an error */}
+            {otpError.includes("Invalid") || otpError.includes("invalid") || otpError.includes("wrong") ? (
+              <button
+                onClick={clearOtpInputs}
+                className="mt-2 text-sm text-red-600 hover:text-red-800 font-medium"
+              >
+                Clear & Try Again
+              </button>
+            ) : null}
+          </div>
+        )}
+
+        {/* OTP Input Boxes */}
+        <form 
+          onSubmit={(e) => {
+            e.preventDefault();
+            if (otp.every(digit => digit !== "")) {
+              handleVerifyOtp(otp.join(""));
+            }
+          }}
+          className="mb-8"
+        >
+          <div className="flex justify-center gap-3">
+            {otp.map((digit, index) => (
+              <input
+                key={index}
+                ref={(el) => {
+                  inputRefs.current[index] = el;
+                }}
+                type="text"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                maxLength={6} // Allow pasting multiple digits
+                value={digit}
+                onChange={(e) => handleOtpChange(index, e.target.value)}
+                onKeyDown={(e) => handleKeyDown(index, e)}
+                onPaste={handlePaste}
+                onFocus={(e) => handleOtpFocus(index, e)}
+                onBlur={handleOtpBlur}
+                onInput={(e) => {
+                  // Prevent non-numeric input
+                  e.target.value = e.target.value.replace(/[^0-9]/g, '');
+                }}
+                className="w-14 h-14 text-2xl text-center text-gray-900 font-bold bg-gray-50 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#27bb97] focus:border-[#27bb97] transition-all duration-200"
+                autoComplete="one-time-code"
+              />
+            ))}
+          </div>
+          <button type="submit" className="hidden">Submit</button>
+        </form>
+
+        <div className="text-center mb-4">
+          <p className="text-sm text-gray-500">
+            Enter the 6-digit verification code
+          </p>
+          {/* Quick Clear Button */}
+          {otp.some(digit => digit !== "") && (
+            <button
+              onClick={clearOtpInputs}
+              className="mt-2 text-sm text-gray-500 hover:text-gray-700"
+            >
+              Clear all
+            </button>
+          )}
+        </div>
+
+        <button
+          onClick={() => {
+            if (otp.every(digit => digit !== "")) {
+              handleVerifyOtp(otp.join(""));
+            } else {
+              setOtpError("Please enter all 6 digits");
+            }
+          }}
+          disabled={otp.some((digit) => digit === "") || otpLoading}
+          className="w-full bg-[#27bb97] hover:bg-[#1fa987] text-white py-3 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center mb-6 shadow-md hover:shadow-lg"
+        >
+          {otpLoading ? (
+            <>
+              <svg
+                className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
+              </svg>
+              Verifying...
+            </>
+          ) : (
+            "Verify & Create Account"
+          )}
+        </button>
+
+        <div className="text-center mb-6">
+          <p className="text-gray-600 text-sm">
+            Didn't receive the code?{" "}
+            <button
+              onClick={handleResendOtp}
+              disabled={resendLoading || countdown > 0}
+              className="text-[#27bb97] hover:underline disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+            >
+              {resendLoading
+                ? "Sending..."
+                : countdown > 0
+                  ? `Resend in ${countdown}s`
+                  : "Resend OTP"}
+            </button>
+          </p>
+        </div>
+
+        <button
+          onClick={handleBackToRegistration}
+          className="w-full text-gray-600 hover:text-gray-800 text-sm font-medium py-2 hover:bg-gray-50 rounded-lg transition-colors flex items-center justify-center"
+        >
+          ← Back to registration
+        </button>
+      </div>
+    </div>
+  );
+
   return (
     <div className="min-h-screen relative overflow-hidden">
       {/* Toast Notifications */}
@@ -178,6 +648,9 @@ export default function SignUp() {
           },
         }}
       />
+
+      {/* OTP Screen */}
+      {showOtpScreen && <OtpScreen />}
 
       {/* Full Screen Background Image Layer */}
       <div className="fixed inset-0 z-0">
@@ -237,7 +710,7 @@ export default function SignUp() {
         {/* Right Side - Register Form Container */}
         <div className="w-full lg:w-1/2 flex items-center justify-center min-h-screen">
           {/* Register Form Card */}
-          <div className="w-[90vw] lg:w-[87vh] h-[85vh] lg:h-[115vh] mt-2 ml-20 rounded-md flex items-center justify-center bg-white/95 backdrop-blur-sm border border-white/20 p-8 shadow-2xl overflow-y-auto">
+          <div className="w-[90vw] lg:w-[87vh] h-[85vh] lg:h-[120vh] mt-2 ml-20 rounded-md flex items-center justify-center bg-white/95 backdrop-blur-sm border border-white/20 p-8 shadow-2xl overflow-y-auto">
             <div className="w-full max-w-md">
               {/* Welcome Text */}
               <div className="mb-4">
@@ -268,7 +741,7 @@ export default function SignUp() {
                       fill="#4285F4"
                     />
                     <path
-                      d="M10.2002 19.6727C12.7584 19.6727 14.9056 18.8509 16.8692 17.3564L13.6565 14.9672C12.7856 15.5527 11.6438 15.8982 10.2002 15.8982C7.73287 15.8982 5.6438 14.1582 4.87106 11.8437H1.5647V14.3073C3.51925 18.1909 6.60925 19.6727 10.2002 19.6727Z"
+                      d="M10.2002 19.6727C12.7584 19.6727 14.9056 18.8509 16.8692 17.3564/L13.6565 14.9672C12.7856 15.5527 11.6438 15.8982 10.2002 15.8982C7.73287 15.8982 5.6438 14.1582 4.87106 11.8437H1.5647V14.3073C3.51925 18.1909 6.60925 19.6727 10.2002 19.6727Z"
                       fill="#34A853"
                     />
                     <path
@@ -384,7 +857,11 @@ export default function SignUp() {
                       <div className="mt-2 grid grid-cols-2 gap-1">
                         <div className="flex items-center gap-1">
                           <div
-                            className={`w-2 h-2 rounded-full ${formData.password.length >= 6 ? "bg-green-500" : "bg-gray-300"}`}
+                            className={`w-2 h-2 rounded-full ${
+                              formData.password.length >= 6
+                                ? "bg-green-500"
+                                : "bg-gray-300"
+                            }`}
                           ></div>
                           <span className="text-xs text-gray-600">
                             6+ characters
@@ -392,7 +869,11 @@ export default function SignUp() {
                         </div>
                         <div className="flex items-center gap-1">
                           <div
-                            className={`w-2 h-2 rounded-full ${/[A-Z]/.test(formData.password) ? "bg-green-500" : "bg-gray-300"}`}
+                            className={`w-2 h-2 rounded-full ${
+                              /[A-Z]/.test(formData.password)
+                                ? "bg-green-500"
+                                : "bg-gray-300"
+                            }`}
                           ></div>
                           <span className="text-xs text-gray-600">
                             Uppercase letter
@@ -400,13 +881,21 @@ export default function SignUp() {
                         </div>
                         <div className="flex items-center gap-1">
                           <div
-                            className={`w-2 h-2 rounded-full ${/[0-9]/.test(formData.password) ? "bg-green-500" : "bg-gray-300"}`}
+                            className={`w-2 h-2 rounded-full ${
+                              /[0-9]/.test(formData.password)
+                                ? "bg-green-500"
+                                : "bg-gray-300"
+                            }`}
                           ></div>
                           <span className="text-xs text-gray-600">Number</span>
                         </div>
                         <div className="flex items-center gap-1">
                           <div
-                            className={`w-2 h-2 rounded-full ${/[^A-Za-z0-9]/.test(formData.password) ? "bg-green-500" : "bg-gray-300"}`}
+                            className={`w-2 h-2 rounded-full ${
+                              /[^A-Za-z0-9]/.test(formData.password)
+                                ? "bg-green-500"
+                                : "bg-gray-300"
+                            }`}
                           ></div>
                           <span className="text-xs text-gray-600">
                             Special character
@@ -424,7 +913,7 @@ export default function SignUp() {
                 </div>
 
                 {/* Confirm Password Input */}
-                {/* <div>
+                <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Confirm Password
                   </label>
@@ -460,7 +949,7 @@ export default function SignUp() {
                       {errors.confirmPassword}
                     </p>
                   )}
-                </div> */}
+                </div>
 
                 {/* Terms and Conditions */}
                 <div className="space-y-2">
@@ -530,10 +1019,10 @@ export default function SignUp() {
                           d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                         ></path>
                       </svg>
-                      Creating Account...
+                      Sending OTP...
                     </>
                   ) : (
-                    "Create Account"
+                    "Continue with OTP"
                   )}
                 </button>
 
