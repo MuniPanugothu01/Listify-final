@@ -132,9 +132,9 @@ const CareServices = () => {
   };
 
   return (
-    <section className="max-w-7xl mx-auto px-3 xs:px-4 sm:px-6 lg:px-8 mb-12 sm:mb-16 lg:mb-20">
+    <section className="max-w-7xl mx-auto px-3 xs:px-4 sm:px-6 lg:px-8 mb-12 sm:mb-16 lg:mb-20 ">
       {/* Header with Navigation Buttons */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 sm:mb-10 lg:mb-12 gap-4">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 sm:mb-10 lg:mb-12 gap-4 ">
         <div className="text-left">
           <h2 className="text-2xl xs:text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-2 sm:mb-3 lg:mb-4 leading-tight">
             {isOnSpecificServicePage ? "OTHER CARE SERVICES" : "ALL IN ONE PLACE"}
@@ -221,7 +221,7 @@ const CareServices = () => {
                 }}
               >
                 {/* Rounded Image */}
-                <div className="relative mb-5 sm:mb-6">
+                <div className="relative mb-5 sm:mb-6 ">
                   <div className="w-20 h-20 xs:w-24 xs:h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden border-4 border-white shadow-lg sm:shadow-xl group-hover:scale-105 sm:group-hover:scale-110 transition-transform duration-300">
                     <img
                       src={service.image}
