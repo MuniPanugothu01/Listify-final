@@ -24,9 +24,42 @@ api.interceptors.request.use(
   }
 );
 
-// Auth API methods
+// Response interceptor to handle errors
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('user');
+      window.location.href = '/login';
+    }
+    return Promise.reject(error);
+  }
+);
+
+// Auth API methods - Updated to match your backend routes
 export const authAPI = {
-  // Register user
+  // OTP Registration - Initiate
+  initiateRegister: (userData) => {
+    return api.post('/register/initiate', userData);
+  },
+
+  // OTP Registration - Verify
+  verifyOTP: (otpData) => {
+    return api.post('/register/verify', otpData);
+  },
+
+  // OTP Registration - Resend OTP
+  resendOTP: (email) => {
+    return api.post('/register/resend-otp', { email });
+  },
+
+  // OTP Registration - Check status
+  checkRegistrationStatus: (email) => {
+    return api.get(`/register/status/${email}`);
+  },
+
+  // Legacy register (without OTP) - kept for compatibility
   register: (userData) => {
     return api.post('/register', userData);
   },
@@ -37,30 +70,18 @@ export const authAPI = {
   },
 
   // Get user profile
-  getProfile: (token) => {
-    return api.get('/profile', {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+  getProfile: () => {
+    return api.get('/profile');
   },
 
   // Update profile
-  updateProfile: (userData, token) => {
-    return api.put('/update-profile', userData, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+  updateProfile: (userData) => {
+    return api.put('/update-profile', userData);
   },
 
   // Change password
-  changePassword: (passwordData, token) => {
-    return api.post('/change-password', passwordData, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+  changePassword: (passwordData) => {
+    return api.post('/change-password', passwordData);
   },
 
   // Forgot password

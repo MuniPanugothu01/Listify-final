@@ -1,49 +1,52 @@
-import React, { useState, useEffect } from 'react';
-import { Eye, EyeOff, ArrowLeft } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
-import { HiDotsHorizontal } from 'react-icons/hi';
-import { useAuth } from '../../hooks/useAuth';
-import toast, { Toaster } from 'react-hot-toast';
+import React, { useState, useEffect } from "react";
+import { Eye, EyeOff, ArrowLeft } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { HiDotsHorizontal } from "react-icons/hi";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  loginUser,
+  clearError,
+  resetSuccess,
+} from "../../redux/slices/authSlice";
+import toast, { Toaster } from "react-hot-toast";
 
 export default function VidProLogin() {
   const navigate = useNavigate();
-  const {
-    login,
-    loading,
-    error,
-    success,
-    clearAuthError,
-    isAuthenticated,
-  } = useAuth();
+  const dispatch = useDispatch();
+
+  // Get auth state from Redux
+  const auth = useSelector((state) => state.auth);
+  const { loading, error, success, token, user } = auth;
 
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
-    email: '',
-    password: '',
+    email: "",
+    password: "",
   });
   const [rememberMe, setRememberMe] = useState(false);
 
   useEffect(() => {
     if (error) {
       toast.error(error);
-      clearAuthError();
+      dispatch(clearError());
     }
-  }, [error, clearAuthError]);
+  }, [error, dispatch]);
 
   useEffect(() => {
     if (success) {
-      toast.success('Login successful!');
+      toast.success("Login successful!");
+      dispatch(resetSuccess());
       setTimeout(() => {
-        navigate('/dashboard');
+        navigate("/dashboard");
       }, 1000);
     }
-  }, [success, navigate]);
+  }, [success, navigate, dispatch]);
 
   useEffect(() => {
-    if (isAuthenticated) {
-      navigate('/dashboard');
+    if (token && user) {
+      navigate("/dashboard");
     }
-  }, [isAuthenticated, navigate]);
+  }, [token, user, navigate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -55,13 +58,14 @@ export default function VidProLogin() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!formData.email || !formData.password) {
-      toast.error('Please fill in all fields');
+      toast.error("Please fill in all fields");
       return;
     }
 
-    await login(formData);
+    // Dispatch the login action
+    dispatch(loginUser(formData));
   };
 
   return (
@@ -71,8 +75,8 @@ export default function VidProLogin() {
         toastOptions={{
           duration: 4000,
           style: {
-            background: '#363636',
-            color: '#fff',
+            background: "#363636",
+            color: "#fff",
           },
         }}
       />
@@ -159,7 +163,7 @@ export default function VidProLogin() {
                   </label>
                   <div className="relative">
                     <input
-                      type={showPassword ? 'text' : 'password'}
+                      type={showPassword ? "text" : "password"}
                       name="password"
                       placeholder="Input your password"
                       value={formData.password}
@@ -189,7 +193,7 @@ export default function VidProLogin() {
                   </label>
                   <button
                     type="button"
-                    onClick={() => navigate('/forgot-password')}
+                    onClick={() => navigate("/forgot-password")}
                     className="text-sm text-gray-600 hover:text-gray-900"
                   >
                     Forgot Password?
@@ -201,8 +205,8 @@ export default function VidProLogin() {
                   disabled={loading}
                   className={`w-full ${
                     loading
-                      ? 'bg-gray-400 cursor-not-allowed'
-                      : 'bg-[#27bb97] hover:bg-[#1fa987]'
+                      ? "bg-gray-400 cursor-not-allowed"
+                      : "bg-[#27bb97] hover:bg-[#1fa987]"
                   } text-white py-3 rounded-lg font-medium transition-colors flex items-center justify-center`}
                 >
                   {loading ? (
@@ -230,7 +234,7 @@ export default function VidProLogin() {
                       Logging in...
                     </>
                   ) : (
-                    'Login'
+                    "Login"
                   )}
                 </button>
 
