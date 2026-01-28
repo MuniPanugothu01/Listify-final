@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import {
   BrowserRouter as Router,
   Routes,
@@ -9,16 +8,13 @@ import {
 
 import Navbar from "./pages/Home/Navbar.jsx";
 import Hero from "./pages/Home/Hero.jsx";
-import HeroSection from "./pages/Home/HeroSection.jsx";
 import Heading from "./pages/Home/Heading.jsx";
-import TrendingCategories from "./pages/Home/TrendingCategories.jsx";
 import Category from "./pages/Home/Category.jsx";
 import WhyUs from "./pages/Home/WhyUs.jsx";
 import HowItWorks from "./pages/Home/HowItWorks.jsx";
 import Questions from "./pages/Home/Questions.jsx";
 import Reviews from "./pages/Home/Reviews.jsx";
 import Footer from "./pages/Home/Footer.jsx";
-import Gallery from "./pages/Home/Gallery.jsx";
 
 // signin page
 import Signin from "./pages/Home/Signin.jsx";
@@ -39,10 +35,8 @@ import ElderCareServices from "./components/TakeCare/ElderCareServices/ElderCare
 import PetCareService from "./components/TakeCare/PetCareServices/PetCareServices.jsx";
 import CareCenterServices from "./components/TakeCare/CareCenterServices/CareCenterServices.jsx";
 
-
 // For Sale
 import ForSale from "./components/ForSale/ForSale.jsx";
-
 
 // Roommates
 import Roommates from "./pages/Roommates/Roommates.jsx";
@@ -52,7 +46,6 @@ import DetailsPage from "./components/Roommates/DetailsPage.jsx";
 // Events
 import Events from "./pages/Events/Events.jsx";
 import EventDetailPage from "./components/Events/EventDetailPage.jsx";
-import EventDetails from "./components/Events/EventDetails.jsx";
 import EventList from "./components/Events/EventList.jsx";
 
 // Rentals
@@ -65,8 +58,8 @@ import JobsPage from "./pages/JobsPage/JobsPage.jsx";
 import JobSearchPortal from "./components/Jobs/JobSearchPortal.jsx";
 import JobDetailsPage from "./components/Jobs/JobDetailsPage.jsx";
 import JobSeekerInterface from "./components/Jobs/JobSeekerInterface.jsx";
-import JobSeekerResume from "./components/Jobs/JobSeekerResume.jsx"; // Job seeker profile page
-import JobSeekerResumesDetail from "./components/Jobs/JobSeekerResumesDetail.jsx"; // Job seeker listings page
+import JobSeekerResume from "./components/Jobs/JobSeekerResume.jsx";
+import JobSeekerResumesDetail from "./components/Jobs/JobSeekerResumesDetail.jsx";
 
 // Services
 import ServicesPage from "./pages/Services/ServicesPage.jsx";
@@ -83,7 +76,7 @@ import Profile from "./pages/Home/Profile.jsx";
 import ChatBot from "./components/ChatBot.jsx";
 import { ScrollProgress } from "./components/ui/scroll-progress.jsx";
 
-// ScrollToTop Component - Automatically scrolls to top on route change
+// ScrollToTop Component
 const ScrollToTop = () => {
   const { pathname } = useLocation();
 
@@ -94,41 +87,30 @@ const ScrollToTop = () => {
   return null;
 };
 
-// Layout wrapper for Footer visibility
-const Layout = ({ children }) => {
+// Main App Component with route-based rendering
+const AppContent = () => {
+  const [showScrollTop, setShowScrollTop] = useState(false);
   const location = useLocation();
 
-  const noFooterPaths = [
-    "/login",
+  // Check if current route should hide navbar and footer
+  const hideNavbarFooterPaths = [
+    "/signin",
     "/signup",
-    "/profile",
-    "/auth/login",
-    "/auth/signup",
-    "/user/profile",
+    "/forgot-password",
+    "/reset-password",
   ];
-
-  const shouldShowFooter = !noFooterPaths.some((path) =>
-    location.pathname.startsWith(path),
+  
+  const shouldHideNavbarFooter = hideNavbarFooterPaths.some((path) =>
+    location.pathname.startsWith(path)
   );
 
-  return (
-    <>
-      {children}
-      {shouldShowFooter && <Footer />}
-    </>
-  );
-};
-
-const App = () => {
-  const [showScrollTop, setShowScrollTop] = useState(false);
-
+  // Handle scroll to top button visibility
   useEffect(() => {
     let ticking = false;
 
     const updateScrollTop = () => {
       const scrollY = window.pageYOffset;
       const viewportHeight = window.innerHeight;
-
       const shouldShow = scrollY > viewportHeight * 1.5;
 
       if (shouldShow !== showScrollTop) {
@@ -151,120 +133,111 @@ const App = () => {
   }, [showScrollTop]);
 
   return (
-    <Router>
-      <ScrollToTop />
-      <div className="relative">
-        <Navbar />
+    <div className="relative min-h-screen flex flex-col">
+      {/* Navbar - Conditionally rendered */}
+      {!shouldHideNavbarFooter && <Navbar />}
+      
+      {/* ScrollProgress - Only show on non-auth pages */}
+      {!shouldHideNavbarFooter && <ScrollProgress />}
 
-        <Layout>
-          <Routes>
-            {/* Home */}
-            <Route
-              path="/"
-              element={
-                <>
-                  <Hero />
-                  {/* <HeroSection /> */}
-                  <Heading />
-                  {/* <Gallery /> */}
-                  <Category />
-                  <WhyUs />
-                  <HowItWorks/>
-                  <Reviews />
+      {/* Main Content */}
+      <main className="flex-grow">
+        <Routes>
+          {/* Home */}
+          <Route
+            path="/"
+            element={
+              <>
+                <Hero />
+                <Heading />
+                <Category />
+                <WhyUs />
+                <HowItWorks />
+                <Reviews />
+                <Questions />
+              </>
+            }
+          />
 
-                  <Questions />
-                </>
-              }
-            />
-            {/* signin route */}
+          {/* Authentication Pages (no navbar/footer) */}
+          <Route path="/signin" element={<Signin />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/faq" element={<Questions />} />
 
-            <Route path="/signin" element={<Signin />} />
-            <Route path="/signup" element={<SignUp />} />
-            <Route path="/faq" element={< Questions/>} />
+          {/* Contact & About Pages */}
+          <Route path="/contact-us" element={<ContactUs />} />
+          <Route path="/about-us" element={<AboutUs />} />
+          <Route path="/our-services" element={<OurServicesPage />} />
+          <Route path="/post-add" element={<PostaddPage />} />
 
+          {/* TakeCare */}
+          <Route path="/takecare" element={<TakeCare />} />
+          <Route path="/takecare/:serviceId" element={<NannyService />} />
+          <Route path="/takecare/babysitter" element={<BabysitterService />} />
+          <Route path="/takecare/cook" element={<CookServices />} />
+          <Route path="/takecare/housekeeper" element={<HousekeeperServices />} />
+          <Route path="/takecare/tutor" element={<TutorServices />} />
+          <Route path="/takecare/eldercare" element={<ElderCareServices />} />
+          <Route path="/takecare/petcare" element={<PetCareService />} />
+          <Route path="/takecare/carecenter" element={<CareCenterServices />} />
 
-            {/* Contacts Page */}
-            <Route path="/contact-us" element={<ContactUs />} />
-            <Route path="/about-us" element={<AboutUs />} />
-            <Route path="/our-services" element={<OurServicesPage />} />
-            <Route path="/post-add" element={<PostaddPage />} />
+          {/* For Sale */}
+          <Route path="/electronics" element={<ForSale />} />
 
-            {/* TakeCare */}
-            <Route path="/takecare" element={<TakeCare />} />
-            <Route path="/takecare/:serviceId" element={<NannyService />} />
-            <Route
-              path="/takecare/babysitter"
-              element={<BabysitterService />}
-            />
-            <Route path="/takecare/cook" element={<CookServices />} />
-            <Route
-              path="/takecare/housekeeper"
-              element={<HousekeeperServices />}
-            />
-            <Route path="/takecare/tutor" element={<TutorServices />} />
-            <Route path="/takecare/eldercare" element={<ElderCareServices />} />
-            <Route path="/takecare/petcare" element={<PetCareService />} />
-            <Route path="/takecare/carecenter" element={<CareCenterServices />} />
+          {/* Roommates */}
+          <Route path="/roommates" element={<Roommates />} />
+          <Route path="/roommate-details" element={<RoomMateDetails />} />
+          <Route path="/details" element={<DetailsPage />} />
 
+          {/* Rentals */}
+          <Route path="/rentals" element={<Rentals />} />
+          <Route path="/rentals-listings" element={<RentalsListings />} />
+          <Route path="/rental-details" element={<RentalDetailsPage />} />
 
-            {/* For Sale */}
-            <Route path="/electronics" element={<ForSale />} />
+          {/* Jobs */}
+          <Route path="/jobs" element={<JobsPage />} />
+          <Route path="/job-search" element={<JobSearchPortal />} />
+          <Route path="/job-details/:id" element={<JobDetailsPage />} />
+          <Route path="/job-seekers" element={<JobSeekerInterface />} />
+          <Route path="/job-seeker-resumes" element={<JobSeekerResumesDetail />} />
+          <Route path="/job-seeker-posts" element={<JobSeekerResume />} />
 
-            {/* Roommates */}
-            <Route path="/roommates" element={<Roommates />} />
-            <Route path="/roommate-details" element={<RoomMateDetails />} />
-            <Route path="/details" element={<DetailsPage />} />
-            {/* Rentals */}
-            <Route path="/rentals" element={<Rentals />} />
-            <Route path="/rentals-listings" element={<RentalsListings />} />
-            <Route path="/rental-details" element={<RentalDetailsPage />} />
-            {/* Jobs */}
-            <Route path="/jobs" element={<JobsPage />} />
-            <Route path="/job-search" element={<JobSearchPortal />} />
-            <Route path="/job-details/:id" element={<JobDetailsPage />} />
-            <Route path="/job-seekers" element={<JobSeekerInterface />} />
-            {/* Job Seeker Resumes Routes - FIXED */}
-            <Route
-              path="/job-seeker-resumes"
-              element={<JobSeekerResumesDetail />}
-            />
-            <Route path="/job-seeker-posts" element={<JobSeekerResume />} />
+          {/* Events */}
+          <Route path="/events" element={<Events />} />
+          <Route path="/events/:eventId" element={<EventDetailPage />} />
+          <Route path="/events-list" element={<EventList />} />
 
-            {/* Events */}
-            <Route path="/events" element={<Events />} />
-            <Route path="/events/:eventId" element={<EventDetailPage />} />
-            {/* <Route path="/event-details" element={<EventDetails />} /> */}
-            <Route path="/events-list" element={<EventList />} />
+          {/* Services Category */}
+          <Route path="/services" element={<ServicesPage />} />
 
-            {/* Services Category */}
-            <Route path="/services" element={<ServicesPage />} />
+          {/* Cars categories */}
+          <Route path="/cars" element={<CarsPage />} />
+          <Route path="/car-listings" element={<CarListing />} />
+          <Route path="/car-details" element={<CarDetails />} />
 
-            {/* Cars categories */}
-            <Route path="/cars" element={<CarsPage />} />
-            <Route path="/car-listings" element={<CarListing />} />
-            <Route path="/car-details" element={<CarDetails />} />
+          {/* Profile */}
+          <Route path="/profile" element={<Profile />} />
 
-            {/* Profile */}
-            <Route path="/profile" element={<Profile />} />
-            {/* Placeholder Pages */}
-            <Route path="/marketplace" element={<div>Marketplace Page</div>} />
-            <Route path="/vehicles" element={<div>Vehicles Page</div>} />
-            <Route path="/takecare" element={<div>TakeCare Page</div>} />
-            <Route path="/cares" element={<div>Cares Page</div>} />
-            <Route path="/blogs" element={<div>Blogs Page</div>} />
-            <Route path="/forums" element={<div>Forums Page</div>} />
-            <Route path="/community" element={<div>Community Page</div>} />
-            <Route path="/my-listings" element={<div>My Listings Page</div>} />
-            <Route path="/messages" element={<div>Messages Page</div>} />
-            <Route
-              path="/notifications"
-              element={<div>Notifications Page</div>}
-            />
-            <Route path="/settings" element={<div>Settings Page</div>} />
-          </Routes>
-        </Layout>
+          {/* Placeholder Pages */}
+          <Route path="/marketplace" element={<div>Marketplace Page</div>} />
+          <Route path="/vehicles" element={<div>Vehicles Page</div>} />
+          <Route path="/takecare" element={<div>TakeCare Page</div>} />
+          <Route path="/cares" element={<div>Cares Page</div>} />
+          <Route path="/blogs" element={<div>Blogs Page</div>} />
+          <Route path="/forums" element={<div>Forums Page</div>} />
+          <Route path="/community" element={<div>Community Page</div>} />
+          <Route path="/my-listings" element={<div>My Listings Page</div>} />
+          <Route path="/messages" element={<div>Messages Page</div>} />
+          <Route path="/notifications" element={<div>Notifications Page</div>} />
+          <Route path="/settings" element={<div>Settings Page</div>} />
+        </Routes>
+      </main>
 
-        {/* Floating Buttons */}
+      {/* Footer - Conditionally rendered */}
+      {!shouldHideNavbarFooter && <Footer />}
+
+      {/* Floating ChatBot Button - Only show on non-auth pages */}
+      {!shouldHideNavbarFooter && (
         <div className="fixed bottom-6 right-8 z-50 flex flex-col items-end space-y-4 ">
           <div
             className={`transition-all duration-500 ${
@@ -274,7 +247,17 @@ const App = () => {
             <ChatBot />
           </div>
         </div>
-      </div>
+      )}
+    </div>
+  );
+};
+
+// Main App Wrapper
+const App = () => {
+  return (
+    <Router>
+      <ScrollToTop />
+      <AppContent />
     </Router>
   );
 };

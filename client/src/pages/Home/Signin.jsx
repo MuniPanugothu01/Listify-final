@@ -33,12 +33,16 @@ export default function VidProLogin() {
             {/* Top Bar - Logo and Back Button */}
             <div className="flex items-center justify-between">
               {/* Logo */}
-              <div className="flex items-center gap-2 text-white">
+
+              <Link to="/">
+               <div className="flex items-center gap-2 text-white">
                 <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
                   <span className="text-slate-900 font-bold text-xl">L</span>
                 </div>
                 <span className="text-2xl font-bold capitalize">listify</span>
               </div>
+              </Link>
+             
 
               {/* Back to Website */}
               <Link to="/">  
