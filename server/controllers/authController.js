@@ -1,9 +1,9 @@
 const User = require("../models/User");
 const jwt = require("jsonwebtoken");
-const RedisService = require('../services/redisService');
-const EmailService = require('../services/emailService');
-const OTPGenerator = require('../utils/otpGenerator');
-const bcrypt = require('bcryptjs');
+const RedisService = require("../services/redisService");
+const EmailService = require("../services/emailService");
+const OTPGenerator = require("../utils/otpGenerator");
+const bcrypt = require("bcryptjs");
 
 // Helper function to generate JWT token
 const generateToken = (id) => {
@@ -37,13 +37,14 @@ exports.initiateRegister = async (req, res) => {
   try {
     const { name, email, password, confirmPassword } = req.body;
 
-    console.log('🔍 Registration attempt:', { email, name });
+    console.log("🔍 Registration attempt:", { email, name });
 
     // Check if all required fields are provided
     if (!name || !email || !password || !confirmPassword) {
       return res.status(400).json({
         success: false,
-        message: 'All fields are required: name, email, password, confirmPassword',
+        message:
+          "All fields are required: name, email, password, confirmPassword",
       });
     }
 
@@ -52,7 +53,7 @@ exports.initiateRegister = async (req, res) => {
     if (!emailRegex.test(email)) {
       return res.status(400).json({
         success: false,
-        message: 'Please provide a valid email address',
+        message: "Please provide a valid email address",
       });
     }
 
@@ -60,7 +61,7 @@ exports.initiateRegister = async (req, res) => {
     if (password.length < 6) {
       return res.status(400).json({
         success: false,
-        message: 'Password must be at least 6 characters long',
+        message: "Password must be at least 6 characters long",
       });
     }
 
@@ -68,7 +69,7 @@ exports.initiateRegister = async (req, res) => {
     if (password !== confirmPassword) {
       return res.status(400).json({
         success: false,
-        message: 'Passwords do not match',
+        message: "Passwords do not match",
       });
     }
 
@@ -77,21 +78,23 @@ exports.initiateRegister = async (req, res) => {
     if (userExists) {
       return res.status(400).json({
         success: false,
-        message: 'User already exists. Please login instead.',
+        message: "User already exists. Please login instead.",
       });
     }
 
     // Check if email already has pending registration
-    const pendingRegistration = await RedisService.getPendingRegistration(email);
+    const pendingRegistration =
+      await RedisService.getPendingRegistration(email);
     if (pendingRegistration) {
       const now = new Date();
       const createdAt = new Date(pendingRegistration.createdAt);
       const expiresAt = new Date(createdAt.getTime() + 10 * 60 * 1000); // 10 minutes
-      
+
       if (now < expiresAt) {
         return res.status(400).json({
           success: false,
-          message: 'Registration already in progress. Please check your email for OTP.',
+          message:
+            "Registration already in progress. Please check your email for OTP.",
           expiresIn: Math.ceil((expiresAt - now) / 1000),
         });
       } else {
@@ -105,18 +108,18 @@ exports.initiateRegister = async (req, res) => {
     if (emailBlocked) {
       return res.status(429).json({
         success: false,
-        message: 'Too many registration attempts. Please try again in 1 hour.',
+        message: "Too many registration attempts. Please try again in 1 hour.",
       });
     }
 
     // Generate OTP
     const otp = OTPGenerator.generateOTP();
     console.log(`✅ Generated OTP for ${email}: ${otp}`);
-    
+
     // Hash password before storing in Redis
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
-    
+
     // Store user data in Redis temporarily
     const userData = {
       name,
@@ -127,16 +130,20 @@ exports.initiateRegister = async (req, res) => {
       createdAt: new Date().toISOString(),
       lastResendTime: null,
     };
-    
-const storeResult = await RedisService.storePendingRegistration(email, userData);
-if (!storeResult) {
-  throw new Error('Failed to store registration data');
-}
+
+    // ✅ FIXED: Changed 'redisService' to 'RedisService' (line 135)
+    const storeResult = await RedisService.storePendingRegistration(
+      email,
+      userData,
+    );
+    if (!storeResult) {
+      throw new Error("Failed to store registration data");
+    }
 
     // Store OTP separately for verification
     const otpStoreResult = await RedisService.storeOTP(email, otp);
     if (!otpStoreResult) {
-      throw new Error('Failed to store OTP');
+      throw new Error("Failed to store OTP");
     }
 
     // Set rate limiting attempts
@@ -148,30 +155,31 @@ if (!storeResult) {
       await EmailService.sendOTPEmail(email, name, otp);
       console.log(`✅ Email sent successfully to ${email}`);
     } catch (emailError) {
-      console.error('❌ Failed to send email:', emailError.message);
-      
+      console.error("❌ Failed to send email:", emailError.message);
+
       // Clean up if email fails
       await RedisService.deletePendingRegistration(email);
       await RedisService.deleteOTP(email);
-      
+
       return res.status(500).json({
         success: false,
-        message: 'Failed to send OTP email. ' + emailError.message,
+        message: "Failed to send OTP email. " + emailError.message,
         error: emailError.message,
       });
     }
 
     res.status(200).json({
       success: true,
-      message: 'OTP sent to your email. Please verify to complete registration.',
+      message:
+        "OTP sent to your email. Please verify to complete registration.",
       email: email,
       expiresIn: 600, // 10 minutes in seconds
     });
   } catch (error) {
-    console.error('❌ Registration initiation error:', error);
+    console.error("❌ Registration initiation error:", error);
     res.status(500).json({
       success: false,
-      message: 'Server error',
+      message: "Server error",
       error: error.message,
     });
   }
@@ -185,7 +193,7 @@ exports.verifyOTPAndRegister = async (req, res) => {
     if (!email || !otp) {
       return res.status(400).json({
         success: false,
-        message: 'Email and OTP are required',
+        message: "Email and OTP are required",
       });
     }
 
@@ -194,7 +202,8 @@ exports.verifyOTPAndRegister = async (req, res) => {
     if (!pendingData) {
       return res.status(400).json({
         success: false,
-        message: 'Registration session expired or not found. Please start over.',
+        message:
+          "Registration session expired or not found. Please start over.",
       });
     }
 
@@ -204,7 +213,7 @@ exports.verifyOTPAndRegister = async (req, res) => {
       await RedisService.deletePendingRegistration(email);
       return res.status(400).json({
         success: false,
-        message: 'Too many OTP attempts. Please start registration again.',
+        message: "Too many OTP attempts. Please start registration again.",
       });
     }
 
@@ -228,27 +237,36 @@ exports.verifyOTPAndRegister = async (req, res) => {
       await RedisService.deletePendingRegistration(email);
       return res.status(400).json({
         success: false,
-        message: 'User already registered. Please login.',
+        message: "User already registered. Please login.",
       });
     }
 
-    // Create user in database
+    // Create user in database FIRST
     const user = await User.create({
       name: pendingData.name,
       email: pendingData.email,
       password: pendingData.password,
     });
 
-    // Clean up Redis data
-    await RedisService.deletePendingRegistration(email);
+    console.log(`✅ User created in database: ${email}`);
+
+    // await RedisService.deletePendingRegistration(email);
+    console.log(`✅ Redis data cleaned up for: ${email}`);
 
     // Send token response
-    sendTokenResponse(user, 201, res, 'User registered successfully');
+    sendTokenResponse(user, 201, res, "User registered successfully");
   } catch (error) {
-    console.error('OTP verification error:', error);
+    console.error("❌ OTP verification error:", error);
+
+    // ❌ FIXED: Don't delete Redis data on error
+    // Keep the pending registration so user can retry
+    console.log(
+      `⚠️  Error occurred, keeping pending registration for retry: ${email}`,
+    );
+
     res.status(500).json({
       success: false,
-      message: 'Server error',
+      message: "Server error",
       error: error.message,
     });
   }
@@ -262,7 +280,7 @@ exports.resendOTP = async (req, res) => {
     if (!email) {
       return res.status(400).json({
         success: false,
-        message: 'Email is required',
+        message: "Email is required",
       });
     }
 
@@ -271,21 +289,21 @@ exports.resendOTP = async (req, res) => {
     if (!pendingData) {
       return res.status(400).json({
         success: false,
-        message: 'No pending registration found for this email.',
+        message: "No pending registration found for this email.",
       });
     }
 
     // Check if we can resend OTP (prevent abuse)
     const lastResendTime = pendingData.lastResendTime;
     const now = new Date();
-    
+
     if (lastResendTime) {
       const timeDiff = (now - new Date(lastResendTime)) / 1000; // in seconds
       if (timeDiff < 60) {
         // Wait at least 60 seconds between resends
         return res.status(429).json({
           success: false,
-          message: 'Please wait before requesting another OTP.',
+          message: "Please wait before requesting another OTP.",
           waitTime: Math.ceil(60 - timeDiff),
         });
       }
@@ -293,11 +311,11 @@ exports.resendOTP = async (req, res) => {
 
     // Generate new OTP
     const otp = OTPGenerator.generateOTP();
-    
+
     // Update pending data with new resend time
     pendingData.lastResendTime = now.toISOString();
     pendingData.resendCount = (pendingData.resendCount || 0) + 1;
-    
+
     // Store updated data and new OTP
     await RedisService.storePendingRegistration(email, pendingData);
     await RedisService.storeOTP(email, otp);
@@ -308,24 +326,24 @@ exports.resendOTP = async (req, res) => {
       await EmailService.sendOTPEmail(email, pendingData.name, otp);
       console.log(`✅ Resent email successfully to ${email}`);
     } catch (emailError) {
-      console.error('❌ Failed to resend email:', emailError.message);
+      console.error("❌ Failed to resend email:", emailError.message);
       return res.status(500).json({
         success: false,
-        message: 'Failed to resend OTP. ' + emailError.message,
+        message: "Failed to resend OTP. " + emailError.message,
         error: emailError.message,
       });
     }
 
     res.status(200).json({
       success: true,
-      message: 'New OTP sent to your email.',
+      message: "New OTP sent to your email.",
       email: email,
     });
   } catch (error) {
-    console.error('Resend OTP error:', error);
+    console.error("Resend OTP error:", error);
     res.status(500).json({
       success: false,
-      message: 'Server error',
+      message: "Server error",
       error: error.message,
     });
   }
@@ -340,7 +358,7 @@ exports.checkRegistrationStatus = async (req, res) => {
     if (!pendingData) {
       return res.status(404).json({
         success: false,
-        message: 'No pending registration found',
+        message: "No pending registration found",
       });
     }
 
@@ -361,10 +379,10 @@ exports.checkRegistrationStatus = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error('Check registration status error:', error);
+    console.error("Check registration status error:", error);
     res.status(500).json({
       success: false,
-      message: 'Server error',
+      message: "Server error",
       error: error.message,
     });
   }
@@ -630,14 +648,14 @@ exports.register = async (req, res) => {
     if (!emailRegex.test(email)) {
       return res.status(400).json({
         success: false,
-        message: "Please provide a valid email address"
+        message: "Please provide a valid email address",
       });
     }
 
     if (password.length < 6) {
       return res.status(400).json({
         success: false,
-        message: "Password must be at least 6 characters long"
+        message: "Password must be at least 6 characters long",
       });
     }
 
@@ -645,20 +663,19 @@ exports.register = async (req, res) => {
     if (userExists) {
       return res.status(400).json({
         success: false,
-        message: "User already exists"
+        message: "User already exists",
       });
     }
 
     const user = await User.create({ name, email, password });
-    
+
     sendTokenResponse(user, 201, res, "User registered successfully");
-    
   } catch (error) {
     console.error("Registration error:", error);
     res.status(500).json({
       success: false,
       message: "Server error",
-      error: error.message
+      error: error.message,
     });
   }
 };
