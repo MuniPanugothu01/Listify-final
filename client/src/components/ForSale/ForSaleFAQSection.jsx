@@ -73,50 +73,6 @@ export default function ForSaleFAQSection() {
             </div>
           ))}
         </div>
-
-        <div className="text-center mt-8 sm:mt-12">
-          <div className="mb-4 sm:mb-6">
-            <p className="text-gray-600 text-sm sm:text-base mb-3 sm:mb-4">Still have electronics questions?</p>
-            <div className="inline-flex flex-col sm:flex-row gap-3 sm:gap-4">
-              <button 
-                className="px-6 sm:px-8 py-2.5 sm:py-3 rounded-full font-medium transition-colors text-sm sm:text-base"
-                style={{ 
-                  backgroundColor: '#27BB97',
-                  color: 'white'
-                }}
-                onMouseEnter={(e) => {
-                  e.target.style.backgroundColor = '#1E9E7E';
-                }}
-                onMouseLeave={(e) => {
-                  e.target.style.backgroundColor = '#27BB97';
-                }}
-              >
-                Ask Tech Community
-              </button>
-              <button 
-                className="px-6 sm:px-8 py-2.5 sm:py-3 rounded-full font-medium transition-colors text-sm sm:text-base"
-                style={{ 
-                  border: '2px solid #27BB97',
-                  color: '#27BB97',
-                  backgroundColor: 'transparent'
-                }}
-                onMouseEnter={(e) => {
-                  e.target.style.backgroundColor = '#27BB97';
-                  e.target.style.color = 'white';
-                }}
-                onMouseLeave={(e) => {
-                  e.target.style.backgroundColor = 'transparent';
-                  e.target.style.color = '#27BB97';
-                }}
-              >
-                Safety Guidelines
-              </button>
-            </div>
-          </div>
-          <p className="text-xs sm:text-sm text-gray-500">
-            Average response time: <span className="font-semibold">2 minutes</span> • Available 24/7
-          </p>
-        </div>
       </div>
     </section>
   );

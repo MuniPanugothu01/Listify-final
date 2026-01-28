@@ -142,7 +142,7 @@ export default function ForSaleOffers() {
                 e.target.style.color = '#27BB97';
               }}
             >
-              Browse Tech Deals
+              Browse More
             </button>
           </div>
         </div>
