@@ -19,6 +19,7 @@ import {
   FaSearch,
   FaPlus,
   FaRegHeart, // Outlined heart icon
+  FaBell, // Notification bell icon
 } from "react-icons/fa";
 
 import NavSearchBar from "./NavSearchBar";
@@ -41,9 +42,22 @@ const Navbar = () => {
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   const [showMoreDropdown, setShowMoreDropdown] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState("");
+  const [isSignedIn, setIsSignedIn] = useState(false); // Add signed in state
+  const [showNotificationDropdown, setShowNotificationDropdown] = useState(false); // Notification dropdown
   
   const profileDropdownRef = useRef(null);
+  const notificationDropdownRef = useRef(null);
   const navigate = useNavigate();
+
+  // Mock notifications data
+  const [notifications, setNotifications] = useState([
+    { id: 1, text: "Someone viewed your iPhone listing", time: "2 mins ago", read: false },
+    { id: 2, text: "Your MacBook Pro has 3 new offers", time: "1 hour ago", read: false },
+    { id: 3, text: "New message from buyer", time: "3 hours ago", read: true },
+    { id: 4, text: "Your listing was featured", time: "1 day ago", read: true },
+  ]);
+
+  const unreadCount = notifications.filter(n => !n.read).length;
 
   // Scroll to top function
   const scrollToTop = () => {
@@ -69,13 +83,13 @@ const Navbar = () => {
   ];
 
   const profileMenuItems = [
-    { name: "Dashboard", path: "/profile", icon: CgProfile },
+    { name: "Dashboard", path: "/dashboard", icon: CgProfile },
+    { name: "My Profile", path: "/profile", icon: FaUserFriends },
     { name: "Saved Items", path: "/saved", icon: FaRegHeart },
-    { name: "Settings", path: "/settings", icon: FaTools },
     { name: "My Listings", path: "/my-listings", icon: FaBuilding },
-    { name: "Messages", path: "/messages", icon: FaUserFriends },
-    { name: "Notifications", path: "/notifications", icon: FaBriefcase },
-    { name: "Logout", path: "/logout", icon: FaChevronRight },
+    { name: "Messages", path: "/messages", icon: FaBriefcase },
+    { name: "Settings", path: "/settings", icon: FaTools },
+    { name: "Sign Out", path: "/logout", icon: FaChevronRight },
   ];
 
   const toggleMobileMenu = () => {
@@ -83,11 +97,23 @@ const Navbar = () => {
   };
 
   const handleProfileClick = () => {
-    setShowProfileDropdown(!showProfileDropdown);
+    if (isSignedIn) {
+      setShowProfileDropdown(!showProfileDropdown);
+    } else {
+      navigate("/signin");
+    }
+  };
+
+  const handleNotificationClick = () => {
+    setShowNotificationDropdown(!showNotificationDropdown);
   };
 
   const closeProfileDropdown = () => {
     setShowProfileDropdown(false);
+  };
+
+  const closeNotificationDropdown = () => {
+    setShowNotificationDropdown(false);
   };
 
   const handleMoreClick = (e) => {
@@ -95,17 +121,35 @@ const Navbar = () => {
     setShowMoreDropdown(!showMoreDropdown);
   };
 
+  const handleSignIn = () => {
+    setIsSignedIn(true);
+    // In real app, this would be after successful authentication
+  };
+
+  const handleSignOut = () => {
+    setIsSignedIn(false);
+    setShowProfileDropdown(false);
+    navigate("/");
+  };
+
   const handleProfileMenuItemClick = (path) => {
-    if (path === "/profile") {
-      navigate("/profile");
-    } else if (path === "/logout") {
-      console.log("Logging out...");
-      navigate("/");
+    if (path === "/logout") {
+      handleSignOut();
     } else {
       navigate(path);
     }
     scrollToTop();
     closeProfileDropdown();
+  };
+
+  const markNotificationAsRead = (id) => {
+    setNotifications(notifications.map(notif => 
+      notif.id === id ? { ...notif, read: true } : notif
+    ));
+  };
+
+  const markAllAsRead = () => {
+    setNotifications(notifications.map(notif => ({ ...notif, read: true })));
   };
 
   // Close dropdown when clicking outside
@@ -118,11 +162,20 @@ const Navbar = () => {
       ) {
         closeProfileDropdown();
       }
+      
+      if (
+        notificationDropdownRef.current &&
+        !notificationDropdownRef.current.contains(event.target) &&
+        !event.target.closest('.notification-button')
+      ) {
+        closeNotificationDropdown();
+      }
     };
 
     const handleEscapeKey = (event) => {
       if (event.key === "Escape") {
         closeProfileDropdown();
+        closeNotificationDropdown();
       }
     };
 
@@ -251,6 +304,27 @@ const Navbar = () => {
     .navbar-scrolled .profile-button:hover {
       background-color: rgba(255, 255, 255, 0.1);
     }
+
+    .notification-badge {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      background-color: #EF4444;
+      color: white;
+      border-radius: 50%;
+      width: 18px;
+      height: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: bold;
+    }
+
+    .notification-item-unread {
+      background-color: #F0F9FF;
+      border-left: 3px solid #3B82F6;
+    }
   `;
 
   return (
@@ -353,24 +427,93 @@ const Navbar = () => {
                   <FaRegHeart className={`text-lg sm:text-xl md:text-2xl ${
                     isScrolled ? "text-white" : "text-gray-700"
                   }`} />
-                  <span className={`text-xs md:text-sm lg:text-base whitespace-nowrap font-medium ${
-                    isScrolled ? "text-white" : "text-gray-700"
-                  }`}>
-                  </span>
                 </Link>
+
+                {/* Notification Icon */}
+                {isSignedIn && (
+                  <div className="relative">
+                    <button
+                      onClick={handleNotificationClick}
+                      className={`notification-button relative p-1.5 rounded-lg hover:bg-gray-100 ${
+                        isScrolled ? "text-white hover:bg-white/10" : "text-gray-700"
+                      }`}
+                    >
+                      <FaBell className="text-lg sm:text-xl md:text-2xl" />
+                      {unreadCount > 0 && (
+                        <span className="notification-badge">{unreadCount}</span>
+                      )}
+                    </button>
+
+                    {/* Notification Dropdown */}
+                    {showNotificationDropdown && (
+                      <div
+                        ref={notificationDropdownRef}
+                        className="absolute right-0 top-full mt-2 w-80 bg-white border border-gray-200 rounded-xl shadow-2xl z-50 overflow-hidden"
+                      >
+                        {/* Notification Header */}
+                        <div className="p-4 border-b border-gray-200">
+                          <div className="flex justify-between items-center">
+                            <h3 className="font-semibold text-gray-900">Notifications</h3>
+                            {unreadCount > 0 && (
+                              <button
+                                onClick={markAllAsRead}
+                                className="text-sm text-blue-600 hover:text-blue-800"
+                              >
+                                Mark all as read
+                              </button>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Notification List */}
+                        <div className="max-h-96 overflow-y-auto">
+                          {notifications.length > 0 ? (
+                            notifications.map((notification) => (
+                              <div
+                                key={notification.id}
+                                className={`p-4 border-b border-gray-100 hover:bg-gray-50 cursor-pointer ${
+                                  !notification.read ? 'notification-item-unread' : ''
+                                }`}
+                                onClick={() => markNotificationAsRead(notification.id)}
+                              >
+                                <p className="text-sm text-gray-800">{notification.text}</p>
+                                <p className="text-xs text-gray-500 mt-1">{notification.time}</p>
+                              </div>
+                            ))
+                          ) : (
+                            <div className="p-8 text-center">
+                              <p className="text-gray-500">No notifications</p>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* View All Link */}
+                        <div className="p-3 border-t border-gray-200">
+                          <Link
+                            to="/notifications"
+                            onClick={closeNotificationDropdown}
+                            className="block text-center text-sm text-blue-600 hover:text-blue-800"
+                          >
+                            View all notifications
+                          </Link>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
 
                 {/* Create Listing Button */}
                 <Link to="/post-add" className="hidden lg:block">
                   <button 
                     onClick={scrollToTop}
-                    className="flex items-center gap-1 sm:gap-2 bg-[#27bb97] text-white px-3 sm:px-4 py-2 sm:py-2.5 md:py-3 lg:py-3.5 rounded-lg text-xs md:text-sm lg:text-base whitespace-nowrap hover:bg-[#1fa987] transition cursor-pointer font-semibold"
+                    className="flex items-center gap-1 sm:gap-2 bg-[#27bb97] text-white px-3 sm:px-3 py-2 sm:py-2.5 md:py-3 lg:py-3 rounded-lg text-xs md:text-sm lg:text-base whitespace-nowrap hover:bg-[#1fa987] transition cursor-pointer font-semibold"
                   >
                     <FaPlus className="text-white text-sm sm:text-base md:text-lg" />
-                    <span className="hidden sm:inline">Post add</span>
+                    <span className="hidden sm:inline">Sell</span>
                   </button>
                 </Link>
 
-                {/* Profile Dropdown */}
+                {/* Profile/Login Button */}
                 <div className="relative">
                   <button
                     onClick={handleProfileClick}
@@ -380,11 +523,21 @@ const Navbar = () => {
                         : "border-gray-300 text-gray-700"
                     }`}
                   >
-                    <CgProfile className="text-base sm:text-lg md:text-[20px] lg:text-[22px]" />
+                    {isSignedIn ? (
+                      <>
+                        <CgProfile className="text-base sm:text-lg md:text-[20px] lg:text-[22px]" />
+                        <FaChevronDown className="h-3 w-3 sm:h-4 sm:w-4" />
+                      </>
+                    ) : (
+                      <>
+                        <CgProfile className="text-base sm:text-lg md:text-[20px] lg:text-[22px]" />
+                        <span className="hidden sm:inline text-sm">Sign In</span>
+                      </>
+                    )}
                   </button>
 
-                  {/* Profile Dropdown Menu */}
-                  {showProfileDropdown && (
+                  {/* Profile Dropdown Menu (only when signed in) */}
+                  {showProfileDropdown && isSignedIn && (
                     <div
                       ref={profileDropdownRef}
                       className="absolute right-0 top-full mt-2 w-56 sm:w-64 bg-white border border-gray-200 rounded-xl shadow-2xl z-50 profile-dropdown overflow-hidden"
@@ -418,8 +571,6 @@ const Navbar = () => {
                           </button>
                         ))}
                       </div>
-
-                     
                     </div>
                   )}
                 </div>
@@ -438,6 +589,23 @@ const Navbar = () => {
                   isScrolled ? "text-white" : "text-gray-700"
                 }`} />
               </Link>
+
+              {/* Mobile Notification Icon */}
+              {isSignedIn && (
+                <div className="relative">
+                  <button
+                    onClick={handleNotificationClick}
+                    className="relative p-1"
+                  >
+                    <FaBell className={`text-lg sm:text-xl ${
+                      isScrolled ? "text-white" : "text-gray-700"
+                    }`} />
+                    {unreadCount > 0 && (
+                      <span className="notification-badge">{unreadCount}</span>
+                    )}
+                  </button>
+                </div>
+              )}
 
               {/* Mobile Create Listing Button */}
               <Link to="/post-add">
@@ -525,29 +693,88 @@ const Navbar = () => {
                   }`}
                 >
                   <div className="flex items-center gap-2">
-                    <FaRegHeart className="h-4 w-4 sm:h-5 sm:w-5 text-gray-700" />
+                    <FaRegHeart className="h-4 w-4 sm:h-5 sm:w-5 text-white-700" />
                     <span>Saved Items</span>
                   </div>
                 </Link>
                 
-                {/* Mobile Profile Link */}
-                <Link
-                  to="/profile"
-                  onClick={() => {
-                    setIsMobileMenuOpen(false);
-                    scrollToTop();
-                  }}
-                  className={`nav-link px-3 py-2 text-xs sm:text-sm hover:bg-gray-100 rounded font-semibold ${
-                    isScrolled 
-                      ? "text-white hover:bg-white/10" 
-                      : "text-gray-700"
-                  }`}
-                >
-                  <div className="flex items-center gap-2">
-                    <CgProfile className="h-4 w-4 sm:h-5 sm:w-5" />
-                    <span>Dashboard</span>
-                  </div>
-                </Link>
+                {/* Mobile Notifications Link */}
+                {isSignedIn && (
+                  <Link
+                    to="/notifications"
+                    onClick={() => {
+                      setIsMobileMenuOpen(false);
+                      scrollToTop();
+                    }}
+                    className={`nav-link px-3 py-2 text-xs sm:text-sm hover:bg-gray-100 rounded font-semibold ${
+                      isScrolled 
+                        ? "text-white hover:bg-white/10" 
+                        : "text-gray-700"
+                    }`}
+                  >
+                    <div className="flex items-center gap-2">
+                      <FaBell className="h-4 w-4 sm:h-5 sm:w-5 text-gray-700" />
+                      <span>Notifications {unreadCount > 0 && `(${unreadCount})`}</span>
+                    </div>
+                  </Link>
+                )}
+                
+                {/* Mobile Profile/Sign In Link */}
+                {isSignedIn ? (
+                  <>
+                    <Link
+                      to="/dashboard"
+                      onClick={() => {
+                        setIsMobileMenuOpen(false);
+                        scrollToTop();
+                      }}
+                      className={`nav-link px-3 py-2 text-xs sm:text-sm hover:bg-gray-100 rounded font-semibold ${
+                        isScrolled 
+                          ? "text-white hover:bg-white/10" 
+                          : "text-gray-700"
+                      }`}
+                    >
+                      <div className="flex items-center gap-2">
+                        <CgProfile className="h-4 w-4 sm:h-5 sm:w-5" />
+                        <span>Dashboard</span>
+                      </div>
+                    </Link>
+                    <button
+                      onClick={() => {
+                        setIsMobileMenuOpen(false);
+                        handleSignOut();
+                      }}
+                      className={`nav-link px-3 py-2 text-xs sm:text-sm hover:bg-gray-100 rounded font-semibold text-left ${
+                        isScrolled 
+                          ? "text-white hover:bg-white/10" 
+                          : "text-gray-700"
+                      }`}
+                    >
+                      <div className="flex items-center gap-2">
+                        <FaChevronRight className="h-4 w-4 sm:h-5 sm:w-5" />
+                        <span>Sign Out</span>
+                      </div>
+                    </button>
+                  </>
+                ) : (
+                  <Link
+                    to="/signin"
+                    onClick={() => {
+                      setIsMobileMenuOpen(false);
+                      scrollToTop();
+                    }}
+                    className={`nav-link px-3 py-2 text-xs sm:text-sm hover:bg-gray-100 rounded font-semibold ${
+                      isScrolled 
+                        ? "text-white hover:bg-white/10" 
+                        : "text-gray-700"
+                    }`}
+                  >
+                    <div className="flex items-center gap-2">
+                      <CgProfile className="h-4 w-4 sm:h-5 sm:w-5" />
+                      <span>Sign In</span>
+                    </div>
+                  </Link>
+                )}
               </div>
             </div>
           )}
