@@ -1,7 +1,7 @@
 import React from 'react';
 import { Shield, Truck, MessageCircle, CreditCard, Star, Users, Package, Headphones } from 'lucide-react';
 
-export default function ForSaleOffers() {
+export default function ElectronicsOffers() {
   const offers = [
     {
       icon: Package,

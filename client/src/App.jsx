@@ -16,7 +16,7 @@ import Questions from "./pages/Home/Questions.jsx";
 import Reviews from "./pages/Home/Reviews.jsx";
 import Footer from "./pages/Home/Footer.jsx";
 
-// signin page
+// signin page  
 import Signin from "./pages/Home/Signin.jsx";
 import SignUp from "./pages/Home/SignUp.jsx";
 
@@ -36,6 +36,7 @@ import PetCareService from "./components/TakeCare/PetCareServices/PetCareService
 import CareCenterServices from "./components/TakeCare/CareCenterServices/CareCenterServices.jsx";
 
 // For Sale
+import Electronics from "./components/Electronics/Electronics.jsx";
 import ForSale from "./components/ForSale/ForSale.jsx";
 
 // Roommates
@@ -182,7 +183,9 @@ const AppContent = () => {
           <Route path="/takecare/carecenter" element={<CareCenterServices />} />
 
           {/* For Sale */}
-          <Route path="/electronics" element={<ForSale />} />
+          <Route path="/electronics" element={<Electronics />} />
+
+          <Route path="/forsale" element={<ForSale />} />
 
           {/* Roommates */}
           <Route path="/roommates" element={<Roommates />} />

@@ -80,6 +80,7 @@ const Navbar = () => {
     { name: "Jobs", path: "/jobs" },
     { name: "Cars", path: "/cars" },
     { name: "Electronics", path: "/electronics" },
+    { name: "For Sale", path: "/forsale" },
   ];
 
   const profileMenuItems = [
