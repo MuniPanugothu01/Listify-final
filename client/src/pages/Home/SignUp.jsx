@@ -1031,7 +1031,7 @@ export default function SignUp() {
                   <span className="text-gray-600">
                     Already have an account?{" "}
                   </span>
-                  <Link to="/signin">
+                  <Link to="/login">
                     <button className="text-gray-900 font-medium hover:underline cursor-pointer">
                       Log in here
                     </button>

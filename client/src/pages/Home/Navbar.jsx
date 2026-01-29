@@ -100,7 +100,7 @@ const Navbar = () => {
     if (isSignedIn) {
       setShowProfileDropdown(!showProfileDropdown);
     } else {
-      navigate("/signin");
+      navigate("/login");
     }
   };
 

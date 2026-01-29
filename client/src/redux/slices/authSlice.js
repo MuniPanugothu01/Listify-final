@@ -1,45 +1,89 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { authAPI } from '../../services/api';
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { authAPI } from "../../services/api";
 
 // Async Thunks
-export const registerUser = createAsyncThunk(
-  'auth/register',
+export const initiateRegister = createAsyncThunk(
+  "auth/initiateRegister",
   async (userData, { rejectWithValue }) => {
     try {
-      const response = await authAPI.register(userData);
+      const response = await authAPI.initiateRegister(userData);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Registration initiation failed",
+      );
+    }
+  },
+);
+
+export const verifyOTP = createAsyncThunk(
+  "auth/verifyOTP",
+  async ({ email, otp }, { rejectWithValue }) => {
+    try {
+      const response = await authAPI.verifyOTP({ email, otp });
       if (response.data.success) {
-        localStorage.setItem('authToken', response.data.token);
-        localStorage.setItem('user', JSON.stringify(response.data.user));
+        localStorage.setItem("authToken", response.data.token);
+        localStorage.setItem("user", JSON.stringify(response.data.user));
       }
       return response.data;
     } catch (error) {
       return rejectWithValue(
-        error.response?.data?.message || 'Registration failed'
+        error.response?.data?.message || "OTP verification failed",
       );
     }
-  }
+  },
+);
+
+export const resendOTP = createAsyncThunk(
+  "auth/resendOTP",
+  async (email, { rejectWithValue }) => {
+    try {
+      const response = await authAPI.resendOTP(email);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to resend OTP",
+      );
+    }
+  },
 );
 
 export const loginUser = createAsyncThunk(
   'auth/login',
   async (credentials, { rejectWithValue }) => {
     try {
+      console.log('Attempting login with:', credentials);
+      
       const response = await authAPI.login(credentials);
+      console.log('Login API Response:', response.data);
+      
       if (response.data.success) {
+        console.log('Login successful, storing token');
         localStorage.setItem('authToken', response.data.token);
         localStorage.setItem('user', JSON.stringify(response.data.user));
+      } else {
+        console.log('Login not successful:', response.data.message);
       }
       return response.data;
     } catch (error) {
-      return rejectWithValue(
-        error.response?.data?.message || 'Login failed'
-      );
+      console.error('Login error details:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status
+      });
+      
+      const errorMessage = error.response?.data?.message || 
+                          error.response?.data?.error || 
+                          error.message || 
+                          'Login failed. Please check your credentials.';
+      
+      return rejectWithValue(errorMessage);
     }
   }
 );
 
 export const getUserProfile = createAsyncThunk(
-  'auth/getProfile',
+  "auth/getProfile",
   async (_, { rejectWithValue, getState }) => {
     try {
       const { auth } = getState();
@@ -47,14 +91,14 @@ export const getUserProfile = createAsyncThunk(
       return response.data;
     } catch (error) {
       return rejectWithValue(
-        error.response?.data?.message || 'Failed to fetch profile'
+        error.response?.data?.message || "Failed to fetch profile",
       );
     }
-  }
+  },
 );
 
 export const updateProfile = createAsyncThunk(
-  'auth/updateProfile',
+  "auth/updateProfile",
   async (userData, { rejectWithValue, getState }) => {
     try {
       const { auth } = getState();
@@ -62,14 +106,14 @@ export const updateProfile = createAsyncThunk(
       return response.data;
     } catch (error) {
       return rejectWithValue(
-        error.response?.data?.message || 'Profile update failed'
+        error.response?.data?.message || "Profile update failed",
       );
     }
-  }
+  },
 );
 
 export const changePassword = createAsyncThunk(
-  'auth/changePassword',
+  "auth/changePassword",
   async (passwordData, { rejectWithValue, getState }) => {
     try {
       const { auth } = getState();
@@ -77,64 +121,126 @@ export const changePassword = createAsyncThunk(
       return response.data;
     } catch (error) {
       return rejectWithValue(
-        error.response?.data?.message || 'Password change failed'
+        error.response?.data?.message || "Password change failed",
       );
     }
-  }
+  },
 );
 
+// OTP-based Forgot Password Actions
+export const initiateForgotPassword = createAsyncThunk(
+  "auth/initiateForgotPassword",
+  async (email, { rejectWithValue }) => {
+    try {
+      const response = await authAPI.initiateForgotPassword(email);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to initiate password reset",
+      );
+    }
+  },
+);
+
+export const verifyForgotPasswordOTP = createAsyncThunk(
+  "auth/verifyForgotPasswordOTP",
+  async ({ email, otp }, { rejectWithValue }) => {
+    try {
+      const response = await authAPI.verifyForgotPasswordOTP({ email, otp });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to verify OTP",
+      );
+    }
+  },
+);
+
+export const resendForgotPasswordOTP = createAsyncThunk(
+  "auth/resendForgotPasswordOTP",
+  async (email, { rejectWithValue }) => {
+    try {
+      const response = await authAPI.resendForgotPasswordOTP(email);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to resend OTP",
+      );
+    }
+  },
+);
+
+export const resetPasswordWithToken = createAsyncThunk(
+  "auth/resetPasswordWithToken",
+  async ({ resetToken, email, password, confirmPassword }, { rejectWithValue }) => {
+    try {
+      const response = await authAPI.resetPasswordWithToken(resetToken, email, password, confirmPassword);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to reset password",
+      );
+    }
+  },
+);
+
+// Legacy forgot password (keep for compatibility)
 export const forgotPassword = createAsyncThunk(
-  'auth/forgotPassword',
+  "auth/forgotPassword",
   async (email, { rejectWithValue }) => {
     try {
       const response = await authAPI.forgotPassword(email);
       return response.data;
     } catch (error) {
       return rejectWithValue(
-        error.response?.data?.message || 'Password reset request failed'
+        error.response?.data?.message || "Password reset request failed",
       );
     }
-  }
+  },
 );
 
+// Legacy reset password (keep for compatibility)
 export const resetPassword = createAsyncThunk(
-  'auth/resetPassword',
+  "auth/resetPassword",
   async ({ resetToken, password }, { rejectWithValue }) => {
     try {
       const response = await authAPI.resetPassword(resetToken, password);
       return response.data;
     } catch (error) {
       return rejectWithValue(
-        error.response?.data?.message || 'Password reset failed'
+        error.response?.data?.message || "Password reset failed",
       );
     }
-  }
+  },
 );
 
 export const logoutUser = createAsyncThunk(
-  'auth/logout',
+  "auth/logout",
   async (_, { rejectWithValue }) => {
     try {
-      // Clear local storage
-      localStorage.removeItem('authToken');
-      localStorage.removeItem('user');
+      localStorage.removeItem("authToken");
+      localStorage.removeItem("user");
       return { success: true };
     } catch (error) {
-      return rejectWithValue('Logout failed', error);
+      return rejectWithValue("Logout failed");
     }
-  }
+  },
 );
 
 const initialState = {
-  token: localStorage.getItem('authToken'),
-  user: JSON.parse(localStorage.getItem('user')) || null,
+  token: localStorage.getItem("authToken"),
+  user: JSON.parse(localStorage.getItem("user")) || null,
   loading: false,
   error: null,
   success: false,
+  otpSent: false,
+  registrationEmail: null,
+  resetToken: null,
+  resetEmail: null, // Add this line
 };
 
 const authSlice = createSlice({
-  name: 'auth',
+  name: "auth",
   initialState,
   reducers: {
     clearError: (state) => {
@@ -143,24 +249,82 @@ const authSlice = createSlice({
     resetSuccess: (state) => {
       state.success = false;
     },
+    setOtpSent: (state, action) => {
+      state.otpSent = action.payload;
+    },
+    setRegistrationEmail: (state, action) => {
+      state.registrationEmail = action.payload;
+    },
+    clearOtpState: (state) => {
+      state.otpSent = false;
+      state.registrationEmail = null;
+    },
+    setResetToken: (state, action) => {
+      state.resetToken = action.payload;
+    },
+    clearResetToken: (state) => {
+      state.resetToken = null;
+    },
+    // ADD THIS NEW REDUCER
+    setResetEmail: (state, action) => {
+      state.resetEmail = action.payload;
+    },
+    // ADD THIS NEW REDUCER
+    clearResetEmail: (state) => {
+      state.resetEmail = null;
+    },
   },
   extraReducers: (builder) => {
     builder
-      // Register
-      .addCase(registerUser.pending, (state) => {
+      // Initiate Registration
+      .addCase(initiateRegister.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(registerUser.fulfilled, (state, action) => {
+      .addCase(initiateRegister.fulfilled, (state, action) => {
+        state.loading = false;
+        state.success = true;
+        state.otpSent = true;
+        state.registrationEmail = action.payload.email;
+      })
+      .addCase(initiateRegister.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+        state.otpSent = false;
+      })
+      
+      // Verify OTP
+      .addCase(verifyOTP.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(verifyOTP.fulfilled, (state, action) => {
         state.loading = false;
         state.success = true;
         state.token = action.payload.token;
         state.user = action.payload.user;
+        state.otpSent = false;
+        state.registrationEmail = null;
       })
-      .addCase(registerUser.rejected, (state, action) => {
+      .addCase(verifyOTP.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
+      
+      // Resend OTP
+      .addCase(resendOTP.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(resendOTP.fulfilled, (state) => {
+        state.loading = false;
+        state.success = true;
+      })
+      .addCase(resendOTP.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      
       // Login
       .addCase(loginUser.pending, (state) => {
         state.loading = true;
@@ -176,6 +340,7 @@ const authSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
+      
       // Get Profile
       .addCase(getUserProfile.pending, (state) => {
         state.loading = true;
@@ -189,6 +354,7 @@ const authSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
+      
       // Update Profile
       .addCase(updateProfile.pending, (state) => {
         state.loading = true;
@@ -203,15 +369,121 @@ const authSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
+      
+      // NEW: Initiate Forgot Password
+      .addCase(initiateForgotPassword.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(initiateForgotPassword.fulfilled, (state, action) => {
+        state.loading = false;
+        state.success = true;
+        state.otpSent = true;
+        state.resetEmail = action.payload.email; // Store reset email
+      })
+      .addCase(initiateForgotPassword.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+        state.otpSent = false;
+      })
+      
+      // NEW: Verify Forgot Password OTP
+      .addCase(verifyForgotPasswordOTP.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(verifyForgotPasswordOTP.fulfilled, (state, action) => {
+        state.loading = false;
+        state.success = true;
+        state.resetToken = action.payload.resetToken;
+        state.otpSent = false;
+      })
+      .addCase(verifyForgotPasswordOTP.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      
+      // NEW: Resend Forgot Password OTP
+      .addCase(resendForgotPasswordOTP.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(resendForgotPasswordOTP.fulfilled, (state) => {
+        state.loading = false;
+        state.success = true;
+      })
+      .addCase(resendForgotPasswordOTP.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      
+      // NEW: Reset Password With Token
+      .addCase(resetPasswordWithToken.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(resetPasswordWithToken.fulfilled, (state, action) => {
+        state.loading = false;
+        state.success = true;
+        state.resetToken = null;
+        state.resetEmail = null;
+      })
+      .addCase(resetPasswordWithToken.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      
+      // Legacy Forgot Password
+      .addCase(forgotPassword.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(forgotPassword.fulfilled, (state) => {
+        state.loading = false;
+        state.success = true;
+      })
+      .addCase(forgotPassword.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      
+      // Legacy Reset Password
+      .addCase(resetPassword.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(resetPassword.fulfilled, (state) => {
+        state.loading = false;
+        state.success = true;
+      })
+      .addCase(resetPassword.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      
       // Logout
       .addCase(logoutUser.fulfilled, (state) => {
         state.token = null;
         state.user = null;
         state.loading = false;
         state.error = null;
+        state.otpSent = false;
+        state.registrationEmail = null;
+        state.resetToken = null;
+        state.resetEmail = null;
       });
   },
 });
 
-export const { clearError, resetSuccess } = authSlice.actions;
+export const {
+  clearError,
+  resetSuccess,
+  setOtpSent,
+  setRegistrationEmail,
+  clearOtpState,
+  setResetToken,
+  clearResetToken,
+  setResetEmail, // Export the new reducer
+  clearResetEmail, // Export the new reducer
+} = authSlice.actions;
 export default authSlice.reducer;

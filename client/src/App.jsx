@@ -17,8 +17,11 @@ import Reviews from "./pages/Home/Reviews.jsx";
 import Footer from "./pages/Home/Footer.jsx";
 
 // signin page
-import Signin from "./pages/Home/Signin.jsx";
 import SignUp from "./pages/Home/SignUp.jsx";
+import Login from "./components/auth/Login.jsx";
+import ForgotPassword from "./components/auth/ForgotPassword.jsx";
+import ResetPassword from "./components/auth/ResetPassword.jsx";
+import ResetOtp from "./components/auth/ResetOtp.jsx";
 
 import ContactUs from "./pages/ContactPage/ContactUS.jsx";
 import AboutUs from "./pages/AboutPage/AboutUs.jsx";
@@ -160,8 +163,11 @@ const AppContent = () => {
           />
 
           {/* Authentication Pages (no navbar/footer) */}
-          <Route path="/signin" element={<Signin />} />
+          <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/reset-otp" element={<ResetOtp />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/faq" element={<Questions />} />
 
           {/* Contact & About Pages */}

@@ -10,7 +10,7 @@ import {
 } from "../../redux/slices/authSlice";
 import toast, { Toaster } from "react-hot-toast";
 
-export default function VidProLogin() {
+const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -24,7 +24,9 @@ export default function VidProLogin() {
     password: "",
   });
   const [rememberMe, setRememberMe] = useState(false);
+  const [formErrors, setFormErrors] = useState({});
 
+  // Handle errors from Redux
   useEffect(() => {
     if (error) {
       toast.error(error);
@@ -32,21 +34,23 @@ export default function VidProLogin() {
     }
   }, [error, dispatch]);
 
+  // Handle success
   useEffect(() => {
     if (success) {
       toast.success("Login successful!");
       dispatch(resetSuccess());
       setTimeout(() => {
-        navigate("/dashboard");
+        navigate("/");
       }, 1000);
     }
   }, [success, navigate, dispatch]);
 
-  useEffect(() => {
-    if (token && user) {
-      navigate("/dashboard");
-    }
-  }, [token, user, navigate]);
+  // Redirect if already authenticated
+  // useEffect(() => {
+  //   if (token && user) {
+  //     navigate("/");
+  //   }
+  // }, [token, user, navigate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -54,18 +58,70 @@ export default function VidProLogin() {
       ...prev,
       [name]: value,
     }));
+
+    // Clear error for this field
+    if (formErrors[name]) {
+      setFormErrors((prev) => ({ ...prev, [name]: "" }));
+    }
+  };
+
+  // Validate form
+  const validateForm = () => {
+    const errors = {};
+
+    if (!formData.email.trim()) {
+      errors.email = "Email is required";
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      errors.email = "Please enter a valid email address";
+    }
+
+    if (!formData.password) {
+      errors.password = "Password is required";
+    } else if (formData.password.length < 6) {
+      errors.password = "Password must be at least 6 characters";
+    }
+
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.email || !formData.password) {
-      toast.error("Please fill in all fields");
+    // Validate form
+    if (!validateForm()) {
+      toast.error("Please fix the errors in the form");
       return;
     }
 
-    // Dispatch the login action
-    dispatch(loginUser(formData));
+    // Log the data being sent (for debugging)
+    console.log("Login attempt with:", {
+      email: formData.email,
+      password: formData.password,
+    });
+
+    // Dispatch the login action with proper credentials
+    try {
+      const result = await dispatch(
+        loginUser({
+          email: formData.email,
+          password: formData.password,
+        }),
+      );
+
+      // Check if login was successful
+      if (loginUser.fulfilled.match(result)) {
+        console.log("Login successful:", result.payload);
+        setTimeout(() => {
+          navigate("/");
+        }, 3000);
+      } else if (loginUser.rejected.match(result)) {
+        console.log("Login failed:", result.payload || result.error);
+      }
+    } catch (err) {
+      console.error("Login error:", err);
+      toast.error("An error occurred during login");
+    }
   };
 
   return (
@@ -152,11 +208,20 @@ export default function VidProLogin() {
                     placeholder="Input your email"
                     value={formData.email}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-1 focus:ring-[#27bb97] focus:border-transparent bg-white/80"
+                    className={`w-full px-4 py-3 rounded-lg border focus:outline-none focus:ring-1 focus:border-transparent bg-white/80 ${
+                      formErrors.email
+                        ? "border-red-300 focus:ring-red-500"
+                        : "border-gray-300 focus:ring-[#27bb97]"
+                    }`}
                     required
+                    disabled={loading}
                   />
+                  {formErrors.email && (
+                    <p className="mt-1 text-sm text-red-600">
+                      {formErrors.email}
+                    </p>
+                  )}
                 </div>
-
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Password
@@ -168,19 +233,30 @@ export default function VidProLogin() {
                       placeholder="Input your password"
                       value={formData.password}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-1 focus:ring-[#27bb97] focus:border-transparent pr-12 bg-white/80"
+                      className={`w-full px-4 py-3 rounded-lg border focus:outline-none focus:ring-1 focus:border-transparent bg-white/80 pr-12 ${
+                        formErrors.password
+                          ? "border-red-300 focus:ring-red-500"
+                          : "border-gray-300 focus:ring-[#27bb97]"
+                      }`}
                       required
+                      disabled={loading}
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
                       className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                      disabled={loading}
                     >
                       {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                     </button>
                   </div>
+                  {formErrors.password && (
+                    <p className="mt-1 text-sm text-red-600">
+                      {formErrors.password}
+                    </p>
+                  )}
                 </div>
-
+    
                 <div className="flex items-center justify-between">
                   <label className="flex items-center gap-2 cursor-pointer">
                     <input
@@ -188,6 +264,7 @@ export default function VidProLogin() {
                       checked={rememberMe}
                       onChange={(e) => setRememberMe(e.target.checked)}
                       className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                      disabled={loading}
                     />
                     <span className="text-sm text-gray-600">Remember Me</span>
                   </label>
@@ -195,15 +272,16 @@ export default function VidProLogin() {
                     type="button"
                     onClick={() => navigate("/forgot-password")}
                     className="text-sm text-gray-600 hover:text-gray-900"
+                    disabled={loading}
                   >
                     Forgot Password?
                   </button>
                 </div>
-
                 <button
+                  onClick={() => console.log("clicked")}
                   type="submit"
                   disabled={loading}
-                  className={`w-full ${
+                  className={`w-full z-50 ${
                     loading
                       ? "bg-gray-400 cursor-not-allowed"
                       : "bg-[#27bb97] hover:bg-[#1fa987]"
@@ -237,7 +315,6 @@ export default function VidProLogin() {
                     "Login"
                   )}
                 </button>
-
                 <div className="relative flex items-center justify-center my-6">
                   <div className="absolute inset-0 flex items-center">
                     <div className="w-full border-t border-gray-300"></div>
@@ -248,11 +325,11 @@ export default function VidProLogin() {
                     </span>
                   </div>
                 </div>
-
                 {/* Google Sign In */}
                 <button
                   type="button"
                   className="w-full flex items-center justify-center gap-3 bg-white border border-gray-300 hover:bg-gray-50 py-3 rounded-lg font-medium transition-colors cursor-pointer"
+                  disabled={loading}
                 >
                   <svg
                     width="20"
@@ -280,11 +357,13 @@ export default function VidProLogin() {
                   </svg>
                   Continue with Google
                 </button>
-
                 <div className="text-center mt-6">
                   <span className="text-gray-600">Don't have an account? </span>
                   <Link to="/signup">
-                    <button className="text-gray-900 font-medium hover:underline cursor-pointer">
+                    <button
+                      className="text-gray-900 font-medium hover:underline cursor-pointer"
+                      disabled={loading}
+                    >
                       Sign up here
                     </button>
                   </Link>
@@ -296,4 +375,6 @@ export default function VidProLogin() {
       </div>
     </div>
   );
-}
+};
+
+export default Login;

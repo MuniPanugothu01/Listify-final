@@ -7,20 +7,30 @@ const {
   validateForgotPassword,
   validateResetPassword,
   validateProfileUpdate,
-  validateChangePassword
+  validateChangePassword,
+  validateOTPVerification
 } = require('../middleware/validationMiddleware');
 const { protect } = require('../middleware/authMiddleware');
 
 // OTP-based Registration routes
 router.post('/register/initiate', validateRegister, authController.initiateRegister);
-router.post('/register/verify', authController.verifyOTPAndRegister);
+router.post('/register/verify', validateOTPVerification, authController.verifyOTPAndRegister);
 router.post('/register/resend-otp', authController.resendOTP);
 router.get('/register/status/:email', authController.checkRegistrationStatus);
 
+// OTP-based Forgot Password routes
+router.post('/forgot-password/initiate', validateForgotPassword, authController.initiateForgotPassword);
+router.post('/forgot-password/verify-otp', validateOTPVerification, authController.verifyForgotPasswordOTP);
+router.post('/forgot-password/resend-otp', authController.resendForgotPasswordOTP);
+router.put('/reset-password/:resetToken', validateResetPassword, authController.resetPasswordWithToken);
+
+// Legacy routes (keep for compatibility)
+router.post('/forgot-password', validateForgotPassword, authController.forgotPassword);
+router.put('/reset-password-legacy/:resetToken', validateResetPassword, authController.resetPassword);
+
 // Existing routes
 router.post('/login', validateLogin, authController.login);
-router.post('/forgot-password', validateForgotPassword, authController.forgotPassword);
-router.put('/reset-password/:resetToken', validateResetPassword, authController.resetPassword);
+router.post('/register-legacy', validateRegister, authController.register);
 
 // Protected routes
 router.get('/profile', protect, authController.getProfile);
