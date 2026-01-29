@@ -28,9 +28,17 @@ router.put('/reset-password/:resetToken', validateResetPassword, authController.
 router.post('/forgot-password', validateForgotPassword, authController.forgotPassword);
 router.put('/reset-password-legacy/:resetToken', validateResetPassword, authController.resetPassword);
 
+// Google OAuth routes
+router.get('/google', authController.googleAuth);
+router.get('/google/callback', authController.googleCallback);
+router.post('/google/token', authController.googleTokenAuth);
+
 // Existing routes
 router.post('/login', validateLogin, authController.login);
 router.post('/register-legacy', validateRegister, authController.register);
+
+// Check authentication status
+router.get('/check', authController.checkAuth);
 
 // Protected routes
 router.get('/profile', protect, authController.getProfile);

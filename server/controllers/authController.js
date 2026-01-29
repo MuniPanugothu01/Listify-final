@@ -1,9 +1,13 @@
+const { OAuth2Client } = require('google-auth-library');
 const User = require("../models/User");
 const jwt = require("jsonwebtoken");
 const RedisService = require("../services/redisService");
 const EmailService = require("../services/emailService");
 const OTPGenerator = require("../utils/otpGenerator");
 const bcrypt = require("bcryptjs");
+const { logger } = require('../utils/logger');
+
+
 
 // Helper function to generate JWT token
 const generateToken = (id) => {
@@ -11,6 +15,349 @@ const generateToken = (id) => {
     expiresIn: process.env.JWT_EXPIRE || "7d",
   });
 };
+
+
+// Initialize Google OAuth client
+const googleClient = new OAuth2Client(
+  process.env.GOOGLE_CLIENT_ID,
+  process.env.GOOGLE_CLIENT_SECRET,
+  process.env.GOOGLE_CALLBACK_URL || 'http://localhost:5000/api/auth/google/callback'
+);
+
+
+// Add this to your existing helper functions
+const generateToken = (id) => {
+  return jwt.sign({ id }, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_EXPIRE || "7d",
+  });
+};
+
+
+ // Update last login
+  user.updateLastLogin();
+
+  res.status(statusCode).json({
+    success: true,
+    message,
+    token,
+    user: {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      provider: user.provider,
+      avatar: user.avatar,
+      isVerified: user.isVerified,
+    },
+  });
+};
+
+// Google OAuth - Initiate login
+exports.googleAuth = (req, res) => {
+  try {
+    const authUrl = googleClient.generateAuthUrl({
+      access_type: 'offline',
+      scope: [
+        'https://www.googleapis.com/auth/userinfo.profile',
+        'https://www.googleapis.com/auth/userinfo.email'
+      ],
+      prompt: 'consent'
+    });
+    
+    logger.info('Google OAuth URL generated');
+    res.redirect(authUrl);
+  } catch (error) {
+    logger.error('Google Auth Error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Google authentication failed',
+      error: error.message
+    });
+  }
+};
+
+// Google OAuth - Callback
+exports.googleCallback = async (req, res) => {
+  try {
+    const { code } = req.query;
+    
+    if (!code) {
+      return res.status(400).json({
+        success: false,
+        message: 'Authorization code is required'
+      });
+    }
+
+    // Exchange code for tokens
+    const { tokens } = await googleClient.getToken(code);
+    googleClient.setCredentials(tokens);
+
+    // Get user info
+    const ticket = await googleClient.verifyIdToken({
+      idToken: tokens.id_token,
+      audience: process.env.GOOGLE_CLIENT_ID
+    });
+
+    const payload = ticket.getPayload();
+    const userId = payload['sub'];
+    const email = payload['email'];
+    const name = payload['name'];
+    const picture = payload['picture'];
+
+    logger.info('Google OAuth callback received:', { email, name });
+
+    // Check if user exists by googleId
+    let user = await User.findOne({ googleId: userId });
+
+    if (user) {
+      // Update last login
+      await user.updateLastLogin();
+      logger.info('Google user found and updated:', user.email);
+      
+      // Generate token and redirect to frontend
+      const token = generateToken(user._id);
+      const redirectUrl = `${process.env.CLIENT_URL || 'http://localhost:5173'}/auth/callback?token=${token}&provider=google`;
+      return res.redirect(redirectUrl);
+    }
+
+    // Check if user exists by email
+    if (email) {
+      user = await User.findOne({ email });
+      
+      if (user) {
+        // Merge Google account with existing local account
+        user.googleId = userId;
+        user.provider = 'google';
+        user.isVerified = true;
+        user.avatar = picture;
+        await user.save();
+        
+        logger.info('Google account merged with existing user:', user.email);
+        
+        const token = generateToken(user._id);
+        const redirectUrl = `${process.env.CLIENT_URL || 'http://localhost:5173'}/auth/callback?token=${token}&provider=google`;
+        return res.redirect(redirectUrl);
+      }
+    }
+
+    // Create new user
+    user = await User.create({
+      googleId: userId,
+      email: email,
+      name: name,
+      provider: 'google',
+      isVerified: true,
+      avatar: picture,
+      password: null
+    });
+
+    logger.info('New Google user created:', user.email);
+    
+    const token = generateToken(user._id);
+    const redirectUrl = `${process.env.CLIENT_URL || 'http://localhost:5173'}/auth/callback?token=${token}&provider=google`;
+    return res.redirect(redirectUrl);
+
+  } catch (error) {
+    logger.error('Google Callback Error:', error);
+    
+    // Redirect to frontend with error
+    const errorRedirectUrl = `${process.env.CLIENT_URL || 'http://localhost:5173'}/auth/callback?error=${encodeURIComponent('Google authentication failed')}`;
+    return res.redirect(errorRedirectUrl);
+  }
+};
+
+// Google OAuth - Direct token verification (for mobile apps)
+exports.googleTokenAuth = async (req, res) => {
+  try {
+    const { token: googleToken } = req.body;
+
+    if (!googleToken) {
+      return res.status(400).json({
+        success: false,
+        message: 'Google token is required'
+      });
+    }
+
+    // Verify Google token
+    const ticket = await googleClient.verifyIdToken({
+      idToken: googleToken,
+      audience: process.env.GOOGLE_CLIENT_ID
+    });
+
+    const payload = ticket.getPayload();
+    const userId = payload['sub'];
+    const email = payload['email'];
+    const name = payload['name'];
+    const picture = payload['picture'];
+
+    logger.info('Google token auth received:', { email, name });
+
+    // Check if user exists by googleId
+    let user = await User.findOne({ googleId: userId });
+
+    if (user) {
+      // Update last login
+      await user.updateLastLogin();
+      logger.info('Google user found via token:', user.email);
+      return sendTokenResponse(user, 200, res, 'Google login successful');
+    }
+
+    // Check if user exists by email
+    if (email) {
+      user = await User.findOne({ email });
+      
+      if (user) {
+        // Merge Google account with existing local account
+        user.googleId = userId;
+        user.provider = 'google';
+        user.isVerified = true;
+        user.avatar = picture;
+        await user.save();
+        
+        logger.info('Google account merged via token:', user.email);
+        return sendTokenResponse(user, 200, res, 'Google account linked successfully');
+      }
+    }
+
+    // Create new user
+    user = await User.create({
+      googleId: userId,
+      email: email,
+      name: name,
+      provider: 'google',
+      isVerified: true,
+      avatar: picture,
+      password: null
+    });
+
+    logger.info('New Google user created via token:', user.email);
+    return sendTokenResponse(user, 201, res, 'Account created with Google');
+
+  } catch (error) {
+    logger.error('Google Token Auth Error:', error);
+    res.status(401).json({
+      success: false,
+      message: 'Invalid Google token',
+      error: error.message
+    });
+  }
+};
+
+// Update existing login function to handle Google users
+exports.login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    logger.info("🔍 Login attempt for:", email);
+
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Please provide email and password",
+      });
+    }
+
+    const user = await User.findOne({ email }).select("+password");
+    logger.info("👤 User found:", user ? user.email : "No user");
+
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid credentials",
+      });
+    }
+
+    // Check if user is a Google user
+    if (user.provider === 'google') {
+      return res.status(400).json({
+        success: false,
+        message: "This account uses Google login. Please sign in with Google.",
+        provider: 'google'
+      });
+    }
+
+    // Check if password exists (for users who might have null password)
+    if (!user.password) {
+      return res.status(400).json({
+        success: false,
+        message: "Please reset your password or use Google login",
+      });
+    }
+
+    const isPasswordMatch = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordMatch) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid credentials",
+      });
+    }
+
+    sendTokenResponse(user, 200, res, "Login successful");
+  } catch (error) {
+    logger.error("Login error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+      error: error.message,
+    });
+  }
+};
+
+// Add this new function to check auth status
+exports.checkAuth = async (req, res) => {
+  try {
+    const token = req.headers.authorization?.split(' ')[1];
+    
+    if (!token) {
+      return res.status(200).json({
+        success: true,
+        isAuthenticated: false,
+      });
+    }
+
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const user = await User.findById(decoded.id);
+      
+      if (!user) {
+        return res.status(200).json({
+          success: true,
+          isAuthenticated: false,
+        });
+      }
+
+      return res.status(200).json({
+        success: true,
+        isAuthenticated: true,
+        user: {
+          id: user._id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+          provider: user.provider,
+          avatar: user.avatar,
+          isVerified: user.isVerified,
+        },
+      });
+    } catch (error) {
+      return res.status(200).json({
+        success: true,
+        isAuthenticated: false,
+      });
+    }
+  } catch (error) {
+    logger.error('Check auth error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error',
+      error: error.message,
+    });
+  }
+};
+
+
+const sendTokenResponse = (user, statusCode, res, message) => {
+  const token = generateToken(user._id);
 
 // Helper to send token response
 const sendTokenResponse = (user, statusCode, res, message) => {
