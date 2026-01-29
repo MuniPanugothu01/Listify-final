@@ -1,20 +1,20 @@
-import React from 'react';
-import HeroForSale from './HeroForsale.jsx';
-import CollectionForSale from './CollectionForSale';
-import ForSaleRecommended from './ForSaleRecommend.jsx';
-import ForSaleOffers from './ForSaleOffers.jsx';
-import ForSaleTestimonials from './ForSaleTestimonials.jsx';
-import ForSaleFAQSection from './ForSaleFAQSection.jsx';
+import React, { useState } from 'react';
+import ForSaleHero from './ForSaleHero';
+import ForSaleCategories from './ForSaleCategories';
+import ForSaleCollections from './ForSaleCollections';
+import ForSaleTrending from './ForSaleTrending';
+import ForSaleBestDeals from './ForSaleBestDeals';
 
-export default function ForSale() {
+export default function ForSaleMarketplace() {
+ 
+
   return (
-    <div className="">
-      <HeroForSale />
-      <CollectionForSale />
-      <ForSaleRecommended />
-       <ForSaleOffers />
-      <ForSaleTestimonials />
-      <ForSaleFAQSection />
+    <div className=" bg-gray-50">
+      <ForSaleHero />
+      <ForSaleCategories />
+      <ForSaleCollections />
+      <ForSaleTrending  />
+      <ForSaleBestDeals  />
     </div>
   );
 }

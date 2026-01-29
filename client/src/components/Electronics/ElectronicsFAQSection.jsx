@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 
-export default function ForSaleFAQSection() {
+export default function ElectronicsFAQSection() {
   const [openFAQ, setOpenFAQ] = useState(null);
 
   const faqs = [

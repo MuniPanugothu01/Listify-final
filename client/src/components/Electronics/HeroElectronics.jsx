@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function HeroForSale() {
+export default function HeroElectronics() {
   return (
     <div className="relative h-[500px] sm:h-[550px] md:h-[450px] lg:h-[550px] overflow-hidden">
       <img
