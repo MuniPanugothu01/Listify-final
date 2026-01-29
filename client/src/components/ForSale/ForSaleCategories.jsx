@@ -1,5 +1,5 @@
 import React from 'react';
-import { FaGamepad, FaChair, FaBook, FaUtensils, FaHome, FaSeedling, FaSports, FaChild, FaWrench } from 'react-icons/fa';
+import { FaGamepad, FaChair, FaBook, FaUtensils, FaHome, FaSeedling, FaChild, FaWrench } from 'react-icons/fa';
 
 const ForSaleCategories = () => {
   const categories = [
@@ -9,7 +9,7 @@ const ForSaleCategories = () => {
     { name: 'Kitchenware', items: '67 items', icon: <FaUtensils className="text-4xl" />, color: 'bg-red-50 hover:bg-red-100' },
     { name: 'Home Decor', items: '78 items', icon: <FaHome className="text-4xl" />, color: 'bg-purple-50 hover:bg-purple-100' },
     { name: 'Gardening', items: '34 items', icon: <FaSeedling className="text-4xl" />, color: 'bg-emerald-50 hover:bg-emerald-100' },
-    { name: 'Sports Gear', items: '41 items', icon: <FaSports className="text-4xl" />, color: 'bg-orange-50 hover:bg-orange-100' },
+    { name: 'Sports Gear', items: '41 items', icon: <FaSeedling className="text-4xl" />, color: 'bg-orange-50 hover:bg-orange-100' },
     { name: 'Baby Items', items: '29 items', icon: <FaChild className="text-4xl" />, color: 'bg-pink-50 hover:bg-pink-100' },
     { name: 'Tools', items: '38 items', icon: <FaWrench className="text-4xl" />, color: 'bg-gray-50 hover:bg-gray-100' },
   ];

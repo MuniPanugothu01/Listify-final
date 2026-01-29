@@ -1,7 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { FaClock, FaEye, FaHeart } from 'react-icons/fa';
 
-const ForSaleBestDeals = ({ wishlist, toggleWishlist }) => {
+const ForSaleBestDeals = () => {
+  const [wishlist, setWishlist] = useState([]);
+
+  const toggleWishlist = (productId) => {
+    setWishlist(prev => 
+      prev.includes(productId) 
+        ? prev.filter(id => id !== productId)
+        : [...prev, productId]
+    );
+  };
+
   const bestDeals = [
     { 
       id: 9,
