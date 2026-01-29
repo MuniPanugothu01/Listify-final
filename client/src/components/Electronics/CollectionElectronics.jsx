@@ -1,7 +1,10 @@
 import React from 'react';
 import { ShoppingBag } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 export default function CollectionElectronics() {
+  const navigate = useNavigate();
+
   const collections = [
     {
       category: 'Smartphones',
@@ -59,6 +62,31 @@ export default function CollectionElectronics() {
     },
   ];
 
+  const handleCardClick = (collection) => {
+    navigate('/electronics-details', { 
+      state: { 
+        collection,
+        category: collection.category,
+        item: collection.items[0]
+      }
+    });
+  };
+
+  const handleViewListingsClick = () => {
+    navigate('/electronics-listings');
+  };
+
+  const handleViewDetailsClick = (collection, e) => {
+    e.stopPropagation(); // Prevent card click when button is clicked
+    navigate('/electronics-details', { 
+      state: { 
+        collection,
+        category: collection.category,
+        item: collection.items[0]
+      }
+    });
+  };
+
   return (
     <section className="py-12 sm:py-16 lg:py-20 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -73,8 +101,12 @@ export default function CollectionElectronics() {
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
           {collections.map((collection, i) => (
-            <div key={i} className="hover-lift">
-              <div className="bg-white rounded-xl sm:rounded-2xl overflow-hidden shadow-lg border border-gray-200 h-full">
+            <div 
+              key={i} 
+              className="hover-lift cursor-pointer"
+              onClick={() => handleCardClick(collection)}
+            >
+              <div className="bg-white rounded-xl sm:rounded-2xl overflow-hidden shadow-lg border border-gray-200 h-full hover:shadow-xl transition-shadow duration-300">
                 <div className="relative h-40 sm:h-48 overflow-hidden">
                   <img
                     src={collection.items[0].image}
@@ -84,7 +116,6 @@ export default function CollectionElectronics() {
                   <div className="absolute top-2 left-2 text-white text-xs px-2 py-1 rounded" style={{ backgroundColor: '#27BB97' }}>
                     Used
                   </div>
-                 
                 </div>
                 <div className="p-4 sm:p-6">
                   <div className="flex items-center justify-between mb-3">
@@ -102,6 +133,7 @@ export default function CollectionElectronics() {
                       <p className="text-xs text-gray-500 mt-1">Good condition • 2 days ago</p>
                     </div>
                     <button 
+                      onClick={(e) => handleViewDetailsClick(collection, e)}
                       className="text-sm font-medium hover:underline transition-colors"
                       style={{ color: '#27BB97' }}
                       onMouseEnter={(e) => e.target.style.color = '#1E9E7E'}
@@ -118,6 +150,7 @@ export default function CollectionElectronics() {
 
         <div className="text-center mt-8 sm:mt-12">
           <button 
+            onClick={handleViewListingsClick}
             className="px-6 sm:px-8 py-2.5 sm:py-3 rounded-full font-medium transition-colors text-sm sm:text-base"
             style={{ 
               border: '2px solid #27BB97',

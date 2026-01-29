@@ -38,6 +38,10 @@ import ElderCareServices from "./components/TakeCare/ElderCareServices/ElderCare
 import PetCareService from "./components/TakeCare/PetCareServices/PetCareServices.jsx";
 import CareCenterServices from "./components/TakeCare/CareCenterServices/CareCenterServices.jsx";
 
+import Electronics from "./components/Electronics/Electronics.jsx";
+import ElectronicsListings from "./components/Electronics/ElectronicsListings.jsx";
+import ElectronicsDetailsPage from "./components/Electronics/ElectronicsDetailsPage.jsx";
+
 // For Sale
 import ForSale from "./components/ForSale/ForSale.jsx";
 
@@ -102,7 +106,7 @@ const AppContent = () => {
     "/forgot-password",
     "/reset-password",
   ];
-  
+
   const shouldHideNavbarFooter = hideNavbarFooterPaths.some((path) =>
     location.pathname.startsWith(path)
   );
@@ -139,7 +143,7 @@ const AppContent = () => {
     <div className="relative min-h-screen flex flex-col">
       {/* Navbar - Conditionally rendered */}
       {!shouldHideNavbarFooter && <Navbar />}
-      
+
       {/* ScrollProgress - Only show on non-auth pages */}
       {!shouldHideNavbarFooter && <ScrollProgress />}
 
@@ -166,8 +170,8 @@ const AppContent = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
-      <Route path="/reset-otp" element={<ResetOtp />} />
-      <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/reset-otp" element={<ResetOtp />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/faq" element={<Questions />} />
 
           {/* Contact & About Pages */}
@@ -188,7 +192,13 @@ const AppContent = () => {
           <Route path="/takecare/carecenter" element={<CareCenterServices />} />
 
           {/* For Sale */}
-          <Route path="/electronics" element={<ForSale />} />
+          <Route path="/forsale" element={<ForSale />} />
+
+
+          {/* electronics*/}
+          <Route path="/electronics" element={<Electronics />} />
+          <Route path="/electronics-listings" element={<ElectronicsListings />} />
+          <Route path="/electronics-details" element={<ElectronicsDetailsPage />} />
 
           {/* Roommates */}
           <Route path="/roommates" element={<Roommates />} />
@@ -246,9 +256,8 @@ const AppContent = () => {
       {!shouldHideNavbarFooter && (
         <div className="fixed bottom-6 right-8 z-50 flex flex-col items-end space-y-4 ">
           <div
-            className={`transition-all duration-500 ${
-              showScrollTop ? "translate-y-0" : "translate-y-2"
-            }`}
+            className={`transition-all duration-500 ${showScrollTop ? "translate-y-0" : "translate-y-2"
+              }`}
           >
             <ChatBot />
           </div>
