@@ -83,6 +83,12 @@ import Profile from "./pages/Home/Profile.jsx";
 import ChatBot from "./components/ChatBot.jsx";
 import { ScrollProgress } from "./components/ui/scroll-progress.jsx";
 
+
+
+//sample
+import Sample from "./components/Sample/Sample.jsx"
+import ProductDetail from "./components/Sample/ProductDetail.jsx"
+
 // ScrollToTop Component
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -165,6 +171,11 @@ const AppContent = () => {
               </>
             }
           />
+
+          {/*Sample */}
+
+         <Route path="/product" element={<Sample />} />
+        <Route path="/product/:id" element={<ProductDetail />} />
 
           {/* Authentication Pages (no navbar/footer) */}
           <Route path="/login" element={<Login />} />
