@@ -40,7 +40,7 @@ import CareCenterServices from "./components/TakeCare/CareCenterServices/CareCen
 
 import Electronics from "./components/Electronics/Electronics.jsx";
 import ElectronicsListings from "./components/Electronics/ElectronicsListings.jsx";
-import ElectronicsDetailsPage from "./components/Electronics/ElectronicsDetailsPage.jsx";
+import ElectronicsDetails from "./components/Electronics/ElectronicsDetails.jsx";
 
 // For Sale
 import ForSale from "./components/ForSale/ForSale.jsx";
@@ -198,7 +198,7 @@ const AppContent = () => {
           {/* electronics*/}
           <Route path="/electronics" element={<Electronics />} />
           <Route path="/electronics-listings" element={<ElectronicsListings />} />
-          <Route path="/electronics-details" element={<ElectronicsDetailsPage />} />
+          <Route path="/electronics-details" element={<ElectronicsDetails />} />
 
           {/* Roommates */}
           <Route path="/roommates" element={<Roommates />} />

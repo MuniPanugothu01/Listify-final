@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
     ChevronLeft,
     ChevronRight,
@@ -33,24 +32,80 @@ import {
 } from "react-icons/fa";
 import { GoArrowUpLeft } from "react-icons/go";
 
-const ElectronicsDetailsPage = () => {
-    const location = useLocation();
+const ElectronicsDetails = () => {
     const navigate = useNavigate();
-    const { product, searchParams } = location.state || {}; // Expecting 'product' passed in state
-
+    const [product, setProduct] = useState(null);
     const [selectedImage, setSelectedImage] = useState(0);
     const [activeTab, setActiveTab] = useState("Overview");
     const [liked, setLiked] = useState(false);
     const [showContact, setShowContact] = useState(false);
 
-    useEffect(() => {
-        if (!product) {
-            // If someone comes here directly without state, redirect
-            navigate("/electronics");
-        }
-    }, [product, navigate]);
+    // Default product data in case localStorage is empty
+    const defaultProduct = {
+        id: 1,
+        title: 'iPhone 15 Pro Max',
+        category: 'Smartphones',
+        price: 899,
+        details: 'Brand new iPhone 15 Pro Max in excellent condition with all accessories. Perfect for everyday use with excellent performance.',
+        condition: 'Like New',
+        features: [
+            'Excellent condition',
+            'Complete accessories',
+            'Original packaging',
+            'Tested & working',
+            '30-day return policy',
+            'Free shipping available'
+        ],
+        specs: {
+            storage: '256GB',
+            ram: '8GB',
+            screenSize: '6.1"',
+            processor: 'A16 Bionic',
+            battery: 'All day battery',
+            camera: '48MP Main',
+            connectivity: '5G, WiFi 6, Bluetooth 5.3',
+            os: 'iOS 17'
+        },
+        warranty: 'No manufacturer warranty',
+        boxIncluded: true,
+        availableForCall: true,
+        contact: '+1 (416) 123-4567',
+        responseTime: 'Less than 1 hour',
+        responseRate: '98%',
+        postedBy: 'Alex Johnson',
+        verified: true,
+        images: [
+            'https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=400&h=300&fit=crop',
+            'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=400&q=80',
+            'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&q=80',
+            'https://images.unsplash.com/photo-1546054451-aa224c0e8c23?w=400&q=80'
+        ],
+        location: 'Toronto, ON',
+        postedDate: '2 days ago'
+    };
 
-    if (!product) return null;
+    useEffect(() => {
+        // Get product from localStorage
+        const storedProduct = localStorage.getItem('selectedProduct');
+        
+        if (storedProduct) {
+            try {
+                setProduct(JSON.parse(storedProduct));
+            } catch (error) {
+                console.error('Error parsing product:', error);
+                setProduct(defaultProduct);
+            }
+        } else {
+            // If no product in localStorage, use default
+            setProduct(defaultProduct);
+        }
+
+        // Cleanup function
+        return () => {
+            // Optional: Clear localStorage when leaving page
+            // localStorage.removeItem('selectedProduct');
+        };
+    }, []);
 
     const handlePrevImage = () => {
         setSelectedImage((prev) =>
@@ -83,6 +138,12 @@ const ElectronicsDetailsPage = () => {
         "MagSafe": <Zap className="w-5 h-5 text-yellow-400" />,
         "Face ID": <User className="w-5 h-5 text-green-500" />,
         "OLED Display": <Monitor className="w-5 h-5 text-black" />,
+        "Excellent condition": <CheckCircle className="w-5 h-5 text-green-500" />,
+        "Complete accessories": <Box className="w-5 h-5 text-blue-500" />,
+        "Original packaging": <Box className="w-5 h-5 text-yellow-500" />,
+        "Tested & working": <CheckCircle className="w-5 h-5 text-green-500" />,
+        "30-day return policy": <RotateCcw className="w-5 h-5 text-blue-500" />,
+        "Free shipping available": <Truck className="w-5 h-5 text-green-500" />,
     };
 
     const policies = [
@@ -98,10 +159,22 @@ const ElectronicsDetailsPage = () => {
         },
         {
             rule: "Box Included",
-            details: product.boxIncluded ? "Original box and accessories included" : "Device only, no original box",
-            icon: <Box className="w-5 h-5 text-brown-500" />,
+            details: product?.boxIncluded ? "Original box and accessories included" : "Device only, no original box",
+            icon: <Box className="w-5 h-5 text-yellow-500" />,
         },
     ];
+
+    // If product is still loading
+    if (!product) {
+        return (
+            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+                <div className="text-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                    <p className="text-gray-600">Loading product details...</p>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen bg-gray-50">
@@ -421,9 +494,8 @@ const ElectronicsDetailsPage = () => {
                     </div>
                 </div>
             </div>
-
         </div>
     );
 };
 
-export default ElectronicsDetailsPage;
+export default ElectronicsDetails;

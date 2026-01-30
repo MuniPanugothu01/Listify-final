@@ -1,90 +1,298 @@
 import React from 'react';
 import { ShoppingBag } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 export default function CollectionElectronics() {
-  const navigate = useNavigate();
-
   const collections = [
     {
+      id: 1,
       category: 'Smartphones',
       items: [
-        { name: 'iPhone 15 Pro Max', price: '$899', image: 'https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=400&h=300&fit=crop' },
-        { name: 'Samsung Galaxy S24', price: '$799', image: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&h=300&fit=crop' },
-        { name: 'Google Pixel 8 Pro', price: '$699', image: 'https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=400&h=300&fit=crop' },
+        { 
+          name: 'iPhone 15 Pro Max', 
+          price: '$899', 
+          image: 'https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=400&h=300&fit=crop',
+          condition: 'Like New',
+          location: 'Toronto, ON',
+          postedDate: '2 days ago'
+        },
+        { 
+          name: 'Samsung Galaxy S24', 
+          price: '$799', 
+          image: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&h=300&fit=crop',
+          condition: 'Excellent',
+          location: 'Mississauga, ON',
+          postedDate: '1 day ago'
+        },
+        { 
+          name: 'Google Pixel 8 Pro', 
+          price: '$699', 
+          image: 'https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=400&h=300&fit=crop',
+          condition: 'Good',
+          location: 'Brampton, ON',
+          postedDate: '3 days ago'
+        },
       ],
       colors: ['bg-gray-800', 'bg-blue-900', 'bg-green-700']
     },
     {
+      id: 2,
       category: 'Laptops & Computers',
       items: [
-        { name: 'MacBook Pro M3', price: '$1,299', image: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=400&h=300&fit=crop' },
-        { name: 'Dell XPS 15', price: '$1,199', image: 'https://images.unsplash.com/photo-1593640408182-31c70c8268f5?w=400&h=300&fit=crop' },
-        { name: 'HP Spectre x360', price: '$999', image: 'https://images.unsplash.com/photo-1541807084-5c52b6b3adef?w=400&h=300&fit=crop' },
+        { 
+          name: 'MacBook Pro M3', 
+          price: '$1,299', 
+          image: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=400&h=300&fit=crop',
+          condition: 'Brand New',
+          location: 'Vancouver, BC',
+          postedDate: '5 hours ago'
+        },
+        { 
+          name: 'Dell XPS 15', 
+          price: '$1,199', 
+          image: 'https://images.unsplash.com/photo-1593640408182-31c70c8268f5?w=400&h=300&fit=crop',
+          condition: 'Like New',
+          location: 'Calgary, AB',
+          postedDate: '1 day ago'
+        },
+        { 
+          name: 'HP Spectre x360', 
+          price: '$999', 
+          image: 'https://images.unsplash.com/photo-1541807084-5c52b6b3adef?w=400&h=300&fit=crop',
+          condition: 'Excellent',
+          location: 'Montreal, QC',
+          postedDate: '2 days ago'
+        },
       ],
       colors: ['bg-silver-400', 'bg-gray-600', 'bg-blue-800']
     },
     {
+      id: 3,
       category: 'Audio & Headphones',
       items: [
-        { name: 'Sony WH-1000XM5', price: '$349', image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=300&fit=crop' },
-        { name: 'AirPods Pro 2', price: '$249', image: 'https://images.unsplash.com/photo-1572569511254-d8f925fe2cbb?w=400&h=300&fit=crop' },
-        { name: 'Bose QuietComfort', price: '$329', image: 'https://images.unsplash.com/photo-1583394838336-acd977736f90?w=400&h=300&fit=crop' },
+        { 
+          name: 'Sony WH-1000XM5', 
+          price: '$349', 
+          image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=300&fit=crop',
+          condition: 'Like New',
+          location: 'Ottawa, ON',
+          postedDate: '6 hours ago'
+        },
+        { 
+          name: 'AirPods Pro 2', 
+          price: '$249', 
+          image: 'https://images.unsplash.com/photo-1572569511254-d8f925fe2cbb?w=400&h=300&fit=crop',
+          condition: 'Brand New',
+          location: 'Toronto, ON',
+          postedDate: '1 day ago'
+        },
+        { 
+          name: 'Bose QuietComfort', 
+          price: '$329', 
+          image: 'https://images.unsplash.com/photo-1583394838336-acd977736f90?w=400&h=300&fit=crop',
+          condition: 'Good',
+          location: 'Hamilton, ON',
+          postedDate: '3 days ago'
+        },
       ],
       colors: ['bg-black', 'bg-white border', 'bg-slate-700']
     },
     {
+      id: 4,
       category: 'Gaming Consoles',
       items: [
-        { name: 'PlayStation 5', price: '$499', image: 'https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?w=400&h=300&fit=crop' },
-        { name: 'Xbox Series X', price: '$499', image: 'https://images.unsplash.com/photo-1621259182978-fbf93132d53d?w=400&h=300&fit=crop' },
-        { name: 'Nintendo Switch OLED', price: '$349', image: 'https://images.unsplash.com/photo-1605901309584-818e25960a8f?w=400&h=300&fit=crop' },
+        { 
+          name: 'PlayStation 5', 
+          price: '$499', 
+          image: 'https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?w=400&h=300&fit=crop',
+          condition: 'Like New',
+          location: 'Toronto, ON',
+          postedDate: '1 day ago'
+        },
+        { 
+          name: 'Xbox Series X', 
+          price: '$499', 
+          image: 'https://images.unsplash.com/photo-1621259182978-fbf93132d53d?w=400&h=300&fit=crop',
+          condition: 'Excellent',
+          location: 'Mississauga, ON',
+          postedDate: '2 days ago'
+        },
+        { 
+          name: 'Nintendo Switch OLED', 
+          price: '$349', 
+          image: 'https://images.unsplash.com/photo-1605901309584-818e25960a8f?w=400&h=300&fit=crop',
+          condition: 'Good',
+          location: 'Brampton, ON',
+          postedDate: '4 days ago'
+        },
       ],
       colors: ['bg-blue-800', 'bg-green-700', 'bg-red-600']
     },
     {
+      id: 5,
       category: 'Smart Watches',
       items: [
-        { name: 'Apple Watch Series 9', price: '$399', image: 'https://images.unsplash.com/photo-1579586337278-3f576cfc5113?w=400&h=300&fit=crop' },
-        { name: 'Samsung Galaxy Watch 6', price: '$299', image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=300&fit=crop' },
-        { name: 'Fitbit Sense 2', price: '$299', image: 'https://images.unsplash.com/photo-1523475496153-2d1d5d8f5cf4?w=400&h=300&fit=crop' },
+        { 
+          name: 'Apple Watch Series 9', 
+          price: '$399', 
+          image: 'https://images.unsplash.com/photo-1579586337278-3f576cfc5113?w=400&h=300&fit=crop',
+          condition: 'Brand New',
+          location: 'Vancouver, BC',
+          postedDate: '3 hours ago'
+        },
+        { 
+          name: 'Samsung Galaxy Watch 6', 
+          price: '$299', 
+          image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=300&fit=crop',
+          condition: 'Like New',
+          location: 'Calgary, AB',
+          postedDate: '1 day ago'
+        },
+        { 
+          name: 'Fitbit Sense 2', 
+          price: '$299', 
+          image: 'https://images.unsplash.com/photo-1523475496153-2d1d5d8f5cf4?w=400&h=300&fit=crop',
+          condition: 'Excellent',
+          location: 'Montreal, QC',
+          postedDate: '2 days ago'
+        },
       ],
       colors: ['bg-gray-800', 'bg-black', 'bg-blue-600']
     },
     {
+      id: 6,
       category: 'Cameras & Photography',
       items: [
-        { name: 'Sony A7 IV', price: '$2,499', image: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=400&h=300&fit=crop' },
-        { name: 'Canon EOS R5', price: '$3,899', image: 'https://images.unsplash.com/photo-1502920917128-1aa500764cbd?w=400&h=300&fit=crop' },
-        { name: 'GoPro Hero 12', price: '$399', image: 'https://images.unsplash.com/photo-1512790182412-b19e6d62bc39?w=400&h=300&fit=crop' },
+        { 
+          name: 'Sony A7 IV', 
+          price: '$2,499', 
+          image: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=400&h=300&fit=crop',
+          condition: 'Like New',
+          location: 'Toronto, ON',
+          postedDate: '1 day ago'
+        },
+        { 
+          name: 'Canon EOS R5', 
+          price: '$3,899', 
+          image: 'https://images.unsplash.com/photo-1502920917128-1aa500764cbd?w=400&h=300&fit=crop',
+          condition: 'Excellent',
+          location: 'Ottawa, ON',
+          postedDate: '3 days ago'
+        },
+        { 
+          name: 'GoPro Hero 12', 
+          price: '$399', 
+          image: 'https://images.unsplash.com/photo-1512790182412-b19e6d62bc39?w=400&h=300&fit=crop',
+          condition: 'Brand New',
+          location: 'Hamilton, ON',
+          postedDate: '5 hours ago'
+        },
       ],
       colors: ['bg-black', 'bg-red-600', 'bg-blue-800']
     },
   ];
 
+  // Function to handle card click
   const handleCardClick = (collection) => {
-    navigate('/electronics-details', { 
-      state: { 
-        collection,
-        category: collection.category,
-        item: collection.items[0]
-      }
-    });
+    // Prepare product data
+    const productData = {
+      id: collection.id,
+      title: collection.items[0].name,
+      category: collection.category,
+      price: parseInt(collection.items[0].price.replace('$', '').replace(',', '')),
+      details: `Premium ${collection.category} in ${collection.items[0].condition.toLowerCase()} condition. ${collection.items[0].name} comes with all original accessories and packaging. Perfect for everyday use with excellent performance.`,
+      condition: collection.items[0].condition,
+      features: [
+        'Excellent condition',
+        'Complete accessories',
+        'Original packaging',
+        'Tested & working',
+        '30-day return policy',
+        'Free shipping available'
+      ],
+      specs: {
+        storage: '256GB',
+        ram: '8GB',
+        screenSize: '6.1"',
+        processor: 'A16 Bionic',
+        battery: 'All day battery',
+        camera: '48MP Main',
+        connectivity: '5G, WiFi 6, Bluetooth 5.3',
+        os: 'iOS 17'
+      },
+      warranty: 'No manufacturer warranty',
+      boxIncluded: true,
+      availableForCall: true,
+      contact: '+1 (416) 123-4567',
+      responseTime: 'Less than 1 hour',
+      responseRate: '98%',
+      postedBy: 'Alex Johnson',
+      verified: true,
+      images: [
+        collection.items[0].image,
+        'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=400&q=80',
+        'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&q=80',
+        'https://images.unsplash.com/photo-1546054451-aa224c0e8c23?w=400&q=80'
+      ],
+      location: collection.items[0].location,
+      postedDate: collection.items[0].postedDate
+    };
+
+    // Store in localStorage
+    localStorage.setItem('selectedProduct', JSON.stringify(productData));
+    // Navigate to details page
+    window.location.href = '/electronics-details';
   };
 
-  const handleViewListingsClick = () => {
-    navigate('/electronics-listings');
-  };
-
+  // Function to handle View Details button click
   const handleViewDetailsClick = (collection, e) => {
-    e.stopPropagation(); // Prevent card click when button is clicked
-    navigate('/electronics-details', { 
-      state: { 
-        collection,
-        category: collection.category,
-        item: collection.items[0]
-      }
-    });
+    e.stopPropagation();
+    
+    const productData = {
+      id: collection.id,
+      title: collection.items[0].name,
+      category: collection.category,
+      price: parseInt(collection.items[0].price.replace('$', '').replace(',', '')),
+      details: `Premium ${collection.category} in ${collection.items[0].condition.toLowerCase()} condition. ${collection.items[0].name} comes with all original accessories and packaging. Perfect for everyday use with excellent performance.`,
+      condition: collection.items[0].condition,
+      features: [
+        'Excellent condition',
+        'Complete accessories',
+        'Original packaging',
+        'Tested & working',
+        '30-day return policy',
+        'Free shipping available'
+      ],
+      specs: {
+        storage: '256GB',
+        ram: '8GB',
+        screenSize: '6.1"',
+        processor: 'A16 Bionic',
+        battery: 'All day battery',
+        camera: '48MP Main',
+        connectivity: '5G, WiFi 6, Bluetooth 5.3',
+        os: 'iOS 17'
+      },
+      warranty: 'No manufacturer warranty',
+      boxIncluded: true,
+      availableForCall: true,
+      contact: '+1 (416) 123-4567',
+      responseTime: 'Less than 1 hour',
+      responseRate: '98%',
+      postedBy: 'Alex Johnson',
+      verified: true,
+      images: [
+        collection.items[0].image,
+        'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=400&q=80',
+        'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&q=80',
+        'https://images.unsplash.com/photo-1546054451-aa224c0e8c23?w=400&q=80'
+      ],
+      location: collection.items[0].location,
+      postedDate: collection.items[0].postedDate
+    };
+
+    localStorage.setItem('selectedProduct', JSON.stringify(productData));
+    window.location.href = '/electronics-details';
   };
 
   return (
@@ -149,9 +357,9 @@ export default function CollectionElectronics() {
         </div>
 
         <div className="text-center mt-8 sm:mt-12">
-          <button 
-            onClick={handleViewListingsClick}
-            className="px-6 sm:px-8 py-2.5 sm:py-3 rounded-full font-medium transition-colors text-sm sm:text-base"
+          <Link 
+            to="/electronics-listings"
+            className="inline-block px-6 sm:px-8 py-2.5 sm:py-3 rounded-full font-medium transition-colors text-sm sm:text-base"
             style={{ 
               border: '2px solid #27BB97',
               color: '#27BB97',
@@ -167,7 +375,7 @@ export default function CollectionElectronics() {
             }}
           >
             View All Electronics
-          </button>
+          </Link>
         </div>
       </div>
     </section>
