@@ -72,15 +72,16 @@ const Navbar = () => {
     { name: "Electronics", path: "/electronics" },
     { name: "Roommates", path: "/roommates" },
     { name: "Rentals", path: "/rentals" },
+    { name: "ForSale", path: "/forsale" },
     { name: "Events", path: "/events" },
     { name: "Services", path: "/services" },
+
   ];
   
   const moreMenuItems = [
     { name: "TakeCare", path: "/takecare" },
     { name: "Jobs", path: "/jobs" },
     { name: "Cars", path: "/cars" },
-    { name: "For Sale", path: "/forsale" },
   ];
 
   const profileMenuItems = [
