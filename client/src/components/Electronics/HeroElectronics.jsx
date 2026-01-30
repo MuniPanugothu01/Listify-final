@@ -2,7 +2,7 @@ import React from 'react';
 
 export default function HeroElectronics() {
   return (
-    <div className="relative h-[500px] sm:h-[550px] md:h-[450px] lg:h-[550px] overflow-hidden">
+    <div className="relative h-[400px] sm:h-[400px] md:h-[400px] lg:h-[380px] overflow-hidden">
       <img
         src="/for-sale.jpg"
         alt="Modern electronics marketplace"
@@ -33,30 +33,6 @@ export default function HeroElectronics() {
           Browse Electronics
         </button>
         
-        <div className="absolute bottom-6 sm:bottom-8">
-          <div 
-            className="w-10 h-10 sm:w-12 sm:h-12 border-2 border-white rounded-full flex items-center justify-center cursor-pointer hover:bg-white/20 transition-all"
-            style={{ borderColor: '#27BB97' }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = '#27BB97';
-              e.currentTarget.style.borderColor = '#27BB97';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = 'transparent';
-              e.currentTarget.style.borderColor = '#27BB97';
-            }}
-          >
-            <svg 
-              className="w-5 h-5 sm:w-6 sm:h-6" 
-              fill="none" 
-              stroke="currentColor" 
-              viewBox="0 0 24 24"
-              style={{ color: 'white' }}
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-            </svg>
-          </div>
-        </div>
       </div>
     </div>
   );

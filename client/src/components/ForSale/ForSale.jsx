@@ -5,7 +5,7 @@ import ForSaleCollections from './ForSaleCollections';
 import ForSaleTrending from './ForSaleTrending';
 import ForSaleBestDeals from './ForSaleBestDeals';
 
-export default function ForSaleMarketplace() {
+export default function ForSale() {
  
 
   return (

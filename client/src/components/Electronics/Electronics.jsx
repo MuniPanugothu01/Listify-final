@@ -6,14 +6,17 @@ import ElectronicsOffers from './ElectronicsOffers.jsx';
 import ElectronicsTestimonials from './ElectronicsTestimonials.jsx';
 import ElectronicsFAQSection from './ElectronicsFAQSection.jsx';
 
+import Sample from '../Sample/Sample.jsx';
+
 export default function Electronics() {
   return (
     <div className="">
       <HeroElectronics />
+      <Sample/>
       <CollectionElectronics />
-      <ElectronicsRecommended />
-       <ElectronicsOffers />
-      <ElectronicsTestimonials />
+      {/* <ElectronicsRecommended /> */}
+       {/* <ElectronicsOffers /> */}
+      {/* <ElectronicsTestimonials /> */}
       <ElectronicsFAQSection />
     </div>
   );
