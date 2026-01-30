@@ -1,13 +1,13 @@
-const { OAuth2Client } = require('google-auth-library');
+require("dotenv").config();
+
 const User = require("../models/User");
 const jwt = require("jsonwebtoken");
 const RedisService = require("../services/redisService");
 const EmailService = require("../services/emailService");
 const OTPGenerator = require("../utils/otpGenerator");
 const bcrypt = require("bcryptjs");
-const { logger } = require('../utils/logger');
-
-
+const { logger } = require("../utils/logger");
+const { handleGoogleAuth } = require("../services/googleAuth.OAuth");
 
 // Helper function to generate JWT token
 const generateToken = (id) => {
@@ -16,25 +16,9 @@ const generateToken = (id) => {
   });
 };
 
-
-// Initialize Google OAuth client
-const googleClient = new OAuth2Client(
-  process.env.GOOGLE_CLIENT_ID,
-  process.env.GOOGLE_CLIENT_SECRET,
-  process.env.GOOGLE_CALLBACK_URL || 'http://localhost:5000/api/auth/google/callback'
-);
-
-
-// Add this to your existing helper functions
-const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRE || "7d",
-  });
-};
-
-
- // Update last login
-  user.updateLastLogin();
+// Helper to send token response
+const sendTokenResponse = (user, statusCode, res, message) => {
+  const token = generateToken(user._id);
 
   res.status(statusCode).json({
     success: true,
@@ -52,121 +36,67 @@ const generateToken = (id) => {
   });
 };
 
-// Google OAuth - Initiate login
-exports.googleAuth = (req, res) => {
-  try {
-    const authUrl = googleClient.generateAuthUrl({
-      access_type: 'offline',
-      scope: [
-        'https://www.googleapis.com/auth/userinfo.profile',
-        'https://www.googleapis.com/auth/userinfo.email'
-      ],
-      prompt: 'consent'
-    });
-    
-    logger.info('Google OAuth URL generated');
-    res.redirect(authUrl);
-  } catch (error) {
-    logger.error('Google Auth Error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Google authentication failed',
-      error: error.message
-    });
-  }
-};
+// ==================== GOOGLE AUTH ====================
 
-// Google OAuth - Callback
-exports.googleCallback = async (req, res) => {
+// Simple Google client ID endpoint for frontend
+exports.getGoogleClientId = (req, res) => {
   try {
-    const { code } = req.query;
+    console.log('🔍 Google Client ID endpoint called');
+    console.log('📋 Headers:', req.headers);
+    console.log('🌐 Origin:', req.headers.origin);
+    console.log('🔐 GOOGLE_CLIENT_ID exists:', !!process.env.GOOGLE_CLIENT_ID);
     
-    if (!code) {
-      return res.status(400).json({
+    // If client ID exists, show first few chars (for security, don't log full ID)
+    if (process.env.GOOGLE_CLIENT_ID) {
+      console.log('✅ GOOGLE_CLIENT_ID (first 10 chars):', process.env.GOOGLE_CLIENT_ID.substring(0, 10) + '...');
+      console.log('✅ GOOGLE_CLIENT_ID full format check:', process.env.GOOGLE_CLIENT_ID.includes('.apps.googleusercontent.com'));
+    } else {
+      console.log('❌ GOOGLE_CLIENT_ID is NOT SET in environment variables');
+      console.log('📝 Available environment variables:', Object.keys(process.env).filter(key => key.includes('GOOGLE')));
+    }
+    
+    // Check for CORS headers
+    console.log('🔄 Checking CORS headers...');
+    console.log('  Access-Control-Allow-Origin header:', res.get('Access-Control-Allow-Origin'));
+    
+    const clientId = process.env.GOOGLE_CLIENT_ID;
+    
+    if (!clientId) {
+      console.log('❌ ERROR: GOOGLE_CLIENT_ID is not configured');
+      return res.status(500).json({
         success: false,
-        message: 'Authorization code is required'
+        message: "Google authentication is not configured on the server",
+        debug: process.env.NODE_ENV === 'development' ? 'GOOGLE_CLIENT_ID environment variable is missing' : undefined
       });
     }
-
-    // Exchange code for tokens
-    const { tokens } = await googleClient.getToken(code);
-    googleClient.setCredentials(tokens);
-
-    // Get user info
-    const ticket = await googleClient.verifyIdToken({
-      idToken: tokens.id_token,
-      audience: process.env.GOOGLE_CLIENT_ID
-    });
-
-    const payload = ticket.getPayload();
-    const userId = payload['sub'];
-    const email = payload['email'];
-    const name = payload['name'];
-    const picture = payload['picture'];
-
-    logger.info('Google OAuth callback received:', { email, name });
-
-    // Check if user exists by googleId
-    let user = await User.findOne({ googleId: userId });
-
-    if (user) {
-      // Update last login
-      await user.updateLastLogin();
-      logger.info('Google user found and updated:', user.email);
-      
-      // Generate token and redirect to frontend
-      const token = generateToken(user._id);
-      const redirectUrl = `${process.env.CLIENT_URL || 'http://localhost:5173'}/auth/callback?token=${token}&provider=google`;
-      return res.redirect(redirectUrl);
-    }
-
-    // Check if user exists by email
-    if (email) {
-      user = await User.findOne({ email });
-      
-      if (user) {
-        // Merge Google account with existing local account
-        user.googleId = userId;
-        user.provider = 'google';
-        user.isVerified = true;
-        user.avatar = picture;
-        await user.save();
-        
-        logger.info('Google account merged with existing user:', user.email);
-        
-        const token = generateToken(user._id);
-        const redirectUrl = `${process.env.CLIENT_URL || 'http://localhost:5173'}/auth/callback?token=${token}&provider=google`;
-        return res.redirect(redirectUrl);
-      }
-    }
-
-    // Create new user
-    user = await User.create({
-      googleId: userId,
-      email: email,
-      name: name,
-      provider: 'google',
-      isVerified: true,
-      avatar: picture,
-      password: null
-    });
-
-    logger.info('New Google user created:', user.email);
     
-    const token = generateToken(user._id);
-    const redirectUrl = `${process.env.CLIENT_URL || 'http://localhost:5173'}/auth/callback?token=${token}&provider=google`;
-    return res.redirect(redirectUrl);
-
+    // ADDED: Validation for Google Client ID format
+    if (!clientId.includes('.apps.googleusercontent.com')) {
+      console.log('⚠️ WARNING: GOOGLE_CLIENT_ID may be in wrong format');
+      console.log('Expected format: xxx-xxx.apps.googleusercontent.com');
+    }
+    
+    console.log('✅ Sending Google Client ID response');
+    
+    res.status(200).json({
+      success: true,
+      clientId: clientId,
+      timestamp: new Date().toISOString(),
+      environment: process.env.NODE_ENV,
+      formatValid: clientId.includes('.apps.googleusercontent.com'),
+    });
   } catch (error) {
-    logger.error('Google Callback Error:', error);
-    
-    // Redirect to frontend with error
-    const errorRedirectUrl = `${process.env.CLIENT_URL || 'http://localhost:5173'}/auth/callback?error=${encodeURIComponent('Google authentication failed')}`;
-    return res.redirect(errorRedirectUrl);
+    console.error('🔥 Error in getGoogleClientId:', error);
+    logger.error("Get Google client ID error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined,
+    });
   }
 };
 
-// Google OAuth - Direct token verification (for mobile apps)
+// Google OAuth - Verify ID token from frontend
 exports.googleTokenAuth = async (req, res) => {
   try {
     const { token: googleToken } = req.body;
@@ -174,76 +104,46 @@ exports.googleTokenAuth = async (req, res) => {
     if (!googleToken) {
       return res.status(400).json({
         success: false,
-        message: 'Google token is required'
+        message: "Google token is required",
       });
     }
 
-    // Verify Google token
-    const ticket = await googleClient.verifyIdToken({
-      idToken: googleToken,
-      audience: process.env.GOOGLE_CLIENT_ID
+    console.log("🔍 Processing Google token...");
+
+    // Use the Google auth service
+    const { user, isNew } = await handleGoogleAuth(googleToken, req);
+
+    const message = isNew
+      ? "Account created with Google"
+      : "Google login successful";
+
+    const statusCode = isNew ? 201 : 200;
+
+    console.log("✅ Google token auth successful:", {
+      email: user.email,
+      isNew,
     });
 
-    const payload = ticket.getPayload();
-    const userId = payload['sub'];
-    const email = payload['email'];
-    const name = payload['name'];
-    const picture = payload['picture'];
-
-    logger.info('Google token auth received:', { email, name });
-
-    // Check if user exists by googleId
-    let user = await User.findOne({ googleId: userId });
-
-    if (user) {
-      // Update last login
-      await user.updateLastLogin();
-      logger.info('Google user found via token:', user.email);
-      return sendTokenResponse(user, 200, res, 'Google login successful');
-    }
-
-    // Check if user exists by email
-    if (email) {
-      user = await User.findOne({ email });
-      
-      if (user) {
-        // Merge Google account with existing local account
-        user.googleId = userId;
-        user.provider = 'google';
-        user.isVerified = true;
-        user.avatar = picture;
-        await user.save();
-        
-        logger.info('Google account merged via token:', user.email);
-        return sendTokenResponse(user, 200, res, 'Google account linked successfully');
-      }
-    }
-
-    // Create new user
-    user = await User.create({
-      googleId: userId,
-      email: email,
-      name: name,
-      provider: 'google',
-      isVerified: true,
-      avatar: picture,
-      password: null
+    logger.info("Google token auth successful:", {
+      email: user.email,
+      isNew,
     });
 
-    logger.info('New Google user created via token:', user.email);
-    return sendTokenResponse(user, 201, res, 'Account created with Google');
-
+    return sendTokenResponse(user, statusCode, res, message);
   } catch (error) {
-    logger.error('Google Token Auth Error:', error);
+    console.error("❌ Google Token Auth Error:", error.message);
+    logger.error("Google Token Auth Error:", error);
     res.status(401).json({
       success: false,
-      message: 'Invalid Google token',
-      error: error.message
+      message: "Invalid Google token",
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined,
     });
   }
 };
 
-// Update existing login function to handle Google users
+// ==================== LOGIN/REGISTRATION ====================
+
+// Login user
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -267,11 +167,11 @@ exports.login = async (req, res) => {
     }
 
     // Check if user is a Google user
-    if (user.provider === 'google') {
+    if (user.provider === "google") {
       return res.status(400).json({
         success: false,
         message: "This account uses Google login. Please sign in with Google.",
-        provider: 'google'
+        provider: "google",
       });
     }
 
@@ -292,6 +192,11 @@ exports.login = async (req, res) => {
       });
     }
 
+    // Update last login if method exists
+    if (user.updateLastLogin && typeof user.updateLastLogin === "function") {
+      await user.updateLastLogin(req.ip, req.get("user-agent"));
+    }
+
     sendTokenResponse(user, 200, res, "Login successful");
   } catch (error) {
     logger.error("Login error:", error);
@@ -303,88 +208,12 @@ exports.login = async (req, res) => {
   }
 };
 
-// Add this new function to check auth status
-exports.checkAuth = async (req, res) => {
-  try {
-    const token = req.headers.authorization?.split(' ')[1];
-    
-    if (!token) {
-      return res.status(200).json({
-        success: true,
-        isAuthenticated: false,
-      });
-    }
-
-    try {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      const user = await User.findById(decoded.id);
-      
-      if (!user) {
-        return res.status(200).json({
-          success: true,
-          isAuthenticated: false,
-        });
-      }
-
-      return res.status(200).json({
-        success: true,
-        isAuthenticated: true,
-        user: {
-          id: user._id,
-          name: user.name,
-          email: user.email,
-          role: user.role,
-          provider: user.provider,
-          avatar: user.avatar,
-          isVerified: user.isVerified,
-        },
-      });
-    } catch (error) {
-      return res.status(200).json({
-        success: true,
-        isAuthenticated: false,
-      });
-    }
-  } catch (error) {
-    logger.error('Check auth error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Server error',
-      error: error.message,
-    });
-  }
-};
-
-
-const sendTokenResponse = (user, statusCode, res, message) => {
-  const token = generateToken(user._id);
-
-// Helper to send token response
-const sendTokenResponse = (user, statusCode, res, message) => {
-  const token = generateToken(user._id);
-
-  // Remove password from output
-  user.password = undefined;
-
-  res.status(statusCode).json({
-    success: true,
-    message,
-    token,
-    user: {
-      id: user._id,
-      name: user.name,
-      email: user.email,
-      role: user.role,
-    },
-  });
-};
-
 // Step 1: Initiate registration (send OTP)
 exports.initiateRegister = async (req, res) => {
   try {
     const { name, email, password, confirmPassword } = req.body;
 
-    console.log("🔍 Registration attempt:", { email, name });
+    logger.info("🔍 Registration attempt:", { email, name });
 
     // Check if all required fields are provided
     if (!name || !email || !password || !confirmPassword) {
@@ -461,7 +290,7 @@ exports.initiateRegister = async (req, res) => {
 
     // Generate OTP
     const otp = OTPGenerator.generateOTP();
-    console.log(`✅ Generated OTP for ${email}: ${otp}`);
+    logger.info(`✅ Generated OTP for ${email}: ${otp}`);
 
     // Hash password before storing in Redis
     const salt = await bcrypt.genSalt(10);
@@ -497,11 +326,11 @@ exports.initiateRegister = async (req, res) => {
 
     // ✅ SEND REAL EMAIL
     try {
-      console.log(`📤 Sending OTP email to: ${email}`);
+      logger.info(`📤 Sending OTP email to: ${email}`);
       await EmailService.sendOTPEmail(email, name, otp);
-      console.log(`✅ Email sent successfully to ${email}`);
+      logger.info(`✅ Email sent successfully to ${email}`);
     } catch (emailError) {
-      console.error("❌ Failed to send email:", emailError.message);
+      logger.error("❌ Failed to send email:", emailError.message);
 
       // Clean up if email fails
       await RedisService.deletePendingRegistration(email);
@@ -522,7 +351,7 @@ exports.initiateRegister = async (req, res) => {
       expiresIn: 600, // 10 minutes in seconds
     });
   } catch (error) {
-    console.error("❌ Registration initiation error:", error);
+    logger.error("❌ Registration initiation error:", error);
     res.status(500).json({
       success: false,
       message: "Server error",
@@ -594,18 +423,18 @@ exports.verifyOTPAndRegister = async (req, res) => {
       password: pendingData.password,
     });
 
-    console.log(`✅ User created in database: ${email}`);
+    logger.info(`✅ User created in database: ${email}`);
 
     // Delete Redis data after successful registration
     await RedisService.deletePendingRegistration(email);
-    console.log(`✅ Redis data cleaned up for: ${email}`);
+    logger.info(`✅ Redis data cleaned up for: ${email}`);
 
     // Send token response
     sendTokenResponse(user, 201, res, "User registered successfully");
   } catch (error) {
-    console.error("❌ OTP verification error:", error);
+    logger.error("❌ OTP verification error:", error);
 
-    console.log(
+    logger.info(
       `⚠️  Error occurred, keeping pending registration for retry: ${email}`,
     );
 
@@ -667,11 +496,11 @@ exports.resendOTP = async (req, res) => {
 
     // ✅ SEND REAL EMAIL
     try {
-      console.log(`📤 Resending OTP email to: ${email}`);
+      logger.info(`📤 Resending OTP email to: ${email}`);
       await EmailService.sendOTPEmail(email, pendingData.name, otp);
-      console.log(`✅ Resent email successfully to ${email}`);
+      logger.info(`✅ Resent email successfully to ${email}`);
     } catch (emailError) {
-      console.error("❌ Failed to resend email:", emailError.message);
+      logger.error("❌ Failed to resend email:", emailError.message);
       return res.status(500).json({
         success: false,
         message: "Failed to resend OTP. " + emailError.message,
@@ -685,7 +514,61 @@ exports.resendOTP = async (req, res) => {
       email: email,
     });
   } catch (error) {
-    console.error("Resend OTP error:", error);
+    logger.error("Resend OTP error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+      error: error.message,
+    });
+  }
+};
+
+// ==================== AUTH STATUS & PROFILE ====================
+
+// Check auth status
+exports.checkAuth = async (req, res) => {
+  try {
+    const token = req.headers.authorization?.split(" ")[1];
+
+    if (!token) {
+      return res.status(200).json({
+        success: true,
+        isAuthenticated: false,
+      });
+    }
+
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const user = await User.findById(decoded.id);
+
+      if (!user) {
+        return res.status(200).json({
+          success: true,
+          isAuthenticated: false,
+        });
+      }
+
+      return res.status(200).json({
+        success: true,
+        isAuthenticated: true,
+        user: {
+          id: user._id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+          provider: user.provider,
+          avatar: user.avatar,
+          isVerified: user.isVerified,
+        },
+      });
+    } catch (error) {
+      return res.status(200).json({
+        success: true,
+        isAuthenticated: false,
+      });
+    }
+  } catch (error) {
+    logger.error("Check auth error:", error);
     res.status(500).json({
       success: false,
       message: "Server error",
@@ -724,49 +607,7 @@ exports.checkRegistrationStatus = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error("Check registration status error:", error);
-    res.status(500).json({
-      success: false,
-      message: "Server error",
-      error: error.message,
-    });
-  }
-};
-
-// Login user
-exports.login = async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    console.log("🔍 Login attempt for:", email);
-
-    if (!email || !password) {
-      return res.status(400).json({
-        success: false,
-        message: "Please provide email and password",
-      });
-    }
-
-    const user = await User.findOne({ email }).select("+password");
-    console.log("👤 User found:", user ? user.email : "No user");
-
-    if (!user) {
-      return res.status(401).json({
-        success: false,
-        message: "Invalid credentials",
-      });
-    }
-
-    const isPasswordMatch = await bcrypt.compare(password, user.password);
-
-    if (!isPasswordMatch) {
-      return res.status(401).json({
-        success: false,
-        message: "Invalid credentials",
-      });
-    }
-
-    sendTokenResponse(user, 200, res, "Login successful");
-  } catch (error) {
+    logger.error("Check registration status error:", error);
     res.status(500).json({
       success: false,
       message: "Server error",
@@ -787,6 +628,9 @@ exports.getProfile = async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
+        provider: user.provider,
+        avatar: user.avatar,
+        isVerified: user.isVerified,
         createdAt: user.createdAt,
       },
     });
@@ -835,6 +679,9 @@ exports.updateProfile = async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
+        provider: user.provider,
+        avatar: user.avatar,
+        isVerified: user.isVerified,
       },
     });
   } catch (error) {
@@ -885,6 +732,8 @@ exports.changePassword = async (req, res) => {
     });
   }
 };
+
+// ==================== PASSWORD RESET ====================
 
 // FORGOT PASSWORD WITH OTP - Step 1: Initiate forgot password
 exports.initiateForgotPassword = async (req, res) => {
@@ -942,7 +791,7 @@ exports.initiateForgotPassword = async (req, res) => {
 
     // Generate OTP
     const otp = OTPGenerator.generateOTP();
-    console.log(`✅ Generated password reset OTP for ${email}: ${otp}`);
+    logger.info(`✅ Generated password reset OTP for ${email}: ${otp}`);
 
     // Store password reset data in Redis
     const resetData = {
@@ -975,11 +824,11 @@ exports.initiateForgotPassword = async (req, res) => {
 
     // Send OTP email
     try {
-      console.log(`📤 Sending password reset OTP email to: ${email}`);
+      logger.info(`📤 Sending password reset OTP email to: ${email}`);
       await EmailService.sendForgotPasswordOTPEmail(email, user.name, otp);
-      console.log(`✅ Password reset OTP email sent successfully to ${email}`);
+      logger.info(`✅ Password reset OTP email sent successfully to ${email}`);
     } catch (emailError) {
-      console.error(
+      logger.error(
         "❌ Failed to send password reset email:",
         emailError.message,
       );
@@ -1002,7 +851,7 @@ exports.initiateForgotPassword = async (req, res) => {
       expiresIn: 600, // 10 minutes in seconds
     });
   } catch (error) {
-    console.error("❌ Forgot password initiation error:", error);
+    logger.error("❌ Forgot password initiation error:", error);
     res.status(500).json({
       success: false,
       message: "Server error",
@@ -1077,7 +926,7 @@ exports.verifyForgotPasswordOTP = async (req, res) => {
       email: email,
     });
   } catch (error) {
-    console.error("❌ Forgot password OTP verification error:", error);
+    logger.error("❌ Forgot password OTP verification error:", error);
     res.status(500).json({
       success: false,
       message: "Server error",
@@ -1158,7 +1007,7 @@ exports.resetPasswordWithToken = async (req, res) => {
         });
       }
     } catch (error) {
-      console.error("Token verification error:", error);
+      logger.error("Token verification error:", error);
       return res.status(400).json({
         success: false,
         message: "Invalid or expired reset token",
@@ -1188,7 +1037,7 @@ exports.resetPasswordWithToken = async (req, res) => {
     try {
       await EmailService.sendPasswordResetSuccessEmail(email, user.name);
     } catch (emailError) {
-      console.error("Failed to send success email:", emailError.message);
+      logger.error("Failed to send success email:", emailError.message);
       // Continue even if email fails
     }
 
@@ -1198,7 +1047,7 @@ exports.resetPasswordWithToken = async (req, res) => {
         "Password reset successful. You can now login with your new password.",
     });
   } catch (error) {
-    console.error("Reset password error:", error);
+    logger.error("Reset password error:", error);
     res.status(500).json({
       success: false,
       message: "Server error",
@@ -1257,15 +1106,15 @@ exports.resendForgotPasswordOTP = async (req, res) => {
 
     // Send new OTP email
     try {
-      console.log(`📤 Resending password reset OTP to: ${email}`);
+      logger.info(`📤 Resending password reset OTP to: ${email}`);
       await EmailService.sendForgotPasswordOTPEmail(
         email,
         pendingData.username,
         otp,
       );
-      console.log(`✅ Resent password reset OTP successfully to ${email}`);
+      logger.info(`✅ Resent password reset OTP successfully to ${email}`);
     } catch (emailError) {
-      console.error(
+      logger.error(
         "❌ Failed to resend password reset OTP:",
         emailError.message,
       );
@@ -1282,7 +1131,7 @@ exports.resendForgotPasswordOTP = async (req, res) => {
       email: email,
     });
   } catch (error) {
-    console.error("Resend forgot password OTP error:", error);
+    logger.error("Resend forgot password OTP error:", error);
     res.status(500).json({
       success: false,
       message: "Server error",
@@ -1290,6 +1139,8 @@ exports.resendForgotPasswordOTP = async (req, res) => {
     });
   }
 };
+
+// ==================== COMPATIBILITY ENDPOINTS ====================
 
 // Legacy forgot password (keep for compatibility)
 exports.forgotPassword = async (req, res) => {
@@ -1323,7 +1174,7 @@ exports.forgotPassword = async (req, res) => {
     // Create reset URL
     const resetUrl = `${req.protocol}://${req.get("host")}/api/auth/reset-password/${resetToken}`;
 
-    console.log("Reset URL:", resetUrl);
+    logger.info("Reset URL:", resetUrl);
 
     res.status(200).json({
       success: true,
@@ -1373,7 +1224,9 @@ exports.resetPassword = async (req, res) => {
       });
     }
 
-    user.password = password;
+    // Hash the new password
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(password, salt);
     await user.save();
 
     sendTokenResponse(user, 200, res, "Password reset successful");
@@ -1391,10 +1244,17 @@ exports.register = async (req, res) => {
   try {
     const { name, email, password, confirmPassword } = req.body;
 
-    if (!name || !email || !password) {
+    if (!name || !email || !password || !confirmPassword) {
       return res.status(400).json({
         success: false,
         message: "All fields are required",
+      });
+    }
+
+    if (password !== confirmPassword) {
+      return res.status(400).json({
+        success: false,
+        message: "Passwords do not match",
       });
     }
 
@@ -1425,7 +1285,7 @@ exports.register = async (req, res) => {
 
     sendTokenResponse(user, 201, res, "User registered successfully");
   } catch (error) {
-    console.error("Registration error:", error);
+    logger.error("Registration error:", error);
     res.status(500).json({
       success: false,
       message: "Server error",
@@ -1433,3 +1293,8 @@ exports.register = async (req, res) => {
     });
   }
 };
+
+// ==================== EXPORT HELPER FUNCTIONS ====================
+
+exports.generateToken = generateToken;
+exports.sendTokenResponse = sendTokenResponse;

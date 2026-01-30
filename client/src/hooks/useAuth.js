@@ -1,4 +1,4 @@
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from "react-redux";
 import {
   initiateRegister,
   verifyOTP,
@@ -14,7 +14,7 @@ import {
   resetSuccess,
   setOtpSent,
   clearOtpState,
-  // NEW OTP-based Forgot Password actions
+  // OTP-based Forgot Password actions
   initiateForgotPassword,
   verifyForgotPasswordOTP,
   resendForgotPasswordOTP,
@@ -22,10 +22,13 @@ import {
   setResetToken,
   clearResetToken,
   setRegistrationEmail,
-  // ADD THESE NEW ACTIONS
   setResetEmail,
   clearResetEmail,
-} from '../redux/slices/authSlice';
+  // Google Auth actions - MAKE SURE THESE ARE EXPORTED
+  getGoogleClientId,
+  googleLogin,
+  setGoogleClientId,
+} from "../redux/slices/authSlice";
 
 export const useAuth = () => {
   const dispatch = useDispatch();
@@ -38,7 +41,9 @@ export const useAuth = () => {
     otpSent,
     registrationEmail,
     resetToken,
-    resetEmail, // Add this
+    resetEmail,
+    googleClientId,
+    isGoogleLoading,
   } = useSelector((state) => state.auth);
 
   // Registration functions
@@ -75,7 +80,7 @@ export const useAuth = () => {
     return dispatch(changePassword(passwordData));
   };
 
-  // NEW OTP-based Forgot Password functions
+  // OTP-based Forgot Password functions
   const forgotPasswordRequest = (email) => {
     return dispatch(initiateForgotPassword(email));
   };
@@ -88,8 +93,15 @@ export const useAuth = () => {
     return dispatch(resendForgotPasswordOTP(email));
   };
 
-  const resetPasswordRequest = (resetToken, email, password, confirmPassword) => {
-    return dispatch(resetPasswordWithToken({ resetToken, email, password, confirmPassword }));
+  const resetPasswordRequest = (
+    resetToken,
+    email,
+    password,
+    confirmPassword,
+  ) => {
+    return dispatch(
+      resetPasswordWithToken({ resetToken, email, password, confirmPassword }),
+    );
   };
 
   // Legacy functions (keep for compatibility)
@@ -99,6 +111,19 @@ export const useAuth = () => {
 
   const legacyResetPassword = (resetToken, password) => {
     return dispatch(resetPassword({ resetToken, password }));
+  };
+
+  // Google Auth functions - MAKE SURE THESE ARE CALLED CORRECTLY
+  const GoogleLogin = (googleToken) => {
+    return dispatch(googleLogin(googleToken));
+  };
+
+  const getGoogleClientIdAction = () => {
+    return dispatch(getGoogleClientId());
+  };
+
+  const setGoogleClientIdAction = (clientId) => {
+    dispatch(setGoogleClientId(clientId));
   };
 
   // Utility functions
@@ -130,7 +155,6 @@ export const useAuth = () => {
     dispatch(clearResetToken());
   };
 
-  // ADD THESE NEW FUNCTIONS
   const setResetEmailAction = (email) => {
     dispatch(setResetEmail(email));
   };
@@ -150,32 +174,39 @@ export const useAuth = () => {
     success,
     otpSent,
     registrationEmail,
-    resetToken, 
-    resetEmail, // Add this
+    resetToken,
+    resetEmail,
+    googleClientId,
+    isGoogleLoading,
     isAuthenticated,
-    
+
     // Registration
     registerInitiate,
     registerVerify,
     registerResendOTP,
-    
+
     // Login/Profile
     login,
     logout,
     getProfile,
     updateUserProfile,
     updatePassword,
-    
-    // NEW OTP-based Forgot Password
+
+    // OTP-based Forgot Password
     forgotPasswordRequest,
     verifyForgotPasswordOTPRequest,
     resendForgotPasswordOTPRequest,
     resetPasswordRequest,
-    
+
     // Legacy Forgot Password
     legacyForgotPassword,
     legacyResetPassword,
-    
+
+    // Google Auth - MAKE SURE THESE ARE EXPORTED
+    GoogleLogin,
+    getGoogleClientIdAction,
+    setGoogleClientIdAction,
+
     // Utility functions
     clearAuthError,
     resetAuthSuccess,
@@ -184,7 +215,6 @@ export const useAuth = () => {
     clearOtpAuthState,
     setResetTokenAction,
     clearResetTokenAction,
-    // ADD THESE NEW FUNCTIONS
     setResetEmailAction,
     clearResetEmailAction,
   };

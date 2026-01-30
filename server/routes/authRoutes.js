@@ -29,9 +29,8 @@ router.post('/forgot-password', validateForgotPassword, authController.forgotPas
 router.put('/reset-password-legacy/:resetToken', validateResetPassword, authController.resetPassword);
 
 // Google OAuth routes
-router.get('/google', authController.googleAuth);
-router.get('/google/callback', authController.googleCallback);
-router.post('/google/token', authController.googleTokenAuth);
+router.get('/google/client-id', authController.getGoogleClientId);
+router.post('/google/token', authController.googleTokenAuth);       // Existing: Verify Google token
 
 // Existing routes
 router.post('/login', validateLogin, authController.login);

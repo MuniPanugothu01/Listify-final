@@ -5,6 +5,8 @@ import {
   Route,
   useLocation,
 } from "react-router-dom";
+// CHANGED: Added GoogleOAuthProvider import
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
 import Navbar from "./pages/Home/Navbar.jsx";
 import Hero from "./pages/Home/Hero.jsx";
@@ -78,6 +80,10 @@ import Profile from "./pages/Home/Profile.jsx";
 // ChatBot
 import ChatBot from "./components/ChatBot.jsx";
 import { ScrollProgress } from "./components/ui/scroll-progress.jsx";
+import { Toaster } from "react-hot-toast";
+
+// Get Google Client ID from environment
+const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
 // ScrollToTop Component
 const ScrollToTop = () => {
@@ -102,9 +108,9 @@ const AppContent = () => {
     "/forgot-password",
     "/reset-password",
   ];
-  
+
   const shouldHideNavbarFooter = hideNavbarFooterPaths.some((path) =>
-    location.pathname.startsWith(path)
+    location.pathname.startsWith(path),
   );
 
   // Handle scroll to top button visibility
@@ -139,12 +145,14 @@ const AppContent = () => {
     <div className="relative min-h-screen flex flex-col">
       {/* Navbar - Conditionally rendered */}
       {!shouldHideNavbarFooter && <Navbar />}
-      
+
       {/* ScrollProgress - Only show on non-auth pages */}
       {!shouldHideNavbarFooter && <ScrollProgress />}
 
       {/* Main Content */}
       <main className="flex-grow">
+        {/* CHANGED: Removed nested GoogleOAuthProvider wrapper */}
+        <Toaster position="top-right" />
         <Routes>
           {/* Home */}
           <Route
@@ -166,8 +174,8 @@ const AppContent = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
-      <Route path="/reset-otp" element={<ResetOtp />} />
-      <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/reset-otp" element={<ResetOtp />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/faq" element={<Questions />} />
 
           {/* Contact & About Pages */}
@@ -181,7 +189,10 @@ const AppContent = () => {
           <Route path="/takecare/:serviceId" element={<NannyService />} />
           <Route path="/takecare/babysitter" element={<BabysitterService />} />
           <Route path="/takecare/cook" element={<CookServices />} />
-          <Route path="/takecare/housekeeper" element={<HousekeeperServices />} />
+          <Route
+            path="/takecare/housekeeper"
+            element={<HousekeeperServices />}
+          />
           <Route path="/takecare/tutor" element={<TutorServices />} />
           <Route path="/takecare/eldercare" element={<ElderCareServices />} />
           <Route path="/takecare/petcare" element={<PetCareService />} />
@@ -205,7 +216,10 @@ const AppContent = () => {
           <Route path="/job-search" element={<JobSearchPortal />} />
           <Route path="/job-details/:id" element={<JobDetailsPage />} />
           <Route path="/job-seekers" element={<JobSeekerInterface />} />
-          <Route path="/job-seeker-resumes" element={<JobSeekerResumesDetail />} />
+          <Route
+            path="/job-seeker-resumes"
+            element={<JobSeekerResumesDetail />}
+          />
           <Route path="/job-seeker-posts" element={<JobSeekerResume />} />
 
           {/* Events */}
@@ -234,7 +248,10 @@ const AppContent = () => {
           <Route path="/community" element={<div>Community Page</div>} />
           <Route path="/my-listings" element={<div>My Listings Page</div>} />
           <Route path="/messages" element={<div>Messages Page</div>} />
-          <Route path="/notifications" element={<div>Notifications Page</div>} />
+          <Route
+            path="/notifications"
+            element={<div>Notifications Page</div>}
+          />
           <Route path="/settings" element={<div>Settings Page</div>} />
         </Routes>
       </main>
@@ -261,10 +278,13 @@ const AppContent = () => {
 // Main App Wrapper
 const App = () => {
   return (
-    <Router>
-      <ScrollToTop />
-      <AppContent />
-    </Router>
+    // CHANGED: Wrapped entire app with GoogleOAuthProvider here
+    <GoogleOAuthProvider clientId={googleClientId || ""}>
+      <Router>
+        <ScrollToTop />
+        <AppContent />
+      </Router>
+    </GoogleOAuthProvider>
   );
 };
 

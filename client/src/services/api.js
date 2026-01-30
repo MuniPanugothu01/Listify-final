@@ -9,7 +9,7 @@ const api = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
-  timeout: 10000, // 10 second timeout
+  timeout: 30000, // Increased timeout to 30 seconds
 });
 
 // Request interceptor - Add token to requests
@@ -19,9 +19,6 @@ api.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
-    console.log(
-      `API Request: ${config.method.toUpperCase()} ${config.baseURL}${config.url}`,
-    );
     return config;
   },
   (error) => {
@@ -33,7 +30,6 @@ api.interceptors.request.use(
 // Response interceptor - Handle errors
 api.interceptors.response.use(
   (response) => {
-    console.log(`API Response: ${response.status}`, response.data);
     return response;
   },
   (error) => {
@@ -41,10 +37,15 @@ api.interceptors.response.use(
       status: error.response?.status,
       data: error.response?.data,
       message: error.message,
+      code: error.code,
     });
 
+    if (error.code === "ECONNABORTED") {
+      console.error("Request timeout - server might be down or slow");
+      return Promise.reject(new Error("Request timeout. Please try again."));
+    }
+
     if (error.response?.status === 401) {
-      console.log("Unauthorized, clearing auth data");
       localStorage.removeItem("authToken");
       localStorage.removeItem("user");
       window.location.href = "/signin";
@@ -56,81 +57,108 @@ api.interceptors.response.use(
 
 // Auth API methods
 export const authAPI = {
+  // Google Auth APIs
+  getGoogleClientId: () => {
+    return api.get("/google/client-id", { timeout: 10000 });
+  },
+
+  googleLogin: (googleToken) => {
+    return api.post(
+      "/google/token",
+      { token: googleToken },
+      { timeout: 15000 },
+    );
+  },
+
   // Login user
   login: (credentials) => {
-    console.log("Login API called with:", credentials);
-    return api.post("/login", credentials);
+    return api.post("/login", credentials, { timeout: 15000 });
   },
 
   // OTP Registration - Initiate
   initiateRegister: (userData) => {
-    return api.post("/register/initiate", userData);
+    return api.post("/register/initiate", userData, { timeout: 15000 });
   },
 
   // OTP Registration - Verify
   verifyOTP: (otpData) => {
-    return api.post("/register/verify", otpData);
+    return api.post("/register/verify", otpData, { timeout: 15000 });
   },
 
   // OTP Registration - Resend OTP
   resendOTP: (email) => {
-    return api.post("/register/resend-otp", { email });
+    return api.post("/register/resend-otp", { email }, { timeout: 15000 });
   },
 
   // OTP Registration - Check status
   checkRegistrationStatus: (email) => {
-    return api.get(`/register/status/${email}`);
+    return api.get(`/register/status/${email}`, { timeout: 10000 });
   },
 
   // Get user profile
   getProfile: () => {
-    return api.get("/profile");
+    return api.get("/profile", { timeout: 10000 });
   },
 
   // Update profile
   updateProfile: (userData) => {
-    return api.put("/update-profile", userData);
+    return api.put("/update-profile", userData, { timeout: 15000 });
   },
 
   // Change password
   changePassword: (passwordData) => {
-    return api.post("/change-password", passwordData);
+    return api.post("/change-password", passwordData, { timeout: 15000 });
   },
 
-  // NEW: OTP-based Forgot Password APIs
-  
   // Initiate forgot password (send OTP)
   initiateForgotPassword: (email) => {
-    return api.post("/forgot-password/initiate", { email });
+    return api.post("/forgot-password/initiate", { email }, { timeout: 15000 });
   },
 
   // Verify forgot password OTP
   verifyForgotPasswordOTP: (otpData) => {
-    return api.post("/forgot-password/verify-otp", otpData);
+    return api.post("/forgot-password/verify-otp", otpData, { timeout: 15000 });
   },
 
   // Resend forgot password OTP
   resendForgotPasswordOTP: (email) => {
-    return api.post("/forgot-password/resend-otp", { email });
+    return api.post(
+      "/forgot-password/resend-otp",
+      { email },
+      { timeout: 15000 },
+    );
   },
 
   // Reset password with token
   resetPasswordWithToken: (resetToken, email, password, confirmPassword) => {
-    return api.put(`/reset-password/${resetToken}`, { 
-      email, 
-      password, 
-      confirmPassword 
-    });
+    return api.put(
+      `/reset-password/${resetToken}`,
+      {
+        email,
+        password,
+        confirmPassword,
+      },
+      { timeout: 15000 },
+    );
   },
 
   // Legacy forgot password (keep for compatibility)
   forgotPassword: (email) => {
-    return api.post("/forgot-password", { email });
+    return api.post("/forgot-password", { email }, { timeout: 15000 });
   },
 
   // Legacy reset password (keep for compatibility)
   resetPassword: (resetToken, password) => {
-    return api.put(`/reset-password-legacy/${resetToken}`, { password });
+    return api.put(
+      `/reset-password-legacy/${resetToken}`,
+      { password },
+      { timeout: 15000 },
+    );
+  },
+
+  // Check authentication status
+  checkAuth: () => {
+    return api.get("/check", { timeout: 10000 });
   },
 };
 

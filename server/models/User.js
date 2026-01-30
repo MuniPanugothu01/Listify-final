@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
+const crypto = require("crypto");
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -17,24 +18,265 @@ const userSchema = new mongoose.Schema({
       /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
       "Please add a valid email",
     ],
+    index: true,
   },
   password: {
     type: String,
-    required: [true, "Please add a password"],
+    required: function() {
+      return !this.googleId && !this.facebookId; // Password not required for social logins
+    },
     minlength: 6,
-    select: false, // Don't return password by default
+    select: false,
   },
   role: {
     type: String,
-    enum: ["user", "admin"],
+    enum: ["user", "admin", "moderator"],
     default: "user",
   },
+  // Social Login Fields
+  googleId: {
+    type: String,
+    sparse: true,
+    unique: true,
+  },
+  provider: {
+    type: String,
+    enum: ["local", "google", "facebook"],
+    default: "local",
+  },
+  avatar: {
+    type: String,
+    default: "https://cdn-icons-png.flaticon.com/512/149/149071.png",
+  },
+  isVerified: {
+    type: Boolean,
+    default: false,
+  },
+  emailVerificationToken: String,
+  emailVerificationExpires: Date,
+  passwordResetToken: String,
+  passwordResetExpires: Date,
+  // Security Fields
+  loginAttempts: {
+    type: Number,
+    default: 0,
+  },
+  lockUntil: Date,
+  lastLogin: Date,
+  ipAddress: String,
+  userAgent: String,
+  // Timestamps
   createdAt: {
     type: Date,
     default: Date.now,
   },
+  updatedAt: {
+    type: Date,
+    default: Date.now,
+  },
+  // Profile Fields
+  phone: {
+    type: String,
+    match: [/^[0-9]{10}$/, "Please add a valid phone number"],
+  },
+  dateOfBirth: Date,
+  gender: {
+    type: String,
+    enum: ["male", "female", "other", "prefer-not-to-say"],
+  },
+  // Preferences
+  preferences: {
+    emailNotifications: {
+      type: Boolean,
+      default: true,
+    },
+    pushNotifications: {
+      type: Boolean,
+      default: true,
+    },
+    twoFactorAuth: {
+      type: Boolean,
+      default: false,
+    },
+    theme: {
+      type: String,
+      enum: ["light", "dark", "auto"],
+      default: "auto",
+    },
+  },
+  // Status
+  status: {
+    type: String,
+    enum: ["active", "inactive", "suspended", "banned"],
+    default: "active",
+  },
+  // Security Audit Trail
+  lastPasswordChange: Date,
+  lastEmailChange: Date,
+  securityLogs: [
+    {
+      action: String,
+      timestamp: {
+        type: Date,
+        default: Date.now,
+      },
+      ip: String,
+      userAgent: String,
+      details: mongoose.Schema.Types.Mixed,
+    },
+  ],
 });
 
+// Indexes for better query performance
+userSchema.index({ email: 1 });
+userSchema.index({ googleId: 1 });
+userSchema.index({ status: 1 });
+userSchema.index({ createdAt: -1 });
 
+// Encrypt password before saving
+userSchema.pre("save", async function (next) {
+  // Only hash the password if it's modified (or new)
+  if (!this.isModified("password")) return next();
+
+  try {
+    // Generate salt
+    const salt = await bcrypt.genSalt(12);
+    // Hash password
+    this.password = await bcrypt.hash(this.password, salt);
+    this.lastPasswordChange = Date.now();
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Update updatedAt timestamp
+userSchema.pre("save", function (next) {
+  this.updatedAt = Date.now();
+  next();
+});
+
+// Method to compare password
+userSchema.methods.comparePassword = async function (candidatePassword) {
+  try {
+    return await bcrypt.compare(candidatePassword, this.password);
+  } catch (error) {
+    throw error;
+  }
+};
+
+// Method to check if account is locked
+userSchema.methods.isLocked = function () {
+  return !!(this.lockUntil && this.lockUntil > Date.now());
+};
+
+// Method to increment login attempts
+userSchema.methods.incrementLoginAttempts = function () {
+  // If we have a previous lock that has expired, restart at 1
+  if (this.lockUntil && this.lockUntil < Date.now()) {
+    return this.updateOne({
+      $set: { loginAttempts: 1 },
+      $unset: { lockUntil: 1 },
+    });
+  }
+
+  // Otherwise increment
+  const updates = { $inc: { loginAttempts: 1 } };
+
+  // Lock the account if we've reached max attempts and it's not locked already
+  if (this.loginAttempts + 1 >= 5 && !this.isLocked()) {
+    updates.$set = { lockUntil: Date.now() + 60 * 60 * 1000 }; // 1 hour lock
+  }
+
+  return this.updateOne(updates);
+};
+
+// Method to reset login attempts after successful login
+userSchema.methods.resetLoginAttempts = function () {
+  return this.updateOne({
+    $set: { loginAttempts: 0 },
+    $unset: { lockUntil: 1 },
+  });
+};
+
+// Method to generate password reset token
+userSchema.methods.createPasswordResetToken = function () {
+  const resetToken = crypto.randomBytes(32).toString("hex");
+
+  this.passwordResetToken = crypto
+    .createHash("sha256")
+    .update(resetToken)
+    .digest("hex");
+
+  this.passwordResetExpires = Date.now() + 10 * 60 * 1000; // 10 minutes
+
+  return resetToken;
+};
+
+// Method to generate email verification token
+userSchema.methods.createEmailVerificationToken = function () {
+  const verificationToken = crypto.randomBytes(32).toString("hex");
+
+  this.emailVerificationToken = crypto
+    .createHash("sha256")
+    .update(verificationToken)
+    .digest("hex");
+
+  this.emailVerificationExpires = Date.now() + 24 * 60 * 60 * 1000; // 24 hours
+
+  return verificationToken;
+};
+
+// Method to update last login
+userSchema.methods.updateLastLogin = function (ip, userAgent) {
+  this.lastLogin = Date.now();
+  if (ip) this.ipAddress = ip;
+  if (userAgent) this.userAgent = userAgent;
+  return this.save();
+};
+
+// Method to add security log
+userSchema.methods.addSecurityLog = function (action, ip, userAgent, details) {
+  this.securityLogs.push({
+    action,
+    ip,
+    userAgent,
+    details,
+  });
+
+  // Keep only last 100 logs
+  if (this.securityLogs.length > 100) {
+    this.securityLogs = this.securityLogs.slice(-100);
+  }
+
+  return this.save();
+};
+
+// Virtual for full name
+userSchema.virtual("fullName").get(function () {
+  return this.name;
+});
+
+// Virtual for isSocialLogin
+userSchema.virtual("isSocialLogin").get(function () {
+  return this.provider !== "local";
+});
+
+// JSON transformation to remove sensitive data
+userSchema.set("toJSON", {
+  virtuals: true,
+  transform: function (doc, ret) {
+    delete ret.password;
+    delete ret.passwordResetToken;
+    delete ret.passwordResetExpires;
+    delete ret.emailVerificationToken;
+    delete ret.emailVerificationExpires;
+    delete ret.securityLogs;
+    delete ret.loginAttempts;
+    delete ret.lockUntil;
+    delete ret.__v;
+    return ret;
+  },
+});
 
 module.exports = mongoose.model("User", userSchema);

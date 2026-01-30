@@ -1,7 +1,69 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { authAPI } from "../../services/api";
 
+const initialState = {
+  token: localStorage.getItem("authToken"),
+  user: null,
+  loading: false,
+  error: null,
+  success: false,
+  otpSent: false,
+  registrationEmail: "",
+  resetToken: "",
+  resetEmail: "",
+  googleClientId: "",
+  isGoogleLoading: false,
+};
+
 // Async Thunks
+export const getGoogleClientId = createAsyncThunk(
+  "auth/getGoogleClientId",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await authAPI.getGoogleClientId();
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  },
+);
+
+export const googleLogin = createAsyncThunk(
+  "auth/googleLogin",
+  async (googleToken, { rejectWithValue }) => {
+    try {
+      const response = await authAPI.googleLogin(googleToken);
+
+      if (response.data.success && response.data.token) {
+        localStorage.setItem("authToken", response.data.token);
+        localStorage.setItem("user", JSON.stringify(response.data.user));
+      }
+
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  },
+);
+
+export const loginUser = createAsyncThunk(
+  "auth/loginUser",
+  async (credentials, { rejectWithValue }) => {
+    try {
+      const response = await authAPI.login(credentials);
+
+      if (response.data.success && response.data.token) {
+        localStorage.setItem("authToken", response.data.token);
+        localStorage.setItem("user", JSON.stringify(response.data.user));
+      }
+
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  },
+);
+
 export const initiateRegister = createAsyncThunk(
   "auth/initiateRegister",
   async (userData, { rejectWithValue }) => {
@@ -9,9 +71,7 @@ export const initiateRegister = createAsyncThunk(
       const response = await authAPI.initiateRegister(userData);
       return response.data;
     } catch (error) {
-      return rejectWithValue(
-        error.response?.data?.message || "Registration initiation failed",
-      );
+      return rejectWithValue(error.response?.data || error.message);
     }
   },
 );
@@ -21,15 +81,15 @@ export const verifyOTP = createAsyncThunk(
   async ({ email, otp }, { rejectWithValue }) => {
     try {
       const response = await authAPI.verifyOTP({ email, otp });
-      if (response.data.success) {
+
+      if (response.data.success && response.data.token) {
         localStorage.setItem("authToken", response.data.token);
         localStorage.setItem("user", JSON.stringify(response.data.user));
       }
+
       return response.data;
     } catch (error) {
-      return rejectWithValue(
-        error.response?.data?.message || "OTP verification failed",
-      );
+      return rejectWithValue(error.response?.data || error.message);
     }
   },
 );
@@ -38,106 +98,22 @@ export const resendOTP = createAsyncThunk(
   "auth/resendOTP",
   async (email, { rejectWithValue }) => {
     try {
-      const response = await authAPI.resendOTP(email);
+      const response = await authAPI.resendOTP({ email });
       return response.data;
     } catch (error) {
-      return rejectWithValue(
-        error.response?.data?.message || "Failed to resend OTP",
-      );
+      return rejectWithValue(error.response?.data || error.message);
     }
   },
 );
 
-export const loginUser = createAsyncThunk(
-  'auth/login',
-  async (credentials, { rejectWithValue }) => {
-    try {
-      console.log('Attempting login with:', credentials);
-      
-      const response = await authAPI.login(credentials);
-      console.log('Login API Response:', response.data);
-      
-      if (response.data.success) {
-        console.log('Login successful, storing token');
-        localStorage.setItem('authToken', response.data.token);
-        localStorage.setItem('user', JSON.stringify(response.data.user));
-      } else {
-        console.log('Login not successful:', response.data.message);
-      }
-      return response.data;
-    } catch (error) {
-      console.error('Login error details:', {
-        message: error.message,
-        response: error.response?.data,
-        status: error.response?.status
-      });
-      
-      const errorMessage = error.response?.data?.message || 
-                          error.response?.data?.error || 
-                          error.message || 
-                          'Login failed. Please check your credentials.';
-      
-      return rejectWithValue(errorMessage);
-    }
-  }
-);
-
-export const getUserProfile = createAsyncThunk(
-  "auth/getProfile",
-  async (_, { rejectWithValue, getState }) => {
-    try {
-      const { auth } = getState();
-      const response = await authAPI.getProfile(auth.token);
-      return response.data;
-    } catch (error) {
-      return rejectWithValue(
-        error.response?.data?.message || "Failed to fetch profile",
-      );
-    }
-  },
-);
-
-export const updateProfile = createAsyncThunk(
-  "auth/updateProfile",
-  async (userData, { rejectWithValue, getState }) => {
-    try {
-      const { auth } = getState();
-      const response = await authAPI.updateProfile(userData, auth.token);
-      return response.data;
-    } catch (error) {
-      return rejectWithValue(
-        error.response?.data?.message || "Profile update failed",
-      );
-    }
-  },
-);
-
-export const changePassword = createAsyncThunk(
-  "auth/changePassword",
-  async (passwordData, { rejectWithValue, getState }) => {
-    try {
-      const { auth } = getState();
-      const response = await authAPI.changePassword(passwordData, auth.token);
-      return response.data;
-    } catch (error) {
-      return rejectWithValue(
-        error.response?.data?.message || "Password change failed",
-      );
-    }
-  },
-);
-
-// OTP-based Forgot Password Actions
 export const initiateForgotPassword = createAsyncThunk(
   "auth/initiateForgotPassword",
   async (email, { rejectWithValue }) => {
     try {
-      const response = await authAPI.initiateForgotPassword(email);
+      const response = await authAPI.initiateForgotPassword({ email });
       return response.data;
     } catch (error) {
-      return rejectWithValue(
-        error.response?.data?.message || "Failed to initiate password reset",
-      );
+      return rejectWithValue(error.response?.data || error.message);
     }
   },
 );
@@ -149,9 +125,7 @@ export const verifyForgotPasswordOTP = createAsyncThunk(
       const response = await authAPI.verifyForgotPasswordOTP({ email, otp });
       return response.data;
     } catch (error) {
-      return rejectWithValue(
-        error.response?.data?.message || "Failed to verify OTP",
-      );
+      return rejectWithValue(error.response?.data || error.message);
     }
   },
 );
@@ -160,46 +134,46 @@ export const resendForgotPasswordOTP = createAsyncThunk(
   "auth/resendForgotPasswordOTP",
   async (email, { rejectWithValue }) => {
     try {
-      const response = await authAPI.resendForgotPasswordOTP(email);
+      const response = await authAPI.resendForgotPasswordOTP({ email });
       return response.data;
     } catch (error) {
-      return rejectWithValue(
-        error.response?.data?.message || "Failed to resend OTP",
-      );
+      return rejectWithValue(error.response?.data || error.message);
     }
   },
 );
 
 export const resetPasswordWithToken = createAsyncThunk(
   "auth/resetPasswordWithToken",
-  async ({ resetToken, email, password, confirmPassword }, { rejectWithValue }) => {
+  async (
+    { resetToken, email, password, confirmPassword },
+    { rejectWithValue },
+  ) => {
     try {
-      const response = await authAPI.resetPasswordWithToken(resetToken, email, password, confirmPassword);
+      const response = await authAPI.resetPasswordWithToken(
+        resetToken,
+        email,
+        password,
+        confirmPassword,
+      );
       return response.data;
     } catch (error) {
-      return rejectWithValue(
-        error.response?.data?.message || "Failed to reset password",
-      );
+      return rejectWithValue(error.response?.data || error.message);
     }
   },
 );
 
-// Legacy forgot password (keep for compatibility)
 export const forgotPassword = createAsyncThunk(
   "auth/forgotPassword",
   async (email, { rejectWithValue }) => {
     try {
-      const response = await authAPI.forgotPassword(email);
+      const response = await authAPI.forgotPassword({ email });
       return response.data;
     } catch (error) {
-      return rejectWithValue(
-        error.response?.data?.message || "Password reset request failed",
-      );
+      return rejectWithValue(error.response?.data || error.message);
     }
   },
 );
 
-// Legacy reset password (keep for compatibility)
 export const resetPassword = createAsyncThunk(
   "auth/resetPassword",
   async ({ resetToken, password }, { rejectWithValue }) => {
@@ -207,42 +181,58 @@ export const resetPassword = createAsyncThunk(
       const response = await authAPI.resetPassword(resetToken, password);
       return response.data;
     } catch (error) {
-      return rejectWithValue(
-        error.response?.data?.message || "Password reset failed",
-      );
+      return rejectWithValue(error.response?.data || error.message);
     }
   },
 );
 
-export const logoutUser = createAsyncThunk(
-  "auth/logout",
+export const getUserProfile = createAsyncThunk(
+  "auth/getUserProfile",
   async (_, { rejectWithValue }) => {
     try {
-      localStorage.removeItem("authToken");
-      localStorage.removeItem("user");
-      return { success: true };
+      const response = await authAPI.getProfile();
+      return response.data;
     } catch (error) {
-      return rejectWithValue("Logout failed");
+      return rejectWithValue(error.response?.data || error.message);
     }
   },
 );
 
-const initialState = {
-  token: localStorage.getItem("authToken"),
-  user: JSON.parse(localStorage.getItem("user")) || null,
-  loading: false,
-  error: null,
-  success: false,
-  otpSent: false,
-  registrationEmail: null,
-  resetToken: null,
-  resetEmail: null, // Add this line
-};
+export const updateProfile = createAsyncThunk(
+  "auth/updateProfile",
+  async (userData, { rejectWithValue }) => {
+    try {
+      const response = await authAPI.updateProfile(userData);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  },
+);
+
+export const changePassword = createAsyncThunk(
+  "auth/changePassword",
+  async (passwordData, { rejectWithValue }) => {
+    try {
+      const response = await authAPI.changePassword(passwordData);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  },
+);
 
 const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
+    logoutUser: (state) => {
+      localStorage.removeItem("authToken");
+      localStorage.removeItem("user");
+      state.token = null;
+      state.user = null;
+      state.success = false;
+    },
     clearError: (state) => {
       state.error = null;
     },
@@ -252,34 +242,86 @@ const authSlice = createSlice({
     setOtpSent: (state, action) => {
       state.otpSent = action.payload;
     },
-    setRegistrationEmail: (state, action) => {
-      state.registrationEmail = action.payload;
-    },
     clearOtpState: (state) => {
       state.otpSent = false;
-      state.registrationEmail = null;
+      state.registrationEmail = "";
+    },
+    setRegistrationEmail: (state, action) => {
+      state.registrationEmail = action.payload;
     },
     setResetToken: (state, action) => {
       state.resetToken = action.payload;
     },
     clearResetToken: (state) => {
-      state.resetToken = null;
+      state.resetToken = "";
     },
-    // ADD THIS NEW REDUCER
     setResetEmail: (state, action) => {
       state.resetEmail = action.payload;
     },
-    // ADD THIS NEW REDUCER
     clearResetEmail: (state) => {
-      state.resetEmail = null;
+      state.resetEmail = "";
+    },
+    setGoogleClientId: (state, action) => {
+      state.googleClientId = action.payload;
     },
   },
   extraReducers: (builder) => {
     builder
-      // Initiate Registration
+      // Get Google Client ID
+      .addCase(getGoogleClientId.pending, (state) => {
+        state.isGoogleLoading = true;
+        state.error = null;
+      })
+      .addCase(getGoogleClientId.fulfilled, (state, action) => {
+        state.isGoogleLoading = false;
+        state.googleClientId = action.payload.clientId;
+      })
+      .addCase(getGoogleClientId.rejected, (state, action) => {
+        state.isGoogleLoading = false;
+        state.error = action.payload;
+      })
+
+      // Google Login
+      .addCase(googleLogin.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+        state.success = false;
+      })
+      .addCase(googleLogin.fulfilled, (state, action) => {
+        state.loading = false;
+        state.success = true;
+        state.token = action.payload.token;
+        state.user = action.payload.user;
+      })
+      .addCase(googleLogin.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+        state.success = false;
+      })
+
+      // Login User
+      .addCase(loginUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+        state.success = false;
+      })
+      .addCase(loginUser.fulfilled, (state, action) => {
+        state.loading = false;
+        state.success = true;
+        state.token = action.payload.token;
+        state.user = action.payload.user;
+      })
+      .addCase(loginUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+        state.success = false;
+      })
+
+      // Initiate Register
       .addCase(initiateRegister.pending, (state) => {
         state.loading = true;
         state.error = null;
+        state.success = false;
       })
       .addCase(initiateRegister.fulfilled, (state, action) => {
         state.loading = false;
@@ -290,13 +332,14 @@ const authSlice = createSlice({
       .addCase(initiateRegister.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
-        state.otpSent = false;
+        state.success = false;
       })
-      
+
       // Verify OTP
       .addCase(verifyOTP.pending, (state) => {
         state.loading = true;
         state.error = null;
+        state.success = false;
       })
       .addCase(verifyOTP.fulfilled, (state, action) => {
         state.loading = false;
@@ -304,13 +347,13 @@ const authSlice = createSlice({
         state.token = action.payload.token;
         state.user = action.payload.user;
         state.otpSent = false;
-        state.registrationEmail = null;
       })
       .addCase(verifyOTP.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+        state.success = false;
       })
-      
+
       // Resend OTP
       .addCase(resendOTP.pending, (state) => {
         state.loading = true;
@@ -324,86 +367,42 @@ const authSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
-      
-      // Login
-      .addCase(loginUser.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(loginUser.fulfilled, (state, action) => {
-        state.loading = false;
-        state.success = true;
-        state.token = action.payload.token;
-        state.user = action.payload.user;
-      })
-      .addCase(loginUser.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
-      })
-      
-      // Get Profile
-      .addCase(getUserProfile.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(getUserProfile.fulfilled, (state, action) => {
-        state.loading = false;
-        state.user = action.payload.user;
-      })
-      .addCase(getUserProfile.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
-      })
-      
-      // Update Profile
-      .addCase(updateProfile.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(updateProfile.fulfilled, (state, action) => {
-        state.loading = false;
-        state.success = true;
-        state.user = action.payload.user;
-      })
-      .addCase(updateProfile.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
-      })
-      
-      // NEW: Initiate Forgot Password
+
+      // Initiate Forgot Password
       .addCase(initiateForgotPassword.pending, (state) => {
         state.loading = true;
         state.error = null;
+        state.success = false;
       })
       .addCase(initiateForgotPassword.fulfilled, (state, action) => {
         state.loading = false;
         state.success = true;
-        state.otpSent = true;
-        state.resetEmail = action.payload.email; // Store reset email
+        state.resetEmail = action.payload.email;
       })
       .addCase(initiateForgotPassword.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
-        state.otpSent = false;
+        state.success = false;
       })
-      
-      // NEW: Verify Forgot Password OTP
+
+      // Verify Forgot Password OTP
       .addCase(verifyForgotPasswordOTP.pending, (state) => {
         state.loading = true;
         state.error = null;
+        state.success = false;
       })
       .addCase(verifyForgotPasswordOTP.fulfilled, (state, action) => {
         state.loading = false;
         state.success = true;
         state.resetToken = action.payload.resetToken;
-        state.otpSent = false;
       })
       .addCase(verifyForgotPasswordOTP.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+        state.success = false;
       })
-      
-      // NEW: Resend Forgot Password OTP
+
+      // Resend Forgot Password OTP
       .addCase(resendForgotPasswordOTP.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -416,74 +415,86 @@ const authSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
-      
-      // NEW: Reset Password With Token
+
+      // Reset Password With Token
       .addCase(resetPasswordWithToken.pending, (state) => {
         state.loading = true;
         state.error = null;
+        state.success = false;
       })
-      .addCase(resetPasswordWithToken.fulfilled, (state, action) => {
+      .addCase(resetPasswordWithToken.fulfilled, (state) => {
         state.loading = false;
         state.success = true;
-        state.resetToken = null;
-        state.resetEmail = null;
+        state.resetToken = "";
+        state.resetEmail = "";
       })
       .addCase(resetPasswordWithToken.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+        state.success = false;
       })
-      
-      // Legacy Forgot Password
-      .addCase(forgotPassword.pending, (state) => {
+
+      // Get User Profile
+      .addCase(getUserProfile.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(forgotPassword.fulfilled, (state) => {
+      .addCase(getUserProfile.fulfilled, (state, action) => {
         state.loading = false;
-        state.success = true;
+        state.user = action.payload.user;
       })
-      .addCase(forgotPassword.rejected, (state, action) => {
+      .addCase(getUserProfile.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
-      
-      // Legacy Reset Password
-      .addCase(resetPassword.pending, (state) => {
+
+      // Update Profile
+      .addCase(updateProfile.pending, (state) => {
         state.loading = true;
         state.error = null;
+        state.success = false;
       })
-      .addCase(resetPassword.fulfilled, (state) => {
+      .addCase(updateProfile.fulfilled, (state, action) => {
+        state.loading = false;
+        state.success = true;
+        state.user = action.payload.user;
+      })
+      .addCase(updateProfile.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+        state.success = false;
+      })
+
+      // Change Password
+      .addCase(changePassword.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+        state.success = false;
+      })
+      .addCase(changePassword.fulfilled, (state) => {
         state.loading = false;
         state.success = true;
       })
-      .addCase(resetPassword.rejected, (state, action) => {
+      .addCase(changePassword.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
-      })
-      
-      // Logout
-      .addCase(logoutUser.fulfilled, (state) => {
-        state.token = null;
-        state.user = null;
-        state.loading = false;
-        state.error = null;
-        state.otpSent = false;
-        state.registrationEmail = null;
-        state.resetToken = null;
-        state.resetEmail = null;
+        state.success = false;
       });
   },
 });
 
 export const {
+  logoutUser,
   clearError,
   resetSuccess,
   setOtpSent,
-  setRegistrationEmail,
   clearOtpState,
+  setRegistrationEmail,
   setResetToken,
   clearResetToken,
-  setResetEmail, // Export the new reducer
-  clearResetEmail, // Export the new reducer
+  setResetEmail,
+  clearResetEmail,
+  setGoogleClientId,
 } = authSlice.actions;
+
 export default authSlice.reducer;
