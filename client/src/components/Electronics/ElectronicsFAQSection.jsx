@@ -37,7 +37,7 @@ export default function ElectronicsFAQSection() {
 
   return (
     <section className="py-12 sm:py-16 lg:py-20 bg-white">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-8 sm:mb-12 lg:mb-16">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-3 sm:mb-4">
             Electronics Buying <span className="gradient-text">Questions</span>
