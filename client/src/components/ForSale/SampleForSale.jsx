@@ -522,7 +522,7 @@ export default function ForSale() {
 
           {/* ─── MAIN CONTENT ───────────────────────────────────── */}
           <main className="flex-1">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
               <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
                 For Sale Items
               </h2>
@@ -538,10 +538,10 @@ export default function ForSale() {
               </div>
             </div>
 
-            <div className="text-sm text-gray-600 mb-5">
+            {/* <div className="text-sm text-gray-600 mb-5">
               {filtered.length} items found
               {filtered.length > 0 && ` • sorted by ${sortBy === 'recent' ? 'most recent' : sortBy === 'price-low' ? 'price low→high' : 'price high→low'}`}
-            </div>
+            </div> */}
 
             <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
               {filtered.map(item => (

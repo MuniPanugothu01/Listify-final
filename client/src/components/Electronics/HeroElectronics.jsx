@@ -8,7 +8,7 @@ export default function HeroElectronics() {
         alt="Modern electronics marketplace"
         className="absolute inset-0 w-full h-full object-cover"
       />
-      <div className="absolute inset-0 bg-black/20" />
+      <div className="absolute inset-0 bg-black/40" />
       
       <div className="relative h-full flex flex-col items-center justify-center text-center px-4 sm:px-6">
         <h1 className="text-white text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 max-w-4xl">
