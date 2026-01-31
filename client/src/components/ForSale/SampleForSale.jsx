@@ -543,7 +543,7 @@ export default function ForSale() {
               {filtered.length > 0 && ` • sorted by ${sortBy === 'recent' ? 'most recent' : sortBy === 'price-low' ? 'price low→high' : 'price high→low'}`}
             </div> */}
 
-            <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+            <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-5 gap-4 sm:gap-6">
               {filtered.map(item => (
                 <ProductCard
                   key={item.id}
