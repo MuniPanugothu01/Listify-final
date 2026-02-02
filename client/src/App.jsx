@@ -169,7 +169,7 @@ const AppContent = () => {
             element={
               <>
                 <Hero />
-                <Heading />
+                {/* <Heading /> */}
                 <Category />
                 <WhyUs />
                 <HowItWorks />
