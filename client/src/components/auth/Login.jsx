@@ -202,7 +202,7 @@ const Login = () => {
                   </div>
                   <div className="relative bg-white/95 px-4 rounded-lg">
                     <span className="text-sm text-gray-600">
-                      Or continue with email:
+                      Or
                     </span>
                   </div>
                 </div>

@@ -19,7 +19,7 @@ import Reviews from "./pages/Home/Reviews.jsx";
 import Footer from "./pages/Home/Footer.jsx";
 
 // signin page
-import SignUp from "./pages/Home/SignUp.jsx";
+import SignUp from "./components/auth/SignUp.jsx";
 import Login from "./components/auth/Login.jsx";
 import ForgotPassword from "./components/auth/ForgotPassword.jsx";
 import ResetPassword from "./components/auth/ResetPassword.jsx";

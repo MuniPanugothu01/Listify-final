@@ -88,7 +88,7 @@ const ForgotPassword = () => {
   };
 
   const handleBackToLogin = () => {
-    navigate("/login");
+    navigate("/reset-otp");
   };
 
   return (

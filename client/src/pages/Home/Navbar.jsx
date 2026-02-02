@@ -18,12 +18,10 @@ import {
   FaMapMarkerAlt,
   FaSearch,
   FaPlus,
-  FaRegHeart, // Outlined heart icon
-  FaBell, // Notification bell icon
+  FaRegHeart,
+  FaBell,
 } from "react-icons/fa";
-
 import NavSearchBar from "./NavSearchBar";
-
 import {
   MdOutlineEventAvailable,
   MdOutlineRealEstateAgent,
@@ -35,6 +33,7 @@ import { LuPencilLine } from "react-icons/lu";
 import { IoLocationOutline } from "react-icons/io5";
 import { CiLocationArrow1 } from "react-icons/ci";
 import { ScrollProgress } from "../../components/ui/scroll-progress";
+import { useAuth } from "../../hooks/useAuth"; // Import useAuth hook
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -42,29 +41,42 @@ const Navbar = () => {
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   const [showMoreDropdown, setShowMoreDropdown] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState("");
-  const [isSignedIn, setIsSignedIn] = useState(false); // Add signed in state
-  const [showNotificationDropdown, setShowNotificationDropdown] = useState(false); // Notification dropdown
-  
+  const [showNotificationDropdown, setShowNotificationDropdown] =
+    useState(false);
+
   const profileDropdownRef = useRef(null);
   const notificationDropdownRef = useRef(null);
   const navigate = useNavigate();
 
+  // Use the auth hook to get user data
+  const { user, isAuthenticated, logout } = useAuth();
+
   // Mock notifications data
   const [notifications, setNotifications] = useState([
-    { id: 1, text: "Someone viewed your iPhone listing", time: "2 mins ago", read: false },
-    { id: 2, text: "Your MacBook Pro has 3 new offers", time: "1 hour ago", read: false },
+    {
+      id: 1,
+      text: "Someone viewed your iPhone listing",
+      time: "2 mins ago",
+      read: false,
+    },
+    {
+      id: 2,
+      text: "Your MacBook Pro has 3 new offers",
+      time: "1 hour ago",
+      read: false,
+    },
     { id: 3, text: "New message from buyer", time: "3 hours ago", read: true },
     { id: 4, text: "Your listing was featured", time: "1 day ago", read: true },
   ]);
 
-  const unreadCount = notifications.filter(n => !n.read).length;
+  const unreadCount = notifications.filter((n) => !n.read).length;
 
   // Scroll to top function
   const scrollToTop = () => {
     window.scrollTo({
       top: 0,
       left: 0,
-      behavior: 'smooth'
+      behavior: "smooth",
     });
   };
 
@@ -75,9 +87,8 @@ const Navbar = () => {
     { name: "ForSale", path: "/forsale" },
     { name: "Events", path: "/events" },
     { name: "Services", path: "/services" },
-
   ];
-  
+
   const moreMenuItems = [
     { name: "TakeCare", path: "/takecare" },
     { name: "Jobs", path: "/jobs" },
@@ -99,7 +110,7 @@ const Navbar = () => {
   };
 
   const handleProfileClick = () => {
-    if (isSignedIn) {
+    if (isAuthenticated) {
       setShowProfileDropdown(!showProfileDropdown);
     } else {
       navigate("/login");
@@ -123,20 +134,11 @@ const Navbar = () => {
     setShowMoreDropdown(!showMoreDropdown);
   };
 
-  const handleSignIn = () => {
-    setIsSignedIn(true);
-    // In real app, this would be after successful authentication
-  };
-
-  const handleSignOut = () => {
-    setIsSignedIn(false);
-    setShowProfileDropdown(false);
-    navigate("/");
-  };
-
   const handleProfileMenuItemClick = (path) => {
     if (path === "/logout") {
-      handleSignOut();
+      logout();
+      closeProfileDropdown();
+      navigate("/");
     } else {
       navigate(path);
     }
@@ -145,13 +147,31 @@ const Navbar = () => {
   };
 
   const markNotificationAsRead = (id) => {
-    setNotifications(notifications.map(notif => 
-      notif.id === id ? { ...notif, read: true } : notif
-    ));
+    setNotifications(
+      notifications.map((notif) =>
+        notif.id === id ? { ...notif, read: true } : notif,
+      ),
+    );
   };
 
   const markAllAsRead = () => {
-    setNotifications(notifications.map(notif => ({ ...notif, read: true })));
+    setNotifications(notifications.map((notif) => ({ ...notif, read: true })));
+  };
+
+  // Get user initial or profile image
+  const getUserInitial = () => {
+    if (!user || !user.name) return "U";
+    return user.name.charAt(0).toUpperCase();
+  };
+
+  const getUserName = () => {
+    if (!user || !user.name) return "User";
+    return user.name.split(" ")[0]; // Return first name only
+  };
+
+  const getUserEmail = () => {
+    if (!user || !user.email) return "user@example.com";
+    return user.email;
   };
 
   // Close dropdown when clicking outside
@@ -160,15 +180,15 @@ const Navbar = () => {
       if (
         profileDropdownRef.current &&
         !profileDropdownRef.current.contains(event.target) &&
-        !event.target.closest('.profile-button')
+        !event.target.closest(".profile-button")
       ) {
         closeProfileDropdown();
       }
-      
+
       if (
         notificationDropdownRef.current &&
         !notificationDropdownRef.current.contains(event.target) &&
-        !event.target.closest('.notification-button')
+        !event.target.closest(".notification-button")
       ) {
         closeNotificationDropdown();
       }
@@ -193,7 +213,7 @@ const Navbar = () => {
   // Scroll handler
   useEffect(() => {
     let ticking = false;
-    
+
     const handleScroll = () => {
       if (!ticking) {
         requestAnimationFrame(() => {
@@ -205,10 +225,10 @@ const Navbar = () => {
       }
     };
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
     return () => {
-      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener("scroll", handleScroll);
     };
   }, []);
 
@@ -327,6 +347,16 @@ const Navbar = () => {
       background-color: #F0F9FF;
       border-left: 3px solid #3B82F6;
     }
+
+    .user-initial {
+      background: linear-gradient(135deg, #27bb97, #1fa987);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
   `;
 
   return (
@@ -335,8 +365,8 @@ const Navbar = () => {
 
       <nav
         className={`border-b border-gray-300 sticky top-0 z-40 navbar-transition ${
-          isScrolled 
-            ? "navbar-scrolled border-gray-700" 
+          isScrolled
+            ? "navbar-scrolled border-gray-700"
             : "bg-white border-gray-300"
         }`}
       >
@@ -356,7 +386,7 @@ const Navbar = () => {
             </div>
 
             {/* Search Bar Component */}
-            <NavSearchBar 
+            <NavSearchBar
               selectedLocation={selectedLocation}
               setSelectedLocation={setSelectedLocation}
               isScrolled={isScrolled}
@@ -417,32 +447,38 @@ const Navbar = () => {
                   </div>
                 </li>
               </ul>
-              
+
               {/* Right side actions */}
               <div className="flex items-center space-x-2 md:space-x-3 lg:space-x-4 ml-10 lg:ml-20">
                 {/* Heart Icon (Saved Items) */}
-                <Link 
+                <Link
                   to="/saved"
                   onClick={scrollToTop}
                   className="hidden lg:flex items-center gap-1 sm:gap-2"
                 >
-                  <FaRegHeart className={`text-lg sm:text-xl md:text-2xl ${
-                    isScrolled ? "text-white" : "text-gray-700"
-                  }`} />
+                  <FaRegHeart
+                    className={`text-lg sm:text-xl md:text-2xl ${
+                      isScrolled ? "text-white" : "text-gray-700"
+                    }`}
+                  />
                 </Link>
 
                 {/* Notification Icon */}
-                {isSignedIn && (
+                {isAuthenticated && (
                   <div className="relative">
                     <button
                       onClick={handleNotificationClick}
                       className={`notification-button relative p-1.5 rounded-lg hover:bg-gray-100 ${
-                        isScrolled ? "text-white hover:bg-white/10" : "text-gray-700"
+                        isScrolled
+                          ? "text-white hover:bg-white/10"
+                          : "text-gray-700"
                       }`}
                     >
                       <FaBell className="text-lg sm:text-xl md:text-2xl" />
                       {unreadCount > 0 && (
-                        <span className="notification-badge">{unreadCount}</span>
+                        <span className="notification-badge">
+                          {unreadCount}
+                        </span>
                       )}
                     </button>
 
@@ -455,7 +491,9 @@ const Navbar = () => {
                         {/* Notification Header */}
                         <div className="p-4 border-b border-gray-200">
                           <div className="flex justify-between items-center">
-                            <h3 className="font-semibold text-gray-900">Notifications</h3>
+                            <h3 className="font-semibold text-gray-900">
+                              Notifications
+                            </h3>
                             {unreadCount > 0 && (
                               <button
                                 onClick={markAllAsRead}
@@ -474,12 +512,20 @@ const Navbar = () => {
                               <div
                                 key={notification.id}
                                 className={`p-4 border-b border-gray-100 hover:bg-gray-50 cursor-pointer ${
-                                  !notification.read ? 'notification-item-unread' : ''
+                                  !notification.read
+                                    ? "notification-item-unread"
+                                    : ""
                                 }`}
-                                onClick={() => markNotificationAsRead(notification.id)}
+                                onClick={() =>
+                                  markNotificationAsRead(notification.id)
+                                }
                               >
-                                <p className="text-sm text-gray-800">{notification.text}</p>
-                                <p className="text-xs text-gray-500 mt-1">{notification.time}</p>
+                                <p className="text-sm text-gray-800">
+                                  {notification.text}
+                                </p>
+                                <p className="text-xs text-gray-500 mt-1">
+                                  {notification.time}
+                                </p>
                               </div>
                             ))
                           ) : (
@@ -506,7 +552,7 @@ const Navbar = () => {
 
                 {/* Create Listing Button */}
                 <Link to="/post-add" className="hidden lg:block">
-                  <button 
+                  <button
                     onClick={scrollToTop}
                     className="flex items-center gap-1 sm:gap-2 bg-[#27bb97] text-white px-3 sm:px-3 py-2 sm:py-2.5 md:py-3 lg:py-3 rounded-lg text-xs md:text-sm lg:text-base whitespace-nowrap hover:bg-[#1fa987] transition cursor-pointer font-semibold"
                   >
@@ -520,26 +566,30 @@ const Navbar = () => {
                   <button
                     onClick={handleProfileClick}
                     className={`border rounded-lg px-2 sm:px-3 py-1.5 md:px-4 md:py-3 hover:shadow-md cursor-pointer flex items-center gap-1 sm:gap-2 profile-button ${
-                      isScrolled 
-                        ? "border-white/30 text-white hover:bg-white/10" 
+                      isScrolled
+                        ? "border-white/30 text-white hover:bg-white/10"
                         : "border-gray-300 text-gray-700"
                     }`}
                   >
-                    {isSignedIn ? (
+                    {isAuthenticated ? (
                       <>
-                        <CgProfile className="text-base sm:text-lg md:text-[20px] lg:text-[22px]" />
+                        <div className="user-initial w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9 text-sm sm:text-base md:text-lg">
+                          {getUserInitial()}
+                        </div>
                         <FaChevronDown className="h-3 w-3 sm:h-4 sm:w-4" />
                       </>
                     ) : (
                       <>
                         <CgProfile className="text-base sm:text-lg md:text-[20px] lg:text-[22px]" />
-                        <span className="hidden sm:inline text-sm">Sign In</span>
+                        <span className="hidden sm:inline text-sm">
+                          Sign In
+                        </span>
                       </>
                     )}
                   </button>
 
-                  {/* Profile Dropdown Menu (only when signed in) */}
-                  {showProfileDropdown && isSignedIn && (
+                  {/* Profile Dropdown Menu (only when authenticated) */}
+                  {showProfileDropdown && isAuthenticated && (
                     <div
                       ref={profileDropdownRef}
                       className="absolute right-0 top-full mt-2 w-56 sm:w-64 bg-white border border-gray-200 rounded-xl shadow-2xl z-50 profile-dropdown overflow-hidden"
@@ -547,12 +597,16 @@ const Navbar = () => {
                       {/* User Info Header */}
                       <div className="p-3 sm:p-4 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-200">
                         <div className="flex items-center gap-2 sm:gap-3">
-                          <div className="w-8 h-8 sm:w-10 sm:h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                            <CgProfile className="h-4 w-4 sm:h-5 sm:w-5 text-[#27BB97]" />
+                          <div className="user-initial w-8 h-8 sm:w-10 sm:h-10 text-sm sm:text-base">
+                            {getUserInitial()}
                           </div>
                           <div className="flex-1 min-w-0">
-                            <h3 className="font-semibold text-gray-900 text-sm sm:text-base truncate">John Doe</h3>
-                            <p className="text-xs sm:text-sm text-gray-600 truncate">john.doe@example.com</p>
+                            <h3 className="font-semibold text-gray-900 text-sm sm:text-base truncate">
+                              {getUserName()}
+                            </h3>
+                            <p className="text-xs sm:text-sm text-gray-600 truncate">
+                              {getUserEmail()}
+                            </p>
                           </div>
                         </div>
                       </div>
@@ -562,7 +616,9 @@ const Navbar = () => {
                         {profileMenuItems.map((item, index) => (
                           <button
                             key={index}
-                            onClick={() => handleProfileMenuItemClick(item.path)}
+                            onClick={() =>
+                              handleProfileMenuItemClick(item.path)
+                            }
                             className="profile-dropdown-link w-full flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-700 hover:text-blue-600"
                           >
                             <item.icon className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
@@ -582,26 +638,30 @@ const Navbar = () => {
             {/* Mobile menu button and search icon */}
             <div className="md:hidden flex items-center space-x-2 sm:space-x-3">
               {/* Mobile Heart Icon */}
-              <Link 
+              <Link
                 to="/saved"
                 onClick={scrollToTop}
                 className="flex items-center"
               >
-                <FaRegHeart className={`text-lg sm:text-xl ${
-                  isScrolled ? "text-white" : "text-gray-700"
-                }`} />
+                <FaRegHeart
+                  className={`text-lg sm:text-xl ${
+                    isScrolled ? "text-white" : "text-gray-700"
+                  }`}
+                />
               </Link>
 
               {/* Mobile Notification Icon */}
-              {isSignedIn && (
+              {isAuthenticated && (
                 <div className="relative">
                   <button
                     onClick={handleNotificationClick}
                     className="relative p-1"
                   >
-                    <FaBell className={`text-lg sm:text-xl ${
-                      isScrolled ? "text-white" : "text-gray-700"
-                    }`} />
+                    <FaBell
+                      className={`text-lg sm:text-xl ${
+                        isScrolled ? "text-white" : "text-gray-700"
+                      }`}
+                    />
                     {unreadCount > 0 && (
                       <span className="notification-badge">{unreadCount}</span>
                     )}
@@ -611,7 +671,7 @@ const Navbar = () => {
 
               {/* Mobile Create Listing Button */}
               <Link to="/post-add">
-                <button 
+                <button
                   onClick={scrollToTop}
                   className="flex items-center gap-1 bg-[#27bb97] text-white px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm whitespace-nowrap hover:bg-[#1fa987] transition cursor-pointer font-semibold"
                 >
@@ -624,7 +684,9 @@ const Navbar = () => {
               <button
                 onClick={toggleMobileMenu}
                 className={`p-1.5 sm:p-2 rounded-lg ${
-                  isScrolled ? "text-white hover:bg-white/10" : "text-gray-700 hover:bg-gray-100"
+                  isScrolled
+                    ? "text-white hover:bg-white/10"
+                    : "text-gray-700 hover:bg-gray-100"
                 }`}
               >
                 {isMobileMenuOpen ? (
@@ -638,9 +700,11 @@ const Navbar = () => {
 
           {/* Mobile Menu */}
           {isMobileMenuOpen && (
-            <div className={`md:hidden pb-3 sm:pb-4 border-t space-y-4 ${
-              isScrolled ? "border-gray-600" : "border-gray-200"
-            }`}>
+            <div
+              className={`md:hidden pb-3 sm:pb-4 border-t space-y-4 ${
+                isScrolled ? "border-gray-600" : "border-gray-200"
+              }`}
+            >
               <div className="flex flex-col space-y-3 sm:space-y-4 mt-3 sm:mt-4">
                 <div className="grid grid-cols-2 gap-2">
                   {mainMenuItems.map((item) => (
@@ -652,8 +716,8 @@ const Navbar = () => {
                         scrollToTop();
                       }}
                       className={`nav-link px-3 py-2 text-xs sm:text-sm hover:bg-gray-100 rounded font-semibold ${
-                        isScrolled 
-                          ? "text-white hover:bg-white/10" 
+                        isScrolled
+                          ? "text-white hover:bg-white/10"
                           : "text-gray-700"
                       }`}
                     >
@@ -671,8 +735,8 @@ const Navbar = () => {
                         scrollToTop();
                       }}
                       className={`nav-link px-3 py-2 text-xs sm:text-sm hover:bg-gray-100 rounded font-semibold ${
-                        isScrolled 
-                          ? "text-white hover:bg-white/10" 
+                        isScrolled
+                          ? "text-white hover:bg-white/10"
                           : "text-gray-700"
                       }`}
                     >
@@ -680,7 +744,7 @@ const Navbar = () => {
                     </Link>
                   ))}
                 </div>
-                
+
                 {/* Mobile Saved Items Link */}
                 <Link
                   to="/saved"
@@ -689,8 +753,8 @@ const Navbar = () => {
                     scrollToTop();
                   }}
                   className={`nav-link px-3 py-2 text-xs sm:text-sm hover:bg-gray-100 rounded font-semibold ${
-                    isScrolled 
-                      ? "text-white hover:bg-white/10" 
+                    isScrolled
+                      ? "text-white hover:bg-white/10"
                       : "text-gray-700"
                   }`}
                 >
@@ -699,9 +763,9 @@ const Navbar = () => {
                     <span>Saved Items</span>
                   </div>
                 </Link>
-                
+
                 {/* Mobile Notifications Link */}
-                {isSignedIn && (
+                {isAuthenticated && (
                   <Link
                     to="/notifications"
                     onClick={() => {
@@ -709,21 +773,40 @@ const Navbar = () => {
                       scrollToTop();
                     }}
                     className={`nav-link px-3 py-2 text-xs sm:text-sm hover:bg-gray-100 rounded font-semibold ${
-                      isScrolled 
-                        ? "text-white hover:bg-white/10" 
+                      isScrolled
+                        ? "text-white hover:bg-white/10"
                         : "text-gray-700"
                     }`}
                   >
                     <div className="flex items-center gap-2">
                       <FaBell className="h-4 w-4 sm:h-5 sm:w-5 text-gray-700" />
-                      <span>Notifications {unreadCount > 0 && `(${unreadCount})`}</span>
+                      <span>
+                        Notifications {unreadCount > 0 && `(${unreadCount})`}
+                      </span>
                     </div>
                   </Link>
                 )}
-                
+
                 {/* Mobile Profile/Sign In Link */}
-                {isSignedIn ? (
+                {isAuthenticated ? (
                   <>
+                    {/* User Info in Mobile Menu */}
+                    <div className="p-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg">
+                      <div className="flex items-center gap-3">
+                        <div className="user-initial w-10 h-10 text-base">
+                          {getUserInitial()}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h3 className="font-semibold text-gray-900 text-sm truncate">
+                            {getUserName()}
+                          </h3>
+                          <p className="text-xs text-gray-600 truncate">
+                            {getUserEmail()}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
                     <Link
                       to="/dashboard"
                       onClick={() => {
@@ -731,8 +814,8 @@ const Navbar = () => {
                         scrollToTop();
                       }}
                       className={`nav-link px-3 py-2 text-xs sm:text-sm hover:bg-gray-100 rounded font-semibold ${
-                        isScrolled 
-                          ? "text-white hover:bg-white/10" 
+                        isScrolled
+                          ? "text-white hover:bg-white/10"
                           : "text-gray-700"
                       }`}
                     >
@@ -741,14 +824,32 @@ const Navbar = () => {
                         <span>Dashboard</span>
                       </div>
                     </Link>
+                    <Link
+                      to="/profile"
+                      onClick={() => {
+                        setIsMobileMenuOpen(false);
+                        scrollToTop();
+                      }}
+                      className={`nav-link px-3 py-2 text-xs sm:text-sm hover:bg-gray-100 rounded font-semibold ${
+                        isScrolled
+                          ? "text-white hover:bg-white/10"
+                          : "text-gray-700"
+                      }`}
+                    >
+                      <div className="flex items-center gap-2">
+                        <FaUserFriends className="h-4 w-4 sm:h-5 sm:w-5" />
+                        <span>My Profile</span>
+                      </div>
+                    </Link>
                     <button
                       onClick={() => {
                         setIsMobileMenuOpen(false);
-                        handleSignOut();
+                        logout();
+                        navigate("/");
                       }}
                       className={`nav-link px-3 py-2 text-xs sm:text-sm hover:bg-gray-100 rounded font-semibold text-left ${
-                        isScrolled 
-                          ? "text-white hover:bg-white/10" 
+                        isScrolled
+                          ? "text-white hover:bg-white/10"
                           : "text-gray-700"
                       }`}
                     >
@@ -760,14 +861,14 @@ const Navbar = () => {
                   </>
                 ) : (
                   <Link
-                    to="/signin"
+                    to="/login"
                     onClick={() => {
                       setIsMobileMenuOpen(false);
                       scrollToTop();
                     }}
                     className={`nav-link px-3 py-2 text-xs sm:text-sm hover:bg-gray-100 rounded font-semibold ${
-                      isScrolled 
-                        ? "text-white hover:bg-white/10" 
+                      isScrolled
+                        ? "text-white hover:bg-white/10"
                         : "text-gray-700"
                     }`}
                   >

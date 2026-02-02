@@ -2,11 +2,27 @@ import React, { useState, useRef, useEffect } from "react";
 import { Eye, EyeOff, ArrowLeft } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { HiDotsHorizontal } from "react-icons/hi";
-import axios from "axios";
+import { useAuth } from "../../hooks/useAuth";
 import toast, { Toaster } from "react-hot-toast";
+import SocialAuth from "./SocialAuth";
 
 export default function SignUp() {
   const navigate = useNavigate();
+  const {
+    registerInitiate,
+    registerVerify,
+    registerResendOTP,
+    GoogleLogin,
+    loading,
+    error,
+    success,
+    otpSent,
+    registrationEmail,
+    clearAuthError,
+    resetAuthSuccess,
+    setOtpSentState,
+    clearOtpAuthState,
+  } = useAuth();
 
   // Form state
   const [formData, setFormData] = useState({
@@ -28,16 +44,42 @@ export default function SignUp() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [agreeTerms, setAgreeTerms] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
+
+  // Handle errors from Redux
+  useEffect(() => {
+    if (error) {
+      toast.error(error);
+      clearAuthError();
+    }
+  }, [error, clearAuthError]);
+
+  // Handle registration success - show OTP screen
+  useEffect(() => {
+    if (success && otpSent && registrationEmail) {
+      toast.success("OTP sent to your email!");
+      setShowOtpScreen(true);
+      setCountdown(60);
+      resetAuthSuccess();
+    }
+  }, [success, otpSent, registrationEmail, resetAuthSuccess]);
+
+  // Handle OTP verification success
+  useEffect(() => {
+    if (success && !otpSent) {
+      toast.success("Account created successfully!");
+      setTimeout(() => {
+        navigate("/");
+      }, 2000);
+      resetAuthSuccess();
+    }
+  }, [success, otpSent, navigate, resetAuthSuccess]);
 
   // Reset OTP when OTP screen opens/closes
   useEffect(() => {
     if (showOtpScreen) {
-      // Reset OTP to empty when OTP screen opens
       setOtp(["", "", "", "", "", ""]);
       setOtpError("");
-      // Focus first input after a small delay
       setTimeout(() => {
         if (inputRefs.current[0]) {
           inputRefs.current[0].focus();
@@ -54,7 +96,6 @@ export default function SignUp() {
       [name]: value,
     }));
 
-    // Clear error for this field when user starts typing
     if (errors[name]) {
       setErrors((prev) => ({
         ...prev,
@@ -63,19 +104,17 @@ export default function SignUp() {
     }
   };
 
-  // FIXED: Improved OTP Handlers with better focus management
+  // OTP Handlers
   const handleOtpChange = (index, value) => {
     if (!/^\d*$/.test(value)) return;
 
     const newOtp = [...otp];
-    
-    // Handle single digit input
+
     if (value.length === 1) {
       newOtp[index] = value;
       setOtp(newOtp);
       setOtpError("");
 
-      // Auto-focus next input if value is entered and not the last box
       if (index < 5) {
         setTimeout(() => {
           if (inputRefs.current[index + 1]) {
@@ -83,9 +122,7 @@ export default function SignUp() {
           }
         }, 10);
       }
-    } 
-    // Handle multiple digits (pasting or fast typing)
-    else if (value.length > 1) {
+    } else if (value.length > 1) {
       const digits = value.slice(0, 6).split("");
       digits.forEach((digit, digitIndex) => {
         const pos = index + digitIndex;
@@ -96,25 +133,24 @@ export default function SignUp() {
       setOtp(newOtp);
       setOtpError("");
 
-      // Focus the next empty box or the last filled box
-      const nextEmptyIndex = newOtp.findIndex((digit, i) => i >= index && digit === "");
-      const targetIndex = nextEmptyIndex !== -1 ? nextEmptyIndex : Math.min(index + value.length, 5);
-      
+      const nextEmptyIndex = newOtp.findIndex(
+        (digit, i) => i >= index && digit === "",
+      );
+      const targetIndex =
+        nextEmptyIndex !== -1
+          ? nextEmptyIndex
+          : Math.min(index + value.length, 5);
+
       setTimeout(() => {
         if (inputRefs.current[targetIndex]) {
           inputRefs.current[targetIndex].focus();
         }
       }, 10);
-    }
-    
-    // Handle deletion (empty value)
-    else if (value === "") {
+    } else if (value === "") {
       newOtp[index] = "";
       setOtp(newOtp);
-      // Don't auto-focus previous box on deletion, let user decide
     }
 
-    // Auto-submit when all digits are entered
     if (newOtp.every((digit) => digit !== "")) {
       setTimeout(() => {
         handleVerifyOtp(newOtp.join(""));
@@ -123,31 +159,26 @@ export default function SignUp() {
   };
 
   const handleKeyDown = (index, e) => {
-    // Prevent form submission on Enter key
     if (e.key === "Enter") {
       e.preventDefault();
-      // If all digits are filled, verify OTP
-      if (otp.every(digit => digit !== "")) {
+      if (otp.every((digit) => digit !== "")) {
         handleVerifyOtp(otp.join(""));
       }
       return;
     }
 
-    // Handle backspace - IMPROVED VERSION
     if (e.key === "Backspace") {
       e.preventDefault();
-      
+
       const newOtp = [...otp];
-      
+
       if (newOtp[index]) {
-        // If current box has value, clear it and stay in same box
         newOtp[index] = "";
         setOtp(newOtp);
       } else if (index > 0) {
-        // If current box is empty, move to previous box and clear it
         newOtp[index - 1] = "";
         setOtp(newOtp);
-        
+
         setTimeout(() => {
           if (inputRefs.current[index - 1]) {
             inputRefs.current[index - 1].focus();
@@ -156,8 +187,7 @@ export default function SignUp() {
       }
       return;
     }
-    
-    // Handle arrow keys
+
     if (e.key === "ArrowLeft" && index > 0) {
       e.preventDefault();
       setTimeout(() => {
@@ -166,7 +196,7 @@ export default function SignUp() {
         }
       }, 10);
     }
-    
+
     if (e.key === "ArrowRight" && index < 5) {
       e.preventDefault();
       setTimeout(() => {
@@ -176,7 +206,6 @@ export default function SignUp() {
       }, 10);
     }
 
-    // Handle Tab key
     if (e.key === "Tab") {
       if (!e.shiftKey && index < 5) {
         e.preventDefault();
@@ -208,8 +237,7 @@ export default function SignUp() {
       });
 
       setOtp(newOtp);
-      
-      // Focus the last filled box
+
       const nextIndex = Math.min(pastedData.length, 5);
       setTimeout(() => {
         if (inputRefs.current[nextIndex]) {
@@ -219,12 +247,9 @@ export default function SignUp() {
     }
   };
 
-  // FIXED: Focus management for OTP inputs
   const handleOtpFocus = (index, e) => {
-    // Select all text when focusing
     e.target.select();
-    
-    // Ensure proper focus state
+
     setTimeout(() => {
       if (inputRefs.current[index]) {
         inputRefs.current[index].focus();
@@ -232,16 +257,12 @@ export default function SignUp() {
     }, 0);
   };
 
-  // FIXED: Prevent focus loss issues
   const handleOtpBlur = (e) => {
-    // Only prevent blur if we're in OTP screen
     if (showOtpScreen) {
       e.preventDefault();
-      // Small delay to ensure focus isn't lost during navigation
       setTimeout(() => {
         if (document.activeElement === document.body) {
-          // If focus went to body, try to focus the first OTP input
-          const firstEmptyIndex = otp.findIndex(digit => digit === "");
+          const firstEmptyIndex = otp.findIndex((digit) => digit === "");
           const targetIndex = firstEmptyIndex !== -1 ? firstEmptyIndex : 0;
           if (inputRefs.current[targetIndex]) {
             inputRefs.current[targetIndex].focus();
@@ -251,11 +272,10 @@ export default function SignUp() {
     }
   };
 
-  // NEW FUNCTION: Clear all OTP inputs
+  // Clear all OTP inputs
   const clearOtpInputs = () => {
     setOtp(["", "", "", "", "", ""]);
     setOtpError("");
-    // Focus first input after clearing
     setTimeout(() => {
       if (inputRefs.current[0]) {
         inputRefs.current[0].focus();
@@ -267,25 +287,18 @@ export default function SignUp() {
   const handleResendOtp = async () => {
     setResendLoading(true);
     try {
-      // API call to resend OTP
-      await axios.post("http://localhost:5000/api/auth/register/resend-otp", {
-        email: formData.email,
-      });
-
+      await registerResendOTP(formData.email);
       setCountdown(60);
-      // Clear OTP inputs when resending
       clearOtpInputs();
-      
       toast.success("New OTP sent to your email");
     } catch (error) {
-      console.error("Resend OTP error:", error);
-      toast.error(error.response?.data?.message || "Failed to resend OTP");
+      toast.error(error || "Failed to resend OTP");
     } finally {
       setResendLoading(false);
     }
   };
 
-  // Verify OTP Handler - UPDATED to clear on error
+  // Verify OTP Handler
   const handleVerifyOtp = async (otpValue = otp.join("")) => {
     if (otpValue.length !== 6) {
       setOtpError("Please enter the complete 6-digit OTP");
@@ -296,36 +309,17 @@ export default function SignUp() {
     setOtpError("");
 
     try {
-      // API call to verify OTP and complete registration
-      const response = await axios.post(
-        "http://localhost:5000/api/auth/register/verify",
-        {
-          email: formData.email,
-          otp: otpValue,
-        },
-      );
-
-      if (response.data.success) {
-        toast.success("Account created successfully!");
-
-        // Store token in localStorage
-        localStorage.setItem("authToken", response.data.token);
-        localStorage.setItem("user", JSON.stringify(response.data.user));
-
-        // Redirect to dashboard after 2 seconds
-        setTimeout(() => {
-          navigate("/");
-        }, 2000);
-      }
-    } catch (error) {
-      console.error("OTP verification error:", error);
-      const errorMessage = error.response?.data?.message || "Invalid OTP. Please try again.";
+      await registerVerify(formData.email, otpValue);
+    } catch (err) {
+      const errorMessage = err || "Invalid OTP. Please try again.";
       setOtpError(errorMessage);
       toast.error(errorMessage);
-      
-      // NEW: Clear OTP inputs when wrong OTP is entered
-      if (errorMessage.includes("Invalid OTP") || errorMessage.includes("invalid") || errorMessage.includes("wrong")) {
-        // Clear OTP inputs
+
+      if (
+        errorMessage.includes("Invalid OTP") ||
+        errorMessage.includes("invalid") ||
+        errorMessage.includes("wrong")
+      ) {
         clearOtpInputs();
       }
     } finally {
@@ -378,47 +372,42 @@ export default function SignUp() {
       return;
     }
 
-    setLoading(true);
-
     try {
-      // API call to initiate registration (send OTP)
-      const response = await axios.post(
-        "http://localhost:5000/api/auth/register/initiate",
-        {
-          name: formData.name,
-          email: formData.email,
-          password: formData.password,
-          confirmPassword: formData.confirmPassword,
-        },
-      );
+      await registerInitiate({
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+        confirmPassword: formData.confirmPassword,
+      });
+    } catch (err) {
+      // Error is handled in useEffect
+    }
+  };
 
-      if (response.data.success) {
-        toast.success("OTP sent to your email!");
-        
-        // Reset OTP state for new registration
-        setOtp(["", "", "", "", "", ""]);
-        setOtpError("");
-        setCountdown(60);
-        
-        // Show OTP screen after a short delay
-        setTimeout(() => {
-          setShowOtpScreen(true);
-        }, 300);
+  // Handle Google Sign Up Success
+  const handleGoogleSignUpSuccess = async (credentialResponse) => {
+    try {
+      const idToken = credentialResponse.credential;
+
+      if (!idToken) {
+        throw new Error("No ID token received from Google");
+      }
+
+      console.log("🔑 Google ID Token received for sign up");
+
+      // Call Google Login API - the backend should handle registration if user doesn't exist
+      const result = await GoogleLogin(idToken);
+
+      if (result.payload?.success) {
+        toast.success("Google sign up successful!");
+        navigate("/");
+      } else {
+        const errorMsg = result.payload?.error || "Google sign up failed";
+        toast.error(errorMsg);
       }
     } catch (error) {
-      console.error("Registration error:", error);
-
-      if (error.response?.data?.message === "User already exists") {
-        toast.error("An account with this email already exists");
-        setErrors((prev) => ({ ...prev, email: "Email already registered" }));
-      } else {
-        toast.error(
-          error.response?.data?.message ||
-            "Registration failed. Please try again.",
-        );
-      }
-    } finally {
-      setLoading(false);
+      console.error("Google Sign Up Error:", error);
+      toast.error(error.message || "Google sign up failed. Please try again.");
     }
   };
 
@@ -455,20 +444,19 @@ export default function SignUp() {
     }
   }, [countdown]);
 
-  // Close OTP screen and reset form - UPDATED to clear OTP
+  // Close OTP screen and reset form
   const handleBackToRegistration = () => {
-    // Clear OTP inputs before closing
-    setOtp(["", "", "", "", "", ""]);
+    clearOtpInputs();
     setOtpError("");
     setShowOtpScreen(false);
+    clearOtpAuthState();
   };
 
-  // OTP Screen Component - UPDATED with clear functionality
+  // OTP Screen Component
   const OtpScreen = () => (
-    <div 
+    <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm"
       onClick={(e) => {
-        // Close modal if clicking on backdrop
         if (e.target === e.currentTarget) {
           handleBackToRegistration();
         }
@@ -488,8 +476,9 @@ export default function SignUp() {
         {otpError && (
           <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
             <p className="text-red-600 text-sm text-center">{otpError}</p>
-            {/* Show clear button when there's an error */}
-            {otpError.includes("Invalid") || otpError.includes("invalid") || otpError.includes("wrong") ? (
+            {otpError.includes("Invalid") ||
+            otpError.includes("invalid") ||
+            otpError.includes("wrong") ? (
               <button
                 onClick={clearOtpInputs}
                 className="mt-2 text-sm text-red-600 hover:text-red-800 font-medium"
@@ -501,10 +490,10 @@ export default function SignUp() {
         )}
 
         {/* OTP Input Boxes */}
-        <form 
+        <form
           onSubmit={(e) => {
             e.preventDefault();
-            if (otp.every(digit => digit !== "")) {
+            if (otp.every((digit) => digit !== "")) {
               handleVerifyOtp(otp.join(""));
             }
           }}
@@ -520,7 +509,7 @@ export default function SignUp() {
                 type="text"
                 inputMode="numeric"
                 pattern="[0-9]*"
-                maxLength={6} // Allow pasting multiple digits
+                maxLength={6}
                 value={digit}
                 onChange={(e) => handleOtpChange(index, e.target.value)}
                 onKeyDown={(e) => handleKeyDown(index, e)}
@@ -528,26 +517,28 @@ export default function SignUp() {
                 onFocus={(e) => handleOtpFocus(index, e)}
                 onBlur={handleOtpBlur}
                 onInput={(e) => {
-                  // Prevent non-numeric input
-                  e.target.value = e.target.value.replace(/[^0-9]/g, '');
+                  e.target.value = e.target.value.replace(/[^0-9]/g, "");
                 }}
                 className="w-14 h-14 text-2xl text-center text-gray-900 font-bold bg-gray-50 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#27bb97] focus:border-[#27bb97] transition-all duration-200"
                 autoComplete="one-time-code"
+                disabled={otpLoading}
               />
             ))}
           </div>
-          <button type="submit" className="hidden">Submit</button>
+          <button type="submit" className="hidden">
+            Submit
+          </button>
         </form>
 
         <div className="text-center mb-4">
           <p className="text-sm text-gray-500">
             Enter the 6-digit verification code
           </p>
-          {/* Quick Clear Button */}
-          {otp.some(digit => digit !== "") && (
+          {otp.some((digit) => digit !== "") && (
             <button
               onClick={clearOtpInputs}
               className="mt-2 text-sm text-gray-500 hover:text-gray-700"
+              disabled={otpLoading}
             >
               Clear all
             </button>
@@ -556,7 +547,7 @@ export default function SignUp() {
 
         <button
           onClick={() => {
-            if (otp.every(digit => digit !== "")) {
+            if (otp.every((digit) => digit !== "")) {
               handleVerifyOtp(otp.join(""));
             } else {
               setOtpError("Please enter all 6 digits");
@@ -672,14 +663,12 @@ export default function SignUp() {
             {/* Top Bar - Logo and Back Button */}
             <div className="flex items-center justify-between">
               {/* Logo */}
-              <Link to="/">
               <div className="flex items-center gap-2 text-white">
                 <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
                   <span className="text-slate-900 font-bold text-xl">L</span>
                 </div>
                 <span className="text-2xl font-bold capitalize">listify</span>
               </div>
-              </Link>
 
               {/* Back to Website */}
               <Link to="/">
@@ -726,37 +715,11 @@ export default function SignUp() {
 
               {/* Register Form */}
               <form onSubmit={handleSubmit} className="space-y-5 mt-2">
-                {/* Google Sign Up */}
-                <button
-                  type="button"
-                  className="w-full flex items-center justify-center gap-3 bg-white border border-gray-300 hover:bg-gray-50 py-3 rounded-lg font-medium transition-colors cursor-pointer"
-                >
-                  <svg
-                    width="20"
-                    height="20"
-                    viewBox="0 0 20 20"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M19.8055 10.2292C19.8055 9.54935 19.7491 8.89587 19.6436 8.26898H10.2002V12.0145H15.6019C15.3728 13.2291 14.6856 14.2655 13.6565 14.9672V17.3564H16.8692C18.7437 15.6328 19.8055 13.1582 19.8055 10.2292Z"
-                      fill="#4285F4"
-                    />
-                    <path
-                      d="M10.2002 19.6727C12.7584 19.6727 14.9056 18.8509 16.8692 17.3564/L13.6565 14.9672C12.7856 15.5527 11.6438 15.8982 10.2002 15.8982C7.73287 15.8982 5.6438 14.1582 4.87106 11.8437H1.5647V14.3073C3.51925 18.1909 6.60925 19.6727 10.2002 19.6727Z"
-                      fill="#34A853"
-                    />
-                    <path
-                      d="M4.87106 11.8437C4.67106 11.2582 4.5647 10.6364 4.5647 10.0001C4.5647 9.36375 4.67106 8.74193 4.87106 8.15648V5.69284H1.5647C0.91925 6.98011 0.563721 8.44375 0.563721 10.0001C0.563721 11.5564 0.91925 13.0201 1.5647 14.3073L4.87106 11.8437Z"
-                      fill="#FBBC05"
-                    />
-                    <path
-                      d="M10.2002 4.10182C11.7783 4.10182 13.1801 4.64546 14.2856 5.69091L17.1474 2.82909C14.9056 0.727271 12.7584 -0.327271 10.2002 -0.327271C6.60925 -0.327271 3.51925 1.15455 1.5647 5.03818L4.87106 7.50182C5.6438 5.18727 7.73287 4.10182 10.2002 4.10182Z"
-                      fill="#EA4335"
-                    />
-                  </svg>
-                  Continue with Google
-                </button>
+                {/* Google Sign Up - Pass custom success handler */}
+                <SocialAuth 
+                  onSuccess={handleGoogleSignUpSuccess} 
+                  isSignUp={true} 
+                />
 
                 {/* Divider */}
                 <div className="relative flex items-center justify-center my-6">
@@ -784,6 +747,7 @@ export default function SignUp() {
                         ? "border-red-300 focus:ring-red-500"
                         : "border-gray-300 focus:ring-[#27bb97]"
                     }`}
+                    disabled={loading}
                   />
                   {errors.name && (
                     <p className="mt-1 text-sm text-red-600">{errors.name}</p>
@@ -806,6 +770,7 @@ export default function SignUp() {
                         ? "border-red-300 focus:ring-red-500"
                         : "border-gray-300 focus:ring-[#27bb97]"
                     }`}
+                    disabled={loading}
                   />
                   {errors.email && (
                     <p className="mt-1 text-sm text-red-600">{errors.email}</p>
@@ -829,11 +794,13 @@ export default function SignUp() {
                           ? "border-red-300 focus:ring-red-500"
                           : "border-gray-300 focus:ring-[#27bb97]"
                       }`}
+                      disabled={loading}
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
                       className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                      disabled={loading}
                     >
                       {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                     </button>
@@ -931,6 +898,7 @@ export default function SignUp() {
                           ? "border-red-300 focus:ring-red-500"
                           : "border-gray-300 focus:ring-[#27bb97]"
                       }`}
+                      disabled={loading}
                     />
                     <button
                       type="button"
@@ -938,6 +906,7 @@ export default function SignUp() {
                         setShowConfirmPassword(!showConfirmPassword)
                       }
                       className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                      disabled={loading}
                     >
                       {showConfirmPassword ? (
                         <EyeOff size={20} />
@@ -966,6 +935,7 @@ export default function SignUp() {
                         }
                       }}
                       className="mt-1 w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                      disabled={loading}
                     />
                     <span className="text-sm text-gray-600">
                       I agree to the{" "}
@@ -1033,7 +1003,7 @@ export default function SignUp() {
                   <span className="text-gray-600">
                     Already have an account?{" "}
                   </span>
-                  <Link to="/login">
+                  <Link to="/signin">
                     <button className="text-gray-900 font-medium hover:underline cursor-pointer">
                       Log in here
                     </button>
