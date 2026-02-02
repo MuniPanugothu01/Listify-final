@@ -187,7 +187,7 @@ const AppContent = () => {
         <Route path="/product/:id" element={<ProductDetail />} />
 
           {/* Authentication Pages (no navbar/footer) */}
-          <Route path="/login" element={<Login />} />
+          <Route path="/signin" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-otp" element={<ResetOtp />} />
