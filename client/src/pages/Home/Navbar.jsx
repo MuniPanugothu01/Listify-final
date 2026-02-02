@@ -113,7 +113,7 @@ const Navbar = () => {
     if (isAuthenticated) {
       setShowProfileDropdown(!showProfileDropdown);
     } else {
-      navigate("/login");
+      navigate("/signin");
     }
   };
 
@@ -861,7 +861,7 @@ const Navbar = () => {
                   </>
                 ) : (
                   <Link
-                    to="/login"
+                    to="/signin"
                     onClick={() => {
                       setIsMobileMenuOpen(false);
                       scrollToTop();
