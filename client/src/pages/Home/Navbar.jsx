@@ -861,7 +861,7 @@ const Navbar = () => {
                   </>
                 ) : (
                   <Link
-                    to="/login"
+                    to="/signin"
                     onClick={() => {
                       setIsMobileMenuOpen(false);
                       scrollToTop();

@@ -113,7 +113,7 @@ const AppContent = () => {
   // Check if current route should hide navbar and footer
   const hideNavbarFooterPaths = [
     "/signup",
-    "/login",
+    "/signin",
     "/forgot-password",
     "/reset-password",
   ];
