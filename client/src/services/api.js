@@ -112,7 +112,7 @@ export const authAPI = {
 
   // Initiate forgot password (send OTP)
   initiateForgotPassword: (email) => {
-    return api.post("/forgot-password/initiate", { email }, { timeout: 15000 });
+    return api.post("/forgot-password/initiate",  email , { timeout: 15000 });
   },
 
   // Verify forgot password OTP

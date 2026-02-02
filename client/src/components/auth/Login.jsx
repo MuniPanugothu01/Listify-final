@@ -9,7 +9,7 @@ import {
   resetSuccess,
 } from "../../redux/slices/authSlice";
 import toast, { Toaster } from "react-hot-toast";
-import SocialAuth from "./SocialAuth"; // Import SocialAuth component
+import SocialAuth from "./SocialAuth";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -26,25 +26,49 @@ const Login = () => {
   });
   const [rememberMe, setRememberMe] = useState(false);
   const [formErrors, setFormErrors] = useState({});
+  const [loginAttempted, setLoginAttempted] = useState(false);
+
+  // Check if user is already logged in on component mount
+  // useEffect(() => {
+  //   const storedToken = localStorage.getItem("authToken");
+  //   const storedUser = localStorage.getItem("user");
+    
+  //   if (storedToken && storedUser) {
+  //     console.log("User already logged in, redirecting...");
+  //     navigate("/");
+  //   }
+  // }, [navigate]);
 
   // Handle errors from Redux
   useEffect(() => {
     if (error) {
-      toast.error(error);
+      console.log("Redux error:", error);
+      toast.error(typeof error === 'string' ? error : error.message || "Login failed");
       dispatch(clearError());
     }
   }, [error, dispatch]);
 
-  // Handle success
-  useEffect(() => {
-    if (success) {
-      toast.success("Login successful!");
-      dispatch(resetSuccess());
-      setTimeout(() => {
-        navigate("/");
-      }, 1000);
-    }
-  }, [success, navigate, dispatch]);
+// In Login.js, update the success useEffect:
+useEffect(() => {
+  console.log("Auth state changed:", { success, token, user, error });
+  
+  // Only navigate if ALL conditions are met:
+  // 1. success is true (from Redux)
+  // 2. token exists
+  // 3. user exists
+  // 4. no error
+  if (success === true && token && user && !error) {
+    console.log("Conditions met for navigation");
+    toast.success("Login successful!");
+    // dispatch(resetSuccess());
+    setTimeout(() => {
+      navigate("/");
+    }, 1000);
+  } else if (error) {
+    console.log("Error detected, NOT navigating");
+    // Error is already handled in the other useEffect
+  }
+}, [success, token, user, error, navigate, dispatch]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -80,22 +104,21 @@ const Login = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault(); // CRITICAL: Prevent default form submission
+    e.stopPropagation(); // Also stop event bubbling
+    
+    console.log("Form submitted with:", formData);
+    setLoginAttempted(true);
 
     // Validate form
     if (!validateForm()) {
       toast.error("Please fix the errors in the form");
+      setLoginAttempted(false);
       return;
     }
 
-    // Log the data being sent (for debugging)
-    console.log("Login attempt with:", {
-      email: formData.email,
-      password: formData.password,
-    });
-
-    // Dispatch the login action with proper credentials
     try {
+      console.log("Dispatching loginUser...");
       const result = await dispatch(
         loginUser({
           email: formData.email,
@@ -103,18 +126,23 @@ const Login = () => {
         }),
       );
 
+      console.log("Dispatch result:", result);
+      
       // Check if login was successful
       if (loginUser.fulfilled.match(result)) {
-        console.log("Login successful:", result.payload);
-        setTimeout(() => {
-          navigate("/");
-        }, 3000);
+        console.log("Login successful - Redux fulfilled:", result.payload);
+        // Don't navigate here - let the useEffect handle it based on token/user
       } else if (loginUser.rejected.match(result)) {
-        console.log("Login failed:", result.payload || result.error);
+        console.log("Login failed - Redux rejected:", result.payload || result.error);
+        setLoginAttempted(false);
+        // Show error toast
+  
+      
       }
     } catch (err) {
-      console.error("Login error:", err);
-      toast.error("An error occurred during login");
+      console.error("Unexpected login error:", err);
+      setLoginAttempted(false);
+      toast.error("An unexpected error occurred during login");
     }
   };
 
@@ -191,8 +219,9 @@ const Login = () => {
                 </p>
               </div>
 
+              {/* FORM - Make sure it has onSubmit handler */}
               <form onSubmit={handleSubmit} className="space-y-5">
-                {/* Google Sign In - Replaced with SocialAuth component */}
+                {/* Google Sign In */}
                 <SocialAuth />
 
                 {/* Divider */}
@@ -201,9 +230,7 @@ const Login = () => {
                     <div className="w-full border-t border-gray-300"></div>
                   </div>
                   <div className="relative bg-white/95 px-4 rounded-lg">
-                    <span className="text-sm text-gray-600">
-                      Or
-                    </span>
+                    <span className="text-sm text-gray-600">Or</span>
                   </div>
                 </div>
 
@@ -223,7 +250,7 @@ const Login = () => {
                         : "border-gray-300 focus:ring-[#27bb97]"
                     }`}
                     required
-                    disabled={loading}
+                    disabled={loading || loginAttempted}
                   />
                   {formErrors.email && (
                     <p className="mt-1 text-sm text-red-600">
@@ -248,13 +275,13 @@ const Login = () => {
                           : "border-gray-300 focus:ring-[#27bb97]"
                       }`}
                       required
-                      disabled={loading}
+                      disabled={loading || loginAttempted}
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
                       className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                      disabled={loading}
+                      disabled={loading || loginAttempted}
                     >
                       {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                     </button>
@@ -273,7 +300,7 @@ const Login = () => {
                       checked={rememberMe}
                       onChange={(e) => setRememberMe(e.target.checked)}
                       className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                      disabled={loading}
+                      disabled={loading || loginAttempted}
                     />
                     <span className="text-sm text-gray-600">Remember Me</span>
                   </label>
@@ -281,22 +308,23 @@ const Login = () => {
                     type="button"
                     onClick={() => navigate("/forgot-password")}
                     className="text-sm text-gray-600 hover:text-gray-900"
-                    disabled={loading}
+                    disabled={loading || loginAttempted}
                   >
                     Forgot Password?
                   </button>
                 </div>
+                
+                {/* SUBMIT BUTTON - Remove onClick handler, keep only type="submit" */}
                 <button
-                  onClick={() => console.log("clicked")}
                   type="submit"
-                  disabled={loading}
+                  disabled={loading || loginAttempted}
                   className={`w-full z-50 ${
-                    loading
+                    loading || loginAttempted
                       ? "bg-gray-400 cursor-not-allowed"
                       : "bg-[#27bb97] hover:bg-[#1fa987]"
                   } text-white py-3 rounded-lg font-medium transition-colors flex items-center justify-center`}
                 >
-                  {loading ? (
+                  {(loading || loginAttempted) ? (
                     <>
                       <svg
                         className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
@@ -330,7 +358,7 @@ const Login = () => {
                   <Link to="/signup">
                     <button
                       className="text-gray-900 font-medium hover:underline cursor-pointer"
-                      disabled={loading}
+                      disabled={loading || loginAttempted}
                     >
                       Sign up here
                     </button>

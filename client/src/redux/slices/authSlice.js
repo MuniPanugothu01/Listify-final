@@ -33,33 +33,75 @@ export const googleLogin = createAsyncThunk(
   async (googleToken, { rejectWithValue }) => {
     try {
       const response = await authAPI.googleLogin(googleToken);
-
-      if (response.data.success && response.data.token) {
-        localStorage.setItem("authToken", response.data.token);
-        localStorage.setItem("user", JSON.stringify(response.data.user));
+      
+      // Check if the backend response indicates SUCCESS
+      if (response.data && response.data.success === true) {
+        if (response.data.token) {
+          localStorage.setItem("authToken", response.data.token);
+          localStorage.setItem("user", JSON.stringify(response.data.user));
+        }
+        return response.data;
+      } else {
+        return rejectWithValue(response.data.message || "Google login failed");
       }
-
-      return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
     }
   },
 );
-
 export const loginUser = createAsyncThunk(
   "auth/loginUser",
   async (credentials, { rejectWithValue }) => {
     try {
       const response = await authAPI.login(credentials);
-
-      if (response.data.success && response.data.token) {
-        localStorage.setItem("authToken", response.data.token);
-        localStorage.setItem("user", JSON.stringify(response.data.user));
+      
+      console.log("Backend response status:", response.status);
+      console.log("Backend response data:", response.data);
+      
+      // Check HTTP status code first
+      if (response.status >= 200 && response.status < 300) {
+        // Check if the backend response indicates SUCCESS
+        if (response.data && response.data.success === true) {
+          // Store token only if success is true
+          if (response.data.token) {
+            localStorage.setItem("authToken", response.data.token);
+            localStorage.setItem("user", JSON.stringify(response.data.user));
+          }
+          return response.data;
+        } else {
+          // If backend returns success: false, treat it as an error
+          console.log("Backend returned success: false");
+          return rejectWithValue(response.data.message || "Login failed");
+        }
+      } else {
+        // If HTTP status is not 2xx, treat as error
+        console.log("HTTP error status:", response.status);
+        return rejectWithValue(response.data.message || `HTTP Error ${response.status}`);
       }
-
-      return response.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data || error.message);
+      console.error("Login API error:", error);
+      
+      // Handle axios errors
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        console.error("Error response data:", error.response.data);
+        console.error("Error response status:", error.response.status);
+        
+        return rejectWithValue(
+          error.response.data?.message || 
+          error.response.data?.error || 
+          `Server error: ${error.response.status}`
+        );
+      } else if (error.request) {
+        // The request was made but no response was received
+        console.error("No response received:", error.request);
+        return rejectWithValue("No response from server. Please try again.");
+      } else {
+        // Something happened in setting up the request
+        console.error("Request setup error:", error.message);
+        return rejectWithValue(error.message || "Login failed");
+      }
     }
   },
 );

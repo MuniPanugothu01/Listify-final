@@ -90,11 +90,9 @@ import { Toaster } from "react-hot-toast";
 // Get Google Client ID from environment
 const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
-
-
 //sample
-import Sample from "./components/Sample/Sample.jsx"
-import ProductDetail from "./components/Sample/ProductDetail.jsx"
+import Sample from "./components/Sample/Sample.jsx";
+import ProductDetail from "./components/Sample/ProductDetail.jsx";
 
 // ScrollToTop Component
 const ScrollToTop = () => {
@@ -183,8 +181,8 @@ const AppContent = () => {
 
           {/*Sample */}
 
-         <Route path="/product" element={<Sample />} />
-        <Route path="/product/:id" element={<ProductDetail />} />
+          <Route path="/product" element={<Sample />} />
+          <Route path="/product/:id" element={<ProductDetail />} />
 
           {/* Authentication Pages (no navbar/footer) */}
           <Route path="/signin" element={<Login />} />
@@ -218,10 +216,12 @@ const AppContent = () => {
           <Route path="/forsale" element={<ForSale />} />
           <Route path="/forsale/:id" element={<DetailForSale />} />
 
-
           {/* electronics*/}
           <Route path="/electronics" element={<Electronics />} />
-          <Route path="/electronics-listings" element={<ElectronicsListings />} />
+          <Route
+            path="/electronics-listings"
+            element={<ElectronicsListings />}
+          />
           <Route path="/electronics-details" element={<ElectronicsDetails />} />
 
           {/* Roommates */}
@@ -286,8 +286,9 @@ const AppContent = () => {
       {!shouldHideNavbarFooter && (
         <div className="fixed bottom-6 right-8 z-50 flex flex-col items-end space-y-4 ">
           <div
-            className={`transition-all duration-500 ${showScrollTop ? "translate-y-0" : "translate-y-2"
-              }`}
+            className={`transition-all duration-500 ${
+              showScrollTop ? "translate-y-0" : "translate-y-2"
+            }`}
           >
             <ChatBot />
           </div>

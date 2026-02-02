@@ -41,57 +41,72 @@ const sendTokenResponse = (user, statusCode, res, message) => {
 // Simple Google client ID endpoint for frontend
 exports.getGoogleClientId = (req, res) => {
   try {
-    console.log('🔍 Google Client ID endpoint called');
-    console.log('📋 Headers:', req.headers);
-    console.log('🌐 Origin:', req.headers.origin);
-    console.log('🔐 GOOGLE_CLIENT_ID exists:', !!process.env.GOOGLE_CLIENT_ID);
-    
+    console.log("🔍 Google Client ID endpoint called");
+    console.log("📋 Headers:", req.headers);
+    console.log("🌐 Origin:", req.headers.origin);
+    console.log("🔐 GOOGLE_CLIENT_ID exists:", !!process.env.GOOGLE_CLIENT_ID);
+
     // If client ID exists, show first few chars (for security, don't log full ID)
     if (process.env.GOOGLE_CLIENT_ID) {
-      console.log('✅ GOOGLE_CLIENT_ID (first 10 chars):', process.env.GOOGLE_CLIENT_ID.substring(0, 10) + '...');
-      console.log('✅ GOOGLE_CLIENT_ID full format check:', process.env.GOOGLE_CLIENT_ID.includes('.apps.googleusercontent.com'));
+      console.log(
+        "✅ GOOGLE_CLIENT_ID (first 10 chars):",
+        process.env.GOOGLE_CLIENT_ID.substring(0, 10) + "...",
+      );
+      console.log(
+        "✅ GOOGLE_CLIENT_ID full format check:",
+        process.env.GOOGLE_CLIENT_ID.includes(".apps.googleusercontent.com"),
+      );
     } else {
-      console.log('❌ GOOGLE_CLIENT_ID is NOT SET in environment variables');
-      console.log('📝 Available environment variables:', Object.keys(process.env).filter(key => key.includes('GOOGLE')));
+      console.log("❌ GOOGLE_CLIENT_ID is NOT SET in environment variables");
+      console.log(
+        "📝 Available environment variables:",
+        Object.keys(process.env).filter((key) => key.includes("GOOGLE")),
+      );
     }
-    
+
     // Check for CORS headers
-    console.log('🔄 Checking CORS headers...');
-    console.log('  Access-Control-Allow-Origin header:', res.get('Access-Control-Allow-Origin'));
-    
+    console.log("🔄 Checking CORS headers...");
+    console.log(
+      "  Access-Control-Allow-Origin header:",
+      res.get("Access-Control-Allow-Origin"),
+    );
+
     const clientId = process.env.GOOGLE_CLIENT_ID;
-    
+
     if (!clientId) {
-      console.log('❌ ERROR: GOOGLE_CLIENT_ID is not configured');
+      console.log("❌ ERROR: GOOGLE_CLIENT_ID is not configured");
       return res.status(500).json({
         success: false,
         message: "Google authentication is not configured on the server",
-        debug: process.env.NODE_ENV === 'development' ? 'GOOGLE_CLIENT_ID environment variable is missing' : undefined
+        debug:
+          process.env.NODE_ENV === "development"
+            ? "GOOGLE_CLIENT_ID environment variable is missing"
+            : undefined,
       });
     }
-    
+
     // ADDED: Validation for Google Client ID format
-    if (!clientId.includes('.apps.googleusercontent.com')) {
-      console.log('⚠️ WARNING: GOOGLE_CLIENT_ID may be in wrong format');
-      console.log('Expected format: xxx-xxx.apps.googleusercontent.com');
+    if (!clientId.includes(".apps.googleusercontent.com")) {
+      console.log("⚠️ WARNING: GOOGLE_CLIENT_ID may be in wrong format");
+      console.log("Expected format: xxx-xxx.apps.googleusercontent.com");
     }
-    
-    console.log('✅ Sending Google Client ID response');
-    
+
+    console.log("✅ Sending Google Client ID response");
+
     res.status(200).json({
       success: true,
       clientId: clientId,
       timestamp: new Date().toISOString(),
       environment: process.env.NODE_ENV,
-      formatValid: clientId.includes('.apps.googleusercontent.com'),
+      formatValid: clientId.includes(".apps.googleusercontent.com"),
     });
   } catch (error) {
-    console.error('🔥 Error in getGoogleClientId:', error);
+    console.error("🔥 Error in getGoogleClientId:", error);
     logger.error("Get Google client ID error:", error);
     res.status(500).json({
       success: false,
       message: "Server error",
-      error: process.env.NODE_ENV === 'development' ? error.message : undefined,
+      error: process.env.NODE_ENV === "development" ? error.message : undefined,
     });
   }
 };
@@ -136,7 +151,7 @@ exports.googleTokenAuth = async (req, res) => {
     res.status(401).json({
       success: false,
       message: "Invalid Google token",
-      error: process.env.NODE_ENV === 'development' ? error.message : undefined,
+      error: process.env.NODE_ENV === "development" ? error.message : undefined,
     });
   }
 };
@@ -147,6 +162,7 @@ exports.googleTokenAuth = async (req, res) => {
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
+    console.log("login data received:", { email, password });
     logger.info("🔍 Login attempt for:", email);
 
     if (!email || !password) {
@@ -156,11 +172,12 @@ exports.login = async (req, res) => {
       });
     }
 
-    const user = await User.findOne({ email }).select("+password");
-    logger.info("👤 User found:", user ? user.email : "No user");
+    const user = await User.findOne({email});
+    console.log("User found:", user);
+    // logger.info("👤 User found:", user ? user.email : "No user");
 
     if (!user) {
-      return res.status(401).json({
+      return res.status(404).json({
         success: false,
         message: "Invalid credentials",
       });

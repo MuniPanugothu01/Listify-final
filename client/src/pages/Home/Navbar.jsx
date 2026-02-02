@@ -113,7 +113,7 @@ const Navbar = () => {
     if (isAuthenticated) {
       setShowProfileDropdown(!showProfileDropdown);
     } else {
-      navigate("/login");
+      navigate("/signin");
     }
   };
 

@@ -4,7 +4,7 @@
   "description": "Basic authentication backend",
   "main": "server.js",
   "scripts": {
-    "start": "nodemon server.js",
+    "start": "nodemon server.js", 
     "dev": "nodemon server.js"
   },
   "dependencies": {
