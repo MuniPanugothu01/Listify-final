@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   Home, 
   Briefcase, 
@@ -32,6 +32,9 @@ const PostAdPage = () => {
   const [uploading, setUploading] = useState(false);
   const [categorySearch, setCategorySearch] = useState('');
   const [subCategorySearch, setSubCategorySearch] = useState('');
+  
+  const categoryDropdownRef = useRef(null);
+  const subCategoryDropdownRef = useRef(null);
   
   const [formData, setFormData] = useState({
     title: '',
@@ -124,6 +127,23 @@ const PostAdPage = () => {
       ]
     },
   ];
+
+  // Close dropdowns when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (categoryDropdownRef.current && !categoryDropdownRef.current.contains(event.target)) {
+        setShowCategoryDropdown(false);
+      }
+      if (subCategoryDropdownRef.current && !subCategoryDropdownRef.current.contains(event.target)) {
+        setShowSubCategoryDropdown(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   // Get current category object
   const currentCategory = categories.find(cat => cat.id === selectedCategory);
@@ -235,9 +255,9 @@ const PostAdPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 relative z-0">
       {/* Header */}
-      <div className="bg-white shadow-sm">
+      <div className="bg-white">
         <div className="max-w-4xl mx-auto px-4 py-6">
           <div className="text-center">
             <h1 className="text-3xl font-bold text-gray-900">Post Your Ad</h1>
@@ -247,7 +267,7 @@ const PostAdPage = () => {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-4xl mx-auto px-4 py-8">
+      <div className="max-w-5xl mx-auto px-4 py-8 ">
         {/* Progress Steps */}
         <div className="mb-8">
           <div className="flex items-center justify-center mb-4">
@@ -286,14 +306,17 @@ const PostAdPage = () => {
               {/* Category Selection */}
               <div className="space-y-6">
                 {/* Category Dropdown */}
-                <div className="space-y-2">
+                <div className="space-y-2" ref={categoryDropdownRef}>
                   <label className="block text-sm font-medium text-gray-700">
                     Category <span className="text-red-500">*</span>
                   </label>
                   <div className="relative">
                     <button
                       type="button"
-                      onClick={() => setShowCategoryDropdown(!showCategoryDropdown)}
+                      onClick={() => {
+                        setShowCategoryDropdown(!showCategoryDropdown);
+                        setShowSubCategoryDropdown(false);
+                      }}
                       className="w-full flex items-center justify-between px-4 py-3 border border-gray-300 rounded-lg bg-white hover:border-[#27BB97] transition-colors"
                     >
                       <div className="flex items-center gap-3">
@@ -314,7 +337,7 @@ const PostAdPage = () => {
                     </button>
                     
                     {showCategoryDropdown && (
-                      <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-96 overflow-hidden">
+                      <div className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-96 overflow-hidden">
                         {/* Search Bar */}
                         <div className="p-3 border-b border-gray-100">
                           <div className="relative">
@@ -370,14 +393,17 @@ const PostAdPage = () => {
 
                 {/* Subcategory Dropdown (only shows when category is selected) */}
                 {selectedCategory && (
-                  <div className="space-y-2">
+                  <div className="space-y-2" ref={subCategoryDropdownRef}>
                     <label className="block text-sm font-medium text-gray-700">
                       Subcategory <span className="text-red-500">*</span>
                     </label>
                     <div className="relative">
                       <button
                         type="button"
-                        onClick={() => setShowSubCategoryDropdown(!showSubCategoryDropdown)}
+                        onClick={() => {
+                          setShowSubCategoryDropdown(!showSubCategoryDropdown);
+                          setShowCategoryDropdown(false);
+                        }}
                         className="w-full flex items-center justify-between px-4 py-3 border border-gray-300 rounded-lg bg-white hover:border-[#27BB97] transition-colors"
                       >
                         <div className="flex items-center gap-3">
@@ -391,7 +417,7 @@ const PostAdPage = () => {
                       </button>
                       
                       {showSubCategoryDropdown && (
-                        <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-96 overflow-hidden">
+                        <div className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-96 overflow-hidden">
                           {/* Search Bar for Subcategories */}
                           <div className="p-3 border-b border-gray-100">
                             <div className="relative">

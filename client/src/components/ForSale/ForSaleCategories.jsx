@@ -15,7 +15,7 @@ const ForSaleCategories = () => {
   ];
 
   return (
-    <section className="py-12 bg-white">
+    <section className="py-12 px-4  bg-white">
       <div className="px-4">
         <div className="text-center mb-10">
           <h2 className="text-3xl font-bold text-gray-900 mb-3">Shop By Category</h2>

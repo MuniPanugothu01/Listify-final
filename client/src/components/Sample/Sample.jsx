@@ -1,6 +1,15 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Heart, Share2, MapPin, Search, ChevronRight, Menu, X, Filter } from 'lucide-react';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  Heart,
+  Share2,
+  MapPin,
+  Search,
+  ChevronRight,
+  Menu,
+  X,
+  Filter,
+} from "lucide-react";
 
 const electronicsData = [
   {
@@ -62,7 +71,7 @@ const electronicsData = [
     sellerReviews: 523,
     sellerJoined: "Mar 2019",
     image:
-      "https://images.unsplash.com/photo-1696446702833-a6b57c67c0ce?w=500&q=80",
+      "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=500&q=80",
     description:
       "Brand new iPhone 15 Pro Max, unlocked, all colors available. Comes with original packaging and accessories.",
     features: ["A17 Pro Chip", "Titanium Design", "48MP Camera", "USB-C Port"],
@@ -448,54 +457,53 @@ const electronicsData = [
   },
 ];
 
-
 // Product Card Component
 const ProductCard = ({ product, onClick }) => {
   return (
-    <div 
+    <div
       onClick={onClick}
       className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer group border border-gray-200"
     >
       {/* Image Container */}
       <div className="relative h-40 sm:h-48 overflow-hidden bg-gray-100">
-        <img 
-          src={product.image} 
+        <img
+          src={product.image}
           alt={product.title}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 p-2"
         />
-        <button 
+        <button
           onClick={(e) => e.stopPropagation()}
           className="absolute top-2 right-2 p-1.5 bg-white rounded-full shadow-sm hover:bg-red-50 transition-colors"
         >
           <Heart className="w-4 h-4 text-gray-600 hover:text-red-500" />
         </button>
       </div>
-      
+
       {/* Content Container */}
       <div className="p-3">
         {/* Title */}
         <h3 className="font-medium text-gray-900 text-sm mb-2 line-clamp-2 min-h-[36px] leading-tight">
           {product.title}
         </h3>
-        
+
         {/* Price and Condition */}
         <div className="flex items-center justify-between mb-2">
-          <span className="text-base sm:text-lg font-bold text-gray-900">${product.price}</span>
+          <span className="text-base sm:text-lg font-bold text-gray-900">
+            ${product.price}
+          </span>
           <span className="text-xs text-gray-500 px-2 py-1 bg-gray-100 rounded-full">
             {product.condition}
           </span>
         </div>
-        
+
         {/* Location */}
         <div className="flex items-center text-xs text-gray-600 mt-1">
           <MapPin className="w-3 h-3 mr-1 flex-shrink-0" />
           <span className="truncate">{product.location}</span>
         </div>
-        
+
         {/* Posted Time */}
-        <div className="text-xs text-gray-400 mt-1">
-          {product.postedTime}
-        </div>
+        <div className="text-xs text-gray-400 mt-1">{product.postedTime}</div>
       </div>
     </div>
   );
@@ -510,10 +518,13 @@ const Sample = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
-  const filteredProducts = electronicsData.filter(product => {
-    const matchesSearch = product.title.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesPrice = (!priceMin || product.price >= Number(priceMin)) && 
-                        (!priceMax || product.price <= Number(priceMax));
+  const filteredProducts = electronicsData.filter((product) => {
+    const matchesSearch = product.title
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase());
+    const matchesPrice =
+      (!priceMin || product.price >= Number(priceMin)) &&
+      (!priceMax || product.price <= Number(priceMax));
     return matchesSearch && matchesPrice;
   });
 
@@ -527,7 +538,9 @@ const Sample = () => {
       <div className="bg-white border-b">
         <div className="px-3 sm:px-4 md:px-6 lg:px-8 py-3">
           <div className="flex items-center text-sm text-gray-600">
-            <a href="/" className="hover:text-gray-900">Home</a>
+            <a href="/" className="hover:text-gray-900">
+              Home
+            </a>
             <ChevronRight className="w-4 h-4 mx-2" />
             <span className="text-gray-900 font-medium">Electronics</span>
           </div>
@@ -542,19 +555,21 @@ const Sample = () => {
             className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors"
           >
             <Filter className="w-5 h-5" />
-            {isFilterOpen ? 'Hide Filters' : 'Show Filters'}
+            {isFilterOpen ? "Hide Filters" : "Show Filters"}
           </button>
         </div>
 
         <div className="flex flex-col lg:flex-row gap-6">
           {/* Sidebar Filters - Responsive */}
-          <aside className={`
-            ${isFilterOpen ? 'block' : 'hidden'} 
+          <aside
+            className={`
+            ${isFilterOpen ? "block" : "hidden"} 
             lg:block lg:w-72 xl:w-80 flex-shrink-0
             bg-white rounded-lg shadow-sm p-4 sm:p-6 
             lg:sticky lg:top-24 h-fit
             max-h-[80vh] overflow-y-auto
-          `}>
+          `}
+          >
             {/* Close button for mobile */}
             <div className="flex justify-between items-center mb-4 lg:hidden">
               <h2 className="text-xl font-bold text-gray-900">Filters</h2>
@@ -566,10 +581,14 @@ const Sample = () => {
               </button>
             </div>
 
-            <h2 className="text-xl font-bold text-gray-900 mb-6 hidden lg:block">Filters</h2>
+            <h2 className="text-xl font-bold text-gray-900 mb-6 hidden lg:block">
+              Filters
+            </h2>
 
             <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">Price range</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Price range
+              </label>
               <div className="flex flex-col sm:flex-row sm:items-center gap-2">
                 <div className="flex items-center gap-2 flex-1">
                   <input
@@ -595,74 +614,98 @@ const Sample = () => {
             </div>
 
             <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-3">Condition</label>
+              <label className="block text-sm font-medium text-gray-700 mb-3">
+                Condition
+              </label>
               <div className="grid grid-cols-2 sm:grid-cols-1 gap-2">
-                {['New', 'Open box', 'Used', 'For parts'].map(condition => (
+                {["New", "Open box", "Used", "For parts"].map((condition) => (
                   <label key={condition} className="flex items-center">
-                    <input type="checkbox" className="w-4 h-4 text-teal-600 border-gray-300 rounded focus:ring-teal-500" />
-                    <span className="ml-2 text-sm text-gray-700">{condition}</span>
+                    <input
+                      type="checkbox"
+                      className="w-4 h-4 text-teal-600 border-gray-300 rounded focus:ring-teal-500"
+                    />
+                    <span className="ml-2 text-sm text-gray-700">
+                      {condition}
+                    </span>
                   </label>
                 ))}
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-3">Categories</label>
+              <label className="block text-sm font-medium text-gray-700 mb-3">
+                Categories
+              </label>
               <div className="grid grid-cols-2 sm:grid-cols-1 gap-2">
-                {['Electronics & Media', 'Audio & Speakers', 'Cell phones & Accessories', 'Cameras & Photography', 'Video games & Consoles'].map(cat => (
+                {[
+                  "Electronics & Media",
+                  "Audio & Speakers",
+                  "Cell phones & Accessories",
+                  "Cameras & Photography",
+                  "Video games & Consoles",
+                ].map((cat) => (
                   <label key={cat} className="flex items-center">
-                    <input type="checkbox" className="w-4 h-4 text-teal-600 border-gray-300 rounded focus:ring-teal-500" />
+                    <input
+                      type="checkbox"
+                      className="w-4 h-4 text-teal-600 border-gray-300 rounded focus:ring-teal-500"
+                    />
                     <span className="ml-2 text-sm text-gray-700">{cat}</span>
                   </label>
                 ))}
               </div>
-              <button className="text-sm text-teal-600 hover:text-teal-700 font-medium mt-3">+ Show more</button>
+              <button className="text-sm text-teal-600 hover:text-teal-700 font-medium mt-3">
+                + Show more
+              </button>
             </div>
           </aside>
 
           {/* Main Content */}
-          <main className="flex-1 min-w-0"> {/* min-w-0 prevents flex overflow */}
-         {/* Page Title and Sort - Responsive */}
-<div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
-  <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Electronics</h1>
-  
-  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
-    {/* Search Bar and Sort in single row on mobile */}
-    <div className="flex flex-row items-center gap-3 w-full sm:w-auto">
-      {/* Search Bar */}
-      <div className="relative flex-1 sm:flex-initial sm:min-w-[250px] lg:min-w-[300px]">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 sm:w-5 sm:h-5" />
-        <input
-          type="text"
-          placeholder="Search items..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full pl-9 sm:pl-10 pr-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-        />
-      </div>
-      
-      {/* Sort Dropdown */}
-      <div className="flex items-center gap-2 sm:flex-shrink-0">
-        <span className="text-xs sm:text-sm text-gray-600 whitespace-nowrap hidden xs:inline">Sort by:</span>
-        <select className="px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent w-full xs:w-auto min-w-[120px] sm:min-w-[180px]">
-          <option>Recent first</option>
-          <option>Price: Low to High</option>
-          <option>Price: High to Low</option>
-          <option>Distance</option>
-        </select>
-      </div>
-    </div>
-  </div>
-</div>
+          <main className="flex-1 min-w-0">
+            {" "}
+            {/* min-w-0 prevents flex overflow */}
+            {/* Page Title and Sort - Responsive */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
+                Electronics
+              </h1>
 
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
+                {/* Search Bar and Sort in single row on mobile */}
+                <div className="flex flex-row items-center gap-3 w-full sm:w-auto">
+                  {/* Search Bar */}
+                  <div className="relative flex-1 sm:flex-initial sm:min-w-[250px] lg:min-w-[300px]">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 sm:w-5 sm:h-5" />
+                    <input
+                      type="text"
+                      placeholder="Search items..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="w-full pl-9 sm:pl-10 pr-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                    />
+                  </div>
+
+                  {/* Sort Dropdown */}
+                  <div className="flex items-center gap-2 sm:flex-shrink-0">
+                    <span className="text-xs sm:text-sm text-gray-600 whitespace-nowrap hidden xs:inline">
+                      Sort by:
+                    </span>
+                    <select className="px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent w-full xs:w-auto min-w-[120px] sm:min-w-[180px]">
+                      <option>Recent first</option>
+                      <option>Price: Low to High</option>
+                      <option>Price: High to Low</option>
+                      <option>Distance</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
             {/* Results Count - Mobile */}
             <div className="text-sm text-gray-600 mb-4 lg:hidden">
               {filteredProducts.length} items found
             </div>
-
             {/* Products Grid - Responsive */}
             <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
-              {filteredProducts.map(product => (
+              {filteredProducts.map((product) => (
                 <ProductCard
                   key={product.id}
                   product={product}
@@ -670,21 +713,20 @@ const Sample = () => {
                 />
               ))}
             </div>
-
             {/* Results count - Desktop */}
             <div className="mt-8 text-center text-gray-600 hidden lg:block">
-              Showing {filteredProducts.length} of {electronicsData.length} items
+              Showing {filteredProducts.length} of {electronicsData.length}{" "}
+              items
             </div>
-
             {/* No Results Message */}
             {filteredProducts.length === 0 && (
               <div className="text-center py-12">
                 <div className="text-gray-400 mb-2">No items found</div>
-                <button 
+                <button
                   onClick={() => {
-                    setSearchQuery('');
-                    setPriceMin('');
-                    setPriceMax('');
+                    setSearchQuery("");
+                    setPriceMin("");
+                    setPriceMax("");
                   }}
                   className="text-teal-600 hover:text-teal-700 font-medium"
                 >

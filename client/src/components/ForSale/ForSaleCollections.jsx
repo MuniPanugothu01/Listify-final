@@ -66,8 +66,8 @@ const ForSaleCollections = () => {
   };
 
   return (
-    <section className="py-12 bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4">
+    <section className="py-12 px-8 bg-white">
+      <div className="">
         <div className="text-center mb-10">
           <h2 className="text-3xl font-bold text-gray-900 mb-3">Shop Collections</h2>
           <p className="text-gray-600">Browse curated collections of household items</p>

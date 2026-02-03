@@ -18,7 +18,6 @@ import {
   Wrench,
 } from 'lucide-react';
 
-
 const marketplaceItems = [
   {
     id: 1,
@@ -47,7 +46,7 @@ const marketplaceItems = [
     location: "Hitech City, Hyderabad",
     postedTime: "3 days ago",
     condition: "Used - Excellent",
-    image: "https://images.unsplash.com/photo-1505693314120-0d443867891c?w=800&q=80",
+    image: "https://images.unsplash.com/photo-1618843479313-40f2e308488e?w=800&q=80",
     category: "Furniture",
   },
   {
@@ -57,7 +56,7 @@ const marketplaceItems = [
     location: "Madhapur, Hyderabad",
     postedTime: "2 hours ago",
     condition: "New - Box Opened",
-    image: "https://images.unsplash.com/photo-1618843479313-40f2e308488e?w=800&q=80",
+    image: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&q=80",
     category: "Toys & Games",
   },
   {
@@ -87,7 +86,7 @@ const marketplaceItems = [
     location: "Dilsukhnagar, Hyderabad",
     postedTime: "1 week ago",
     condition: "Like New",
-    image: "https://images.unsplash.com/photo-1532012197267-da84d127e765?w=800&q=80",
+    image: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=800&q=80",
     category: "Books",
   },
   {
@@ -117,7 +116,7 @@ const marketplaceItems = [
     location: "Kondapur, Hyderabad",
     postedTime: "Today, 12:20 PM",
     condition: "New",
-    image: "https://images.unsplash.com/photo-1585576691778-2e5aeadb0d46?w=800&q=80",
+    image: "https://images.unsplash.com/photo-1618843479313-40f2e308488e?w=800&q=80",
     category: "Kitchenware",
   },
   {
@@ -127,7 +126,7 @@ const marketplaceItems = [
     location: "Banjara Hills, Hyderabad",
     postedTime: "5 days ago",
     condition: "Used - Excellent",
-    image: "https://images.unsplash.com/photo-1583417314155-6b8d2e1e2e6f?w=800&q=80",
+    image: "https://images.unsplash.com/photo-1637853088870-2e4e2e8d3b4e?w=800&q=80",
     category: "Kitchenware",
   },
   {
@@ -137,7 +136,7 @@ const marketplaceItems = [
     location: "Jubilee Hills, Hyderabad",
     postedTime: "4 hours ago",
     condition: "New",
-    image: "https://images.unsplash.com/photo-1540575861509-4c0e9d367d0f?w=800&q=80",
+    image: "https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?w=800&q=80",
     category: "Home Decor",
   },
   {
@@ -147,7 +146,7 @@ const marketplaceItems = [
     location: "Manikonda, Hyderabad",
     postedTime: "2 days ago",
     condition: "New",
-    image: "https://images.unsplash.com/photo-1572048572872-2394404cf1f3?w=800&q=80",
+    image: "https://images.unsplash.com/photo-1581235720704-06d1018152dc?w=800&q=80",
     category: "Home Decor",
   },
   {
@@ -157,7 +156,7 @@ const marketplaceItems = [
     location: "LB Nagar, Hyderabad",
     postedTime: "Today, 6:30 PM",
     condition: "Like New",
-    image: "https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=800&q=80",
+    image: "https://images.unsplash.com/photo-1495446815901-a7297e633e8d?w=800&q=80",
     category: "Home Decor",
   },
   {
@@ -167,7 +166,7 @@ const marketplaceItems = [
     location: "Uppal, Hyderabad",
     postedTime: "2 days ago",
     condition: "Healthy",
-    image: "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=800&q=80",
+    image: "https://images.unsplash.com/photo-1556911220-b0b895fafb40?w=800&q=80",
     category: "Gardening",
   },
   {
@@ -177,7 +176,7 @@ const marketplaceItems = [
     location: "KPHB Colony, Hyderabad",
     postedTime: "3 days ago",
     condition: "New",
-    image: "https://images.unsplash.com/photo-1459411559334-6f5a0f5d9e9e?w=800&q=80",
+    image: "https://images.unsplash.com/photo-1520412099551-62b6bafeb5bb?w=800&q=80",
     category: "Gardening",
   },
   {
@@ -187,7 +186,7 @@ const marketplaceItems = [
     location: "Banjara Hills, Hyderabad",
     postedTime: "Today, 9:40 AM",
     condition: "Used - Excellent",
-    image: "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?w=800&q=80",
+    image: "https://images.unsplash.com/photo-1588880331179-46d541a819de?w=800&q=80",
     category: "Sports Gear",
   },
   {
@@ -237,7 +236,7 @@ const marketplaceItems = [
     location: "Toli Chowki, Hyderabad",
     postedTime: "Today, 10:10 AM",
     condition: "New",
-    image: "https://images.unsplash.com/photo-1581093450021-4a7360e9a6b5?w=800&q=80",
+    image: "https://images.unsplash.com/photo-1583241475880-083f84372725?w=800&q=80",
     category: "Tools",
   },
   {
@@ -247,7 +246,7 @@ const marketplaceItems = [
     location: "Mehdipatnam, Hyderabad",
     postedTime: "2 hours ago",
     condition: "New",
-    image: "https://images.unsplash.com/photo-1581092160384-0a4a0c3e0e6f?w=800&q=80",
+    image: "https://images.unsplash.com/photo-1581092160607-8d2a3a5c3f5a?w=800&q=80",
     category: "Tools",
   },
   {
@@ -257,306 +256,290 @@ const marketplaceItems = [
     location: "Attapur, Hyderabad",
     postedTime: "4 days ago",
     condition: "Like New",
-    image: "https://images.unsplash.com/photo-1581093458795-4a4e1b0d4a4e?w=800&q=80",
+    image: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&q=80",
     category: "Tools",
   },
 ];
 
-
-
-
-
-// ProductCard component (unchanged)
-const ProductCard = ({ item, onClick }) => (
-  <div
-    onClick={onClick}
-    className="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer border border-gray-200 overflow-hidden group"
-  >
-    <div className="relative aspect-[4/3] bg-gray-50">
-      <img
-        src={item.image}
-        alt={item.title}
-        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 p-3"
-      />
-      <button
-        onClick={e => e.stopPropagation()}
-        className="absolute top-2 right-2 p-2 bg-white/90 backdrop-blur rounded-full shadow-sm hover:bg-red-50 transition-colors"
-      >
-        <Heart className="w-5 h-5 text-gray-600 hover:text-red-500" />
-      </button>
-    </div>
-    <div className="p-3.5">
-      <h3 className="font-medium text-gray-900 text-[15px] leading-tight line-clamp-2 min-h-[2.6rem] mb-2">
-        {item.title}
-      </h3>
-      <div className="flex items-center justify-between mb-1">
-        <span className="text-lg font-bold text-gray-900">₹{item.price.toLocaleString()}</span>
-        <span className="text-xs px-2.5 py-1 bg-gray-100 text-gray-700 rounded-full">
-          {item.condition}
-        </span>
+// Product Card Component - Updated to match Sample
+const ProductCard = ({ product, onClick }) => {
+  return (
+    <div
+      onClick={onClick}
+      className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer group border border-gray-200"
+    >
+      {/* Image Container */}
+      <div className="relative h-40 sm:h-48 overflow-hidden bg-gray-100">
+        <img
+          src={product.image}
+          alt={product.title}
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 p-2"
+        />
+        <button
+          onClick={(e) => e.stopPropagation()}
+          className="absolute top-2 right-2 p-1.5 bg-white rounded-full shadow-sm hover:bg-red-50 transition-colors"
+        >
+          <Heart className="w-4 h-4 text-gray-600 hover:text-red-500" />
+        </button>
       </div>
-      <div className="flex items-center text-xs text-gray-600">
-        <MapPin className="w-3.5 h-3.5 mr-1 flex-shrink-0" />
-        <span className="truncate">{item.location}</span>
+
+      {/* Content Container */}
+      <div className="p-3">
+        {/* Title */}
+        <h3 className="font-medium text-gray-900 text-sm mb-2 line-clamp-2 min-h-[36px] leading-tight">
+          {product.title}
+        </h3>
+
+        {/* Price and Condition */}
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-base sm:text-lg font-bold text-gray-900">
+            ₹{product.price.toLocaleString()}
+          </span>
+          <span className="text-xs text-gray-500 px-2 py-1 bg-gray-100 rounded-full">
+            {product.condition}
+          </span>
+        </div>
+
+        {/* Location */}
+        <div className="flex items-center text-xs text-gray-600 mt-1">
+          <MapPin className="w-3 h-3 mr-1 flex-shrink-0" />
+          <span className="truncate">{product.location}</span>
+        </div>
+
+        {/* Posted Time */}
+        <div className="text-xs text-gray-400 mt-1">{product.postedTime}</div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
-export default function ForSale() {
+// Marketplace Listing Page Component
+export default function SampleForSale() {
   const navigate = useNavigate();
+  const [selectedCategory, setSelectedCategory] = useState("All Categories");
+  const [priceMin, setPriceMin] = useState("");
+  const [priceMax, setPriceMax] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
 
-  // ─── Filter States ────────────────────────────────────────
-  const [search, setSearch] = useState('');
-  const [minPrice, setMinPrice] = useState('');
-  const [maxPrice, setMaxPrice] = useState('');
-  const [selectedConditions, setSelectedConditions] = useState([]);
-  const [selectedCategories, setSelectedCategories] = useState([]);
-  const [locationFilter, setLocationFilter] = useState('');
-  const [sortBy, setSortBy] = useState('recent'); // recent, price-low, price-high
-  const [filtersOpen, setFiltersOpen] = useState(false);
-
-  // Available filter options
-  const conditions = [
-    'New',
-    'Like New',
-    'Used - Excellent',
-    'Used - Good',
-    'Used - Fair',
-  ];
-
-  const categories = [
-    'Furniture',
-    'Toys & Games',
-    'Books',
-    'Kitchenware',
-    'Home Decor',
-    'Gardening',
-    'Sports Gear',
-    'Baby Items',
-    'Tools',
-  ];
-
-  // ─── Filtering Logic ──────────────────────────────────────
-  let filtered = marketplaceItems.filter(item => {
-    // Search title
-    if (search && !item.title.toLowerCase().includes(search.toLowerCase())) return false;
-
-    // Price range
-    const priceNum = item.price;
-    if (minPrice && priceNum < Number(minPrice)) return false;
-    if (maxPrice && priceNum > Number(maxPrice)) return false;
-
-    // Condition
-    if (selectedConditions.length > 0 && !selectedConditions.includes(item.condition)) {
-      return false;
-    }
-
-    // Category
-    if (selectedCategories.length > 0 && !selectedCategories.includes(item.category)) {
-      return false;
-    }
-
-    // Location (contains search – case insensitive)
-    if (locationFilter && !item.location.toLowerCase().includes(locationFilter.toLowerCase())) {
-      return false;
-    }
-
-    return true;
+  // Filtering logic
+  const filteredProducts = marketplaceItems.filter((product) => {
+    const matchesSearch = product.title
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase());
+    const matchesPrice =
+      (!priceMin || product.price >= Number(priceMin)) &&
+      (!priceMax || product.price <= Number(priceMax));
+    return matchesSearch && matchesPrice;
   });
 
-  // ─── Sorting ──────────────────────────────────────────────
-  if (sortBy === 'price-low') {
-    filtered = [...filtered].sort((a, b) => a.price - b.price);
-  } else if (sortBy === 'price-high') {
-    filtered = [...filtered].sort((a, b) => b.price - a.price);
-  } else if (sortBy === 'recent') {
-    // For demo: we can simulate recency by postedTime string comparison
-    // In real app you would parse dates properly
-    filtered = [...filtered].sort((a, b) => b.postedTime.localeCompare(a.postedTime));
-  }
+  const handleProductClick = (productId) => {
+    navigate(`/forsale/${productId}`);
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Breadcrumb */}
       <div className="bg-white border-b">
-        <div className="px-4 sm:px-6 lg:px-8 py-3">
+        <div className="px-3 sm:px-4 md:px-6 lg:px-8 py-3">
           <div className="flex items-center text-sm text-gray-600">
-            <a href="/" className="hover:text-teal-700">Home</a>
+            <a href="/" className="hover:text-gray-900">
+              Home
+            </a>
             <ChevronRight className="w-4 h-4 mx-2" />
-            <span className="font-medium text-gray-900">For Sale</span>
+            <span className="text-gray-900 font-medium">For Sale</span>
           </div>
         </div>
       </div>
 
-      <div className=" px-4 sm:px-6 lg:px-8 py-6 lg:py-8">
-        {/* Mobile filter toggle */}
-        <div className="lg:hidden mb-5">
+      <div className="px-3 sm:px-4 md:px-6 lg:px-8 py-4">
+        {/* Mobile Filter Toggle */}
+        <div className="lg:hidden mb-4">
           <button
-            onClick={() => setFiltersOpen(!filtersOpen)}
-            className="w-full flex items-center justify-center gap-2 py-3.5 px-5 bg-teal-600 text-white rounded-xl font-medium shadow-sm"
+            onClick={() => setIsFilterOpen(!isFilterOpen)}
+            className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors"
           >
-            <Filter size={18} />
-            {filtersOpen ? 'Hide Filters' : 'Show Filters'}
+            <Filter className="w-5 h-5" />
+            {isFilterOpen ? "Hide Filters" : "Show Filters"}
           </button>
         </div>
 
-        <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
-          {/* ─── FILTER SIDEBAR ─────────────────────────────────── */}
-          {/* <aside
+        <div className="flex flex-col lg:flex-row gap-6">
+          {/* Sidebar Filters - Static on scroll */}
+          <aside
             className={`
-              ${filtersOpen ? 'block fixed inset-0 z-50 bg-gray-50 overflow-y-auto p-5 lg:static lg:block' : 'hidden lg:block'}
-              lg:w-72 xl:w-80 flex-shrink-0 lg:sticky lg:top-6
-            `}
+            ${isFilterOpen ? "block" : "hidden"} 
+            lg:block lg:w-72 xl:w-80 flex-shrink-0
+            bg-white rounded-lg shadow-sm p-4 sm:p-6 
+            lg:sticky lg:top-24 h-fit
+            max-h-[80vh] overflow-y-auto
+          `}
           >
-            <div className="bg-white rounded-xl shadow-sm p-5">
-              <div className="flex justify-between items-center mb-6 lg:hidden">
-                <h2 className="text-xl font-bold text-gray-900">Filters</h2>
-                <button onClick={() => setFiltersOpen(false)}>
-                  <X size={24} className="text-gray-600" />
-                </button>
-              </div>
+            {/* Close button for mobile */}
+            <div className="flex justify-between items-center mb-4 lg:hidden">
+              <h2 className="text-xl font-bold text-gray-900">Filters</h2>
+              <button
+                onClick={() => setIsFilterOpen(false)}
+                className="p-2 text-gray-500 hover:text-gray-700"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
 
-              <h2 className="text-xl font-bold mb-6 hidden lg:block">Filters</h2>
+            <h2 className="text-xl font-bold text-gray-900 mb-6 hidden lg:block">
+              Filters
+            </h2>
 
-              <div className="mb-7">
-                <label className="block text-sm font-medium text-gray-700 mb-2.5">Price Range</label>
-                <div className="grid grid-cols-2 gap-3">
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Price range
+              </label>
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                <div className="flex items-center gap-2 flex-1">
                   <input
                     type="number"
                     placeholder="Min ₹"
-                    value={minPrice}
-                    onChange={e => setMinPrice(e.target.value)}
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-teal-500 focus:border-teal-500"
+                    value={priceMin}
+                    onChange={(e) => setPriceMin(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent text-sm sm:text-base"
                   />
+                  <span className="text-gray-500 text-sm">to</span>
                   <input
                     type="number"
                     placeholder="Max ₹"
-                    value={maxPrice}
-                    onChange={e => setMaxPrice(e.target.value)}
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-teal-500 focus:border-teal-500"
+                    value={priceMax}
+                    onChange={(e) => setPriceMax(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent text-sm sm:text-base"
                   />
                 </div>
-              </div>
-
-              <div className="mb-7">
-                <label className="block text-sm font-medium text-gray-700 mb-2.5">Condition</label>
-                <div className="space-y-2">
-                  {conditions.map(cond => (
-                    <label key={cond} className="flex items-center">
-                      <input
-                        type="checkbox"
-                        checked={selectedConditions.includes(cond)}
-                        onChange={() => {
-                          setSelectedConditions(prev =>
-                            prev.includes(cond)
-                              ? prev.filter(c => c !== cond)
-                              : [...prev, cond]
-                          );
-                        }}
-                        className="w-4 h-4 text-teal-600 border-gray-300 rounded focus:ring-teal-500"
-                      />
-                      <span className="ml-2 text-sm text-gray-700">{cond}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              <div className="mb-7">
-                <label className="block text-sm font-medium text-gray-700 mb-2.5">Category</label>
-                <div className="space-y-2 max-h-48 overflow-y-auto pr-2">
-                  {categories.map(cat => (
-                    <label key={cat} className="flex items-center">
-                      <input
-                        type="checkbox"
-                        checked={selectedCategories.includes(cat)}
-                        onChange={() => {
-                          setSelectedCategories(prev =>
-                            prev.includes(cat)
-                              ? prev.filter(c => c !== cat)
-                              : [...prev, cat]
-                          );
-                        }}
-                        className="w-4 h-4 text-teal-600 border-gray-300 rounded focus:ring-teal-500"
-                      />
-                      <span className="ml-2 text-sm text-gray-700">{cat}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              <div className="mb-7">
-                <label className="block text-sm font-medium text-gray-700 mb-2.5">Location</label>
-                <input
-                  type="text"
-                  placeholder="e.g. Kukatpally, Gachibowli..."
-                  value={locationFilter}
-                  onChange={e => setLocationFilter(e.target.value)}
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-teal-500 focus:border-teal-500"
-                />
-              </div>
-
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2.5">Sort by</label>
-                <select
-                  value={sortBy}
-                  onChange={e => setSortBy(e.target.value)}
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-teal-500 focus:border-teal-500 bg-white"
-                >
-                  <option value="recent">Most Recent</option>
-                  <option value="price-low">Price: Low to High</option>
-                  <option value="price-high">Price: High to Low</option>
-                </select>
-              </div>
-
-              <div className="mt-8 lg:hidden">
-                <button
-                  onClick={() => setFiltersOpen(false)}
-                  className="w-full py-3.5 bg-teal-600 text-white rounded-xl font-medium shadow-sm"
-                >
-                  Apply Filters
+                <button className="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors whitespace-nowrap text-sm sm:text-base">
+                  Apply
                 </button>
               </div>
             </div>
-          </aside> */}
 
-          {/* ─── MAIN CONTENT ───────────────────────────────────── */}
-          <main className="flex-1">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
-              <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
-                For Sale Items
-              </h2>
-              <div className="relative flex-1 sm:max-w-md">
-                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-                <input
-                  type="text"
-                  placeholder="Search in For Sale..."
-                  value={search}
-                  onChange={e => setSearch(e.target.value)}
-                  className="w-full pl-11 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-teal-500 focus:border-transparent text-base shadow-sm"
-                />
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700 mb-3">
+                Condition
+              </label>
+              <div className="grid grid-cols-2 sm:grid-cols-1 gap-2">
+                {["New", "Like New", "Used - Excellent"].map((condition) => (
+                  <label key={condition} className="flex items-center">
+                    <input
+                      type="checkbox"
+                      className="w-4 h-4 text-teal-600 border-gray-300 rounded focus:ring-teal-500"
+                    />
+                    <span className="ml-2 text-sm text-gray-700">
+                      {condition}
+                    </span>
+                  </label>
+                ))}
               </div>
             </div>
 
-            {/* <div className="text-sm text-gray-600 mb-5">
-              {filtered.length} items found
-              {filtered.length > 0 && ` • sorted by ${sortBy === 'recent' ? 'most recent' : sortBy === 'price-low' ? 'price low→high' : 'price high→low'}`}
-            </div> */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-3">
+                Categories
+              </label>
+              <div className="grid grid-cols-2 sm:grid-cols-1 gap-2">
+                {[
+                  "Furniture",
+                  "Toys & Games", 
+                  "Books",
+                  "Kitchenware",
+                  "Home Decor",
+                  "Baby Items",
+                  "Tools",
+                ].map((cat) => (
+                  <label key={cat} className="flex items-center">
+                    <input
+                      type="checkbox"
+                      className="w-4 h-4 text-teal-600 border-gray-300 rounded focus:ring-teal-500"
+                    />
+                    <span className="ml-2 text-sm text-gray-700">{cat}</span>
+                  </label>
+                ))}
+              </div>
+              <button className="text-sm text-teal-600 hover:text-teal-700 font-medium mt-3">
+                + Show more
+              </button>
+            </div>
+          </aside>
 
-            <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-5 gap-4 sm:gap-6">
-              {filtered.map(item => (
+          {/* Main Content */}
+          <main className="flex-1 min-w-0">
+            {/* Page Title and Sort - Responsive */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
+                For Sale Items
+              </h1>
+
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
+                {/* Search Bar and Sort in single row on mobile */}
+                <div className="flex flex-row items-center gap-3 w-full sm:w-auto">
+                  {/* Search Bar */}
+                  <div className="relative flex-1 sm:flex-initial sm:min-w-[250px] lg:min-w-[300px]">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 sm:w-5 sm:h-5" />
+                    <input
+                      type="text"
+                      placeholder="Search items..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="w-full pl-9 sm:pl-10 pr-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                    />
+                  </div>
+
+                  {/* Sort Dropdown - Beside search bar as in Sample */}
+                  <div className="flex items-center gap-2 sm:flex-shrink-0">
+                    <span className="text-xs sm:text-sm text-gray-600 whitespace-nowrap hidden xs:inline">
+                      Sort by:
+                    </span>
+                    <select className="px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent w-full xs:w-auto min-w-[120px] sm:min-w-[180px]">
+                      <option>Recent first</option>
+                      <option>Price: Low to High</option>
+                      <option>Price: High to Low</option>
+                      <option>Distance</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Results Count - Mobile */}
+            <div className="text-sm text-gray-600 mb-4 lg:hidden">
+              {filteredProducts.length} items found
+            </div>
+
+            {/* Products Grid - Responsive */}
+            <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
+              {filteredProducts.map((product) => (
                 <ProductCard
-                  key={item.id}
-                  item={item}
-                  onClick={() => navigate(`/forsale/${item.id}`)}
+                  key={product.id}
+                  product={product}
+                  onClick={() => handleProductClick(product.id)}
                 />
               ))}
             </div>
 
-            {filtered.length === 0 && (
-              <div className="text-center py-16 text-gray-600 bg-white rounded-xl border mt-8">
-                No items match your filters.<br />
-                Try adjusting search, price, condition or category.
+            {/* Results count - Desktop */}
+            <div className="mt-8 text-center text-gray-600 hidden lg:block">
+              Showing {filteredProducts.length} of {marketplaceItems.length} items
+            </div>
+
+            {/* No Results Message */}
+            {filteredProducts.length === 0 && (
+              <div className="text-center py-12">
+                <div className="text-gray-400 mb-2">No items found</div>
+                <button
+                  onClick={() => {
+                    setSearchQuery("");
+                    setPriceMin("");
+                    setPriceMax("");
+                  }}
+                  className="text-teal-600 hover:text-teal-700 font-medium"
+                >
+                  Clear all filters
+                </button>
               </div>
             )}
           </main>
