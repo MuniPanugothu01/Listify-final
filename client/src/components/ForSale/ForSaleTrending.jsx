@@ -163,8 +163,8 @@ const ForSaleTrending = () => {
   };
 
   return (
-    <section className="py-12 bg-white">
-      <div className="max-w-7xl mx-auto px-4">
+    <section className="py-12 px-4  bg-white">
+      <div className="px-4">
         <div className="flex items-center justify-between mb-8">
           <div>
             <h2 className="text-3xl font-bold text-gray-900">Trending Now</h2>

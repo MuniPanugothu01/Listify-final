@@ -14,10 +14,10 @@ export default function ForSale() {
     <div className=" bg-gray-50">
       <ForSaleHero />
       <SampleForSale/>
-      <ForSaleCategories />
+      {/* <ForSaleCategories /> */}
       <ForSaleCollections />
-      <ForSaleTrending  />
-      <ForSaleBestDeals  />
+      {/* <ForSaleTrending  /> */}
+      {/* <ForSaleBestDeals  /> */}
     </div>
   );
 }
