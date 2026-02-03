@@ -24,6 +24,9 @@ router.post('/forgot-password/verify-otp', validateOTPVerification, authControll
 router.post('/forgot-password/resend-otp', authController.resendForgotPasswordOTP);
 router.put('/reset-password/:resetToken', validateResetPassword, authController.resetPasswordWithToken);
 
+// Password setup for users without passwords
+router.post('/setup-password', authController.setupPassword);
+
 // Legacy routes (keep for compatibility)
 router.post('/forgot-password', validateForgotPassword, authController.forgotPassword);
 router.put('/reset-password-legacy/:resetToken', validateResetPassword, authController.resetPassword);

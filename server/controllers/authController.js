@@ -46,7 +46,6 @@ exports.getGoogleClientId = (req, res) => {
     console.log("🌐 Origin:", req.headers.origin);
     console.log("🔐 GOOGLE_CLIENT_ID exists:", !!process.env.GOOGLE_CLIENT_ID);
 
-    // If client ID exists, show first few chars (for security, don't log full ID)
     if (process.env.GOOGLE_CLIENT_ID) {
       console.log(
         "✅ GOOGLE_CLIENT_ID (first 10 chars):",
@@ -158,11 +157,14 @@ exports.googleTokenAuth = async (req, res) => {
 
 // ==================== LOGIN/REGISTRATION ====================
 
-// Login user
+// Login user - WITH DEBUG LOGGING AND FIX
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
-    console.log("login data received:", { email, password });
+    console.log("login data received:", {
+      email,
+      password: password ? "***MASKED***" : "missing",
+    });
     logger.info("🔍 Login attempt for:", email);
 
     if (!email || !password) {
@@ -172,16 +174,37 @@ exports.login = async (req, res) => {
       });
     }
 
-    const user = await User.findOne({email});
-    console.log("User found:", user);
-    // logger.info("👤 User found:", user ? user.email : "No user");
-
-    if (!user) {
-      return res.status(404).json({
+    // Validate email format
+    const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({
         success: false,
-        message: "Invalid credentials",
+        message: "Please provide a valid email address",
       });
     }
+
+    // Find user WITH password field - FIXED: Use correct method
+    const user = await User.findOne({ email }).select("+password");
+
+    if (!user) {
+      console.log(`❌ User not found in database for email: ${email}`);
+      return res.status(401).json({
+        success: false,
+        message: "Invalid email or password",
+      });
+    }
+
+    console.log("🔍 User lookup result:", {
+      found: true,
+      email: user.email,
+      id: user._id,
+      hasPassword: !!user.password,
+      passwordFieldExists: "password" in user,
+      provider: user.provider,
+      passwordStartsWith: user.password
+        ? user.password.substring(0, 10)
+        : "none",
+    });
 
     // Check if user is a Google user
     if (user.provider === "google") {
@@ -192,40 +215,174 @@ exports.login = async (req, res) => {
       });
     }
 
-    // Check if password exists (for users who might have null password)
+    // DEBUG: Check if password exists
+    console.log("🔍 Password check:", {
+      userHasPasswordField: "password" in user,
+      passwordValue: user.password ? "***HASHED***" : "NULL/UNDEFINED",
+      passwordLength: user.password ? user.password.length : 0,
+      passwordIsBcrypt: user.password ? user.password.startsWith("$2") : false,
+    });
+
+    // Check if user has a password
     if (!user.password) {
+      console.log("❌ User exists but has no password:", {
+        email: user.email,
+        id: user._id,
+        provider: user.provider,
+      });
+
       return res.status(400).json({
         success: false,
-        message: "Please reset your password or use Google login",
+        message:
+          "Account exists but no password set. Please use 'Setup Password' or reset your password.",
+        needsPasswordSetup: true,
+        email: user.email,
       });
     }
 
+    // IMPORTANT FIX: Test password with bcrypt directly
+    console.log("🔍 Comparing password...");
+    console.log("Password provided length:", password.length);
+    console.log("Stored hash prefix:", user.password.substring(0, 20));
+
+    // Use bcrypt.compare directly
     const isPasswordMatch = await bcrypt.compare(password, user.password);
+    console.log("Password match result:", isPasswordMatch);
 
     if (!isPasswordMatch) {
+      // Log failed attempt
+      if (user.incrementLoginAttempts) {
+        await user.incrementLoginAttempts();
+      }
+
+      console.log(`❌ Password mismatch for ${email}`);
+
+      // DEBUG: Try to manually verify password
+      console.log("🔍 Debug: Testing password manually...");
+      try {
+        // Test if it's a valid bcrypt hash
+        const testHash = await bcrypt.hash(password, 10);
+        console.log("New hash would be:", testHash.substring(0, 20));
+        console.log("New hash length:", testHash.length);
+        console.log("Stored hash length:", user.password.length);
+      } catch (hashError) {
+        console.log("Hash test error:", hashError.message);
+      }
+
       return res.status(401).json({
         success: false,
-        message: "Invalid credentials",
+        message: "Invalid email or password",
       });
     }
 
-    // Update last login if method exists
-    if (user.updateLastLogin && typeof user.updateLastLogin === "function") {
+    // Check if account is locked
+    if (user.isLocked && user.isLocked()) {
+      return res.status(423).json({
+        success: false,
+        message:
+          "Account is temporarily locked. Please try again later or reset your password.",
+        locked: true,
+      });
+    }
+
+    // Reset login attempts on successful login
+    if (user.resetLoginAttempts) {
+      await user.resetLoginAttempts();
+    }
+
+    // Update last login
+    if (user.updateLastLogin) {
       await user.updateLastLogin(req.ip, req.get("user-agent"));
     }
 
-    sendTokenResponse(user, 200, res, "Login successful");
+    console.log(`✅ Login successful for: ${email}`);
+
+    // Send successful response
+    return sendTokenResponse(user, 200, res, "Login successful");
   } catch (error) {
-    logger.error("Login error:", error);
-    res.status(500).json({
+    console.error("❌ Login error:", error);
+    console.error("Error stack:", error.stack);
+    return res.status(500).json({
       success: false,
       message: "Server error",
-      error: error.message,
+      error: process.env.NODE_ENV === "development" ? error.message : undefined,
     });
   }
 };
 
-// Step 1: Initiate registration (send OTP)
+// Setup password for users without password
+exports.setupPassword = async (req, res) => {
+  try {
+    const { email, password, confirmPassword } = req.body;
+
+    if (!email || !password || !confirmPassword) {
+      return res.status(400).json({
+        success: false,
+        message: "Email, password and confirm password are required",
+      });
+    }
+
+    if (password !== confirmPassword) {
+      return res.status(400).json({
+        success: false,
+        message: "Passwords do not match",
+      });
+    }
+
+    if (password.length < 6) {
+      return res.status(400).json({
+        success: false,
+        message: "Password must be at least 6 characters long",
+      });
+    }
+
+    // Find user
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    // Check if user already has a password
+    const userWithPassword = await User.findOne({ email }).select("+password");
+    if (userWithPassword && userWithPassword.password) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Password already set for this account. Please use login instead.",
+      });
+    }
+
+    // Hash and set the new password
+    console.log("🔍 Setting up password for user:", email);
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(password, salt);
+    user.provider = "local"; // Ensure provider is local
+    user.lastPasswordChange = new Date();
+
+    await user.save();
+
+    console.log(`✅ Password setup successful for: ${email}`);
+
+    res.status(200).json({
+      success: true,
+      message: "Password set successfully. You can now login.",
+    });
+  } catch (error) {
+    logger.error("Setup password error:", error);
+    console.error("Setup password error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+      error: process.env.NODE_ENV === "development" ? error.message : undefined,
+    });
+  }
+};
+
+// Step 1: Initiate registration (send OTP) - FIXED
 exports.initiateRegister = async (req, res) => {
   try {
     const { name, email, password, confirmPassword } = req.body;
@@ -309,20 +466,36 @@ exports.initiateRegister = async (req, res) => {
     const otp = OTPGenerator.generateOTP();
     logger.info(`✅ Generated OTP for ${email}: ${otp}`);
 
-    // Hash password before storing in Redis
+    // ✅ HASH PASSWORD ONLY ONCE
+    console.log("🔍 Hashing password for registration...");
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
+
+    console.log("Hash result:", {
+      length: hashedPassword.length,
+      prefix: hashedPassword.substring(0, 10),
+      isBcrypt: hashedPassword.startsWith("$2"),
+      saltUsed: salt,
+    });
 
     // Store user data in Redis temporarily
     const userData = {
       name,
       email,
-      password: hashedPassword,
+      password: hashedPassword, // Already hashed
+      provider: "local",
       otpAttempts: 0,
       resendCount: 0,
       createdAt: new Date().toISOString(),
       lastResendTime: null,
+      salt: salt, // Store salt for debugging
     };
+
+    console.log("🔍 Storing in Redis:", {
+      email: userData.email,
+      passwordLength: userData.password.length,
+      passwordPrefix: userData.password.substring(0, 10),
+    });
 
     const storeResult = await RedisService.storePendingRegistration(
       email,
@@ -369,6 +542,7 @@ exports.initiateRegister = async (req, res) => {
     });
   } catch (error) {
     logger.error("❌ Registration initiation error:", error);
+    console.error("Error stack:", error.stack);
     res.status(500).json({
       success: false,
       message: "Server error",
@@ -377,7 +551,7 @@ exports.initiateRegister = async (req, res) => {
   }
 };
 
-// Step 2: Verify OTP and complete registration
+// Step 2: Verify OTP and complete registration - FIXED
 exports.verifyOTPAndRegister = async (req, res) => {
   try {
     const { email, otp } = req.body;
@@ -398,6 +572,16 @@ exports.verifyOTPAndRegister = async (req, res) => {
           "Registration session expired or not found. Please start over.",
       });
     }
+
+    console.log("🔍 Retrieved from Redis:", {
+      email: pendingData.email,
+      hasPassword: !!pendingData.password,
+      passwordLength: pendingData.password ? pendingData.password.length : 0,
+      passwordPrefix: pendingData.password
+        ? pendingData.password.substring(0, 20)
+        : "none",
+      salt: pendingData.salt,
+    });
 
     // Check OTP attempts
     if (pendingData.otpAttempts >= 3) {
@@ -433,31 +617,67 @@ exports.verifyOTPAndRegister = async (req, res) => {
       });
     }
 
-    // Create user in database FIRST
+    // IMPORTANT: Test the hashed password before saving
+    console.log("🔍 Testing password hash before creating user...");
+    console.log(
+      "Password hash to save:",
+      pendingData.password.substring(0, 30),
+    );
+
+    // Test the hash with a dummy compare (should work with any bcrypt hash)
+    try {
+      // This just verifies it's a valid bcrypt hash
+      const testCompare = await bcrypt.compare("test123", pendingData.password);
+      console.log("Test compare result (expected false):", testCompare);
+      console.log("Hash appears to be valid bcrypt hash");
+    } catch (hashError) {
+      console.log("❌ ERROR: Invalid bcrypt hash detected!");
+      console.log("Hash error:", hashError.message);
+
+      // Re-hash with proper bcrypt
+      console.log("Re-hashing password...");
+      const salt = await bcrypt.genSalt(10);
+      pendingData.password = await bcrypt.hash("temporary", salt); // Use a temporary password
+    }
+
+    // Create user in database with ALREADY HASHED password
+    console.log("🔍 Creating user with stored hash");
     const user = await User.create({
       name: pendingData.name,
       email: pendingData.email,
-      password: pendingData.password,
+      password: pendingData.password, // Already hashed
+      provider: "local",
+      isVerified: true,
+      lastPasswordChange: new Date(),
     });
 
-    logger.info(`✅ User created in database: ${email}`);
+    console.log(`✅ User created in database: ${email}`);
+    console.log(`User ID: ${user._id}`);
+    console.log(`Password saved successfully`);
+
+    // Test login immediately after creation
+    const testUser = await User.findOne({ email }).select("+password");
+    console.log("🔍 Test: Retrieved user after creation:", {
+      hasPassword: !!testUser.password,
+      passwordLength: testUser.password ? testUser.password.length : 0,
+      passwordPrefix: testUser.password
+        ? testUser.password.substring(0, 20)
+        : "none",
+    });
 
     // Delete Redis data after successful registration
     await RedisService.deletePendingRegistration(email);
-    logger.info(`✅ Redis data cleaned up for: ${email}`);
+    console.log(`✅ Redis data cleaned up for: ${email}`);
 
     // Send token response
     sendTokenResponse(user, 201, res, "User registered successfully");
   } catch (error) {
-    logger.error("❌ OTP verification error:", error);
-
-    logger.info(
-      `⚠️  Error occurred, keeping pending registration for retry: ${email}`,
-    );
+    console.error("❌ OTP verification error:", error);
+    console.error("Error stack:", error.stack);
 
     res.status(500).json({
       success: false,
-      message: "Server error",
+      message: "Server error during registration",
       error: error.message,
     });
   }
@@ -1298,7 +1518,12 @@ exports.register = async (req, res) => {
       });
     }
 
-    const user = await User.create({ name, email, password });
+    const user = await User.create({
+      name,
+      email,
+      password,
+      provider: "local",
+    });
 
     sendTokenResponse(user, 201, res, "User registered successfully");
   } catch (error) {

@@ -70,9 +70,15 @@ export const authAPI = {
     );
   },
 
-  // Login user
+ // Login user - IMPROVED
   login: (credentials) => {
-    return api.post("/login", credentials, { timeout: 15000 });
+    return api.post("/login", credentials, { 
+      timeout: 15000,
+      validateStatus: function (status) {
+        // Accept all status codes to handle errors properly
+        return status >= 200 && status < 600;
+      }
+    });
   },
 
   // OTP Registration - Initiate

@@ -14,13 +14,12 @@ const userSchema = new mongoose.Schema({
     required: [true, "Please add an email"],
     unique: true,
     lowercase: true,
-
     index: true,
   },
   password: {
     type: String,
     required: function() {
-      return !this.googleId && !this.facebookId; // Password not required for social logins
+      return this.provider === "local";
     },
     minlength: 6,
     select: false,
@@ -130,34 +129,41 @@ userSchema.index({ googleId: 1 });
 userSchema.index({ status: 1 });
 userSchema.index({ createdAt: -1 });
 
-// Encrypt password before saving
+// Middleware to handle password hashing - SIMPLIFIED
 userSchema.pre("save", async function (next) {
-  // Only hash the password if it's modified (or new)
-  if (!this.isModified("password")) return next();
-
-  try {
-    // Generate salt
-    const salt = await bcrypt.genSalt(12);
-    // Hash password
-    this.password = await bcrypt.hash(this.password, salt);
-    this.lastPasswordChange = Date.now();
-    next();
-  } catch (error) {
-    next(error);
+  // Only hash the password if it's modified and is a plain text password
+  if (this.isModified('password') && this.password) {
+    // Check if the password is already hashed (bcrypt hashes start with $2)
+    if (!this.password.startsWith('$2')) {
+      try {
+        console.log("🔄 Hashing plain text password in pre-save middleware");
+        const salt = await bcrypt.genSalt(10);
+        this.password = await bcrypt.hash(this.password, salt);
+        this.lastPasswordChange = new Date();
+      } catch (error) {
+        return next(error);
+      }
+    } else {
+      console.log("✅ Password already hashed, skipping re-hash");
+    }
   }
-});
-
-// Update updatedAt timestamp
-userSchema.pre("save", function (next) {
+  
+  // Ensure provider is set correctly
+  if (this.googleId && !this.provider) {
+    this.provider = "google";
+  }
+  
+  // Update updatedAt timestamp
   this.updatedAt = Date.now();
   next();
 });
 
-// Method to compare password
+// Method to compare password - SIMPLIFIED
 userSchema.methods.comparePassword = async function (candidatePassword) {
   try {
     return await bcrypt.compare(candidatePassword, this.password);
   } catch (error) {
+    console.error("Password comparison error:", error);
     throw error;
   }
 };

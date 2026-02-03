@@ -49,62 +49,70 @@ export const googleLogin = createAsyncThunk(
     }
   },
 );
+
+
+
 export const loginUser = createAsyncThunk(
   "auth/loginUser",
   async (credentials, { rejectWithValue }) => {
     try {
       const response = await authAPI.login(credentials);
       
-      console.log("Backend response status:", response.status);
-      console.log("Backend response data:", response.data);
+      console.log("Backend response:", {
+        status: response.status,
+        data: response.data,
+        success: response.data.success
+      });
       
-      // Check HTTP status code first
-      if (response.status >= 200 && response.status < 300) {
-        // Check if the backend response indicates SUCCESS
-        if (response.data && response.data.success === true) {
-          // Store token only if success is true
-          if (response.data.token) {
-            localStorage.setItem("authToken", response.data.token);
-            localStorage.setItem("user", JSON.stringify(response.data.user));
-          }
-          return response.data;
-        } else {
-          // If backend returns success: false, treat it as an error
-          console.log("Backend returned success: false");
-          return rejectWithValue(response.data.message || "Login failed");
-        }
-      } else {
-        // If HTTP status is not 2xx, treat as error
-        console.log("HTTP error status:", response.status);
-        return rejectWithValue(response.data.message || `HTTP Error ${response.status}`);
+      // CRITICAL: Check if backend returned success: false
+      if (response.data && response.data.success === false) {
+        console.log("Backend returned success: false with message:", response.data.message);
+        return rejectWithValue(response.data.message || "Login failed");
       }
+      
+      // Only proceed if success is true or undefined (for backward compatibility)
+      if (response.data && (response.data.success === true || response.data.success === undefined)) {
+        if (response.data.token) {
+          localStorage.setItem("authToken", response.data.token);
+          localStorage.setItem("user", JSON.stringify(response.data.user));
+        }
+        return response.data;
+      } else {
+        // Fallback for unexpected response format
+        return rejectWithValue("Invalid server response");
+      }
+      
     } catch (error) {
       console.error("Login API error:", error);
       
       // Handle axios errors
       if (error.response) {
-        // The request was made and the server responded with a status code
-        // that falls out of the range of 2xx
-        console.error("Error response data:", error.response.data);
-        console.error("Error response status:", error.response.status);
+        // Server responded with error status
+        const errorData = error.response.data;
+        const errorMessage = errorData?.message || 
+                           errorData?.error || 
+                           `Server error: ${error.response.status}`;
         
-        return rejectWithValue(
-          error.response.data?.message || 
-          error.response.data?.error || 
-          `Server error: ${error.response.status}`
-        );
+        console.error("Server error response:", {
+          status: error.response.status,
+          message: errorMessage,
+          data: errorData
+        });
+        
+        return rejectWithValue(errorMessage);
       } else if (error.request) {
-        // The request was made but no response was received
-        console.error("No response received:", error.request);
+        // No response received
+        console.error("No response received from server");
         return rejectWithValue("No response from server. Please try again.");
       } else {
-        // Something happened in setting up the request
+        // Request setup error
         console.error("Request setup error:", error.message);
         return rejectWithValue(error.message || "Login failed");
       }
     }
   },
 );
+
 
 export const initiateRegister = createAsyncThunk(
   "auth/initiateRegister",
