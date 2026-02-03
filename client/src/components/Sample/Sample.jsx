@@ -469,7 +469,7 @@ const ProductCard = ({ product, onClick }) => {
         <img
           src={product.image}
           alt={product.title}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 p-2"
+          className="w-full h-full group-hover:scale-105 transition-transform duration-300"
         />
         <button
           onClick={(e) => e.stopPropagation()}
