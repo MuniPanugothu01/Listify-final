@@ -3,10 +3,7 @@ import { Eye, EyeOff, ArrowLeft } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { HiDotsHorizontal } from "react-icons/hi";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  loginUser,
-  clearError,
-} from "../../redux/slices/authSlice";
+import { loginUser, clearError } from "../../redux/slices/authSlice";
 import toast, { Toaster } from "react-hot-toast";
 import SocialAuth from "./SocialAuth";
 
@@ -28,36 +25,46 @@ const Login = () => {
 
   // Handle errors from Redux
   useEffect(() => {
-    console.log("Current auth state:", { loading, error, success, token, user });
-    
+    console.log("Current auth state:", {
+      loading,
+      error,
+      success,
+      token,
+      user,
+    });
+
     if (error) {
       console.log("Redux error detected:", error);
-      toast.error(typeof error === 'string' ? error : "Login failed. Please check your credentials.");
+      toast.error(
+        typeof error === "string"
+          ? error
+          : "Login failed. Please check your credentials.",
+      );
       dispatch(clearError());
     }
   }, [error, dispatch]);
 
   // Handle successful login
   useEffect(() => {
-    console.log("Checking for successful login...", { 
-      success, 
-      token: !!token, 
-      user: !!user 
+    console.log("Checking for successful login...", {
+      success,
+      token: !!token,
+      user: !!user,
     });
-    
+
     if (success && token && user) {
       console.log("Login successful, navigating to home page");
       toast.success("Login successful!");
-      
+
       if (rememberMe) {
         localStorage.setItem("rememberMe", "true");
       }
-      
+
       // Navigate after a short delay
       const timer = setTimeout(() => {
         navigate("/");
       }, 1000);
-      
+
       return () => clearTimeout(timer);
     }
   }, [success, token, user, navigate, rememberMe]);
@@ -98,7 +105,7 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     e.stopPropagation();
-    
+
     console.log("Form submitted with:", formData);
     console.log("Form validation result:", validateForm());
 
@@ -118,13 +125,16 @@ const Login = () => {
       );
 
       console.log("Dispatch result:", result);
-      
+
       // Check the result type
       if (loginUser.fulfilled.match(result)) {
         console.log("Login successful - Redux fulfilled");
         // The useEffect will handle navigation
       } else if (loginUser.rejected.match(result)) {
-        console.log("Login failed - Redux rejected:", result.error || result.payload);
+        console.log(
+          "Login failed - Redux rejected:",
+          result.error || result.payload,
+        );
         // Error is already shown in the useEffect
       }
     } catch (err) {
@@ -162,12 +172,14 @@ const Login = () => {
         <div className="hidden lg:flex lg:w-1/2 min-h-screen relative">
           <div className="relative z-20 w-full p-12 flex flex-col justify-between">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2 text-white">
-                <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
-                  <span className="text-slate-900 font-bold text-xl">L</span>
+              <Link to="/">
+                <div className="flex items-center gap-2 text-white">
+                  <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
+                    <span className="text-slate-900 font-bold text-xl">L</span>
+                  </div>
+                  <span className="text-2xl font-bold capitalize">listify</span>
                 </div>
-                <span className="text-2xl font-bold capitalize">listify</span>
-              </div>
+              </Link>
               <Link to="/">
                 <button className="flex items-center gap-1 ml-10 text-gray-400 hover:text-gray-300 transition-colors cursor-pointer">
                   <ArrowLeft size={20} />
@@ -175,15 +187,15 @@ const Login = () => {
                 </button>
               </Link>
             </div>
-
             <div className="text-white max-w-xl mt-30">
               <p className="text-5xl font-bold leading-tight mb-3">
-                Edit Smarter. Export Faster. <br />
-                Create Anywhere.
+                List Smarter. Sell Faster. <br />
+                Grow Anywhere.
               </p>
               <p className="text-slate-300 text-md mb-30">
-                From quick social media clips to full-length videos, our
-                powerful editor lets you work seamlessly across devices.
+                From cars and electronics to services and properties, Listify
+                helps you showcase, discover, and sell everything in one
+                powerful platform.
               </p>
               <div className="flex items-center gap-1 -mt-22">
                 <div className="w-6 h-1 bg-white rounded-full"></div>
@@ -201,9 +213,6 @@ const Login = () => {
                 <h2 className="text-4xl font-bold text-gray-900 mb-2">
                   Welcome Back!
                 </h2>
-                <p className="text-gray-600">
-                  Log in to start creating stunning videos with ease.
-                </p>
               </div>
 
               {/* FORM */}
@@ -300,7 +309,7 @@ const Login = () => {
                     Forgot Password?
                   </button>
                 </div>
-                
+
                 {/* SUBMIT BUTTON */}
                 <button
                   type="submit"
