@@ -176,21 +176,9 @@ const Category = () => {
     },
   ];
 
-  const [showAll, setShowAll] = useState(false);
   const [expandedCard, setExpandedCard] = useState(null);
   const [isMobile, setIsMobile] = useState(false);
-  const [initialCardsCount, setInitialCardsCount] = useState(8);
   const [tapCount, setTapCount] = useState({}); // Track tap count per card
-
-  const getInitialCardsCount = () => {
-    if (typeof window !== 'undefined') {
-      if (window.innerWidth >= 1280) return 8;
-      if (window.innerWidth >= 1024) return 6;
-      if (window.innerWidth >= 640) return 6;
-      return 4;
-    }
-    return 8;
-  };
 
   const checkIsMobile = useCallback(() => {
     return typeof window !== 'undefined' && window.innerWidth < 768;
@@ -242,7 +230,6 @@ const Category = () => {
     const handleResize = () => {
       const mobile = checkIsMobile();
       setIsMobile(mobile);
-      setInitialCardsCount(getInitialCardsCount());
       
       if (!mobile) {
         setExpandedCard(null);
@@ -258,9 +245,6 @@ const Category = () => {
       document.removeEventListener('click', handleClickOutside);
     };
   }, [checkIsMobile, handleClickOutside]);
-
-  const displayedCategories = showAll ? categories : categories.slice(0, initialCardsCount);
-  const hasMoreCards = categories.length > initialCardsCount;
 
   const renderCard = (category) => {
     const isExpanded = expandedCard === category.id;
@@ -383,41 +367,12 @@ const Category = () => {
           )}
         </div>
 
-        {/* Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 py-2 px-12 gap-3 sm:gap-4 md:gap-5 lg:gap-6 mt-6 sm:mt-8 md:mt-10 lg:mt-12">
-          {displayedCategories.map(renderCard)}
+        {/* Grid - Showing ALL categories at once */}
+        <div className="lg:px-12 lg:py-4 mt-4 grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
+          {categories.map(renderCard)}
         </div>
 
-        {/* View More / View Less Button */}
-        {hasMoreCards && (
-          <div className="text-center mt-8 sm:mt-10 md:mt-12">
-            <button
-              onClick={() => setShowAll(!showAll)}
-              className="px-4 sm:px-6 md:px-8 py-2 sm:py-2.5 md:py-3 border-2 border-[#27bb97] text-[#27bb97] font-semibold rounded-lg sm:rounded-xl hover:bg-[#27bb97] hover:text-white transition-all duration-300 hover:shadow-lg flex items-center justify-center mx-auto gap-1 sm:gap-2 text-sm sm:text-base"
-            >
-              {showAll ? (
-                <>
-                  View Less
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 sm:h-5 sm:w-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clipRule="evenodd" />
-                  </svg>
-                </>
-              ) : (
-                <>
-                  View More Categories
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 sm:h-5 sm:w-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-                  </svg>
-                </>
-              )}
-            </button>
-            {!showAll && (
-              <p className="text-gray-500 mt-2 sm:mt-3 text-xs sm:text-sm">
-                Showing {initialCardsCount} of {categories.length} categories
-              </p>
-            )}
-          </div>
-        )}
+        {/* Removed View More / View Less Button and count message */}
       </div>
     </div>
   );

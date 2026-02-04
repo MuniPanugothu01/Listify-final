@@ -17,17 +17,13 @@ const NavSearchBar = ({ selectedLocation, setSelectedLocation, isScrolled }) => 
 
   // Category items with React Icons
   const categoryItems = [
-    { name: "ALL", count: "88", icon: TbCategory },
+    {name: "Electronics", count: "5", icon: TbCategory },
     { name: "Events", count: "12", icon: IoLocationOutline },
     { name: "Roommates", count: "15", icon: CiLocationArrow1 },
     { name: "Rentals", count: "23", icon: TbCategory },
     { name: "Jobs", count: "34", icon: TbCategory },
-    { name: "Care Services", count: "8", icon: TbCategory },
-    { name: "IT Training", count: "5", icon: TbCategory },
+    { name: "Cars", count: "8", icon: TbCategory },
     { name: "Services", count: "45", icon: TbCategory },
-    { name: "Real Estate", count: "29", icon: TbCategory },
-    { name: "Financial & Taxation", count: "7", icon: TbCategory },
-    { name: "Lawyers", count: "11", icon: TbCategory },
   ];
 
   // Location data
@@ -128,13 +124,9 @@ const NavSearchBar = ({ selectedLocation, setSelectedLocation, isScrolled }) => 
     },
   ];
 
-  // Sulekha-style search data
   const trendingEventSearches = [
     "Inder Sahani Comedy Show Tickets",
     "Sonu Nigam Concert Tickets",
-    "Artist Concert Tour Dates 2025",
-    "Hariharan Live Concert Tickets",
-    "Ghatan Karthick",
   ];
 
   const searchSuggestions = {
@@ -144,15 +136,10 @@ const NavSearchBar = ({ selectedLocation, setSelectedLocation, isScrolled }) => 
       "Rentals",
       "Jobs",
       "Local Services",
-      "Lawyers",
-      "Wedding Services",
     ],
     Roommates: [
       "Roommates",
-      "IT Training",
       "Care Services",
-      "Astrologers",
-      "Immigration",
       "Cars",
     ],
   };
@@ -645,41 +632,7 @@ const NavSearchBar = ({ selectedLocation, setSelectedLocation, isScrolled }) => 
                     </div>
                   )}
 
-                  {/* Footer with Countries */}
-                  <div className="p-3 sm:p-4 bg-gray-50">
-                    <div className="flex flex-col sm:flex-row items-center justify-between space-y-3 sm:space-y-0">
-                      <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-3">
-                        <span className="text-xs sm:text-sm text-gray-600">
-                          Stay on Listify
-                        </span>
-                        <div className="flex flex-wrap gap-1.5 sm:gap-2">
-                          {footerCountries.map((country, index) => (
-                            <button
-                              key={index}
-                              className="flex items-center space-x-1.5 sm:space-x-2 px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg text-xs hover:bg-white transition-colors border border-gray-200 shadow-sm"
-                              title={country.name}
-                            >
-                              <img
-                                src={country.flagImage}
-                                alt={`${country.name} flag`}
-                                className="w-4 h-3 sm:w-5 sm:h-3.5 object-cover rounded-sm"
-                                srcSet={`${country.flagImage} 1x, ${country.flagImage2x} 2x`}
-                              />
-                              <span className="text-gray-700 font-medium text-xs sm:text-sm">
-                                {country.name}
-                              </span>
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                      <button
-                        onClick={() => setShowTopCities(true)}
-                        className="text-blue-600 hover:text-blue-700 text-xs sm:text-sm font-medium cursor-pointer hover:underline"
-                      >
-                        View top cities
-                      </button>
-                    </div>
-                  </div>
+                
                 </>
               ) : (
                 /* Search Results */
@@ -915,9 +868,7 @@ const NavSearchBar = ({ selectedLocation, setSelectedLocation, isScrolled }) => 
                           >
                             <span className="text-gray-800 text-sm sm:text-base truncate block">{event}</span>
                           </button>
-                          <p className="text-gray-300 w-full text-xs sm:text-base">
-                            -----------------------------------------------------------------------------------------------
-                          </p>
+                       
                         </div>
                       ))}
                     </div>
@@ -936,9 +887,7 @@ const NavSearchBar = ({ selectedLocation, setSelectedLocation, isScrolled }) => 
                                     <h4 className="font-bold text-red-600 text-xs sm:text-sm uppercase tracking-wide truncate">
                                       TAKECARE
                                     </h4>
-                                    <span className="text-gray-300 ml-2 hidden sm:inline">
-                                      |------------------------
-                                    </span>
+                                    
                                   </div>
                                 </>
                               ) : (
@@ -946,9 +895,7 @@ const NavSearchBar = ({ selectedLocation, setSelectedLocation, isScrolled }) => 
                                   <h4 className="font-bold text-red-600 text-xs sm:text-sm uppercase tracking-wide truncate">
                                     {category}
                                   </h4>
-                                  <span className="text-gray-300 ml-2 hidden sm:inline">
-                                    |------------------------------------------------------------------------------
-                                  </span>
+                                
                                 </div>
                               )}
                               <div className="flex flex-col sm:flex-wrap gap-1 sm:gap-2">
@@ -964,9 +911,7 @@ const NavSearchBar = ({ selectedLocation, setSelectedLocation, isScrolled }) => 
                                         {item}
                                       </span>
                                     </button>
-                                    <p className="text-gray-300 w-full text-xs sm:text-base">
-                                      -----------------------------------------------------------------------------------------------
-                                    </p>
+                                
                                   </div>
                                 ))}
                               </div>
@@ -987,20 +932,9 @@ const NavSearchBar = ({ selectedLocation, setSelectedLocation, isScrolled }) => 
                           { name: "Events", icon: "/bag.png" },
                           { name: "Roommates", icon: "/house.png" },
                           { name: "Rentals", icon: "/house.png" },
-                          { name: "IT Training", icon: "/ittraining.jpg" },
                           { name: "Jobs", icon: "/moble.png" },
-                          { name: "Care Services", icon: "/carservice.png" },
-                          { name: "Local Services", icon: "/carservice.png" },
-                          { name: "Travels", icon: "/moble.png" },
+                          { name: "Local", icon: "/carservice.png" },
                           { name: "TakeCares", icon: "/Babiessitter.jpg" },
-                          {
-                            name: "Immigration",
-                            icon: "/immigration-icon.png",
-                          },
-                          {
-                            name: "Wedding Services",
-                            icon: "/wedding-services-icon.png",
-                          },
                           { name: "Cars", icon: "/car1.png" },
                         ].map((service, index) => (
                           <button

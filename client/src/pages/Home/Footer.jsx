@@ -61,6 +61,7 @@ const Footer = () => {
     { name: "Services", path: "/our-services" },
     { name: "Post-add", path: "/post-add" },
     { name: "Contact", path: "/contact-us" }, 
+    { name: "Reviews", path: "/reviews" },
   ];
 
   const legalLinks = [
