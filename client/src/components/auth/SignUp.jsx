@@ -659,16 +659,18 @@ export default function SignUp() {
         {/* Left Side - Text Content Over Background */}
         <div className="hidden lg:flex lg:w-1/2 min-h-screen relative">
           {/* Content Container */}
-          <div className="relative z-20 w-full p-12 flex flex-col justify-between">
+          <div className="relative z-20 w-full p-10 flex flex-col justify-between">
             {/* Top Bar - Logo and Back Button */}
             <div className="flex items-center justify-between">
               {/* Logo */}
-              <div className="flex items-center gap-2 text-white">
-                <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
-                  <span className="text-slate-900 font-bold text-xl">L</span>
+              <Link to="/">
+                <div className="flex items-center gap-2 text-white">
+                  <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
+                    <span className="text-slate-900 font-bold text-xl">L</span>
+                  </div>
+                  <span className="text-2xl font-bold capitalize">listify</span>
                 </div>
-                <span className="text-2xl font-bold capitalize">listify</span>
-              </div>
+              </Link>
 
               {/* Back to Website */}
               <Link to="/">
@@ -680,14 +682,15 @@ export default function SignUp() {
             </div>
 
             {/* Main Text Content - Centered */}
-            <div className="text-white max-w-xl mt-30">
+            <div className="text-white max-w-xl ">
               <p className="text-5xl font-bold leading-tight mb-3">
-                Join the Creative Revolution <br />
-                Start Creating Today.
+                Join Listify Today <br />
+                Start Listing Instantly.
               </p>
-              <p className="text-slate-300 text-md mb-30">
-                Unlock powerful video editing tools and collaborate with
-                creators worldwide. Your journey to amazing content starts here.
+              <p className="text-slate-300 text-md ">
+                Create your account to list products, offer services, and
+                connect with buyers across categories like cars, electronics,
+                and more.
               </p>
               {/* Carousel Dots */}
               <div className="flex items-center gap-1 mt-12">
@@ -699,12 +702,12 @@ export default function SignUp() {
         </div>
 
         {/* Right Side - Register Form Container */}
-        <div className="w-full lg:w-1/2 flex items-center justify-center min-h-screen">
+        <div className="w-full lg:w-1/2 flex items-center justify-center">
           {/* Register Form Card */}
-          <div className="w-[90vw] lg:w-[87vh] h-[85vh] lg:h-[120vh] mt-2 ml-20 rounded-md flex items-center justify-center bg-white/95 backdrop-blur-sm border border-white/20 p-8 shadow-2xl overflow-y-auto">
+          <div className="w-[90vw] lg:w-[80vh] mt-2 p-2 ml-20 rounded-md flex items-center justify-center bg-white/95 backdrop-blur-sm border border-white/20 shadow-2xl overflow-y-auto">
             <div className="w-full max-w-md">
               {/* Welcome Text */}
-              <div className="mb-4">
+              <div className="mb-4 px-6  text-center">
                 <h2 className="text-4xl font-bold text-gray-900 mb-2">
                   Create Account
                 </h2>
@@ -716,13 +719,13 @@ export default function SignUp() {
               {/* Register Form */}
               <form onSubmit={handleSubmit} className="space-y-5 mt-2">
                 {/* Google Sign Up - Pass custom success handler */}
-                <SocialAuth 
-                  onSuccess={handleGoogleSignUpSuccess} 
-                  isSignUp={true} 
+                <SocialAuth
+                  onSuccess={handleGoogleSignUpSuccess}
+                  isSignUp={true}
                 />
 
                 {/* Divider */}
-                <div className="relative flex items-center justify-center my-6">
+                <div className="relative flex items-center justify-center">
                   <div className="absolute inset-0 flex items-center">
                     <div className="w-full border-t border-gray-300"></div>
                   </div>
