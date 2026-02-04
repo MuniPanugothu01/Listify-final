@@ -20,6 +20,7 @@ import {
   FaPlus,
   FaRegHeart,
   FaBell,
+  FaUserCircle,
 } from "react-icons/fa";
 import NavSearchBar from "./NavSearchBar";
 import {
@@ -33,7 +34,7 @@ import { LuPencilLine } from "react-icons/lu";
 import { IoLocationOutline } from "react-icons/io5";
 import { CiLocationArrow1 } from "react-icons/ci";
 import { ScrollProgress } from "../../components/ui/scroll-progress";
-import { useAuth } from "../../hooks/useAuth"; // Import useAuth hook
+import { useAuth } from "../../hooks/useAuth";
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -158,20 +159,38 @@ const Navbar = () => {
     setNotifications(notifications.map((notif) => ({ ...notif, read: true })));
   };
 
-  // Get user initial or profile image
-  const getUserInitial = () => {
-    if (!user || !user.name) return "U";
-    return user.name.charAt(0).toUpperCase();
+  // Get user's first name
+  const getUserFirstName = () => {
+    if (!user || !user.name) return "User";
+    return user.name.split(" ")[0];
   };
 
-  const getUserName = () => {
+  const getUserFullName = () => {
     if (!user || !user.name) return "User";
-    return user.name.split(" ")[0]; // Return first name only
+    return user.name;
   };
 
   const getUserEmail = () => {
     if (!user || !user.email) return "user@example.com";
     return user.email;
+  };
+
+  // Check if user logged in with Google
+  const isGoogleUser = () => {
+    return user && user.provider === "google";
+  };
+
+  // Get user profile image - only show Google image for Google users
+  const getUserProfileImage = () => {
+    if (!user) return null;
+
+    // Only show Google profile image for Google users
+    if (isGoogleUser() && user.googleProfileImage) {
+      return user.googleProfileImage;
+    }
+
+    // For email users or Google users without image, return null to show icon
+    return null;
   };
 
   // Close dropdown when clicking outside
@@ -348,14 +367,20 @@ const Navbar = () => {
       border-left: 3px solid #3B82F6;
     }
 
-    .user-initial {
+    .user-profile-image {
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid white;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .user-icon-container {
       background: linear-gradient(135deg, #27bb97, #1fa987);
       color: white;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-weight: bold;
     }
   `;
 
@@ -372,7 +397,7 @@ const Navbar = () => {
       >
         <div className="px-3 sm:px-4 md:px-6 lg:px-7">
           <div className="flex justify-between items-center py-3 sm:py-4 md:py-3">
-            {/* Logo */}
+            {/* Logo - WITHOUT the "Hi, First Name" on left side */}
             <div className="flex items-center flex-shrink-0">
               <Link
                 to="/"
@@ -573,8 +598,33 @@ const Navbar = () => {
                   >
                     {isAuthenticated ? (
                       <>
-                        <div className="user-initial w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9 text-sm sm:text-base md:text-lg">
-                          {getUserInitial()}
+                        <div className="flex items-center gap-2">
+                          {/* Show Google profile image ONLY for Google users */}
+                          {isGoogleUser() && getUserProfileImage() ? (
+                            <img
+                              src={getUserProfileImage()}
+                              alt={getUserFullName()}
+                              className="user-profile-image w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9"
+                              onError={(e) => {
+                                // If Google image fails to load, show user icon
+                                e.target.style.display = "none";
+                                const nextSibling = e.target.nextElementSibling;
+                                if (nextSibling) {
+                                  nextSibling.style.display = "flex";
+                                }
+                              }}
+                            />
+                          ) : (
+                            /* Show static user icon for email users or Google users without image */
+                            <div className="user-icon-container w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9">
+                              <FaUserCircle className="text-white text-sm sm:text-base md:text-lg" />
+                            </div>
+                          )}
+
+                          {/* Display user name next to profile image */}
+                          <span className="hidden lg:inline text-sm font-medium">
+                            {getUserFirstName()}
+                          </span>
                         </div>
                         <FaChevronDown className="h-3 w-3 sm:h-4 sm:w-4" />
                       </>
@@ -588,7 +638,7 @@ const Navbar = () => {
                     )}
                   </button>
 
-                  {/* Profile Dropdown Menu (only when authenticated) */}
+                  {/* Profile Dropdown Menu */}
                   {showProfileDropdown && isAuthenticated && (
                     <div
                       ref={profileDropdownRef}
@@ -597,15 +647,39 @@ const Navbar = () => {
                       {/* User Info Header */}
                       <div className="p-3 sm:p-4 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-200">
                         <div className="flex items-center gap-2 sm:gap-3">
-                          <div className="user-initial w-8 h-8 sm:w-10 sm:h-10 text-sm sm:text-base">
-                            {getUserInitial()}
-                          </div>
+                          {/* Show Google profile image ONLY for Google users in dropdown */}
+                          {isGoogleUser() && getUserProfileImage() ? (
+                            <img
+                              src={getUserProfileImage()}
+                              alt={getUserFullName()}
+                              className="user-profile-image w-8 h-8 sm:w-10 sm:h-10"
+                              onError={(e) => {
+                                // If Google image fails to load, show user icon
+                                e.target.style.display = "none";
+                                const nextSibling = e.target.nextElementSibling;
+                                if (nextSibling) {
+                                  nextSibling.style.display = "flex";
+                                }
+                              }}
+                            />
+                          ) : (
+                            /* Show static user icon for email users or Google users without image */
+                            <div className="user-icon-container w-8 h-8 sm:w-10 sm:h-10">
+                              <FaUserCircle className="text-white text-base sm:text-lg" />
+                            </div>
+                          )}
+
                           <div className="flex-1 min-w-0">
                             <h3 className="font-semibold text-gray-900 text-sm sm:text-base truncate">
-                              {getUserName()}
+                              {getUserFullName()}
                             </h3>
                             <p className="text-xs sm:text-sm text-gray-600 truncate">
                               {getUserEmail()}
+                              {isGoogleUser() && (
+                                <span className="ml-2 text-xs text-blue-600">
+                                  (Google)
+                                </span>
+                              )}
                             </p>
                           </div>
                         </div>
@@ -706,6 +780,49 @@ const Navbar = () => {
               }`}
             >
               <div className="flex flex-col space-y-3 sm:space-y-4 mt-3 sm:mt-4">
+                {/* User Info in Mobile Menu */}
+                {isAuthenticated && user && (
+                  <div className="p-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg">
+                    <div className="flex items-center gap-3">
+                      {/* Show Google profile image ONLY for Google users in mobile menu */}
+                      {isGoogleUser() && getUserProfileImage() ? (
+                        <img
+                          src={getUserProfileImage()}
+                          alt={getUserFullName()}
+                          className="user-profile-image w-10 h-10"
+                          onError={(e) => {
+                            // If Google image fails to load, show user icon
+                            e.target.style.display = "none";
+                            const nextSibling = e.target.nextElementSibling;
+                            if (nextSibling) {
+                              nextSibling.style.display = "flex";
+                            }
+                          }}
+                        />
+                      ) : (
+                        /* Show static user icon for email users or Google users without image */
+                        <div className="user-icon-container w-10 h-10">
+                          <FaUserCircle className="text-white text-base" />
+                        </div>
+                      )}
+
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-semibold text-gray-900 text-sm truncate">
+                          {getUserFullName()}
+                        </h3>
+                        <p className="text-xs text-gray-600 truncate">
+                          {getUserEmail()}
+                          {isGoogleUser() && (
+                            <span className="ml-2 text-xs text-blue-600">
+                              (Google)
+                            </span>
+                          )}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 <div className="grid grid-cols-2 gap-2">
                   {mainMenuItems.map((item) => (
                     <Link
@@ -790,23 +907,6 @@ const Navbar = () => {
                 {/* Mobile Profile/Sign In Link */}
                 {isAuthenticated ? (
                   <>
-                    {/* User Info in Mobile Menu */}
-                    <div className="p-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg">
-                      <div className="flex items-center gap-3">
-                        <div className="user-initial w-10 h-10 text-base">
-                          {getUserInitial()}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <h3 className="font-semibold text-gray-900 text-sm truncate">
-                            {getUserName()}
-                          </h3>
-                          <p className="text-xs text-gray-600 truncate">
-                            {getUserEmail()}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-
                     <Link
                       to="/dashboard"
                       onClick={() => {
@@ -837,7 +937,7 @@ const Navbar = () => {
                       }`}
                     >
                       <div className="flex items-center gap-2">
-                        <FaUserFriends className="h-4 w-4 sm:h-5 sm:w-5" />
+                        <FaUserFriends className="h-4 w-4 sm:h-5 sm:h-5" />
                         <span>My Profile</span>
                       </div>
                     </Link>

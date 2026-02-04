@@ -1,9 +1,23 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { authAPI } from "../../services/api";
 
+// Helper function to get initial user state from localStorage
+const getInitialUserState = () => {
+  try {
+    const userStr = localStorage.getItem("user");
+    if (userStr) {
+      const user = JSON.parse(userStr);
+      return user;
+    }
+  } catch (error) {
+    console.error("Error parsing user from localStorage:", error);
+  }
+  return null;
+};
+
 const initialState = {
   token: localStorage.getItem("authToken"),
-  user: null,
+  user: getInitialUserState(),
   loading: false,
   error: null,
   success: false,
@@ -50,8 +64,6 @@ export const googleLogin = createAsyncThunk(
   },
 );
 
-
-
 export const loginUser = createAsyncThunk(
   "auth/loginUser",
   async (credentials, { rejectWithValue }) => {
@@ -87,32 +99,20 @@ export const loginUser = createAsyncThunk(
       
       // Handle axios errors
       if (error.response) {
-        // Server responded with error status
         const errorData = error.response.data;
         const errorMessage = errorData?.message || 
                            errorData?.error || 
                            `Server error: ${error.response.status}`;
         
-        console.error("Server error response:", {
-          status: error.response.status,
-          message: errorMessage,
-          data: errorData
-        });
-        
         return rejectWithValue(errorMessage);
       } else if (error.request) {
-        // No response received
-        console.error("No response received from server");
         return rejectWithValue("No response from server. Please try again.");
       } else {
-        // Request setup error
-        console.error("Request setup error:", error.message);
         return rejectWithValue(error.message || "Login failed");
       }
     }
   },
 );
-
 
 export const initiateRegister = createAsyncThunk(
   "auth/initiateRegister",
@@ -236,11 +236,18 @@ export const resetPassword = createAsyncThunk(
   },
 );
 
+// ==================== UPDATED: getUserProfile ====================
 export const getUserProfile = createAsyncThunk(
   "auth/getUserProfile",
   async (_, { rejectWithValue }) => {
     try {
       const response = await authAPI.getProfile();
+      
+      if (response.data.success) {
+        // Update localStorage with fresh user data
+        localStorage.setItem("user", JSON.stringify(response.data.user));
+      }
+      
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
@@ -248,11 +255,23 @@ export const getUserProfile = createAsyncThunk(
   },
 );
 
+// ==================== UPDATED: updateProfile ====================
 export const updateProfile = createAsyncThunk(
   "auth/updateProfile",
   async (userData, { rejectWithValue }) => {
     try {
       const response = await authAPI.updateProfile(userData);
+      
+      if (response.data.success) {
+        // Update localStorage with updated user data
+        const currentUserStr = localStorage.getItem("user");
+        if (currentUserStr) {
+          const currentUser = JSON.parse(currentUserStr);
+          const updatedUser = { ...currentUser, ...response.data.user };
+          localStorage.setItem("user", JSON.stringify(updatedUser));
+        }
+      }
+      
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
@@ -313,6 +332,18 @@ const authSlice = createSlice({
     },
     setGoogleClientId: (state, action) => {
       state.googleClientId = action.payload;
+    },
+    // ==================== ADDED: refreshUserData ====================
+    refreshUserData: (state) => {
+      const userStr = localStorage.getItem("user");
+      if (userStr) {
+        try {
+          state.user = JSON.parse(userStr);
+        } catch (error) {
+          console.error("Error parsing user from localStorage:", error);
+          state.user = null;
+        }
+      }
     },
   },
   extraReducers: (builder) => {
@@ -484,7 +515,7 @@ const authSlice = createSlice({
         state.success = false;
       })
 
-      // Get User Profile
+      // ==================== UPDATED: Get User Profile ====================
       .addCase(getUserProfile.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -498,7 +529,7 @@ const authSlice = createSlice({
         state.error = action.payload;
       })
 
-      // Update Profile
+      // ==================== UPDATED: Update Profile ====================
       .addCase(updateProfile.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -545,6 +576,7 @@ export const {
   setResetEmail,
   clearResetEmail,
   setGoogleClientId,
+  refreshUserData, // Added
 } = authSlice.actions;
 
 export default authSlice.reducer;
