@@ -18,7 +18,7 @@ const userSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    required: function() {
+    required: function () {
       return this.provider === "local";
     },
     minlength: 6,
@@ -29,6 +29,22 @@ const userSchema = new mongoose.Schema({
     enum: ["user", "admin", "moderator"],
     default: "user",
   },
+
+  // ==================== PROFILE IMAGE FIELDS ====================
+  profileImage: {
+    type: String,
+    default: null,
+  },
+  googleProfileImage: {
+    type: String,
+    default: null,
+  },
+  avatar: {
+    type: String,
+    default: "https://cdn-icons-png.flaticon.com/512/149/149071.png",
+  },
+  // ==================== END PROFILE IMAGE FIELDS ====================
+
   // Social Login Fields
   googleId: {
     type: String,
@@ -40,10 +56,6 @@ const userSchema = new mongoose.Schema({
     enum: ["local", "google", "facebook"],
     default: "local",
   },
-  avatar: {
-    type: String,
-    default: "https://cdn-icons-png.flaticon.com/512/149/149071.png",
-  },
   isVerified: {
     type: Boolean,
     default: false,
@@ -52,6 +64,7 @@ const userSchema = new mongoose.Schema({
   emailVerificationExpires: Date,
   passwordResetToken: String,
   passwordResetExpires: Date,
+
   // Security Fields
   loginAttempts: {
     type: Number,
@@ -61,6 +74,7 @@ const userSchema = new mongoose.Schema({
   lastLogin: Date,
   ipAddress: String,
   userAgent: String,
+
   // Timestamps
   createdAt: {
     type: Date,
@@ -70,6 +84,7 @@ const userSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+
   // Profile Fields
   phone: {
     type: String,
@@ -80,6 +95,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     enum: ["male", "female", "other", "prefer-not-to-say"],
   },
+
   // Preferences
   preferences: {
     emailNotifications: {
@@ -100,12 +116,14 @@ const userSchema = new mongoose.Schema({
       default: "auto",
     },
   },
+
   // Status
   status: {
     type: String,
     enum: ["active", "inactive", "suspended", "banned"],
     default: "active",
   },
+
   // Security Audit Trail
   lastPasswordChange: Date,
   lastEmailChange: Date,
@@ -129,12 +147,33 @@ userSchema.index({ googleId: 1 });
 userSchema.index({ status: 1 });
 userSchema.index({ createdAt: -1 });
 
+// ==================== NEW METHODS FOR PROFILE IMAGES ====================
+// Method to get best available profile image
+userSchema.methods.getProfileImage = function () {
+  if (this.profileImage) return this.profileImage;
+  if (this.googleProfileImage) return this.googleProfileImage;
+  if (
+    this.avatar &&
+    this.avatar !== "https://cdn-icons-png.flaticon.com/512/149/149071.png"
+  ) {
+    return this.avatar;
+  }
+  return "https://cdn-icons-png.flaticon.com/512/149/149071.png"; // Default avatar
+};
+
+// Method to update profile image
+userSchema.methods.updateProfileImage = async function (imageUrl) {
+  this.profileImage = imageUrl;
+  return this.save();
+};
+// ==================== END NEW METHODS ====================
+
 // Middleware to handle password hashing - SIMPLIFIED
 userSchema.pre("save", async function (next) {
   // Only hash the password if it's modified and is a plain text password
-  if (this.isModified('password') && this.password) {
+  if (this.isModified("password") && this.password) {
     // Check if the password is already hashed (bcrypt hashes start with $2)
-    if (!this.password.startsWith('$2')) {
+    if (!this.password.startsWith("$2")) {
       try {
         console.log("🔄 Hashing plain text password in pre-save middleware");
         const salt = await bcrypt.genSalt(10);
@@ -147,12 +186,12 @@ userSchema.pre("save", async function (next) {
       console.log("✅ Password already hashed, skipping re-hash");
     }
   }
-  
+
   // Ensure provider is set correctly
   if (this.googleId && !this.provider) {
     this.provider = "google";
   }
-  
+
   // Update updatedAt timestamp
   this.updatedAt = Date.now();
   next();
@@ -265,7 +304,7 @@ userSchema.virtual("isSocialLogin").get(function () {
   return this.provider !== "local";
 });
 
-// JSON transformation to remove sensitive data
+// ==================== UPDATED toJSON TRANSFORM ====================
 userSchema.set("toJSON", {
   virtuals: true,
   transform: function (doc, ret) {
@@ -278,6 +317,11 @@ userSchema.set("toJSON", {
     delete ret.loginAttempts;
     delete ret.lockUntil;
     delete ret.__v;
+
+    // Add profileImageUrl virtual
+    ret.profileImageUrl = doc.getProfileImage
+      ? doc.getProfileImage()
+      : ret.avatar || "https://cdn-icons-png.flaticon.com/512/149/149071.png";
     return ret;
   },
 });

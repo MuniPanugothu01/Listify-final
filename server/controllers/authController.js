@@ -16,23 +16,30 @@ const generateToken = (id) => {
   });
 };
 
-// Helper to send token response
+// Helper to send token response - UPDATED
 const sendTokenResponse = (user, statusCode, res, message) => {
   const token = generateToken(user._id);
+
+  // ==================== UPDATED USER RESPONSE ====================
+  const userResponse = {
+    id: user._id,
+    name: user.name,
+    email: user.email,
+    role: user.role,
+    provider: user.provider,
+    avatar: user.avatar,
+    profileImage: user.profileImage || null,
+    googleProfileImage: user.googleProfileImage || null,
+    isVerified: user.isVerified,
+    // Add computed profile image URL
+    profileImageUrl: user.getProfileImage ? user.getProfileImage() : user.avatar
+  };
 
   res.status(statusCode).json({
     success: true,
     message,
     token,
-    user: {
-      id: user._id,
-      name: user.name,
-      email: user.email,
-      role: user.role,
-      provider: user.provider,
-      avatar: user.avatar,
-      isVerified: user.isVerified,
-    },
+    user: userResponse,
   });
 };
 
@@ -157,7 +164,10 @@ exports.googleTokenAuth = async (req, res) => {
 
 // ==================== LOGIN/REGISTRATION ====================
 
-// Login user - WITH DEBUG LOGGING AND FIX
+
+// ==================== UPDATED FUNCTIONS ====================
+
+// Update login response to include profile images
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -183,7 +193,7 @@ exports.login = async (req, res) => {
       });
     }
 
-    // Find user WITH password field - FIXED: Use correct method
+    // Find user WITH password field
     const user = await User.findOne({ email }).select("+password");
 
     if (!user) {
@@ -199,11 +209,7 @@ exports.login = async (req, res) => {
       email: user.email,
       id: user._id,
       hasPassword: !!user.password,
-      passwordFieldExists: "password" in user,
       provider: user.provider,
-      passwordStartsWith: user.password
-        ? user.password.substring(0, 10)
-        : "none",
     });
 
     // Check if user is a Google user
@@ -214,14 +220,6 @@ exports.login = async (req, res) => {
         provider: "google",
       });
     }
-
-    // DEBUG: Check if password exists
-    console.log("🔍 Password check:", {
-      userHasPasswordField: "password" in user,
-      passwordValue: user.password ? "***HASHED***" : "NULL/UNDEFINED",
-      passwordLength: user.password ? user.password.length : 0,
-      passwordIsBcrypt: user.password ? user.password.startsWith("$2") : false,
-    });
 
     // Check if user has a password
     if (!user.password) {
@@ -240,12 +238,7 @@ exports.login = async (req, res) => {
       });
     }
 
-    // IMPORTANT FIX: Test password with bcrypt directly
-    console.log("🔍 Comparing password...");
-    console.log("Password provided length:", password.length);
-    console.log("Stored hash prefix:", user.password.substring(0, 20));
-
-    // Use bcrypt.compare directly
+    // Compare password
     const isPasswordMatch = await bcrypt.compare(password, user.password);
     console.log("Password match result:", isPasswordMatch);
 
@@ -256,19 +249,6 @@ exports.login = async (req, res) => {
       }
 
       console.log(`❌ Password mismatch for ${email}`);
-
-      // DEBUG: Try to manually verify password
-      console.log("🔍 Debug: Testing password manually...");
-      try {
-        // Test if it's a valid bcrypt hash
-        const testHash = await bcrypt.hash(password, 10);
-        console.log("New hash would be:", testHash.substring(0, 20));
-        console.log("New hash length:", testHash.length);
-        console.log("Stored hash length:", user.password.length);
-      } catch (hashError) {
-        console.log("Hash test error:", hashError.message);
-      }
-
       return res.status(401).json({
         success: false,
         message: "Invalid email or password",
@@ -297,11 +277,30 @@ exports.login = async (req, res) => {
 
     console.log(`✅ Login successful for: ${email}`);
 
-    // Send successful response
-    return sendTokenResponse(user, 200, res, "Login successful");
+    // ==================== UPDATED RESPONSE ====================
+    const userResponse = {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      provider: user.provider,
+      avatar: user.avatar,
+      profileImage: user.profileImage,
+      googleProfileImage: user.googleProfileImage,
+      isVerified: user.isVerified,
+      profileImageUrl: user.getProfileImage ? user.getProfileImage() : user.avatar
+    };
+
+    const token = generateToken(user._id);
+
+    return res.status(200).json({
+      success: true,
+      message: "Login successful",
+      token,
+      user: userResponse,
+    });
   } catch (error) {
     console.error("❌ Login error:", error);
-    console.error("Error stack:", error.stack);
     return res.status(500).json({
       success: false,
       message: "Server error",
@@ -309,6 +308,314 @@ exports.login = async (req, res) => {
     });
   }
 };
+
+// Update Google login response
+exports.googleTokenAuth = async (req, res) => {
+  try {
+    const { token: googleToken } = req.body;
+
+    if (!googleToken) {
+      return res.status(400).json({
+        success: false,
+        message: "Google token is required",
+      });
+    }
+
+    console.log("🔍 Processing Google token...");
+
+    // Use the Google auth service
+    const { user, isNew } = await handleGoogleAuth(googleToken, req);
+
+    const message = isNew
+      ? "Account created with Google"
+      : "Google login successful";
+
+    const statusCode = isNew ? 201 : 200;
+
+    console.log("✅ Google token auth successful:", {
+      email: user.email,
+      isNew,
+    });
+
+    logger.info("Google token auth successful:", {
+      email: user.email,
+      isNew,
+    });
+
+    // ==================== UPDATED RESPONSE ====================
+    const userResponse = {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      provider: user.provider,
+      avatar: user.avatar,
+      profileImage: user.profileImage,
+      googleProfileImage: user.googleProfileImage,
+      isVerified: user.isVerified,
+      profileImageUrl: user.getProfileImage ? user.getProfileImage() : user.avatar
+    };
+
+    const authToken = generateToken(user._id);
+
+    return res.status(statusCode).json({
+      success: true,
+      message,
+      token: authToken,
+      user: userResponse,
+    });
+  } catch (error) {
+    console.error("❌ Google Token Auth Error:", error.message);
+    logger.error("Google Token Auth Error:", error);
+    res.status(401).json({
+      success: false,
+      message: "Invalid Google token",
+      error: process.env.NODE_ENV === "development" ? error.message : undefined,
+    });
+  }
+};
+
+// Update getProfile to include profile images
+exports.getProfile = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+
+    // ==================== UPDATED RESPONSE ====================
+    const userResponse = {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      provider: user.provider,
+      avatar: user.avatar,
+      profileImage: user.profileImage,
+      googleProfileImage: user.googleProfileImage,
+      isVerified: user.isVerified,
+      createdAt: user.createdAt,
+      profileImageUrl: user.getProfileImage ? user.getProfileImage() : user.avatar
+    };
+
+    res.status(200).json({
+      success: true,
+      user: userResponse,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+      error: error.message,
+    });
+  }
+};
+
+// Update profile with profile image support
+exports.updateProfile = async (req, res) => {
+  try {
+    const { name, email, profileImage } = req.body;
+    const updateData = {};
+
+    if (name) updateData.name = name;
+    if (profileImage) updateData.profileImage = profileImage;
+
+    if (email) {
+      const emailExists = await User.findOne({
+        email,
+        _id: { $ne: req.user.id },
+      });
+
+      if (emailExists) {
+        return res.status(400).json({
+          success: false,
+          message: "Email already in use",
+        });
+      }
+      updateData.email = email;
+    }
+
+    const user = await User.findByIdAndUpdate(req.user.id, updateData, {
+      new: true,
+      runValidators: true,
+    });
+
+    // ==================== UPDATED RESPONSE ====================
+    const userResponse = {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      provider: user.provider,
+      avatar: user.avatar,
+      profileImage: user.profileImage,
+      googleProfileImage: user.googleProfileImage,
+      isVerified: user.isVerified,
+      profileImageUrl: user.getProfileImage ? user.getProfileImage() : user.avatar
+    };
+
+    res.status(200).json({
+      success: true,
+      message: "Profile updated successfully",
+      user: userResponse,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+      error: error.message,
+    });
+  }
+};
+
+// Add new endpoint to upload profile image
+exports.uploadProfileImage = async (req, res) => {
+  try {
+    const { profileImage } = req.body;
+    
+    if (!profileImage) {
+      return res.status(400).json({
+        success: false,
+        message: "Profile image URL is required",
+      });
+    }
+
+    const user = await User.findByIdAndUpdate(
+      req.user.id,
+      { profileImage },
+      { new: true }
+    );
+
+    // ==================== UPDATED RESPONSE ====================
+    const userResponse = {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      provider: user.provider,
+      avatar: user.avatar,
+      profileImage: user.profileImage,
+      googleProfileImage: user.googleProfileImage,
+      isVerified: user.isVerified,
+      profileImageUrl: user.getProfileImage ? user.getProfileImage() : user.avatar
+    };
+
+    res.status(200).json({
+      success: true,
+      message: "Profile image updated successfully",
+      user: userResponse,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+      error: error.message,
+    });
+  }
+};
+
+// Update OTP registration response
+exports.verifyOTPAndRegister = async (req, res) => {
+  try {
+    const { email, otp } = req.body;
+
+    if (!email || !otp) {
+      return res.status(400).json({
+        success: false,
+        message: "Email and OTP are required",
+      });
+    }
+
+    // Get pending registration data
+    const pendingData = await RedisService.getPendingRegistration(email);
+    if (!pendingData) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Registration session expired or not found. Please start over.",
+      });
+    }
+
+    // Check OTP attempts
+    if (pendingData.otpAttempts >= 3) {
+      // Too many attempts, delete pending registration
+      await RedisService.deletePendingRegistration(email);
+      return res.status(400).json({
+        success: false,
+        message: "Too many OTP attempts. Please start registration again.",
+      });
+    }
+
+    // Verify OTP
+    const otpVerification = await RedisService.verifyOTP(email, otp);
+    if (!otpVerification.valid) {
+      // Increment OTP attempts
+      pendingData.otpAttempts += 1;
+      await RedisService.storePendingRegistration(email, pendingData);
+
+      return res.status(400).json({
+        success: false,
+        message: otpVerification.reason,
+        attemptsRemaining: 3 - pendingData.otpAttempts,
+      });
+    }
+
+    // Double-check if user still doesn't exist in database
+    const userExists = await User.findOne({ email });
+    if (userExists) {
+      await RedisService.deletePendingRegistration(email);
+      return res.status(400).json({
+        success: false,
+        message: "User already registered. Please login.",
+      });
+    }
+
+    // Create user in database
+    console.log("🔍 Creating user with stored hash");
+    const user = await User.create({
+      name: pendingData.name,
+      email: pendingData.email,
+      password: pendingData.password,
+      provider: "local",
+      isVerified: true,
+      lastPasswordChange: new Date(),
+    });
+
+    console.log(`✅ User created in database: ${email}`);
+
+    // Delete Redis data after successful registration
+    await RedisService.deletePendingRegistration(email);
+    console.log(`✅ Redis data cleaned up for: ${email}`);
+
+    // ==================== UPDATED RESPONSE ====================
+    const userResponse = {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      provider: user.provider,
+      avatar: user.avatar,
+      profileImage: user.profileImage,
+      googleProfileImage: user.googleProfileImage,
+      isVerified: user.isVerified,
+      profileImageUrl: user.getProfileImage ? user.getProfileImage() : user.avatar
+    };
+
+    const token = generateToken(user._id);
+
+    res.status(201).json({
+      success: true,
+      message: "User registered successfully",
+      token,
+      user: userResponse,
+    });
+  } catch (error) {
+    console.error("❌ OTP verification error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error during registration",
+      error: error.message,
+    });
+  }
+};
+
 
 // Setup password for users without password
 exports.setupPassword = async (req, res) => {
