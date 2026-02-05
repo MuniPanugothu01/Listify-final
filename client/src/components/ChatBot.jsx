@@ -254,7 +254,7 @@ const ChatBot = () => {
                   <div className="w-8 h-8 md:w-10 md:h-10 bg-white/10 rounded-full flex items-center justify-center backdrop-blur-sm border border-white/20">
                     <Bot className="w-4 h-4 md:w-5 md:h-5 text-white" />
                   </div>
-                  <div className="absolute -bottom-1 -right-1 w-2 h-2 md:w-3 md:h-3 bg-green-400 rounded-full border-2 border-[#2F3A63]"></div>
+                  <div className="absolute -bottom-1 -right-1 w-2 h-2 md:w-3 md:h-3 bg-green-400 rounded-full border-2 border-[#27BB97]"></div>
                 </div>
                 <div className="min-w-0 flex-1">
                   <h3 className="font-semibold text-sm truncate">
@@ -300,14 +300,14 @@ const ChatBot = () => {
                   >
                     <div className="flex items-end space-x-1 md:space-x-2 max-w-[90%] md:max-w-[85%]">
                       {message.sender === "bot" && (
-                        <div className="w-5 h-5 md:w-6 md:h-6 bg-[#2F3A63] rounded-full flex items-center justify-center flex-shrink-0 mb-1">
+                        <div className="w-5 h-5 md:w-6 md:h-6 bg-[#27BB97] rounded-full flex items-center justify-center flex-shrink-0 mb-1">
                           <Bot className="w-2.5 h-2.5 md:w-3 md:h-3 text-white" />
                         </div>
                       )}
                       <div
                         className={`rounded-2xl px-3 py-2 md:px-4 md:py-3 transition-all duration-200 ${
                           message.sender === "user"
-                            ? "bg-[#2F3A63] text-white rounded-br-none"
+                            ? "bg-[#27BB97] text-white rounded-br-none"
                             : "bg-white text-gray-900 rounded-bl-none border border-gray-200"
                         }`}
                       >
@@ -337,7 +337,7 @@ const ChatBot = () => {
                 {isTyping && (
                   <div className="flex justify-start">
                     <div className="flex items-end space-x-1 md:space-x-2">
-                      <div className="w-5 h-5 md:w-6 md:h-6 bg-[#2F3A63] rounded-full flex items-center justify-center">
+                      <div className="w-5 h-5 md:w-6 md:h-6 bg-[#27BB97] rounded-full flex items-center justify-center">
                         <Bot className="w-2.5 h-2.5 md:w-3 md:h-3 text-white" />
                       </div>
                       <div className="bg-white border border-gray-200 text-gray-900 rounded-2xl rounded-bl-none px-3 py-2 md:px-4 md:py-3">
@@ -373,7 +373,7 @@ const ChatBot = () => {
                         <button
                           key={index}
                           onClick={() => handleQuickReply(reply)}
-                          className="text-xs bg-white border border-gray-300 text-gray-700 px-2 py-1.5 md:px-3 md:py-2 rounded-full hover:bg-[#2F3A63] hover:text-white hover:border-[#2F3A63] transition-all duration-200 shadow-sm hover:shadow-md break-words text-center"
+                          className="text-xs bg-white text-gray-700 px-2 py-1.5 md:px-3 md:py-2 rounded-full hover:bg-[#27bb97] hover:text-white hover:border-[#27bb97] transition-all duration-200 shadow-sm hover:shadow-md break-words text-center"
                           style={{ fontSize: "0.7rem", lineHeight: "1.2" }}
                         >
                           {reply}
@@ -399,7 +399,7 @@ const ChatBot = () => {
                       value={inputMessage}
                       onChange={(e) => setInputMessage(e.target.value)}
                       placeholder="Type your message..."
-                      className="w-full border border-gray-300 rounded-xl px-3 py-2 md:px-4 md:py-3 text-xs md:text-sm focus:outline-none focus:ring-2 focus:ring-[#2F3A63] focus:border-transparent bg-white transition-all duration-200 placeholder-gray-500"
+                      className="w-full border border-gray-300 rounded-xl px-3 py-2 md:px-4 md:py-3 text-xs md:text-sm focus:outline-none focus:ring-2 focus:ring-[#27bb97] focus:border-transparent bg-white transition-all duration-200 placeholder-gray-500"
                       disabled={isTyping}
                       maxLength={500}
                     />
@@ -414,7 +414,7 @@ const ChatBot = () => {
                   <button
                     type="submit"
                     disabled={!inputMessage.trim() || isTyping}
-                    className="bg-[#2F3A63] text-white rounded-xl p-2 md:p-3 hover:bg-[#1e2a4a] disabled:bg-gray-400 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 disabled:hover:scale-100 flex items-center justify-center flex-shrink-0"
+                    className="bg-white text-[#27bb97] rounded-xl p-2 md:p-3 hover:bg-[#27bb97] hover:text-white disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 disabled:hover:scale-100 flex items-center justify-center flex-shrink-0"
                   >
                     <Send size={16} className="md:w-4 md:h-4" />
                   </button>
@@ -438,7 +438,7 @@ const ChatBot = () => {
             >
               <div className="flex items-center space-x-2 md:space-x-3 min-w-0 flex-1">
                 <div className="relative flex-shrink-0">
-                  <div className="w-7 h-7 md:w-8 md:h-8 bg-[#2F3A63] rounded-full flex items-center justify-center">
+                  <div className="w-7 h-7 md:w-8 md:h-8 bg-[#27BB97] rounded-full flex items-center justify-center">
                     <MessageCircle className="w-3 h-3 md:w-4 md:h-4 text-white" />
                   </div>
                   {unreadCount > 0 && (
@@ -473,7 +473,7 @@ const ChatBot = () => {
       >
         <div className="relative ">
           {/* Main Lottie Animation */}
-          <div className="relative  rounded-full shadow-2xl border border-gray-200 ">
+          <div className="relative  rounded-full shadow-2xl border border-gray-200  ">
             <Lottie
               lottieRef={lottieRef}
               animationData={chatIconAnimation}
