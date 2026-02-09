@@ -18,6 +18,7 @@ import {
   Wrench,
 } from 'lucide-react';
 
+// ... (marketplaceItems array remains exactly the same as your original) ...
 const marketplaceItems = [
   {
     id: 1,
@@ -261,7 +262,8 @@ const marketplaceItems = [
   },
 ];
 
-// Product Card Component - Updated to match Sample
+
+// Product Card Component
 const ProductCard = ({ product, onClick }) => {
   return (
     <div
@@ -273,7 +275,7 @@ const ProductCard = ({ product, onClick }) => {
         <img
           src={product.image}
           alt={product.title}
-          className="w-full h-full  group-hover:scale-105 transition-transform duration-300 "
+          className="w-full h-full group-hover:scale-105 transition-transform duration-300"
         />
         <button
           onClick={(e) => e.stopPropagation()}
@@ -316,25 +318,98 @@ const ProductCard = ({ product, onClick }) => {
 // Marketplace Listing Page Component
 export default function SampleForSale() {
   const navigate = useNavigate();
-  const [selectedCategory, setSelectedCategory] = useState("All Categories");
   const [priceMin, setPriceMin] = useState("");
   const [priceMax, setPriceMax] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  
+  // State for all checkboxes
+  const [selectedCategories, setSelectedCategories] = useState([]);
+  const [selectedConditions, setSelectedConditions] = useState([]);
+  
+  // Get all unique categories and conditions from data
+  const allCategories = [
+    "Furniture",
+    "Toys & Games", 
+    "Books",
+    "Kitchenware",
+    "Home Decor",
+    "Gardening",
+    "Sports Gear",
+    "Baby Items",
+    "Tools"
+  ];
+  
+  const allConditions = [
+    "New",
+    "Like New", 
+    "Used - Excellent",
+    "Used - Good",
+    "Used - Very Good",
+    "Gently Used",
+    "Healthy",
+    "New - Box Opened"
+  ];
 
-  // Filtering logic
+  // Filter products based on all criteria
   const filteredProducts = marketplaceItems.filter((product) => {
-    const matchesSearch = product.title
-      .toLowerCase()
-      .includes(searchQuery.toLowerCase());
-    const matchesPrice =
-      (!priceMin || product.price >= Number(priceMin)) &&
-      (!priceMax || product.price <= Number(priceMax));
-    return matchesSearch && matchesPrice;
+    // 1. Search filter
+    if (searchQuery && !product.title.toLowerCase().includes(searchQuery.toLowerCase())) {
+      return false;
+    }
+    
+    // 2. Price filter
+    const price = product.price;
+    if (priceMin && price < Number(priceMin)) return false;
+    if (priceMax && price > Number(priceMax)) return false;
+    
+    // 3. Category filter (only apply if categories are selected)
+    if (selectedCategories.length > 0 && !selectedCategories.includes(product.category)) {
+      return false;
+    }
+    
+    // 4. Condition filter (only apply if conditions are selected)
+    if (selectedConditions.length > 0 && !selectedConditions.includes(product.condition)) {
+      return false;
+    }
+    
+    return true;
   });
 
   const handleProductClick = (productId) => {
     navigate(`/forsale/${productId}`);
+  };
+
+  // Handle category checkbox changes
+  const handleCategoryChange = (category) => {
+    setSelectedCategories(prev => 
+      prev.includes(category)
+        ? prev.filter(c => c !== category)
+        : [...prev, category]
+    );
+  };
+
+  // Handle condition checkbox changes
+  const handleConditionChange = (condition) => {
+    setSelectedConditions(prev => 
+      prev.includes(condition)
+        ? prev.filter(c => c !== condition)
+        : [...prev, condition]
+    );
+  };
+
+  // Clear all filters
+  const clearAllFilters = () => {
+    setSearchQuery("");
+    setPriceMin("");
+    setPriceMax("");
+    setSelectedCategories([]);
+    setSelectedConditions([]);
+  };
+
+  // Check if any filters are active
+  const hasActiveFilters = () => {
+    return searchQuery || priceMin || priceMax || selectedCategories.length > 0 || selectedConditions.length > 0;
   };
 
   return (
@@ -357,7 +432,7 @@ export default function SampleForSale() {
         <div className="lg:hidden mb-4">
           <button
             onClick={() => setIsFilterOpen(!isFilterOpen)}
-            className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors"
+            className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-[#27bb97] text-white rounded-lg hover:bg-[#1fa987] transition-colors"
           >
             <Filter className="w-5 h-5" />
             {isFilterOpen ? "Hide Filters" : "Show Filters"}
@@ -365,7 +440,7 @@ export default function SampleForSale() {
         </div>
 
         <div className="flex flex-col lg:flex-row gap-6">
-          {/* Sidebar Filters - Static on scroll */}
+          {/* Sidebar Filters */}
           <aside
             className={`
             ${isFilterOpen ? "block" : "hidden"} 
@@ -390,44 +465,43 @@ export default function SampleForSale() {
               Filters
             </h2>
 
+            {/* Price Range Filter */}
             <div className="mb-6">
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Price range
               </label>
-              <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                <div className="flex items-center gap-2 flex-1">
-                  <input
-                    type="number"
-                    placeholder="Min ₹"
-                    value={priceMin}
-                    onChange={(e) => setPriceMin(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent text-sm sm:text-base"
-                  />
-                  <span className="text-gray-500 text-sm">to</span>
-                  <input
-                    type="number"
-                    placeholder="Max ₹"
-                    value={priceMax}
-                    onChange={(e) => setPriceMax(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent text-sm sm:text-base"
-                  />
-                </div>
-                <button className="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors whitespace-nowrap text-sm sm:text-base">
-                  Apply
-                </button>
+              <div className="flex items-center gap-2">
+                <input
+                  type="number"
+                  placeholder="Min ₹"
+                  value={priceMin}
+                  onChange={(e) => setPriceMin(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#27bb97] focus:border-transparent text-sm"
+                />
+                <span className="text-gray-500 text-sm">to</span>
+                <input
+                  type="number"
+                  placeholder="Max ₹"
+                  value={priceMax}
+                  onChange={(e) => setPriceMax(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#27bb97] focus:border-transparent text-sm"
+                />
               </div>
             </div>
 
+            {/* Condition Filter */}
             <div className="mb-6">
               <label className="block text-sm font-medium text-gray-700 mb-3">
                 Condition
               </label>
               <div className="grid grid-cols-2 sm:grid-cols-1 gap-2">
-                {["New", "Like New", "Used - Excellent"].map((condition) => (
-                  <label key={condition} className="flex items-center">
+                {allConditions.map((condition) => (
+                  <label key={condition} className="flex items-center cursor-pointer">
                     <input
                       type="checkbox"
-                      className="w-4 h-4 text-teal-600 border-gray-300 rounded focus:ring-teal-500"
+                      checked={selectedConditions.includes(condition)}
+                      onChange={() => handleConditionChange(condition)}
+                      className="w-4 h-4 text-[#27bb97] border-gray-300 rounded focus:ring-[#27bb97] cursor-pointer"
                     />
                     <span className="ml-2 text-sm text-gray-700">
                       {condition}
@@ -437,33 +511,33 @@ export default function SampleForSale() {
               </div>
             </div>
 
-            <div>
+            {/* Category Filter */}
+            <div className="mb-6">
               <label className="block text-sm font-medium text-gray-700 mb-3">
                 Categories
               </label>
               <div className="grid grid-cols-2 sm:grid-cols-1 gap-2">
-                {[
-                  "Furniture",
-                  "Toys & Games", 
-                  "Books",
-                  "Kitchenware",
-                  "Home Decor",
-                  "Baby Items",
-                  "Tools",
-                ].map((cat) => (
-                  <label key={cat} className="flex items-center">
+                {allCategories.map((category) => (
+                  <label key={category} className="flex items-center cursor-pointer">
                     <input
                       type="checkbox"
-                      className="w-4 h-4 text-teal-600 border-gray-300 rounded focus:ring-teal-500"
+                      checked={selectedCategories.includes(category)}
+                      onChange={() => handleCategoryChange(category)}
+                      className="w-4 h-4 text-[#27bb97] border-gray-300 rounded focus:ring-[#27bb97] cursor-pointer"
                     />
-                    <span className="ml-2 text-sm text-gray-700">{cat}</span>
+                    <span className="ml-2 text-sm text-gray-700">{category}</span>
                   </label>
                 ))}
               </div>
-              <button className="text-sm text-teal-600 hover:text-teal-700 font-medium mt-3">
-                + Show more
-              </button>
             </div>
+
+            {/* Clear All Filters Button */}
+            <button
+              onClick={clearAllFilters}
+              className="w-full px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium"
+            >
+              Clear All Filters
+            </button>
           </aside>
 
           {/* Main Content */}
@@ -472,6 +546,11 @@ export default function SampleForSale() {
             <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
               <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
                 For Sale Items
+                {hasActiveFilters() && (
+                  <span className="text-sm text-gray-600 font-normal ml-2">
+                    ({filteredProducts.length} filtered items)
+                  </span>
+                )}
               </h1>
 
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
@@ -485,16 +564,16 @@ export default function SampleForSale() {
                       placeholder="Search items..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      className="w-full pl-9 sm:pl-10 pr-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                      className="w-full pl-9 sm:pl-10 pr-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#27bb97] focus:border-transparent"
                     />
                   </div>
 
-                  {/* Sort Dropdown - Beside search bar as in Sample */}
+                  {/* Sort Dropdown */}
                   <div className="flex items-center gap-2 sm:flex-shrink-0">
                     <span className="text-xs sm:text-sm text-gray-600 whitespace-nowrap hidden xs:inline">
                       Sort by:
                     </span>
-                    <select className="px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent w-full xs:w-auto min-w-[120px] sm:min-w-[180px]">
+                    <select className="px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#27bb97] focus:border-transparent w-full xs:w-auto min-w-[120px] sm:min-w-[180px]">
                       <option>Recent first</option>
                       <option>Price: Low to High</option>
                       <option>Price: High to Low</option>
@@ -508,6 +587,14 @@ export default function SampleForSale() {
             {/* Results Count - Mobile */}
             <div className="text-sm text-gray-600 mb-4 lg:hidden">
               {filteredProducts.length} items found
+              {hasActiveFilters() && (
+                <button
+                  onClick={clearAllFilters}
+                  className="ml-2 text-[#27bb97] hover:text-[#1fa987]"
+                >
+                  Clear filters
+                </button>
+              )}
             </div>
 
             {/* Products Grid - Responsive */}
@@ -531,12 +618,8 @@ export default function SampleForSale() {
               <div className="text-center py-12">
                 <div className="text-gray-400 mb-2">No items found</div>
                 <button
-                  onClick={() => {
-                    setSearchQuery("");
-                    setPriceMin("");
-                    setPriceMax("");
-                  }}
-                  className="text-teal-600 hover:text-teal-700 font-medium"
+                  onClick={clearAllFilters}
+                  className="text-[#27bb97] hover:text-[#1fa987] font-medium"
                 >
                   Clear all filters
                 </button>

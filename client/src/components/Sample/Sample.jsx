@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import {
   Heart,
   Share2,
@@ -9,8 +9,26 @@ import {
   Menu,
   X,
   Filter,
+  MessageCircle,
+  Star,
+  Check,
+  Clock,
+  Shield,
+  Package,
+  Battery,
+  Camera,
+  Wifi,
+  Smartphone,
+  ChevronLeft,
+  ChevronRight as ChevronRightIcon,
+  User,
+  Phone,
+  Mail,
+  Verified,
 } from "lucide-react";
+import { FaMinus, FaPlus } from "react-icons/fa";
 
+// Product data (keep the same)
 const electronicsData = [
   {
     id: 1,
@@ -457,14 +475,120 @@ const electronicsData = [
   },
 ];
 
-// Product Card Component
+// Static Map Component
+const LocationMap = ({ location }) => {
+  return (
+    <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+      <div className="p-4 border-b border-gray-100">
+        <h3 className="text-lg font-bold text-gray-900 flex items-center">
+          <MapPin className="w-5 h-5 mr-2 text-[#27bb97]" />
+          Location
+        </h3>
+        <p className="text-gray-600 mt-1">{location}</p>
+      </div>
+      <div className="relative h-64 sm:h-72 md:h-80 bg-gray-100">
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="text-center">
+            <MapPin className="w-16 h-16 text-red-500 mx-auto mb-4" />
+            <div className="bg-white p-4 rounded-lg shadow-md inline-block">
+              <p className="font-medium text-gray-800">{location}</p>
+              <p className="text-sm text-gray-600 mt-1">Contact seller for exact address</p>
+            </div>
+          </div>
+        </div>
+        <div className="absolute inset-0 opacity-20">
+          <div className="h-full w-full bg-gradient-to-br from-blue-50 to-gray-50">
+            <div className="absolute inset-0" style={{
+              backgroundImage: `
+                linear-gradient(to right, #cbd5e1 1px, transparent 1px),
+                linear-gradient(to bottom, #cbd5e1 1px, transparent 1px)
+              `,
+              backgroundSize: '40px 40px'
+            }}></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Seller Details Component
+const SellerDetails = ({ seller, rating, reviews, joined }) => {
+  return (
+    <div className="bg-white rounded-lg shadow-sm p-6">
+      <div className="flex items-center justify-between mb-6">
+        <h3 className="text-lg font-bold text-gray-900">Seller Information</h3>
+        <button className="text-[#27bb97] text-sm font-medium hover:text-[#1fa987]">
+          View Profile →
+        </button>
+      </div>
+
+      <div className="flex items-center gap-4 mb-6">
+        <div className="w-16 h-16 bg-gradient-to-br from-[#27bb97] to-[#1E9E7E] rounded-full flex items-center justify-center text-white text-2xl font-bold">
+          {seller[0].toUpperCase()}
+        </div>
+        <div className="flex-1">
+          <div className="flex items-center gap-2 mb-2">
+            <h4 className="font-bold text-gray-900 text-lg">{seller}</h4>
+            <Verified className="w-5 h-5 text-blue-500" />
+          </div>
+          
+          <div className="flex items-center mb-2">
+            <div className="flex items-center mr-2">
+              {[...Array(5)].map((_, i) => (
+                <Star
+                  key={i}
+                  className={`w-4 h-4 ${i < Math.floor(rating) ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
+                />
+              ))}
+            </div>
+            <span className="text-sm font-medium text-gray-700">{rating.toFixed(1)}</span>
+            <span className="text-sm text-gray-500 ml-2">({reviews} reviews)</span>
+          </div>
+
+          <div className="flex items-center gap-4 text-sm text-gray-600">
+            <div className="flex items-center">
+              <Package className="w-4 h-4 mr-1.5" />
+              <span>42 sold</span>
+            </div>
+            <div className="flex items-center">
+              <Clock className="w-4 h-4 mr-1.5" />
+              <span>Joined {joined}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button className="w-full py-3 bg-[#27bb97] hover:bg-[#1fa987] text-white rounded-lg font-medium transition-colors mb-4 flex items-center justify-center">
+        <MessageCircle className="w-5 h-5 mr-2" />
+        Contact Seller
+      </button>
+
+      <div className="grid grid-cols-3 gap-4 p-4 bg-gray-50 rounded-lg">
+        <div className="text-center">
+          <div className="text-xl font-bold text-gray-900">98%</div>
+          <div className="text-xs text-gray-500">Response Rate</div>
+        </div>
+        <div className="text-center">
+          <div className="text-xl font-bold text-gray-900">1hr</div>
+          <div className="text-xs text-gray-500">Response Time</div>
+        </div>
+        <div className="text-center">
+          <div className="text-xl font-bold text-gray-900">100%</div>
+          <div className="text-xs text-gray-500">Positive Feedback</div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Product Card Component (for listing page)
 const ProductCard = ({ product, onClick }) => {
   return (
     <div
       onClick={onClick}
       className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer group border border-gray-200"
     >
-      {/* Image Container */}
       <div className="relative h-40 sm:h-48 overflow-hidden bg-gray-100">
         <img
           src={product.image}
@@ -479,14 +603,11 @@ const ProductCard = ({ product, onClick }) => {
         </button>
       </div>
 
-      {/* Content Container */}
       <div className="p-3">
-        {/* Title */}
         <h3 className="font-medium text-gray-900 text-sm mb-2 line-clamp-2 min-h-[36px] leading-tight">
           {product.title}
         </h3>
 
-        {/* Price and Condition */}
         <div className="flex items-center justify-between mb-2">
           <span className="text-base sm:text-lg font-bold text-gray-900">
             ${product.price}
@@ -496,13 +617,11 @@ const ProductCard = ({ product, onClick }) => {
           </span>
         </div>
 
-        {/* Location */}
         <div className="flex items-center text-xs text-gray-600 mt-1">
           <MapPin className="w-3 h-3 mr-1 flex-shrink-0" />
           <span className="truncate">{product.location}</span>
         </div>
 
-        {/* Posted Time */}
         <div className="text-xs text-gray-400 mt-1">{product.postedTime}</div>
       </div>
     </div>
@@ -510,31 +629,68 @@ const ProductCard = ({ product, onClick }) => {
 };
 
 // Electronics Listing Page Component
-const Sample = () => {
+const ElectronicsListing = () => {
   const navigate = useNavigate();
-  const [selectedCategory, setSelectedCategory] = useState("All Categories");
+  const [searchQuery, setSearchQuery] = useState("");
   const [priceMin, setPriceMin] = useState("");
   const [priceMax, setPriceMax] = useState("");
-  const [searchQuery, setSearchQuery] = useState("");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [selectedCategories, setSelectedCategories] = useState([]);
+  const [selectedConditions, setSelectedConditions] = useState([]);
+
+  // Get unique categories and conditions
+  const categories = [...new Set(electronicsData.map(p => p.category))];
+  const conditions = [...new Set(electronicsData.map(p => p.condition))];
 
   const filteredProducts = electronicsData.filter((product) => {
-    const matchesSearch = product.title
-      .toLowerCase()
-      .includes(searchQuery.toLowerCase());
-    const matchesPrice =
-      (!priceMin || product.price >= Number(priceMin)) &&
-      (!priceMax || product.price <= Number(priceMax));
-    return matchesSearch && matchesPrice;
+    // Search filter
+    if (searchQuery && !product.title.toLowerCase().includes(searchQuery.toLowerCase())) {
+      return false;
+    }
+    
+    // Price filter
+    if (priceMin && product.price < parseFloat(priceMin)) {
+      return false;
+    }
+    if (priceMax && product.price > parseFloat(priceMax)) {
+      return false;
+    }
+    
+    // Category filter
+    if (selectedCategories.length > 0 && !selectedCategories.includes(product.category)) {
+      return false;
+    }
+    
+    // Condition filter
+    if (selectedConditions.length > 0 && !selectedConditions.includes(product.condition)) {
+      return false;
+    }
+    
+    return true;
   });
 
   const handleProductClick = (productId) => {
     navigate(`/product/${productId}`);
   };
 
+  const handleCategoryChange = (category) => {
+    setSelectedCategories(prev => 
+      prev.includes(category)
+        ? prev.filter(c => c !== category)
+        : [...prev, category]
+    );
+  };
+
+  const handleConditionChange = (condition) => {
+    setSelectedConditions(prev =>
+      prev.includes(condition)
+        ? prev.filter(c => c !== condition)
+        : [...prev, condition]
+    );
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Breadcrumb */}
       <div className="bg-white border-b">
         <div className="px-3 sm:px-4 md:px-6 lg:px-8 py-3">
           <div className="flex items-center text-sm text-gray-600">
@@ -548,11 +704,10 @@ const Sample = () => {
       </div>
 
       <div className="px-3 sm:px-4 md:px-6 lg:px-8 py-4">
-        {/* Mobile Filter Toggle */}
         <div className="lg:hidden mb-4">
           <button
             onClick={() => setIsFilterOpen(!isFilterOpen)}
-            className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors"
+            className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-[#27bb97] text-white rounded-lg hover:bg-[#1fa987] transition-colors"
           >
             <Filter className="w-5 h-5" />
             {isFilterOpen ? "Hide Filters" : "Show Filters"}
@@ -560,7 +715,7 @@ const Sample = () => {
         </div>
 
         <div className="flex flex-col lg:flex-row gap-6">
-          {/* Sidebar Filters - Responsive */}
+          {/* Filter Sidebar */}
           <aside
             className={`
             ${isFilterOpen ? "block" : "hidden"} 
@@ -570,7 +725,6 @@ const Sample = () => {
             max-h-[80vh] overflow-y-auto
           `}
           >
-            {/* Close button for mobile */}
             <div className="flex justify-between items-center mb-4 lg:hidden">
               <h2 className="text-xl font-bold text-gray-900">Filters</h2>
               <button
@@ -589,27 +743,22 @@ const Sample = () => {
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Price range
               </label>
-              <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                <div className="flex items-center gap-2 flex-1">
-                  <input
-                    type="number"
-                    placeholder="Min"
-                    value={priceMin}
-                    onChange={(e) => setPriceMin(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent text-sm sm:text-base"
-                  />
-                  <span className="text-gray-500 text-sm">to</span>
-                  <input
-                    type="number"
-                    placeholder="Max"
-                    value={priceMax}
-                    onChange={(e) => setPriceMax(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent text-sm sm:text-base"
-                  />
-                </div>
-                <button className="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors whitespace-nowrap text-sm sm:text-base">
-                  Apply
-                </button>
+              <div className="flex items-center gap-2">
+                <input
+                  type="number"
+                  placeholder="Min"
+                  value={priceMin}
+                  onChange={(e) => setPriceMin(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#27bb97] focus:border-transparent text-sm"
+                />
+                <span className="text-gray-500 text-sm">to</span>
+                <input
+                  type="number"
+                  placeholder="Max"
+                  value={priceMax}
+                  onChange={(e) => setPriceMax(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#27bb97] focus:border-transparent text-sm"
+                />
               </div>
             </div>
 
@@ -618,11 +767,13 @@ const Sample = () => {
                 Condition
               </label>
               <div className="grid grid-cols-2 sm:grid-cols-1 gap-2">
-                {["New", "Open box", "Used", "For parts"].map((condition) => (
+                {conditions.map((condition) => (
                   <label key={condition} className="flex items-center">
                     <input
                       type="checkbox"
-                      className="w-4 h-4 text-teal-600 border-gray-300 rounded focus:ring-teal-500"
+                      checked={selectedConditions.includes(condition)}
+                      onChange={() => handleConditionChange(condition)}
+                      className="w-4 h-4 text-[#27bb97] border-gray-300 rounded focus:ring-[#27bb97]"
                     />
                     <span className="ml-2 text-sm text-gray-700">
                       {condition}
@@ -637,42 +788,43 @@ const Sample = () => {
                 Categories
               </label>
               <div className="grid grid-cols-2 sm:grid-cols-1 gap-2">
-                {[
-                  "Electronics & Media",
-                  "Audio & Speakers",
-                  "Cell phones & Accessories",
-                  "Cameras & Photography",
-                  "Video games & Consoles",
-                ].map((cat) => (
+                {categories.map((cat) => (
                   <label key={cat} className="flex items-center">
                     <input
                       type="checkbox"
-                      className="w-4 h-4 text-teal-600 border-gray-300 rounded focus:ring-teal-500"
+                      checked={selectedCategories.includes(cat)}
+                      onChange={() => handleCategoryChange(cat)}
+                      className="w-4 h-4 text-[#27bb97] border-gray-300 rounded focus:ring-[#27bb97]"
                     />
                     <span className="ml-2 text-sm text-gray-700">{cat}</span>
                   </label>
                 ))}
               </div>
-              <button className="text-sm text-teal-600 hover:text-teal-700 font-medium mt-3">
-                + Show more
-              </button>
             </div>
+
+            <button
+              onClick={() => {
+                setSearchQuery("");
+                setPriceMin("");
+                setPriceMax("");
+                setSelectedCategories([]);
+                setSelectedConditions([]);
+              }}
+              className="w-full mt-6 px-4 py-2 border-2 border-gray-300 text-gray-700 rounded-lg hover:border-gray-400 transition-colors"
+            >
+              Clear All Filters
+            </button>
           </aside>
 
           {/* Main Content */}
           <main className="flex-1 min-w-0">
-            {" "}
-            {/* min-w-0 prevents flex overflow */}
-            {/* Page Title and Sort - Responsive */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
               <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
                 Electronics
               </h1>
 
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
-                {/* Search Bar and Sort in single row on mobile */}
                 <div className="flex flex-row items-center gap-3 w-full sm:w-auto">
-                  {/* Search Bar */}
                   <div className="relative flex-1 sm:flex-initial sm:min-w-[250px] lg:min-w-[300px]">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 sm:w-5 sm:h-5" />
                     <input
@@ -680,16 +832,15 @@ const Sample = () => {
                       placeholder="Search items..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      className="w-full pl-9 sm:pl-10 pr-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                      className="w-full pl-9 sm:pl-10 pr-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#27bb97] focus:border-transparent"
                     />
                   </div>
 
-                  {/* Sort Dropdown */}
                   <div className="flex items-center gap-2 sm:flex-shrink-0">
                     <span className="text-xs sm:text-sm text-gray-600 whitespace-nowrap hidden xs:inline">
                       Sort by:
                     </span>
-                    <select className="px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent w-full xs:w-auto min-w-[120px] sm:min-w-[180px]">
+                    <select className="px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#27bb97] focus:border-transparent w-full xs:w-auto min-w-[120px] sm:min-w-[180px]">
                       <option>Recent first</option>
                       <option>Price: Low to High</option>
                       <option>Price: High to Low</option>
@@ -699,11 +850,11 @@ const Sample = () => {
                 </div>
               </div>
             </div>
-            {/* Results Count - Mobile */}
+
             <div className="text-sm text-gray-600 mb-4 lg:hidden">
               {filteredProducts.length} items found
             </div>
-            {/* Products Grid - Responsive */}
+
             <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
               {filteredProducts.map((product) => (
                 <ProductCard
@@ -713,12 +864,11 @@ const Sample = () => {
                 />
               ))}
             </div>
-            {/* Results count - Desktop */}
+
             <div className="mt-8 text-center text-gray-600 hidden lg:block">
-              Showing {filteredProducts.length} of {electronicsData.length}{" "}
-              items
+              Showing {filteredProducts.length} of {electronicsData.length} items
             </div>
-            {/* No Results Message */}
+
             {filteredProducts.length === 0 && (
               <div className="text-center py-12">
                 <div className="text-gray-400 mb-2">No items found</div>
@@ -727,8 +877,10 @@ const Sample = () => {
                     setSearchQuery("");
                     setPriceMin("");
                     setPriceMax("");
+                    setSelectedCategories([]);
+                    setSelectedConditions([]);
                   }}
-                  className="text-teal-600 hover:text-teal-700 font-medium"
+                  className="text-[#27bb97] hover:text-[#1fa987] font-medium"
                 >
                   Clear all filters
                 </button>
@@ -741,5 +893,261 @@ const Sample = () => {
   );
 };
 
-export default Sample;
+// Product Detail Page Component
+const ProductDetail = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const product = electronicsData.find((p) => p.id === parseInt(id));
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const [quantity, setQuantity] = useState(1);
+
+  const productImages = [
+    product?.image,
+    'https://images.unsplash.com/photo-1579586337278-3f576cfc5113?w=500&q=80',
+    'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=500&q=80',
+    'https://images.unsplash.com/photo-1546054451-aa224c0e8c23?w=500&q=80',
+  ].filter(Boolean);
+
+  const handleThumbnailClick = (index) => setSelectedImageIndex(index);
+  const handlePrevImage = () =>
+    setSelectedImageIndex((prev) => (prev === 0 ? productImages.length - 1 : prev - 1));
+  const handleNextImage = () =>
+    setSelectedImageIndex((prev) => (prev === productImages.length - 1 ? 0 : prev + 1));
+
+  if (!product) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+        <div className="text-center p-6 sm:p-8 bg-white rounded-2xl shadow-lg w-full max-w-md">
+          <div className="w-20 h-20 sm:w-24 sm:h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <Smartphone className="w-10 h-10 sm:w-12 sm:h-12 text-gray-400" />
+          </div>
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">Product not found</h2>
+          <button
+            onClick={() => navigate('/electronics')}
+            className="px-6 py-3 bg-[#27BB97] text-white rounded-lg hover:bg-[#1E9E7E] transition-colors font-medium text-base sm:text-lg"
+          >
+            Back to Electronics
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  const techSpecs = [
+    { icon: <Battery className="text-[#27bb97] text-xl" />, label: 'Battery Life', value: '24 hours' },
+    { icon: <Wifi className="text-[#27bb97] text-xl" />, label: 'Connectivity', value: 'Bluetooth 5.2' },
+    { icon: <Shield className="text-[#27bb97] text-xl" />, label: 'Water Resistance', value: 'IP68' },
+    { icon: <Smartphone className="text-[#27bb97] text-xl" />, label: 'Display', value: '1.93" AMOLED' },
+  ];
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <div className="bg-white shadow-sm top-0 z-50">
+        <div className="px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-14 sm:h-16">
+            <div className="flex items-center space-x-1.5 sm:space-x-2 text-sm text-gray-600 min-w-0 flex-1">
+              <button
+                onClick={() => navigate('/electronics')}
+                className="hover:text-[#27bb97] transition-colors whitespace-nowrap"
+              >
+                Electronics
+              </button>
+              <ChevronRight className="w-4 h-4 flex-shrink-0" />
+              <span className="font-medium text-gray-900 truncate">{product.title}</span>
+            </div>
+            <div className="flex items-center space-x-2 sm:space-x-4">
+              <button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+                <Share2 className="w-5 h-5 text-gray-600" />
+              </button>
+              <button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+                <Heart className="w-5 h-5 text-gray-600 hover:text-red-500" />
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
+        <div className="grid grid-cols-1 lg:grid-cols-10 gap-8 lg:gap-12">
+          <div className="lg:col-span-6">
+            <div className="rounded-md mb-6 shadow-sm overflow-hidden bg-white p-4">
+              <div className="relative">
+                <img
+                  src={productImages[selectedImageIndex]}
+                  alt={product.title}
+                  className="w-full h-auto max-h-[500px] rounded-md object-cover bg-gray-50"
+                />
+                
+                <button
+                  onClick={handlePrevImage}
+                  className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 backdrop-blur-sm rounded-full shadow-lg flex items-center justify-center hover:bg-white transition-all hover:shadow-xl z-20"
+                >
+                  <ChevronLeft className="w-6 h-6 text-gray-700" />
+                </button>
+                
+                <button
+                  onClick={handleNextImage}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 backdrop-blur-sm rounded-full shadow-lg flex items-center justify-center hover:bg-white transition-all hover:shadow-xl z-20"
+                >
+                  <ChevronRightIcon className="w-6 h-6 text-gray-700" />
+                </button>
+              </div>
+            </div>
+
+            <div className="flex gap-3 mb-8">
+              {productImages.map((image, index) => (
+                <button
+                  key={index}
+                  onClick={() => handleThumbnailClick(index)}
+                  className={`w-20 h-20 rounded-md overflow-hidden cursor-pointer transition-all ${
+                    selectedImageIndex === index
+                      ? 'border-2 border-[#27bb97] shadow-md'
+                      : 'hover:border-2 hover:border-gray-300'
+                  }`}
+                >
+                  <img
+                    src={image}
+                    className="w-full h-full object-cover"
+                    alt={`Thumbnail ${index + 1}`}
+                  />
+                </button>
+              ))}
+            </div>
+
+            <div className="mb-8">
+              <LocationMap location={product.location} />
+            </div>
+
+            <div className="bg-white rounded-lg shadow-sm p-6">
+              <h3 className="text-xl font-bold mb-4 text-gray-900">Product Description</h3>
+              <p className="text-gray-600 leading-relaxed mb-6">
+                {product.description}
+              </p>
+              
+              <div className="pt-6 border-t border-gray-100">
+                <h4 className="text-lg font-semibold mb-3">Key Features</h4>
+                <ul className="space-y-2">
+                  {product.features.map((feature, index) => (
+                    <li key={index} className="flex items-center">
+                      <Check className="w-5 h-5 text-[#27bb97] mr-3 flex-shrink-0" />
+                      <span className="text-gray-700">{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div className="lg:col-span-4">
+            <div className="sticky top-24 space-y-6">
+              <div className="bg-white rounded-lg shadow-sm p-6">
+                <h2 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-4">
+                  {product.title}
+                </h2>
+                
+                <div className="mb-6">
+                  <div className="text-sm text-gray-500 mb-1 font-medium">
+                    PRICE
+                  </div>
+                  <div className="text-4xl font-bold text-[#27bb97]">
+                    ${product.price}
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-4 text-gray-600 mb-6">
+                  <div className="flex items-center">
+                    <Shield className="w-4 h-4 mr-1.5" />
+                    <span className="font-medium">{product.condition}</span>
+                  </div>
+                  <div className="flex items-center">
+                    <MapPin className="w-4 h-4 mr-1.5" />
+                    <span>{product.location}</span>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3 mb-6">
+                  <span className="text-gray-700 font-medium">Quantity:</span>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                      className="w-10 h-10 rounded-full border-2 border-gray-300 flex items-center justify-center hover:border-gray-400 transition"
+                    >
+                      <FaMinus className="w-3.5 h-3.5 text-gray-600" />
+                    </button>
+                    <span className="text-xl font-semibold w-10 text-center">
+                      {quantity}
+                    </span>
+                    <button
+                      onClick={() => setQuantity(quantity + 1)}
+                      className="w-10 h-10 rounded-full border-2 border-gray-300 flex items-center justify-center hover:border-gray-400 transition"
+                    >
+                      <FaPlus className="w-3.5 h-3.5 text-gray-600" />
+                    </button>
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <button className="w-full py-4 bg-[#27bb97] hover:bg-[#1fa987] text-white rounded-lg font-semibold transition-all shadow-md hover:shadow-lg">
+                    <MessageCircle className="w-5 h-5 inline mr-2" />
+                    Contact Seller
+                  </button>
+                  
+                  <div className="grid grid-cols-2 gap-3">
+                    <button className="py-3 bg-white border-2 border-gray-200 text-gray-700 rounded-lg font-medium hover:border-gray-300 transition-colors">
+                      Make Offer
+                    </button>
+                    <button className="py-3 bg-white border-2 border-[#27bb97] text-[#27bb97] rounded-lg font-medium hover:bg-[#27bb97]/5 transition-colors">
+                      Save Item
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white rounded-lg shadow-sm p-6">
+                <h3 className="text-lg font-bold mb-4 text-gray-700">
+                  Specifications
+                </h3>
+                <div className="space-y-4">
+                  {techSpecs.map((spec, index) => (
+                    <div key={index} className="flex items-center gap-3">
+                      <div className="w-10 h-10 flex items-center justify-center bg-gray-50 rounded-lg">
+                        {spec.icon}
+                      </div>
+                      <div>
+                        <div className="text-sm text-gray-500">{spec.label}</div>
+                        <div className="font-medium text-gray-700">{spec.value}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              
+              <SellerDetails
+                seller={product.seller}
+                rating={product.sellerRating}
+                reviews={product.sellerReviews}
+                joined={product.sellerJoined}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Main App Component with Routing
+const ElectronicsApp = () => {
+  const { id } = useParams();
+  
+  // If there's a product ID in the URL, show product detail page
+  // Otherwise, show the listing page
+  if (id) {
+    return <ProductDetail />;
+  }
+  
+  return <ElectronicsListing />;
+};
+
+export default ElectronicsApp;
 export { electronicsData };

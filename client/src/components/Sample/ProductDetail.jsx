@@ -18,9 +18,73 @@ import {
   Smartphone,
   ChevronLeft,
   ChevronRight as ChevronRightIcon,
+  Navigation,
+  Globe,
 } from 'lucide-react';
 import { FaMinus, FaPlus } from 'react-icons/fa';
 import { electronicsData } from './Sample';
+
+// Simple Location Map Component
+const LocationMap = ({ location }) => {
+  return (
+    <div className="bg-white rounded-lg shadow-sm overflow-hidden mt-8">
+      <div className="p-4 border-b border-gray-100">
+        <h3 className="text-xl font-bold text-gray-900 flex items-center">
+          <MapPin className="w-5 h-5 mr-2 text-[#27bb97]" />
+          Location
+        </h3>
+        <p className="text-gray-600 mt-2">{location}</p>
+      </div>
+      
+      <div className="relative h-64 sm:h-72 md:h-80 bg-gray-100">
+        {/* Map-like background with grid */}
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-gray-50">
+          {/* Grid lines */}
+          <div className="absolute inset-0" style={{
+            backgroundImage: `
+              linear-gradient(to right, #cbd5e1 1px, transparent 1px),
+              linear-gradient(to bottom, #cbd5e1 1px, transparent 1px)
+            `,
+            backgroundSize: '40px 40px'
+          }}></div>
+          
+          {/* Location pin */}
+          <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
+            <div className="relative">
+              <MapPin className="w-12 h-12 text-red-500 animate-pulse" />
+              <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-red-500 rounded-full"></div>
+            </div>
+          </div>
+          
+          {/* Location label */}
+          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
+            <div className="bg-white px-4 py-2 rounded-lg shadow-lg text-center">
+              <p className="font-medium text-gray-800">{location}</p>
+              <p className="text-xs text-gray-500 mt-1">Approximate location</p>
+            </div>
+          </div>
+        </div>
+        
+        {/* Compass in corner */}
+        <div className="absolute top-4 right-4 bg-white p-2 rounded-lg shadow-sm">
+          <Navigation className="w-4 h-4 text-gray-600" />
+        </div>
+      </div>
+      
+      <div className="p-4 border-t border-gray-100 bg-gray-50">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center text-sm text-gray-600">
+            <Globe className="w-4 h-4 mr-2" />
+            <span>Local pickup available</span>
+          </div>
+          <button className="text-sm text-[#27bb97] hover:text-[#1fa987] font-medium">
+            Get directions →
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -92,25 +156,17 @@ const ProductDetail = () => {
               <ChevronRight className="w-4 h-4 flex-shrink-0" />
               <span className="font-medium text-gray-900 truncate">{product.title}</span>
             </div>
-            <div className="flex items-center space-x-2 sm:space-x-4">
-              <button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
-                <Share2 className="w-5 h-5 text-gray-600" />
-              </button>
-              <button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
-                <Heart className="w-5 h-5 text-gray-600 hover:text-red-500" />
-              </button>
-            </div>
           </div>
         </div>
       </div>
 
       {/* Main Content - Using same 60/40 layout */}
-      <div className="px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-10 gap-8 lg:gap-12">
+      <div className="px-4 sm:px-8 lg:px-8 py-6 lg:py-6">
+        <div className="grid grid-cols-1 lg:grid-cols-10 gap-6 lg:gap-6">
           {/* Left Column - Images - Takes 60% (6 columns) */}
           <div className="lg:col-span-6">
             {/* Main Image with Scroll Buttons */}
-            <div className="rounded-md mb-6 shadow-sm overflow-hidden bg-white p-4">
+            <div className="rounded-md mb-6 shadow-sm overflow-hidden bg-white">
               <div className="relative">
                 <img
                   src={productImages[selectedImageIndex]}
@@ -172,6 +228,9 @@ const ProductDetail = () => {
               ))}
             </div>
 
+            {/* Location Map - Added here */}
+            <LocationMap location={product.location} />
+
             {/* Additional Information Below Images */}
             <div className="mt-8 bg-white rounded-lg shadow-sm p-6">
               <h3 className="text-xl font-bold mb-4 text-gray-900">Product Description</h3>
@@ -198,7 +257,7 @@ const ProductDetail = () => {
             <div className="sticky top-24 space-y-6">
               {/* Title and Price */}
               <div className="bg-white rounded-lg shadow-sm p-6">
-                <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+                <h2 className="text-3xl lg:text-3xl font-bold text-gray-900 mb-4">
                   {product.title}
                 </h2>
                 
@@ -206,7 +265,7 @@ const ProductDetail = () => {
                   <div className="text-sm text-gray-500 mb-1 tracking-wider font-medium">
                     ASKING PRICE
                   </div>
-                  <div className="text-4xl lg:text-5xl font-bold text-[#27bb97]">
+                  <div className="text-4xl lg:text-4xl font-bold text-[#27bb97]">
                     ${product.price}
                   </div>
                 </div>
@@ -281,48 +340,7 @@ const ProductDetail = () => {
                   ))}
                 </div>
               </div>
-
-              {/* Color Selection */}
-              <div className="bg-white rounded-lg shadow-sm p-6">
-                <h3 className="text-xs font-bold mb-4 tracking-wider text-gray-700">
-                  AVAILABLE COLORS
-                </h3>
-                <div className="flex gap-3">
-                  <button
-                    onClick={() => setSelectedColor("blue")}
-                    className={`w-9 h-9 rounded-full bg-blue-500 shadow-md ${
-                      selectedColor === "blue"
-                        ? "ring-2 ring-offset-2 ring-blue-500"
-                        : ""
-                    } transition`}
-                  />
-                  <button
-                    onClick={() => setSelectedColor("black")}
-                    className={`w-9 h-9 rounded-full bg-black shadow-md ${
-                      selectedColor === "black"
-                        ? "ring-2 ring-offset-2 ring-black"
-                        : ""
-                    } transition`}
-                  />
-                  <button
-                    onClick={() => setSelectedColor("white")}
-                    className={`w-9 h-9 rounded-full bg-gray-100 border border-gray-300 shadow-md ${
-                      selectedColor === "white"
-                        ? "ring-2 ring-offset-2 ring-gray-400"
-                        : ""
-                    } transition`}
-                  />
-                  <button
-                    onClick={() => setSelectedColor("red")}
-                    className={`w-9 h-9 rounded-full bg-red-500 shadow-md ${
-                      selectedColor === "red"
-                        ? "ring-2 ring-offset-2 ring-red-500"
-                        : ""
-                    } transition`}
-                  />
-                </div>
-              </div>
-
+              
               {/* Seller Info */}
               <div className="bg-white rounded-lg shadow-sm p-6">
                 <div className="flex items-center justify-between mb-4">
