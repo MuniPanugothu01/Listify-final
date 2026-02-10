@@ -150,7 +150,7 @@ const Category = () => {
       id: 11,
       title: "For Sale",
       path: "/forsale",
-      image: "https://lookaside.fbsbx.com/lookaside/crawler/media/?media_id=10219937815529239",
+      image: "/for-sale-2.jpg",
       icon: ShoppingCart,
       subcategories: [
         "Furniture",
@@ -164,7 +164,7 @@ const Category = () => {
       id: 12,
       title: "Pets",
       path: "/pets",
-      image: "https://www.akc.org/wp-content/uploads/2017/11/Golden-Retriever-puppy-outdoors.jpg",
+      image: "/pet-care-5.jpg",
       icon: Users,
       subcategories: [
         "Dogs for Adoption",

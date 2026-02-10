@@ -402,7 +402,7 @@ const Navbar = () => {
               <Link
                 to="/"
                 onClick={scrollToTop}
-                className={`text-lg sm:text-xl md:text-2xl font-semibold hover:text-gray-900 transition-colors logo-text ${
+                className={`text-lg sm:text-xl md:text-2xl font-bold hover:text-gray-900 transition-colors logo-text ${
                   isScrolled ? "text-white" : "text-gray-800"
                 }`}
               >

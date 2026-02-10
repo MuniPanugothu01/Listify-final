@@ -20,7 +20,7 @@ const HowItWorks = () => {
         "Authentic customer reviews",
         "Clear pricing information",
       ],
-      image: "/howitworks.jpg",
+      image: "/howitworks-4.jpg",
     },
     {
       title: "Connect & Book",
@@ -32,7 +32,7 @@ const HowItWorks = () => {
         "Real-time availability updates",
         "Flexible scheduling options",
       ],
-      image: "/howitworks-2.jpg",
+      image: "/howitworks-5.jpg",
     },
     {
       title: "Experience & Review",
@@ -44,7 +44,7 @@ const HowItWorks = () => {
         "Detailed rating system",
         "Support for any concerns",
       ],
-      image: "/howitworks-3.jpg",
+      image: "/howitworks-6.jpg",
     },
   ];
 
@@ -140,7 +140,7 @@ const HowItWorks = () => {
                       <img
                         src={step.image}
                         alt={step.title}
-                        className="w-full h-64 sm:h-80 lg:h-96 object-contain transition-transform duration-700 group-hover:scale-105"
+                        className="w-full h-64 sm:h-80 lg:h-96 object-cover transition-transform duration-700 group-hover:scale-105"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
                     </div>
