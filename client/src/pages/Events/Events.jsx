@@ -6,17 +6,21 @@ import EventsHero from '../../components/Events/EventsHero';
 import Eventcard from '../../components/Events/Eventcard';
 import EventsPopular from '../../components/Events/EventPopular'
 
+import EventSample from '../../components/Events/EventSample';
+
 
 
 const Events = () => {
     return (
         <div className="events-page">
-            <EventsSubNav />
+            {/* <EventsSubNav /> */}
             <EventsHero />
-           
-             <Eventcard />
 
-           <EventsPopular />
+            <EventSample/>
+           
+             {/* <Eventcard /> */}
+
+           {/* <EventsPopular /> */}
 
         </div>
     );

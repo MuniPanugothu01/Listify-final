@@ -88,14 +88,12 @@ export default function Hero() {
   };
 
   const searchCategories = [
-    { name: "Housing", image: "/house.png", color: "bg-purple-100" },
+    { name: "Rentals", image: "/house.png", color: "bg-purple-100" },
     { name: "Jobs", image: "/car1.png", color: "bg-blue-100" },
     { name: "Services", image: "/carservice.png", color: "bg-green-100" },
     { name: "TakeCare", image: "/categories/amazon.png", color: "bg-yellow-100" },
     { name: "Marketplace", image: "/Furniture.png", color: "bg-blue-50" },
-    { name: "Freelancers", image: "/phiyano.png", color: "bg-orange-100" },
-    { name: "Relocation Services", image: "/bag.png", color: "bg-red-100" },
-    { name: "Local Events", image: "/bike.png", color: "bg-teal-100" },
+    { name: "Events", image: "/bike.png", color: "bg-teal-100" },
   ];
 
   // Category data for the rotating icons with routes

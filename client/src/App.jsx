@@ -57,6 +57,7 @@ import DetailsPage from "./components/Roommates/DetailsPage.jsx";
 import Events from "./pages/Events/Events.jsx";
 import EventDetailPage from "./components/Events/EventDetailPage.jsx";
 import EventList from "./components/Events/EventList.jsx";
+import EventSampleDetail from "./components/Events/EventSampleDetail.jsx";
 
 // Rentals
 import Rentals from "./pages/Rentalspage/Rentals";
@@ -250,6 +251,8 @@ const AppContent = () => {
           <Route path="/events" element={<Events />} />
           <Route path="/events/:eventId" element={<EventDetailPage />} />
           <Route path="/events-list" element={<EventList />} />
+          <Route path="/event/:id" element={<EventSampleDetail />} />
+
 
           {/* Services Category */}
           <Route path="/services" element={<ServicesPage />} />

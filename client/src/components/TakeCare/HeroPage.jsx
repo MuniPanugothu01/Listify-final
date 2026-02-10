@@ -87,9 +87,9 @@ const HeroPage = () => {
   return (
     <>
       {/* Hero Section */}
-      <section className="relative w-full h-[40vh] sm:h-[45vh] md:h-[50vh] min-h-[400px] sm:min-h-[450px] md:min-h-[550px] flex items-center justify-center overflow-hidden">
+      <section className="relative w-full h-[400px] sm:h-[400px] md:h-[400px] lg:h-[380px] overflow-hidden">
         <div
-          className="absolute inset-0 bg-cover bg-center"
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
             backgroundImage: `url('babycare-7.jpg')`,
             loading: "lazy",
@@ -125,11 +125,10 @@ const HeroPage = () => {
       </section>
 
       {/* Search Bar Overlay */}
-      <div className="relative -mt-8 sm:-mt-10 md:-mt-12 mb-12 sm:mb-16 md:mb-20">
+      {/* <div className="relative -mt-8 sm:-mt-10 md:-mt-12 mb-12 sm:mb-16 md:mb-20">
         <div className="px-3 sm:px-4 md:px-6">
           <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg sm:shadow-2xl p-4 sm:p-5 md:p-6 border border-gray-200 mx-2 sm:mx-0">
             <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-6 lg:grid-cols-6 gap-3 sm:gap-4">
-              {/* Category Dropdown */}
               <div className="relative">
                 <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
                   Category
@@ -150,7 +149,6 @@ const HeroPage = () => {
                 </div>
               </div>
 
-              {/* City Dropdown */}
               <div className="relative">
                 <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
                   City
@@ -173,7 +171,6 @@ const HeroPage = () => {
                 </div>
               </div>
 
-              {/* Price Dropdown */}
               <div className="relative">
                 <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
                   Price Range
@@ -195,7 +192,6 @@ const HeroPage = () => {
                 </div>
               </div>
 
-              {/* Work Type Dropdown */}
               <div className="relative">
                 <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
                   Work Type
@@ -217,7 +213,6 @@ const HeroPage = () => {
                 </div>
               </div>
 
-              {/* Job Type Dropdown */}
               <div className="relative">
                 <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
                   Job Type
@@ -239,7 +234,6 @@ const HeroPage = () => {
                 </div>
               </div>
 
-              {/* Search Button */}
               <div className="relative flex items-end">
                 <button
                   onClick={handleSearch}
@@ -252,7 +246,7 @@ const HeroPage = () => {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
     </>
   );
 };

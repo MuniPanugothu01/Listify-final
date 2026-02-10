@@ -97,9 +97,9 @@ export default function EventsHero() {
   };
 
   return (
-    <div className="relative h-[40vh] sm:h-[50vh] lg:h-[60vh] xl:h-[70vh]">
+    <div className="relative h-[400px] sm:h-[400px] md:h-[400px] lg:h-[380px] overflow-hidden">
       {/* Carousel Container */}
-      <div className="relative w-full h-[40vh] sm:h-[50vh] lg:h-[60vh] xl:h-[70vh] min-h-[400px] sm:min-h-[500px] overflow-hidden">
+      <div className="">
         {carouselItems.map((item, index) => {
           const isActive = index === currentSlide;
           const isPrevious = index === (currentSlide - 1 + carouselItems.length) % carouselItems.length;
@@ -224,12 +224,11 @@ export default function EventsHero() {
       </div>
 
       {/* 🌟 Floating Search Bar - Responsive positioning */}
-      <div className="absolute left-1/2 -bottom-15 transform -translate-x-1/2 w-full px-3 xs:px-4 sm:px-6 lg:px-8 z-30" 
+      {/* <div className="absolute left-1/2 -bottom-15 transform -translate-x-1/2 w-full px-3 xs:px-4 sm:px-6 lg:px-8 z-30" 
           >
         <div className="rounded-lg sm:rounded-xl lg:rounded-2xl shadow-lg p-4 sm:p-5 lg:p-6 mx-auto bg-white/95 backdrop-blur-sm border border-gray-200">
           <div className="grid grid-cols-5 sm:grid-cols-5 md:grid-cols-5 lg:grid-cols-5 gap-3 sm:gap-4">
             
-            {/* Event Type */}
             <div className="lg:col-span-1">
               <label className="block text-xs font-medium text-gray-600 mb-1">
                 Event Type
@@ -248,7 +247,6 @@ export default function EventsHero() {
               </select>
             </div>
 
-            {/* Location */}
             <div className="lg:col-span-1">
               <label className="block text-xs font-medium text-gray-600 mb-1">
                 Location
@@ -266,7 +264,6 @@ export default function EventsHero() {
               </div>
             </div>
 
-            {/* Date */}
             <div className="lg:col-span-1">
               <label className="block text-xs font-medium text-gray-600 mb-1">
                 When
@@ -285,7 +282,6 @@ export default function EventsHero() {
               </select>
             </div>
 
-            {/* Category */}
             <div className="lg:col-span-1">
               <label className="block text-xs font-medium text-gray-600 mb-1">
                 Category
@@ -304,7 +300,6 @@ export default function EventsHero() {
               </select>
             </div>
 
-            {/* Search Button */}
             <div className="xs:col-span-2 lg:col-span-1 flex items-end mt-1">
               <button className="w-full bg-[#27bb97] text-white font-medium px-4 sm:px-6 lg:px-8 py-2.5 sm:py-3 lg:py-3.5 rounded-lg hover:bg-[#1fa987] transition flex items-center justify-center gap-2 text-sm sm:text-base">
                 <Search className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -314,7 +309,6 @@ export default function EventsHero() {
 
           </div>
 
-          {/* Mobile: Show 2 columns for better visibility */}
           <style jsx>{`
             @media (max-width: 475px) {
               .xs\\:grid-cols-2 {
@@ -323,7 +317,7 @@ export default function EventsHero() {
             }
           `}</style>
         </div>
-      </div>
+      </div> */}
 
       {/* Custom CSS for upward wheel animation only */}
       <style jsx>{`

@@ -66,7 +66,7 @@ const ForSaleCollections = () => {
   };
 
   return (
-    <section className="py-12 px-8 bg-white">
+    <section className="py-12 px-10 bg-white">
       <div className="">
         <div className="text-center mb-10">
           <h2 className="text-3xl font-bold text-gray-900 mb-3">Shop Collections</h2>
