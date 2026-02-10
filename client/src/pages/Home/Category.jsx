@@ -16,8 +16,6 @@ const Category = () => {
         "Shared Apartments",
         "Room for Rent",
         "Flatmates Wanted",
-        "Student Housing",
-        "Long-term Roommates",
       ],
     },
     {
@@ -30,8 +28,6 @@ const Category = () => {
         "Apartments",
         "Studio Flats",
         "Short-term Rentals",
-        "Furnished Rooms",
-        "Vacation Rentals",
       ],
     },
     {
@@ -44,22 +40,6 @@ const Category = () => {
         "Smartphones",
         "Laptops & Tablets",
         "TVs & Audio",
-        "Gaming Consoles",
-        "Accessories",
-      ],
-    },
-    {
-      id: 4,
-      title: "Houses",
-      path: "/rentals",
-      image: "https://thumbs.dreamstime.com/b/real-estate-exterior-front-house-sunny-day-big-custom-made-luxury-nicely-landscaped-yard-summer-modern-beautiful-289420329.jpg",
-      icon: Home,
-      subcategories: [
-        "Houses for Sale",
-        "Houses for Rent",
-        "Townhouses",
-        "Luxury Homes",
-        "New Developments",
       ],
     },
     {
@@ -72,8 +52,6 @@ const Category = () => {
         "Used Cars",
         "New Cars",
         "SUVs & Trucks",
-        "Electric Vehicles",
-        "Motorcycles",
       ],
     },
     {
@@ -86,8 +64,6 @@ const Category = () => {
         "Plumbing",
         "Electrical",
         "Cleaning",
-        "Painting",
-        "Handyman Repairs",
       ],
     },
     {
@@ -100,8 +76,6 @@ const Category = () => {
         "Elderly Care",
         "Home Nursing",
         "Caregivers",
-        "Companion Services",
-        "Medical Assistance",
       ],
     },
     {
@@ -114,8 +88,6 @@ const Category = () => {
         "Full-time Jobs",
         "Part-time",
         "Remote Work",
-        "Internships",
-        "Freelance Gigs",
       ],
     },
     {
@@ -128,8 +100,6 @@ const Category = () => {
         "Concerts",
         "DJ Nights",
         "Parties",
-        "Live Shows",
-        "Local Events",
       ],
     },
     {
@@ -142,8 +112,6 @@ const Category = () => {
         "General Buy/Sell",
         "Free Items",
         "Collectibles",
-        "Antiques",
-        "Local Deals",
       ],
     },
     {
@@ -156,22 +124,6 @@ const Category = () => {
         "Furniture",
         "Clothing",
         "Home Appliances",
-        "Sports Equipment",
-        "Books & Toys",
-      ],
-    },
-    {
-      id: 12,
-      title: "Pets",
-      path: "/pets",
-      image: "/pet-care-5.jpg",
-      icon: Users,
-      subcategories: [
-        "Dogs for Adoption",
-        "Cats for Adoption",
-        "Pet Supplies",
-        "Pet Services",
-        "Lost & Found Pets",
       ],
     },
   ];
@@ -252,7 +204,7 @@ const Category = () => {
     return (
       <div
         key={category.id}
-        className="category-card group relative h-48 sm:h-56 md:h-64 lg:h-72 xl:h-80 w-full overflow-hidden cursor-pointer rounded-lg sm:rounded-xl shadow-lg hover:shadow-2xl transition-all duration-700 ease-in-out transform hover:scale-[1.02]"
+        className="category-card group relative h-48 md:h-48 lg:h-56 xl:h-64 w-full overflow-hidden cursor-pointer rounded-lg sm:rounded-xl shadow-lg hover:shadow-2xl transition-all duration-700 ease-in-out transform hover:scale-[1.02]"
         onClick={(e) => handleCardClick(category, e)}
       >
         {/* Background Image */}
@@ -368,11 +320,9 @@ const Category = () => {
         </div>
 
         {/* Grid - Showing ALL categories at once */}
-        <div className="lg:px-12 lg:py-4 mt-4 grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
+        <div className="lg:px-12 lg:py-4 mt-4 grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-5 gap-3 sm:gap-4 md:gap-6">
           {categories.map(renderCard)}
         </div>
-
-        {/* Removed View More / View Less Button and count message */}
       </div>
     </div>
   );

@@ -154,14 +154,6 @@ const WhyUs = () => {
                 For Sale – Furniture, Fashion, Books, and Miscellaneous
               </span>
             </li>
-            <li className="flex items-start sm:items-center gap-2">
-              <FaArrowRight className="text-black mt-1 sm:mt-0 flex-shrink-0" />
-              <span>Pets – Adoption, Accessories, and Veterinary</span>
-            </li>
-            <li className="flex items-start sm:items-center gap-2">
-              <FaArrowRight className="text-black mt-1 sm:mt-0 flex-shrink-0" />
-              <span>Community – Events, Activities, and Networking</span>
-            </li>
           </ul>
           <div className="flex items-center gap-1 sm:gap-2 mt-4 sm:mt-5 md:mt-6 lg:mt-7">
             {[...Array(6)].map((_, i) => (

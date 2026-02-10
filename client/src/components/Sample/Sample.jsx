@@ -690,8 +690,8 @@ const ElectronicsListing = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="bg-white border-b">
+    <div className="min-h-screen bg-gray-50 ">
+      <div className="bg-white border-b ">
         <div className="px-3 sm:px-4 md:px-6 lg:px-8 py-3">
           <div className="flex items-center text-sm text-gray-600">
             <a href="/" className="hover:text-gray-900">
@@ -855,7 +855,7 @@ const ElectronicsListing = () => {
               {filteredProducts.length} items found
             </div>
 
-            <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
+            <div className="grid grid-cols-2 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
               {filteredProducts.map((product) => (
                 <ProductCard
                   key={product.id}
