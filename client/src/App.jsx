@@ -5,8 +5,10 @@ import {
   Route,
   useLocation,
 } from "react-router-dom";
-// CHANGED: Added GoogleOAuthProvider import
 import { GoogleOAuthProvider } from "@react-oauth/google";
+
+// Import Loading Spinner Component
+import LoadingSpinner from "./components/LoadingSpinner.jsx"; // Make sure path is correct
 
 import Navbar from "./pages/Home/Navbar.jsx";
 import Hero from "./pages/Home/Hero.jsx";
@@ -110,7 +112,18 @@ const ScrollToTop = () => {
 // Main App Component with route-based rendering
 const AppContent = () => {
   const [showScrollTop, setShowScrollTop] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const location = useLocation();
+
+  // Initial app loading
+  useEffect(() => {
+    // Simulate initial app loading (you can remove this and set isLoading to false if not needed)
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   // Check if current route should hide navbar and footer
   const hideNavbarFooterPaths = [
@@ -152,6 +165,11 @@ const AppContent = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [showScrollTop]);
 
+  // Show loading spinner during initial app load
+  if (isLoading) {
+    return <LoadingSpinner text="Loading..." />;
+  }
+
   return (
     <div className="relative min-h-screen flex flex-col">
       {/* Navbar - Conditionally rendered */}
@@ -162,7 +180,6 @@ const AppContent = () => {
 
       {/* Main Content */}
       <main className="flex-grow">
-        {/* CHANGED: Removed nested GoogleOAuthProvider wrapper */}
         <Toaster position="top-right" />
         <Routes>
           {/* Home */}
@@ -182,7 +199,6 @@ const AppContent = () => {
           />
 
           {/*Sample */}
-
           <Route path="/product" element={<Sample />} />
           <Route path="/product/:id" element={<ProductDetail />} />
 
@@ -254,7 +270,6 @@ const AppContent = () => {
           <Route path="/events-list" element={<EventList />} />
           <Route path="/event/:id" element={<EventSampleDetail />} />
 
-
           {/* Services Category */}
           <Route path="/services" element={<ServicesPage />} />
 
@@ -307,7 +322,6 @@ const AppContent = () => {
 // Main App Wrapper
 const App = () => {
   return (
-    // CHANGED: Wrapped entire app with GoogleOAuthProvider here
     <GoogleOAuthProvider clientId={googleClientId || ""}>
       <Router>
         <ScrollToTop />
