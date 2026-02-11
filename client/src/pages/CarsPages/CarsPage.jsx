@@ -11,21 +11,26 @@ import AllCarsCard from "../../components/Cars/AllCarsCard";
 import HeroSection2 from "../../components/Cars/HeroSection2";
 import CarsSubNav from "../../components/Cars/CarsSubNav";
 
+import VehiclesListing from "../../components/Cars/VehiclesListing";
+
 const CarsPage = () => {
   return (
     <div>
       {/* <HeroSection /> */}
-      <CarsSubNav/>
+      {/* <CarsSubNav/> */}
       <HeroSection2/>
-      {/* <BrowseCategories /> */}
-      <BrowseCategories2 />
 
-      <FeaturedCars />
+      <VehiclesListing/>
+
+      {/* <BrowseCategories /> */}
+      {/* <BrowseCategories2 /> */}
+
+      {/* <FeaturedCars /> */}
    
-      <PostCars />
-      <CarListings />
-      <TrendingCars />
-<WhyChooseUs/>
+      {/* <PostCars /> */}
+      {/* <CarListings /> */}
+      {/* <TrendingCars /> */}
+      {/* <WhyChooseUs/> */}
 
 
    {/* <AllCarsCard/> */}

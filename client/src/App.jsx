@@ -79,6 +79,7 @@ import ServicesPage from "./pages/Services/ServicesPage.jsx";
 import CarsPage from "./pages/CarsPages/CarsPage.jsx";
 import CarListing from "./components/Cars/CarListing.jsx";
 import CarDetails from "./components/Cars/CarDetails.jsx";
+import VehicleDetail from "./components/Cars/VehicleDetail.jsx";
 
 // Profile
 import Profile from "./pages/Home/Profile.jsx";
@@ -258,9 +259,10 @@ const AppContent = () => {
           <Route path="/services" element={<ServicesPage />} />
 
           {/* Cars categories */}
-          <Route path="/cars" element={<CarsPage />} />
+          <Route path="/vehicles" element={<CarsPage />} />
           <Route path="/car-listings" element={<CarListing />} />
           <Route path="/car-details" element={<CarDetails />} />
+          <Route path="/vehicle/:id" element={<VehicleDetail />} />
 
           {/* Profile */}
           <Route path="/dashboard" element={<Profile />} />

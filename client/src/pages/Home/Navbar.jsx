@@ -82,18 +82,18 @@ const Navbar = () => {
   };
 
   const mainMenuItems = [
+    { name: "Vehicles", path: "/vehicles" },
     { name: "Electronics", path: "/electronics" },
-    { name: "ForSale", path: "/forsale" },
+    { name: "For Sale", path: "/forsale" },
     { name: "Events", path: "/events" },
-    { name: "Roommates", path: "/roommates" },
-    { name: "Rentals", path: "/rentals" },
-    { name: "Services", path: "/services" },
   ];
-
+  
   const moreMenuItems = [
+    { name: "Rentals", path: "/rentals" },
+    { name: "Roommates", path: "/roommates" },
+    { name: "Services", path: "/services" },
     { name: "TakeCare", path: "/takecare" },
     { name: "Jobs", path: "/jobs" },
-    { name: "Cars", path: "/cars" },
   ];
 
   const profileMenuItems = [

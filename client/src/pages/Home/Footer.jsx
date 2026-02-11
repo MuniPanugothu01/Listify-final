@@ -45,7 +45,7 @@ const Footer = () => {
     { name: "Jobs", path: "/jobs", description: "Career opportunities" },
     { name: "Events", path: "/events", description: "Events" },
     { name: "Take Care", path: "/takecare", description: " " },
-    { name: "Cars", path: "/cars", description: " " },
+    { name: "Vehicles", path: "/vehicles", description: " " },
     { name: "For Sale", path: "/forsale", description: " " },
   ];
 
