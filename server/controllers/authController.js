@@ -32,7 +32,9 @@ const sendTokenResponse = (user, statusCode, res, message) => {
     googleProfileImage: user.googleProfileImage || null,
     isVerified: user.isVerified,
     // Add computed profile image URL
-    profileImageUrl: user.getProfileImage ? user.getProfileImage() : user.avatar
+    profileImageUrl: user.getProfileImage
+      ? user.getProfileImage()
+      : user.avatar || "https://cdn-icons-png.flaticon.com/512/149/149071.png",
   };
 
   res.status(statusCode).json({
@@ -143,6 +145,12 @@ exports.googleTokenAuth = async (req, res) => {
     console.log("✅ Google token auth successful:", {
       email: user.email,
       isNew,
+      profileImage: user.profileImage,
+      googleProfileImage: user.googleProfileImage,
+      avatar: user.avatar,
+      profileImageUrl: user.getProfileImage
+        ? user.getProfileImage()
+        : "Not calculated",
     });
 
     logger.info("Google token auth successful:", {
@@ -150,7 +158,32 @@ exports.googleTokenAuth = async (req, res) => {
       isNew,
     });
 
-    return sendTokenResponse(user, statusCode, res, message);
+    // Use enhanced user response
+    const userResponse = {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      provider: user.provider,
+      avatar: user.avatar,
+      profileImage: user.profileImage || null,
+      googleProfileImage: user.googleProfileImage || null,
+      isVerified: user.isVerified,
+      // Calculate profileImageUrl using the method
+      profileImageUrl: user.getProfileImage
+        ? user.getProfileImage()
+        : user.avatar ||
+          "https://cdn-icons-png.flaticon.com/512/149/149071.png",
+    };
+
+    const authToken = generateToken(user._id);
+
+    return res.status(statusCode).json({
+      success: true,
+      message,
+      token: authToken,
+      user: userResponse,
+    });
   } catch (error) {
     console.error("❌ Google Token Auth Error:", error.message);
     logger.error("Google Token Auth Error:", error);
@@ -163,9 +196,6 @@ exports.googleTokenAuth = async (req, res) => {
 };
 
 // ==================== LOGIN/REGISTRATION ====================
-
-
-// ==================== UPDATED FUNCTIONS ====================
 
 // Update login response to include profile images
 exports.login = async (req, res) => {
@@ -288,7 +318,10 @@ exports.login = async (req, res) => {
       profileImage: user.profileImage,
       googleProfileImage: user.googleProfileImage,
       isVerified: user.isVerified,
-      profileImageUrl: user.getProfileImage ? user.getProfileImage() : user.avatar
+      profileImageUrl: user.getProfileImage
+        ? user.getProfileImage()
+        : user.avatar ||
+          "https://cdn-icons-png.flaticon.com/512/149/149071.png",
     };
 
     const token = generateToken(user._id);
@@ -309,313 +342,7 @@ exports.login = async (req, res) => {
   }
 };
 
-// Update Google login response
-exports.googleTokenAuth = async (req, res) => {
-  try {
-    const { token: googleToken } = req.body;
-
-    if (!googleToken) {
-      return res.status(400).json({
-        success: false,
-        message: "Google token is required",
-      });
-    }
-
-    console.log("🔍 Processing Google token...");
-
-    // Use the Google auth service
-    const { user, isNew } = await handleGoogleAuth(googleToken, req);
-
-    const message = isNew
-      ? "Account created with Google"
-      : "Google login successful";
-
-    const statusCode = isNew ? 201 : 200;
-
-    console.log("✅ Google token auth successful:", {
-      email: user.email,
-      isNew,
-    });
-
-    logger.info("Google token auth successful:", {
-      email: user.email,
-      isNew,
-    });
-
-    // ==================== UPDATED RESPONSE ====================
-    const userResponse = {
-      id: user._id,
-      name: user.name,
-      email: user.email,
-      role: user.role,
-      provider: user.provider,
-      avatar: user.avatar,
-      profileImage: user.profileImage,
-      googleProfileImage: user.googleProfileImage,
-      isVerified: user.isVerified,
-      profileImageUrl: user.getProfileImage ? user.getProfileImage() : user.avatar
-    };
-
-    const authToken = generateToken(user._id);
-
-    return res.status(statusCode).json({
-      success: true,
-      message,
-      token: authToken,
-      user: userResponse,
-    });
-  } catch (error) {
-    console.error("❌ Google Token Auth Error:", error.message);
-    logger.error("Google Token Auth Error:", error);
-    res.status(401).json({
-      success: false,
-      message: "Invalid Google token",
-      error: process.env.NODE_ENV === "development" ? error.message : undefined,
-    });
-  }
-};
-
-// Update getProfile to include profile images
-exports.getProfile = async (req, res) => {
-  try {
-    const user = await User.findById(req.user.id);
-
-    // ==================== UPDATED RESPONSE ====================
-    const userResponse = {
-      id: user._id,
-      name: user.name,
-      email: user.email,
-      role: user.role,
-      provider: user.provider,
-      avatar: user.avatar,
-      profileImage: user.profileImage,
-      googleProfileImage: user.googleProfileImage,
-      isVerified: user.isVerified,
-      createdAt: user.createdAt,
-      profileImageUrl: user.getProfileImage ? user.getProfileImage() : user.avatar
-    };
-
-    res.status(200).json({
-      success: true,
-      user: userResponse,
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Server error",
-      error: error.message,
-    });
-  }
-};
-
-// Update profile with profile image support
-exports.updateProfile = async (req, res) => {
-  try {
-    const { name, email, profileImage } = req.body;
-    const updateData = {};
-
-    if (name) updateData.name = name;
-    if (profileImage) updateData.profileImage = profileImage;
-
-    if (email) {
-      const emailExists = await User.findOne({
-        email,
-        _id: { $ne: req.user.id },
-      });
-
-      if (emailExists) {
-        return res.status(400).json({
-          success: false,
-          message: "Email already in use",
-        });
-      }
-      updateData.email = email;
-    }
-
-    const user = await User.findByIdAndUpdate(req.user.id, updateData, {
-      new: true,
-      runValidators: true,
-    });
-
-    // ==================== UPDATED RESPONSE ====================
-    const userResponse = {
-      id: user._id,
-      name: user.name,
-      email: user.email,
-      role: user.role,
-      provider: user.provider,
-      avatar: user.avatar,
-      profileImage: user.profileImage,
-      googleProfileImage: user.googleProfileImage,
-      isVerified: user.isVerified,
-      profileImageUrl: user.getProfileImage ? user.getProfileImage() : user.avatar
-    };
-
-    res.status(200).json({
-      success: true,
-      message: "Profile updated successfully",
-      user: userResponse,
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Server error",
-      error: error.message,
-    });
-  }
-};
-
-// Add new endpoint to upload profile image
-exports.uploadProfileImage = async (req, res) => {
-  try {
-    const { profileImage } = req.body;
-    
-    if (!profileImage) {
-      return res.status(400).json({
-        success: false,
-        message: "Profile image URL is required",
-      });
-    }
-
-    const user = await User.findByIdAndUpdate(
-      req.user.id,
-      { profileImage },
-      { new: true }
-    );
-
-    // ==================== UPDATED RESPONSE ====================
-    const userResponse = {
-      id: user._id,
-      name: user.name,
-      email: user.email,
-      role: user.role,
-      provider: user.provider,
-      avatar: user.avatar,
-      profileImage: user.profileImage,
-      googleProfileImage: user.googleProfileImage,
-      isVerified: user.isVerified,
-      profileImageUrl: user.getProfileImage ? user.getProfileImage() : user.avatar
-    };
-
-    res.status(200).json({
-      success: true,
-      message: "Profile image updated successfully",
-      user: userResponse,
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Server error",
-      error: error.message,
-    });
-  }
-};
-
-// Update OTP registration response
-exports.verifyOTPAndRegister = async (req, res) => {
-  try {
-    const { email, otp } = req.body;
-
-    if (!email || !otp) {
-      return res.status(400).json({
-        success: false,
-        message: "Email and OTP are required",
-      });
-    }
-
-    // Get pending registration data
-    const pendingData = await RedisService.getPendingRegistration(email);
-    if (!pendingData) {
-      return res.status(400).json({
-        success: false,
-        message:
-          "Registration session expired or not found. Please start over.",
-      });
-    }
-
-    // Check OTP attempts
-    if (pendingData.otpAttempts >= 3) {
-      // Too many attempts, delete pending registration
-      await RedisService.deletePendingRegistration(email);
-      return res.status(400).json({
-        success: false,
-        message: "Too many OTP attempts. Please start registration again.",
-      });
-    }
-
-    // Verify OTP
-    const otpVerification = await RedisService.verifyOTP(email, otp);
-    if (!otpVerification.valid) {
-      // Increment OTP attempts
-      pendingData.otpAttempts += 1;
-      await RedisService.storePendingRegistration(email, pendingData);
-
-      return res.status(400).json({
-        success: false,
-        message: otpVerification.reason,
-        attemptsRemaining: 3 - pendingData.otpAttempts,
-      });
-    }
-
-    // Double-check if user still doesn't exist in database
-    const userExists = await User.findOne({ email });
-    if (userExists) {
-      await RedisService.deletePendingRegistration(email);
-      return res.status(400).json({
-        success: false,
-        message: "User already registered. Please login.",
-      });
-    }
-
-    // Create user in database
-    console.log("🔍 Creating user with stored hash");
-    const user = await User.create({
-      name: pendingData.name,
-      email: pendingData.email,
-      password: pendingData.password,
-      provider: "local",
-      isVerified: true,
-      lastPasswordChange: new Date(),
-    });
-
-    console.log(`✅ User created in database: ${email}`);
-
-    // Delete Redis data after successful registration
-    await RedisService.deletePendingRegistration(email);
-    console.log(`✅ Redis data cleaned up for: ${email}`);
-
-    // ==================== UPDATED RESPONSE ====================
-    const userResponse = {
-      id: user._id,
-      name: user.name,
-      email: user.email,
-      role: user.role,
-      provider: user.provider,
-      avatar: user.avatar,
-      profileImage: user.profileImage,
-      googleProfileImage: user.googleProfileImage,
-      isVerified: user.isVerified,
-      profileImageUrl: user.getProfileImage ? user.getProfileImage() : user.avatar
-    };
-
-    const token = generateToken(user._id);
-
-    res.status(201).json({
-      success: true,
-      message: "User registered successfully",
-      token,
-      user: userResponse,
-    });
-  } catch (error) {
-    console.error("❌ OTP verification error:", error);
-    res.status(500).json({
-      success: false,
-      message: "Server error during registration",
-      error: error.message,
-    });
-  }
-};
-
+// ==================== UPDATED FUNCTIONS ====================
 
 // Setup password for users without password
 exports.setupPassword = async (req, res) => {
@@ -976,8 +703,31 @@ exports.verifyOTPAndRegister = async (req, res) => {
     await RedisService.deletePendingRegistration(email);
     console.log(`✅ Redis data cleaned up for: ${email}`);
 
-    // Send token response
-    sendTokenResponse(user, 201, res, "User registered successfully");
+    // Send token response with enhanced user data
+    const userResponse = {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      provider: user.provider,
+      avatar: user.avatar,
+      profileImage: user.profileImage || null,
+      googleProfileImage: user.googleProfileImage || null,
+      isVerified: user.isVerified,
+      profileImageUrl: user.getProfileImage
+        ? user.getProfileImage()
+        : user.avatar ||
+          "https://cdn-icons-png.flaticon.com/512/149/149071.png",
+    };
+
+    const token = generateToken(user._id);
+
+    res.status(201).json({
+      success: true,
+      message: "User registered successfully",
+      token,
+      user: userResponse,
+    });
   } catch (error) {
     console.error("❌ OTP verification error:", error);
     console.error("Error stack:", error.stack);
@@ -1102,7 +852,13 @@ exports.checkAuth = async (req, res) => {
           role: user.role,
           provider: user.provider,
           avatar: user.avatar,
+          profileImage: user.profileImage,
+          googleProfileImage: user.googleProfileImage,
           isVerified: user.isVerified,
+          profileImageUrl: user.getProfileImage
+            ? user.getProfileImage()
+            : user.avatar ||
+              "https://cdn-icons-png.flaticon.com/512/149/149071.png",
         },
       });
     } catch (error) {
@@ -1160,23 +916,32 @@ exports.checkRegistrationStatus = async (req, res) => {
   }
 };
 
-// Get user profile
+// Get user profile - UPDATED
 exports.getProfile = async (req, res) => {
   try {
     const user = await User.findById(req.user.id);
 
+    // ==================== UPDATED RESPONSE ====================
+    const userResponse = {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      provider: user.provider,
+      avatar: user.avatar,
+      profileImage: user.profileImage,
+      googleProfileImage: user.googleProfileImage,
+      isVerified: user.isVerified,
+      createdAt: user.createdAt,
+      profileImageUrl: user.getProfileImage
+        ? user.getProfileImage()
+        : user.avatar ||
+          "https://cdn-icons-png.flaticon.com/512/149/149071.png",
+    };
+
     res.status(200).json({
       success: true,
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        provider: user.provider,
-        avatar: user.avatar,
-        isVerified: user.isVerified,
-        createdAt: user.createdAt,
-      },
+      user: userResponse,
     });
   } catch (error) {
     res.status(500).json({
@@ -1187,13 +952,14 @@ exports.getProfile = async (req, res) => {
   }
 };
 
-// Update profile
+// Update profile with profile image support
 exports.updateProfile = async (req, res) => {
   try {
-    const { name, email } = req.body;
+    const { name, email, profileImage } = req.body;
     const updateData = {};
 
     if (name) updateData.name = name;
+    if (profileImage) updateData.profileImage = profileImage;
 
     if (email) {
       const emailExists = await User.findOne({
@@ -1215,18 +981,76 @@ exports.updateProfile = async (req, res) => {
       runValidators: true,
     });
 
+    // ==================== UPDATED RESPONSE ====================
+    const userResponse = {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      provider: user.provider,
+      avatar: user.avatar,
+      profileImage: user.profileImage,
+      googleProfileImage: user.googleProfileImage,
+      isVerified: user.isVerified,
+      profileImageUrl: user.getProfileImage
+        ? user.getProfileImage()
+        : user.avatar ||
+          "https://cdn-icons-png.flaticon.com/512/149/149071.png",
+    };
+
     res.status(200).json({
       success: true,
       message: "Profile updated successfully",
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        provider: user.provider,
-        avatar: user.avatar,
-        isVerified: user.isVerified,
-      },
+      user: userResponse,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+      error: error.message,
+    });
+  }
+};
+
+// Add new endpoint to upload profile image
+exports.uploadProfileImage = async (req, res) => {
+  try {
+    const { profileImage } = req.body;
+
+    if (!profileImage) {
+      return res.status(400).json({
+        success: false,
+        message: "Profile image URL is required",
+      });
+    }
+
+    const user = await User.findByIdAndUpdate(
+      req.user.id,
+      { profileImage },
+      { new: true },
+    );
+
+    // ==================== UPDATED RESPONSE ====================
+    const userResponse = {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      provider: user.provider,
+      avatar: user.avatar,
+      profileImage: user.profileImage,
+      googleProfileImage: user.googleProfileImage,
+      isVerified: user.isVerified,
+      profileImageUrl: user.getProfileImage
+        ? user.getProfileImage()
+        : user.avatar ||
+          "https://cdn-icons-png.flaticon.com/512/149/149071.png",
+    };
+
+    res.status(200).json({
+      success: true,
+      message: "Profile image updated successfully",
+      user: userResponse,
     });
   } catch (error) {
     res.status(500).json({

@@ -319,6 +319,7 @@ const handleGoogleAuth = async (idToken, req = null) => {
       hasGoogleProfileImage: !!user.googleProfileImage,
       hasProfileImage: !!user.profileImage,
       avatar: user.avatar ? "Set" : "Not set",
+      profileImageUrl: user.getProfileImage ? user.getProfileImage() : "Not calculated",
     });
 
     return { user, isNew };

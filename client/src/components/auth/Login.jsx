@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Eye, EyeOff, ArrowLeft } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { HiDotsHorizontal } from "react-icons/hi";
@@ -22,8 +22,11 @@ const Login = () => {
   });
   const [rememberMe, setRememberMe] = useState(false);
   const [formErrors, setFormErrors] = useState({});
+  
+  // Add ref to track if toast has been shown
+  const toastShownRef = useRef(false);
 
-  // Handle errors from Redux
+  // Handle errors from Redux - FIXED to prevent double toast
   useEffect(() => {
     console.log("Current auth state:", {
       loading,
@@ -33,18 +36,24 @@ const Login = () => {
       user,
     });
 
-    if (error) {
+    if (error && !toastShownRef.current) {
       console.log("Redux error detected:", error);
+      toastShownRef.current = true;
       toast.error(
         typeof error === "string"
           ? error
           : "Login failed. Please check your credentials.",
       );
-      dispatch(clearError());
+      
+      // Clear error after showing toast
+      setTimeout(() => {
+        dispatch(clearError());
+        toastShownRef.current = false;
+      }, 100);
     }
   }, [error, dispatch]);
 
-  // Handle successful login
+  // Handle successful login - FIXED to prevent double toast
   useEffect(() => {
     console.log("Checking for successful login...", {
       success,
@@ -52,8 +61,9 @@ const Login = () => {
       user: !!user,
     });
 
-    if (success && token && user) {
+    if (success && token && user && !toastShownRef.current) {
       console.log("Login successful, navigating to home page");
+      toastShownRef.current = true;
       toast.success("Login successful!");
 
       if (rememberMe) {
@@ -63,6 +73,7 @@ const Login = () => {
       // Navigate after a short delay
       const timer = setTimeout(() => {
         navigate("/");
+        toastShownRef.current = false;
       }, 1000);
 
       return () => clearTimeout(timer);
@@ -108,6 +119,9 @@ const Login = () => {
 
     console.log("Form submitted with:", formData);
     console.log("Form validation result:", validateForm());
+
+    // Reset toast flag
+    toastShownRef.current = false;
 
     // Validate form
     if (!validateForm()) {

@@ -7,6 +7,13 @@ const getInitialUserState = () => {
     const userStr = localStorage.getItem("user");
     if (userStr) {
       const user = JSON.parse(userStr);
+      // Ensure user has profileImageUrl
+      if (!user.profileImageUrl) {
+        user.profileImageUrl = user.avatar || 
+                              user.profileImage || 
+                              user.googleProfileImage || 
+                              "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+      }
       return user;
     }
   } catch (error) {
@@ -338,7 +345,15 @@ const authSlice = createSlice({
       const userStr = localStorage.getItem("user");
       if (userStr) {
         try {
-          state.user = JSON.parse(userStr);
+          const user = JSON.parse(userStr);
+          // Ensure profileImageUrl is set
+          if (!user.profileImageUrl) {
+            user.profileImageUrl = user.avatar || 
+                                  user.profileImage || 
+                                  user.googleProfileImage || 
+                                  "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+          }
+          state.user = user;
         } catch (error) {
           console.error("Error parsing user from localStorage:", error);
           state.user = null;
@@ -362,7 +377,7 @@ const authSlice = createSlice({
         state.error = action.payload;
       })
 
-      // Google Login
+      // Google Login - UPDATED to fix double toast
       .addCase(googleLogin.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -373,6 +388,24 @@ const authSlice = createSlice({
         state.success = true;
         state.token = action.payload.token;
         state.user = action.payload.user;
+        
+        // Force refresh from localStorage
+        const userStr = localStorage.getItem("user");
+        if (userStr) {
+          try {
+            const user = JSON.parse(userStr);
+            // Ensure profileImageUrl is set
+            if (!user.profileImageUrl) {
+              user.profileImageUrl = user.avatar || 
+                                    user.profileImage || 
+                                    user.googleProfileImage || 
+                                    "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+            }
+            state.user = user;
+          } catch (error) {
+            console.error("Error parsing user from localStorage:", error);
+          }
+        }
       })
       .addCase(googleLogin.rejected, (state, action) => {
         state.loading = false;
@@ -576,7 +609,7 @@ export const {
   setResetEmail,
   clearResetEmail,
   setGoogleClientId,
-  refreshUserData, // Added
+  refreshUserData,
 } = authSlice.actions;
 
 export default authSlice.reducer;

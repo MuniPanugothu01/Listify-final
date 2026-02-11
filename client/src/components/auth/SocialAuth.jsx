@@ -16,6 +16,7 @@ const SocialAuth = ({ onSuccess, isSignUp = false }) => {
   const [error, setError] = useState("");
   const [googleButtonReady, setGoogleButtonReady] = useState(false);
   const loginInProgress = useRef(false);
+  const toastShown = useRef(false); // Added to prevent double toast
 
   // Get Google Client ID when component mounts
   useEffect(() => {
@@ -44,9 +45,17 @@ const SocialAuth = ({ onSuccess, isSignUp = false }) => {
 
   const handleGoogleSuccess = async (credentialResponse) => {
     try {
+      // Reset toast flag
+      toastShown.current = false;
+      
       if (onSuccess) {
         // Use custom success handler if provided (for SignUp)
         return onSuccess(credentialResponse);
+      }
+
+      if (loginInProgress.current) {
+        console.log("Login already in progress, skipping");
+        return;
       }
 
       loginInProgress.current = true;
@@ -63,17 +72,29 @@ const SocialAuth = ({ onSuccess, isSignUp = false }) => {
       const result = await googleLoginAction(idToken);
 
       if (result.payload?.success) {
-        toast.success("Google login successful!");
+        // Show toast only once
+        if (!toastShown.current) {
+          toast.success("Google login successful!");
+          toastShown.current = true;
+        }
         navigate("/");
       } else {
         const errorMsg = result.payload?.error || "Google login failed";
         setError(errorMsg);
-        toast.error(errorMsg);
+        // Show toast only once
+        if (!toastShown.current) {
+          toast.error(errorMsg);
+          toastShown.current = true;
+        }
       }
     } catch (error) {
       console.error("Google Login Error:", error);
       setError(error.message || "Google login failed");
-      toast.error("Google login failed. Please try again.");
+      // Show toast only once
+      if (!toastShown.current) {
+        toast.error("Google login failed. Please try again.");
+        toastShown.current = true;
+      }
     } finally {
       loginInProgress.current = false;
     }
@@ -82,9 +103,13 @@ const SocialAuth = ({ onSuccess, isSignUp = false }) => {
   const handleGoogleError = () => {
     console.log("Google Login Failed");
     setError("Google authentication failed");
-    toast.error(
-      "Google authentication failed. Please check your Google Client ID configuration.",
-    );
+    // Show toast only once
+    if (!toastShown.current) {
+      toast.error(
+        "Google authentication failed. Please check your Google Client ID configuration.",
+      );
+      toastShown.current = true;
+    }
   };
 
   // Custom Google button component

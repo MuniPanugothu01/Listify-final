@@ -318,10 +318,20 @@ userSchema.set("toJSON", {
     delete ret.lockUntil;
     delete ret.__v;
 
-    // Add profileImageUrl virtual
-    ret.profileImageUrl = doc.getProfileImage
-      ? doc.getProfileImage()
-      : ret.avatar || "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+    // Calculate profileImageUrl using the method
+    ret.profileImageUrl = doc.getProfileImage ? doc.getProfileImage() : 
+                         (ret.avatar || "https://cdn-icons-png.flaticon.com/512/149/149071.png");
+    
+    // Ensure we always have a valid profileImageUrl
+    if (!ret.profileImageUrl) {
+      ret.profileImageUrl = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+    }
+    
+    // Add profileImage and googleProfileImage fields for frontend
+    ret.profileImage = doc.profileImage || null;
+    ret.googleProfileImage = doc.googleProfileImage || null;
+    ret.avatar = doc.avatar || "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+    
     return ret;
   },
 });
