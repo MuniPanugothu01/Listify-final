@@ -137,21 +137,6 @@ const SellerDetails = ({ seller, rating, reviews, joined }) => {
         <MessageCircle className="w-5 h-5 mr-2" />
         Contact Seller
       </button>
-
-      <div className="grid grid-cols-3 gap-4 p-4 bg-gray-50 rounded-lg">
-        <div className="text-center">
-          <div className="text-xl font-bold text-gray-900">98%</div>
-          <div className="text-xs text-gray-500">Response Rate</div>
-        </div>
-        <div className="text-center">
-          <div className="text-xl font-bold text-gray-900">1hr</div>
-          <div className="text-xs text-gray-500">Response Time</div>
-        </div>
-        <div className="text-center">
-          <div className="text-xl font-bold text-gray-900">100%</div>
-          <div className="text-xs text-gray-500">Verified Listings</div>
-        </div>
-      </div>
     </div>
   );
 };
@@ -256,7 +241,7 @@ const VehicleDetail = () => {
           {/* Left Column - 60% */}
           <div className="lg:col-span-6">
             {/* Main Image */}
-            <div className="rounded-md mb-6 shadow-sm overflow-hidden bg-white p-4">
+            <div className="rounded-md mb-6 shadow-sm overflow-hidden bg-white">
               <div className="relative">
                 <img
                   src={vehicleImages[selectedImageIndex]}
