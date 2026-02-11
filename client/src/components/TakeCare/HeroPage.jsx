@@ -89,7 +89,7 @@ const HeroPage = () => {
       {/* Hero Section */}
       <section className="relative w-full h-[400px] sm:h-[400px] md:h-[400px] lg:h-[380px] overflow-hidden">
         <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          className="absolute inset-0 bg-cover bg-no-repeat"
           style={{
             backgroundImage: `url('babycare-7.jpg')`,
             loading: "lazy",
@@ -99,28 +99,18 @@ const HeroPage = () => {
         {/* Gradient Overlay for better text readability */}
         <div className="absolute inset-0 bg-linear-to-b from-black/40 via-black/20 to-black/30" />
 
-        <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-10">
           <div className="text-center">
             <h1 className="text-3xl xs:text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-white leading-tight tracking-tight">
-              Joy for Every
-              <br className="hidden xs:block" />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-300 to-rose-300">
-                Little One
-              </span>
+              Joy for Every Little One
             </h1>
-
             <p className="text-base sm:text-lg md:text-xl text-gray-200 max-w-3xl mx-auto leading-relaxed mt-4 sm:mt-6 mb-8 sm:mb-14 px-2">
               Find certified caregivers and daycare centers that provide safe
             </p>
-
             <div className="flex justify-center my-4 sm:my-6 md:my-8">
               <Heart className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 text-pink-300 fill-pink-300 animate-float" />
             </div>
           </div>
-        </div>
-
-        <div className="absolute bottom-4 sm:bottom-6 md:bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-          <ChevronDown className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
         </div>
       </section>
 

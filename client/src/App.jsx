@@ -32,6 +32,8 @@ import AboutUs from "./pages/AboutPage/AboutUs.jsx";
 import OurServicesPage from "./pages/OurServices/OurServicesPage.jsx";
 
 import PostaddPage from "./pages/PostaddPage/Postadd.jsx";
+
+
 import TakeCare from "./pages/TakeCare/TakeCare.jsx";
 import NannyService from "./components/TakeCare/NannyCareServices/NannyService.jsx";
 import BabysitterService from "./components/TakeCare/BabysitterCareServices/BabysitterService.jsx";
@@ -41,6 +43,7 @@ import TutorServices from "./components/TakeCare/TutorServices/TutorServices.jsx
 import ElderCareServices from "./components/TakeCare/ElderCareServices/ElderCareServices.jsx";
 import PetCareService from "./components/TakeCare/PetCareServices/PetCareServices.jsx";
 import CareCenterServices from "./components/TakeCare/CareCenterServices/CareCenterServices.jsx";
+import CareTakerDetail from "./components/TakeCare/CareTakerDetail.jsx";
 
 import Electronics from "./components/Electronics/Electronics.jsx";
 import ElectronicsListings from "./components/Electronics/ElectronicsListings.jsx";
@@ -218,10 +221,14 @@ const AppContent = () => {
           <Route path="/reviews" element={<Reviews />} />
 
           {/* TakeCare */}
+          <Route path="/takecare/:id" element={<CareTakerDetail />} />
           <Route path="/takecare" element={<TakeCare />} />
           <Route path="/takecare/:serviceId" element={<NannyService />} />
           <Route path="/takecare/babysitter" element={<BabysitterService />} />
           <Route path="/takecare/cook" element={<CookServices />} />
+
+
+
           <Route
             path="/takecare/housekeeper"
             element={<HousekeeperServices />}

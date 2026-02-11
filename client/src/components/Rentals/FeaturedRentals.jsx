@@ -41,7 +41,6 @@ const FeaturedRentals = () => {
       bathrooms: property.baths,
       sqft: property.sqft,
       leaseTerm: "12 months",
-      details: `Beautiful ${property.title} located in ${property.location}. Features ${property.amenities.slice(0, 3).join(", ")}. ${property.available === "Immediately" ? "Available for immediate move-in." : `Available from ${property.available}.`}`,
       postedBy: "Premium Properties Inc.",
       responseRate: "95%",
       views: Math.floor(Math.random() * 500) + 100,
@@ -56,7 +55,6 @@ const FeaturedRentals = () => {
       discount: property.featured ? "Featured Listing" : null,
       details: `${property.title} is a beautiful ${property.type.toLowerCase()} located in the heart of ${property.location}. This property offers ${property.beds} bedrooms and ${property.baths} bathrooms with ${property.sqft.toLocaleString()} square feet of living space. Features include ${property.amenities.slice(0, 3).join(", ")} and more. Perfect for ${property.beds > 2 ? "families" : "professionals"} looking for comfortable living in a prime location.`,
       originalPrice: `$${property.price + 200}/month`,
-      discount: property.featured ? "5% off" : null
     };
 
     // Navigate to rental-details page with property data

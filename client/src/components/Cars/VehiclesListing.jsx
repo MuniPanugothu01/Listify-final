@@ -30,7 +30,7 @@ const vehiclesData = [
     sellerRating: 4.8,
     sellerReviews: 342,
     sellerJoined: "Jan 2019",
-    image: "https://images.unsplash.com/photo-1549399542-7e3f8b79c341?w=800&q=80",
+    image: "https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=800&q=80",
     description: "2022 Toyota Camry XLE with only 18,500 miles. Excellent condition, one owner, no accidents. All maintenance records available.",
     features: ["18,500 Miles", "One Owner", "No Accidents", "Leather Seats", "Sunroof"],
     category: "Sedan",
@@ -374,19 +374,19 @@ const VehicleCard = ({ vehicle, onClick }) => {
       onClick={onClick}
       className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer group border border-gray-200"
     >
-      <div className="relative h-40 sm:h-48 overflow-hidden bg-gray-100">
+    <div className="relative pt-[75%] sm:pt-[75%] overflow-hidden bg-gray-100">
         <img
           src={vehicle.image}
           alt={vehicle.title}
-          className="w-full h-full group-hover:scale-105 transition-transform duration-300"
+          className="absolute top-0 left-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
         />
         <button
           onClick={(e) => e.stopPropagation()}
-          className="absolute top-2 right-2 p-1.5 bg-white rounded-full shadow-sm hover:bg-red-50 transition-colors"
+          className="absolute top-2 right-2 p-1.5 bg-white rounded-full shadow-sm hover:bg-red-50 transition-colors z-10"
         >
           <Heart className="w-4 h-4 text-gray-600 hover:text-red-500" />
         </button>
-        <div className="absolute top-2 left-2 px-2 py-1 bg-black/70 text-white text-xs rounded-full flex items-center">
+        <div className="absolute top-2 left-2 px-2 py-1 bg-black/70 text-white text-xs rounded-full flex items-center z-10">
           {categoryIcons[vehicle.category] || <Car className="w-3 h-3 mr-1" />}
           <span className="ml-1">{vehicle.category}</span>
         </div>

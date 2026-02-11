@@ -8,6 +8,8 @@ import FeaturedServices from "../../components/TakeCare/FeaturedServices.jsx";
 import HowItWorks from "../../components/TakeCare/HowItWorks.jsx";
 import WhyChooseUs from "../../components/TakeCare/WhyChooseUs.jsx";
 
+import CareTakerListing from "../../components/TakeCare/CareTakerListing.jsx";
+
 const TakeCare = () => {
   // Data
   const serviceTypesData = [
@@ -234,9 +236,12 @@ const TakeCare = () => {
   return (
     <div className="">
       <HeroPage />
-      <RecentCare/>
-      <CareServices/>
-      <main className="max-w-7xl mx-auto ">
+      {/* <RecentCare/> */}
+      {/* <CareServices/> */}
+
+      <CareTakerListing/>
+
+      {/* <main className="max-w-7xl mx-auto ">
         <AllServices 
           services={serviceTypesData} 
           onServiceClick={handleServiceClick}
@@ -250,10 +255,10 @@ const TakeCare = () => {
         <FeaturedServices providers={featuredProvidersData} />
         
       
-      </main>
-        <HowItWorks />
+      </main> */}
+        {/* <HowItWorks /> */}
         
-        <WhyChooseUs />
+        {/* <WhyChooseUs /> */}
     </div>
   );
 };
