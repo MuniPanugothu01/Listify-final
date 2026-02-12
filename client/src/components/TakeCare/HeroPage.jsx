@@ -87,17 +87,14 @@ const HeroPage = () => {
   return (
     <>
       {/* Hero Section */}
-      <section className="relative w-full h-[400px] sm:h-[400px] md:h-[400px] lg:h-[380px] overflow-hidden">
+      <section className="relative w-full h-[300px] sm:h-[300px] md:h-[300px] lg:h-[300px] overflow-hidden">
         <div
-          className="absolute inset-0 bg-cover bg-no-repeat"
+          className="absolute inset-0 bg-cover bg-no-repeat bg-center bg-black/30 bg-blend-darken"
           style={{
             backgroundImage: `url('babycare-7.jpg')`,
             loading: "lazy",
           }}
         />
-        
-        {/* Gradient Overlay for better text readability */}
-        <div className="absolute inset-0 bg-linear-to-b from-black/40 via-black/20 to-black/30" />
 
         <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-10">
           <div className="text-center">
@@ -107,9 +104,6 @@ const HeroPage = () => {
             <p className="text-base sm:text-lg md:text-xl text-gray-200 max-w-3xl mx-auto leading-relaxed mt-4 sm:mt-6 mb-8 sm:mb-14 px-2">
               Find certified caregivers and daycare centers that provide safe
             </p>
-            <div className="flex justify-center my-4 sm:my-6 md:my-8">
-              <Heart className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 text-pink-300 fill-pink-300 animate-float" />
-            </div>
           </div>
         </div>
       </section>

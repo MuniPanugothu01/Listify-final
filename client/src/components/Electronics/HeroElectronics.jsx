@@ -2,7 +2,7 @@ import React from 'react';
 
 export default function HeroElectronics() {
   return (
-    <div className="relative h-[400px] sm:h-[400px] md:h-[400px] lg:h-[380px] overflow-hidden">
+    <div className="relative h-[300px] sm:h-[300px] md:h-[300px] lg:h-[300px] overflow-hidden">
       <img
         src="/for-sale.jpg"
         alt="Modern electronics marketplace"
@@ -16,23 +16,7 @@ export default function HeroElectronics() {
         </h1>
         <p className="text-white text-sm sm:text-base md:text-lg mb-6 sm:mb-8 max-w-2xl">
           Buy and sell smartphones, laptops, gaming consoles, and more. Get amazing deals on premium tech in your community.
-        </p>
-        <button 
-          className="px-6 sm:px-8 py-2.5 sm:py-3 rounded-full font-medium transition-colors text-sm sm:text-base"
-          style={{ 
-            backgroundColor: '#27BB97',
-            color: 'white'
-          }}
-          onMouseEnter={(e) => {
-            e.target.style.backgroundColor = '#1E9E7E';
-          }}
-          onMouseLeave={(e) => {
-            e.target.style.backgroundColor = '#27BB97';
-          }}
-        >
-          Browse Electronics
-        </button>
-        
+        </p>     
       </div>
     </div>
   );

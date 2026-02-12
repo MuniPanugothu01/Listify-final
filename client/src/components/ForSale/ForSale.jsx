@@ -6,16 +6,20 @@ import ForSaleTrending from './ForSaleTrending';
 import ForSaleBestDeals from './ForSaleBestDeals';
 
 import SampleForSale from './SampleForSale.jsx';
+import SubNavbar from './SubNavbar.jsx';
+import Products from './Products.jsx'; 
 
 export default function ForSale() {
  
 
   return (
     <div className=" bg-gray-50">
+      <SubNavbar/>
       <ForSaleHero />
-      <SampleForSale/>
+      <Products/>
+      {/* <SampleForSale/> */}
       {/* <ForSaleCategories /> */}
-      <ForSaleCollections />
+      {/* <ForSaleCollections /> */}
       {/* <ForSaleTrending  /> */}
       {/* <ForSaleBestDeals  /> */}
     </div>
