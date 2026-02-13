@@ -278,7 +278,7 @@ const Products = () => {
   return (
     <div className="min-h-screen bg-gray-50">      
       {/* Products Grid */}
-      <div className=" px-12 py-4">
+      <div className=" px-12 py-4 sm:px-8 md:px-8 lg:px-12 xl:px-12">
         <h1 className="text-3xl font-bold text-gray-900 mb-6">
           For Sale
         </h1>
