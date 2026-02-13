@@ -1,8 +1,12 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+import ReactDOM from 'react-dom';
 
 const SubNavbar = () => {
   const [hoveredCategory, setHoveredCategory] = useState(null);
+  const [dropdownPosition, setDropdownPosition] = useState({ left: 0, top: 0 });
   const scrollContainerRef = useRef(null);
+  const navRef = useRef(null);
+  const buttonRefs = useRef({});
 
   const categories = {
     'Electronics & Media': ['Computers', 'TVs', 'Cameras', 'Audio', 'Gaming', 'Phones', 'Tablets', 'Accessories'],
@@ -16,158 +20,210 @@ const SubNavbar = () => {
     'Pet supplies': ['Dog', 'Cat', 'Bird', 'Fish', 'Reptile', 'Small Animals']
   };
 
-  const scroll = (direction) => {
-    const container = scrollContainerRef.current;
-    if (container) {
-      const scrollAmount = 300;
-      container.scrollBy({
-        left: direction === 'left' ? -scrollAmount : scrollAmount,
-        behavior: 'smooth'
+  const handleMouseEnter = (category) => {
+    const button = buttonRefs.current[category];
+    if (button) {
+      const rect = button.getBoundingClientRect();
+      setDropdownPosition({
+        left: rect.left,
+        top: rect.bottom + window.scrollY
       });
     }
+    setHoveredCategory(category);
   };
 
-  return (
-    <nav className="bg-white border-b border-gray-200 sticky top-0 z-40">
-      <div className="relative flex items-center max-w-full">
-        {/* Left scroll button - Always visible on mobile/tablet */}
-        <button
-          onClick={() => scroll('left')}
-          className="
-            absolute left-0 z-20
-            bg-white h-full px-2 md:px-3
-            flex items-center justify-center
-            text-gray-600 hover:text-teal-600
-            border-r border-gray-200
-            shadow-[4px_0_6px_-2px_rgba(0,0,0,0.05)]
-            transition-all duration-200
-            md:hidden
-          "
-          aria-label="Scroll left"
-        >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
-          </svg>
-        </button>
+  // Update position on scroll
+  useEffect(() => {
+    const handleScroll = () => {
+      if (hoveredCategory) {
+        const button = buttonRefs.current[hoveredCategory];
+        if (button) {
+          const rect = button.getBoundingClientRect();
+          setDropdownPosition({
+            left: rect.left,
+            top: rect.bottom + window.scrollY
+          });
+        }
+      }
+    };
 
-        {/* Scrollable container */}
-        <div
-          ref={scrollContainerRef}
-          className="
-            overflow-x-auto scrollbar-hide
-            px-10 md:px-6 lg:px-12
-            flex items-center
-            [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]
-            scroll-smooth
-            w-full
-          "
+    window.addEventListener('scroll', handleScroll, true);
+    return () => window.removeEventListener('scroll', handleScroll, true);
+  }, [hoveredCategory]);
+
+  return (
+    <>
+      {/* Dropdown rendered at body level */}
+      {hoveredCategory && ReactDOM.createPortal(
+        <div 
           style={{
-            WebkitOverflowScrolling: 'touch'
+            position: 'absolute',
+            left: dropdownPosition.left,
+            top: dropdownPosition.top,
+            width: '224px',
+            backgroundColor: 'white',
+            borderRadius: '0.5rem',
+            boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04)',
+            border: '1px solid #e5e7eb',
+            padding: '0.375rem 0',
+            zIndex: 999999,
           }}
+          onMouseEnter={() => setHoveredCategory(hoveredCategory)}
+          onMouseLeave={() => setHoveredCategory(null)}
         >
-          <div className="flex items-center space-x-1 md:space-x-2 py-3 min-w-max">
-            {Object.keys(categories).map((category) => (
-              <div
-                key={category}
-                className="relative flex-shrink-0"
-                onMouseEnter={() => setHoveredCategory(category)}
-                onMouseLeave={() => setHoveredCategory(null)}
+          {categories[hoveredCategory].map((subcategory) => (
+            <a
+              key={subcategory}
+              href="#"
+              style={{
+                display: 'block',
+                padding: '0.5rem 1rem',
+                fontSize: '0.875rem',
+                color: '#374151',
+                textDecoration: 'none',
+                transition: 'all 0.15s'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = '#f9fafb';
+                e.currentTarget.style.color = '#0d9488';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'transparent';
+                e.currentTarget.style.color = '#374151';
+              }}
+              onClick={(e) => {
+                e.preventDefault();
+                setHoveredCategory(null);
+              }}
+            >
+              {subcategory}
+            </a>
+          ))}
+        </div>,
+        document.body
+      )}
+
+      <nav 
+        ref={navRef}
+        style={{
+          backgroundColor: 'white',
+          borderBottom: '1px solid #e5e7eb',
+          position: 'sticky',
+          top: 0,
+          zIndex: 99999,
+        }}
+      >
+        <div style={{ 
+          position: 'relative', 
+          display: 'flex', 
+          alignItems: 'center', 
+          maxWidth: '100%' 
+        }}>
+          {/* Scrollable container - no buttons */}
+          <div
+            ref={scrollContainerRef}
+            style={{
+              overflowX: 'auto',
+              paddingLeft: '1rem',
+              paddingRight: '1rem',
+              display: 'flex',
+              alignItems: 'center',
+              scrollbarWidth: 'none',
+              msOverflowStyle: 'none',
+              scrollBehavior: 'smooth',
+              width: '100%',
+              WebkitOverflowScrolling: 'touch'
+            }}
+          >
+            <style>
+              {`
+                div::-webkit-scrollbar {
+                  display: none;
+                }
+              `}
+            </style>
+            <div style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '0.25rem', 
+              padding: '0.75rem 0', 
+              minWidth: 'max-content',
+              margin: '0 auto' // Center the content
+            }}>
+              {Object.keys(categories).map((category) => (
+                <div
+                  key={category}
+                  style={{ position: 'relative', flexShrink: 0 }}
+                  onMouseEnter={() => handleMouseEnter(category)}
+                  onMouseLeave={() => setHoveredCategory(null)}
+                >
+                  <button 
+                    ref={el => buttonRefs.current[category] = el}
+                    style={{
+                      padding: '0.5rem 1rem',
+                      margin: '0 0.125rem',
+                      fontSize: '0.875rem',
+                      fontWeight: 500,
+                      color: hoveredCategory === category ? '#0d9488' : '#374151',
+                      whiteSpace: 'nowrap',
+                      borderRadius: '0.375rem',
+                      transition: 'all 0.2s',
+                      backgroundColor: hoveredCategory === category ? '#f9fafb' : 'transparent',
+                      border: 'none',
+                      cursor: 'pointer'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = '#f9fafb';
+                      e.currentTarget.style.color = '#0d9488';
+                    }}
+                    onMouseLeave={(e) => {
+                      if (hoveredCategory !== category) {
+                        e.currentTarget.style.backgroundColor = 'transparent';
+                        e.currentTarget.style.color = '#374151';
+                      }
+                    }}
+                  >
+                    {category}
+                  </button>
+                </div>
+              ))}
+              
+              <button style={{
+                padding: '0.5rem 1rem',
+                margin: '0 0.125rem',
+                fontSize: '0.875rem',
+                fontWeight: 500,
+                color: '#0d9488',
+                whiteSpace: 'nowrap',
+                borderRadius: '0.375rem',
+                transition: 'all 0.2s',
+                backgroundColor: 'transparent',
+                border: 'none',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.25rem',
+                flexShrink: 0
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = '#f9fafb';
+                e.currentTarget.style.color = '#0f766e';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'transparent';
+                e.currentTarget.style.color = '#0d9488';
+              }}
               >
-                <button className="
-                  px-4 py-2 mx-0.5
-                  text-sm font-medium
-                  text-gray-700 hover:text-teal-600
-                  whitespace-nowrap rounded-md
-                  transition-all duration-200
-                  hover:bg-gray-50
-                  focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2
-                ">
-                  {category}
-                </button>
-                
-                {/* Dropdown menu */}
-                {hoveredCategory === category && (
-                  <div className="
-                    absolute top-full left-0 mt-1
-                    w-56 bg-white rounded-lg shadow-lg
-                    py-1.5 border border-gray-200
-                    z-50
-                    animate-in
-                  ">
-                    {categories[category].map((subcategory) => (
-                      <a
-                        key={subcategory}
-                        href="#"
-                        className="
-                          block px-4 py-2 text-sm text-gray-700
-                          hover:bg-gray-50 hover:text-teal-600
-                          transition-colors duration-150
-                        "
-                      >
-                        {subcategory}
-                      </a>
-                    ))}
-                  </div>
-                )}
-              </div>
-            ))}
-            
-            <button className="
-              px-4 py-2 mx-0.5
-              text-sm font-medium
-              text-teal-600 hover:text-teal-700
-              whitespace-nowrap rounded-md
-              transition-all duration-200
-              hover:bg-gray-50
-              flex items-center gap-1
-              flex-shrink-0
-            ">
-              More
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-              </svg>
-            </button>
+                More
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+            </div>
           </div>
         </div>
-
-        {/* Right scroll button - Always visible on mobile/tablet */}
-        <button
-          onClick={() => scroll('right')}
-          className="
-            absolute right-0 z-20
-            bg-white h-full px-2 md:px-3
-            flex items-center justify-center
-            text-gray-600 hover:text-teal-600
-            border-l border-gray-200
-            shadow-[-4px_0_6px_-2px_rgba(0,0,0,0.05)]
-            transition-all duration-200
-            md:hidden
-          "
-          aria-label="Scroll right"
-        >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
-          </svg>
-        </button>
-      </div>
-
-      {/* Desktop hover dropdowns remain the same */}
-      <style jsx>{`
-        @keyframes slideIn {
-          from {
-            opacity: 0;
-            transform: translateY(-8px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-        .animate-in {
-          animation: slideIn 0.15s ease-out;
-        }
-      `}</style>
-    </nav>
+      </nav>
+    </>
   );
 };
 
