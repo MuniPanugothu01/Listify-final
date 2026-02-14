@@ -6,32 +6,21 @@ const Category = () => {
   const navigate = useNavigate();
   
   const categories = [
-    {
+     {
       id: 1,
-      title: "Roommates",
-      path: "/roommates",
-      image: "https://www.shutterstock.com/image-photo/laughing-phone-sharing-friends-on-260nw-2701402047.jpg",
-      icon: Users,
+      title: "For Sale",
+      path: "/forsale",
+      image: "/for-sale-2.jpg",
+      icon: ShoppingCart,
       subcategories: [
-        "Shared Apartments",
-        "Room for Rent",
-        "Flatmates Wanted",
+        "Furniture",
+        "Clothing",
+        "Home Appliances",
       ],
     },
+  
     {
       id: 2,
-      title: "Rentals",
-      path: "/rentals",
-      image: "https://hips.hearstapps.com/hmg-prod/images/designed-by-arlyn-hernandez-photo-by-sara-ligorria-tramp-5-652db3f539ed5.jpg",
-      icon: Home,
-      subcategories: [
-        "Apartments",
-        "Studio Flats",
-        "Short-term Rentals",
-      ],
-    },
-    {
-      id: 3,
       title: "Electronics",
       path: "/electronics",
       image: "https://thumbs.dreamstime.com/b/modern-electronics-store-showcasing-macbook-air-laptops-smartphones-technology-accessories-lviv-ukraine-march-high-end-macbook-368559879.jpg",
@@ -43,7 +32,7 @@ const Category = () => {
       ],
     },
     {
-      id: 5,
+      id: 3,
       title: "Cars",
       path: "/cars",
       image: "https://www.huntermoss.com/images/best-cars-for-road-trips/a-img.webp",
@@ -54,44 +43,8 @@ const Category = () => {
         "SUVs & Trucks",
       ],
     },
-    {
-      id: 6,
-      title: "Local Services",
-      path: "/services",
-      image: "https://www.professionalhomerepair.net/images/services/handyman-tools.webp",
-      icon: Briefcase,
-      subcategories: [
-        "Plumbing",
-        "Electrical",
-        "Cleaning",
-      ],
-    },
-    {
-      id: 7,
-      title: "Take Care",
-      path: "/takecare",
-      image: "https://www.hopehospice.com/wp-content/uploads/2020/06/blog-banner-caregiver-help-2.jpg",
-      icon: Users,
-      subcategories: [
-        "Elderly Care",
-        "Home Nursing",
-        "Caregivers",
-      ],
-    },
-    {
-      id: 8,
-      title: "Jobs",
-      path: "/jobs",
-      image: "https://plus.unsplash.com/premium_photo-1661537653118-93a6f2a43d23?fm=jpg&q=60&w=3000",
-      icon: Briefcase,
-      subcategories: [
-        "Full-time Jobs",
-        "Part-time",
-        "Remote Work",
-      ],
-    },
-    {
-      id: 9,
+       {
+      id: 4,
       title: "Events",
       path: "/events",
       image: "https://thumbs.dreamstime.com/b/dj-celebrating-stage-arms-raised-vibrant-concert-dynamic-scene-standing-triumphantly-high-celebration-as-373546700.jpg",
@@ -103,29 +56,66 @@ const Category = () => {
       ],
     },
     {
-      id: 10,
-      title: "Marketplace",
+      id: 5,
+      title: "Services",
       path: "/services",
-      image: "https://images.squarespace-cdn.com/content/v1/5726544ef85082b93e0f14c1/1698529986360-L5UIUBKQ0HVZT4MZ1UCZ/new+york+city+flea+markets.jpg?format=2500w",
-      icon: ShoppingCart,
+      image: "https://www.professionalhomerepair.net/images/services/handyman-tools.webp",
+      icon: Briefcase,
       subcategories: [
-        "General Buy/Sell",
-        "Free Items",
-        "Collectibles",
+        "Plumbing",
+        "Electrical",
+        "Cleaning",
       ],
     },
     {
-      id: 11,
-      title: "For Sale",
-      path: "/forsale",
-      image: "/for-sale-2.jpg",
-      icon: ShoppingCart,
+      id: 6,
+      title: "Take Care",
+      path: "/takecare",
+      image: "https://www.hopehospice.com/wp-content/uploads/2020/06/blog-banner-caregiver-help-2.jpg",
+      icon: Users,
       subcategories: [
-        "Furniture",
-        "Clothing",
-        "Home Appliances",
+        "Elderly Care",
+        "Home Nursing",
+        "Caregivers",
       ],
     },
+    {
+      id: 7,
+      title: "Jobs",
+      path: "/jobs",
+      image: "https://plus.unsplash.com/premium_photo-1661537653118-93a6f2a43d23?fm=jpg&q=60&w=3000",
+      icon: Briefcase,
+      subcategories: [
+        "Full-time Jobs",
+        "Part-time",
+        "Remote Work",
+      ],
+    },
+      {
+      id: 8,
+      title: "Roommates",
+      path: "/roommates",
+      image: "https://www.shutterstock.com/image-photo/laughing-phone-sharing-friends-on-260nw-2701402047.jpg",
+      icon: Users,
+      subcategories: [
+        "Shared Apartments",
+        "Room for Rent",
+        "Flatmates Wanted",
+      ],
+    },
+     {
+      id: 9,
+      title: "Rentals",
+      path: "/rentals",
+      image: "https://hips.hearstapps.com/hmg-prod/images/designed-by-arlyn-hernandez-photo-by-sara-ligorria-tramp-5-652db3f539ed5.jpg",
+      icon: Home,
+      subcategories: [
+        "Apartments",
+        "Studio Flats",
+        "Short-term Rentals",
+      ],
+    },
+   
   ];
 
   const [expandedCard, setExpandedCard] = useState(null);
@@ -320,7 +310,7 @@ const Category = () => {
         </div>
 
         {/* Grid - Showing ALL categories at once */}
-        <div className="lg:px-12 lg:py-4 mt-4 grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-5 gap-3 sm:gap-4 md:gap-6">
+        <div className="lg:px-12 lg:py-4 mt-4 grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 md:gap-6">
           {categories.map(renderCard)}
         </div>
       </div>
