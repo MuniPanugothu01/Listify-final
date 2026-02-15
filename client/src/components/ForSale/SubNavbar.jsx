@@ -15,6 +15,7 @@ const SubNavbar = () => {
     'Pet supplies': ['Dog', 'Cat', 'Bird', 'Fish', 'Reptile', 'Small Animals']
   };
 
+  
   return (
     <nav className="bg-white shadow-sm border-b">
       <div className="px-4">
