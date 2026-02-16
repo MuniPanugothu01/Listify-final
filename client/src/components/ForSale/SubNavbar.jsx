@@ -183,15 +183,7 @@ const SubNavbar = () => {
           }}
           onMouseEnter={() => setHoveredCategory(hoveredCategory)}
           onMouseLeave={() => setHoveredCategory(null)}
-        >
-          {/* View All - Compact */}
-          <button
-            onClick={() => handleNavigation(hoveredCategory)}
-            className="w-full text-left px-3 py-1.5 text-xs font-medium text-teal-600 hover:bg-gray-50 border-b border-gray-100"
-          >
-            View All {hoveredCategory}
-          </button>
-          
+        >  
           {/* Subcategories - Compact */}
           <div className="max-h-80 overflow-y-auto">
             {categories[hoveredCategory].subcategories.map((subcategory) => (
