@@ -185,7 +185,6 @@ async function sendOTPEmail(email, username, otp) {
   } catch (error) {
     console.error("❌ ERROR sending email:", error.message);
 
-    // If it's an authentication error, give specific advice
     if (
       error.message.includes("Invalid login") ||
       error.message.includes("Authentication failed")
@@ -202,7 +201,7 @@ async function sendOTPEmail(email, username, otp) {
   }
 }
 
-// Add this function to your existing emailServices.js file
+// Forgot Password OTP Template
 const getForgotPasswordOTPTemplate = (username, otpCode) => {
   return `
   <!DOCTYPE html>
@@ -352,7 +351,7 @@ const getForgotPasswordOTPTemplate = (username, otpCode) => {
   `;
 };
 
-// Add this function to send forgot password OTP
+// Send Forgot Password OTP Email
 async function sendForgotPasswordOTPEmail(email, username, otp) {
   try {
     console.log(`📤 Attempting to send forgot password OTP email to: ${email}`);
@@ -400,7 +399,7 @@ async function sendForgotPasswordOTPEmail(email, username, otp) {
   }
 }
 
-// Add password reset success email
+// Password Reset Success Email
 async function sendPasswordResetSuccessEmail(email, username) {
   try {
     console.log(`📤 Sending password reset success email to: ${email}`);
@@ -499,7 +498,7 @@ async function sendPasswordResetSuccessEmail(email, username) {
             </div>
             
             <div style="text-align: center; margin: 30px 0;">
-              <a href="${process.env.CLIENT_URL || 'http://localhost:5173'}/signin" style="display: inline-block; background: #27bb97; color: white; padding: 12px 30px; text-decoration: none; border-radius: 6px; font-weight: 600;">
+              <a href="${process.env.CLIENT_URL || "http://localhost:5173"}/signin" style="display: inline-block; background: #27bb97; color: white; padding: 12px 30px; text-decoration: none; border-radius: 6px; font-weight: 600;">
                 Login to Your Account
               </a>
             </div>
@@ -525,7 +524,10 @@ async function sendPasswordResetSuccessEmail(email, username) {
       messageId: result.messageId,
     };
   } catch (error) {
-    console.error("❌ ERROR sending password reset success email:", error.message);
+    console.error(
+      "❌ ERROR sending password reset success email:",
+      error.message,
+    );
     throw error;
   }
 }

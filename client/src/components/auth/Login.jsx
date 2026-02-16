@@ -25,8 +25,34 @@ const Login = () => {
   
   // Add ref to track if toast has been shown
   const toastShownRef = useRef(false);
+  // Track login method to show correct toast
+  const loginMethodRef = useRef(null);
 
-  // Handle errors from Redux - FIXED to prevent double toast
+  // ============== ADD GLOBAL CSS ANIMATIONS ==============
+  useEffect(() => {
+    // Add animation styles to document head
+    const style = document.createElement('style');
+    style.innerHTML = `
+      @keyframes fadeInScale {
+        0% { opacity: 0; transform: scale(0.9); }
+        100% { opacity: 1; transform: scale(1); }
+      }
+      @keyframes fadeOutScale {
+        0% { opacity: 1; transform: scale(1); }
+        100% { opacity: 0; transform: scale(0.9); }
+      }
+      .toast-animation {
+        animation: fadeInScale 0.5s ease-in-out, fadeOutScale 0.5s ease-in-out 3.5s forwards !important;
+      }
+    `;
+    document.head.appendChild(style);
+    
+    return () => {
+      document.head.removeChild(style);
+    };
+  }, []);
+
+  // Handle errors from Redux
   useEffect(() => {
     console.log("Current auth state:", {
       loading,
@@ -39,10 +65,16 @@ const Login = () => {
     if (error && !toastShownRef.current) {
       console.log("Redux error detected:", error);
       toastShownRef.current = true;
+      
+      // ============== ONLY ADD duration AND animation CLASS ==============
       toast.error(
         typeof error === "string"
           ? error
           : "Login failed. Please check your credentials.",
+        {
+          duration: 5000,
+          className: 'toast-animation',
+        }
       );
       
       // Clear error after showing toast
@@ -53,18 +85,25 @@ const Login = () => {
     }
   }, [error, dispatch]);
 
-  // Handle successful login - FIXED to prevent double toast
+  // Handle successful login - ONLY for email login
   useEffect(() => {
     console.log("Checking for successful login...", {
       success,
       token: !!token,
       user: !!user,
+      loginMethod: loginMethodRef.current
     });
 
-    if (success && token && user && !toastShownRef.current) {
-      console.log("Login successful, navigating to home page");
+    // Only show toast if this was an email login
+    if (success && token && user && !toastShownRef.current && loginMethodRef.current === 'email') {
+      console.log("Email login successful, showing toast and navigating");
       toastShownRef.current = true;
-      toast.success("Login successful!");
+      
+      // ============== ONLY ADD duration AND animation CLASS ==============
+      toast.success("Login successful!", {
+        duration: 4000,
+        className: 'toast-animation',
+      });
 
       if (rememberMe) {
         localStorage.setItem("rememberMe", "true");
@@ -73,9 +112,24 @@ const Login = () => {
       // Navigate after a short delay
       const timer = setTimeout(() => {
         navigate("/");
+        // Reset login method
+        loginMethodRef.current = null;
         toastShownRef.current = false;
-      }, 1000);
+      }, 2000);
 
+      return () => clearTimeout(timer);
+    }
+    
+    // Reset login method after Google login
+    if (success && token && user && loginMethodRef.current === 'google') {
+      console.log("Google login successful - NOT showing duplicate toast");
+      // Don't show toast - Google component already showed it
+      // Just navigate
+      const timer = setTimeout(() => {
+        navigate("/");
+        loginMethodRef.current = null;
+      }, 100);
+      
       return () => clearTimeout(timer);
     }
   }, [success, token, user, navigate, rememberMe]);
@@ -122,10 +176,17 @@ const Login = () => {
 
     // Reset toast flag
     toastShownRef.current = false;
+    // Set login method to EMAIL
+    loginMethodRef.current = 'email';
 
     // Validate form
     if (!validateForm()) {
-      toast.error("Please fix the errors in the form");
+      // ============== ONLY ADD duration AND animation CLASS ==============
+      toast.error("Please fix the errors in the form", {
+        duration: 4000,
+        className: 'toast-animation',
+      });
+      loginMethodRef.current = null;
       return;
     }
 
@@ -143,22 +204,34 @@ const Login = () => {
       // Check the result type
       if (loginUser.fulfilled.match(result)) {
         console.log("Login successful - Redux fulfilled");
-        // The useEffect will handle navigation
+        // The useEffect will handle navigation and toast
       } else if (loginUser.rejected.match(result)) {
         console.log(
           "Login failed - Redux rejected:",
           result.error || result.payload,
         );
+        loginMethodRef.current = null; // Reset login method on failure
         // Error is already shown in the useEffect
       }
     } catch (err) {
       console.error("Unexpected login error:", err);
-      toast.error("An unexpected error occurred. Please try again.");
+      // ============== ONLY ADD duration AND animation CLASS ==============
+      toast.error("An unexpected error occurred. Please try again.", {
+        duration: 5000,
+        className: 'toast-animation',
+      });
+      loginMethodRef.current = null;
     }
+  };
+
+  // Handler to set login method when Google login is triggered
+  const handleGoogleLoginStart = () => {
+    loginMethodRef.current = 'google';
   };
 
   return (
     <div className="min-h-screen relative overflow-hidden">
+      {/* ============== YOUR EXISTING TOASTER - NO CHANGES ============== */}
       <Toaster
         position="top-right"
         toastOptions={{
@@ -231,8 +304,8 @@ const Login = () => {
 
               {/* FORM */}
               <form onSubmit={handleSubmit} className="space-y-5">
-                {/* Google Sign In */}
-                <SocialAuth />
+                {/* Pass onLoginStart handler to track Google login */}
+                <SocialAuth onLoginStart={handleGoogleLoginStart} />
 
                 {/* Divider */}
                 <div className="relative flex items-center justify-center my-6">

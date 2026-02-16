@@ -39,6 +39,13 @@ export default function SignUp() {
   const [resendLoading, setResendLoading] = useState(false);
   const [countdown, setCountdown] = useState(0);
   const [otpError, setOtpError] = useState("");
+  const [focusedIndex, setFocusedIndex] = useState(0);
+  const [attempts, setAttempts] = useState(0);
+  const [isBlocked, setIsBlocked] = useState(false);
+  const [lockCountdown, setLockCountdown] = useState(0);
+  const [showRedBorder, setShowRedBorder] = useState(false);
+  const [autoClearTimer, setAutoClearTimer] = useState(null);
+  const [failedAttempts, setFailedAttempts] = useState(0);
   const inputRefs = useRef([]);
 
   const [showPassword, setShowPassword] = useState(false);
@@ -75,18 +82,94 @@ export default function SignUp() {
     }
   }, [success, otpSent, navigate, resetAuthSuccess]);
 
-  // Reset OTP when OTP screen opens/closes
+  // Reset OTP when OTP screen opens
   useEffect(() => {
     if (showOtpScreen) {
       setOtp(["", "", "", "", "", ""]);
       setOtpError("");
+      setFocusedIndex(0);
+      setIsBlocked(false);
+      setLockCountdown(0);
+      setAttempts(0);
+      setShowRedBorder(false);
+      setFailedAttempts(0);
+
+      // Clear any pending auto-clear timer
+      if (autoClearTimer) {
+        clearTimeout(autoClearTimer);
+        setAutoClearTimer(null);
+      }
+
+      const timer = setTimeout(() => {
+        if (inputRefs.current[0]) {
+          inputRefs.current[0].focus();
+          inputRefs.current[0].select();
+        }
+      }, 100);
+
+      return () => clearTimeout(timer);
+    }
+  }, [showOtpScreen]);
+
+  // Auto-focus effect with blinking cursor
+  useEffect(() => {
+    if (showOtpScreen && focusedIndex >= 0 && focusedIndex < 6 && !isBlocked) {
+      const rafId = requestAnimationFrame(() => {
+        if (inputRefs.current[focusedIndex]) {
+          inputRefs.current[focusedIndex].focus();
+          inputRefs.current[focusedIndex].select();
+        }
+      });
+
+      return () => cancelAnimationFrame(rafId);
+    }
+  }, [focusedIndex, showOtpScreen, isBlocked]);
+
+  // Lock countdown timer
+  useEffect(() => {
+    let timer;
+    if (isBlocked && lockCountdown > 0) {
+      timer = setTimeout(() => {
+        setLockCountdown(lockCountdown - 1);
+      }, 1000);
+    } else if (lockCountdown === 0 && isBlocked) {
+      setIsBlocked(false);
+      setShowRedBorder(false);
+      setAttempts(0);
+      setFailedAttempts(0);
       setTimeout(() => {
         if (inputRefs.current[0]) {
           inputRefs.current[0].focus();
+          inputRefs.current[0].select();
         }
-      }, 100);
+      }, 50);
     }
-  }, [showOtpScreen]);
+    return () => clearTimeout(timer);
+  }, [isBlocked, lockCountdown]);
+
+  // Check if OTP is blocked from error message
+  useEffect(() => {
+    if (otpError && otpError.includes("Too many failed attempts")) {
+      setIsBlocked(true);
+      const secondsMatch = otpError.match(/(\d+)\s*seconds?/);
+      if (secondsMatch && secondsMatch[1]) {
+        setLockCountdown(parseInt(secondsMatch[1]));
+      } else {
+        setLockCountdown(60);
+      }
+      setShowRedBorder(false);
+      setFailedAttempts(3);
+    }
+  }, [otpError]);
+
+  // Cleanup timer on unmount
+  useEffect(() => {
+    return () => {
+      if (autoClearTimer) {
+        clearTimeout(autoClearTimer);
+      }
+    };
+  }, [autoClearTimer]);
 
   // Handle input changes
   const handleChange = (e) => {
@@ -108,19 +191,25 @@ export default function SignUp() {
   const handleOtpChange = (index, value) => {
     if (!/^\d*$/.test(value)) return;
 
+    // Clear red border when user starts typing
+    if (showRedBorder) {
+      setShowRedBorder(false);
+    }
+
+    // Clear any pending auto-clear timer when user starts typing
+    if (autoClearTimer) {
+      clearTimeout(autoClearTimer);
+      setAutoClearTimer(null);
+    }
+
     const newOtp = [...otp];
 
     if (value.length === 1) {
       newOtp[index] = value;
       setOtp(newOtp);
-      setOtpError("");
 
       if (index < 5) {
-        setTimeout(() => {
-          if (inputRefs.current[index + 1]) {
-            inputRefs.current[index + 1].focus();
-          }
-        }, 10);
+        setFocusedIndex(index + 1);
       }
     } else if (value.length > 1) {
       const digits = value.slice(0, 6).split("");
@@ -131,7 +220,6 @@ export default function SignUp() {
         }
       });
       setOtp(newOtp);
-      setOtpError("");
 
       const nextEmptyIndex = newOtp.findIndex(
         (digit, i) => i >= index && digit === "",
@@ -139,18 +227,14 @@ export default function SignUp() {
       const targetIndex =
         nextEmptyIndex !== -1
           ? nextEmptyIndex
-          : Math.min(index + value.length, 5);
-
-      setTimeout(() => {
-        if (inputRefs.current[targetIndex]) {
-          inputRefs.current[targetIndex].focus();
-        }
-      }, 10);
+          : Math.min(index + digits.length, 5);
+      setFocusedIndex(targetIndex);
     } else if (value === "") {
       newOtp[index] = "";
       setOtp(newOtp);
     }
 
+    // Auto-verify when all digits are entered
     if (newOtp.every((digit) => digit !== "")) {
       setTimeout(() => {
         handleVerifyOtp(newOtp.join(""));
@@ -175,59 +259,54 @@ export default function SignUp() {
       if (newOtp[index]) {
         newOtp[index] = "";
         setOtp(newOtp);
+        setFocusedIndex(index);
       } else if (index > 0) {
         newOtp[index - 1] = "";
         setOtp(newOtp);
-
-        setTimeout(() => {
-          if (inputRefs.current[index - 1]) {
-            inputRefs.current[index - 1].focus();
-          }
-        }, 10);
+        setFocusedIndex(index - 1);
       }
       return;
     }
 
     if (e.key === "ArrowLeft" && index > 0) {
       e.preventDefault();
-      setTimeout(() => {
-        if (inputRefs.current[index - 1]) {
-          inputRefs.current[index - 1].focus();
-        }
-      }, 10);
+      setFocusedIndex(index - 1);
     }
 
     if (e.key === "ArrowRight" && index < 5) {
       e.preventDefault();
-      setTimeout(() => {
-        if (inputRefs.current[index + 1]) {
-          inputRefs.current[index + 1].focus();
-        }
-      }, 10);
+      setFocusedIndex(index + 1);
     }
 
     if (e.key === "Tab") {
       if (!e.shiftKey && index < 5) {
         e.preventDefault();
-        setTimeout(() => {
-          if (inputRefs.current[index + 1]) {
-            inputRefs.current[index + 1].focus();
-          }
-        }, 10);
+        setFocusedIndex(index + 1);
       } else if (e.shiftKey && index > 0) {
         e.preventDefault();
-        setTimeout(() => {
-          if (inputRefs.current[index - 1]) {
-            inputRefs.current[index - 1].focus();
-          }
-        }, 10);
+        setFocusedIndex(index - 1);
       }
+    }
+
+    if (e.key === " ") {
+      e.preventDefault();
     }
   };
 
   const handlePaste = (e) => {
     e.preventDefault();
+
+    // Clear red border
+    setShowRedBorder(false);
+
+    // Clear any pending auto-clear timer
+    if (autoClearTimer) {
+      clearTimeout(autoClearTimer);
+      setAutoClearTimer(null);
+    }
+
     const pastedData = e.clipboardData.getData("text").slice(0, 6);
+
     if (/^\d+$/.test(pastedData)) {
       const newOtp = [...otp];
       pastedData.split("").forEach((char, index) => {
@@ -238,96 +317,111 @@ export default function SignUp() {
 
       setOtp(newOtp);
 
-      const nextIndex = Math.min(pastedData.length, 5);
-      setTimeout(() => {
-        if (inputRefs.current[nextIndex]) {
-          inputRefs.current[nextIndex].focus();
-        }
-      }, 10);
+      const nextEmptyIndex = newOtp.findIndex((digit) => digit === "");
+      const targetIndex = nextEmptyIndex !== -1 ? nextEmptyIndex : 5;
+      setFocusedIndex(targetIndex);
     }
   };
 
-  const handleOtpFocus = (index, e) => {
-    e.target.select();
-
-    setTimeout(() => {
+  const handleOtpFocus = (index) => {
+    if (!isBlocked) {
+      setFocusedIndex(index);
       if (inputRefs.current[index]) {
-        inputRefs.current[index].focus();
+        setTimeout(() => {
+          if (inputRefs.current[index]) {
+            inputRefs.current[index].select();
+          }
+        }, 0);
       }
-    }, 0);
+    }
   };
 
   const handleOtpBlur = (e) => {
-    if (showOtpScreen) {
-      e.preventDefault();
-      setTimeout(() => {
-        if (document.activeElement === document.body) {
-          const firstEmptyIndex = otp.findIndex((digit) => digit === "");
-          const targetIndex = firstEmptyIndex !== -1 ? firstEmptyIndex : 0;
-          if (inputRefs.current[targetIndex]) {
-            inputRefs.current[targetIndex].focus();
-          }
-        }
-      }, 10);
-    }
+    // Don't automatically refocus - let user click naturally
   };
 
-  // Clear all OTP inputs
   const clearOtpInputs = () => {
     setOtp(["", "", "", "", "", ""]);
-    setOtpError("");
+    setShowRedBorder(false);
+    setFocusedIndex(0);
+
+    // Clear any pending auto-clear timer
+    if (autoClearTimer) {
+      clearTimeout(autoClearTimer);
+      setAutoClearTimer(null);
+    }
+
     setTimeout(() => {
       if (inputRefs.current[0]) {
         inputRefs.current[0].focus();
+        inputRefs.current[0].select();
       }
-    }, 10);
+    }, 50);
   };
 
-  // Resend OTP Handler
   const handleResendOtp = async () => {
     setResendLoading(true);
     try {
       await registerResendOTP(formData.email);
       setCountdown(60);
       clearOtpInputs();
+      setIsBlocked(false);
+      setLockCountdown(0);
+      setAttempts(0);
+      setShowRedBorder(false);
+      setFailedAttempts(0);
+
+      // Clear any pending auto-clear timer
+      if (autoClearTimer) {
+        clearTimeout(autoClearTimer);
+        setAutoClearTimer(null);
+      }
+
       toast.success("New OTP sent to your email");
     } catch (error) {
-      toast.error(error || "Failed to resend OTP");
+      console.error("Resend OTP error:", error);
     } finally {
       setResendLoading(false);
     }
   };
 
-  // Verify OTP Handler
+  // ============== FIXED: Verify OTP with failed attempts tracking ==============
   const handleVerifyOtp = async (otpValue = otp.join("")) => {
     if (otpValue.length !== 6) {
-      setOtpError("Please enter the complete 6-digit OTP");
       return;
     }
 
     setOtpLoading(true);
-    setOtpError("");
 
     try {
       await registerVerify(formData.email, otpValue);
+      // Reset failed attempts on success
+      setFailedAttempts(0);
     } catch (err) {
-      const errorMessage = err || "Invalid OTP. Please try again.";
-      setOtpError(errorMessage);
-      toast.error(errorMessage);
+      console.error("OTP verification error:", err);
 
-      if (
-        errorMessage.includes("Invalid OTP") ||
-        errorMessage.includes("invalid") ||
-        errorMessage.includes("wrong")
-      ) {
+      // Increment failed attempts
+      const newFailedAttempts = failedAttempts + 1;
+      setFailedAttempts(newFailedAttempts);
+
+      // Show toast message
+      toast.error("Invalid OTP. Please try again.");
+
+      // Show red borders on empty inputs
+      setShowRedBorder(true);
+
+      // Auto-clear after 2.5 seconds
+      const timer = setTimeout(() => {
         clearOtpInputs();
-      }
+        setAutoClearTimer(null);
+      }, 2500);
+
+      setAutoClearTimer(timer);
     } finally {
       setOtpLoading(false);
     }
   };
 
-  // Validate form
   const validateForm = () => {
     const newErrors = {};
 
@@ -363,7 +457,6 @@ export default function SignUp() {
     return Object.keys(newErrors).length === 0;
   };
 
-  // Handle form submission (initiate registration)
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -384,7 +477,6 @@ export default function SignUp() {
     }
   };
 
-  // Handle Google Sign Up Success
   const handleGoogleSignUpSuccess = async (credentialResponse) => {
     try {
       const idToken = credentialResponse.credential;
@@ -395,7 +487,6 @@ export default function SignUp() {
 
       console.log("🔑 Google ID Token received for sign up");
 
-      // Call Google Login API - the backend should handle registration if user doesn't exist
       const result = await GoogleLogin(idToken);
 
       if (result.payload?.success) {
@@ -411,7 +502,6 @@ export default function SignUp() {
     }
   };
 
-  // Password strength indicator
   const getPasswordStrength = () => {
     const password = formData.password;
     if (!password) return { text: "", color: "gray", width: "0%" };
@@ -436,7 +526,6 @@ export default function SignUp() {
 
   const passwordStrength = getPasswordStrength();
 
-  // Countdown timer effect
   useEffect(() => {
     if (countdown > 0) {
       const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
@@ -444,177 +533,287 @@ export default function SignUp() {
     }
   }, [countdown]);
 
-  // Close OTP screen and reset form
   const handleBackToRegistration = () => {
+    // Clear any pending auto-clear timer
+    if (autoClearTimer) {
+      clearTimeout(autoClearTimer);
+      setAutoClearTimer(null);
+    }
+
     clearOtpInputs();
-    setOtpError("");
     setShowOtpScreen(false);
+    setIsBlocked(false);
+    setLockCountdown(0);
+    setAttempts(0);
+    setShowRedBorder(false);
+    setFailedAttempts(0);
     clearOtpAuthState();
   };
 
-  // OTP Screen Component
-  const OtpScreen = () => (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm"
-      onClick={(e) => {
-        if (e.target === e.currentTarget) {
-          handleBackToRegistration();
-        }
-      }}
-    >
-      <div className="bg-white rounded-2xl p-8 w-full max-w-md mx-4 shadow-2xl">
-        <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">Verify OTP</h2>
-          <p className="text-gray-600">
-            Enter the 6-digit code sent to <br />
-            <span className="font-semibold text-gray-800">
-              {formData.email}
-            </span>
-          </p>
-        </div>
+  // ============== FIXED: OTP Screen Component with Professional Lock Message ==============
+  const OtpScreen = () => {
+    // Calculate remaining attempts
+    const remainingAttempts = Math.max(0, 3 - failedAttempts);
 
-        {otpError && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-            <p className="text-red-600 text-sm text-center">{otpError}</p>
-            {otpError.includes("Invalid") ||
-            otpError.includes("invalid") ||
-            otpError.includes("wrong") ? (
+    return (
+      <div
+        className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm"
+        onClick={(e) => {
+          if (e.target === e.currentTarget) {
+            handleBackToRegistration();
+          }
+        }}
+      >
+        <div className="bg-white rounded-2xl p-8 w-full max-w-md mx-4 shadow-2xl">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-bold text-gray-900 mb-2">
+              Verify OTP
+            </h2>
+            <p className="text-gray-600">
+              Enter the 6-digit code sent to <br />
+              <span className="font-semibold text-gray-800">
+                {formData.email}
+              </span>
+            </p>
+          </div>
+
+          {/* ============== PROFESSIONAL LOCK MESSAGE - Above Input Boxes ============== */}
+          {isBlocked ? (
+            <div className="mb-6 bg-gradient-to-r from-red-50 to-orange-50 border-l-4 border-red-500 rounded-r-lg p-4 shadow-sm">
+              <div className="flex items-start">
+                <div className="flex-shrink-0">
+                  <svg
+                    className="h-5 w-5 text-red-500"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </div>
+                <div className="ml-3 flex-1">
+                  <h3 className="text-sm font-semibold text-red-800">
+                    Account Temporarily Locked
+                  </h3>
+                  <p className="text-sm text-red-700 mt-1">
+                    Too many invalid attempts. Please try again in{" "}
+                    <span className="font-bold">{lockCountdown}</span> seconds.
+                  </p>
+                  <div className="mt-2 w-full bg-red-200 rounded-full h-1.5">
+                    <div
+                      className="bg-red-600 h-1.5 rounded-full transition-all duration-1000"
+                      style={{ width: `${(lockCountdown / 60) * 100}%` }}
+                    ></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : (
+            /* ============== ATTEMPTS REMAINING INDICATOR ============== */
+            <div className="mb-4 flex justify-between items-center">
+              <div className="text-xs text-gray-500">
+                {failedAttempts > 0 ? (
+                  <span className="text-amber-600 font-medium">
+                    {remainingAttempts}{" "}
+                    {remainingAttempts === 1 ? "attempt" : "attempts"} remaining
+                  </span>
+                ) : (
+                  <span>&nbsp;</span>
+                )}
+              </div>
+              <div className="flex gap-1">
+                {[1, 2, 3].map((i) => (
+                  <div
+                    key={i}
+                    className={`w-2 h-2 rounded-full ${
+                      i <= failedAttempts ? "bg-red-400" : "bg-gray-200"
+                    }`}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* OTP Input Boxes */}
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (!isBlocked) {
+                if (otp.every((digit) => digit !== "")) {
+                  handleVerifyOtp(otp.join(""));
+                }
+              }
+            }}
+            className="mb-8"
+          >
+            <div className="flex justify-center gap-3">
+              {otp.map((digit, index) => {
+                // Border color logic
+                let borderColor = "border-gray-300";
+                let focusRingColor =
+                  "focus:ring-[#27bb97] focus:border-[#27bb97]";
+                let bgColor = "bg-gray-50";
+
+                if (isBlocked) {
+                  borderColor = "border-gray-300";
+                  focusRingColor = "focus:ring-gray-400 focus:border-gray-400";
+                  bgColor = "bg-gray-100";
+                } else if (showRedBorder && !digit) {
+                  // Show red border when wrong OTP entered and input is empty
+                  borderColor = "border-red-300";
+                  focusRingColor = "focus:ring-red-500 focus:border-red-500";
+                  bgColor = "bg-red-50";
+                } else if (digit) {
+                  borderColor = "border-[#27bb97]";
+                  bgColor = "bg-[#27bb97]/5";
+                  focusRingColor =
+                    "focus:ring-[#27bb97] focus:border-[#27bb97]";
+                }
+
+                return (
+                  <input
+                    key={index}
+                    ref={(el) => {
+                      inputRefs.current[index] = el;
+                    }}
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    maxLength={6}
+                    value={digit}
+                    onChange={(e) =>
+                      !isBlocked && handleOtpChange(index, e.target.value)
+                    }
+                    onKeyDown={(e) => !isBlocked && handleKeyDown(index, e)}
+                    onPaste={!isBlocked ? handlePaste : undefined}
+                    onFocus={() => handleOtpFocus(index)}
+                    onBlur={handleOtpBlur}
+                    onInput={(e) => {
+                      e.target.value = e.target.value.replace(/[^0-9]/g, "");
+                    }}
+                    className={`w-14 h-14 text-2xl text-center text-gray-900 font-bold ${bgColor} border-2 rounded-xl focus:outline-none focus:ring-2 transition-all duration-200 ${borderColor} ${focusRingColor} ${
+                      isBlocked ? "cursor-not-allowed opacity-60" : ""
+                    }`}
+                    autoComplete="one-time-code"
+                    disabled={otpLoading || isBlocked}
+                    style={{ caretColor: isBlocked ? "transparent" : "auto" }}
+                  />
+                );
+              })}
+            </div>
+            <button type="submit" className="hidden">
+              Submit
+            </button>
+          </form>
+
+          <div className="text-center mb-4">
+            <p className="text-sm text-gray-500">
+              Enter the 6-digit verification code
+            </p>
+            {/* Clear all button - only when user has entered digits and not blocked */}
+            {!isBlocked && otp.some((digit) => digit !== "") && (
               <button
                 onClick={clearOtpInputs}
-                className="mt-2 text-sm text-red-600 hover:text-red-800 font-medium"
+                className="mt-2 text-sm text-gray-500 hover:text-gray-700 underline"
+                disabled={otpLoading || isBlocked}
               >
-                Clear & Try Again
+                Clear all
               </button>
-            ) : null}
+            )}
           </div>
-        )}
 
-        {/* OTP Input Boxes */}
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            if (otp.every((digit) => digit !== "")) {
-              handleVerifyOtp(otp.join(""));
+          {/* Verify Button */}
+          <button
+            onClick={() => {
+              if (!isBlocked) {
+                if (otp.every((digit) => digit !== "")) {
+                  handleVerifyOtp(otp.join(""));
+                }
+              }
+            }}
+            disabled={
+              otp.some((digit) => digit === "") || otpLoading || isBlocked
             }
-          }}
-          className="mb-8"
-        >
-          <div className="flex justify-center gap-3">
-            {otp.map((digit, index) => (
-              <input
-                key={index}
-                ref={(el) => {
-                  inputRefs.current[index] = el;
-                }}
-                type="text"
-                inputMode="numeric"
-                pattern="[0-9]*"
-                maxLength={6}
-                value={digit}
-                onChange={(e) => handleOtpChange(index, e.target.value)}
-                onKeyDown={(e) => handleKeyDown(index, e)}
-                onPaste={handlePaste}
-                onFocus={(e) => handleOtpFocus(index, e)}
-                onBlur={handleOtpBlur}
-                onInput={(e) => {
-                  e.target.value = e.target.value.replace(/[^0-9]/g, "");
-                }}
-                className="w-14 h-14 text-2xl text-center text-gray-900 font-bold bg-gray-50 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#27bb97] focus:border-[#27bb97] transition-all duration-200"
-                autoComplete="one-time-code"
-                disabled={otpLoading}
-              />
-            ))}
-          </div>
-          <button type="submit" className="hidden">
-            Submit
+            className={`w-full py-3 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center mb-6 shadow-md hover:shadow-lg ${
+              isBlocked
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-[#27bb97] hover:bg-[#1fa987] text-white"
+            }`}
+          >
+            {otpLoading ? (
+              <>
+                <svg
+                  className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
+                </svg>
+                Verifying...
+              </>
+            ) : isBlocked ? (
+              `⏰ Locked for ${lockCountdown}s`
+            ) : (
+              "Verify & Create Account"
+            )}
           </button>
-        </form>
 
-        <div className="text-center mb-4">
-          <p className="text-sm text-gray-500">
-            Enter the 6-digit verification code
-          </p>
-          {otp.some((digit) => digit !== "") && (
-            <button
-              onClick={clearOtpInputs}
-              className="mt-2 text-sm text-gray-500 hover:text-gray-700"
-              disabled={otpLoading}
-            >
-              Clear all
-            </button>
-          )}
-        </div>
-
-        <button
-          onClick={() => {
-            if (otp.every((digit) => digit !== "")) {
-              handleVerifyOtp(otp.join(""));
-            } else {
-              setOtpError("Please enter all 6 digits");
-            }
-          }}
-          disabled={otp.some((digit) => digit === "") || otpLoading}
-          className="w-full bg-[#27bb97] hover:bg-[#1fa987] text-white py-3 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center mb-6 shadow-md hover:shadow-lg"
-        >
-          {otpLoading ? (
-            <>
-              <svg
-                className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
+          <div className="text-center mb-6">
+            <p className="text-gray-600 text-sm">
+              Didn't receive the code?{" "}
+              <button
+                onClick={handleResendOtp}
+                disabled={
+                  resendLoading || countdown > 0 || isBlocked || otpLoading
+                }
+                className={`font-medium ${
+                  isBlocked
+                    ? "text-gray-400 cursor-not-allowed"
+                    : "text-[#27bb97] hover:underline"
+                } disabled:opacity-50 disabled:cursor-not-allowed`}
               >
-                <circle
-                  className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                ></circle>
-                <path
-                  className="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                ></path>
-              </svg>
-              Verifying...
-            </>
-          ) : (
-            "Verify & Create Account"
-          )}
-        </button>
+                {resendLoading
+                  ? "Sending..."
+                  : countdown > 0
+                    ? `Resend in ${countdown}s`
+                    : isBlocked
+                      ? `Locked for ${lockCountdown}s`
+                      : "Resend OTP"}
+              </button>
+            </p>
+          </div>
 
-        <div className="text-center mb-6">
-          <p className="text-gray-600 text-sm">
-            Didn't receive the code?{" "}
-            <button
-              onClick={handleResendOtp}
-              disabled={resendLoading || countdown > 0}
-              className="text-[#27bb97] hover:underline disabled:opacity-50 disabled:cursor-not-allowed font-medium"
-            >
-              {resendLoading
-                ? "Sending..."
-                : countdown > 0
-                  ? `Resend in ${countdown}s`
-                  : "Resend OTP"}
-            </button>
-          </p>
+          <button
+            onClick={handleBackToRegistration}
+            className="w-full text-gray-600 hover:text-gray-800 text-sm font-medium py-2 hover:bg-gray-50 rounded-lg transition-colors flex items-center justify-center"
+            disabled={otpLoading}
+          >
+            ← Back to registration
+          </button>
         </div>
-
-        <button
-          onClick={handleBackToRegistration}
-          className="w-full text-gray-600 hover:text-gray-800 text-sm font-medium py-2 hover:bg-gray-50 rounded-lg transition-colors flex items-center justify-center"
-        >
-          ← Back to registration
-        </button>
       </div>
-    </div>
-  );
+    );
+  };
 
   return (
     <div className="min-h-screen relative overflow-hidden">
-      {/* Toast Notifications */}
       <Toaster
         position="top-right"
         toastOptions={{
@@ -640,29 +839,21 @@ export default function SignUp() {
         }}
       />
 
-      {/* OTP Screen */}
       {showOtpScreen && <OtpScreen />}
 
-      {/* Full Screen Background Image Layer */}
       <div className="fixed inset-0 z-0">
         <img
           src="/signin.webp"
           alt="Geometric Background"
           className="w-full h-full object-cover"
         />
-        {/* Semi-transparent overlay */}
         <div className="absolute inset-0 bg-gradient-to-r from-slate-900/90 via-slate-900/70 to-transparent lg:bg-gradient-to-r lg:from-slate-900/80 lg:via-slate-900/60 lg:to-transparent"></div>
       </div>
 
-      {/* Main Content Container */}
       <div className="relative z-10 flex min-h-screen">
-        {/* Left Side - Text Content Over Background */}
         <div className="hidden lg:flex lg:w-1/2 min-h-screen relative">
-          {/* Content Container */}
           <div className="relative z-20 w-full p-10 flex flex-col justify-between">
-            {/* Top Bar - Logo and Back Button */}
             <div className="flex items-center justify-between">
-              {/* Logo */}
               <Link to="/">
                 <div className="flex items-center gap-2 text-white">
                   <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
@@ -672,7 +863,6 @@ export default function SignUp() {
                 </div>
               </Link>
 
-              {/* Back to Website */}
               <Link to="/">
                 <button className="flex items-center gap-1 ml-10 text-gray-400 hover:text-gray-300 transition-colors cursor-pointer">
                   <ArrowLeft size={20} />
@@ -681,18 +871,16 @@ export default function SignUp() {
               </Link>
             </div>
 
-            {/* Main Text Content - Centered */}
-            <div className="text-white max-w-xl ">
+            <div className="text-white max-w-xl">
               <p className="text-5xl font-bold leading-tight mb-3">
                 Join Listify Today <br />
                 Start Listing Instantly.
               </p>
-              <p className="text-slate-300 text-md ">
+              <p className="text-slate-300 text-md">
                 Create your account to list products, offer services, and
                 connect with buyers across categories like cars, electronics,
                 and more.
               </p>
-              {/* Carousel Dots */}
               <div className="flex items-center gap-1 mt-12">
                 <div className="w-6 h-1 bg-white rounded-full"></div>
                 <HiDotsHorizontal className="text-white/50 w-6 h-6" />
@@ -701,13 +889,10 @@ export default function SignUp() {
           </div>
         </div>
 
-        {/* Right Side - Register Form Container */}
         <div className="w-full lg:w-1/2 flex items-center justify-center">
-          {/* Register Form Card */}
           <div className="w-[90vw] lg:w-[80vh] mt-2 p-2 ml-20 rounded-md flex items-center justify-center bg-white/95 backdrop-blur-sm border border-white/20 shadow-2xl overflow-y-auto">
             <div className="w-full max-w-md">
-              {/* Welcome Text */}
-              <div className="mb-4 px-6  text-center">
+              <div className="mb-4 px-6 text-center">
                 <h2 className="text-4xl font-bold text-gray-900 mb-2">
                   Create Account
                 </h2>
@@ -716,15 +901,12 @@ export default function SignUp() {
                 </p>
               </div>
 
-              {/* Register Form */}
               <form onSubmit={handleSubmit} className="space-y-5 mt-2">
-                {/* Google Sign Up - Pass custom success handler */}
                 <SocialAuth
                   onSuccess={handleGoogleSignUpSuccess}
                   isSignUp={true}
                 />
 
-                {/* Divider */}
                 <div className="relative flex items-center justify-center">
                   <div className="absolute inset-0 flex items-center">
                     <div className="w-full border-t border-gray-300"></div>
@@ -809,7 +991,6 @@ export default function SignUp() {
                     </button>
                   </div>
 
-                  {/* Password Strength Indicator */}
                   {formData.password && (
                     <div className="mt-2">
                       <div className="flex items-center justify-between mb-1">

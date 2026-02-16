@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { GoogleLogin } from "@react-oauth/google";
 import toast from "react-hot-toast";
 
-const SocialAuth = ({ onSuccess, isSignUp = false }) => {
+const SocialAuth = ({ onSuccess, isSignUp = false, onLoginStart }) => {
   const navigate = useNavigate();
   const {
     GoogleLogin: googleLoginAction,
@@ -16,7 +16,30 @@ const SocialAuth = ({ onSuccess, isSignUp = false }) => {
   const [error, setError] = useState("");
   const [googleButtonReady, setGoogleButtonReady] = useState(false);
   const loginInProgress = useRef(false);
-  const toastShown = useRef(false); // Added to prevent double toast
+  const toastShown = useRef(false);
+
+  // ============== ADD ANIMATION STYLES ==============
+  useEffect(() => {
+    const style = document.createElement("style");
+    style.innerHTML = `
+      @keyframes fadeInScale {
+        0% { opacity: 0; transform: scale(0.9); }
+        100% { opacity: 1; transform: scale(1); }
+      }
+      @keyframes fadeOutScale {
+        0% { opacity: 1; transform: scale(1); }
+        100% { opacity: 0; transform: scale(0.9); }
+      }
+      .toast-animation {
+        animation: fadeInScale 0.5s ease-in-out, fadeOutScale 0.5s ease-in-out 3.5s forwards !important;
+      }
+    `;
+    document.head.appendChild(style);
+
+    return () => {
+      document.head.removeChild(style);
+    };
+  }, []);
 
   // Get Google Client ID when component mounts
   useEffect(() => {
@@ -45,9 +68,13 @@ const SocialAuth = ({ onSuccess, isSignUp = false }) => {
 
   const handleGoogleSuccess = async (credentialResponse) => {
     try {
-      // Reset toast flag
+      // Notify parent that Google login started
+      if (onLoginStart) {
+        onLoginStart();
+      }
+
       toastShown.current = false;
-      
+
       if (onSuccess) {
         // Use custom success handler if provided (for SignUp)
         return onSuccess(credentialResponse);
@@ -71,28 +98,56 @@ const SocialAuth = ({ onSuccess, isSignUp = false }) => {
 
       const result = await googleLoginAction(idToken);
 
-      if (result.payload?.success) {
-        // Show toast only once
+      console.log("Google login result:", result);
+
+      // FIXED: Check for successful login correctly
+      // Backend now returns success: true and user object (no token in body)
+      if (result?.payload?.success === true && result?.payload?.user) {
+        console.log("✅ Google login successful!");
+
+        // ============== ONLY ADD duration AND animation CLASS ==============
         if (!toastShown.current) {
-          toast.success("Google login successful!");
+          toast.success("Google login successful!", {
+            duration: 4000,
+            className: "toast-animation",
+          });
           toastShown.current = true;
         }
-        navigate("/");
+
+        // Short delay before navigation
+        setTimeout(() => {
+          navigate("/");
+        }, 2000);
       } else {
-        const errorMsg = result.payload?.error || "Google login failed";
+        // Try to get error message from various places
+        const errorMsg =
+          result?.payload?.message ||
+          result?.payload?.error ||
+          result?.error?.message ||
+          "Google login failed. Please try again.";
+
+        console.error("❌ Google login failed:", errorMsg);
         setError(errorMsg);
-        // Show toast only once
+
         if (!toastShown.current) {
-          toast.error(errorMsg);
+          // ============== ONLY ADD duration AND animation CLASS ==============
+          toast.error(errorMsg, {
+            duration: 5000,
+            className: "toast-animation",
+          });
           toastShown.current = true;
         }
       }
     } catch (error) {
       console.error("Google Login Error:", error);
       setError(error.message || "Google login failed");
-      // Show toast only once
+
       if (!toastShown.current) {
-        toast.error("Google login failed. Please try again.");
+        // ============== ONLY ADD duration AND animation CLASS ==============
+        toast.error("Google login failed. Please try again.", {
+          duration: 5000,
+          className: "toast-animation",
+        });
         toastShown.current = true;
       }
     } finally {
@@ -101,24 +156,31 @@ const SocialAuth = ({ onSuccess, isSignUp = false }) => {
   };
 
   const handleGoogleError = () => {
-    console.log("Google Login Failed");
+    console.log("Google Login Failed - Error from Google SDK");
     setError("Google authentication failed");
-    // Show toast only once
+
     if (!toastShown.current) {
+      // ============== ONLY ADD duration AND animation CLASS ==============
       toast.error(
         "Google authentication failed. Please check your Google Client ID configuration.",
+        {
+          duration: 6000,
+          className: "toast-animation",
+        },
       );
       toastShown.current = true;
     }
   };
 
-  // Custom Google button component
+  // Custom Google button component (fallback)
   const CustomGoogleButton = () => (
     <button
       onClick={() => {
-        // This is a fallback button, actual Google button will render when ready
         if (!googleButtonReady) {
           getGoogleClientIdAction();
+        }
+        if (onLoginStart) {
+          onLoginStart();
         }
       }}
       className="w-full flex items-center justify-center gap-3 bg-white border border-gray-300 hover:bg-gray-50 py-2.5 rounded-lg font-medium transition-colors shadow-sm"
@@ -164,11 +226,13 @@ const SocialAuth = ({ onSuccess, isSignUp = false }) => {
       {isGoogleLoading ? (
         <div className="flex items-center justify-center gap-3 bg-white border border-gray-300 py-2.5 rounded-lg shadow-sm">
           <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-gray-600"></div>
-          <span className="text-sm text-gray-700">Loading Google sign-in...</span>
+          <span className="text-sm text-gray-700">
+            Loading Google sign-in...
+          </span>
         </div>
       ) : googleClientId && googleButtonReady ? (
         // Google Login component with proper styling
-        <div className="flex justify-center">
+        <div className="flex justify-center w-full">
           <GoogleLogin
             onSuccess={handleGoogleSuccess}
             onError={handleGoogleError}
@@ -180,14 +244,6 @@ const SocialAuth = ({ onSuccess, isSignUp = false }) => {
             useOneTap={false}
             ux_mode="popup"
             context={isSignUp ? "signup" : "signin"}
-            // Add custom CSS to control the button
-            containerProps={{
-              style: {
-                width: '100%',
-                display: 'flex',
-                justifyContent: 'center'
-              }
-            }}
           />
         </div>
       ) : (

@@ -5,16 +5,17 @@ import {
   resendOTP,
   loginUser,
   logoutUser,
+  logoutAll,
   getUserProfile,
   updateProfile,
   changePassword,
   forgotPassword,
   resetPassword,
+  checkAuth,
   clearError,
   resetSuccess,
   setOtpSent,
   clearOtpState,
-  // OTP-based Forgot Password actions
   initiateForgotPassword,
   verifyForgotPasswordOTP,
   resendForgotPasswordOTP,
@@ -24,7 +25,6 @@ import {
   setRegistrationEmail,
   setResetEmail,
   clearResetEmail,
-  // Google Auth actions - MAKE SURE THESE ARE EXPORTED
   getGoogleClientId,
   googleLogin,
   setGoogleClientId,
@@ -33,7 +33,7 @@ import {
 export const useAuth = () => {
   const dispatch = useDispatch();
   const {
-    token,
+    token, // Always null - don't use this
     user,
     loading,
     error,
@@ -46,87 +46,204 @@ export const useAuth = () => {
     isGoogleLoading,
   } = useSelector((state) => state.auth);
 
-  // Registration functions
-  const registerInitiate = (userData) => {
-    return dispatch(initiateRegister(userData));
+  // ==================== Auth Status Check ====================
+  const checkAuthStatus = async () => {
+    try {
+      return await dispatch(checkAuth()).unwrap();
+    } catch (error) {
+      console.error("Check auth error:", error);
+      throw error;
+    }
   };
 
-  const registerVerify = (email, otp) => {
-    return dispatch(verifyOTP({ email, otp }));
+  // ==================== Google Login ====================
+  const GoogleLogin = async (googleToken) => {
+    try {
+      console.log("🚀 GoogleLogin hook called");
+      const result = await dispatch(googleLogin(googleToken)).unwrap();
+      console.log("✅ Google login successful in hook:", result);
+      return { payload: result, success: true };
+    } catch (error) {
+      console.error("❌ Google login error in hook:", error);
+
+      let errorMessage = "Google login failed";
+
+      if (typeof error === "string") {
+        errorMessage = error;
+      } else if (error?.message) {
+        errorMessage = error.message;
+      } else if (error?.payload) {
+        errorMessage =
+          error.payload?.message || error.payload || "Google login failed";
+      }
+
+      throw new Error(errorMessage);
+    }
   };
 
-  const registerResendOTP = (email) => {
-    return dispatch(resendOTP(email));
+  // ==================== Registration ====================
+  const registerInitiate = async (userData) => {
+    try {
+      return await dispatch(initiateRegister(userData)).unwrap();
+    } catch (error) {
+      console.error("Registration initiation error in hook:", error);
+      throw error;
+    }
   };
 
-  // Login/Profile functions
-  const login = (credentials) => {
-    return dispatch(loginUser(credentials));
+  const registerVerify = async (email, otp) => {
+    try {
+      return await dispatch(verifyOTP({ email, otp })).unwrap();
+    } catch (error) {
+      console.error("OTP verification error in hook:", error);
+
+      if (typeof error === "string") {
+        throw new Error(error);
+      } else if (error?.message) {
+        throw new Error(error.message);
+      } else {
+        throw new Error("Invalid OTP. Please try again.");
+      }
+    }
   };
 
-  const logout = () => {
-    return dispatch(logoutUser());
+  const registerResendOTP = async (email) => {
+    try {
+      return await dispatch(resendOTP(email)).unwrap();
+    } catch (error) {
+      console.error("Resend OTP error in hook:", error);
+      throw error;
+    }
   };
 
-  const getProfile = () => {
-    return dispatch(getUserProfile());
+  // ==================== Login ====================
+  const login = async (credentials) => {
+    try {
+      return await dispatch(loginUser(credentials)).unwrap();
+    } catch (error) {
+      console.error("Login error in hook:", error);
+      throw error;
+    }
   };
 
-  const updateUserProfile = (userData) => {
-    return dispatch(updateProfile(userData));
+  // ==================== Logout ====================
+  const logout = async () => {
+    try {
+      return await dispatch(logoutUser()).unwrap();
+    } catch (error) {
+      console.error("Logout error in hook:", error);
+      throw error;
+    }
   };
 
-  const updatePassword = (passwordData) => {
-    return dispatch(changePassword(passwordData));
+  const logoutAllDevices = async () => {
+    try {
+      return await dispatch(logoutAll()).unwrap();
+    } catch (error) {
+      console.error("Logout all error in hook:", error);
+      throw error;
+    }
   };
 
-  // OTP-based Forgot Password functions
-  const forgotPasswordRequest = (email) => {
-    return dispatch(initiateForgotPassword(email));
+  // ==================== Profile ====================
+  const getProfile = async () => {
+    try {
+      return await dispatch(getUserProfile()).unwrap();
+    } catch (error) {
+      console.error("Get profile error in hook:", error);
+      throw error;
+    }
   };
 
-  const verifyForgotPasswordOTPRequest = (email, otp) => {
-    return dispatch(verifyForgotPasswordOTP({ email, otp }));
+  const updateUserProfile = async (userData) => {
+    try {
+      return await dispatch(updateProfile(userData)).unwrap();
+    } catch (error) {
+      console.error("Update profile error in hook:", error);
+      throw error;
+    }
   };
 
-  const resendForgotPasswordOTPRequest = (email) => {
-    return dispatch(resendForgotPasswordOTP(email));
+  const updatePassword = async (passwordData) => {
+    try {
+      return await dispatch(changePassword(passwordData)).unwrap();
+    } catch (error) {
+      console.error("Change password error in hook:", error);
+      throw error;
+    }
   };
 
-  const resetPasswordRequest = (
+  // ==================== Forgot Password ====================
+  const forgotPasswordRequest = async (email) => {
+    try {
+      return await dispatch(initiateForgotPassword(email)).unwrap();
+    } catch (error) {
+      console.error("Forgot password initiation error in hook:", error);
+      throw error;
+    }
+  };
+
+  const verifyForgotPasswordOTPRequest = async (email, otp) => {
+    try {
+      return await dispatch(verifyForgotPasswordOTP({ email, otp })).unwrap();
+    } catch (error) {
+      console.error("Forgot password OTP verification error in hook:", error);
+
+      if (typeof error === "string") {
+        throw new Error(error);
+      } else if (error?.message) {
+        throw new Error(error.message);
+      } else {
+        throw new Error("Invalid OTP. Please try again.");
+      }
+    }
+  };
+
+  const resendForgotPasswordOTPRequest = async (email) => {
+    try {
+      return await dispatch(resendForgotPasswordOTP(email)).unwrap();
+    } catch (error) {
+      console.error("Resend forgot password OTP error in hook:", error);
+      throw error;
+    }
+  };
+
+  const resetPasswordRequest = async (
     resetToken,
     email,
     password,
     confirmPassword,
   ) => {
-    return dispatch(
-      resetPasswordWithToken({ resetToken, email, password, confirmPassword }),
-    );
+    try {
+      return await dispatch(
+        resetPasswordWithToken({
+          resetToken,
+          email,
+          password,
+          confirmPassword,
+        }),
+      ).unwrap();
+    } catch (error) {
+      console.error("Reset password error in hook:", error);
+      throw error;
+    }
   };
 
-  // Legacy functions (keep for compatibility)
-  const legacyForgotPassword = (email) => {
-    return dispatch(forgotPassword(email));
-  };
-
-  const legacyResetPassword = (resetToken, password) => {
-    return dispatch(resetPassword({ resetToken, password }));
-  };
-
-  // Google Auth functions - MAKE SURE THESE ARE CALLED CORRECTLY
-  const GoogleLogin = (googleToken) => {
-    return dispatch(googleLogin(googleToken));
-  };
-
-  const getGoogleClientIdAction = () => {
-    return dispatch(getGoogleClientId());
+  // ==================== Google Auth ====================
+  const getGoogleClientIdAction = async () => {
+    try {
+      return await dispatch(getGoogleClientId()).unwrap();
+    } catch (error) {
+      console.error("Get Google client ID error in hook:", error);
+      throw error;
+    }
   };
 
   const setGoogleClientIdAction = (clientId) => {
     dispatch(setGoogleClientId(clientId));
   };
 
-  // Utility functions
+  // ==================== Utility ====================
   const clearAuthError = () => {
     dispatch(clearError());
   };
@@ -163,11 +280,13 @@ export const useAuth = () => {
     dispatch(clearResetEmail());
   };
 
-  const isAuthenticated = !!token;
+  // ==================== Authentication Status ====================
+  // We can't rely on token state anymore, so we check user object
+  const isAuthenticated = !!user;
 
   return {
     // State
-    token,
+    token: null, // Always null - don't use this
     user,
     loading,
     error,
@@ -180,6 +299,9 @@ export const useAuth = () => {
     isGoogleLoading,
     isAuthenticated,
 
+    // Auth Status
+    checkAuthStatus,
+
     // Registration
     registerInitiate,
     registerVerify,
@@ -188,26 +310,27 @@ export const useAuth = () => {
     // Login/Profile
     login,
     logout,
+    logoutAllDevices,
     getProfile,
     updateUserProfile,
     updatePassword,
 
-    // OTP-based Forgot Password
+    // Forgot Password
     forgotPasswordRequest,
     verifyForgotPasswordOTPRequest,
     resendForgotPasswordOTPRequest,
     resetPasswordRequest,
 
-    // Legacy Forgot Password
-    legacyForgotPassword,
-    legacyResetPassword,
+    // Legacy
+    legacyForgotPassword: forgotPasswordRequest,
+    legacyResetPassword: resetPasswordRequest,
 
-    // Google Auth - MAKE SURE THESE ARE EXPORTED
+    // Google Auth
     GoogleLogin,
     getGoogleClientIdAction,
     setGoogleClientIdAction,
 
-    // Utility functions
+    // Utility
     clearAuthError,
     resetAuthSuccess,
     setOtpSentState,

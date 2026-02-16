@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { authAPI } from "../../services/api";
 
 // Helper function to get initial user state from localStorage
+// We ONLY store user data, NEVER tokens
 const getInitialUserState = () => {
   try {
     const userStr = localStorage.getItem("user");
@@ -9,10 +10,11 @@ const getInitialUserState = () => {
       const user = JSON.parse(userStr);
       // Ensure user has profileImageUrl
       if (!user.profileImageUrl) {
-        user.profileImageUrl = user.avatar || 
-                              user.profileImage || 
-                              user.googleProfileImage || 
-                              "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+        user.profileImageUrl =
+          user.avatar ||
+          user.profileImage ||
+          user.googleProfileImage ||
+          "https://cdn-icons-png.flaticon.com/512/149/149071.png";
       }
       return user;
     }
@@ -23,7 +25,8 @@ const getInitialUserState = () => {
 };
 
 const initialState = {
-  token: localStorage.getItem("authToken"),
+  // ⚠️ NO TOKEN IN STATE - Token is in HTTP-only cookie
+  token: null, // Always null - we don't store tokens anymore
   user: getInitialUserState(),
   loading: false,
   error: null,
@@ -49,24 +52,51 @@ export const getGoogleClientId = createAsyncThunk(
   },
 );
 
+// ==================== FIXED: Google Login Thunk ====================
 export const googleLogin = createAsyncThunk(
   "auth/googleLogin",
   async (googleToken, { rejectWithValue }) => {
     try {
       const response = await authAPI.googleLogin(googleToken);
-      
-      // Check if the backend response indicates SUCCESS
-      if (response.data && response.data.success === true) {
-        if (response.data.token) {
-          localStorage.setItem("authToken", response.data.token);
+
+      console.log("Google login response:", {
+        status: response.status,
+        hasData: !!response.data,
+        success: response.data?.success,
+        hasUser: !!response.data?.user,
+      });
+
+      // Check if we got a successful response with user data
+      if (response.data) {
+        if (response.data.success && response.data.user) {
+          // ⚠️ NO TOKEN STORAGE - Token is in HTTP-only cookie
+          // Only store user data
           localStorage.setItem("user", JSON.stringify(response.data.user));
+
+          return response.data;
+        } else {
+          return rejectWithValue(
+            response.data.message || "Invalid server response",
+          );
         }
-        return response.data;
       } else {
-        return rejectWithValue(response.data.message || "Google login failed");
+        return rejectWithValue("No response data received");
       }
     } catch (error) {
-      return rejectWithValue(error.response?.data || error.message);
+      console.error("Google login API error:", error);
+
+      if (error.response) {
+        const errorData = error.response.data;
+        const errorMessage =
+          errorData?.message ||
+          errorData?.error ||
+          `Server error: ${error.response.status}`;
+        return rejectWithValue(errorMessage);
+      } else if (error.request) {
+        return rejectWithValue("No response from server. Please try again.");
+      } else {
+        return rejectWithValue(error.message || "Google login failed");
+      }
     }
   },
 );
@@ -76,41 +106,35 @@ export const loginUser = createAsyncThunk(
   async (credentials, { rejectWithValue }) => {
     try {
       const response = await authAPI.login(credentials);
-      
-      console.log("Backend response:", {
+
+      console.log("Login response:", {
         status: response.status,
         data: response.data,
-        success: response.data.success
+        success: response.data?.success,
       });
-      
-      // CRITICAL: Check if backend returned success: false
+
       if (response.data && response.data.success === false) {
-        console.log("Backend returned success: false with message:", response.data.message);
         return rejectWithValue(response.data.message || "Login failed");
       }
-      
-      // Only proceed if success is true or undefined (for backward compatibility)
-      if (response.data && (response.data.success === true || response.data.success === undefined)) {
-        if (response.data.token) {
-          localStorage.setItem("authToken", response.data.token);
+
+      if (response.data && response.data.success === true) {
+        if (response.data.user) {
+          // ⚠️ NO TOKEN STORAGE - Token is in HTTP-only cookie
           localStorage.setItem("user", JSON.stringify(response.data.user));
         }
         return response.data;
       } else {
-        // Fallback for unexpected response format
         return rejectWithValue("Invalid server response");
       }
-      
     } catch (error) {
       console.error("Login API error:", error);
-      
-      // Handle axios errors
+
       if (error.response) {
         const errorData = error.response.data;
-        const errorMessage = errorData?.message || 
-                           errorData?.error || 
-                           `Server error: ${error.response.status}`;
-        
+        const errorMessage =
+          errorData?.message ||
+          errorData?.error ||
+          `Server error: ${error.response.status}`;
         return rejectWithValue(errorMessage);
       } else if (error.request) {
         return rejectWithValue("No response from server. Please try again.");
@@ -133,20 +157,35 @@ export const initiateRegister = createAsyncThunk(
   },
 );
 
+// ==================== FIXED: verifyOTP ====================
 export const verifyOTP = createAsyncThunk(
   "auth/verifyOTP",
   async ({ email, otp }, { rejectWithValue }) => {
     try {
       const response = await authAPI.verifyOTP({ email, otp });
 
-      if (response.data.success && response.data.token) {
-        localStorage.setItem("authToken", response.data.token);
+      if (response.data.success && response.data.user) {
+        // ⚠️ NO TOKEN STORAGE - Token is in HTTP-only cookie
         localStorage.setItem("user", JSON.stringify(response.data.user));
       }
 
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data || error.message);
+      console.error("OTP verification error:", error);
+
+      // Extract the error message properly
+      let errorMessage = "OTP verification failed";
+
+      if (error.response?.data) {
+        errorMessage =
+          error.response.data.message ||
+          error.response.data.error ||
+          JSON.stringify(error.response.data);
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+
+      return rejectWithValue(errorMessage);
     }
   },
 );
@@ -175,6 +214,7 @@ export const initiateForgotPassword = createAsyncThunk(
   },
 );
 
+// ==================== FIXED: verifyForgotPasswordOTP ====================
 export const verifyForgotPasswordOTP = createAsyncThunk(
   "auth/verifyForgotPasswordOTP",
   async ({ email, otp }, { rejectWithValue }) => {
@@ -182,7 +222,20 @@ export const verifyForgotPasswordOTP = createAsyncThunk(
       const response = await authAPI.verifyForgotPasswordOTP({ email, otp });
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data || error.message);
+      console.error("Forgot password OTP verification error:", error);
+
+      let errorMessage = "OTP verification failed";
+
+      if (error.response?.data) {
+        errorMessage =
+          error.response.data.message ||
+          error.response.data.error ||
+          JSON.stringify(error.response.data);
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+
+      return rejectWithValue(errorMessage);
     }
   },
 );
@@ -243,18 +296,16 @@ export const resetPassword = createAsyncThunk(
   },
 );
 
-// ==================== UPDATED: getUserProfile ====================
 export const getUserProfile = createAsyncThunk(
   "auth/getUserProfile",
   async (_, { rejectWithValue }) => {
     try {
       const response = await authAPI.getProfile();
-      
+
       if (response.data.success) {
-        // Update localStorage with fresh user data
         localStorage.setItem("user", JSON.stringify(response.data.user));
       }
-      
+
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
@@ -262,15 +313,13 @@ export const getUserProfile = createAsyncThunk(
   },
 );
 
-// ==================== UPDATED: updateProfile ====================
 export const updateProfile = createAsyncThunk(
   "auth/updateProfile",
   async (userData, { rejectWithValue }) => {
     try {
       const response = await authAPI.updateProfile(userData);
-      
+
       if (response.data.success) {
-        // Update localStorage with updated user data
         const currentUserStr = localStorage.getItem("user");
         if (currentUserStr) {
           const currentUser = JSON.parse(currentUserStr);
@@ -278,7 +327,7 @@ export const updateProfile = createAsyncThunk(
           localStorage.setItem("user", JSON.stringify(updatedUser));
         }
       }
-      
+
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
@@ -298,12 +347,103 @@ export const changePassword = createAsyncThunk(
   },
 );
 
+// ==================== NEW: Logout Thunks ====================
+export const logoutUser = createAsyncThunk(
+  "auth/logoutUser",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await authAPI.logout();
+      localStorage.removeItem("user");
+      return response.data;
+    } catch (error) {
+      console.error("Logout error:", error);
+      localStorage.removeItem("user");
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  },
+);
+
+export const logoutAll = createAsyncThunk(
+  "auth/logoutAll",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await authAPI.logoutAll();
+      localStorage.removeItem("user");
+      return response.data;
+    } catch (error) {
+      console.error("Logout all error:", error);
+      localStorage.removeItem("user");
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  },
+);
+
+// ==================== NEW: Check Auth Status ====================
+export const checkAuth = createAsyncThunk(
+  "auth/checkAuth",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await authAPI.checkAuth();
+
+      if (response.data.isAuthenticated && response.data.user) {
+        localStorage.setItem("user", JSON.stringify(response.data.user));
+      } else if (!response.data.isAuthenticated) {
+        localStorage.removeItem("user");
+      }
+
+      return response.data;
+    } catch (error) {
+      localStorage.removeItem("user");
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  },
+);
+
+// ==================== NEW: Get Active Sessions ====================
+export const getSessions = createAsyncThunk(
+  "auth/getSessions",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await authAPI.getSessions();
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  },
+);
+
+// ==================== NEW: Revoke Session ====================
+export const revokeSession = createAsyncThunk(
+  "auth/revokeSession",
+  async (tokenId, { rejectWithValue }) => {
+    try {
+      const response = await authAPI.revokeSession(tokenId);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  },
+);
+
+// ==================== NEW: Refresh Token ====================
+export const refreshToken = createAsyncThunk(
+  "auth/refreshToken",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await authAPI.refreshToken();
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  },
+);
+
 const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    logoutUser: (state) => {
-      localStorage.removeItem("authToken");
+    // Manual logout action (for when API call fails)
+    manualLogout: (state) => {
       localStorage.removeItem("user");
       state.token = null;
       state.user = null;
@@ -340,18 +480,17 @@ const authSlice = createSlice({
     setGoogleClientId: (state, action) => {
       state.googleClientId = action.payload;
     },
-    // ==================== ADDED: refreshUserData ====================
     refreshUserData: (state) => {
       const userStr = localStorage.getItem("user");
       if (userStr) {
         try {
           const user = JSON.parse(userStr);
-          // Ensure profileImageUrl is set
           if (!user.profileImageUrl) {
-            user.profileImageUrl = user.avatar || 
-                                  user.profileImage || 
-                                  user.googleProfileImage || 
-                                  "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+            user.profileImageUrl =
+              user.avatar ||
+              user.profileImage ||
+              user.googleProfileImage ||
+              "https://cdn-icons-png.flaticon.com/512/149/149071.png";
           }
           state.user = user;
         } catch (error) {
@@ -363,7 +502,7 @@ const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // Get Google Client ID
+      // ==================== Get Google Client ID ====================
       .addCase(getGoogleClientId.pending, (state) => {
         state.isGoogleLoading = true;
         state.error = null;
@@ -377,7 +516,7 @@ const authSlice = createSlice({
         state.error = action.payload;
       })
 
-      // Google Login - UPDATED to fix double toast
+      // ==================== Google Login ====================
       .addCase(googleLogin.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -386,34 +525,23 @@ const authSlice = createSlice({
       .addCase(googleLogin.fulfilled, (state, action) => {
         state.loading = false;
         state.success = true;
-        state.token = action.payload.token;
+        state.error = null;
+        state.token = null; // Always null - token is in cookie
         state.user = action.payload.user;
-        
-        // Force refresh from localStorage
-        const userStr = localStorage.getItem("user");
-        if (userStr) {
-          try {
-            const user = JSON.parse(userStr);
-            // Ensure profileImageUrl is set
-            if (!user.profileImageUrl) {
-              user.profileImageUrl = user.avatar || 
-                                    user.profileImage || 
-                                    user.googleProfileImage || 
-                                    "https://cdn-icons-png.flaticon.com/512/149/149071.png";
-            }
-            state.user = user;
-          } catch (error) {
-            console.error("Error parsing user from localStorage:", error);
-          }
-        }
+
+        console.log("✅ Google login fulfilled in slice:", {
+          user: !!state.user,
+          success: state.success,
+        });
       })
       .addCase(googleLogin.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
         state.success = false;
+        console.error("❌ Google login rejected in slice:", action.payload);
       })
 
-      // Login User
+      // ==================== Login User ====================
       .addCase(loginUser.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -422,7 +550,7 @@ const authSlice = createSlice({
       .addCase(loginUser.fulfilled, (state, action) => {
         state.loading = false;
         state.success = true;
-        state.token = action.payload.token;
+        state.token = null; // Always null - token is in cookie
         state.user = action.payload.user;
       })
       .addCase(loginUser.rejected, (state, action) => {
@@ -431,7 +559,7 @@ const authSlice = createSlice({
         state.success = false;
       })
 
-      // Initiate Register
+      // ==================== Initiate Register ====================
       .addCase(initiateRegister.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -449,7 +577,7 @@ const authSlice = createSlice({
         state.success = false;
       })
 
-      // Verify OTP
+      // ==================== Verify OTP ====================
       .addCase(verifyOTP.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -458,17 +586,20 @@ const authSlice = createSlice({
       .addCase(verifyOTP.fulfilled, (state, action) => {
         state.loading = false;
         state.success = true;
-        state.token = action.payload.token;
+        state.token = null; // Always null - token is in cookie
         state.user = action.payload.user;
+        // Clear OTP state ONLY on successful verification
         state.otpSent = false;
+        state.registrationEmail = "";
       })
       .addCase(verifyOTP.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload;
+        state.error = action.payload || "OTP verification failed";
         state.success = false;
+        // IMPORTANT: Keep otpSent true so OTP screen stays open
       })
 
-      // Resend OTP
+      // ==================== Resend OTP ====================
       .addCase(resendOTP.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -482,7 +613,7 @@ const authSlice = createSlice({
         state.error = action.payload;
       })
 
-      // Initiate Forgot Password
+      // ==================== Initiate Forgot Password ====================
       .addCase(initiateForgotPassword.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -499,7 +630,7 @@ const authSlice = createSlice({
         state.success = false;
       })
 
-      // Verify Forgot Password OTP
+      // ==================== Verify Forgot Password OTP ====================
       .addCase(verifyForgotPasswordOTP.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -512,11 +643,12 @@ const authSlice = createSlice({
       })
       .addCase(verifyForgotPasswordOTP.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload;
+        state.error = action.payload || "OTP verification failed";
         state.success = false;
+        // Keep resetEmail so user can try again
       })
 
-      // Resend Forgot Password OTP
+      // ==================== Resend Forgot Password OTP ====================
       .addCase(resendForgotPasswordOTP.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -530,7 +662,7 @@ const authSlice = createSlice({
         state.error = action.payload;
       })
 
-      // Reset Password With Token
+      // ==================== Reset Password With Token ====================
       .addCase(resetPasswordWithToken.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -548,7 +680,7 @@ const authSlice = createSlice({
         state.success = false;
       })
 
-      // ==================== UPDATED: Get User Profile ====================
+      // ==================== Get User Profile ====================
       .addCase(getUserProfile.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -562,7 +694,7 @@ const authSlice = createSlice({
         state.error = action.payload;
       })
 
-      // ==================== UPDATED: Update Profile ====================
+      // ==================== Update Profile ====================
       .addCase(updateProfile.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -579,7 +711,7 @@ const authSlice = createSlice({
         state.success = false;
       })
 
-      // Change Password
+      // ==================== Change Password ====================
       .addCase(changePassword.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -593,12 +725,116 @@ const authSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
         state.success = false;
+      })
+
+      // ==================== NEW: Logout User ====================
+      .addCase(logoutUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(logoutUser.fulfilled, (state) => {
+        state.loading = false;
+        state.token = null;
+        state.user = null;
+        state.success = false;
+      })
+      .addCase(logoutUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+        // Still clear user data even if API fails
+        state.token = null;
+        state.user = null;
+      })
+
+      // ==================== NEW: Logout All ====================
+      .addCase(logoutAll.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(logoutAll.fulfilled, (state) => {
+        state.loading = false;
+        state.token = null;
+        state.user = null;
+        state.success = false;
+      })
+      .addCase(logoutAll.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+        // Still clear user data even if API fails
+        state.token = null;
+        state.user = null;
+      })
+
+      // ==================== NEW: Check Auth ====================
+      .addCase(checkAuth.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(checkAuth.fulfilled, (state, action) => {
+        state.loading = false;
+        if (action.payload.isAuthenticated) {
+          state.user = action.payload.user;
+        } else {
+          state.user = null;
+        }
+        state.token = null; // Always null
+      })
+      .addCase(checkAuth.rejected, (state) => {
+        state.loading = false;
+        state.user = null;
+        state.token = null;
+      })
+
+      // ==================== NEW: Get Sessions ====================
+      .addCase(getSessions.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getSessions.fulfilled, (state, action) => {
+        state.loading = false;
+        // Store sessions in state if needed
+        state.sessions = action.payload.sessions;
+      })
+      .addCase(getSessions.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      // ==================== NEW: Revoke Session ====================
+      .addCase(revokeSession.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(revokeSession.fulfilled, (state) => {
+        state.loading = false;
+        state.success = true;
+      })
+      .addCase(revokeSession.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      // ==================== NEW: Refresh Token ====================
+      .addCase(refreshToken.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(refreshToken.fulfilled, (state) => {
+        state.loading = false;
+        // Token refreshed successfully - no state change needed
+        // New token is in HTTP-only cookie
+      })
+      .addCase(refreshToken.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+        // If refresh fails, user might need to login again
+        state.user = null;
       });
   },
 });
 
 export const {
-  logoutUser,
+  manualLogout,
   clearError,
   resetSuccess,
   setOtpSent,

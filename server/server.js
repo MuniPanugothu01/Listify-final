@@ -1,42 +1,78 @@
 require("dotenv").config();
 const express = require("express");
 const session = require("express-session");
-const MongoDBStore = require('connect-mongodb-session')(session);
+const MongoDBStore = require("connect-mongodb-session")(session);
 const cors = require("cors");
+const cookieParser = require("cookie-parser");
 const crypto = require("crypto");
 const connectDB = require("./config/database");
 const passport = require("./config/passport");
 const mongoose = require("mongoose");
+const redis = require("./config/redis");
 
 // Initialize Express app
 const app = express();
 
-// Simple CORS configuration
-app.use(cors({
-  origin: 'http://localhost:5173', // Your React app URL
-  credentials: true, // Allow cookies/sessions
-}));
+// ============== CORS Configuration ==============
+const corsOptions = {
+  origin: process.env.CLIENT_URL || "http://localhost:5173",
+  credentials: true,
+  optionsSuccessStatus: 200,
+};
+
+app.use(cors(corsOptions));
 
 // Body parser
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Cookie parser
+app.use(cookieParser());
+
 // Generate secure session secret
 const generateSecureSecret = () => {
-  return process.env.SESSION_SECRET || crypto.randomBytes(64).toString('hex');
+  return process.env.SESSION_SECRET || crypto.randomBytes(64).toString("hex");
 };
 
-// MongoDB session store
-const store = new MongoDBStore({
-  uri: process.env.MONGODB_URI,
-  collection: 'sessions',
-  expires: 1000 * 60 * 60 * 24 * 7, // 7 days
-});
+// ============== MongoDB Session Store - FIXED ==============
+let store;
 
-// Session store error handling
-store.on('error', function(error) {
-  console.error('MongoDB Session Store Error:', error);
-});
+try {
+  const storeOptions = {
+    uri: process.env.MONGODB_URI,
+    collection: "sessions",
+    expires: 1000 * 60 * 60 * 24 * 7, // 7 days
+    connectionOptions: {
+      // REMOVED deprecated options
+      ssl: true,
+      tls: true,
+      maxPoolSize: 5,
+      serverSelectionTimeoutMS: 5000,
+      socketTimeoutMS: 45000,
+    },
+  };
+
+  store = new MongoDBStore(storeOptions);
+
+  store.on("error", function (error) {
+    console.error("❌ MongoDB Session Store Error:", error.message);
+    console.log("⚠️ Falling back to MemoryStore for sessions");
+    
+    // Fallback to MemoryStore
+    const MemoryStore = require("express-session").MemoryStore;
+    store = new MemoryStore();
+  });
+
+  store.on("connected", () => {
+    console.log("✅ MongoDB Session Store connected");
+  });
+
+} catch (error) {
+  console.error("❌ Failed to create MongoDB session store:", error.message);
+  console.log("⚠️ Using MemoryStore as fallback");
+  const MemoryStore = require("express-session").MemoryStore;
+  store = new MemoryStore();
+}
 
 // Session configuration
 const sessionConfig = {
@@ -44,53 +80,54 @@ const sessionConfig = {
   resave: false,
   saveUninitialized: false,
   store: store,
-  name: 'listify.sid',
+  name: "listify.sid",
   cookie: {
-    secure: process.env.NODE_ENV === 'production',
+    secure: process.env.NODE_ENV === "production",
     httpOnly: true,
-    sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
+    sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
     maxAge: 1000 * 60 * 60 * 24, // 24 hours
   },
+  rolling: true,
 };
 
-// Apply session middleware
 app.use(session(sessionConfig));
-
-// Initialize Passport
 app.use(passport.initialize());
 app.use(passport.session());
 
 // Connect to database
-connectDB();
+connectDB().catch(console.error);
 
-// Route files
+// Routes
 const authRoutes = require("./routes/authRoutes");
-
-// Mount routers
 app.use("/api/auth", authRoutes);
+
+// Health check
+app.get("/health", (req, res) => {
+  const dbStatus =
+    mongoose.connection.readyState === 1 ? "connected" : "disconnected";
+
+  res.status(200).json({
+    status: "healthy",
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    environment: process.env.NODE_ENV,
+    database: dbStatus,
+    redis: "connected",
+    sessionStore: store.constructor.name === "MongoDBStore" ? "MongoDB" : "MemoryStore"
+  });
+});
 
 // Test endpoint
 app.get('/api/test', (req, res) => {
+  const dbStatus = mongoose.connection.readyState === 1 ? 'connected' : 'disconnected';
+  
   res.status(200).json({
     success: true,
     message: 'Server is working!',
     timestamp: new Date().toISOString(),
     environment: process.env.NODE_ENV,
-    database: mongoose.connection.readyState === 1 ? 'Connected' : 'Disconnected',
-    session: req.sessionID ? 'Active' : 'No session'
-  });
-});
-
-// Health check endpoint
-app.get('/health', (req, res) => {
-  const dbStatus = mongoose.connection.readyState === 1 ? 'connected' : 'disconnected';
-  
-  res.status(200).json({
-    status: 'healthy',
-    timestamp: new Date().toISOString(),
-    uptime: process.uptime(),
-    environment: process.env.NODE_ENV,
     database: dbStatus,
+    session: req.sessionID ? 'Active' : 'No session'
   });
 });
 
@@ -109,52 +146,72 @@ app.use("*", (req, res) => {
   res.status(404).json({
     success: false,
     message: "Resource not found",
-    path: req.originalUrl,
-    method: req.method,
   });
 });
 
-// Global error handling middleware
+// Error handler
 app.use((err, req, res, next) => {
-  console.error('Error:', err.message);
-  
+  console.error("❌ Error:", err.message);
+  console.error(err.stack);
+
   res.status(err.statusCode || 500).json({
     success: false,
-    message: err.message || 'An error occurred',
-    ...(process.env.NODE_ENV === 'development' && { 
-      stack: err.stack 
-    }),
+    message: err.message || "An error occurred",
+    ...(process.env.NODE_ENV === "development" && { stack: err.stack }),
   });
 });
 
 // Start server
-const PORT = process.env.PORT || 5001;
+const PORT = process.env.PORT || 5000;
 const server = app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`🌐 CORS enabled for: http://localhost:5173`);
-  console.log(`📝 Session storage: MongoDB`);
+  console.log(`🌐 Environment: ${process.env.NODE_ENV}`);
+  console.log(`🍪 Cookie parser enabled`);
+  console.log(`📝 Session store: ${store.constructor.name === 'MongoDBStore' ? 'MongoDB' : 'MemoryStore'}`);
 });
 
-// Handle graceful shutdown
-const shutdown = () => {
-  console.log('Shutting down gracefully...');
-  
-  server.close(() => {
-    console.log('HTTP server closed');
-    mongoose.connection.close(false, () => {
-      console.log('MongoDB connection closed');
-      process.exit(0);
-    });
-  });
+// ============== PRODUCTION GRACEFUL SHUTDOWN ==============
+const shutdown = async (signal) => {
+  console.log(`\n🛑 Received ${signal}. Starting graceful shutdown...`);
 
-  // Force shutdown after 10 seconds
-  setTimeout(() => {
-    console.error('Forcefully shutting down');
-    process.exit(1);
-  }, 10000);
+  let exitCode = 0;
+
+  try {
+    // 1. Stop accepting new connections
+    await new Promise((resolve) => {
+      server.close(resolve);
+      console.log("✅ HTTP server closed");
+    });
+
+    // 2. Close MongoDB connection
+    if (mongoose.connection.readyState !== 0) {
+      await mongoose.connection.close();
+      console.log("✅ MongoDB connection closed");
+    }
+
+    console.log("✅ Graceful shutdown completed");
+  } catch (error) {
+    console.error("❌ Error during shutdown:", error);
+    exitCode = 1;
+  } finally {
+    process.exit(exitCode);
+  }
 };
 
-process.on('SIGTERM', shutdown);
-process.on('SIGINT', shutdown);
+// Handle shutdown signals
+process.on("SIGTERM", () => shutdown("SIGTERM"));
+process.on("SIGINT", () => shutdown("SIGINT"));
+
+// Handle uncaught exceptions
+process.on("uncaughtException", (err) => {
+  console.error("❌ Uncaught Exception:", err);
+  shutdown("UNCAUGHT_EXCEPTION");
+});
+
+// Handle unhandled rejections
+process.on("unhandledRejection", (err) => {
+  console.error("❌ Unhandled Rejection:", err);
+  shutdown("UNHANDLED_REJECTION");
+});
 
 module.exports = app;

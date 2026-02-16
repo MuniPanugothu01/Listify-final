@@ -14,7 +14,6 @@ const userSchema = new mongoose.Schema({
     required: [true, "Please add an email"],
     unique: true,
     lowercase: true,
-    index: true,
   },
   password: {
     type: String,
@@ -141,13 +140,11 @@ const userSchema = new mongoose.Schema({
   ],
 });
 
-// Indexes for better query performance
-userSchema.index({ email: 1 });
-userSchema.index({ googleId: 1 });
+// Create indexes
 userSchema.index({ status: 1 });
 userSchema.index({ createdAt: -1 });
 
-// ==================== NEW METHODS FOR PROFILE IMAGES ====================
+// ==================== METHODS FOR PROFILE IMAGES ====================
 // Method to get best available profile image
 userSchema.methods.getProfileImage = function () {
   if (this.profileImage) return this.profileImage;
@@ -166,38 +163,35 @@ userSchema.methods.updateProfileImage = async function (imageUrl) {
   this.profileImage = imageUrl;
   return this.save();
 };
-// ==================== END NEW METHODS ====================
 
-// Middleware to handle password hashing - SIMPLIFIED
-userSchema.pre("save", async function (next) {
-  // Only hash the password if it's modified and is a plain text password
-  if (this.isModified("password") && this.password) {
-    // Check if the password is already hashed (bcrypt hashes start with $2)
-    if (!this.password.startsWith("$2")) {
-      try {
-        console.log("🔄 Hashing plain text password in pre-save middleware");
-        const salt = await bcrypt.genSalt(10);
-        this.password = await bcrypt.hash(this.password, salt);
-        this.lastPasswordChange = new Date();
-      } catch (error) {
-        return next(error);
-      }
-    } else {
-      console.log("✅ Password already hashed, skipping re-hash");
-    }
-  }
-
-  // Ensure provider is set correctly
-  if (this.googleId && !this.provider) {
-    this.provider = "google";
-  }
-
+// ==================== FIXED: Middleware to handle password hashing ====================
+// FIXED: Changed from callback to async/await pattern
+userSchema.pre("save", async function() {
   // Update updatedAt timestamp
   this.updatedAt = Date.now();
-  next();
+  
+  // Only hash the password if it's modified and is a plain text password
+  if (!this.isModified("password") || !this.password) {
+    return;
+  }
+
+  // Check if the password is already hashed (bcrypt hashes start with $2)
+  if (this.password.startsWith("$2")) {
+    console.log("✅ Password already hashed, skipping re-hash");
+    return;
+  }
+
+  console.log("🔄 Hashing plain text password in pre-save middleware");
+  
+  // Hash the password
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
+  this.lastPasswordChange = new Date();
+  
+  console.log("✅ Password hashed successfully");
 });
 
-// Method to compare password - SIMPLIFIED
+// Method to compare password
 userSchema.methods.comparePassword = async function (candidatePassword) {
   try {
     return await bcrypt.compare(candidatePassword, this.password);
@@ -284,6 +278,7 @@ userSchema.methods.addSecurityLog = function (action, ip, userAgent, details) {
     ip,
     userAgent,
     details,
+    timestamp: new Date()
   });
 
   // Keep only last 100 logs

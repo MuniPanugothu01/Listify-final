@@ -5,12 +5,9 @@ class RedisService {
   static async storePendingRegistration(email, userData) {
     try {
       const key = `pending_registration:${email}`;
-
-      // FIX: Always stringify the data before storing
       const dataString = JSON.stringify(userData);
       console.log(`[Redis] Storing pending registration for ${email}`);
 
-      // Store for 10 minutes (600 seconds)
       await redis.setex(key, 600, dataString);
       return true;
     } catch (error) {
@@ -32,14 +29,11 @@ class RedisService {
 
       console.log(`[Redis] Found pending registration for ${email}`);
 
-      // FIX: Check if data is already an object or needs parsing
       let parsedData;
       try {
         if (typeof data === "string") {
-          // If it's a string, parse it as JSON
           parsedData = JSON.parse(data);
         } else if (typeof data === "object") {
-          // If it's already an object, use it directly
           parsedData = data;
         } else {
           console.log(`[Redis] Unexpected data type: ${typeof data}`);
@@ -75,15 +69,143 @@ class RedisService {
   static async storeOTP(email, otp) {
     try {
       const key = `otp:${email}`;
-      // FIX: Always store as string
       const otpString = String(otp);
       console.log(`[Redis] Storing OTP for ${email}: ${otpString} (as string)`);
 
-      // OTP valid for 5 minutes (300 seconds)
       await redis.setex(key, 300, otpString);
       return true;
     } catch (error) {
       console.error("Error storing OTP:", error);
+      return false;
+    }
+  }
+
+  // ============== FIXED: Increment OTP attempts and check lock (BLOCK AFTER 3 ATTEMPTS) ==============
+  static async incrementOTPAttempts(email) {
+    try {
+      const key = `otp_attempts:${email}`;
+      const attempts = await redis.incr(key);
+
+      // Set expiry if this is the first attempt
+      if (attempts === 1) {
+        await redis.expire(key, 300); // Reset after 5 minutes
+      }
+
+      console.log(`[Redis] OTP attempts for ${email}: ${attempts}`);
+
+      // Block email if too many attempts (3+ attempts)
+      if (attempts >= 3) {
+        await this.blockOTPEmail(email, 60); // Block for 1 minute
+        return { attempts, blocked: true, blockDuration: 60 };
+      }
+
+      return { attempts, blocked: false };
+    } catch (error) {
+      console.error("Error incrementing OTP attempts:", error);
+      return { attempts: 1, blocked: false };
+    }
+  }
+
+  // ============== FIXED: Block email for OTP attempts ==============
+  static async blockOTPEmail(email, seconds) {
+    try {
+      const key = `blocked_otp:${email}`;
+      await redis.setex(key, seconds, "true");
+      console.log(
+        `[Redis] Blocked OTP for email ${email} for ${seconds} seconds`,
+      );
+
+      const blockInfoKey = `otp_block_info:${email}`;
+      const blockInfo = {
+        blockedAt: new Date().toISOString(),
+        duration: seconds,
+        expiresIn: seconds,
+      };
+      await redis.setex(blockInfoKey, seconds, JSON.stringify(blockInfo));
+
+      return true;
+    } catch (error) {
+      console.error("Error blocking OTP email:", error);
+      return false;
+    }
+  }
+
+  // ============== FIXED: Check if OTP is blocked ==============
+  static async checkOTPBlocked(email) {
+    try {
+      const key = `blocked_otp:${email}`;
+      const exists = await redis.exists(key);
+
+      if (exists === 1) {
+        const ttl = await redis.ttl(key);
+        console.log(`[Redis] OTP blocked for ${email}, TTL: ${ttl}s`);
+        return { blocked: true, remainingSeconds: ttl };
+      }
+
+      console.log(`[Redis] OTP not blocked for ${email}`);
+      return { blocked: false, remainingSeconds: 0 };
+    } catch (error) {
+      console.error("Error checking OTP blocked:", error);
+      return { blocked: false, remainingSeconds: 0 };
+    }
+  }
+
+  // ============== FIXED: Get OTP block info ==============
+  static async getOTPBlockInfo(email) {
+    try {
+      const key = `otp_block_info:${email}`;
+      const data = await redis.get(key);
+
+      if (!data) {
+        return null;
+      }
+
+      let parsedData;
+      try {
+        if (typeof data === "string") {
+          parsedData = JSON.parse(data);
+        } else if (typeof data === "object") {
+          parsedData = data;
+        }
+
+        const ttl = await redis.ttl(`blocked_otp:${email}`);
+        parsedData.expiresIn = ttl;
+
+        return parsedData;
+      } catch (parseError) {
+        console.error(`[Redis] JSON parse error:`, parseError);
+        return null;
+      }
+    } catch (error) {
+      console.error("Error getting OTP block info:", error);
+      return null;
+    }
+  }
+
+  // ============== FIXED: Clear OTP attempts ==============
+  static async clearOTPAttempts(email) {
+    try {
+      const key = `otp_attempts:${email}`;
+      await redis.del(key);
+      console.log(`[Redis] Cleared OTP attempts for ${email}`);
+      return true;
+    } catch (error) {
+      console.error("Error clearing OTP attempts:", error);
+      return false;
+    }
+  }
+
+  // ============== FIXED: Clear OTP block ==============
+  static async clearOTPBlock(email) {
+    try {
+      const blockKey = `blocked_otp:${email}`;
+      const blockInfoKey = `otp_block_info:${email}`;
+      await redis.del(blockKey);
+      await redis.del(blockInfoKey);
+      console.log(`[Redis] Cleared OTP block for ${email}`);
+      return true;
+    } catch (error) {
+      console.error("Error clearing OTP block:", error);
       return false;
     }
   }
@@ -102,7 +224,6 @@ class RedisService {
         return { valid: false, reason: "OTP expired or not found" };
       }
 
-      // FIX: Compare as strings to avoid type mismatch
       const receivedOTP = String(otp).trim();
       const storedOTPStr = String(storedOTP).trim();
 
@@ -112,7 +233,6 @@ class RedisService {
         return { valid: false, reason: "Invalid OTP" };
       }
 
-      // Delete OTP after successful verification
       await redis.del(key);
       console.log(`[Redis] OTP verified successfully for ${email}`);
       return { valid: true };
@@ -141,7 +261,6 @@ class RedisService {
   static async setEmailExists(email) {
     try {
       const key = `email_exists:${email}`;
-      // Set for 1 hour to prevent spam
       await redis.setex(key, 3600, "true");
       console.log(`[Redis] Set email exists flag for ${email} (1 hour)`);
       return true;
@@ -157,16 +276,14 @@ class RedisService {
       const key = `reg_attempts:${email}`;
       const attempts = await redis.incr(key);
 
-      // Set expiry if this is the first attempt
       if (attempts === 1) {
-        await redis.expire(key, 3600); // 1 hour
+        await redis.expire(key, 3600);
       }
 
       console.log(`[Redis] Registration attempts for ${email}: ${attempts}`);
 
-      // Block email if too many attempts (5+)
       if (attempts >= 5) {
-        await this.blockEmail(email, 3600); // Block for 1 hour
+        await this.blockEmail(email, 3600);
       }
 
       return attempts;
@@ -226,8 +343,6 @@ class RedisService {
     }
   }
 
-  // Add these methods to your RedisService class
-
   // Store pending password reset
   static async storePendingPasswordReset(email, resetData) {
     try {
@@ -235,7 +350,6 @@ class RedisService {
       const dataString = JSON.stringify(resetData);
       console.log(`[Redis] Storing pending password reset for ${email}`);
 
-      // Store for 10 minutes (600 seconds)
       await redis.setex(key, 600, dataString);
       return true;
     } catch (error) {
@@ -299,7 +413,6 @@ class RedisService {
       const key = `password_reset_token:${email}`;
       console.log(`[Redis] Storing password reset token for ${email}`);
 
-      // Store for 10 minutes (600 seconds)
       await redis.setex(key, 600, token);
       return true;
     } catch (error) {
