@@ -1,10 +1,24 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom'; // Add this import
 
 const Products = () => {
+  const navigate = useNavigate(); // Add this hook
+
   // Product Card Component
-  const ProductCard = ({ image, title, price, location, promoted }) => {
+  const ProductCard = ({ image, title, price, location, promoted, product }) => {
+    const handleCardClick = () => {
+      // Store the product data in localStorage
+      localStorage.setItem('selectedProduct', JSON.stringify(product));
+      
+      // Navigate to the details page
+      navigate(`/product/${product.id}`);
+    };
+
     return (
-      <div className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer">
+      <div 
+        className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+        onClick={handleCardClick}
+      >
         <div className="relative">
           <img 
             src={image} 
@@ -278,13 +292,17 @@ const Products = () => {
   return (
     <div className="min-h-screen bg-gray-50">      
       {/* Products Grid */}
-      <div className=" px-12 py-4 sm:px-8 md:px-8 lg:px-12 xl:px-12">
+      <div className="px-12 py-4 sm:px-8 md:px-8 lg:px-12 xl:px-12">
         <h1 className="text-3xl font-bold text-gray-900 mb-6">
           For Sale
         </h1>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
           {products.map((product) => (
-            <ProductCard key={product.id} {...product} />
+            <ProductCard 
+              key={product.id} 
+              {...product} 
+              product={product} // Pass the entire product object
+            />
           ))}
         </div>
       </div>

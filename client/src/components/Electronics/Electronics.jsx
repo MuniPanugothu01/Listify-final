@@ -13,11 +13,11 @@ export default function Electronics() {
     <div className="">
       <HeroElectronics />
       <Sample/>
-      <CollectionElectronics />
+      {/* <CollectionElectronics /> */}
       {/* <ElectronicsRecommended /> */}
        {/* <ElectronicsOffers /> */}
       {/* <ElectronicsTestimonials /> */}
-      <ElectronicsFAQSection />
+      {/* <ElectronicsFAQSection /> */}
     </div>
   );
 }
