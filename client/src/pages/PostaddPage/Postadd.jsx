@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState } from 'react';
 import { 
   Home, 
   Briefcase, 
@@ -6,36 +6,36 @@ import {
   ShoppingBag,
   Car,
   Users,
-  ArrowLeft,
-  CheckCircle,
   MapPin,
   Phone,
   Mail,
   User,
-  ChevronDown,
-  Camera,
   DollarSign,
-  Upload,
   X,
+  Camera,
+  Upload,
+  Check,
+  ChevronRight,
+  Package,
+  AlertCircle,
+  Sparkles,
+  ArrowLeft,
+  PlusCircle,
   Image as ImageIcon,
-  Shield,
-  Search
+  Tag,
+  Heart
 } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { toast } from 'react-hot-toast';
 
 const PostAdPage = () => {
-  const [step, setStep] = useState(1);
-  const [selectedCategory, setSelectedCategory] = useState('');
-  const [selectedSubCategory, setSelectedSubCategory] = useState('');
-  const [showCategoryDropdown, setShowCategoryDropdown] = useState(false);
-  const [showSubCategoryDropdown, setShowSubCategoryDropdown] = useState(false);
+  const navigate = useNavigate();
+  const [currentStep, setCurrentStep] = useState(1);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [selectedSubcategory, setSelectedSubcategory] = useState(null);
   const [images, setImages] = useState([]);
-  const [uploading, setUploading] = useState(false);
-  const [categorySearch, setCategorySearch] = useState('');
-  const [subCategorySearch, setSubCategorySearch] = useState('');
-  
-  const categoryDropdownRef = useRef(null);
-  const subCategoryDropdownRef = useRef(null);
-  
+  const [isUploading, setIsUploading] = useState(false);
+
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -45,768 +45,452 @@ const PostAdPage = () => {
     phone: '',
     email: ''
   });
-  
-  // Categories with icons and subcategories
+
   const categories = [
-    { 
-      id: 'housing', 
-      name: 'Housing', 
-      icon: <Home className="w-5 h-5" />,
-      subcategories: [
-        'Apartments for Rent',
-        'Rooms for Rent', 
-        'Houses for Sale',
-        'Roommates Wanted',
-        'Vacation Rentals',
-        'Commercial Space'
-      ]
+     { 
+      id: 1, 
+      name: 'For Sale', 
+      icon: <ShoppingBag className="w-6 h-6" />, 
+      color: 'from-purple-500 to-pink-500',
+      bgColor: 'bg-purple-50',
+      textColor: 'text-purple-600',
+      subcategories: ['Electronics', 'Furniture', 'Clothing', 'Books', 'Sports']
     },
-    { 
-      id: 'jobs', 
-      name: 'Jobs', 
-      icon: <Briefcase className="w-5 h-5" />,
-      subcategories: [
-        'Full-time Jobs',
-        'Part-time Jobs',
-        'Contract Work',
-        'Remote Jobs',
-        'Internships'
-      ]
-    },
-    { 
-      id: 'services', 
-      name: 'Services', 
-      icon: <Wrench className="w-5 h-5" />,
-      subcategories: [
-        'Cleaning Services',
-        'Repair Services',
-        'Tutoring',
-        'Beauty Services',
-        'Delivery Services',
-        'Plumbing Services',
-        'Electrical Services'
-      ]
-    },
-    { 
-      id: 'buySell', 
-      name: 'Buy & Sell', 
-      icon: <ShoppingBag className="w-5 h-5" />,
-      subcategories: [
-        'Electronics',
-        'Furniture',
-        'Clothing & Accessories',
-        'Books & Media',
-        'Sports Equipment',
-        'Home Appliances',
-        'Mobile Phones'
-      ]
-    },
-    { 
-      id: 'automotive', 
+     { 
+      id: 2, 
       name: 'Vehicles', 
-      icon: <Car className="w-5 h-5" />,
-      subcategories: [
-        'Cars for Sale',
-        'Motorcycles',
-        'Auto Parts',
-        'Car Rental',
-        'Bicycles',
-        'Scooters'
-      ]
+      icon: <Car className="w-6 h-6" />, 
+      color: 'from-red-500 to-rose-500',
+      bgColor: 'bg-red-50',
+      textColor: 'text-red-600',
+      subcategories: ['Cars', 'Motorcycles', 'Trucks', 'Boats', 'Parts']
     },
     { 
-      id: 'events', 
+      id: 3, 
       name: 'Events', 
-      icon: <Users className="w-5 h-5" />,
-      subcategories: [
-        'Concerts & Shows',
-        'Workshops',
-        'Festivals',
-        'Sports Events',
-        'Parties'
-      ]
+      icon: <Users className="w-6 h-6" />, 
+      color: 'from-pink-500 to-rose-500',
+      bgColor: 'bg-pink-50',
+      textColor: 'text-pink-600',
+      subcategories: ['Concerts', 'Workshops', 'Festivals', 'Sports', 'Parties']
     },
+    { 
+      id: 4, 
+      name: 'Housing', 
+      icon: <Home className="w-6 h-6" />, 
+      color: 'from-emerald-500 to-teal-500',
+      bgColor: 'bg-emerald-50',
+      textColor: 'text-emerald-600',
+      subcategories: ['Apartment', 'House', 'Room', 'Commercial', 'Land']
+    },
+    { 
+      id: 5, 
+      name: 'Jobs', 
+      icon: <Briefcase className="w-6 h-6" />, 
+      color: 'from-blue-500 to-indigo-500',
+      bgColor: 'bg-blue-50',
+      textColor: 'text-blue-600',
+      subcategories: ['Full Time', 'Part Time', 'Contract', 'Remote', 'Internship']
+    },
+    { 
+      id: 6, 
+      name: 'Services', 
+      icon: <Wrench className="w-6 h-6" />, 
+      color: 'from-orange-500 to-amber-500',
+      bgColor: 'bg-orange-50',
+      textColor: 'text-orange-600',
+      subcategories: ['Cleaning', 'Repair', 'Tutoring', 'Beauty', 'Delivery']
+    },
+    {
+      id: 7,
+      name: 'Take Care',
+      icon: <Heart className="w-6 h-6" />,
+      color: 'from-green-500 to-teal-500',
+      bgColor: 'bg-green-50',
+      textColor: 'text-green-600',
+      subcategories: ['Nanny Care','Elder Care', 'Child Care', 'Tutoring']
+    }
   ];
 
-  // Close dropdowns when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (categoryDropdownRef.current && !categoryDropdownRef.current.contains(event.target)) {
-        setShowCategoryDropdown(false);
-      }
-      if (subCategoryDropdownRef.current && !subCategoryDropdownRef.current.contains(event.target)) {
-        setShowSubCategoryDropdown(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
-
-  // Get current category object
-  const currentCategory = categories.find(cat => cat.id === selectedCategory);
-  
-  // Filter categories based on search
-  const filteredCategories = categories.filter(category =>
-    category.name.toLowerCase().includes(categorySearch.toLowerCase()) ||
-    category.subcategories.some(subcat => 
-      subcat.toLowerCase().includes(categorySearch.toLowerCase())
-    )
-  );
-
-  // Filter subcategories based on search
-  const filteredSubCategories = currentCategory?.subcategories.filter(subcat =>
-    subcat.toLowerCase().includes(subCategorySearch.toLowerCase())
-  ) || [];
-
-  // Reset subcategory search when category changes
-  useEffect(() => {
-    setSubCategorySearch('');
-  }, [selectedCategory]);
-
-  // Handle back to step 1
-  const handleBack = () => {
-    setStep(1);
-  };
-
-  // Handle form input changes
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
-  // Handle image upload
   const handleImageUpload = (e) => {
     const files = Array.from(e.target.files);
-    if (images.length + files.length > 10) {
-      alert('Maximum 10 images allowed');
+    if (images.length + files.length > 6) {
+      alert('Maximum 6 images allowed');
       return;
     }
 
-    setUploading(true);
+    setIsUploading(true);
     
-    // Simulate upload delay
     setTimeout(() => {
       const newImages = files.map(file => ({
-        id: Date.now() + Math.random(),
-        file,
-        preview: URL.createObjectURL(file),
-        name: file.name
+        id: Math.random().toString(36).substr(2, 9),
+        url: URL.createObjectURL(file),
+        file
       }));
-      
-      setImages(prev => [...prev, ...newImages]);
-      setUploading(false);
-    }, 500);
+      setImages([...images, ...newImages]);
+      setIsUploading(false);
+    }, 1000);
   };
 
-  // Remove image
-  const handleRemoveImage = (id) => {
-    setImages(prev => prev.filter(img => img.id !== id));
+  const removeImage = (id) => {
+    setImages(images.filter(img => img.id !== id));
   };
 
-  // Handle continue to step 2
-  const handleContinue = () => {
-    if (!selectedCategory || !selectedSubCategory) {
-      alert('Please select both category and subcategory');
-      return;
-    }
-    setStep(2);
-  };
-
-  // Handle form submission
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    
-    if (images.length === 0) {
-      alert('Please add at least one image');
-      return;
-    }
-    
-    console.log('Ad Posted:', {
-      category: selectedCategory,
-      subCategory: selectedSubCategory,
-      images: images,
-      ...formData
+const handleSubmit = (e) => {
+  e.preventDefault();
+  if (images.length === 0) {
+    toast.error('Please add at least one image', {
+      duration: 3000, // 3 seconds
+      position: 'top-center',
+      style: {
+        background: '#ef4444',
+        color: '#fff',
+      },
     });
-    
-    alert('Ad posted successfully!');
-    
-    // Reset form
-    setStep(1);
-    setSelectedCategory('');
-    setSelectedSubCategory('');
-    setImages([]);
-    setCategorySearch('');
-    setSubCategorySearch('');
-    setFormData({
-      title: '',
-      description: '',
-      price: '',
-      location: '',
-      name: '',
-      phone: '',
-      email: ''
-    });
-  };
-
+    return;
+  }
+  
+  toast.success('Listing posted successfully!', {
+    duration: 3000, // 3 seconds
+    position: 'top-center',
+    style: {
+      color: '#27BB97',
+    },
+  });
+  
+  // Navigate after toast appears
+  setTimeout(() => {
+    navigate('/');
+  }, 1000); // Navigate after 1 second so user sees the toast
+};
   return (
-    <div className="min-h-screen bg-gray-50 relative z-0">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50">
       {/* Header */}
-      <div className="bg-white">
-        <div className="max-w-4xl mx-auto px-4 py-6">
-          <div className="text-center">
-            <h1 className="text-3xl font-bold text-gray-900">Post Your Ad</h1>
-            <p className="text-gray-600 mt-2">Quick and easy ad posting</p>
+      <div className="bg-white/80 backdrop-blur-md border-b border-gray-100 sticky top-0 z-50">
+        <div className="px-4">
+          <div className="flex items-center justify-between h-16">
+            <div className="flex items-center gap-3">
+              <Link to="/" className="flex items-center gap-2">
+                <div className="w-8 h-8 bg-gradient-to-br from-[#27BB97] to-[#1fa987] rounded-xl flex items-center justify-center shadow-lg shadow-[#27BB97]/20">
+                  <span className="text-white font-bold text-lg">L</span>
+                </div>
+                <span className="text-xl font-bold bg-gradient-to-r from-[#27BB97] to-[#1fa987] bg-clip-text text-transparent">
+                  Listify
+                </span>
+              </Link>
+            </div>
+            
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-gray-500 mr-2">
+                Step {currentStep}/2
+              </span>
+              <button
+                onClick={() => navigate(-1)}
+                className="w-9 h-9 flex items-center justify-center bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors"
+              >
+                <X className="w-5 h-5 text-gray-600" />
+              </button>
+            </div>
           </div>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="max-w-5xl mx-auto px-4 py-8 ">
-        {/* Progress Steps */}
-        <div className="mb-8">
-          <div className="flex items-center justify-center mb-4">
-            <div className={`w-12 h-12 rounded-full flex items-center justify-center ${
-              step === 1 ? 'bg-[#27BB97] text-white' : 'bg-gray-200 text-gray-400'
-            } font-bold text-lg transition-all duration-300`}>
-              1
-            </div>
-            <div className="w-32 h-1 bg-gray-200"></div>
-            <div className={`w-12 h-12 rounded-full flex items-center justify-center ${
-              step === 2 ? 'bg-[#27BB97] text-white' : 'bg-gray-200 text-gray-400'
-            } font-bold text-lg transition-all duration-300`}>
-              2
-            </div>
-          </div>
-          <div className="text-center">
-            <div className="text-sm font-medium text-gray-900 mb-1">
-              {step === 1 ? 'Select Category' : 'Fill Details'}
-            </div>
-            <div className="text-xs text-gray-500">
-              Step {step} of 2
+      <div className="max-w-4xl mx-auto px-4 py-8">
+        {/* Welcome Card */}
+        <div className=" rounded-2xl p-6 text-black mb-8 bg-gray-50 shadow-sm">
+          <div className="flex items-start gap-4">
+            <div className="flex-1">
+              <h2 className="text-xl font-bold mb-1">Create a Listing</h2>
+              <p className="text-gray-600 text-sm">Share what you're selling with thousands of buyers</p>
             </div>
           </div>
         </div>
 
-        {/* Step Content */}
-        <div className="bg-white rounded-xl shadow-lg p-6 md:p-8">
-          {/* Step 1: Category & Subcategory Selection */}
-          {step === 1 && (
-            <div>
-              <div className="mb-8">
-                <h2 className="text-2xl font-bold text-gray-900 mb-2">Select Your Ad Type</h2>
-                <p className="text-gray-600">Choose what you want to post</p>
-              </div>
+        {/* Step 1: Category Selection */}
+        {currentStep === 1 && (
+          <div className="space-y-6">
+            {/* Categories Grid */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              {categories.map((category) => (
+                <button
+                  key={category.id}
+                  onClick={() => {
+                    setSelectedCategory(category);
+                    setSelectedSubcategory(null);
+                  }}
+                  className={`group relative p-4 rounded-xl border-2 transition-all ${
+                    selectedCategory?.id === category.id
+                      ? 'border-[#27BB97] bg-[#27BB97]/5 shadow-lg shadow-[#27BB97]/10'
+                      : 'border-gray-100 bg-white hover:border-gray-200 hover:shadow-md'
+                  }`}
+                >
+                  <div className={`w-12 h-12 ${category.bgColor} rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform`}>
+                    <div className={category.textColor}>
+                      {category.icon}
+                    </div>
+                  </div>
+                  <span className="text-sm font-medium text-gray-900 block text-center">
+                    {category.name}
+                  </span>
+                  {selectedCategory?.id === category.id && (
+                    <div className="absolute -top-2 -right-2 w-6 h-6 bg-[#27BB97] rounded-full flex items-center justify-center">
+                      <Check className="w-4 h-4 text-white" />
+                    </div>
+                  )}
+                </button>
+              ))}
+            </div>
 
-              {/* Category Selection */}
-              <div className="space-y-6">
-                {/* Category Dropdown */}
-                <div className="space-y-2" ref={categoryDropdownRef}>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Category <span className="text-red-500">*</span>
-                  </label>
-                  <div className="relative">
+            {/* Subcategories */}
+            {selectedCategory && (
+              <div className="bg-white rounded-xl p-6 border border-gray-100 shadow-sm">
+                <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                  <Package className="w-5 h-5 text-[#27BB97]" />
+                  Choose Subcategory
+                </h3>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                  {selectedCategory.subcategories.map((sub, index) => (
                     <button
-                      type="button"
-                      onClick={() => {
-                        setShowCategoryDropdown(!showCategoryDropdown);
-                        setShowSubCategoryDropdown(false);
-                      }}
-                      className="w-full flex items-center justify-between px-4 py-3 border border-gray-300 rounded-lg bg-white hover:border-[#27BB97] transition-colors"
+                      key={index}
+                      onClick={() => setSelectedSubcategory(sub)}
+                      className={`p-3 rounded-lg border text-left transition-all ${
+                        selectedSubcategory === sub
+                          ? 'border-[#27BB97] bg-[#27BB97]/5 text-[#27BB97]'
+                          : 'border-gray-200 hover:border-gray-300 text-gray-700'
+                      }`}
                     >
-                      <div className="flex items-center gap-3">
-                        {selectedCategory ? (
-                          <>
-                            <div className="text-[#27BB97]">
-                              {categories.find(cat => cat.id === selectedCategory)?.icon}
-                            </div>
-                            <span className="text-gray-900">
-                              {categories.find(cat => cat.id === selectedCategory)?.name}
-                            </span>
-                          </>
-                        ) : (
-                          <span className="text-gray-500">Select a category</span>
-                        )}
-                      </div>
-                      <ChevronDown className={`w-5 h-5 text-gray-400 transition-transform ${showCategoryDropdown ? 'rotate-180' : ''}`} />
+                      <span className="text-sm font-medium">{sub}</span>
                     </button>
-                    
-                    {showCategoryDropdown && (
-                      <div className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-96 overflow-hidden">
-                        {/* Search Bar */}
-                        <div className="p-3 border-b border-gray-100">
-                          <div className="relative">
-                            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                            <input
-                              type="text"
-                              placeholder="Search categories..."
-                              value={categorySearch}
-                              onChange={(e) => setCategorySearch(e.target.value)}
-                              className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#27BB97] focus:border-[#27BB97]"
-                              onClick={(e) => e.stopPropagation()}
-                            />
-                          </div>
-                        </div>
-                        
-                        {/* Category List */}
-                        <div className="max-h-60 overflow-auto">
-                          {filteredCategories.length > 0 ? (
-                            filteredCategories.map((category) => (
-                              <button
-                                key={category.id}
-                                type="button"
-                                onClick={() => {
-                                  setSelectedCategory(category.id);
-                                  setSelectedSubCategory('');
-                                  setShowCategoryDropdown(false);
-                                  setCategorySearch('');
-                                }}
-                                className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 text-left border-b border-gray-100 last:border-0"
-                              >
-                                <div className="text-[#27BB97]">
-                                  {category.icon}
-                                </div>
-                                <div className="flex-1">
-                                  <div className="font-medium text-gray-900">{category.name}</div>
-                                  <div className="text-xs text-gray-500">{category.subcategories.length} options</div>
-                                </div>
-                                {selectedCategory === category.id && (
-                                  <CheckCircle className="w-5 h-5 text-[#27BB97]" />
-                                )}
-                              </button>
-                            ))
-                          ) : (
-                            <div className="px-4 py-6 text-center">
-                              <p className="text-gray-500">No categories found</p>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    )}
-                  </div>
+                  ))}
                 </div>
+              </div>
+            )}
 
-                {/* Subcategory Dropdown (only shows when category is selected) */}
-                {selectedCategory && (
-                  <div className="space-y-2" ref={subCategoryDropdownRef}>
-                    <label className="block text-sm font-medium text-gray-700">
-                      Subcategory <span className="text-red-500">*</span>
-                    </label>
-                    <div className="relative">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setShowSubCategoryDropdown(!showSubCategoryDropdown);
-                          setShowCategoryDropdown(false);
-                        }}
-                        className="w-full flex items-center justify-between px-4 py-3 border border-gray-300 rounded-lg bg-white hover:border-[#27BB97] transition-colors"
-                      >
-                        <div className="flex items-center gap-3">
-                          {selectedSubCategory ? (
-                            <span className="text-gray-900">{selectedSubCategory}</span>
-                          ) : (
-                            <span className="text-gray-500">Select a subcategory</span>
-                          )}
-                        </div>
-                        <ChevronDown className={`w-5 h-5 text-gray-400 transition-transform ${showSubCategoryDropdown ? 'rotate-180' : ''}`} />
-                      </button>
-                      
-                      {showSubCategoryDropdown && (
-                        <div className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-96 overflow-hidden">
-                          {/* Search Bar for Subcategories */}
-                          <div className="p-3 border-b border-gray-100">
-                            <div className="relative">
-                              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                              <input
-                                type="text"
-                                placeholder="Search subcategories..."
-                                value={subCategorySearch}
-                                onChange={(e) => setSubCategorySearch(e.target.value)}
-                                className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#27BB97] focus:border-[#27BB97]"
-                                onClick={(e) => e.stopPropagation()}
-                              />
-                            </div>
-                          </div>
-                          
-                          {/* Subcategory List */}
-                          <div className="max-h-60 overflow-auto">
-                            {filteredSubCategories.length > 0 ? (
-                              filteredSubCategories.map((subcat, index) => (
-                                <button
-                                  key={index}
-                                  type="button"
-                                  onClick={() => {
-                                    setSelectedSubCategory(subcat);
-                                    setShowSubCategoryDropdown(false);
-                                    setSubCategorySearch('');
-                                  }}
-                                  className="w-full px-4 py-3 hover:bg-gray-50 text-left border-b border-gray-100 last:border-0 flex items-center justify-between"
-                                >
-                                  <div className="font-medium text-gray-900">{subcat}</div>
-                                  {selectedSubCategory === subcat && (
-                                    <CheckCircle className="w-5 h-5 text-[#27BB97]" />
-                                  )}
-                                </button>
-                              ))
-                            ) : (
-                              <div className="px-4 py-6 text-center">
-                                <p className="text-gray-500">No subcategories found</p>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                )}
+            {/* Continue Button */}
+            {selectedCategory && selectedSubcategory && (
+              <button
+                onClick={() => setCurrentStep(2)}
+                className="w-full py-4 bg-gradient-to-r from-[#27BB97] to-[#1fa987] text-white font-semibold rounded-xl hover:shadow-lg hover:shadow-[#27BB97]/20 transition-all flex items-center justify-center gap-2"
+              >
+                Continue to Details
+                <ChevronRight className="w-5 h-5" />
+              </button>
+            )}
+          </div>
+        )}
 
-                {/* Category Info (when both selected) */}
-                {selectedCategory && selectedSubCategory && (
-                  <div className="bg-[#27BB97]/5 border border-[#27BB97]/20 rounded-lg p-4">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 bg-[#27BB97]/10 rounded-lg">
-                        {currentCategory?.icon}
-                      </div>
-                      <div>
-                        <h4 className="font-semibold text-gray-900">
-                          Posting: {selectedSubCategory}
-                        </h4>
-                        <p className="text-sm text-gray-600">
-                          Category: {currentCategory?.name}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                )}
+        {/* Step 2: Form Details */}
+        {currentStep === 2 && (
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Back Button */}
+            <button
+              type="button"
+              onClick={() => setCurrentStep(1)}
+              className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-4"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span className="text-sm">Change Category</span>
+            </button>
 
-                {/* Continue Button */}
-                <div className="pt-4">
-                  <button
-                    type="button"
-                    onClick={handleContinue}
-                    disabled={!selectedCategory || !selectedSubCategory}
-                    className="w-full py-3 bg-[#27BB97] text-white font-semibold rounded-lg hover:bg-[#1fa987] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    Continue to Details
-                  </button>
+            {/* Selected Category Badge */}
+            <div className="bg-gray-50 rounded-xl p-4 flex items-center gap-3">
+              <div className={`w-12 h-12 ${selectedCategory.bgColor} rounded-xl flex items-center justify-center`}>
+                <div className={selectedCategory.textColor}>
+                  {selectedCategory.icon}
                 </div>
+              </div>
+              <div>
+                <p className="text-xs text-gray-500">Selected Category</p>
+                <p className="font-medium text-gray-900">
+                  {selectedCategory.name} • {selectedSubcategory}
+                </p>
               </div>
             </div>
-          )}
 
-          {/* Step 2: Form Details */}
-          {step === 2 && (
-            <div>
-              <div className="flex items-center mb-8">
-                <button
-                  type="button"
-                  onClick={handleBack}
-                  className="mr-4 p-2 hover:bg-gray-100 rounded-full transition-colors"
-                >
-                  <ArrowLeft className="w-5 h-5 text-gray-600" />
-                </button>
-                <div>
-                  <h2 className="text-2xl font-bold text-gray-900">
-                    Post your {selectedSubCategory}
-                  </h2>
-                  <p className="text-gray-600">Fill in the details for your ad</p>
-                </div>
+            {/* Image Upload - Modern Card */}
+            <div className="bg-white rounded-xl p-6 border border-gray-100 shadow-sm">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-semibold text-gray-900 flex items-center gap-2">
+                  <Camera className="w-5 h-5 text-[#27BB97]" />
+                  Add Photos
+                </h3>
+                <span className="text-sm text-gray-500">{images.length}/6</span>
               </div>
 
-              <form onSubmit={handleSubmit} className="space-y-6">
-                {/* Category Info Banner */}
-                <div className="bg-[#27BB97]/5 border border-[#27BB97]/20 rounded-lg p-4 mb-6">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-[#27BB97]/10 rounded-lg">
-                      {currentCategory?.icon}
+              <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
+                {images.map((img) => (
+                  <div key={img.id} className="relative group">
+                    <div className="aspect-square rounded-lg overflow-hidden bg-gray-100">
+                      <img src={img.url} alt="" className="w-full h-full object-cover" />
                     </div>
-                    <div>
-                      <h4 className="font-semibold text-gray-900">{selectedSubCategory}</h4>
-                      <p className="text-sm text-gray-600">Category: {currentCategory?.name}</p>
-                    </div>
+                    <button
+                      type="button"
+                      onClick={() => removeImage(img.id)}
+                      className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
                   </div>
-                </div>
+                ))}
 
-                {/* Image Upload Section */}
-                <div className="space-y-4">
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">Upload Images</h3>
-                    <p className="text-sm text-gray-600 mb-4">
-                      Add photos to make your ad more attractive (Max 10 images)
-                    </p>
-                  </div>
-
-                  {/* Image Upload Area */}
-                  <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-[#27BB97] transition-colors">
+                {images.length < 6 && (
+                  <label className="cursor-pointer">
                     <input
                       type="file"
-                      id="image-upload"
                       multiple
                       accept="image/*"
                       onChange={handleImageUpload}
                       className="hidden"
-                      disabled={uploading || images.length >= 10}
+                      disabled={isUploading}
                     />
-                    <label 
-                      htmlFor="image-upload" 
-                      className={`cursor-pointer ${(uploading || images.length >= 10) ? 'opacity-50 cursor-not-allowed' : ''}`}
-                    >
-                      <div className="flex flex-col items-center">
-                        <div className="w-16 h-16 bg-[#27BB97]/10 rounded-full flex items-center justify-center mb-4">
-                          {uploading ? (
-                            <div className="w-8 h-8 border-2 border-[#27BB97] border-t-transparent rounded-full animate-spin"></div>
-                          ) : (
-                            <Upload className="w-8 h-8 text-[#27BB97]" />
-                          )}
-                        </div>
-                        <p className="font-medium text-gray-900 mb-1">
-                          {uploading ? 'Uploading...' : 'Click to upload images'}
-                        </p>
-                        <p className="text-sm text-gray-600 mb-4">
-                          PNG, JPG, JPEG up to 5MB each
-                        </p>
-                        <button
-                          type="button"
-                          className="px-4 py-2 bg-[#27BB97] text-white text-sm font-medium rounded-lg hover:bg-[#1fa987] transition-colors"
-                        >
-                          Select Files
-                        </button>
-                      </div>
-                    </label>
-                  </div>
-
-                  {/* Image Preview Grid */}
-                  {images.length > 0 && (
-                    <div className="mt-6">
-                      <div className="flex justify-between items-center mb-3">
-                        <h4 className="text-sm font-medium text-gray-900">Uploaded Images ({images.length}/10)</h4>
-                        <button
-                          type="button"
-                          onClick={() => setImages([])}
-                          className="text-sm text-red-600 hover:text-red-700"
-                        >
-                          Remove All
-                        </button>
-                      </div>
-                      <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2">
-                        {images.map((image) => (
-                          <div key={image.id} className="relative group">
-                            <div className="aspect-square rounded-lg overflow-hidden bg-gray-100">
-                              <img
-                                src={image.preview}
-                                alt={image.name}
-                                className="w-full h-full object-cover"
-                              />
-                            </div>
-                            <button
-                              type="button"
-                              onClick={() => handleRemoveImage(image.id)}
-                              className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                            >
-                              <X className="w-3 h-3" />
-                            </button>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {/* Ad Details */}
-                <div className="space-y-6 pt-6 border-t border-gray-200">
-                  <h3 className="text-lg font-semibold text-gray-900">Ad Details</h3>
-                  
-                  <div className="space-y-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Ad Title <span className="text-red-500">*</span>
-                      </label>
-                      <input
-                        type="text"
-                        name="title"
-                        value={formData.title}
-                        onChange={handleInputChange}
-                        placeholder="What are you offering?"
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#27BB97] focus:border-[#27BB97] transition"
-                        required
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Description <span className="text-red-500">*</span>
-                      </label>
-                      <textarea
-                        name="description"
-                        value={formData.description}
-                        onChange={handleInputChange}
-                        rows="4"
-                        placeholder={`Describe your ${selectedSubCategory.toLowerCase()} in detail...`}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#27BB97] focus:border-[#27BB97] transition"
-                        required
-                      />
-                    </div>
-
-                    <div className="grid md:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Price <span className="text-red-500">*</span>
-                        </label>
-                        <div className="flex items-center border border-gray-300 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-[#27BB97] focus-within:border-[#27BB97]">
-                          <div className="pl-4 pr-3">
-                            <DollarSign className="w-5 h-5 text-gray-500" />
-                          </div>
-                          <input
-                            type="number"
-                            name="price"
-                            value={formData.price}
-                            onChange={handleInputChange}
-                            placeholder="Enter amount"
-                            className="flex-1 py-3 px-2 outline-none"
-                            required
-                          />
-                          <div className="pr-4 text-gray-500">USD</div>
-                        </div>
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Location <span className="text-red-500">*</span>
-                        </label>
-                        <div className="flex items-center border border-gray-300 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-[#27BB97] focus-within:border-[#27BB97]">
-                          <div className="pl-4 pr-3">
-                            <MapPin className="w-5 h-5 text-gray-500" />
-                          </div>
-                          <input
-                            type="text"
-                            name="location"
-                            value={formData.location}
-                            onChange={handleInputChange}
-                            placeholder="City, State"
-                            className="flex-1 py-3 px-2 outline-none"
-                            required
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Contact Information */}
-                <div className="pt-6 border-t border-gray-200">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Contact Information</h3>
-                  
-                  <div className="grid md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Your Name <span className="text-red-500">*</span>
-                      </label>
-                      <div className="flex items-center border border-gray-300 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-[#27BB97] focus-within:border-[#27BB97]">
-                        <div className="pl-4 pr-3">
-                          <User className="w-5 h-5 text-gray-500" />
-                        </div>
-                        <input
-                          type="text"
-                          name="name"
-                          value={formData.name}
-                          onChange={handleInputChange}
-                          placeholder="Enter your name"
-                          className="flex-1 py-3 px-2 outline-none"
-                          required
-                        />
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Phone Number <span className="text-red-500">*</span>
-                      </label>
-                      <div className="flex items-center border border-gray-300 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-[#27BB97] focus-within:border-[#27BB97]">
-                        <div className="pl-4 pr-3">
-                          <Phone className="w-5 h-5 text-gray-500" />
-                        </div>
-                        <input
-                          type="tel"
-                          name="phone"
-                          value={formData.phone}
-                          onChange={handleInputChange}
-                          placeholder="Enter phone number"
-                          className="flex-1 py-3 px-2 outline-none"
-                          required
-                        />
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Email Address <span className="text-red-500">*</span>
-                      </label>
-                      <div className="flex items-center border border-gray-300 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-[#27BB97] focus-within:border-[#27BB97]">
-                        <div className="pl-4 pr-3">
-                          <Mail className="w-5 h-5 text-gray-500" />
-                        </div>
-                        <input
-                          type="email"
-                          name="email"
-                          value={formData.email}
-                          onChange={handleInputChange}
-                          placeholder="Enter email address"
-                          className="flex-1 py-3 px-2 outline-none"
-                          required
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Submit Button */}
-                <div className="pt-6 border-t border-gray-200">
-                  <div className="flex justify-between items-center">
-                    <button
-                      type="button"
-                      onClick={handleBack}
-                      className="px-6 py-3 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors"
-                    >
-                      Back
-                    </button>
-                    
-                    <button
-                      type="submit"
-                      className="px-8 py-3 bg-[#27BB97] text-white font-semibold rounded-lg hover:bg-[#1fa987] transition-all duration-300 hover:scale-105 flex items-center gap-3"
-                      disabled={images.length === 0}
-                    >
-                      {images.length === 0 ? (
-                        <>
-                          <Camera className="w-5 h-5" />
-                          Add Images to Post
-                        </>
+                    <div className={`aspect-square rounded-lg border-2 border-dashed border-gray-200 flex flex-col items-center justify-center gap-2 hover:border-[#27BB97] transition-colors ${
+                      isUploading ? 'bg-gray-50' : 'bg-white'
+                    }`}>
+                      {isUploading ? (
+                        <div className="w-6 h-6 border-2 border-[#27BB97] border-t-transparent rounded-full animate-spin" />
                       ) : (
                         <>
-                          <CheckCircle className="w-5 h-5" />
-                          Post Ad Now
+                          <PlusCircle className="w-6 h-6 text-gray-400" />
+                          <span className="text-xs text-gray-500">Add Photo</span>
                         </>
                       )}
-                    </button>
-                  </div>
-                  
-                  <div className="flex items-center justify-center gap-2 text-sm text-gray-600 mt-4">
-                    <Shield className="w-4 h-4 text-[#27BB97]" />
-                    <span>Protected by our safety guidelines</span>
-                  </div>
-                  
-                  <p className="text-sm text-gray-500 mt-4 text-center">
-                    By posting this ad, you agree to our terms of service.
-                  </p>
-                </div>
-              </form>
+                    </div>
+                  </label>
+                )}
+              </div>
             </div>
-          )}
-        </div>
+
+            {/* Form Fields */}
+            <div className="space-y-4">
+              {/* Title */}
+              <div className="bg-white rounded-xl p-6 border border-gray-100 shadow-sm">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Listing Title <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  value={formData.title}
+                  onChange={(e) => setFormData({...formData, title: e.target.value})}
+                  placeholder="e.g., iPhone 13 Pro Max - 256GB - Like New"
+                  className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:border-[#27BB97] focus:ring-2 focus:ring-[#27BB97]/20 outline-none transition"
+                  required
+                />
+              </div>
+
+              {/* Description */}
+              <div className="bg-white rounded-xl p-6 border border-gray-100 shadow-sm">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Description <span className="text-red-500">*</span>
+                </label>
+                <textarea
+                  value={formData.description}
+                  onChange={(e) => setFormData({...formData, description: e.target.value})}
+                  rows="4"
+                  placeholder="Describe your item in detail... Include condition, features, and any other relevant information."
+                  className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:border-[#27BB97] focus:ring-2 focus:ring-[#27BB97]/20 outline-none transition resize-none"
+                  required
+                />
+              </div>
+
+              {/* Price & Location Grid */}
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div className="bg-white rounded-xl p-6 border border-gray-100 shadow-sm">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Price <span className="text-red-500">*</span>
+                  </label>
+                  <div className="relative">
+                    <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                    <input
+                      type="number"
+                      value={formData.price}
+                      onChange={(e) => setFormData({...formData, price: e.target.value})}
+                      placeholder="0.00"
+                      className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:border-[#27BB97] focus:ring-2 focus:ring-[#27BB97]/20 outline-none transition"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="bg-white rounded-xl p-6 border border-gray-100 shadow-sm">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Location <span className="text-red-500">*</span>
+                  </label>
+                  <div className="relative">
+                    <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                    <input
+                      type="text"
+                      value={formData.location}
+                      onChange={(e) => setFormData({...formData, location: e.target.value})}
+                      placeholder="City, State"
+                      className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:border-[#27BB97] focus:ring-2 focus:ring-[#27BB97]/20 outline-none transition"
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Contact Info Card */}
+              <div className="bg-white rounded-xl p-6 border border-gray-100 shadow-sm">
+                <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                  <Heart className="w-5 h-5 text-[#27BB97]" />
+                  Contact Information
+                </h3>
+                
+                <div className="space-y-4">
+                  <div className="relative">
+                    <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                    <input
+                      type="text"
+                      value={formData.name}
+                      onChange={(e) => setFormData({...formData, name: e.target.value})}
+                      placeholder="Your full name"
+                      className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:border-[#27BB97] focus:ring-2 focus:ring-[#27BB97]/20 outline-none transition"
+                      required
+                    />
+                  </div>
+
+                  <div className="relative">
+                    <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                    <input
+                      type="tel"
+                      value={formData.phone}
+                      onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                      placeholder="Phone number"
+                      className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:border-[#27BB97] focus:ring-2 focus:ring-[#27BB97]/20 outline-none transition"
+                      required
+                    />
+                  </div>
+
+                  <div className="relative">
+                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                    <input
+                      type="email"
+                      value={formData.email}
+                      onChange={(e) => setFormData({...formData, email: e.target.value})}
+                      placeholder="Email address"
+                      className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:border-[#27BB97] focus:ring-2 focus:ring-[#27BB97]/20 outline-none transition"
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Submit Button */}
+            <button
+              type="submit"
+              className="w-full py-4 bg-gradient-to-r from-[#27BB97] to-[#1fa987] text-white font-semibold rounded-xl hover:shadow-lg hover:shadow-[#27BB97]/20 transition-all flex items-center justify-center gap-2 text-lg"
+            >
+              Post Listing Now
+            </button>
+
+            {/* Terms */}
+            <p className="text-xs text-center text-gray-500">
+              By posting, you agree to our Terms of Service and Community Guidelines
+            </p>
+          </form>
+        )}
       </div>
     </div>
   );
