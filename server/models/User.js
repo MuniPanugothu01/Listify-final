@@ -29,7 +29,28 @@ const userSchema = new mongoose.Schema({
     default: "user",
   },
 
-  // ==================== PROFILE IMAGE FIELDS ====================
+  // ==================== PASSWORD HISTORY FIELD ====================
+  passwordHistory: [
+    {
+      password: {
+        type: String,
+        required: true,
+      },
+      changedAt: {
+        type: Date,
+        default: Date.now,
+      },
+      changedBy: {
+        type: String,
+        enum: ["user", "admin", "system", "reset"],
+        default: "user",
+      },
+      ipAddress: String,
+      userAgent: String,
+    },
+  ],
+
+  // Profile Image Fields
   profileImage: {
     type: String,
     default: null,
@@ -42,7 +63,6 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: "https://cdn-icons-png.flaticon.com/512/149/149071.png",
   },
-  // ==================== END PROFILE IMAGE FIELDS ====================
 
   // Social Login Fields
   googleId: {
@@ -114,6 +134,10 @@ const userSchema = new mongoose.Schema({
       enum: ["light", "dark", "auto"],
       default: "auto",
     },
+    passwordExpiryNotification: {
+      type: Boolean,
+      default: true,
+    },
   },
 
   // Status
@@ -144,28 +168,7 @@ const userSchema = new mongoose.Schema({
 userSchema.index({ status: 1 });
 userSchema.index({ createdAt: -1 });
 
-// ==================== METHODS FOR PROFILE IMAGES ====================
-// Method to get best available profile image
-userSchema.methods.getProfileImage = function () {
-  if (this.profileImage) return this.profileImage;
-  if (this.googleProfileImage) return this.googleProfileImage;
-  if (
-    this.avatar &&
-    this.avatar !== "https://cdn-icons-png.flaticon.com/512/149/149071.png"
-  ) {
-    return this.avatar;
-  }
-  return "https://cdn-icons-png.flaticon.com/512/149/149071.png"; // Default avatar
-};
-
-// Method to update profile image
-userSchema.methods.updateProfileImage = async function (imageUrl) {
-  this.profileImage = imageUrl;
-  return this.save();
-};
-
 // ==================== FIXED: Middleware to handle password hashing ====================
-// FIXED: Changed from callback to async/await pattern
 userSchema.pre("save", async function() {
   // Update updatedAt timestamp
   this.updatedAt = Date.now();
@@ -184,14 +187,44 @@ userSchema.pre("save", async function() {
   console.log("🔄 Hashing plain text password in pre-save middleware");
   
   // Hash the password
-  const salt = await bcrypt.genSalt(10);
+  const salt = await bcrypt.genSalt(12); // Increased from 10 to 12 for better security
   this.password = await bcrypt.hash(this.password, salt);
   this.lastPasswordChange = new Date();
   
   console.log("✅ Password hashed successfully");
 });
 
-// Method to compare password
+// ==================== NEW: Method to add password to history ====================
+userSchema.methods.addToPasswordHistory = async function(password, context = {}) {
+  try {
+    // Hash the password before storing in history
+    const salt = await bcrypt.genSalt(12);
+    const hashedPassword = await bcrypt.hash(password, salt);
+    
+    // Add to password history
+    this.passwordHistory.push({
+      password: hashedPassword,
+      changedAt: new Date(),
+      changedBy: context.changedBy || 'user',
+      ipAddress: context.ipAddress,
+      userAgent: context.userAgent
+    });
+    
+    // Keep only last 5 passwords (or configured limit)
+    const historyLimit = 5; // Configurable
+    if (this.passwordHistory.length > historyLimit) {
+      this.passwordHistory = this.passwordHistory.slice(-historyLimit);
+    }
+    
+    await this.save();
+    return true;
+  } catch (error) {
+    console.error("Error adding to password history:", error);
+    return false;
+  }
+};
+
+// ==================== UPDATED: comparePassword with better logging ====================
 userSchema.methods.comparePassword = async function (candidatePassword) {
   try {
     return await bcrypt.compare(candidatePassword, this.password);
@@ -199,6 +232,60 @@ userSchema.methods.comparePassword = async function (candidatePassword) {
     console.error("Password comparison error:", error);
     throw error;
   }
+};
+
+// ==================== NEW: Check if password is in history ====================
+userSchema.methods.isPasswordInHistory = async function(candidatePassword) {
+  try {
+    // Check current password first
+    const isCurrentMatch = await this.comparePassword(candidatePassword);
+    if (isCurrentMatch) {
+      return { inHistory: true, message: "Cannot use current password" };
+    }
+    
+    // Check history
+    for (let i = 0; i < this.passwordHistory.length; i++) {
+      const historyItem = this.passwordHistory[i];
+      const isMatch = await bcrypt.compare(candidatePassword, historyItem.password);
+      if (isMatch) {
+        return { 
+          inHistory: true, 
+          message: `You used this password on ${new Date(historyItem.changedAt).toLocaleDateString()}`,
+          historyItem 
+        };
+      }
+    }
+    
+    return { inHistory: false };
+  } catch (error) {
+    console.error("Password history check error:", error);
+    return { inHistory: false, error: error.message };
+  }
+};
+
+// ==================== NEW: Check if password needs to be changed ====================
+userSchema.methods.passwordNeedsChange = function() {
+  if (!this.lastPasswordChange) {
+    return { needsChange: false, reason: 'No password set' };
+  }
+  
+  const now = new Date();
+  const lastChange = new Date(this.lastPasswordChange);
+  const daysSinceChange = Math.floor((now - lastChange) / (1000 * 60 * 60 * 24));
+  
+  // 90 days expiration policy
+  const expirationDays = 90;
+  const needsChange = daysSinceChange >= expirationDays;
+  const daysRemaining = Math.max(0, expirationDays - daysSinceChange);
+  
+  return {
+    needsChange,
+    daysSinceChange,
+    daysRemaining,
+    expirationDays,
+    warningThreshold: 7, // Warn 7 days before expiration
+    shouldWarn: daysRemaining <= 7 && daysRemaining > 0
+  };
 };
 
 // Method to check if account is locked
@@ -312,6 +399,7 @@ userSchema.set("toJSON", {
     delete ret.loginAttempts;
     delete ret.lockUntil;
     delete ret.__v;
+    delete ret.passwordHistory; // Don't expose password history
 
     // Calculate profileImageUrl using the method
     ret.profileImageUrl = doc.getProfileImage ? doc.getProfileImage() : 

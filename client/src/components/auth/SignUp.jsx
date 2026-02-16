@@ -1,10 +1,12 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Eye, EyeOff, ArrowLeft } from "lucide-react";
+import { Eye, EyeOff, ArrowLeft, X, Clock } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { HiDotsHorizontal } from "react-icons/hi";
 import { useAuth } from "../../hooks/useAuth";
 import toast, { Toaster } from "react-hot-toast";
 import SocialAuth from "./SocialAuth";
+import EmailProgressPopup from "./EmailProgressPopup";
+import axios from "axios";
 
 export default function SignUp() {
   const navigate = useNavigate();
@@ -23,6 +25,29 @@ export default function SignUp() {
     setOtpSentState,
     clearOtpAuthState,
   } = useAuth();
+
+  // ==================== Email in progress popup state ====================
+  const [showEmailProgressPopup, setShowEmailProgressPopup] = useState(false);
+  const [inProgressEmail, setInProgressEmail] = useState("");
+  const [popupExpiryTime, setPopupExpiryTime] = useState(0);
+  const [popupCountdown, setPopupCountdown] = useState(0);
+
+  // Password security states
+  const [passwordChecks, setPasswordChecks] = useState({
+    length: false,
+    uppercase: false,
+    lowercase: false,
+    number: false,
+    special: false,
+    breached: false,
+    checkingBreach: false,
+  });
+
+  const [passwordStrength, setPasswordStrength] = useState({
+    text: "",
+    color: "bg-gray-200",
+    width: "0%",
+  });
 
   // Form state
   const [formData, setFormData] = useState({
@@ -53,13 +78,263 @@ export default function SignUp() {
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [errors, setErrors] = useState({});
 
-  // Handle errors from Redux
+  // ==================== Add animation styles ====================
+  useEffect(() => {
+    const style = document.createElement("style");
+    style.innerHTML = `
+      @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+      @keyframes slideUp {
+        from { 
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to { 
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .animate-fadeIn {
+        animation: fadeIn 0.3s ease-out;
+      }
+      .animate-slideUp {
+        animation: slideUp 0.4s ease-out;
+      }
+    `;
+    document.head.appendChild(style);
+    return () => {
+      document.head.removeChild(style);
+    };
+  }, []);
+
+  // ==================== Countdown timer for popup ====================
+  useEffect(() => {
+    let timer;
+    if (showEmailProgressPopup && popupCountdown > 0) {
+      timer = setTimeout(() => {
+        setPopupCountdown(popupCountdown - 1);
+      }, 1000);
+    } else if (popupCountdown === 0 && showEmailProgressPopup) {
+      // Auto close when countdown reaches 0
+      setShowEmailProgressPopup(false);
+    }
+    return () => clearTimeout(timer);
+  }, [showEmailProgressPopup, popupCountdown]);
+
+  // ==================== Check if email is in progress on email input blur ====================
+  const checkEmailInProgress = async (email) => {
+    if (!email || !/\S+@\S+\.\S+/.test(email)) return;
+
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_URL || "http://localhost:5000"}/api/auth/register/status/${encodeURIComponent(email)}`,
+      );
+
+      if (response.data.success && response.data.data) {
+        // Email is in progress
+        setInProgressEmail(email);
+        setPopupExpiryTime(response.data.data.expiresIn);
+        setPopupCountdown(response.data.data.expiresIn);
+        setShowEmailProgressPopup(true);
+
+        // Clear the email field
+        setFormData((prev) => ({ ...prev, email: "" }));
+
+        // Focus back on email field
+        setTimeout(() => {
+          const emailInput = document.querySelector('input[name="email"]');
+          if (emailInput) emailInput.focus();
+        }, 100);
+      }
+    } catch (error) {
+      // 404 means no pending registration - that's fine
+      if (error.response?.status !== 404) {
+        console.error("Error checking email status:", error);
+      }
+    }
+  };
+
+  // Handle email blur
+  const handleEmailBlur = (e) => {
+    const email = e.target.value;
+    checkEmailInProgress(email);
+  };
+
+  // ==================== Password security functions ====================
+  useEffect(() => {
+    const password = formData.password;
+
+    if (!password) {
+      setPasswordStrength({ text: "", color: "bg-gray-200", width: "0%" });
+      setPasswordChecks((prev) => ({
+        ...prev,
+        length: false,
+        uppercase: false,
+        lowercase: false,
+        number: false,
+        special: false,
+      }));
+      return;
+    }
+
+    const checks = {
+      length: password.length >= 8,
+      uppercase: /[A-Z]/.test(password),
+      lowercase: /[a-z]/.test(password),
+      number: /[0-9]/.test(password),
+      special: /[!@#$%^&*()_+\-=\[\]{}|;:,.<>?]/.test(password),
+    };
+
+    setPasswordChecks((prev) => ({ ...prev, ...checks }));
+
+    let strength = 0;
+    if (checks.length) strength += 20;
+    if (checks.uppercase) strength += 20;
+    if (checks.lowercase) strength += 20;
+    if (checks.number) strength += 20;
+    if (checks.special) strength += 20;
+
+    if (strength <= 20)
+      setPasswordStrength({
+        text: "Very Weak",
+        color: "bg-red-500",
+        width: "20%",
+      });
+    else if (strength <= 40)
+      setPasswordStrength({
+        text: "Weak",
+        color: "bg-orange-500",
+        width: "40%",
+      });
+    else if (strength <= 60)
+      setPasswordStrength({
+        text: "Fair",
+        color: "bg-yellow-500",
+        width: "60%",
+      });
+    else if (strength <= 80)
+      setPasswordStrength({ text: "Good", color: "bg-blue-500", width: "80%" });
+    else
+      setPasswordStrength({
+        text: "Strong",
+        color: "bg-green-500",
+        width: "100%",
+      });
+  }, [formData.password]);
+
+  // Check password breach
+  const checkPasswordBreach = async (password) => {
+    if (!password || password.length < 8) return;
+
+    setPasswordChecks((prev) => ({ ...prev, checkingBreach: true }));
+
+    try {
+      const encoder = new TextEncoder();
+      const data = encoder.encode(password);
+      const hashBuffer = await crypto.subtle.digest("SHA-1", data);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      const hashHex = hashArray
+        .map((b) => b.toString(16).padStart(2, "0"))
+        .join("")
+        .toUpperCase();
+
+      const prefix = hashHex.substring(0, 5);
+      const suffix = hashHex.substring(5);
+
+      const response = await fetch(
+        `https://api.pwnedpasswords.com/range/${prefix}`,
+      );
+      const data_text = await response.text();
+      const hashes = data_text.split("\n").map((line) => line.split(":")[0]);
+
+      const isBreached = hashes.some((h) => h === suffix);
+
+      setPasswordChecks((prev) => ({
+        ...prev,
+        breached: isBreached,
+        checkingBreach: false,
+      }));
+
+      if (isBreached) {
+        toast.error("This password has been exposed in a data breach", {
+          duration: 5000,
+        });
+      }
+    } catch (error) {
+      console.error("Breach check failed:", error);
+      setPasswordChecks((prev) => ({ ...prev, checkingBreach: false }));
+    }
+  };
+
+  // Debounced breach check
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (
+        formData.password &&
+        passwordChecks.length &&
+        passwordChecks.uppercase &&
+        passwordChecks.lowercase &&
+        passwordChecks.number &&
+        passwordChecks.special
+      ) {
+        checkPasswordBreach(formData.password);
+      }
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [
+    formData.password,
+    passwordChecks.length,
+    passwordChecks.uppercase,
+    passwordChecks.lowercase,
+    passwordChecks.number,
+    passwordChecks.special,
+  ]);
+
+  // ==================== FIXED: Handle errors from Redux ====================
   useEffect(() => {
     if (error) {
-      toast.error(error);
+      console.log("Error from Redux:", error);
+
+      // Check if error is an object with message property
+      if (typeof error === "object") {
+        // Check if it's the "already in progress" error
+        if (error.message?.includes("already in progress")) {
+          const match = error.message.match(/expires in (\d+) seconds?/i);
+          if (match && match[1]) {
+            setInProgressEmail(formData.email);
+            setPopupExpiryTime(parseInt(match[1]));
+            setPopupCountdown(parseInt(match[1]));
+            setShowEmailProgressPopup(true);
+          } else {
+            toast.error(error.message);
+          }
+        } else {
+          toast.error(error.message || "An error occurred");
+        }
+      }
+      // Check if error is a string
+      else if (typeof error === "string") {
+        if (error.includes("already in progress")) {
+          const match = error.match(/expires in (\d+) seconds?/i);
+          if (match && match[1]) {
+            setInProgressEmail(formData.email);
+            setPopupExpiryTime(parseInt(match[1]));
+            setPopupCountdown(parseInt(match[1]));
+            setShowEmailProgressPopup(true);
+          } else {
+            toast.error(error);
+          }
+        } else {
+          toast.error(error);
+        }
+      }
+
       clearAuthError();
     }
-  }, [error, clearAuthError]);
+  }, [error, clearAuthError, formData.email]);
 
   // Handle registration success - show OTP screen
   useEffect(() => {
@@ -94,7 +369,6 @@ export default function SignUp() {
       setShowRedBorder(false);
       setFailedAttempts(0);
 
-      // Clear any pending auto-clear timer
       if (autoClearTimer) {
         clearTimeout(autoClearTimer);
         setAutoClearTimer(null);
@@ -111,7 +385,7 @@ export default function SignUp() {
     }
   }, [showOtpScreen]);
 
-  // Auto-focus effect with blinking cursor
+  // Auto-focus effect
   useEffect(() => {
     if (showOtpScreen && focusedIndex >= 0 && focusedIndex < 6 && !isBlocked) {
       const rafId = requestAnimationFrame(() => {
@@ -185,18 +459,21 @@ export default function SignUp() {
         [name]: "",
       }));
     }
+
+    // Reset breach status when password changes
+    if (name === "password") {
+      setPasswordChecks((prev) => ({ ...prev, breached: false }));
+    }
   };
 
   // OTP Handlers
   const handleOtpChange = (index, value) => {
     if (!/^\d*$/.test(value)) return;
 
-    // Clear red border when user starts typing
     if (showRedBorder) {
       setShowRedBorder(false);
     }
 
-    // Clear any pending auto-clear timer when user starts typing
     if (autoClearTimer) {
       clearTimeout(autoClearTimer);
       setAutoClearTimer(null);
@@ -234,7 +511,6 @@ export default function SignUp() {
       setOtp(newOtp);
     }
 
-    // Auto-verify when all digits are entered
     if (newOtp.every((digit) => digit !== "")) {
       setTimeout(() => {
         handleVerifyOtp(newOtp.join(""));
@@ -296,10 +572,8 @@ export default function SignUp() {
   const handlePaste = (e) => {
     e.preventDefault();
 
-    // Clear red border
     setShowRedBorder(false);
 
-    // Clear any pending auto-clear timer
     if (autoClearTimer) {
       clearTimeout(autoClearTimer);
       setAutoClearTimer(null);
@@ -336,16 +610,11 @@ export default function SignUp() {
     }
   };
 
-  const handleOtpBlur = (e) => {
-    // Don't automatically refocus - let user click naturally
-  };
-
   const clearOtpInputs = () => {
     setOtp(["", "", "", "", "", ""]);
     setShowRedBorder(false);
     setFocusedIndex(0);
 
-    // Clear any pending auto-clear timer
     if (autoClearTimer) {
       clearTimeout(autoClearTimer);
       setAutoClearTimer(null);
@@ -371,7 +640,6 @@ export default function SignUp() {
       setShowRedBorder(false);
       setFailedAttempts(0);
 
-      // Clear any pending auto-clear timer
       if (autoClearTimer) {
         clearTimeout(autoClearTimer);
         setAutoClearTimer(null);
@@ -385,7 +653,6 @@ export default function SignUp() {
     }
   };
 
-  // ============== FIXED: Verify OTP with failed attempts tracking ==============
   const handleVerifyOtp = async (otpValue = otp.join("")) => {
     if (otpValue.length !== 6) {
       return;
@@ -395,22 +662,17 @@ export default function SignUp() {
 
     try {
       await registerVerify(formData.email, otpValue);
-      // Reset failed attempts on success
       setFailedAttempts(0);
     } catch (err) {
       console.error("OTP verification error:", err);
 
-      // Increment failed attempts
       const newFailedAttempts = failedAttempts + 1;
       setFailedAttempts(newFailedAttempts);
 
-      // Show toast message
       toast.error("Invalid OTP. Please try again.");
 
-      // Show red borders on empty inputs
       setShowRedBorder(true);
 
-      // Auto-clear after 2.5 seconds
       const timer = setTimeout(() => {
         clearOtpInputs();
         setAutoClearTimer(null);
@@ -439,8 +701,22 @@ export default function SignUp() {
 
     if (!formData.password) {
       newErrors.password = "Password is required";
-    } else if (formData.password.length < 6) {
-      newErrors.password = "Password must be at least 6 characters";
+    } else {
+      const allChecksPassed =
+        passwordChecks.length &&
+        passwordChecks.uppercase &&
+        passwordChecks.lowercase &&
+        passwordChecks.number &&
+        passwordChecks.special;
+
+      if (!allChecksPassed) {
+        newErrors.password =
+          "Password must contain: 8+ chars, uppercase, lowercase, number & special char";
+      }
+
+      if (passwordChecks.breached) {
+        newErrors.password = "This password has been exposed in a data breach";
+      }
     }
 
     if (!formData.confirmPassword) {
@@ -457,11 +733,19 @@ export default function SignUp() {
     return Object.keys(newErrors).length === 0;
   };
 
+  // ==================== FIXED: handleSubmit with proper error handling ====================
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!validateForm()) {
       toast.error("Please fix the errors in the form");
+      return;
+    }
+
+    if (passwordChecks.breached) {
+      toast.error(
+        "This password has been exposed in a data breach. Please choose a different one.",
+      );
       return;
     }
 
@@ -473,7 +757,33 @@ export default function SignUp() {
         confirmPassword: formData.confirmPassword,
       });
     } catch (err) {
-      // Error is handled in useEffect
+      // Handle the error directly here
+      console.log("Registration error caught in component:", err);
+
+      // Check if it's the "already in progress" error
+      if (
+        err?.message?.includes("already in progress") ||
+        err?.data?.message?.includes("already in progress")
+      ) {
+        // Try to extract expiry time from error
+        let expirySeconds = 60; // default
+        const errorMessage = err?.message || err?.data?.message || "";
+        const match = errorMessage.match(/expires in (\d+) seconds?/i);
+        if (match && match[1]) {
+          expirySeconds = parseInt(match[1]);
+        }
+
+        // Show the popup
+        setInProgressEmail(formData.email);
+        setPopupExpiryTime(expirySeconds);
+        setPopupCountdown(expirySeconds);
+        setShowEmailProgressPopup(true);
+      } else {
+        // For other errors, show toast
+        toast.error(
+          err?.message || err?.data?.message || "Registration failed",
+        );
+      }
     }
   };
 
@@ -484,8 +794,6 @@ export default function SignUp() {
       if (!idToken) {
         throw new Error("No ID token received from Google");
       }
-
-      console.log("🔑 Google ID Token received for sign up");
 
       const result = await GoogleLogin(idToken);
 
@@ -503,28 +811,10 @@ export default function SignUp() {
   };
 
   const getPasswordStrength = () => {
-    const password = formData.password;
-    if (!password) return { text: "", color: "gray", width: "0%" };
-
-    let strength = 0;
-    if (password.length >= 6) strength += 1;
-    if (/[A-Z]/.test(password)) strength += 1;
-    if (/[0-9]/.test(password)) strength += 1;
-    if (/[^A-Za-z0-9]/.test(password)) strength += 1;
-
-    const strengths = [
-      { text: "Very Weak", color: "bg-red-500", width: "25%" },
-      { text: "Weak", color: "bg-orange-500", width: "50%" },
-      { text: "Fair", color: "bg-yellow-500", width: "75%" },
-      { text: "Strong", color: "bg-green-500", width: "100%" },
-    ];
-
-    return (
-      strengths[strength] || { text: "", color: "bg-gray-300", width: "0%" }
-    );
+    return passwordStrength;
   };
 
-  const passwordStrength = getPasswordStrength();
+  const passwordStrengthResult = getPasswordStrength();
 
   useEffect(() => {
     if (countdown > 0) {
@@ -534,7 +824,6 @@ export default function SignUp() {
   }, [countdown]);
 
   const handleBackToRegistration = () => {
-    // Clear any pending auto-clear timer
     if (autoClearTimer) {
       clearTimeout(autoClearTimer);
       setAutoClearTimer(null);
@@ -550,9 +839,8 @@ export default function SignUp() {
     clearOtpAuthState();
   };
 
-  // ============== FIXED: OTP Screen Component with Professional Lock Message ==============
+  // OTP Screen Component
   const OtpScreen = () => {
-    // Calculate remaining attempts
     const remainingAttempts = Math.max(0, 3 - failedAttempts);
 
     return (
@@ -577,7 +865,6 @@ export default function SignUp() {
             </p>
           </div>
 
-          {/* ============== PROFESSIONAL LOCK MESSAGE - Above Input Boxes ============== */}
           {isBlocked ? (
             <div className="mb-6 bg-gradient-to-r from-red-50 to-orange-50 border-l-4 border-red-500 rounded-r-lg p-4 shadow-sm">
               <div className="flex items-start">
@@ -613,7 +900,6 @@ export default function SignUp() {
               </div>
             </div>
           ) : (
-            /* ============== ATTEMPTS REMAINING INDICATOR ============== */
             <div className="mb-4 flex justify-between items-center">
               <div className="text-xs text-gray-500">
                 {failedAttempts > 0 ? (
@@ -638,7 +924,6 @@ export default function SignUp() {
             </div>
           )}
 
-          {/* OTP Input Boxes */}
           <form
             onSubmit={(e) => {
               e.preventDefault();
@@ -652,7 +937,6 @@ export default function SignUp() {
           >
             <div className="flex justify-center gap-3">
               {otp.map((digit, index) => {
-                // Border color logic
                 let borderColor = "border-gray-300";
                 let focusRingColor =
                   "focus:ring-[#27bb97] focus:border-[#27bb97]";
@@ -663,7 +947,6 @@ export default function SignUp() {
                   focusRingColor = "focus:ring-gray-400 focus:border-gray-400";
                   bgColor = "bg-gray-100";
                 } else if (showRedBorder && !digit) {
-                  // Show red border when wrong OTP entered and input is empty
                   borderColor = "border-red-300";
                   focusRingColor = "focus:ring-red-500 focus:border-red-500";
                   bgColor = "bg-red-50";
@@ -691,10 +974,6 @@ export default function SignUp() {
                     onKeyDown={(e) => !isBlocked && handleKeyDown(index, e)}
                     onPaste={!isBlocked ? handlePaste : undefined}
                     onFocus={() => handleOtpFocus(index)}
-                    onBlur={handleOtpBlur}
-                    onInput={(e) => {
-                      e.target.value = e.target.value.replace(/[^0-9]/g, "");
-                    }}
                     className={`w-14 h-14 text-2xl text-center text-gray-900 font-bold ${bgColor} border-2 rounded-xl focus:outline-none focus:ring-2 transition-all duration-200 ${borderColor} ${focusRingColor} ${
                       isBlocked ? "cursor-not-allowed opacity-60" : ""
                     }`}
@@ -714,7 +993,6 @@ export default function SignUp() {
             <p className="text-sm text-gray-500">
               Enter the 6-digit verification code
             </p>
-            {/* Clear all button - only when user has entered digits and not blocked */}
             {!isBlocked && otp.some((digit) => digit !== "") && (
               <button
                 onClick={clearOtpInputs}
@@ -726,7 +1004,6 @@ export default function SignUp() {
             )}
           </div>
 
-          {/* Verify Button */}
           <button
             onClick={() => {
               if (!isBlocked) {
@@ -839,6 +1116,15 @@ export default function SignUp() {
         }}
       />
 
+      {/* Email In Progress Popup */}
+      <EmailProgressPopup
+        isOpen={showEmailProgressPopup}
+        onClose={() => setShowEmailProgressPopup(false)}
+        email={inProgressEmail}
+        expiryTime={popupExpiryTime}
+        countdown={popupCountdown}
+      />
+
       {showOtpScreen && <OtpScreen />}
 
       <div className="fixed inset-0 z-0">
@@ -939,7 +1225,7 @@ export default function SignUp() {
                   )}
                 </div>
 
-                {/* Email Input */}
+                {/* Email Input - with onBlur handler */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Email Address
@@ -950,6 +1236,7 @@ export default function SignUp() {
                     placeholder="Enter your email"
                     value={formData.email}
                     onChange={handleChange}
+                    onBlur={handleEmailBlur}
                     className={`w-full px-4 py-3 rounded-lg border focus:outline-none focus:ring-1 focus:border-transparent bg-white/80 ${
                       errors.email
                         ? "border-red-300 focus:ring-red-500"
@@ -991,6 +1278,7 @@ export default function SignUp() {
                     </button>
                   </div>
 
+                  {/* Password strength indicator */}
                   {formData.password && (
                     <div className="mt-2">
                       <div className="flex items-center justify-between mb-1">
@@ -998,63 +1286,91 @@ export default function SignUp() {
                           Password strength:
                         </span>
                         <span className="text-xs font-medium text-gray-700">
-                          {passwordStrength.text}
+                          {passwordStrengthResult.text}
                         </span>
                       </div>
                       <div className="h-1 w-full bg-gray-200 rounded-full overflow-hidden">
                         <div
-                          className={`h-full ${passwordStrength.color} transition-all duration-300`}
-                          style={{ width: passwordStrength.width }}
+                          className={`h-full ${passwordStrengthResult.color} transition-all duration-300`}
+                          style={{ width: passwordStrengthResult.width }}
                         ></div>
                       </div>
+
+                      {/* Password requirements checklist */}
                       <div className="mt-2 grid grid-cols-2 gap-1">
                         <div className="flex items-center gap-1">
                           <div
                             className={`w-2 h-2 rounded-full ${
-                              formData.password.length >= 6
+                              passwordChecks.length
                                 ? "bg-green-500"
                                 : "bg-gray-300"
                             }`}
                           ></div>
                           <span className="text-xs text-gray-600">
-                            6+ characters
+                            8+ characters
                           </span>
                         </div>
                         <div className="flex items-center gap-1">
                           <div
                             className={`w-2 h-2 rounded-full ${
-                              /[A-Z]/.test(formData.password)
+                              passwordChecks.uppercase
                                 ? "bg-green-500"
                                 : "bg-gray-300"
                             }`}
                           ></div>
                           <span className="text-xs text-gray-600">
-                            Uppercase letter
+                            Uppercase
                           </span>
                         </div>
                         <div className="flex items-center gap-1">
                           <div
                             className={`w-2 h-2 rounded-full ${
-                              /[0-9]/.test(formData.password)
+                              passwordChecks.lowercase
+                                ? "bg-green-500"
+                                : "bg-gray-300"
+                            }`}
+                          ></div>
+                          <span className="text-xs text-gray-600">
+                            Lowercase
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <div
+                            className={`w-2 h-2 rounded-full ${
+                              passwordChecks.number
                                 ? "bg-green-500"
                                 : "bg-gray-300"
                             }`}
                           ></div>
                           <span className="text-xs text-gray-600">Number</span>
                         </div>
-                        <div className="flex items-center gap-1">
+                        <div className="flex items-center gap-1 col-span-2">
                           <div
                             className={`w-2 h-2 rounded-full ${
-                              /[^A-Za-z0-9]/.test(formData.password)
+                              passwordChecks.special
                                 ? "bg-green-500"
                                 : "bg-gray-300"
                             }`}
                           ></div>
                           <span className="text-xs text-gray-600">
-                            Special character
+                            Special character (!@#$%^&*)
                           </span>
                         </div>
                       </div>
+
+                      {/* Breach warning */}
+                      {passwordChecks.checkingBreach && (
+                        <div className="mt-2 text-xs text-gray-500 flex items-center gap-1">
+                          <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-gray-500"></div>
+                          Checking password security...
+                        </div>
+                      )}
+
+                      {passwordChecks.breached && (
+                        <div className="mt-2 p-2 bg-red-50 border border-red-200 rounded text-xs text-red-600">
+                          ⚠️ This password has been exposed in a data breach
+                        </div>
+                      )}
                     </div>
                   )}
 
@@ -1146,9 +1462,9 @@ export default function SignUp() {
                 {/* Register Button */}
                 <button
                   type="submit"
-                  disabled={loading}
+                  disabled={loading || passwordChecks.checkingBreach}
                   className={`w-full ${
-                    loading
+                    loading || passwordChecks.checkingBreach
                       ? "bg-gray-400 cursor-not-allowed"
                       : "bg-[#27bb97] hover:bg-[#1fa987]"
                   } text-white py-3 rounded-lg font-medium transition-colors cursor-pointer flex items-center justify-center`}
@@ -1176,6 +1492,30 @@ export default function SignUp() {
                         ></path>
                       </svg>
                       Sending OTP...
+                    </>
+                  ) : passwordChecks.checkingBreach ? (
+                    <>
+                      <svg
+                        className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        ></circle>
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        ></path>
+                      </svg>
+                      Checking password...
                     </>
                   ) : (
                     "Continue with OTP"

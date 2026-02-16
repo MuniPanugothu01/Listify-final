@@ -69,7 +69,8 @@ class RedisService {
   static async storeOTP(email, otp) {
     try {
       const key = `otp:${email}`;
-      const otpString = String(otp);
+      // FIX: Always store as string to ensure consistent type
+      const otpString = String(otp).trim();
       console.log(`[Redis] Storing OTP for ${email}: ${otpString} (as string)`);
 
       await redis.setex(key, 300, otpString);
@@ -210,7 +211,7 @@ class RedisService {
     }
   }
 
-  // Verify OTP
+  // ============== FIXED: Verify OTP with type conversion ==============
   static async verifyOTP(email, otp) {
     try {
       const key = `otp:${email}`;
@@ -224,6 +225,8 @@ class RedisService {
         return { valid: false, reason: "OTP expired or not found" };
       }
 
+      // FIX: Convert both to strings and trim for comparison
+      // This handles cases where Redis returns number but we stored as string
       const receivedOTP = String(otp).trim();
       const storedOTPStr = String(storedOTP).trim();
 
@@ -233,6 +236,7 @@ class RedisService {
         return { valid: false, reason: "Invalid OTP" };
       }
 
+      // Delete OTP after successful verification
       await redis.del(key);
       console.log(`[Redis] OTP verified successfully for ${email}`);
       return { valid: true };

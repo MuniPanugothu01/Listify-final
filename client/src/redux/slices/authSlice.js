@@ -145,6 +145,7 @@ export const loginUser = createAsyncThunk(
   },
 );
 
+// ==================== FIXED: initiateRegister with proper error handling ====================
 export const initiateRegister = createAsyncThunk(
   "auth/initiateRegister",
   async (userData, { rejectWithValue }) => {
@@ -152,7 +153,17 @@ export const initiateRegister = createAsyncThunk(
       const response = await authAPI.initiateRegister(userData);
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data || error.message);
+      console.error("Initiate register error:", error);
+
+      // Extract error message properly
+      if (error.response?.data) {
+        // If the error response has data, return it
+        return rejectWithValue(error.response.data);
+      } else if (error.message) {
+        return rejectWithValue({ message: error.message });
+      } else {
+        return rejectWithValue({ message: "Registration failed" });
+      }
     }
   },
 );
@@ -573,6 +584,7 @@ const authSlice = createSlice({
       })
       .addCase(initiateRegister.rejected, (state, action) => {
         state.loading = false;
+        // Store the error object - could be string or object
         state.error = action.payload;
         state.success = false;
       })

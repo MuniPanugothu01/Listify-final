@@ -118,3 +118,48 @@ exports.validateOTPVerification = (req, res, next) => {
 
   next();
 };
+
+// ==================== NEW: Password validation middleware ====================
+exports.validatePasswordSecurity = async (req, res, next) => {
+  try {
+    const { password, newPassword } = req.body;
+    const passwordToCheck = newPassword || password;
+    
+    if (!passwordToCheck) {
+      return next();
+    }
+    
+    const { validatePassword } = require('../utils/passwordSecurity');
+    const userId = req.user ? req.user.id : null;
+    
+    // Only check breach for new registrations or password changes
+    const checkBreach = true;
+    
+    const validation = await validatePassword(passwordToCheck, userId, checkBreach);
+    
+    if (!validation.isValid) {
+      return res.status(400).json({
+        success: false,
+        message: 'Password does not meet security requirements',
+        errors: validation.errors,
+        strength: validation.strength
+      });
+    }
+    
+    // Attach validation result to request
+    req.passwordValidation = validation;
+    next();
+  } catch (error) {
+    console.error('Password validation middleware error:', error);
+    next();
+  }
+};
+
+// ==================== NEW: Get password requirements ====================
+exports.getPasswordRequirements = (req, res) => {
+  const { getPasswordRequirements } = require('../utils/passwordSecurity');
+  res.status(200).json({
+    success: true,
+    requirements: getPasswordRequirements()
+  });
+};

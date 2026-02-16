@@ -87,6 +87,7 @@ export const useAuth = () => {
       return await dispatch(initiateRegister(userData)).unwrap();
     } catch (error) {
       console.error("Registration initiation error in hook:", error);
+      // Throw the error as is - don't modify
       throw error;
     }
   };

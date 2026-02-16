@@ -10,13 +10,20 @@ const {
   validateProfileUpdate,
   validateChangePassword,
   validateOTPVerification,
+  validatePasswordSecurity,
+  getPasswordRequirements,
 } = require("../middleware/validationMiddleware");
 const { protect, refreshToken, logout, logoutAll } = require("../middleware/authMiddleware");
+
+// ==================== PASSWORD SECURITY ENDPOINTS ====================
+router.get("/password-requirements", getPasswordRequirements);
+router.get("/password-expiration", protect, authController.checkPasswordExpiration);
 
 // OTP-based Registration routes
 router.post(
   "/register/initiate",
   validateRegister,
+  validatePasswordSecurity, // Add password security check
   authController.initiateRegister,
 );
 router.post(
@@ -45,11 +52,16 @@ router.post(
 router.put(
   "/reset-password/:resetToken",
   validateResetPassword,
+  validatePasswordSecurity, // Add password security check
   authController.resetPasswordWithToken,
 );
 
 // Password setup for users without passwords
-router.post("/setup-password", authController.setupPassword);
+router.post(
+  "/setup-password",
+  validatePasswordSecurity, // Add password security check
+  authController.setupPassword
+);
 
 // Legacy routes (keep for compatibility)
 router.post(
@@ -60,6 +72,7 @@ router.post(
 router.put(
   "/reset-password-legacy/:resetToken",
   validateResetPassword,
+  validatePasswordSecurity, // Add password security check
   authController.resetPassword,
 );
 
@@ -69,14 +82,14 @@ router.post("/google/token", authController.googleTokenAuth);
 
 // Existing routes
 router.post("/login", validateLogin, authController.login);
-router.post("/register-legacy", validateRegister, authController.register);
+router.post("/register-legacy", validateRegister, validatePasswordSecurity, authController.register);
 
-// ============== NEW REFRESH TOKEN & LOGOUT ROUTES ==============
-router.post("/refresh", refreshToken);                          // Get new access token
-router.post("/logout", logout);                                 // Logout current device
-router.post("/logout-all", protect, logoutAll);               // Logout all devices
-router.get("/sessions", protect, tokenController.getUserSessions); // Get active sessions
-router.delete("/sessions/:tokenId", protect, tokenController.revokeSession); // Revoke specific session
+// Refresh token & logout routes
+router.post("/refresh", refreshToken);
+router.post("/logout", logout);
+router.post("/logout-all", protect, logoutAll);
+router.get("/sessions", protect, tokenController.getUserSessions);
+router.delete("/sessions/:tokenId", protect, tokenController.revokeSession);
 
 // Admin routes
 router.get("/admin/sessions/:userId", protect, tokenController.adminGetUserSessions);
@@ -85,7 +98,7 @@ router.post("/admin/cleanup-tokens", protect, tokenController.adminCleanupTokens
 // Check authentication status
 router.get("/check", authController.checkAuth);
 
-// ==================== UPDATED PROTECTED ROUTES ====================
+// Protected routes
 router.get("/profile", protect, authController.getProfile);
 router.put(
   "/update-profile",
@@ -98,6 +111,7 @@ router.post(
   "/change-password",
   protect,
   validateChangePassword,
+  validatePasswordSecurity, // Add password security check
   authController.changePassword,
 );
 
