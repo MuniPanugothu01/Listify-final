@@ -86,13 +86,14 @@ const Navbar = () => {
     { name: "Vehicles", path: "/vehicles" },
     { name: "Electronics", path: "/electronics" },
     { name: "Events", path: "/events" },
+    { name: "Take Care", path: "/takecare" },
+
   ];
   
   const moreMenuItems = [
     { name: "Rentals", path: "/rentals" },
     { name: "Roommates", path: "/roommates" },
     { name: "Services", path: "/services" },
-    { name: "TakeCare", path: "/takecare" },
     { name: "Jobs", path: "/jobs" },
   ];
 
