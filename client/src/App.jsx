@@ -35,6 +35,8 @@ import PostaddPage from "./pages/PostaddPage/Postadd.jsx";
 
 
 import TakeCare from "./pages/TakeCare/TakeCare.jsx";
+import TakeCareDetail from "./components/TakeCare/TakeCareDetail.jsx";
+
 import NannyService from "./components/TakeCare/NannyCareServices/NannyService.jsx";
 import BabysitterService from "./components/TakeCare/BabysitterCareServices/BabysitterService.jsx";
 import CookServices from "./components/TakeCare/CookServices/CookServices.jsx";
@@ -43,7 +45,6 @@ import TutorServices from "./components/TakeCare/TutorServices/TutorServices.jsx
 import ElderCareServices from "./components/TakeCare/ElderCareServices/ElderCareServices.jsx";
 import PetCareService from "./components/TakeCare/PetCareServices/PetCareServices.jsx";
 import CareCenterServices from "./components/TakeCare/CareCenterServices/CareCenterServices.jsx";
-import CareTakerDetail from "./components/TakeCare/CareTakerDetail.jsx";
 
 
 // Electronics
@@ -219,8 +220,9 @@ const AppContent = () => {
           <Route path="/reviews" element={<Reviews />} />
 
           {/* TakeCare */}
-          <Route path="/takecare/:id" element={<CareTakerDetail />} />
           <Route path="/takecare" element={<TakeCare />} />
+          <Route path="/takecare/:id" element={<TakeCareDetail />} />
+
           <Route path="/takecare/:serviceId" element={<NannyService />} />
           <Route path="/takecare/babysitter" element={<BabysitterService />} />
           <Route path="/takecare/cook" element={<CookServices />} />

@@ -28,7 +28,7 @@ import {
 } from 'lucide-react';
 
 // Import care taker data
-import { careTakerData } from './CareTakerListing';
+import { careTakerData } from './TakeCareListing';
 
 // Location Map Component
 const CareTakerLocationMap = ({ location }) => {

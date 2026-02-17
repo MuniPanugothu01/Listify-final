@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Search, MapPin, Heart, Filter, ChevronDown } from "lucide-react";
 
-const HeroPage = () => {
+const TakeCareHero = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [location, setLocation] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("Nanny");
@@ -235,4 +235,4 @@ const HeroPage = () => {
   );
 };
 
-export default HeroPage;
+export default TakeCareHero;
