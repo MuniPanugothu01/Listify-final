@@ -268,7 +268,7 @@ const AppContent = () => {
 
           {/* Events */}
           <Route path="/events" element={<Events />} />
-          <Route path="/event/:id" element={<EventsDetail />} />
+          <Route path="/events/:id" element={<EventsDetail />} />
 
           <Route path="/events/:eventId" element={<EventDetailPage />} />
           <Route path="/events-list" element={<EventList />} />

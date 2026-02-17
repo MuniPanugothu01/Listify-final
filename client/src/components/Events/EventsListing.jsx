@@ -377,7 +377,7 @@ const EventsListing = () => {
   });
 
   const handleEventClick = (eventId) => {
-    navigate(`/event/${eventId}`);
+    navigate(`/events/${eventId}`);
   };
 
   const handleCategoryChange = (category) => {
