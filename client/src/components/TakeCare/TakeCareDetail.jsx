@@ -84,7 +84,7 @@ const CareTakerLocationMap = ({ location }) => {
 };
 
 // Main Care Taker Detail Component
-const CareTakerDetail = () => {
+const TakeCareDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const careTaker = careTakerData.find((p) => p.id === parseInt(id));
@@ -420,4 +420,4 @@ const CareTakerDetail = () => {
   );
 };
 
-export default CareTakerDetail;
+export default TakeCareDetail;
