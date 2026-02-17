@@ -51,7 +51,8 @@ import ElectronicsDetails from "./components/Electronics/ElectronicsDetails.jsx"
 
 // For Sale
 import ForSale from "./components/ForSale/ForSale.jsx";
-import DetailForSale from "./components/ForSale/DetailForSale.jsx";
+import ForSaleDetail from "./components/ForSale/ForsaleDetail.jsx";
+// import DetailForSale from "./components/ForSale/DetailForSale.jsx";
 
 // Roommates
 import Roommates from "./pages/Roommates/Roommates.jsx";
@@ -241,7 +242,8 @@ const AppContent = () => {
 
           {/* For Sale */}
           <Route path="/forsale" element={<ForSale />} />
-          <Route path="/forsale/:id" element={<DetailForSale />} />
+          <Route path="/forsale/:id" element={<ForSaleDetail />} />
+          {/* <Route path="/forsale/:id" element={<DetailForSale />} /> */}
 
           {/* electronics*/}
           <Route path="/electronics" element={<Electronics />} />
