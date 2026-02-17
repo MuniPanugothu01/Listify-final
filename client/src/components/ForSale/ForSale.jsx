@@ -5,7 +5,7 @@ import ForSaleCollections from './ForSaleCollections';
 import ForSaleTrending from './ForSaleTrending';
 import ForSaleBestDeals from './ForSaleBestDeals';
 
-import SampleForSale from './SampleForSale.jsx';
+// import SampleForSale from './SampleForSale.jsx';
 import SubNavbar from './SubNavbar.jsx';
 import ForSaleListing from './ForSaleListing.jsx'; 
 

@@ -1,34 +1,18 @@
-import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Heart,
-  Share2,
   MapPin,
   Search,
   ChevronRight,
-  Menu,
   X,
   Filter,
-  MessageCircle,
   Star,
-  Check,
-  Clock,
-  Shield,
   Package,
-  Battery,
-  Camera,
-  Wifi,
-  Smartphone,
-  ChevronLeft,
-  ChevronRight as ChevronRightIcon,
-  User,
-  Phone,
-  Mail,
-  Verified,
-} from "lucide-react";
-import { FaMinus, FaPlus } from "react-icons/fa";
+  Clock,
+} from 'lucide-react';
 
-// Product data (keep the same)
+// Product data
 const electronicsData = [
   {
     id: 1,
@@ -475,114 +459,7 @@ const electronicsData = [
   },
 ];
 
-// Static Map Component
-const LocationMap = ({ location }) => {
-  return (
-    <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-      <div className="p-4 border-b border-gray-100">
-        <h3 className="text-lg font-bold text-gray-900 flex items-center">
-          <MapPin className="w-5 h-5 mr-2 text-[#27bb97]" />
-          Location
-        </h3>
-        <p className="text-gray-600 mt-1">{location}</p>
-      </div>
-      <div className="relative h-64 sm:h-72 md:h-80 bg-gray-100">
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="text-center">
-            <MapPin className="w-16 h-16 text-red-500 mx-auto mb-4" />
-            <div className="bg-white p-4 rounded-lg shadow-md inline-block">
-              <p className="font-medium text-gray-800">{location}</p>
-              <p className="text-sm text-gray-600 mt-1">Contact seller for exact address</p>
-            </div>
-          </div>
-        </div>
-        <div className="absolute inset-0 opacity-20">
-          <div className="h-full w-full bg-gradient-to-br from-blue-50 to-gray-50">
-            <div className="absolute inset-0" style={{
-              backgroundImage: `
-                linear-gradient(to right, #cbd5e1 1px, transparent 1px),
-                linear-gradient(to bottom, #cbd5e1 1px, transparent 1px)
-              `,
-              backgroundSize: '40px 40px'
-            }}></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-// Seller Details Component
-const SellerDetails = ({ seller, rating, reviews, joined }) => {
-  return (
-    <div className="bg-white rounded-lg shadow-sm p-6">
-      <div className="flex items-center justify-between mb-6">
-        <h3 className="text-lg font-bold text-gray-900">Seller Information</h3>
-        <button className="text-[#27bb97] text-sm font-medium hover:text-[#1fa987]">
-          View Profile →
-        </button>
-      </div>
-
-      <div className="flex items-center gap-4 mb-6">
-        <div className="w-16 h-16 bg-gradient-to-br from-[#27bb97] to-[#1E9E7E] rounded-full flex items-center justify-center text-white text-2xl font-bold">
-          {seller[0].toUpperCase()}
-        </div>
-        <div className="flex-1">
-          <div className="flex items-center gap-2 mb-2">
-            <h4 className="font-bold text-gray-900 text-lg">{seller}</h4>
-            <Verified className="w-5 h-5 text-blue-500" />
-          </div>
-          
-          <div className="flex items-center mb-2">
-            <div className="flex items-center mr-2">
-              {[...Array(5)].map((_, i) => (
-                <Star
-                  key={i}
-                  className={`w-4 h-4 ${i < Math.floor(rating) ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
-                />
-              ))}
-            </div>
-            <span className="text-sm font-medium text-gray-700">{rating.toFixed(1)}</span>
-            <span className="text-sm text-gray-500 ml-2">({reviews} reviews)</span>
-          </div>
-
-          <div className="flex items-center gap-4 text-sm text-gray-600">
-            <div className="flex items-center">
-              <Package className="w-4 h-4 mr-1.5" />
-              <span>42 sold</span>
-            </div>
-            <div className="flex items-center">
-              <Clock className="w-4 h-4 mr-1.5" />
-              <span>Joined {joined}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <button className="w-full py-3 bg-[#27bb97] hover:bg-[#1fa987] text-white rounded-lg font-medium transition-colors mb-4 flex items-center justify-center">
-        <MessageCircle className="w-5 h-5 mr-2" />
-        Contact Seller
-      </button>
-
-      <div className="grid grid-cols-3 gap-4 p-4 bg-gray-50 rounded-lg">
-        <div className="text-center">
-          <div className="text-xl font-bold text-gray-900">98%</div>
-          <div className="text-xs text-gray-500">Response Rate</div>
-        </div>
-        <div className="text-center">
-          <div className="text-xl font-bold text-gray-900">1hr</div>
-          <div className="text-xs text-gray-500">Response Time</div>
-        </div>
-        <div className="text-center">
-          <div className="text-xl font-bold text-gray-900">100%</div>
-          <div className="text-xs text-gray-500">Positive Feedback</div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-// Product Card Component (for listing page)
+// Product Card Component
 const ProductCard = ({ product, onClick }) => {
   return (
     <div
@@ -593,7 +470,7 @@ const ProductCard = ({ product, onClick }) => {
         <img
           src={product.image}
           alt={product.title}
-          className="w-full h-full group-hover:scale-105 transition-transform duration-300"
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
         />
         <button
           onClick={(e) => e.stopPropagation()}
@@ -628,7 +505,6 @@ const ProductCard = ({ product, onClick }) => {
   );
 };
 
-// Electronics Listing Page Component
 const ElectronicsListing = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
@@ -637,6 +513,11 @@ const ElectronicsListing = () => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [selectedConditions, setSelectedConditions] = useState([]);
+
+  // Store all products in localStorage for similar items in detail page
+  useEffect(() => {
+    localStorage.setItem('allElectronics', JSON.stringify(electronicsData));
+  }, []);
 
   // Get unique categories and conditions
   const categories = [...new Set(electronicsData.map(p => p.category))];
@@ -669,8 +550,10 @@ const ElectronicsListing = () => {
     return true;
   });
 
-  const handleProductClick = (productId) => {
-    navigate(`/product/${productId}`);
+  const handleProductClick = (product) => {
+    // Store the selected product in localStorage
+    localStorage.setItem('selectedElectronics', JSON.stringify(product));
+    navigate(`/electronics/${product.id}`);
   };
 
   const handleCategoryChange = (category) => {
@@ -690,8 +573,8 @@ const ElectronicsListing = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 ">
-      <div className="bg-white border-b ">
+    <div className="min-h-screen bg-gray-50">
+      <div className="bg-white border-b">
         <div className="px-3 sm:px-4 md:px-6 lg:px-8 py-3">
           <div className="flex items-center text-sm text-gray-600">
             <a href="/" className="hover:text-gray-900">
@@ -860,7 +743,7 @@ const ElectronicsListing = () => {
                 <ProductCard
                   key={product.id}
                   product={product}
-                  onClick={() => handleProductClick(product.id)}
+                  onClick={() => handleProductClick(product)}
                 />
               ))}
             </div>
@@ -893,261 +776,4 @@ const ElectronicsListing = () => {
   );
 };
 
-// Product Detail Page Component
-const ProductDetail = () => {
-  const { id } = useParams();
-  const navigate = useNavigate();
-  const product = electronicsData.find((p) => p.id === parseInt(id));
-  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
-  const [quantity, setQuantity] = useState(1);
-
-  const productImages = [
-    product?.image,
-    'https://images.unsplash.com/photo-1579586337278-3f576cfc5113?w=500&q=80',
-    'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=500&q=80',
-    'https://images.unsplash.com/photo-1546054451-aa224c0e8c23?w=500&q=80',
-  ].filter(Boolean);
-
-  const handleThumbnailClick = (index) => setSelectedImageIndex(index);
-  const handlePrevImage = () =>
-    setSelectedImageIndex((prev) => (prev === 0 ? productImages.length - 1 : prev - 1));
-  const handleNextImage = () =>
-    setSelectedImageIndex((prev) => (prev === productImages.length - 1 ? 0 : prev + 1));
-
-  if (!product) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-        <div className="text-center p-6 sm:p-8 bg-white rounded-2xl shadow-lg w-full max-w-md">
-          <div className="w-20 h-20 sm:w-24 sm:h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
-            <Smartphone className="w-10 h-10 sm:w-12 sm:h-12 text-gray-400" />
-          </div>
-          <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">Product not found</h2>
-          <button
-            onClick={() => navigate('/electronics')}
-            className="px-6 py-3 bg-[#27BB97] text-white rounded-lg hover:bg-[#1E9E7E] transition-colors font-medium text-base sm:text-lg"
-          >
-            Back to Electronics
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  const techSpecs = [
-    { icon: <Battery className="text-[#27bb97] text-xl" />, label: 'Battery Life', value: '24 hours' },
-    { icon: <Wifi className="text-[#27bb97] text-xl" />, label: 'Connectivity', value: 'Bluetooth 5.2' },
-    { icon: <Shield className="text-[#27bb97] text-xl" />, label: 'Water Resistance', value: 'IP68' },
-    { icon: <Smartphone className="text-[#27bb97] text-xl" />, label: 'Display', value: '1.93" AMOLED' },
-  ];
-
-  return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="bg-white shadow-sm top-0 z-50">
-        <div className="px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-14 sm:h-16">
-            <div className="flex items-center space-x-1.5 sm:space-x-2 text-sm text-gray-600 min-w-0 flex-1">
-              <button
-                onClick={() => navigate('/electronics')}
-                className="hover:text-[#27bb97] transition-colors whitespace-nowrap"
-              >
-                Electronics
-              </button>
-              <ChevronRight className="w-4 h-4 flex-shrink-0" />
-              <span className="font-medium text-gray-900 truncate">{product.title}</span>
-            </div>
-            <div className="flex items-center space-x-2 sm:space-x-4">
-              <button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
-                <Share2 className="w-5 h-5 text-gray-600" />
-              </button>
-              <button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
-                <Heart className="w-5 h-5 text-gray-600 hover:text-red-500" />
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-10 gap-8 lg:gap-12">
-          <div className="lg:col-span-6">
-            <div className="rounded-md mb-6 shadow-sm overflow-hidden bg-white p-4">
-              <div className="relative">
-                <img
-                  src={productImages[selectedImageIndex]}
-                  alt={product.title}
-                  className="w-full h-auto max-h-[500px] rounded-md object-cover bg-gray-50"
-                />
-                
-                <button
-                  onClick={handlePrevImage}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 backdrop-blur-sm rounded-full shadow-lg flex items-center justify-center hover:bg-white transition-all hover:shadow-xl z-20"
-                >
-                  <ChevronLeft className="w-6 h-6 text-gray-700" />
-                </button>
-                
-                <button
-                  onClick={handleNextImage}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 backdrop-blur-sm rounded-full shadow-lg flex items-center justify-center hover:bg-white transition-all hover:shadow-xl z-20"
-                >
-                  <ChevronRightIcon className="w-6 h-6 text-gray-700" />
-                </button>
-              </div>
-            </div>
-
-            <div className="flex gap-3 mb-8">
-              {productImages.map((image, index) => (
-                <button
-                  key={index}
-                  onClick={() => handleThumbnailClick(index)}
-                  className={`w-20 h-20 rounded-md overflow-hidden cursor-pointer transition-all ${
-                    selectedImageIndex === index
-                      ? 'border-2 border-[#27bb97] shadow-md'
-                      : 'hover:border-2 hover:border-gray-300'
-                  }`}
-                >
-                  <img
-                    src={image}
-                    className="w-full h-full object-cover"
-                    alt={`Thumbnail ${index + 1}`}
-                  />
-                </button>
-              ))}
-            </div>
-
-            <div className="mb-8">
-              <LocationMap location={product.location} />
-            </div>
-
-            <div className="bg-white rounded-lg shadow-sm p-6">
-              <h3 className="text-xl font-bold mb-4 text-gray-900">Product Description</h3>
-              <p className="text-gray-600 leading-relaxed mb-6">
-                {product.description}
-              </p>
-              
-              <div className="pt-6 border-t border-gray-100">
-                <h4 className="text-lg font-semibold mb-3">Key Features</h4>
-                <ul className="space-y-2">
-                  {product.features.map((feature, index) => (
-                    <li key={index} className="flex items-center">
-                      <Check className="w-5 h-5 text-[#27bb97] mr-3 flex-shrink-0" />
-                      <span className="text-gray-700">{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          </div>
-
-          <div className="lg:col-span-4">
-            <div className="sticky top-24 space-y-6">
-              <div className="bg-white rounded-lg shadow-sm p-6">
-                <h2 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-4">
-                  {product.title}
-                </h2>
-                
-                <div className="mb-6">
-                  <div className="text-sm text-gray-500 mb-1 font-medium">
-                    PRICE
-                  </div>
-                  <div className="text-4xl font-bold text-[#27bb97]">
-                    ${product.price}
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-4 text-gray-600 mb-6">
-                  <div className="flex items-center">
-                    <Shield className="w-4 h-4 mr-1.5" />
-                    <span className="font-medium">{product.condition}</span>
-                  </div>
-                  <div className="flex items-center">
-                    <MapPin className="w-4 h-4 mr-1.5" />
-                    <span>{product.location}</span>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-3 mb-6">
-                  <span className="text-gray-700 font-medium">Quantity:</span>
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                      className="w-10 h-10 rounded-full border-2 border-gray-300 flex items-center justify-center hover:border-gray-400 transition"
-                    >
-                      <FaMinus className="w-3.5 h-3.5 text-gray-600" />
-                    </button>
-                    <span className="text-xl font-semibold w-10 text-center">
-                      {quantity}
-                    </span>
-                    <button
-                      onClick={() => setQuantity(quantity + 1)}
-                      className="w-10 h-10 rounded-full border-2 border-gray-300 flex items-center justify-center hover:border-gray-400 transition"
-                    >
-                      <FaPlus className="w-3.5 h-3.5 text-gray-600" />
-                    </button>
-                  </div>
-                </div>
-
-                <div className="space-y-3">
-                  <button className="w-full py-4 bg-[#27bb97] hover:bg-[#1fa987] text-white rounded-lg font-semibold transition-all shadow-md hover:shadow-lg">
-                    <MessageCircle className="w-5 h-5 inline mr-2" />
-                    Contact Seller
-                  </button>
-                  
-                  <div className="grid grid-cols-2 gap-3">
-                    <button className="py-3 bg-white border-2 border-gray-200 text-gray-700 rounded-lg font-medium hover:border-gray-300 transition-colors">
-                      Make Offer
-                    </button>
-                    <button className="py-3 bg-white border-2 border-[#27bb97] text-[#27bb97] rounded-lg font-medium hover:bg-[#27bb97]/5 transition-colors">
-                      Save Item
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-white rounded-lg shadow-sm p-6">
-                <h3 className="text-lg font-bold mb-4 text-gray-700">
-                  Specifications
-                </h3>
-                <div className="space-y-4">
-                  {techSpecs.map((spec, index) => (
-                    <div key={index} className="flex items-center gap-3">
-                      <div className="w-10 h-10 flex items-center justify-center bg-gray-50 rounded-lg">
-                        {spec.icon}
-                      </div>
-                      <div>
-                        <div className="text-sm text-gray-500">{spec.label}</div>
-                        <div className="font-medium text-gray-700">{spec.value}</div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              
-              <SellerDetails
-                seller={product.seller}
-                rating={product.sellerRating}
-                reviews={product.sellerReviews}
-                joined={product.sellerJoined}
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-// Main App Component with Routing
-const ElectronicsApp = () => {
-  const { id } = useParams();
-  
-  // If there's a product ID in the URL, show product detail page
-  // Otherwise, show the listing page
-  if (id) {
-    return <ProductDetail />;
-  }
-  
-  return <ElectronicsListing />;
-};
-
-export default ElectronicsApp;
-export { electronicsData };
+export default ElectronicsListing;

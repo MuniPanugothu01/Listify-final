@@ -6,13 +6,13 @@ import ElectronicsOffers from './ElectronicsOffers.jsx';
 import ElectronicsTestimonials from './ElectronicsTestimonials.jsx';
 import ElectronicsFAQSection from './ElectronicsFAQSection.jsx';
 
-import Sample from '../Sample/Sample.jsx';
+import ElectronicsListing from './ElectronicsListing.jsx';
 
 export default function Electronics() {
   return (
     <div className="">
       <HeroElectronics />
-      <Sample/>
+      <ElectronicsListing/>
       {/* <CollectionElectronics /> */}
       {/* <ElectronicsRecommended /> */}
        {/* <ElectronicsOffers /> */}

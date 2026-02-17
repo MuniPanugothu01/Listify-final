@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
   Heart,
@@ -20,11 +20,14 @@ import {
   ChevronRight as ChevronRightIcon,
   Navigation,
   Globe,
+  Headphones,
+  Watch,
+  Gamepad,
+  Laptop,
 } from 'lucide-react';
 import { FaMinus, FaPlus } from 'react-icons/fa';
-import { electronicsData } from './Sample';
 
-// Simple Location Map Component
+// Location Map Component
 const LocationMap = ({ location }) => {
   return (
     <div className="bg-white rounded-lg shadow-sm overflow-hidden mt-8">
@@ -37,9 +40,7 @@ const LocationMap = ({ location }) => {
       </div>
       
       <div className="relative h-64 sm:h-72 md:h-80 bg-gray-100">
-        {/* Map-like background with grid */}
         <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-gray-50">
-          {/* Grid lines */}
           <div className="absolute inset-0" style={{
             backgroundImage: `
               linear-gradient(to right, #cbd5e1 1px, transparent 1px),
@@ -48,7 +49,6 @@ const LocationMap = ({ location }) => {
             backgroundSize: '40px 40px'
           }}></div>
           
-          {/* Location pin */}
           <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
             <div className="relative">
               <MapPin className="w-12 h-12 text-red-500 animate-pulse" />
@@ -56,7 +56,6 @@ const LocationMap = ({ location }) => {
             </div>
           </div>
           
-          {/* Location label */}
           <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
             <div className="bg-white px-4 py-2 rounded-lg shadow-lg text-center">
               <p className="font-medium text-gray-800">{location}</p>
@@ -65,7 +64,6 @@ const LocationMap = ({ location }) => {
           </div>
         </div>
         
-        {/* Compass in corner */}
         <div className="absolute top-4 right-4 bg-white p-2 rounded-lg shadow-sm">
           <Navigation className="w-4 h-4 text-gray-600" />
         </div>
@@ -86,13 +84,32 @@ const LocationMap = ({ location }) => {
   );
 };
 
-const ProductDetail = () => {
+const ElectronicsDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const product = electronicsData.find((p) => p.id === parseInt(id));
+  const [product, setProduct] = useState(null);
+  const [allProducts, setAllProducts] = useState([]);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
-  const [selectedColor, setSelectedColor] = useState("blue");
+
+  useEffect(() => {
+    // Get product data from localStorage (passed from listing page)
+    const storedProduct = localStorage.getItem('selectedElectronics');
+    const storedProducts = localStorage.getItem('allElectronics');
+    
+    if (storedProduct) {
+      const parsedProduct = JSON.parse(storedProduct);
+      // Verify that the ID matches
+      if (parsedProduct.id === parseInt(id)) {
+        setProduct(parsedProduct);
+      }
+    }
+    
+    // Get all products for similar items
+    if (storedProducts) {
+      setAllProducts(JSON.parse(storedProducts));
+    }
+  }, [id]);
 
   const productImages = [
     product?.image,
@@ -109,6 +126,11 @@ const ProductDetail = () => {
   const handleNextImage = () =>
     setSelectedImageIndex((prev) => (prev === productImages.length - 1 ? 0 : prev + 1));
 
+  // Get similar products (excluding current product)
+  const similarProducts = allProducts
+    .filter(p => p.id !== product?.id)
+    .slice(0, 4);
+
   if (!product) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
@@ -117,6 +139,7 @@ const ProductDetail = () => {
             <Smartphone className="w-10 h-10 sm:w-12 sm:h-12 text-gray-400" />
           </div>
           <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">Product not found</h2>
+          <p className="text-gray-600 mb-6">Please select a product from the electronics listing page.</p>
           <button
             onClick={() => navigate('/electronics')}
             className="px-6 py-3 bg-[#27BB97] text-white rounded-lg hover:bg-[#1E9E7E] transition-colors font-medium text-base sm:text-lg"
@@ -128,23 +151,68 @@ const ProductDetail = () => {
     );
   }
 
-  // Electronics specifications with icons
-  const techSpecs = [
-    { icon: <Battery className="text-[#27bb97] text-xl" />, label: 'Battery Life', value: '24 hours' },
-    { icon: <Wifi className="text-[#27bb97] text-xl" />, label: 'Connectivity', value: 'Bluetooth 5.2' },
-    { icon: <Shield className="text-[#27bb97] text-xl" />, label: 'Water Resistance', value: 'IP68' },
-    { icon: <Smartphone className="text-[#27bb97] text-xl" />, label: 'Display', value: '1.93" AMOLED' },
-    { icon: <Camera className="text-[#27bb97] text-xl" />, label: 'Camera', value: '48MP + 12MP' },
-    { icon: <Package className="text-[#27bb97] text-xl" />, label: 'Storage', value: '128GB' },
-  ];
-
-  const similarProducts = electronicsData.filter((p) => p.id !== product.id).slice(0, 4);
+  // Generate specs based on product category
+  const getProductSpecs = () => {
+    const category = product.category?.toLowerCase() || '';
+    const title = product.title.toLowerCase();
+    
+    if (category.includes('wearables') || title.includes('watch') || title.includes('fitbit')) {
+      return [
+        { icon: <Watch className="text-[#27bb97] text-xl" />, label: 'Battery Life', value: '24+ hours' },
+        { icon: <Wifi className="text-[#27bb97] text-xl" />, label: 'Connectivity', value: 'Bluetooth 5.2' },
+        { icon: <Shield className="text-[#27bb97] text-xl" />, label: 'Water Resistance', value: 'IP68' },
+        { icon: <Smartphone className="text-[#27bb97] text-xl" />, label: 'Display', value: '1.93" AMOLED' },
+      ];
+    } else if (category.includes('headphones') || title.includes('headphone') || title.includes('airpod') || title.includes('earbud')) {
+      return [
+        { icon: <Headphones className="text-[#27bb97] text-xl" />, label: 'Battery Life', value: '30 hours' },
+        { icon: <Wifi className="text-[#27bb97] text-xl" />, label: 'Connectivity', value: 'Bluetooth 5.0' },
+        { icon: <Shield className="text-[#27bb97] text-xl" />, label: 'Noise Cancelling', value: 'Active' },
+        { icon: <Battery className="text-[#27bb97] text-xl" />, label: 'Charging', value: 'USB-C' },
+      ];
+    } else if (category.includes('camera') || title.includes('camera') || title.includes('dji') || title.includes('canon')) {
+      return [
+        { icon: <Camera className="text-[#27bb97] text-xl" />, label: 'Megapixels', value: '24MP+' },
+        { icon: <Wifi className="text-[#27bb97] text-xl" />, label: 'Video', value: '4K' },
+        { icon: <Shield className="text-[#27bb97] text-xl" />, label: 'Stabilization', value: 'Yes' },
+        { icon: <Package className="text-[#27bb97] text-xl" />, label: 'Storage', value: 'SD Card' },
+      ];
+    } else if (category.includes('video games') || title.includes('ps4') || title.includes('xbox') || title.includes('game')) {
+      return [
+        { icon: <Gamepad className="text-[#27bb97] text-xl" />, label: 'Platform', value: title.includes('ps4') ? 'PS4' : 'Xbox' },
+        { icon: <Package className="text-[#27bb97] text-xl" />, label: 'Condition', value: product.condition },
+        { icon: <Shield className="text-[#27bb97] text-xl" />, label: 'Region', value: 'US' },
+        { icon: <Check className="text-[#27bb97] text-xl" />, label: 'Case', value: 'Included' },
+      ];
+    } else if (category.includes('cell phones') || title.includes('iphone') || title.includes('phone') || title.includes('mobile')) {
+      return [
+        { icon: <Smartphone className="text-[#27bb97] text-xl" />, label: 'Storage', value: '128GB' },
+        { icon: <Battery className="text-[#27bb97] text-xl" />, label: 'Battery Health', value: '90%+' },
+        { icon: <Camera className="text-[#27bb97] text-xl" />, label: 'Camera', value: '48MP' },
+        { icon: <Shield className="text-[#27bb97] text-xl" />, label: 'Face ID', value: 'Yes' },
+      ];
+    } else if (category.includes('audio') || title.includes('speaker') || title.includes('microphone')) {
+      return [
+        { icon: <Headphones className="text-[#27bb97] text-xl" />, label: 'Sound', value: 'Stereo' },
+        { icon: <Wifi className="text-[#27bb97] text-xl" />, label: 'Connectivity', value: 'Bluetooth' },
+        { icon: <Battery className="text-[#27bb97] text-xl" />, label: 'Battery', value: '10+ hours' },
+        { icon: <Shield className="text-[#27bb97] text-xl" />, label: 'Waterproof', value: 'IPX7' },
+      ];
+    } else {
+      return [
+        { icon: <Package className="text-[#27bb97] text-xl" />, label: 'Condition', value: product.condition },
+        { icon: <Shield className="text-[#27bb97] text-xl" />, label: 'Warranty', value: 'Not included' },
+        { icon: <Truck className="text-[#27bb97] text-xl" />, label: 'Shipping', value: 'Local pickup' },
+        { icon: <Clock className="text-[#27bb97] text-xl" />, label: 'Listed', value: product.postedTime },
+      ];
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Sticky Navigation - Updated to match DetailForSale */}
+      {/* Sticky Navigation */}
       <div className="bg-white shadow-sm top-0 z-50">
-        <div className=" px-4 sm:px-6 lg:px-8">
+        <div className="px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-14 sm:h-16">
             <div className="flex items-center space-x-1.5 sm:space-x-2 text-sm text-gray-600 min-w-0 flex-1">
               <button
@@ -160,7 +228,7 @@ const ProductDetail = () => {
         </div>
       </div>
 
-      {/* Main Content - Using same 60/40 layout */}
+      {/* Main Content */}
       <div className="px-4 sm:px-8 lg:px-8 py-6 lg:py-6">
         <div className="grid grid-cols-1 lg:grid-cols-10 gap-6 lg:gap-6">
           {/* Left Column - Images - Takes 60% (6 columns) */}
@@ -174,7 +242,6 @@ const ProductDetail = () => {
                   className="w-full h-auto max-h-[500px] rounded-md object-cover bg-gray-50"
                 />
                 
-                {/* Left Scroll Button for Main Image */}
                 <button
                   onClick={handlePrevImage}
                   className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 backdrop-blur-sm rounded-full shadow-lg flex items-center justify-center hover:bg-white transition-all hover:shadow-xl z-20"
@@ -182,7 +249,6 @@ const ProductDetail = () => {
                   <ChevronLeft className="w-6 h-6 text-gray-700" />
                 </button>
                 
-                {/* Right Scroll Button for Main Image */}
                 <button
                   onClick={handleNextImage}
                   className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 backdrop-blur-sm rounded-full shadow-lg flex items-center justify-center hover:bg-white transition-all hover:shadow-xl z-20"
@@ -190,12 +256,10 @@ const ProductDetail = () => {
                   <ChevronRightIcon className="w-6 h-6 text-gray-700" />
                 </button>
                 
-                {/* Image Counter */}
                 <div className="absolute bottom-4 right-4 bg-black/70 text-white px-3 py-1.5 rounded-full text-sm font-medium backdrop-blur-sm z-10">
                   {selectedImageIndex + 1} / {productImages.length}
                 </div>
 
-                {/* Heart and Share Buttons */}
                 <div className="absolute top-4 right-4 flex gap-2 z-10">
                   <button className="p-2.5 bg-white/90 backdrop-blur-sm rounded-lg shadow-sm hover:shadow-md transition-shadow">
                     <Heart className="w-5 h-5 text-gray-600 hover:text-red-500" />
@@ -228,7 +292,7 @@ const ProductDetail = () => {
               ))}
             </div>
 
-            {/* Location Map - Added here */}
+            {/* Location Map */}
             <LocationMap location={product.location} />
 
             {/* Additional Information Below Images */}
@@ -327,7 +391,7 @@ const ProductDetail = () => {
                   SPECIFICATIONS
                 </h3>
                 <div className="grid grid-cols-2 gap-y-4">
-                  {techSpecs.map((spec, index) => (
+                  {getProductSpecs().map((spec, index) => (
                     <div key={index} className="flex items-center gap-3">
                       <div className="w-10 h-10 flex items-center justify-center bg-gray-50 rounded-lg">
                         {spec.icon}
@@ -380,50 +444,58 @@ const ProductDetail = () => {
         </div>
 
         {/* Similar Items */}
-        <div className="mt-16">
-          <div className="flex items-center justify-between mb-8">
-            <h2 className="text-2xl font-bold text-gray-900">Similar Products</h2>
-            <button className="text-[#27bb97] hover:text-[#1E9E7E] font-medium">
-              View all →
-            </button>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {similarProducts.map((item) => (
-              <div
-                key={item.id}
-                onClick={() => navigate(`/product/${item.id}`)}
-                className="group bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer border border-gray-100 overflow-hidden"
+        {similarProducts.length > 0 && (
+          <div className="mt-16">
+            <div className="flex items-center justify-between mb-8">
+              <h2 className="text-2xl font-bold text-gray-900">Similar Electronics</h2>
+              <button 
+                onClick={() => navigate('/electronics')}
+                className="text-[#27bb97] hover:text-[#1E9E7E] font-medium"
               >
-                <div className="aspect-[4/3] bg-gray-100 overflow-hidden">
-                  <img
-                    src={item.image}
-                    alt={item.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                </div>
-                <div className="p-5">
-                  <h3 className="font-bold text-gray-900 text-lg mb-2 line-clamp-1">
-                    {item.title}
-                  </h3>
-                  <p className="text-gray-600 text-sm mb-3 line-clamp-2">
-                    {item.description?.substring(0, 80)}...
-                  </p>
-                  <div className="flex items-center justify-between">
-                    <span className="text-2xl font-bold text-[#27bb97]">
-                      ${item.price}
-                    </span>
-                    <span className="text-xs font-medium text-gray-500 px-3 py-1.5 bg-gray-100 rounded-full">
-                      {item.condition}
-                    </span>
+                View all →
+              </button>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {similarProducts.map((item) => (
+                <div
+                  key={item.id}
+                  onClick={() => {
+                    localStorage.setItem('selectedElectronics', JSON.stringify(item));
+                    navigate(`/electronics/${item.id}`);
+                  }}
+                  className="group bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer border border-gray-100 overflow-hidden"
+                >
+                  <div className="aspect-[4/3] bg-gray-100 overflow-hidden">
+                    <img
+                      src={item.image}
+                      alt={item.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                  </div>
+                  <div className="p-5">
+                    <h3 className="font-bold text-gray-900 text-lg mb-2 line-clamp-1">
+                      {item.title}
+                    </h3>
+                    <p className="text-gray-600 text-sm mb-3 line-clamp-2">
+                      {item.description?.substring(0, 80)}...
+                    </p>
+                    <div className="flex items-center justify-between">
+                      <span className="text-2xl font-bold text-[#27bb97]">
+                        ${item.price}
+                      </span>
+                      <span className="text-xs font-medium text-gray-500 px-3 py-1.5 bg-gray-100 rounded-full">
+                        {item.condition}
+                      </span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
 };
 
-export default ProductDetail;
+export default ElectronicsDetail;

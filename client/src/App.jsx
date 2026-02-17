@@ -45,14 +45,15 @@ import PetCareService from "./components/TakeCare/PetCareServices/PetCareService
 import CareCenterServices from "./components/TakeCare/CareCenterServices/CareCenterServices.jsx";
 import CareTakerDetail from "./components/TakeCare/CareTakerDetail.jsx";
 
+
+// Electronics
 import Electronics from "./components/Electronics/Electronics.jsx";
-import ElectronicsListings from "./components/Electronics/ElectronicsListings.jsx";
-import ElectronicsDetails from "./components/Electronics/ElectronicsDetails.jsx";
+import ElectronicsDetail from "./components/Electronics/ElectronicsDetail.jsx";
+
 
 // For Sale
 import ForSale from "./components/ForSale/ForSale.jsx";
 import ForSaleDetail from "./components/ForSale/ForsaleDetail.jsx";
-// import DetailForSale from "./components/ForSale/DetailForSale.jsx";
 
 // Roommates
 import Roommates from "./pages/Roommates/Roommates.jsx";
@@ -98,9 +99,7 @@ import { Toaster } from "react-hot-toast";
 // Get Google Client ID from environment
 const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
-//sample
-import Sample from "./components/Sample/Sample.jsx";
-import ProductDetail from "./components/Sample/ProductDetail.jsx";
+
 
 // ScrollToTop Component
 const ScrollToTop = () => {
@@ -203,10 +202,6 @@ const AppContent = () => {
             }
           />
 
-          {/*Sample */}
-          <Route path="/product" element={<Sample />} />
-          <Route path="/product/:id" element={<ProductDetail />} />
-
           {/* Authentication Pages (no navbar/footer) */}
           <Route path="/signin" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
@@ -243,15 +238,11 @@ const AppContent = () => {
           {/* For Sale */}
           <Route path="/forsale" element={<ForSale />} />
           <Route path="/forsale/:id" element={<ForSaleDetail />} />
-          {/* <Route path="/forsale/:id" element={<DetailForSale />} /> */}
 
           {/* electronics*/}
           <Route path="/electronics" element={<Electronics />} />
-          <Route
-            path="/electronics-listings"
-            element={<ElectronicsListings />}
-          />
-          <Route path="/electronics-details" element={<ElectronicsDetails />} />
+          <Route path="/electronics/:id" element={<ElectronicsDetail />} />
+      
 
           {/* Roommates */}
           <Route path="/roommates" element={<Roommates />} />
