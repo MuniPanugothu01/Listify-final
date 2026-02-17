@@ -62,9 +62,10 @@ import DetailsPage from "./components/Roommates/DetailsPage.jsx";
 
 // Events
 import Events from "./pages/Events/Events.jsx";
+import EventsDetail from "./components/Events/EventsDetail.jsx";
+
 import EventDetailPage from "./components/Events/EventDetailPage.jsx";
 import EventList from "./components/Events/EventList.jsx";
-import EventSampleDetail from "./components/Events/EventSampleDetail.jsx";
 
 // Rentals
 import Rentals from "./pages/Rentalspage/Rentals";
@@ -83,10 +84,10 @@ import JobSeekerResumesDetail from "./components/Jobs/JobSeekerResumesDetail.jsx
 import ServicesPage from "./pages/Services/ServicesPage.jsx";
 
 // Cars categories
-import CarsPage from "./pages/CarsPages/CarsPage.jsx";
+import VehiclePage from "./pages/VehiclePage/VehiclePage.jsx";
+import VehicleDetail from "./components/Cars/VehicleDetail.jsx";
 import CarListing from "./components/Cars/CarListing.jsx";
 import CarDetails from "./components/Cars/CarDetails.jsx";
-import VehicleDetail from "./components/Cars/VehicleDetail.jsx";
 
 // Profile
 import Profile from "./pages/Home/Profile.jsx";
@@ -267,18 +268,21 @@ const AppContent = () => {
 
           {/* Events */}
           <Route path="/events" element={<Events />} />
+          <Route path="/event/:id" element={<EventsDetail />} />
+
           <Route path="/events/:eventId" element={<EventDetailPage />} />
           <Route path="/events-list" element={<EventList />} />
-          <Route path="/event/:id" element={<EventSampleDetail />} />
+
 
           {/* Services Category */}
           <Route path="/services" element={<ServicesPage />} />
 
           {/* Cars categories */}
-          <Route path="/vehicles" element={<CarsPage />} />
+          <Route path="/vehicles" element={<VehiclePage />} />
+          <Route path="/vehicles/:id" element={<VehicleDetail />} />
+          
           <Route path="/car-listings" element={<CarListing />} />
           <Route path="/car-details" element={<CarDetails />} />
-          <Route path="/vehicle/:id" element={<VehicleDetail />} />
 
           {/* Profile */}
           <Route path="/dashboard" element={<Profile />} />

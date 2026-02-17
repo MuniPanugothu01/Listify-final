@@ -336,7 +336,7 @@ const EventCard = ({ event, onClick }) => {
 };
 
 // Main Events Listing Component
-const EventSample = () => {
+const EventsListing = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [priceMin, setPriceMin] = useState("");
@@ -613,5 +613,5 @@ const EventSample = () => {
   );
 };
 
-export default EventSample;
+export default EventsListing;
 export { eventsData };
