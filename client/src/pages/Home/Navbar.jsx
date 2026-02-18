@@ -948,6 +948,7 @@ const Navbar = () => {
                       onClick={() => {
                         setIsMobileMenuOpen(false);
                         logout();
+                        toast.success("Logout successful");
                         navigate("/");
                       }}
                       className={`nav-link px-3 py-2 text-xs sm:text-sm hover:bg-gray-100 rounded font-semibold text-left ${

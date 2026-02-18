@@ -715,7 +715,7 @@ export default function Profile() {
               )}
             </button>
             <h1
-              className="text-xl font-bold text-blue-700 sm:text-2xl flex-shrink-0 cursor-pointer hover:text-blue-800 transition-colors"
+              className="text-xl font-bold text-[#27BB97] sm:text-2xl flex-shrink-0 cursor-pointer  transition-colors"
               onClick={() => navigate("/")}
             >
               Listify
@@ -738,7 +738,7 @@ export default function Profile() {
         </div>
       </header>
 
-      <div className="pt-4 container mx-auto px-1 py-6 mt-4">
+      <div className="pt-4 container mx-auto px-1 py-6 mt-20">
         <div className="lg:flex gap-6">
           <Sidebar
             activeSection={activeSection}
