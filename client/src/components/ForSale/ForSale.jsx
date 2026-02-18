@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import ForSaleHero from './ForSaleHero';
 import ForSaleCategories from './ForSaleCategories';
 import ForSaleCollections from './ForSaleCollections';
