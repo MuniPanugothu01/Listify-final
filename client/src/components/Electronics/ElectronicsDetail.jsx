@@ -385,27 +385,7 @@ const ElectronicsDetail = () => {
                 </div>
               </div>
 
-              {/* Specifications */}
-              <div className="bg-white rounded-lg shadow-sm p-6">
-                <h3 className="text-lg font-bold mb-4 tracking-wider text-gray-700">
-                  SPECIFICATIONS
-                </h3>
-                <div className="grid grid-cols-2 gap-y-4">
-                  {getProductSpecs().map((spec, index) => (
-                    <div key={index} className="flex items-center gap-3">
-                      <div className="w-10 h-10 flex items-center justify-center bg-gray-50 rounded-lg">
-                        {spec.icon}
-                      </div>
-                      <div>
-                        <div className="text-xs text-gray-500">{spec.label}</div>
-                        <div className="text-sm font-medium text-gray-700">{spec.value}</div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              
-              {/* Seller Info */}
+               {/* Seller Info */}
               <div className="bg-white rounded-lg shadow-sm p-6">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-lg font-bold text-gray-700">SELLER INFORMATION</h3>
@@ -437,6 +417,26 @@ const ElectronicsDetail = () => {
                       <span>Joined {product.sellerJoined}</span>
                     </div>
                   </div>
+                </div>
+              </div>
+
+              {/* Specifications */}
+              <div className="bg-white rounded-lg shadow-sm p-6">
+                <h3 className="text-lg font-bold mb-4 tracking-wider text-gray-700">
+                  SPECIFICATIONS
+                </h3>
+                <div className="grid grid-cols-2 gap-y-4">
+                  {getProductSpecs().map((spec, index) => (
+                    <div key={index} className="flex items-center gap-3">
+                      <div className="w-10 h-10 flex items-center justify-center bg-gray-50 rounded-lg">
+                        {spec.icon}
+                      </div>
+                      <div>
+                        <div className="text-xs text-gray-500">{spec.label}</div>
+                        <div className="text-sm font-medium text-gray-700">{spec.value}</div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>

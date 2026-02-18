@@ -894,12 +894,7 @@ const products = [
             </div>
           </div>
         </div>
-
-        {/* Results count */}
-        <p className="text-sm text-gray-600 mb-4">
-          {filteredProducts.length} {filteredProducts.length === 1 ? 'item' : 'items'} found
-        </p>
-
+        
         {/* Products Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
           {filteredProducts.map((product) => (

@@ -35,6 +35,7 @@ import { IoLocationOutline } from "react-icons/io5";
 import { CiLocationArrow1 } from "react-icons/ci";
 import { ScrollProgress } from "../../components/ui/scroll-progress";
 import { useAuth } from "../../hooks/useAuth";
+import toast from "react-hot-toast";
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -140,6 +141,7 @@ const Navbar = () => {
     if (path === "/logout") {
       logout();
       closeProfileDropdown();
+      toast.success("logout successfully");
       navigate("/");
     } else {
       navigate(path);

@@ -20,10 +20,14 @@ import {
   ChevronRight as ChevronRightIcon,
   Navigation,
   Globe,
+  X,
+  DollarSign,
+  User,
+  Send,
 } from 'lucide-react';
 import { FaMinus, FaPlus } from 'react-icons/fa';
 
-// Location Map Component
+// Location Map Component (unchanged)
 const LocationMap = ({ location }) => {
   return (
     <div className="bg-white rounded-lg shadow-sm overflow-hidden mt-8">
@@ -80,6 +84,257 @@ const LocationMap = ({ location }) => {
   );
 };
 
+// Make Offer Modal Component
+const MakeOfferModal = ({ isOpen, onClose, product, onSubmit }) => {
+  const [offerAmount, setOfferAmount] = useState('');
+  const [message, setMessage] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  if (!isOpen) return null;
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    
+    // Simulate API call
+    setTimeout(() => {
+      onSubmit({
+        productId: product.id,
+        productTitle: product.title,
+        offerAmount: parseFloat(offerAmount),
+        message: message,
+        timestamp: new Date().toISOString(),
+      });
+      setIsSubmitting(false);
+      onClose();
+      // Show success message (you can implement a toast notification here)
+      alert(`Offer of $${offerAmount} sent successfully!`);
+    }, 1000);
+  };
+
+  const suggestedOffers = [
+    Math.round(product.price * 0.8),
+    Math.round(product.price * 0.9),
+    Math.round(product.price * 0.95),
+  ];
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+        <div className="p-6 border-b border-gray-100 flex justify-between items-center sticky top-0 bg-white">
+          <h3 className="text-xl font-bold text-gray-900">Make an Offer</h3>
+          <button
+            onClick={onClose}
+            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+          >
+            <X className="w-5 h-5 text-gray-500" />
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="p-6 space-y-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Product
+            </label>
+            <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+              <img
+                src={product.image}
+                alt={product.title}
+                className="w-12 h-12 object-cover rounded-md"
+              />
+              <div>
+                <h4 className="font-medium text-gray-900">{product.title}</h4>
+                <p className="text-sm text-gray-500">Listed price: ${product.price.toLocaleString()}</p>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Your Offer Amount
+            </label>
+            <div className="relative">
+              <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <input
+                type="number"
+                value={offerAmount}
+                onChange={(e) => setOfferAmount(e.target.value)}
+                placeholder="Enter amount"
+                min="1"
+                max={product.price}
+                step="1"
+                required
+                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#27bb97] focus:border-transparent outline-none"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Suggested Offers
+            </label>
+            <div className="flex flex-wrap gap-2">
+              {suggestedOffers.map((amount, index) => (
+                <button
+                  key={index}
+                  type="button"
+                  onClick={() => setOfferAmount(amount)}
+                  className="px-4 py-2 border border-gray-300 rounded-lg text-sm hover:border-[#27bb97] hover:text-[#27bb97] transition-colors"
+                >
+                  ${amount.toLocaleString()}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Message to Seller (Optional)
+            </label>
+            <textarea
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              placeholder="Add a note about your offer..."
+              rows="4"
+              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#27bb97] focus:border-transparent outline-none resize-none"
+            />
+          </div>
+
+          <div className="bg-blue-50 p-4 rounded-lg">
+            <p className="text-sm text-blue-800">
+              <strong>Note:</strong> Your offer is binding. If the seller accepts, you'll be notified and can proceed with the purchase.
+            </p>
+          </div>
+
+          <div className="flex gap-3">
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex-1 py-3 border-2 border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={!offerAmount || isSubmitting}
+              className="flex-1 py-3 bg-[#27bb97] hover:bg-[#1fa987] text-white rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            >
+              {isSubmitting ? (
+                'Sending...'
+              ) : (
+                <>
+                  <Send className="w-4 h-4" />
+                  Send Offer
+                </>
+              )}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+// View Profile Modal Component
+const ViewProfileModal = ({ isOpen, onClose, seller }) => {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="p-6 border-b border-gray-100 flex justify-between items-center sticky top-0 bg-white">
+          <h3 className="text-xl font-bold text-gray-900">Seller Profile</h3>
+          <button
+            onClick={onClose}
+            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+          >
+            <X className="w-5 h-5 text-gray-500" />
+          </button>
+        </div>
+
+        <div className="p-6">
+          {/* Profile Header */}
+          <div className="flex items-center gap-6 mb-8">
+            <div className="w-24 h-24 bg-gradient-to-br from-[#27bb97] to-[#1E9E7E] rounded-full flex items-center justify-center text-white text-4xl font-bold">
+              {seller.name[0]}
+            </div>
+            <div>
+              <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+                {seller.name}
+                <Shield className="w-5 h-5 text-blue-500" />
+              </h2>
+              <div className="flex items-center mt-2">
+                {[...Array(5)].map((_, i) => (
+                  <Star
+                    key={i}
+                    className={`w-5 h-5 ${i < Math.floor(seller.rating) ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
+                  />
+                ))}
+                <span className="ml-2 text-gray-600">({seller.reviews} reviews)</span>
+              </div>
+              <div className="flex items-center text-gray-500 mt-2">
+                <Clock className="w-4 h-4 mr-1" />
+                <span>Member since {seller.joined}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Stats Grid */}
+          <div className="grid grid-cols-3 gap-4 mb-8">
+            <div className="bg-gray-50 p-4 rounded-lg text-center">
+              <div className="text-2xl font-bold text-gray-900">98%</div>
+              <div className="text-sm text-gray-600">Positive Feedback</div>
+            </div>
+            <div className="bg-gray-50 p-4 rounded-lg text-center">
+              <div className="text-2xl font-bold text-gray-900">156</div>
+              <div className="text-sm text-gray-600">Items Sold</div>
+            </div>
+            <div className="bg-gray-50 p-4 rounded-lg text-center">
+              <div className="text-2xl font-bold text-gray-900">2.5k</div>
+              <div className="text-sm text-gray-600">Followers</div>
+            </div>
+          </div>
+
+          {/* About Section */}
+          <div className="mb-8">
+            <h4 className="text-lg font-bold text-gray-900 mb-3">About</h4>
+            <p className="text-gray-600 leading-relaxed">
+              Passionate seller with over 5 years of experience on the platform. 
+              Specializing in electronics and collectibles. All items are carefully 
+              inspected before listing. Fast shipping and excellent customer service guaranteed!
+            </p>
+          </div>
+
+          {/* Seller's Items */}
+          <div>
+            <h4 className="text-lg font-bold text-gray-900 mb-3">Seller's Other Items</h4>
+            <div className="grid grid-cols-2 gap-4">
+              {[1, 2].map((item) => (
+                <div key={item} className="border border-gray-200 rounded-lg p-3 hover:shadow-md transition-shadow">
+                  <div className="aspect-square bg-gray-100 rounded-md mb-2"></div>
+                  <p className="font-medium text-gray-900">Sample Item {item}</p>
+                  <p className="text-[#27bb97] font-bold">$XX.XX</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex gap-3 mt-8">
+            <button className="flex-1 py-3 bg-[#27bb97] hover:bg-[#1fa987] text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2">
+              <MessageCircle className="w-4 h-4" />
+              Contact Seller
+            </button>
+            <button className="flex-1 py-3 border-2 border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors">
+              Follow
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const ForSaleDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -87,6 +342,10 @@ const ForSaleDetail = () => {
   const [allProducts, setAllProducts] = useState([]);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
+  const [isOfferModalOpen, setIsOfferModalOpen] = useState(false);
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
+  const [isLiked, setIsLiked] = useState(false);
 
   useEffect(() => {
     // Get product data from localStorage (passed from listing page)
@@ -122,6 +381,37 @@ const ForSaleDetail = () => {
   const handleNextImage = () =>
     setSelectedImageIndex((prev) => (prev === productImages.length - 1 ? 0 : prev + 1));
 
+  const handleMakeOffer = (offerData) => {
+    // Here you would typically send this to your backend
+    console.log('Offer submitted:', offerData);
+    // You can store in localStorage for demo purposes
+    const existingOffers = JSON.parse(localStorage.getItem('userOffers') || '[]');
+    localStorage.setItem('userOffers', JSON.stringify([...existingOffers, offerData]));
+  };
+
+  const handleContactSeller = () => {
+    // Navigate to messages or open chat
+    navigate('/dashboard', { state: { seller: product?.seller, product: product } });
+  };
+
+  const handleShare = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: product.title,
+          text: product.description,
+          url: window.location.href,
+        });
+      } catch (error) {
+        console.log('Error sharing:', error);
+      }
+    } else {
+      // Fallback - copy to clipboard
+      navigator.clipboard.writeText(window.location.href);
+      alert('Link copied to clipboard!');
+    }
+  };
+
   // Get similar products (excluding current product)
   const similarProducts = allProducts
     .filter(p => p.id !== product?.id)
@@ -147,7 +437,7 @@ const ForSaleDetail = () => {
     );
   }
 
-  // Generate specs based on product type
+  // Generate specs based on product type (unchanged)
   const getProductSpecs = () => {
     const title = product.title.toLowerCase();
     
@@ -205,6 +495,25 @@ const ForSaleDetail = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Modals */}
+      <MakeOfferModal
+        isOpen={isOfferModalOpen}
+        onClose={() => setIsOfferModalOpen(false)}
+        product={product}
+        onSubmit={handleMakeOffer}
+      />
+      
+      <ViewProfileModal
+        isOpen={isProfileModalOpen}
+        onClose={() => setIsProfileModalOpen(false)}
+        seller={{
+          name: product.seller,
+          rating: product.sellerRating,
+          reviews: product.sellerReviews,
+          joined: product.sellerJoined,
+        }}
+      />
+
       {/* Sticky Navigation */}
       <div className="bg-white shadow-sm top-0 z-50">
         <div className="px-4 sm:px-6 lg:px-8">
@@ -256,10 +565,16 @@ const ForSaleDetail = () => {
                 </div>
 
                 <div className="absolute top-4 right-4 flex gap-2 z-10">
-                  <button className="p-2.5 bg-white/90 backdrop-blur-sm rounded-lg shadow-sm hover:shadow-md transition-shadow">
-                    <Heart className="w-5 h-5 text-gray-600 hover:text-red-500" />
+                  <button 
+                    onClick={() => setIsLiked(!isLiked)}
+                    className="p-2.5 bg-white/90 backdrop-blur-sm rounded-lg shadow-sm hover:shadow-md transition-shadow"
+                  >
+                    <Heart className={`w-5 h-5 ${isLiked ? 'fill-red-500 text-red-500' : 'text-gray-600'}`} />
                   </button>
-                  <button className="p-2.5 bg-white/90 backdrop-blur-sm rounded-lg shadow-sm hover:shadow-md transition-shadow">
+                  <button 
+                    onClick={handleShare}
+                    className="p-2.5 bg-white/90 backdrop-blur-sm rounded-lg shadow-sm hover:shadow-md transition-shadow"
+                  >
                     <Share2 className="w-5 h-5 text-gray-600" />
                   </button>
                 </div>
@@ -364,27 +679,44 @@ const ForSaleDetail = () => {
 
                 {/* Action Buttons */}
                 <div className="space-y-3">
-                  <button className="w-full py-4 bg-[#27bb97] hover:bg-[#1fa987] text-white rounded-lg font-semibold transition-all shadow-md hover:shadow-lg text-base uppercase">
+                  <button 
+                    onClick={handleContactSeller}
+                    className="w-full py-4 bg-[#27bb97] hover:bg-[#1fa987] text-white rounded-lg font-semibold transition-all shadow-md hover:shadow-lg text-base uppercase"
+                  >
                     <MessageCircle className="w-5 h-5 inline mr-2" />
                     Contact Seller
                   </button>
                   
                   <div className="grid grid-cols-2 gap-3">
-                    <button className="py-3 bg-white border-2 border-gray-200 text-gray-700 rounded-lg font-medium hover:border-gray-300 transition-colors">
+                    <button 
+                      onClick={() => setIsOfferModalOpen(true)}
+                      className="py-3 bg-white border-2 border-gray-200 text-gray-700 rounded-lg font-medium hover:border-gray-300 transition-colors"
+                    >
                       Make Offer
                     </button>
-                    <button className="py-3 bg-white border-2 border-[#27bb97] text-[#27bb97] rounded-lg font-medium hover:bg-[#27bb97]/5 transition-colors">
-                      Save Item
+                    <button 
+                      onClick={() => setIsSaved(!isSaved)}
+                      className={`py-3 border-2 rounded-lg font-medium transition-colors ${
+                        isSaved 
+                          ? 'bg-[#27bb97] border-[#27bb97] text-white hover:bg-[#1fa987]' 
+                          : 'bg-white border-[#27bb97] text-[#27bb97] hover:bg-[#27bb97]/5'
+                      }`}
+                    >
+                      {isSaved ? 'Saved' : 'Save Item'}
                     </button>
                   </div>
                 </div>
               </div>
 
-                {/* Seller Info */}
+              {/* Seller Info */}
               <div className="bg-white rounded-lg shadow-sm p-6">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-lg font-bold text-gray-700">SELLER INFORMATION</h3>
-                  <button className="text-[#27bb97] text-sm font-medium hover:text-[#1fa987]">
+                  <button 
+                    onClick={() => setIsProfileModalOpen(true)}
+                    className="text-[#27bb97] text-sm font-medium hover:text-[#1fa987] flex items-center gap-1"
+                  >
+                    <User className="w-4 h-4" />
                     View Profile →
                   </button>
                 </div>
@@ -434,8 +766,6 @@ const ForSaleDetail = () => {
                   ))}
                 </div>
               </div>
-              
-            
             </div>
           </div>
         </div>
