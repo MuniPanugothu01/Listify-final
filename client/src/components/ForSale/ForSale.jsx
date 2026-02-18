@@ -13,7 +13,7 @@ export default function ForSale() {
  
 
   return (
-    <div className=" bg-gray-50">
+    <div className="">
       <SubNavbar/>
       <ForSaleHero />
       <ForSaleListing/>
