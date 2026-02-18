@@ -50,8 +50,16 @@ const userSchema = new mongoose.Schema({
     },
   ],
 
-  // Profile Image Fields
+  // ==================== AWS PROFILE IMAGE FIELDS ====================
   profileImage: {
+    type: String,
+    default: null,
+  },
+  profileImageKey: {
+    type: String, // S3 object key
+    default: null,
+  },
+  profileImageThumbnail: {
     type: String,
     default: null,
   },
@@ -83,6 +91,95 @@ const userSchema = new mongoose.Schema({
   emailVerificationExpires: Date,
   passwordResetToken: String,
   passwordResetExpires: Date,
+
+  // ==================== DEVICE & SESSION TRACKING ====================
+  devices: [{
+    deviceId: {
+      type: String,
+      required: true,
+    },
+    deviceName: {
+      type: String,
+      required: true,
+    },
+    deviceType: {
+      type: String,
+      enum: ['mobile', 'tablet', 'desktop', 'bot', 'unknown'],
+      default: 'unknown',
+    },
+    browser: String,
+    browserVersion: String,
+    os: String,
+    osVersion: String,
+    ipAddress: String,
+    location: {
+      country: String,
+      city: String,
+      region: String,
+      latitude: Number,
+      longitude: Number,
+      timezone: String,
+    },
+    firstSeen: {
+      type: Date,
+      default: Date.now,
+    },
+    lastSeen: {
+      type: Date,
+      default: Date.now,
+    },
+    isCurrentDevice: {
+      type: Boolean,
+      default: false,
+    },
+    userAgent: String,
+    sessions: [{
+      sessionId: {
+        type: String,
+        required: true,
+      },
+      tokenId: String,
+      loginTime: {
+        type: Date,
+        default: Date.now,
+      },
+      lastActivity: {
+        type: Date,
+        default: Date.now,
+      },
+      logoutTime: Date,
+      isActive: {
+        type: Boolean,
+        default: true,
+      },
+    }],
+  }],
+
+  // ==================== LOGIN HISTORY ====================
+  loginHistory: [{
+    timestamp: {
+      type: Date,
+      default: Date.now,
+    },
+    ipAddress: String,
+    userAgent: String,
+    deviceId: String,
+    deviceName: String,
+    location: {
+      country: String,
+      city: String,
+      region: String,
+    },
+    loginType: {
+      type: String,
+      enum: ['email', 'google', 'facebook'],
+    },
+    success: {
+      type: Boolean,
+      default: true,
+    },
+    failureReason: String,
+  }],
 
   // Security Fields
   loginAttempts: {
@@ -167,6 +264,8 @@ const userSchema = new mongoose.Schema({
 // Create indexes
 userSchema.index({ status: 1 });
 userSchema.index({ createdAt: -1 });
+userSchema.index({ "devices.deviceId": 1 });
+userSchema.index({ "loginHistory.timestamp": -1 });
 
 // ==================== FIXED: Middleware to handle password hashing ====================
 userSchema.pre("save", async function() {
@@ -187,21 +286,19 @@ userSchema.pre("save", async function() {
   console.log("🔄 Hashing plain text password in pre-save middleware");
   
   // Hash the password
-  const salt = await bcrypt.genSalt(12); // Increased from 10 to 12 for better security
+  const salt = await bcrypt.genSalt(12);
   this.password = await bcrypt.hash(this.password, salt);
   this.lastPasswordChange = new Date();
   
   console.log("✅ Password hashed successfully");
 });
 
-// ==================== NEW: Method to add password to history ====================
+// ==================== METHOD: Add to password history ====================
 userSchema.methods.addToPasswordHistory = async function(password, context = {}) {
   try {
-    // Hash the password before storing in history
     const salt = await bcrypt.genSalt(12);
     const hashedPassword = await bcrypt.hash(password, salt);
     
-    // Add to password history
     this.passwordHistory.push({
       password: hashedPassword,
       changedAt: new Date(),
@@ -210,8 +307,8 @@ userSchema.methods.addToPasswordHistory = async function(password, context = {})
       userAgent: context.userAgent
     });
     
-    // Keep only last 5 passwords (or configured limit)
-    const historyLimit = 5; // Configurable
+    // Keep only last 5 passwords
+    const historyLimit = 5;
     if (this.passwordHistory.length > historyLimit) {
       this.passwordHistory = this.passwordHistory.slice(-historyLimit);
     }
@@ -224,7 +321,7 @@ userSchema.methods.addToPasswordHistory = async function(password, context = {})
   }
 };
 
-// ==================== UPDATED: comparePassword with better logging ====================
+// ==================== METHOD: Compare password ====================
 userSchema.methods.comparePassword = async function (candidatePassword) {
   try {
     return await bcrypt.compare(candidatePassword, this.password);
@@ -234,16 +331,14 @@ userSchema.methods.comparePassword = async function (candidatePassword) {
   }
 };
 
-// ==================== NEW: Check if password is in history ====================
+// ==================== METHOD: Check if password is in history ====================
 userSchema.methods.isPasswordInHistory = async function(candidatePassword) {
   try {
-    // Check current password first
     const isCurrentMatch = await this.comparePassword(candidatePassword);
     if (isCurrentMatch) {
       return { inHistory: true, message: "Cannot use current password" };
     }
     
-    // Check history
     for (let i = 0; i < this.passwordHistory.length; i++) {
       const historyItem = this.passwordHistory[i];
       const isMatch = await bcrypt.compare(candidatePassword, historyItem.password);
@@ -263,7 +358,7 @@ userSchema.methods.isPasswordInHistory = async function(candidatePassword) {
   }
 };
 
-// ==================== NEW: Check if password needs to be changed ====================
+// ==================== METHOD: Check password expiration ====================
 userSchema.methods.passwordNeedsChange = function() {
   if (!this.lastPasswordChange) {
     return { needsChange: false, reason: 'No password set' };
@@ -273,7 +368,6 @@ userSchema.methods.passwordNeedsChange = function() {
   const lastChange = new Date(this.lastPasswordChange);
   const daysSinceChange = Math.floor((now - lastChange) / (1000 * 60 * 60 * 24));
   
-  // 90 days expiration policy
   const expirationDays = 90;
   const needsChange = daysSinceChange >= expirationDays;
   const daysRemaining = Math.max(0, expirationDays - daysSinceChange);
@@ -283,19 +377,18 @@ userSchema.methods.passwordNeedsChange = function() {
     daysSinceChange,
     daysRemaining,
     expirationDays,
-    warningThreshold: 7, // Warn 7 days before expiration
+    warningThreshold: 7,
     shouldWarn: daysRemaining <= 7 && daysRemaining > 0
   };
 };
 
-// Method to check if account is locked
+// ==================== METHOD: Check if account is locked ====================
 userSchema.methods.isLocked = function () {
   return !!(this.lockUntil && this.lockUntil > Date.now());
 };
 
-// Method to increment login attempts
+// ==================== METHOD: Increment login attempts ====================
 userSchema.methods.incrementLoginAttempts = function () {
-  // If we have a previous lock that has expired, restart at 1
   if (this.lockUntil && this.lockUntil < Date.now()) {
     return this.updateOne({
       $set: { loginAttempts: 1 },
@@ -303,18 +396,16 @@ userSchema.methods.incrementLoginAttempts = function () {
     });
   }
 
-  // Otherwise increment
   const updates = { $inc: { loginAttempts: 1 } };
 
-  // Lock the account if we've reached max attempts and it's not locked already
   if (this.loginAttempts + 1 >= 5 && !this.isLocked()) {
-    updates.$set = { lockUntil: Date.now() + 60 * 60 * 1000 }; // 1 hour lock
+    updates.$set = { lockUntil: Date.now() + 60 * 60 * 1000 };
   }
 
   return this.updateOne(updates);
 };
 
-// Method to reset login attempts after successful login
+// ==================== METHOD: Reset login attempts ====================
 userSchema.methods.resetLoginAttempts = function () {
   return this.updateOne({
     $set: { loginAttempts: 0 },
@@ -322,7 +413,7 @@ userSchema.methods.resetLoginAttempts = function () {
   });
 };
 
-// Method to generate password reset token
+// ==================== METHOD: Create password reset token ====================
 userSchema.methods.createPasswordResetToken = function () {
   const resetToken = crypto.randomBytes(32).toString("hex");
 
@@ -331,12 +422,12 @@ userSchema.methods.createPasswordResetToken = function () {
     .update(resetToken)
     .digest("hex");
 
-  this.passwordResetExpires = Date.now() + 10 * 60 * 1000; // 10 minutes
+  this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
 
   return resetToken;
 };
 
-// Method to generate email verification token
+// ==================== METHOD: Create email verification token ====================
 userSchema.methods.createEmailVerificationToken = function () {
   const verificationToken = crypto.randomBytes(32).toString("hex");
 
@@ -345,12 +436,12 @@ userSchema.methods.createEmailVerificationToken = function () {
     .update(verificationToken)
     .digest("hex");
 
-  this.emailVerificationExpires = Date.now() + 24 * 60 * 60 * 1000; // 24 hours
+  this.emailVerificationExpires = Date.now() + 24 * 60 * 60 * 1000;
 
   return verificationToken;
 };
 
-// Method to update last login
+// ==================== METHOD: Update last login ====================
 userSchema.methods.updateLastLogin = function (ip, userAgent) {
   this.lastLogin = Date.now();
   if (ip) this.ipAddress = ip;
@@ -358,7 +449,7 @@ userSchema.methods.updateLastLogin = function (ip, userAgent) {
   return this.save();
 };
 
-// Method to add security log
+// ==================== METHOD: Add security log ====================
 userSchema.methods.addSecurityLog = function (action, ip, userAgent, details) {
   this.securityLogs.push({
     action,
@@ -368,7 +459,6 @@ userSchema.methods.addSecurityLog = function (action, ip, userAgent, details) {
     timestamp: new Date()
   });
 
-  // Keep only last 100 logs
   if (this.securityLogs.length > 100) {
     this.securityLogs = this.securityLogs.slice(-100);
   }
@@ -376,17 +466,102 @@ userSchema.methods.addSecurityLog = function (action, ip, userAgent, details) {
   return this.save();
 };
 
-// Virtual for full name
+// ==================== METHOD: Get profile image ====================
+userSchema.methods.getProfileImage = function () {
+  if (this.profileImage) return this.profileImage;
+  if (this.googleProfileImage) return this.googleProfileImage;
+  if (this.avatar && this.avatar !== "https://cdn-icons-png.flaticon.com/512/149/149071.png") {
+    return this.avatar;
+  }
+  return "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+};
+
+// ==================== METHOD: Update profile image ====================
+userSchema.methods.updateProfileImage = async function (imageUrl, imageKey) {
+  this.profileImage = imageUrl;
+  this.profileImageKey = imageKey;
+  return this.save();
+};
+
+// ==================== METHOD: Add login to history ====================
+userSchema.methods.addLoginHistory = function(loginData) {
+  this.loginHistory.push({
+    timestamp: new Date(),
+    ipAddress: loginData.ipAddress,
+    userAgent: loginData.userAgent,
+    deviceId: loginData.deviceId,
+    deviceName: loginData.deviceName,
+    location: loginData.location,
+    loginType: loginData.loginType,
+    success: loginData.success,
+    failureReason: loginData.failureReason,
+  });
+
+  // Keep only last 50 login records
+  if (this.loginHistory.length > 50) {
+    this.loginHistory = this.loginHistory.slice(-50);
+  }
+
+  return this.save();
+};
+
+// ==================== METHOD: Update device session ====================
+userSchema.methods.updateDeviceSession = function(deviceData, tokenId) {
+  const existingDeviceIndex = this.devices.findIndex(
+    d => d.deviceId === deviceData.deviceId
+  );
+
+  if (existingDeviceIndex >= 0) {
+    // Update existing device
+    this.devices[existingDeviceIndex].lastSeen = new Date();
+    this.devices[existingDeviceIndex].sessions.push({
+      sessionId: crypto.randomBytes(16).toString('hex'),
+      tokenId,
+      loginTime: new Date(),
+      lastActivity: new Date(),
+      isActive: true,
+    });
+    
+    // Keep only last 10 sessions
+    if (this.devices[existingDeviceIndex].sessions.length > 10) {
+      this.devices[existingDeviceIndex].sessions = 
+        this.devices[existingDeviceIndex].sessions.slice(-10);
+    }
+  } else {
+    // Add new device
+    this.devices.push(deviceData);
+  }
+
+  return this.save();
+};
+
+// ==================== METHOD: Deactivate session ====================
+userSchema.methods.deactivateSession = function(tokenId) {
+  for (let i = 0; i < this.devices.length; i++) {
+    const device = this.devices[i];
+    const sessionIndex = device.sessions.findIndex(s => s.tokenId === tokenId);
+    
+    if (sessionIndex >= 0) {
+      device.sessions[sessionIndex].isActive = false;
+      device.sessions[sessionIndex].logoutTime = new Date();
+      break;
+    }
+  }
+  
+  return this.save();
+};
+
+// ==================== VIRTUAL: Full name ====================
 userSchema.virtual("fullName").get(function () {
   return this.name;
 });
 
-// Virtual for isSocialLogin
+// ==================== VIRTUAL: Is social login ====================
 userSchema.virtual("isSocialLogin").get(function () {
   return this.provider !== "local";
 });
 
-// ==================== UPDATED toJSON TRANSFORM ====================
+// ==================== toJSON TRANSFORM ====================
 userSchema.set("toJSON", {
   virtuals: true,
   transform: function (doc, ret) {
@@ -399,19 +574,17 @@ userSchema.set("toJSON", {
     delete ret.loginAttempts;
     delete ret.lockUntil;
     delete ret.__v;
-    delete ret.passwordHistory; // Don't expose password history
+    delete ret.passwordHistory;
 
-    // Calculate profileImageUrl using the method
     ret.profileImageUrl = doc.getProfileImage ? doc.getProfileImage() : 
                          (ret.avatar || "https://cdn-icons-png.flaticon.com/512/149/149071.png");
     
-    // Ensure we always have a valid profileImageUrl
     if (!ret.profileImageUrl) {
       ret.profileImageUrl = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
     }
     
-    // Add profileImage and googleProfileImage fields for frontend
     ret.profileImage = doc.profileImage || null;
+    ret.profileImageKey = doc.profileImageKey || null;
     ret.googleProfileImage = doc.googleProfileImage || null;
     ret.avatar = doc.avatar || "https://cdn-icons-png.flaticon.com/512/149/149071.png";
     

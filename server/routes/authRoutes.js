@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const authController = require("../controllers/authController");
 const tokenController = require("../controllers/tokenController");
+const upload = require("../middleware/uploadMiddleware");
 const {
   validateRegister,
   validateLogin,
@@ -19,11 +20,30 @@ const { protect, refreshToken, logout, logoutAll } = require("../middleware/auth
 router.get("/password-requirements", getPasswordRequirements);
 router.get("/password-expiration", protect, authController.checkPasswordExpiration);
 
-// OTP-based Registration routes
+// ==================== PROFILE IMAGE UPLOAD ROUTES ====================
+router.post(
+  "/profile/upload-image",
+  protect,
+  upload.single('image'),
+  authController.uploadProfileImage
+);
+
+router.post(
+  "/profile/generate-upload-url",
+  protect,
+  authController.generateUploadUrl
+);
+
+// ==================== DEVICE & SESSION ROUTES ====================
+router.get("/devices", protect, authController.getUserDevices);
+router.get("/login-history", protect, authController.getLoginHistory);
+router.delete("/devices/:deviceId", protect, authController.revokeDevice);
+
+// ==================== OTP-based Registration routes ====================
 router.post(
   "/register/initiate",
   validateRegister,
-  validatePasswordSecurity, // Add password security check
+  validatePasswordSecurity,
   authController.initiateRegister,
 );
 router.post(
@@ -34,7 +54,7 @@ router.post(
 router.post("/register/resend-otp", authController.resendOTP);
 router.get("/register/status/:email", authController.checkRegistrationStatus);
 
-// OTP-based Forgot Password routes
+// ==================== OTP-based Forgot Password routes ====================
 router.post(
   "/forgot-password/initiate",
   validateForgotPassword,
@@ -52,18 +72,18 @@ router.post(
 router.put(
   "/reset-password/:resetToken",
   validateResetPassword,
-  validatePasswordSecurity, // Add password security check
+  validatePasswordSecurity,
   authController.resetPasswordWithToken,
 );
 
-// Password setup for users without passwords
+// ==================== Password setup for users without passwords ====================
 router.post(
   "/setup-password",
-  validatePasswordSecurity, // Add password security check
+  validatePasswordSecurity,
   authController.setupPassword
 );
 
-// Legacy routes (keep for compatibility)
+// ==================== Legacy routes (keep for compatibility) ====================
 router.post(
   "/forgot-password",
   validateForgotPassword,
@@ -72,33 +92,33 @@ router.post(
 router.put(
   "/reset-password-legacy/:resetToken",
   validateResetPassword,
-  validatePasswordSecurity, // Add password security check
+  validatePasswordSecurity,
   authController.resetPassword,
 );
 
-// Google OAuth routes
+// ==================== Google OAuth routes ====================
 router.get("/google/client-id", authController.getGoogleClientId);
 router.post("/google/token", authController.googleTokenAuth);
 
-// Existing routes
+// ==================== Existing routes ====================
 router.post("/login", validateLogin, authController.login);
 router.post("/register-legacy", validateRegister, validatePasswordSecurity, authController.register);
 
-// Refresh token & logout routes
+// ==================== Refresh token & logout routes ====================
 router.post("/refresh", refreshToken);
 router.post("/logout", logout);
 router.post("/logout-all", protect, logoutAll);
 router.get("/sessions", protect, tokenController.getUserSessions);
 router.delete("/sessions/:tokenId", protect, tokenController.revokeSession);
 
-// Admin routes
+// ==================== Admin routes ====================
 router.get("/admin/sessions/:userId", protect, tokenController.adminGetUserSessions);
 router.post("/admin/cleanup-tokens", protect, tokenController.adminCleanupTokens);
 
-// Check authentication status
+// ==================== Check authentication status ====================
 router.get("/check", authController.checkAuth);
 
-// Protected routes
+// ==================== Protected routes ====================
 router.get("/profile", protect, authController.getProfile);
 router.put(
   "/update-profile",
@@ -111,7 +131,7 @@ router.post(
   "/change-password",
   protect,
   validateChangePassword,
-  validatePasswordSecurity, // Add password security check
+  validatePasswordSecurity,
   authController.changePassword,
 );
 

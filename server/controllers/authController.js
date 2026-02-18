@@ -10,20 +10,21 @@ const { logger } = require("../utils/logger");
 const { handleGoogleAuth } = require("../services/googleAuth.OAuth");
 const tokenController = require("./tokenController");
 const passwordSecurity = require("../utils/passwordSecurity");
+const deviceService = require("../services/deviceService");
+const s3Service = require("../services/s3Service");
+const crypto = require("crypto");
 
 // ==================== HELPER FUNCTIONS ====================
 
 /**
  * Generate access token (short-lived)
- * @param {string} userId - User ID
- * @returns {string} JWT access token
  */
 const generateAccessToken = (userId) => {
   return jwt.sign(
     {
       id: userId,
       type: "access",
-      jti: require("crypto").randomBytes(16).toString("hex"),
+      jti: crypto.randomBytes(16).toString("hex"),
     },
     process.env.JWT_ACCESS_SECRET || process.env.JWT_SECRET,
     {
@@ -34,15 +35,13 @@ const generateAccessToken = (userId) => {
 
 /**
  * Generate refresh token (long-lived)
- * @param {string} userId - User ID
- * @returns {string} JWT refresh token
  */
 const generateRefreshToken = (userId) => {
   return jwt.sign(
     {
       id: userId,
       type: "refresh",
-      jti: require("crypto").randomBytes(16).toString("hex"),
+      jti: crypto.randomBytes(16).toString("hex"),
     },
     process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET + "refresh",
     {
@@ -71,14 +70,12 @@ const storeRefreshToken = async (userId, refreshToken, req = null) => {
       lastActivity: new Date().toISOString(),
     };
 
-    // Store in Redis with auto-expiry
     await redis.setex(
       `refresh_token:${tokenId}`,
       expiresIn,
       JSON.stringify(sessionData),
     );
 
-    // Add to user's session set
     await redis.sadd(`user_sessions:${userId}`, tokenId);
     await redis.expire(`user_sessions:${userId}`, expiresIn);
 
@@ -96,22 +93,20 @@ const storeRefreshToken = async (userId, refreshToken, req = null) => {
 const setTokenCookies = (res, accessToken, refreshToken) => {
   const isProduction = process.env.NODE_ENV === "production";
 
-  // Access Token Cookie
   res.cookie("accessToken", accessToken, {
     httpOnly: true,
     secure: isProduction,
     sameSite: isProduction ? "strict" : "lax",
-    maxAge: 15 * 60 * 1000, // 15 minutes
+    maxAge: 15 * 60 * 1000,
     path: "/",
     domain: isProduction ? process.env.COOKIE_DOMAIN : undefined,
   });
 
-  // Refresh Token Cookie
   res.cookie("refreshToken", refreshToken, {
     httpOnly: true,
     secure: isProduction,
     sameSite: isProduction ? "strict" : "lax",
-    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    maxAge: 7 * 24 * 60 * 60 * 1000,
     path: "/api/auth/refresh",
     domain: isProduction ? process.env.COOKIE_DOMAIN : undefined,
   });
@@ -205,6 +200,21 @@ const revokeRefreshToken = async (refreshToken) => {
 };
 
 /**
+ * Revoke refresh token by JTI
+ */
+const revokeRefreshTokenByJti = async (jti) => {
+  try {
+    const redis = require("../config/redis");
+    await redis.del(`refresh_token:${jti}`);
+    logger.info("✅ Refresh token revoked by JTI", { jti });
+    return true;
+  } catch (error) {
+    logger.error("❌ Error revoking refresh token by JTI:", error);
+    return false;
+  }
+};
+
+/**
  * Revoke all user tokens
  */
 const revokeAllUserTokens = async (userId) => {
@@ -280,16 +290,16 @@ const sendTokenResponse = async (user, statusCode, res, message) => {
       provider: user.provider,
       avatar: user.avatar,
       profileImage: user.profileImage || null,
+      profileImageKey: user.profileImageKey || null,
       googleProfileImage: user.googleProfileImage || null,
       isVerified: user.isVerified,
-      profileImageUrl: user.getProfileImage
-        ? user.getProfileImage()
-        : user.avatar ||
-          "https://cdn-icons-png.flaticon.com/512/149/149071.png",
-      // ==================== NEW: Password expiration info ====================
+      profileImageUrl: user.getProfileImage ? user.getProfileImage() : null,
       passwordExpiration: user.passwordNeedsChange
         ? user.passwordNeedsChange()
         : null,
+      devices: user.devices
+        ? user.devices.map((d) => deviceService.formatDeviceForDisplay(d))
+        : [],
     };
 
     logger.info("✅ Token response sent with HTTP-only cookies", {
@@ -310,94 +320,7 @@ const sendTokenResponse = async (user, statusCode, res, message) => {
   }
 };
 
-// Legacy generateToken
-const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRE || "7d",
-  });
-};
-
-// Legacy sendTokenResponse
-const legacySendTokenResponse = (user, statusCode, res, message) => {
-  const token = generateToken(user._id);
-
-  const userResponse = {
-    id: user._id,
-    name: user.name,
-    email: user.email,
-    role: user.role,
-    provider: user.provider,
-    avatar: user.avatar,
-    profileImage: user.profileImage || null,
-    googleProfileImage: user.googleProfileImage || null,
-    isVerified: user.isVerified,
-    profileImageUrl: user.getProfileImage
-      ? user.getProfileImage()
-      : user.avatar || "https://cdn-icons-png.flaticon.com/512/149/149071.png",
-  };
-
-  res.status(statusCode).json({
-    success: true,
-    message,
-    token,
-    user: userResponse,
-  });
-};
-
-// ==================== GOOGLE AUTH ====================
-
-exports.getGoogleClientId = (req, res) => {
-  try {
-    const clientId = process.env.GOOGLE_CLIENT_ID;
-
-    if (!clientId) {
-      return res.status(500).json({
-        success: false,
-        message: "Google authentication is not configured on the server",
-      });
-    }
-
-    res.status(200).json({
-      success: true,
-      clientId: clientId,
-    });
-  } catch (error) {
-    logger.error("Get Google client ID error:", error);
-    res.status(500).json({
-      success: false,
-      message: "Server error",
-    });
-  }
-};
-
-exports.googleTokenAuth = async (req, res) => {
-  try {
-    const { token: googleToken } = req.body;
-
-    if (!googleToken) {
-      return res.status(400).json({
-        success: false,
-        message: "Google token is required",
-      });
-    }
-
-    const { user, isNew } = await handleGoogleAuth(googleToken, req);
-    const message = isNew
-      ? "Account created with Google"
-      : "Google login successful";
-    const statusCode = isNew ? 201 : 200;
-
-    return await sendTokenResponse(user, statusCode, res, message);
-  } catch (error) {
-    logger.error("Google Token Auth Error:", error);
-    res.status(401).json({
-      success: false,
-      message: "Invalid Google token",
-    });
-  }
-};
-
-// ==================== UPDATED: Login with password expiration check ====================
+// ==================== UPDATED: LOGIN WITH DEVICE TRACKING ====================
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -411,10 +334,28 @@ exports.login = async (req, res) => {
     }
 
     const user = await User.findOne({ email }).select(
-      "+password +passwordHistory",
+      "+password +passwordHistory +devices +loginHistory",
     );
 
     if (!user) {
+      // Log failed attempt (user not found)
+      const failedDeviceData = deviceService.createDeviceSession(
+        req,
+        "unknown",
+      );
+      if (user) {
+        await user.addLoginHistory({
+          ipAddress: req.ip,
+          userAgent: req.get("user-agent"),
+          deviceId: failedDeviceData.deviceId,
+          deviceName: failedDeviceData.deviceName,
+          location: failedDeviceData.location,
+          loginType: "email",
+          success: false,
+          failureReason: "User not found",
+        });
+      }
+
       return res.status(401).json({
         success: false,
         message: "Invalid email or password",
@@ -442,9 +383,28 @@ exports.login = async (req, res) => {
     const isPasswordMatch = await bcrypt.compare(password, user.password);
 
     if (!isPasswordMatch) {
+      // Log failed attempt (wrong password)
+      const failedDeviceData = deviceService.createDeviceSession(
+        req,
+        "unknown",
+      );
+      await user.addLoginHistory({
+        ipAddress: req.ip,
+        userAgent: req.get("user-agent"),
+        deviceId: failedDeviceData.deviceId,
+        deviceName: failedDeviceData.deviceName,
+        location: failedDeviceData.location,
+        loginType: "email",
+        success: false,
+        failureReason: "Invalid password",
+      });
+
       if (user.incrementLoginAttempts) {
         await user.incrementLoginAttempts();
       }
+
+      await user.save();
+
       return res.status(401).json({
         success: false,
         message: "Invalid email or password",
@@ -460,27 +420,66 @@ exports.login = async (req, res) => {
       });
     }
 
+    // Generate tokens
+    const accessToken = generateAccessToken(user._id);
+    const refreshToken = generateRefreshToken(user._id);
+    const decoded = jwt.decode(refreshToken);
+
+    // Create device session
+    const deviceSession = deviceService.createDeviceSession(req, decoded.jti);
+
+    // Update user devices
+    await user.updateDeviceSession(deviceSession, decoded.jti);
+
+    // Add to login history
+    await user.addLoginHistory({
+      ipAddress: req.ip,
+      userAgent: req.get("user-agent"),
+      deviceId: deviceSession.deviceId,
+      deviceName: deviceSession.deviceName,
+      location: deviceSession.location,
+      loginType: "email",
+      success: true,
+    });
+
     if (user.resetLoginAttempts) {
       await user.resetLoginAttempts();
     }
 
-    if (user.updateLastLogin) {
-      await user.updateLastLogin(req.ip, req.get("user-agent"));
-    }
+    // Store tokens in Redis
+    await storeRefreshToken(user._id.toString(), refreshToken, req);
+    setTokenCookies(res, accessToken, refreshToken);
 
-    // ==================== NEW: Check password expiration ====================
-    const passwordExpiration = user.passwordNeedsChange
-      ? user.passwordNeedsChange()
-      : null;
+    // Prepare user response
+    const userResponse = {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      provider: user.provider,
+      avatar: user.avatar,
+      profileImage: user.profileImage || null,
+      profileImageKey: user.profileImageKey || null,
+      googleProfileImage: user.googleProfileImage || null,
+      isVerified: user.isVerified,
+      profileImageUrl: user.getProfileImage ? user.getProfileImage() : null,
+      devices: user.devices.map((d) => deviceService.formatDeviceForDisplay(d)),
+      currentDevice: deviceService.formatDeviceForDisplay(deviceSession),
+      passwordExpiration: user.passwordNeedsChange
+        ? user.passwordNeedsChange()
+        : null,
+    };
 
-    // Add warning if password is about to expire
-    if (passwordExpiration && passwordExpiration.shouldWarn) {
-      logger.info(
-        `⚠️ Password for ${email} will expire in ${passwordExpiration.daysRemaining} days`,
-      );
-    }
+    logger.info(`✅ Login successful for: ${email}`, {
+      device: deviceSession.deviceName,
+      location: deviceSession.location,
+    });
 
-    return await sendTokenResponse(user, 200, res, "Login successful");
+    res.status(200).json({
+      success: true,
+      message: "Login successful",
+      user: userResponse,
+    });
   } catch (error) {
     logger.error("❌ Login error:", error);
     return res.status(500).json({
@@ -490,7 +489,412 @@ exports.login = async (req, res) => {
   }
 };
 
-// ==================== UPDATED: Register with password security ====================
+// ==================== UPDATED: GOOGLE LOGIN WITH DEVICE TRACKING ====================
+exports.googleTokenAuth = async (req, res) => {
+  try {
+    const { token: googleToken } = req.body;
+
+    if (!googleToken) {
+      return res.status(400).json({
+        success: false,
+        message: "Google token is required",
+      });
+    }
+
+    const { user, isNew } = await handleGoogleAuth(googleToken, req);
+
+    // Generate tokens
+    const accessToken = generateAccessToken(user._id);
+    const refreshToken = generateRefreshToken(user._id);
+    const decoded = jwt.decode(refreshToken);
+
+    // Create device session
+    const deviceSession = deviceService.createDeviceSession(req, decoded.jti);
+
+    // Update user devices
+    await user.updateDeviceSession(deviceSession, decoded.jti);
+
+    // Add to login history
+    await user.addLoginHistory({
+      ipAddress: req.ip,
+      userAgent: req.get("user-agent"),
+      deviceId: deviceSession.deviceId,
+      deviceName: deviceSession.deviceName,
+      location: deviceSession.location,
+      loginType: "google",
+      success: true,
+    });
+
+    // Store tokens in Redis
+    await storeRefreshToken(user._id.toString(), refreshToken, req);
+    setTokenCookies(res, accessToken, refreshToken);
+
+    const message = isNew
+      ? "Account created with Google"
+      : "Google login successful";
+    const statusCode = isNew ? 201 : 200;
+
+    const userResponse = {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      provider: user.provider,
+      avatar: user.avatar,
+      profileImage: user.profileImage || null,
+      profileImageKey: user.profileImageKey || null,
+      googleProfileImage: user.googleProfileImage || null,
+      isVerified: user.isVerified,
+      profileImageUrl: user.getProfileImage ? user.getProfileImage() : null,
+      devices: user.devices.map((d) => deviceService.formatDeviceForDisplay(d)),
+      currentDevice: deviceService.formatDeviceForDisplay(deviceSession),
+    };
+
+    logger.info(`✅ Google login successful for: ${user.email}`, {
+      device: deviceSession.deviceName,
+      location: deviceSession.location,
+      isNew,
+    });
+
+    res.status(statusCode).json({
+      success: true,
+      message,
+      user: userResponse,
+    });
+  } catch (error) {
+    logger.error("❌ Google Token Auth Error:", error);
+    res.status(401).json({
+      success: false,
+      message: "Invalid Google token",
+    });
+  }
+};
+
+// ==================== UPDATED: LOGOUT WITH DEVICE CLEANUP ====================
+exports.logout = async (req, res) => {
+  try {
+    const { refreshToken } = req.cookies;
+
+    if (refreshToken) {
+      const decoded = jwt.decode(refreshToken);
+
+      // Deactivate session in user document
+      if (decoded?.id) {
+        const user = await User.findById(decoded.id);
+        if (user) {
+          await user.deactivateSession(decoded.jti);
+        }
+      }
+
+      // Revoke from Redis
+      await revokeRefreshToken(refreshToken);
+    }
+
+    clearTokenCookies(res);
+
+    res.status(200).json({
+      success: true,
+      message: "Logged out successfully",
+    });
+  } catch (error) {
+    logger.error("Logout error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error during logout",
+    });
+  }
+};
+
+// ==================== UPDATED: LOGOUT ALL DEVICES ====================
+exports.logoutAll = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    // Get all session token IDs for user
+    const redis = require("../config/redis");
+    const tokenIds = await redis.smembers(`user_sessions:${userId}`);
+
+    // Deactivate all sessions in user document
+    const user = await User.findById(userId);
+    if (user) {
+      user.devices.forEach((device) => {
+        device.sessions.forEach((session) => {
+          session.isActive = false;
+          session.logoutTime = new Date();
+        });
+      });
+      await user.save();
+    }
+
+    // Revoke all tokens from Redis
+    await revokeAllUserTokens(userId);
+
+    // Clear cookie
+    clearTokenCookies(res);
+
+    res.status(200).json({
+      success: true,
+      message: "Logged out from all devices successfully",
+    });
+  } catch (error) {
+    logger.error("Logout all error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error during logout",
+    });
+  }
+};
+
+// ==================== UPLOAD PROFILE IMAGE TO S3 ====================
+exports.uploadProfileImage = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        message: "No image file provided",
+      });
+    }
+
+    // Validate image
+    const validation = s3Service.validateImage(req.file);
+    if (!validation.valid) {
+      return res.status(400).json({
+        success: false,
+        message: validation.error,
+      });
+    }
+
+    const userId = req.user.id;
+
+    // Upload to S3
+    const uploadResult = await s3Service.uploadProfileImage(
+      req.file.buffer,
+      userId,
+      req.file.mimetype,
+    );
+
+    // Update user record
+    const user = await User.findById(userId);
+
+    // Delete old image if exists
+    if (user.profileImageKey) {
+      await s3Service.deleteImage(user.profileImageKey);
+    }
+
+    user.profileImage = uploadResult.imageUrl;
+    user.profileImageKey = uploadResult.key;
+    user.profileImageThumbnail = uploadResult.imageUrl;
+    await user.save();
+
+    // Log activity
+    await user.addSecurityLog(
+      "profile_image_updated",
+      req.ip,
+      req.get("user-agent"),
+      { imageKey: uploadResult.key },
+    );
+
+    res.status(200).json({
+      success: true,
+      message: "Profile image uploaded successfully",
+      imageUrl: uploadResult.imageUrl,
+      imageKey: uploadResult.key,
+    });
+  } catch (error) {
+    logger.error("❌ Profile image upload error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to upload profile image",
+    });
+  }
+};
+
+// ==================== GENERATE UPLOAD URL FOR CLIENT-SIDE UPLOAD ====================
+exports.generateUploadUrl = async (req, res) => {
+  try {
+    const { fileType } = req.body;
+    const userId = req.user.id;
+
+    if (!fileType || !fileType.startsWith("image/")) {
+      return res.status(400).json({
+        success: false,
+        message: "Valid image file type is required",
+      });
+    }
+
+    const uploadData = await s3Service.generateUploadUrl(userId, fileType);
+
+    res.status(200).json({
+      success: true,
+      ...uploadData,
+    });
+  } catch (error) {
+    logger.error("❌ Generate upload URL error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to generate upload URL",
+    });
+  }
+};
+
+// ==================== GET USER DEVICES ====================
+exports.getUserDevices = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+
+    const formattedDevices = user.devices.map((device) =>
+      deviceService.formatDeviceForDisplay(device),
+    );
+
+    // Get current device from refresh token
+    const { refreshToken } = req.cookies;
+    let currentDeviceId = null;
+
+    if (refreshToken) {
+      const decoded = jwt.decode(refreshToken);
+      if (decoded?.jti) {
+        const currentSession = user.devices.find((d) =>
+          d.sessions.some((s) => s.tokenId === decoded.jti),
+        );
+        currentDeviceId = currentSession?.deviceId;
+      }
+    }
+
+    res.status(200).json({
+      success: true,
+      devices: formattedDevices,
+      currentDeviceId,
+    });
+  } catch (error) {
+    logger.error("❌ Get user devices error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to get devices",
+    });
+  }
+};
+
+// ==================== GET LOGIN HISTORY ====================
+exports.getLoginHistory = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select("loginHistory");
+
+    const history = user.loginHistory
+      .sort((a, b) => b.timestamp - a.timestamp)
+      .map((log) => ({
+        timestamp: log.timestamp,
+        ipAddress: log.ipAddress,
+        location: log.location
+          ? `${log.location.city || ""}, ${log.location.country || ""}`.replace(
+              /^, |, $/g,
+              "",
+            ) || "Unknown"
+          : "Unknown",
+        deviceName: log.deviceName || "Unknown Device",
+        loginType: log.loginType,
+        success: log.success,
+        failureReason: log.failureReason,
+      }));
+
+    res.status(200).json({
+      success: true,
+      history,
+    });
+  } catch (error) {
+    logger.error("❌ Get login history error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to get login history",
+    });
+  }
+};
+
+// ==================== REVOKE DEVICE ====================
+exports.revokeDevice = async (req, res) => {
+  try {
+    const { deviceId } = req.params;
+    const userId = req.user.id;
+
+    const user = await User.findById(userId);
+
+    const device = user.devices.find((d) => d.deviceId === deviceId);
+
+    if (!device) {
+      return res.status(404).json({
+        success: false,
+        message: "Device not found",
+      });
+    }
+
+    // Check if trying to revoke current device
+    const { refreshToken } = req.cookies;
+    if (refreshToken) {
+      const decoded = jwt.decode(refreshToken);
+      if (decoded?.jti) {
+        const isCurrent = device.sessions.some(
+          (s) => s.tokenId === decoded.jti,
+        );
+        if (isCurrent) {
+          return res.status(400).json({
+            success: false,
+            message: "Cannot revoke current device. Use logout instead.",
+          });
+        }
+      }
+    }
+
+    // Revoke all sessions for this device
+    for (const session of device.sessions) {
+      if (session.tokenId) {
+        await revokeRefreshTokenByJti(session.tokenId);
+      }
+    }
+
+    // Remove device
+    user.devices = user.devices.filter((d) => d.deviceId !== deviceId);
+    await user.save();
+
+    logger.info("✅ Device revoked", { userId, deviceId });
+
+    res.status(200).json({
+      success: true,
+      message: "Device revoked successfully",
+    });
+  } catch (error) {
+    logger.error("❌ Revoke device error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to revoke device",
+    });
+  }
+};
+
+// ==================== GET GOOGLE CLIENT ID ====================
+exports.getGoogleClientId = (req, res) => {
+  try {
+    const clientId = process.env.GOOGLE_CLIENT_ID;
+
+    if (!clientId) {
+      return res.status(500).json({
+        success: false,
+        message: "Google authentication is not configured on the server",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      clientId: clientId,
+    });
+  } catch (error) {
+    logger.error("Get Google client ID error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+};
+
+// ==================== REGISTRATION METHODS ====================
 exports.initiateRegister = async (req, res) => {
   try {
     const { name, email, password, confirmPassword } = req.body;
@@ -513,7 +917,6 @@ exports.initiateRegister = async (req, res) => {
       });
     }
 
-    // ==================== NEW: Comprehensive password validation ====================
     const passwordValidation = await passwordSecurity.validatePassword(
       password,
       null,
@@ -544,7 +947,6 @@ exports.initiateRegister = async (req, res) => {
       });
     }
 
-    // Check if registration already in progress
     const pendingRegistration =
       await RedisService.getPendingRegistration(email);
     if (pendingRegistration) {
@@ -575,7 +977,6 @@ exports.initiateRegister = async (req, res) => {
     const otp = OTPGenerator.generateOTP();
     logger.info(`✅ Generated OTP for ${email}: ${otp}`);
 
-    // Hash password with increased salt rounds (12)
     const salt = await bcrypt.genSalt(12);
     const hashedPassword = await bcrypt.hash(password, salt);
 
@@ -639,7 +1040,6 @@ exports.initiateRegister = async (req, res) => {
   }
 };
 
-// ==================== UPDATED: Verify OTP and complete registration ====================
 exports.verifyOTPAndRegister = async (req, res) => {
   try {
     const { email, otp } = req.body;
@@ -709,8 +1109,6 @@ exports.verifyOTPAndRegister = async (req, res) => {
       });
     }
 
-    // ==================== NEW: Create user with password history ====================
-    console.log("🔍 Creating user with stored hash");
     const user = new User({
       name: pendingData.name,
       email: pendingData.email,
@@ -720,7 +1118,6 @@ exports.verifyOTPAndRegister = async (req, res) => {
       lastPasswordChange: new Date(),
     });
 
-    // Add initial password to history
     user.passwordHistory = [
       {
         password: pendingData.password,
@@ -733,10 +1130,9 @@ exports.verifyOTPAndRegister = async (req, res) => {
 
     await user.save();
 
-    console.log(`✅ User created in database: ${email}`);
+    logger.info(`✅ User created in database: ${email}`);
 
     await RedisService.deletePendingRegistration(email);
-    console.log(`✅ Redis data cleaned up for: ${email}`);
 
     return await sendTokenResponse(
       user,
@@ -753,398 +1149,7 @@ exports.verifyOTPAndRegister = async (req, res) => {
   }
 };
 
-// ==================== UPDATED: Change Password with history check ====================
-exports.changePassword = async (req, res) => {
-  try {
-    const { currentPassword, newPassword, confirmNewPassword } = req.body;
-
-    if (!currentPassword || !newPassword || !confirmNewPassword) {
-      return res.status(400).json({
-        success: false,
-        message:
-          "Please provide current password, new password, and confirm password",
-      });
-    }
-
-    if (newPassword !== confirmNewPassword) {
-      return res.status(400).json({
-        success: false,
-        message: "New passwords do not match",
-      });
-    }
-
-    const user = await User.findById(req.user.id).select(
-      "+password +passwordHistory",
-    );
-
-    const isMatch = await bcrypt.compare(currentPassword, user.password);
-    if (!isMatch) {
-      return res.status(401).json({
-        success: false,
-        message: "Current password is incorrect",
-      });
-    }
-
-    // ==================== NEW: Comprehensive password validation ====================
-    const passwordValidation = await passwordSecurity.validatePassword(
-      newPassword,
-      user._id.toString(),
-      true,
-    );
-
-    if (!passwordValidation.isValid) {
-      return res.status(400).json({
-        success: false,
-        message: "Password does not meet security requirements",
-        errors: passwordValidation.errors,
-        strength: passwordValidation.strength,
-      });
-    }
-
-    // ==================== NEW: Check if password is in history ====================
-    const historyCheck = await user.isPasswordInHistory(newPassword);
-    if (historyCheck.inHistory) {
-      return res.status(400).json({
-        success: false,
-        message:
-          historyCheck.message ||
-          "You have used this password recently. Please choose a different password.",
-      });
-    }
-
-    // Hash new password with increased salt rounds
-    const salt = await bcrypt.genSalt(12);
-    const hashedPassword = await bcrypt.hash(newPassword, salt);
-
-    // ==================== NEW: Add old password to history before changing ====================
-    await user.addToPasswordHistory(currentPassword, {
-      changedBy: "user",
-      ipAddress: req.ip,
-      userAgent: req.get("user-agent"),
-    });
-
-    // Update password
-    user.password = hashedPassword;
-    user.lastPasswordChange = new Date();
-    await user.save();
-
-    // ==================== NEW: Log security event ====================
-    if (user.addSecurityLog) {
-      await user.addSecurityLog(
-        "password_changed",
-        req.ip,
-        req.get("user-agent"),
-        { method: "user_change" },
-      );
-    }
-
-    // Revoke all sessions except current one
-    await revokeAllUserTokens(user._id.toString());
-
-    logger.info(`✅ Password changed successfully for user: ${user.email}`);
-
-    res.status(200).json({
-      success: true,
-      message:
-        "Password changed successfully. Please login again with your new password.",
-    });
-  } catch (error) {
-    logger.error("❌ Change password error:", error);
-    res.status(500).json({
-      success: false,
-      message: "Server error",
-    });
-  }
-};
-
-// ==================== UPDATED: Reset password with token ====================
-exports.resetPasswordWithToken = async (req, res) => {
-  try {
-    const { resetToken } = req.params;
-    const { password, confirmPassword, email } = req.body;
-
-    if (!password || !confirmPassword || !email) {
-      return res.status(400).json({
-        success: false,
-        message: "Email, password and confirm password are required",
-      });
-    }
-
-    if (password !== confirmPassword) {
-      return res.status(400).json({
-        success: false,
-        message: "Passwords do not match",
-      });
-    }
-
-    const isValidToken = await RedisService.verifyPasswordResetToken(
-      email,
-      resetToken,
-    );
-    if (!isValidToken) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid or expired reset token",
-      });
-    }
-
-    let decoded;
-    try {
-      const user = await User.findOne({ email });
-      if (!user) {
-        return res.status(400).json({
-          success: false,
-          message: "User not found",
-        });
-      }
-
-      decoded = jwt.verify(
-        resetToken,
-        process.env.JWT_SECRET + user._id.toString(),
-      );
-
-      if (decoded.type !== "password_reset" || decoded.email !== email) {
-        return res.status(400).json({
-          success: false,
-          message: "Invalid reset token",
-        });
-      }
-    } catch (error) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid or expired reset token",
-      });
-    }
-
-    const user = await User.findById(decoded.id).select(
-      "+password +passwordHistory",
-    );
-
-    if (!user) {
-      return res.status(400).json({
-        success: false,
-        message: "User not found",
-      });
-    }
-
-    // ==================== NEW: Comprehensive password validation ====================
-    const passwordValidation = await passwordSecurity.validatePassword(
-      password,
-      user._id.toString(),
-      true,
-    );
-
-    if (!passwordValidation.isValid) {
-      return res.status(400).json({
-        success: false,
-        message: "Password does not meet security requirements",
-        errors: passwordValidation.errors,
-        strength: passwordValidation.strength,
-      });
-    }
-
-    // ==================== NEW: Check if password is in history ====================
-    const historyCheck = await user.isPasswordInHistory(password);
-    if (historyCheck.inHistory) {
-      return res.status(400).json({
-        success: false,
-        message:
-          historyCheck.message ||
-          "You have used this password recently. Please choose a different password.",
-      });
-    }
-
-    // Hash new password with increased salt rounds
-    const salt = await bcrypt.genSalt(12);
-    const hashedPassword = await bcrypt.hash(password, salt);
-
-    // ==================== NEW: Add old password to history if exists ====================
-    if (user.password) {
-      await user.addToPasswordHistory(password, {
-        changedBy: "reset",
-        ipAddress: req.ip,
-        userAgent: req.get("user-agent"),
-      });
-    } else {
-      // First time password setup - add to history
-      user.passwordHistory = [
-        {
-          password: hashedPassword,
-          changedAt: new Date(),
-          changedBy: "reset",
-          ipAddress: req.ip,
-          userAgent: req.get("user-agent"),
-        },
-      ];
-    }
-
-    user.password = hashedPassword;
-    user.lastPasswordChange = new Date();
-    await user.save();
-
-    // Revoke all existing sessions after password reset
-    await revokeAllUserTokens(user._id.toString());
-
-    // Clean up Redis data
-    await RedisService.deletePendingPasswordReset(email);
-    await RedisService.deletePasswordResetToken(email);
-    await RedisService.deleteOTP(email);
-
-    // Send success email
-    try {
-      await EmailService.sendPasswordResetSuccessEmail(email, user.name);
-    } catch (emailError) {
-      logger.error("Failed to send success email:", emailError.message);
-    }
-
-    res.status(200).json({
-      success: true,
-      message:
-        "Password reset successful. You can now login with your new password.",
-    });
-  } catch (error) {
-    logger.error("❌ Reset password error:", error);
-    res.status(500).json({
-      success: false,
-      message: "Server error",
-    });
-  }
-};
-
-// ==================== NEW: Setup password with security checks ====================
-exports.setupPassword = async (req, res) => {
-  try {
-    const { email, password, confirmPassword } = req.body;
-
-    if (!email || !password || !confirmPassword) {
-      return res.status(400).json({
-        success: false,
-        message: "Email, password and confirm password are required",
-      });
-    }
-
-    if (password !== confirmPassword) {
-      return res.status(400).json({
-        success: false,
-        message: "Passwords do not match",
-      });
-    }
-
-    const user = await User.findOne({ email }).select(
-      "+password +passwordHistory",
-    );
-
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: "User not found",
-      });
-    }
-
-    const userWithPassword = await User.findOne({ email }).select("+password");
-    if (userWithPassword && userWithPassword.password) {
-      return res.status(400).json({
-        success: false,
-        message:
-          "Password already set for this account. Please use login instead.",
-      });
-    }
-
-    // ==================== NEW: Comprehensive password validation ====================
-    const passwordValidation = await passwordSecurity.validatePassword(
-      password,
-      user._id.toString(),
-      true,
-    );
-
-    if (!passwordValidation.isValid) {
-      return res.status(400).json({
-        success: false,
-        message: "Password does not meet security requirements",
-        errors: passwordValidation.errors,
-        strength: passwordValidation.strength,
-      });
-    }
-
-    console.log("🔍 Setting up password for user:", email);
-    const salt = await bcrypt.genSalt(12);
-    const hashedPassword = await bcrypt.hash(password, salt);
-
-    user.password = hashedPassword;
-    user.provider = "local";
-    user.lastPasswordChange = new Date();
-
-    // ==================== NEW: Add to password history ====================
-    user.passwordHistory = [
-      {
-        password: hashedPassword,
-        changedAt: new Date(),
-        changedBy: "user",
-        ipAddress: req.ip,
-        userAgent: req.get("user-agent"),
-      },
-    ];
-
-    await user.save();
-
-    console.log(`✅ Password setup successful for: ${email}`);
-
-    res.status(200).json({
-      success: true,
-      message: "Password set successfully. You can now login.",
-    });
-  } catch (error) {
-    logger.error("❌ Setup password error:", error);
-    res.status(500).json({
-      success: false,
-      message: "Server error",
-    });
-  }
-};
-
-// ==================== NEW: Check password expiration status ====================
-exports.checkPasswordExpiration = async (req, res) => {
-  try {
-    const user = await User.findById(req.user.id);
-
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: "User not found",
-      });
-    }
-
-    const expirationStatus = user.passwordNeedsChange
-      ? user.passwordNeedsChange()
-      : {
-          needsChange: false,
-          daysRemaining: null,
-        };
-
-    res.status(200).json({
-      success: true,
-      expiration: expirationStatus,
-    });
-  } catch (error) {
-    logger.error("❌ Check password expiration error:", error);
-    res.status(500).json({
-      success: false,
-      message: "Server error",
-    });
-  }
-};
-
-// ==================== NEW: Get password requirements for frontend ====================
-exports.getPasswordRequirements = (req, res) => {
-  const requirements = passwordSecurity.getPasswordRequirements();
-  res.status(200).json({
-    success: true,
-    requirements,
-  });
-};
-
-// ==================== EXISTING FUNCTIONS (unchanged) ====================
-
+// ==================== REFRESH TOKEN ====================
 exports.refreshToken = async (req, res) => {
   try {
     const { refreshToken } = req.cookies;
@@ -1181,201 +1186,7 @@ exports.refreshToken = async (req, res) => {
   }
 };
 
-exports.logout = async (req, res) => {
-  try {
-    const { refreshToken } = req.cookies;
-
-    if (refreshToken) {
-      await revokeRefreshToken(refreshToken);
-    }
-
-    clearTokenCookies(res);
-
-    res.status(200).json({
-      success: true,
-      message: "Logged out successfully",
-    });
-  } catch (error) {
-    logger.error("Logout error:", error);
-    res.status(500).json({
-      success: false,
-      message: "Error during logout",
-    });
-  }
-};
-
-exports.logoutAll = async (req, res) => {
-  try {
-    const { accessToken } = req.cookies;
-
-    if (!accessToken) {
-      return res.status(401).json({
-        success: false,
-        message: "Not authenticated",
-      });
-    }
-
-    try {
-      const decoded = jwt.verify(
-        accessToken,
-        process.env.JWT_ACCESS_SECRET || process.env.JWT_SECRET,
-      );
-
-      if (decoded.type === "access") {
-        await revokeAllUserTokens(decoded.id);
-      }
-    } catch (error) {
-      const { refreshToken } = req.cookies;
-      if (refreshToken) {
-        const decoded = jwt.decode(refreshToken);
-        if (decoded?.id) {
-          await revokeAllUserTokens(decoded.id);
-        }
-      }
-    }
-
-    clearTokenCookies(res);
-
-    res.status(200).json({
-      success: true,
-      message: "Logged out from all devices successfully",
-    });
-  } catch (error) {
-    logger.error("Logout all error:", error);
-    res.status(500).json({
-      success: false,
-      message: "Error during logout",
-    });
-  }
-};
-
-exports.getSessions = async (req, res) => {
-  try {
-    const redis = require("../config/redis");
-    const { accessToken } = req.cookies;
-
-    if (!accessToken) {
-      return res.status(401).json({
-        success: false,
-        message: "Not authenticated",
-      });
-    }
-
-    let userId;
-    try {
-      const decoded = jwt.verify(
-        accessToken,
-        process.env.JWT_ACCESS_SECRET || process.env.JWT_SECRET,
-      );
-      userId = decoded.id;
-    } catch (error) {
-      return res.status(401).json({
-        success: false,
-        message: "Invalid token",
-      });
-    }
-
-    const tokenIds = await redis.smembers(`user_sessions:${userId}`);
-    const sessions = [];
-
-    for (const tokenId of tokenIds) {
-      const tokenData = await redis.get(`refresh_token:${tokenId}`);
-      if (tokenData) {
-        const session = JSON.parse(tokenData);
-        sessions.push({
-          tokenId: session.tokenId,
-          createdAt: session.createdAt,
-          lastActivity: session.lastActivity,
-          ip: session.ip,
-          userAgent: session.userAgent,
-          isCurrentSession: session.refreshToken === req.cookies.refreshToken,
-        });
-      }
-    }
-
-    sessions.sort(
-      (a, b) => new Date(b.lastActivity) - new Date(a.lastActivity),
-    );
-
-    res.status(200).json({
-      success: true,
-      sessions,
-    });
-  } catch (error) {
-    logger.error("Get sessions error:", error);
-    res.status(500).json({
-      success: false,
-      message: "Error retrieving sessions",
-    });
-  }
-};
-
-exports.revokeSession = async (req, res) => {
-  try {
-    const { tokenId } = req.params;
-    const redis = require("../config/redis");
-    const { accessToken } = req.cookies;
-
-    if (!accessToken) {
-      return res.status(401).json({
-        success: false,
-        message: "Not authenticated",
-      });
-    }
-
-    let userId;
-    try {
-      const decoded = jwt.verify(
-        accessToken,
-        process.env.JWT_ACCESS_SECRET || process.env.JWT_SECRET,
-      );
-      userId = decoded.id;
-    } catch (error) {
-      return res.status(401).json({
-        success: false,
-        message: "Invalid token",
-      });
-    }
-
-    const tokenData = await redis.get(`refresh_token:${tokenId}`);
-    if (!tokenData) {
-      return res.status(404).json({
-        success: false,
-        message: "Session not found",
-      });
-    }
-
-    const session = JSON.parse(tokenData);
-
-    if (session.userId !== userId.toString()) {
-      return res.status(403).json({
-        success: false,
-        message: "Not authorized to revoke this session",
-      });
-    }
-
-    if (session.refreshToken === req.cookies.refreshToken) {
-      return res.status(400).json({
-        success: false,
-        message: "Cannot revoke current session. Use logout instead.",
-      });
-    }
-
-    await revokeRefreshToken(session.refreshToken);
-
-    res.status(200).json({
-      success: true,
-      message: "Session revoked successfully",
-    });
-  } catch (error) {
-    logger.error("Revoke session error:", error);
-    res.status(500).json({
-      success: false,
-      message: "Error revoking session",
-    });
-  }
-};
-
+// ==================== CHECK AUTH ====================
 exports.checkAuth = async (req, res) => {
   try {
     const { accessToken } = req.cookies;
@@ -1409,7 +1220,6 @@ exports.checkAuth = async (req, res) => {
         });
       }
 
-      // ==================== NEW: Add password expiration info ====================
       const passwordExpiration = user.passwordNeedsChange
         ? user.passwordNeedsChange()
         : null;
@@ -1425,12 +1235,10 @@ exports.checkAuth = async (req, res) => {
           provider: user.provider,
           avatar: user.avatar,
           profileImage: user.profileImage,
+          profileImageKey: user.profileImageKey,
           googleProfileImage: user.googleProfileImage,
           isVerified: user.isVerified,
-          profileImageUrl: user.getProfileImage
-            ? user.getProfileImage()
-            : user.avatar ||
-              "https://cdn-icons-png.flaticon.com/512/149/149071.png",
+          profileImageUrl: user.getProfileImage ? user.getProfileImage() : null,
           passwordExpiration,
         },
       });
@@ -1466,12 +1274,12 @@ exports.checkAuth = async (req, res) => {
                   provider: user.provider,
                   avatar: user.avatar,
                   profileImage: user.profileImage,
+                  profileImageKey: user.profileImageKey,
                   googleProfileImage: user.googleProfileImage,
                   isVerified: user.isVerified,
                   profileImageUrl: user.getProfileImage
                     ? user.getProfileImage()
-                    : user.avatar ||
-                      "https://cdn-icons-png.flaticon.com/512/149/149071.png",
+                    : null,
                   passwordExpiration,
                 },
               });
@@ -1494,6 +1302,7 @@ exports.checkAuth = async (req, res) => {
   }
 };
 
+// ==================== GET PROFILE ====================
 exports.getProfile = async (req, res) => {
   try {
     const user = req.user;
@@ -1506,14 +1315,11 @@ exports.getProfile = async (req, res) => {
       provider: user.provider,
       avatar: user.avatar,
       profileImage: user.profileImage,
+      profileImageKey: user.profileImageKey,
       googleProfileImage: user.googleProfileImage,
       isVerified: user.isVerified,
       createdAt: user.createdAt,
-      profileImageUrl: user.getProfileImage
-        ? user.getProfileImage()
-        : user.avatar ||
-          "https://cdn-icons-png.flaticon.com/512/149/149071.png",
-      // ==================== NEW: Password expiration info ====================
+      profileImageUrl: user.getProfileImage ? user.getProfileImage() : null,
       passwordExpiration: user.passwordNeedsChange
         ? user.passwordNeedsChange()
         : null,
@@ -1531,13 +1337,18 @@ exports.getProfile = async (req, res) => {
   }
 };
 
+// ==================== UPDATE PROFILE ====================
 exports.updateProfile = async (req, res) => {
   try {
-    const { name, email, profileImage } = req.body;
+    const { name, email, phone, address, bio, dateOfBirth, gender } = req.body;
     const updateData = {};
 
     if (name) updateData.name = name;
-    if (profileImage) updateData.profileImage = profileImage;
+    if (phone) updateData.phone = phone;
+    if (address) updateData.address = address;
+    if (bio) updateData.bio = bio;
+    if (dateOfBirth) updateData.dateOfBirth = dateOfBirth;
+    if (gender) updateData.gender = gender;
 
     if (email) {
       const emailExists = await User.findOne({
@@ -1552,6 +1363,7 @@ exports.updateProfile = async (req, res) => {
         });
       }
       updateData.email = email;
+      updateData.lastEmailChange = new Date();
     }
 
     const user = await User.findByIdAndUpdate(req.user.id, updateData, {
@@ -1559,20 +1371,31 @@ exports.updateProfile = async (req, res) => {
       runValidators: true,
     });
 
+    // Log activity
+    await user.addSecurityLog(
+      "profile_updated",
+      req.ip,
+      req.get("user-agent"),
+      { updatedFields: Object.keys(updateData) },
+    );
+
     const userResponse = {
       id: user._id,
       name: user.name,
       email: user.email,
+      phone: user.phone,
+      address: user.address,
+      bio: user.bio,
+      dateOfBirth: user.dateOfBirth,
+      gender: user.gender,
       role: user.role,
       provider: user.provider,
       avatar: user.avatar,
       profileImage: user.profileImage,
+      profileImageKey: user.profileImageKey,
       googleProfileImage: user.googleProfileImage,
       isVerified: user.isVerified,
-      profileImageUrl: user.getProfileImage
-        ? user.getProfileImage()
-        : user.avatar ||
-          "https://cdn-icons-png.flaticon.com/512/149/149071.png",
+      profileImageUrl: user.getProfileImage ? user.getProfileImage() : null,
     };
 
     res.status(200).json({
@@ -1581,6 +1404,7 @@ exports.updateProfile = async (req, res) => {
       user: userResponse,
     });
   } catch (error) {
+    logger.error("❌ Update profile error:", error);
     res.status(500).json({
       success: false,
       message: "Server error",
@@ -1588,45 +1412,95 @@ exports.updateProfile = async (req, res) => {
   }
 };
 
-exports.uploadProfileImage = async (req, res) => {
+// ==================== CHANGE PASSWORD ====================
+exports.changePassword = async (req, res) => {
   try {
-    const { profileImage } = req.body;
+    const { currentPassword, newPassword, confirmNewPassword } = req.body;
 
-    if (!profileImage) {
+    if (!currentPassword || !newPassword || !confirmNewPassword) {
       return res.status(400).json({
         success: false,
-        message: "Profile image URL is required",
+        message:
+          "Please provide current password, new password, and confirm password",
       });
     }
 
-    const user = await User.findByIdAndUpdate(
-      req.user.id,
-      { profileImage },
-      { new: true },
+    if (newPassword !== confirmNewPassword) {
+      return res.status(400).json({
+        success: false,
+        message: "New passwords do not match",
+      });
+    }
+
+    const user = await User.findById(req.user.id).select(
+      "+password +passwordHistory",
     );
 
-    const userResponse = {
-      id: user._id,
-      name: user.name,
-      email: user.email,
-      role: user.role,
-      provider: user.provider,
-      avatar: user.avatar,
-      profileImage: user.profileImage,
-      googleProfileImage: user.googleProfileImage,
-      isVerified: user.isVerified,
-      profileImageUrl: user.getProfileImage
-        ? user.getProfileImage()
-        : user.avatar ||
-          "https://cdn-icons-png.flaticon.com/512/149/149071.png",
-    };
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isMatch) {
+      return res.status(401).json({
+        success: false,
+        message: "Current password is incorrect",
+      });
+    }
+
+    const passwordValidation = await passwordSecurity.validatePassword(
+      newPassword,
+      user._id.toString(),
+      true,
+    );
+
+    if (!passwordValidation.isValid) {
+      return res.status(400).json({
+        success: false,
+        message: "Password does not meet security requirements",
+        errors: passwordValidation.errors,
+        strength: passwordValidation.strength,
+      });
+    }
+
+    const historyCheck = await user.isPasswordInHistory(newPassword);
+    if (historyCheck.inHistory) {
+      return res.status(400).json({
+        success: false,
+        message:
+          historyCheck.message ||
+          "You have used this password recently. Please choose a different password.",
+      });
+    }
+
+    const salt = await bcrypt.genSalt(12);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+    await user.addToPasswordHistory(currentPassword, {
+      changedBy: "user",
+      ipAddress: req.ip,
+      userAgent: req.get("user-agent"),
+    });
+
+    user.password = hashedPassword;
+    user.lastPasswordChange = new Date();
+    await user.save();
+
+    await user.addSecurityLog(
+      "password_changed",
+      req.ip,
+      req.get("user-agent"),
+      { method: "user_change" },
+    );
+
+    // Revoke all sessions except current one
+    await revokeAllUserTokens(user._id.toString());
+
+    logger.info(`✅ Password changed successfully for user: ${user.email}`);
 
     res.status(200).json({
       success: true,
-      message: "Profile image updated successfully",
-      user: userResponse,
+      message:
+        "Password changed successfully. Please login again with your new password.",
     });
   } catch (error) {
+    logger.error("❌ Change password error:", error);
     res.status(500).json({
       success: false,
       message: "Server error",
@@ -1635,7 +1509,6 @@ exports.uploadProfileImage = async (req, res) => {
 };
 
 // ==================== FORGOT PASSWORD FLOW ====================
-
 exports.initiateForgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
@@ -1930,6 +1803,152 @@ exports.resendForgotPasswordOTP = async (req, res) => {
   }
 };
 
+exports.resetPasswordWithToken = async (req, res) => {
+  try {
+    const { resetToken } = req.params;
+    const { password, confirmPassword, email } = req.body;
+
+    if (!password || !confirmPassword || !email) {
+      return res.status(400).json({
+        success: false,
+        message: "Email, password and confirm password are required",
+      });
+    }
+
+    if (password !== confirmPassword) {
+      return res.status(400).json({
+        success: false,
+        message: "Passwords do not match",
+      });
+    }
+
+    const isValidToken = await RedisService.verifyPasswordResetToken(
+      email,
+      resetToken,
+    );
+    if (!isValidToken) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid or expired reset token",
+      });
+    }
+
+    let decoded;
+    try {
+      const user = await User.findOne({ email });
+      if (!user) {
+        return res.status(400).json({
+          success: false,
+          message: "User not found",
+        });
+      }
+
+      decoded = jwt.verify(
+        resetToken,
+        process.env.JWT_SECRET + user._id.toString(),
+      );
+
+      if (decoded.type !== "password_reset" || decoded.email !== email) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid reset token",
+        });
+      }
+    } catch (error) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid or expired reset token",
+      });
+    }
+
+    const user = await User.findById(decoded.id).select(
+      "+password +passwordHistory",
+    );
+
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    const passwordValidation = await passwordSecurity.validatePassword(
+      password,
+      user._id.toString(),
+      true,
+    );
+
+    if (!passwordValidation.isValid) {
+      return res.status(400).json({
+        success: false,
+        message: "Password does not meet security requirements",
+        errors: passwordValidation.errors,
+        strength: passwordValidation.strength,
+      });
+    }
+
+    const historyCheck = await user.isPasswordInHistory(password);
+    if (historyCheck.inHistory) {
+      return res.status(400).json({
+        success: false,
+        message:
+          historyCheck.message ||
+          "You have used this password recently. Please choose a different password.",
+      });
+    }
+
+    const salt = await bcrypt.genSalt(12);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    if (user.password) {
+      await user.addToPasswordHistory(password, {
+        changedBy: "reset",
+        ipAddress: req.ip,
+        userAgent: req.get("user-agent"),
+      });
+    } else {
+      user.passwordHistory = [
+        {
+          password: hashedPassword,
+          changedAt: new Date(),
+          changedBy: "reset",
+          ipAddress: req.ip,
+          userAgent: req.get("user-agent"),
+        },
+      ];
+    }
+
+    user.password = hashedPassword;
+    user.lastPasswordChange = new Date();
+    await user.save();
+
+    await revokeAllUserTokens(user._id.toString());
+
+    await RedisService.deletePendingPasswordReset(email);
+    await RedisService.deletePasswordResetToken(email);
+    await RedisService.deleteOTP(email);
+
+    try {
+      await EmailService.sendPasswordResetSuccessEmail(email, user.name);
+    } catch (emailError) {
+      logger.error("Failed to send success email:", emailError.message);
+    }
+
+    res.status(200).json({
+      success: true,
+      message:
+        "Password reset successful. You can now login with your new password.",
+    });
+  } catch (error) {
+    logger.error("❌ Reset password error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+};
+
+// ==================== RESEND OTP ====================
 exports.resendOTP = async (req, res) => {
   try {
     const { email } = req.body;
@@ -2010,6 +2029,7 @@ exports.resendOTP = async (req, res) => {
   }
 };
 
+// ==================== CHECK REGISTRATION STATUS ====================
 exports.checkRegistrationStatus = async (req, res) => {
   try {
     const { email } = req.params;
@@ -2046,8 +2066,136 @@ exports.checkRegistrationStatus = async (req, res) => {
   }
 };
 
-// ==================== LEGACY COMPATIBILITY ENDPOINTS ====================
+// ==================== CHECK PASSWORD EXPIRATION ====================
+exports.checkPasswordExpiration = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
 
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    const expirationStatus = user.passwordNeedsChange
+      ? user.passwordNeedsChange()
+      : {
+          needsChange: false,
+          daysRemaining: null,
+        };
+
+    res.status(200).json({
+      success: true,
+      expiration: expirationStatus,
+    });
+  } catch (error) {
+    logger.error("❌ Check password expiration error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+};
+
+// ==================== GET PASSWORD REQUIREMENTS ====================
+exports.getPasswordRequirements = (req, res) => {
+  const requirements = passwordSecurity.getPasswordRequirements();
+  res.status(200).json({
+    success: true,
+    requirements,
+  });
+};
+
+// ==================== LEGACY: SETUP PASSWORD ====================
+exports.setupPassword = async (req, res) => {
+  try {
+    const { email, password, confirmPassword } = req.body;
+
+    if (!email || !password || !confirmPassword) {
+      return res.status(400).json({
+        success: false,
+        message: "Email, password and confirm password are required",
+      });
+    }
+
+    if (password !== confirmPassword) {
+      return res.status(400).json({
+        success: false,
+        message: "Passwords do not match",
+      });
+    }
+
+    const user = await User.findOne({ email }).select(
+      "+password +passwordHistory",
+    );
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    const userWithPassword = await User.findOne({ email }).select("+password");
+    if (userWithPassword && userWithPassword.password) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Password already set for this account. Please use login instead.",
+      });
+    }
+
+    const passwordValidation = await passwordSecurity.validatePassword(
+      password,
+      user._id.toString(),
+      true,
+    );
+
+    if (!passwordValidation.isValid) {
+      return res.status(400).json({
+        success: false,
+        message: "Password does not meet security requirements",
+        errors: passwordValidation.errors,
+        strength: passwordValidation.strength,
+      });
+    }
+
+    const salt = await bcrypt.genSalt(12);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    user.password = hashedPassword;
+    user.provider = "local";
+    user.lastPasswordChange = new Date();
+
+    user.passwordHistory = [
+      {
+        password: hashedPassword,
+        changedAt: new Date(),
+        changedBy: "user",
+        ipAddress: req.ip,
+        userAgent: req.get("user-agent"),
+      },
+    ];
+
+    await user.save();
+
+    logger.info(`✅ Password setup successful for: ${email}`);
+
+    res.status(200).json({
+      success: true,
+      message: "Password set successfully. You can now login.",
+    });
+  } catch (error) {
+    logger.error("❌ Setup password error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+};
+
+// ==================== LEGACY COMPATIBILITY ENDPOINTS ====================
 exports.forgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
@@ -2162,7 +2310,6 @@ exports.register = async (req, res) => {
       });
     }
 
-    // ==================== NEW: Password validation ====================
     const passwordValidation = await passwordSecurity.validatePassword(
       password,
       null,
@@ -2202,7 +2349,38 @@ exports.register = async (req, res) => {
   }
 };
 
-// ==================== EXPORT HELPER FUNCTIONS ====================
+// Legacy helper
+const generateToken = (id) => {
+  return jwt.sign({ id }, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_EXPIRE || "7d",
+  });
+};
 
+const legacySendTokenResponse = (user, statusCode, res, message) => {
+  const token = generateToken(user._id);
+
+  const userResponse = {
+    id: user._id,
+    name: user.name,
+    email: user.email,
+    role: user.role,
+    provider: user.provider,
+    avatar: user.avatar,
+    profileImage: user.profileImage || null,
+    profileImageKey: user.profileImageKey || null,
+    googleProfileImage: user.googleProfileImage || null,
+    isVerified: user.isVerified,
+    profileImageUrl: user.getProfileImage ? user.getProfileImage() : null,
+  };
+
+  res.status(statusCode).json({
+    success: true,
+    message,
+    token,
+    user: userResponse,
+  });
+};
+
+// Export helpers
 exports.generateToken = generateToken;
 exports.sendTokenResponse = legacySendTokenResponse;

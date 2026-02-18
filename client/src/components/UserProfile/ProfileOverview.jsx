@@ -1,24 +1,33 @@
 import React from "react";
-import { 
+import {
   TrendingUp,
   Award,
   BadgeCheck,
   Users,
   Eye,
   MessageSquare,
-  Star
+  Star,
+  Smartphone,
+  MapPin,
+  Clock
 } from "lucide-react";
 
-const ProfileOverview = ({ user, profilePic, myPosts }) => {
+const ProfileOverview = ({ user, profilePic, myPosts, devices }) => {
+  // Get current device
+  const currentDevice = devices?.find(d => d.isCurrentDevice);
+
+  // Calculate statistics
+  const totalViews = myPosts?.reduce((sum, post) => sum + (post.views || 0), 0) || 0;
+
   return (
-    <div className="space-y-6  w-6xl  p-5">
+    <div className="space-y-6">
       {/* Profile Summary Card */}
       <div className="bg-white rounded-2xl border border-gray-200 p-6">
         <div className="flex items-center gap-4 pb-6 border-b border-gray-100">
           <div className="relative">
-            <img 
-              src={profilePic} 
-              alt="Profile" 
+            <img
+              src={profilePic}
+              alt="Profile"
               className="w-20 h-20 rounded-2xl object-cover border-4 border-white shadow-lg"
             />
             <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-emerald-500 rounded-full border-4 border-white flex items-center justify-center">
@@ -27,15 +36,17 @@ const ProfileOverview = ({ user, profilePic, myPosts }) => {
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1">
-              <h3 className="font-bold text-gray-900 truncate">{user.name}</h3>
+              <h3 className="font-bold text-gray-900 truncate">{user?.name}</h3>
               <span className="px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded-full text-xs font-semibold">
                 PRO
               </span>
             </div>
-            <p className="text-sm text-gray-500 truncate">{user.email}</p>
+            <p className="text-sm text-gray-500 truncate">{user?.email}</p>
             <div className="flex items-center gap-1 mt-2">
               <Star className="w-4 h-4 text-amber-500 fill-amber-500" />
-              <span className="text-sm font-semibold text-gray-900">4.8</span>
+              <span className="text-sm font-semibold text-gray-900">
+                {user?.rating || "4.8"}
+              </span>
               <span className="text-xs text-gray-500">(124 reviews)</span>
             </div>
           </div>
@@ -44,15 +55,15 @@ const ProfileOverview = ({ user, profilePic, myPosts }) => {
         {/* Quick Stats */}
         <div className="grid grid-cols-2 gap-4 py-6">
           <div className="text-center p-3 bg-gray-50 rounded-xl">
-            <p className="text-2xl font-bold text-gray-900">{myPosts.length}</p>
+            <p className="text-2xl font-bold text-gray-900">{myPosts?.length || 0}</p>
             <p className="text-xs text-gray-500 mt-1">Active Listings</p>
           </div>
           <div className="text-center p-3 bg-gray-50 rounded-xl">
-            <p className="text-2xl font-bold text-gray-900">1.2K</p>
+            <p className="text-2xl font-bold text-gray-900">{totalViews}</p>
             <p className="text-xs text-gray-500 mt-1">Total Views</p>
           </div>
           <div className="text-center p-3 bg-gray-50 rounded-xl">
-            <p className="text-2xl font-bold text-gray-900">89%</p>
+            <p className="text-2xl font-bold text-gray-900">95%</p>
             <p className="text-xs text-gray-500 mt-1">Response Rate</p>
           </div>
           <div className="text-center p-3 bg-gray-50 rounded-xl">
@@ -83,6 +94,26 @@ const ProfileOverview = ({ user, profilePic, myPosts }) => {
           </div>
         </div>
       </div>
+
+      {/* Current Session */}
+      {currentDevice && (
+        <div className="bg-white rounded-2xl border border-gray-200 p-6">
+          <h3 className="font-semibold text-gray-900 mb-4">Current Session</h3>
+          <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
+            <div className="w-10 h-10 bg-emerald-100 rounded-xl flex items-center justify-center">
+              <Smartphone className="w-5 h-5 text-emerald-600" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="font-medium text-gray-900 truncate">{currentDevice.deviceName}</p>
+              <div className="flex items-center gap-2 text-xs text-gray-500 mt-1">
+                <MapPin className="w-3 h-3 flex-shrink-0" />
+                <span className="truncate">{currentDevice.location}</span>
+              </div>
+              <p className="text-xs text-gray-400 mt-1">{currentDevice.lastActiveText}</p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Performance Metrics */}
       <div className="bg-emerald-500 rounded-2xl p-6 text-white">
@@ -119,45 +150,6 @@ const ProfileOverview = ({ user, profilePic, myPosts }) => {
             </div>
             <div className="w-full bg-emerald-400/30 rounded-full h-2">
               <div className="bg-white w-19/20 h-2 rounded-full"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Recent Activity */}
-      <div className="bg-white rounded-2xl border border-gray-200 p-6">
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="font-semibold text-gray-900">Recent Activity</h3>
-          <button className="text-sm text-emerald-600 hover:text-emerald-700 font-semibold">
-            View all
-          </button>
-        </div>
-        <div className="space-y-4">
-          <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-xl">
-            <div className="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center flex-shrink-0">
-              <Eye className="w-5 h-5 text-emerald-600" />
-            </div>
-            <div>
-              <p className="text-sm font-medium text-gray-900">Your listing got 45 views</p>
-              <p className="text-xs text-gray-500 mt-1">2 hours ago</p>
-            </div>
-          </div>
-          <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-xl">
-            <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center flex-shrink-0">
-              <MessageSquare className="w-5 h-5 text-blue-600" />
-            </div>
-            <div>
-              <p className="text-sm font-medium text-gray-900">New inquiry received</p>
-              <p className="text-xs text-gray-500 mt-1">4 hours ago</p>
-            </div>
-          </div>
-          <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-xl">
-            <div className="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center flex-shrink-0">
-              <Users className="w-5 h-5 text-purple-600" />
-            </div>
-            <div>
-              <p className="text-sm font-medium text-gray-900">Scheduled viewing confirmed</p>
-              <p className="text-xs text-gray-500 mt-1">Yesterday</p>
             </div>
           </div>
         </div>
