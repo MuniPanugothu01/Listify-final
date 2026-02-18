@@ -201,11 +201,16 @@ export const verifyOTP = createAsyncThunk(
   },
 );
 
+// ==================== FIX: resendOTP ====================
+// BUG WAS: thunk passed { email } to authAPI.resendOTP()
+// but api.js already wraps the argument into { email } before posting
+// so the server received { email: { email: "..." } } - an object instead of a string
+// FIX: pass the raw email string so api.js can wrap it correctly
 export const resendOTP = createAsyncThunk(
   "auth/resendOTP",
   async (email, { rejectWithValue }) => {
     try {
-      const response = await authAPI.resendOTP({ email });
+      const response = await authAPI.resendOTP(email);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
@@ -213,14 +218,26 @@ export const resendOTP = createAsyncThunk(
   },
 );
 
+// ==================== FIX: initiateForgotPassword ====================
+// BUG WAS: thunk passed { email } to authAPI.initiateForgotPassword()
+// but api.js already wraps the argument into { email } before posting
+// so the server received { email: { email: "..." } } - an object instead of a string
+// This caused the backend validation to reject with "Please provide a valid email address"
+// FIX: pass the raw email string so api.js can wrap it correctly
 export const initiateForgotPassword = createAsyncThunk(
   "auth/initiateForgotPassword",
   async (email, { rejectWithValue }) => {
     try {
-      const response = await authAPI.initiateForgotPassword({ email });
+      const response = await authAPI.initiateForgotPassword(email);
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data || error.message);
+      // Pass the full response data object so useAuth can extract the right message
+      if (error.response?.data) {
+        return rejectWithValue(error.response.data);
+      }
+      return rejectWithValue({
+        message: error.message || "Failed to initiate forgot password",
+      });
     }
   },
 );
@@ -251,11 +268,16 @@ export const verifyForgotPasswordOTP = createAsyncThunk(
   },
 );
 
+// ==================== FIX: resendForgotPasswordOTP ====================
+// BUG WAS: thunk passed { email } to authAPI.resendForgotPasswordOTP()
+// but api.js already wraps the argument into { email } before posting
+// so the server received { email: { email: "..." } } - an object instead of a string
+// FIX: pass the raw email string so api.js can wrap it correctly
 export const resendForgotPasswordOTP = createAsyncThunk(
   "auth/resendForgotPasswordOTP",
   async (email, { rejectWithValue }) => {
     try {
-      const response = await authAPI.resendForgotPasswordOTP({ email });
+      const response = await authAPI.resendForgotPasswordOTP(email);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);

@@ -120,6 +120,7 @@ export const authAPI = {
   },
 
   // OTP Registration - Resend OTP
+  // FIX: receives email string directly, wraps into { email } here
   resendOTP: (email) => {
     return api.post(
       "/register/resend-otp",
@@ -212,7 +213,7 @@ export const authAPI = {
   },
 
   // ==================== FORGOT PASSWORD APIS ====================
-  // Initiate forgot password (send OTP)
+  // FIX: receives email string directly, wraps into { email } here
   initiateForgotPassword: (email) => {
     return api.post(
       "/forgot-password/initiate",
@@ -228,7 +229,7 @@ export const authAPI = {
     });
   },
 
-  // Resend forgot password OTP
+  // FIX: receives email string directly, wraps into { email } here
   resendForgotPasswordOTP: (email) => {
     return api.post(
       "/forgot-password/resend-otp",
@@ -237,12 +238,15 @@ export const authAPI = {
     );
   },
 
-  // Reset password with token
+  // FIX: increased timeout to 60s — bcrypt hashing + Redis + MongoDB calls can be slow
   resetPasswordWithToken: (resetToken, email, password, confirmPassword) => {
     return api.put(
       `/reset-password/${resetToken}`,
       { email, password, confirmPassword },
-      { withCredentials: true },
+      {
+        withCredentials: true,
+        timeout: 60000, // 60 seconds for this call
+      },
     );
   },
 
