@@ -213,15 +213,9 @@ export default function Profile() {
             >
               {isMobileMenuOpen ? <X className="w-5 h-5 text-gray-600" /> : <Menu className="w-5 h-5 text-gray-600" />}
             </button>
-<<<<<<< HEAD
             <h1 
               className="text-xl md:text-2xl font-bold text-emerald-700 cursor-pointer hover:text-emerald-800 transition-colors"
               onClick={() => navigate('/')}
-=======
-            <h1
-              className="text-xl font-bold text-[#27BB97] sm:text-2xl flex-shrink-0 cursor-pointer  transition-colors"
-              onClick={() => navigate("/")}
->>>>>>> f86670ac734448b403d23eac66644ba274a01508
             >
               Listify
             </h1>
@@ -261,12 +255,7 @@ export default function Profile() {
         </div>
       </header>
 
-<<<<<<< HEAD
-      {/* Main Content */}
-      <div className="pt-20 max-w-7xl mx-auto px-4 md:px-6 py-4 md:py-6">
-=======
       <div className="pt-4 container mx-auto px-1 py-6 mt-20">
->>>>>>> f86670ac734448b403d23eac66644ba274a01508
         <div className="lg:flex gap-6">
           {/* Sidebar */}
           <div className="lg:w-64 xl:w-72 flex-shrink-0">
