@@ -35,6 +35,7 @@ import { IoLocationOutline } from "react-icons/io5";
 import { CiLocationArrow1 } from "react-icons/ci";
 import { ScrollProgress } from "../../components/ui/scroll-progress";
 import { useAuth } from "../../hooks/useAuth";
+import toast from "react-hot-toast";
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -87,7 +88,6 @@ const Navbar = () => {
     { name: "Electronics", path: "/electronics" },
     { name: "Events", path: "/events" },
     { name: "Take Care", path: "/takecare" },
-
   ];
   
   const moreMenuItems = [
@@ -140,6 +140,7 @@ const Navbar = () => {
     if (path === "/logout") {
       logout();
       closeProfileDropdown();
+      toast.success("logout successfully");
       navigate("/");
     } else {
       navigate(path);
@@ -181,17 +182,16 @@ const Navbar = () => {
     return user && user.provider === "google";
   };
 
-  // Get user profile image - only show Google image for Google users
+  // Get user profile image - prioritize in order: profileImageUrl, profileImage, googleProfileImage, avatar
   const getUserProfileImage = () => {
     if (!user) return null;
 
-    // Only show Google profile image for Google users
-    if (isGoogleUser() && user.googleProfileImage) {
-      return user.googleProfileImage;
-    }
-
-    // For email users or Google users without image, return null to show icon
-    return null;
+    // Check all possible image fields in order of priority
+    return user.profileImageUrl || 
+           user.profileImage || 
+           user.googleProfileImage || 
+           user.avatar || 
+           null;
   };
 
   // Close dropdown when clicking outside
@@ -600,23 +600,25 @@ const Navbar = () => {
                     {isAuthenticated ? (
                       <>
                         <div className="flex items-center gap-2">
-                          {/* Show Google profile image ONLY for Google users */}
-                          {isGoogleUser() && getUserProfileImage() ? (
+                          {/* Show profile image if available */}
+                          {getUserProfileImage() ? (
                             <img
                               src={getUserProfileImage()}
                               alt={getUserFullName()}
                               className="user-profile-image w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9"
                               onError={(e) => {
-                                // If Google image fails to load, show user icon
+                                // If image fails to load, show user icon
                                 e.target.style.display = "none";
-                                const nextSibling = e.target.nextElementSibling;
-                                if (nextSibling) {
-                                  nextSibling.style.display = "flex";
-                                }
+                                const parent = e.target.parentElement;
+                                // Create and append the icon div
+                                const iconDiv = document.createElement('div');
+                                iconDiv.className = "user-icon-container w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9";
+                                iconDiv.innerHTML = '<svg class="text-white text-sm sm:text-base md:text-lg">...</svg>';
+                                parent.appendChild(iconDiv);
                               }}
                             />
                           ) : (
-                            /* Show static user icon for email users or Google users without image */
+                            /* Show static user icon when no image */
                             <div className="user-icon-container w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9">
                               <FaUserCircle className="text-white text-sm sm:text-base md:text-lg" />
                             </div>
@@ -648,23 +650,24 @@ const Navbar = () => {
                       {/* User Info Header */}
                       <div className="p-3 sm:p-4 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-200">
                         <div className="flex items-center gap-2 sm:gap-3">
-                          {/* Show Google profile image ONLY for Google users in dropdown */}
-                          {isGoogleUser() && getUserProfileImage() ? (
+                          {/* Show profile image if available */}
+                          {getUserProfileImage() ? (
                             <img
                               src={getUserProfileImage()}
                               alt={getUserFullName()}
                               className="user-profile-image w-8 h-8 sm:w-10 sm:h-10"
                               onError={(e) => {
-                                // If Google image fails to load, show user icon
+                                // If image fails to load, show user icon
                                 e.target.style.display = "none";
-                                const nextSibling = e.target.nextElementSibling;
-                                if (nextSibling) {
-                                  nextSibling.style.display = "flex";
-                                }
+                                const parent = e.target.parentElement;
+                                const iconDiv = document.createElement('div');
+                                iconDiv.className = "user-icon-container w-8 h-8 sm:w-10 sm:h-10";
+                                iconDiv.innerHTML = '<svg class="text-white text-base sm:text-lg">...</svg>';
+                                parent.appendChild(iconDiv);
                               }}
                             />
                           ) : (
-                            /* Show static user icon for email users or Google users without image */
+                            /* Show static user icon when no image */
                             <div className="user-icon-container w-8 h-8 sm:w-10 sm:h-10">
                               <FaUserCircle className="text-white text-base sm:text-lg" />
                             </div>
@@ -785,23 +788,24 @@ const Navbar = () => {
                 {isAuthenticated && user && (
                   <div className="p-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg">
                     <div className="flex items-center gap-3">
-                      {/* Show Google profile image ONLY for Google users in mobile menu */}
-                      {isGoogleUser() && getUserProfileImage() ? (
+                      {/* Show profile image if available */}
+                      {getUserProfileImage() ? (
                         <img
                           src={getUserProfileImage()}
                           alt={getUserFullName()}
                           className="user-profile-image w-10 h-10"
                           onError={(e) => {
-                            // If Google image fails to load, show user icon
+                            // If image fails to load, show user icon
                             e.target.style.display = "none";
-                            const nextSibling = e.target.nextElementSibling;
-                            if (nextSibling) {
-                              nextSibling.style.display = "flex";
-                            }
+                            const parent = e.target.parentElement;
+                            const iconDiv = document.createElement('div');
+                            iconDiv.className = "user-icon-container w-10 h-10";
+                            iconDiv.innerHTML = '<svg class="text-white text-base">...</svg>';
+                            parent.appendChild(iconDiv);
                           }}
                         />
                       ) : (
-                        /* Show static user icon for email users or Google users without image */
+                        /* Show static user icon when no image */
                         <div className="user-icon-container w-10 h-10">
                           <FaUserCircle className="text-white text-base" />
                         </div>
@@ -946,6 +950,7 @@ const Navbar = () => {
                       onClick={() => {
                         setIsMobileMenuOpen(false);
                         logout();
+                        toast.success("Logout successful");
                         navigate("/");
                       }}
                       className={`nav-link px-3 py-2 text-xs sm:text-sm hover:bg-gray-100 rounded font-semibold text-left ${

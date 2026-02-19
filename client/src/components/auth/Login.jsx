@@ -13,7 +13,9 @@ const Login = () => {
 
   // Get auth state from Redux
   const auth = useSelector((state) => state.auth);
-  const { loading, error, success, token, user } = auth;
+  // FIX: removed `token` from destructure — token is ALWAYS null (stored in HTTP-only cookie)
+  // The old code checked `success && token && user` which NEVER passed because token === null
+  const { loading, error, success, user } = auth;
 
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
@@ -22,7 +24,7 @@ const Login = () => {
   });
   const [rememberMe, setRememberMe] = useState(false);
   const [formErrors, setFormErrors] = useState({});
-  
+
   // Add ref to track if toast has been shown
   const toastShownRef = useRef(false);
   // Track login method to show correct toast
@@ -30,8 +32,7 @@ const Login = () => {
 
   // ============== ADD GLOBAL CSS ANIMATIONS ==============
   useEffect(() => {
-    // Add animation styles to document head
-    const style = document.createElement('style');
+    const style = document.createElement("style");
     style.innerHTML = `
       @keyframes fadeInScale {
         0% { opacity: 0; transform: scale(0.9); }
@@ -46,7 +47,7 @@ const Login = () => {
       }
     `;
     document.head.appendChild(style);
-    
+
     return () => {
       document.head.removeChild(style);
     };
@@ -54,30 +55,22 @@ const Login = () => {
 
   // Handle errors from Redux
   useEffect(() => {
-    console.log("Current auth state:", {
-      loading,
-      error,
-      success,
-      token,
-      user,
-    });
+    console.log("Current auth state:", { loading, error, success, user });
 
     if (error && !toastShownRef.current) {
       console.log("Redux error detected:", error);
       toastShownRef.current = true;
-      
-      // ============== ONLY ADD duration AND animation CLASS ==============
+
       toast.error(
         typeof error === "string"
           ? error
           : "Login failed. Please check your credentials.",
         {
           duration: 5000,
-          className: 'toast-animation',
-        }
+          className: "toast-animation",
+        },
       );
-      
-      // Clear error after showing toast
+
       setTimeout(() => {
         dispatch(clearError());
         toastShownRef.current = false;
@@ -85,54 +78,56 @@ const Login = () => {
     }
   }, [error, dispatch]);
 
-  // Handle successful login - ONLY for email login
+  // Handle successful login
   useEffect(() => {
     console.log("Checking for successful login...", {
       success,
-      token: !!token,
       user: !!user,
-      loginMethod: loginMethodRef.current
+      loginMethod: loginMethodRef.current,
     });
 
-    // Only show toast if this was an email login
-    if (success && token && user && !toastShownRef.current && loginMethodRef.current === 'email') {
+    // FIX: removed `&& token` check — token is always null in Redux (it lives in HTTP-only cookie)
+    // Now correctly checks: success && user (user object is set after login)
+    if (
+      success &&
+      user &&
+      !toastShownRef.current &&
+      loginMethodRef.current === "email"
+    ) {
       console.log("Email login successful, showing toast and navigating");
       toastShownRef.current = true;
-      
-      // ============== ONLY ADD duration AND animation CLASS ==============
+
       toast.success("Login successful!", {
         duration: 4000,
-        className: 'toast-animation',
+        className: "toast-animation",
       });
 
       if (rememberMe) {
         localStorage.setItem("rememberMe", "true");
       }
 
-      // Navigate after a short delay
       const timer = setTimeout(() => {
         navigate("/");
-        // Reset login method
         loginMethodRef.current = null;
         toastShownRef.current = false;
       }, 2000);
 
       return () => clearTimeout(timer);
     }
-    
-    // Reset login method after Google login
-    if (success && token && user && loginMethodRef.current === 'google') {
-      console.log("Google login successful - NOT showing duplicate toast");
-      // Don't show toast - Google component already showed it
-      // Just navigate
+
+    // FIX: removed `&& token` check for Google login path too
+    if (success && user && loginMethodRef.current === "google") {
+      console.log(
+        "Google login successful - navigating without duplicate toast",
+      );
       const timer = setTimeout(() => {
         navigate("/");
         loginMethodRef.current = null;
       }, 100);
-      
+
       return () => clearTimeout(timer);
     }
-  }, [success, token, user, navigate, rememberMe]);
+  }, [success, user, navigate, rememberMe]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -141,13 +136,11 @@ const Login = () => {
       [name]: value,
     }));
 
-    // Clear error for this field
     if (formErrors[name]) {
       setFormErrors((prev) => ({ ...prev, [name]: "" }));
     }
   };
 
-  // Validate form
   const validateForm = () => {
     const errors = {};
 
@@ -172,19 +165,14 @@ const Login = () => {
     e.stopPropagation();
 
     console.log("Form submitted with:", formData);
-    console.log("Form validation result:", validateForm());
 
-    // Reset toast flag
     toastShownRef.current = false;
-    // Set login method to EMAIL
-    loginMethodRef.current = 'email';
+    loginMethodRef.current = "email";
 
-    // Validate form
     if (!validateForm()) {
-      // ============== ONLY ADD duration AND animation CLASS ==============
       toast.error("Please fix the errors in the form", {
         duration: 4000,
-        className: 'toast-animation',
+        className: "toast-animation",
       });
       loginMethodRef.current = null;
       return;
@@ -201,37 +189,32 @@ const Login = () => {
 
       console.log("Dispatch result:", result);
 
-      // Check the result type
       if (loginUser.fulfilled.match(result)) {
         console.log("Login successful - Redux fulfilled");
-        // The useEffect will handle navigation and toast
+        // useEffect handles navigation and toast
       } else if (loginUser.rejected.match(result)) {
         console.log(
           "Login failed - Redux rejected:",
           result.error || result.payload,
         );
-        loginMethodRef.current = null; // Reset login method on failure
-        // Error is already shown in the useEffect
+        loginMethodRef.current = null;
       }
     } catch (err) {
       console.error("Unexpected login error:", err);
-      // ============== ONLY ADD duration AND animation CLASS ==============
       toast.error("An unexpected error occurred. Please try again.", {
         duration: 5000,
-        className: 'toast-animation',
+        className: "toast-animation",
       });
       loginMethodRef.current = null;
     }
   };
 
-  // Handler to set login method when Google login is triggered
   const handleGoogleLoginStart = () => {
-    loginMethodRef.current = 'google';
+    loginMethodRef.current = "google";
   };
 
   return (
     <div className="min-h-screen relative overflow-hidden">
-      {/* ============== YOUR EXISTING TOASTER - NO CHANGES ============== */}
       <Toaster
         position="top-right"
         toastOptions={{
@@ -302,9 +285,7 @@ const Login = () => {
                 </h2>
               </div>
 
-              {/* FORM */}
               <form onSubmit={handleSubmit} className="space-y-5">
-                {/* Pass onLoginStart handler to track Google login */}
                 <SocialAuth onLoginStart={handleGoogleLoginStart} />
 
                 {/* Divider */}
@@ -341,6 +322,7 @@ const Login = () => {
                     </p>
                   )}
                 </div>
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Password
@@ -397,7 +379,6 @@ const Login = () => {
                   </button>
                 </div>
 
-                {/* SUBMIT BUTTON */}
                 <button
                   type="submit"
                   disabled={loading}

@@ -17,11 +17,12 @@ import {
   TrendingUp,
   Calendar,
   DollarSign,
-  ChartBar,
-  CreditCard
+  Smartphone,
+  History,
 } from "lucide-react";
-
-import { toast, ToastContainer } from "react-toastify";
+import { useDispatch, useSelector } from "react-redux";
+import { logoutUser } from "../../redux/slices/authSlice";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const Sidebar = ({
@@ -31,25 +32,50 @@ const Sidebar = ({
   isMobileMenuOpen,
   setIsMobileMenuOpen,
 }) => {
+  const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.auth);
+  const { devices } = useSelector((state) => state.profile);
+
   const menuItems = [
     { id: "home", label: "Dashboard", icon: Home, notification: counts.alerts > 0 ? counts.alerts : null },
     { id: "personal", label: "Profile", icon: User },
     { id: "posts", label: "My Listings", icon: FileText, count: counts.posts },
     { id: "saved", label: "Saved Items", icon: Heart, count: counts.saved },
-    { id: "messages", label: "Messages", icon: MessageCircle, count: 3 },
-    { id: "profile-overview", label: "Profile Overview", icon: Calendar }, // Changed from Calendar
+    { id: "messages", label: "Messages", icon: MessageCircle, count: counts.messages },
+    { id: "devices", label: "Devices", icon: Smartphone, count: devices?.length },
+    { id: "activity", label: "Activity", icon: History },
+    { id: "profile-overview", label: "Profile Overview", icon: Calendar },
     { id: "alerts", label: "Alerts", icon: Bell, count: counts.alerts },
-    { id: "activity", label: "Activity", icon: Activity },
     { id: "settings", label: "Settings", icon: Settings },
     { id: "security", label: "Security", icon: Shield },
   ];
 
-  const handleLogout = () => {
-    localStorage.removeItem("user");
-    toast.success("Logged out successfully.");
-    setTimeout(() => {
-      window.location.href = "/";
-    }, 500);
+  const handleLogout = async () => {
+    try {
+      await dispatch(logoutUser()).unwrap();
+      toast.success("Logged out successfully.");
+      setTimeout(() => {
+        window.location.href = "/";
+      }, 500);
+    } catch (error) {
+      toast.error("Logout failed. Please try again.");
+    }
+  };
+
+  // Get user initials for avatar
+  const getUserInitials = () => {
+    if (!user?.name) return "U";
+    return user.name
+      .split(" ")
+      .map(n => n[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2);
+  };
+
+  // Get profile image URL
+  const getProfileImage = () => {
+    return user?.profileImageUrl || user?.avatar || null;
   };
 
   return (
@@ -63,13 +89,13 @@ const Sidebar = ({
 
       <div
         className={`
-        fixed lg:static top-0 left-0 w-64 md:w-92 h-screen bg-white border-r border-gray-200
-        transition-transform duration-300 ease-in-out z-50 lg:z-0 
+        fixed lg:static top-0 left-0 w-64 md:w-72 h-screen bg-white border-r border-gray-200
+        transition-transform duration-300 ease-in-out z-50 lg:z-0 overflow-y-auto
         ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
         `}
       >
         {/* Mobile Header */}
-        <div className="lg:hidden p-6 border-b border-gray-200 flex items-center justify-between bg-white">
+        <div className="lg:hidden p-6 border-b border-gray-200 flex items-center justify-between bg-white sticky top-0">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-emerald-500 rounded-xl flex items-center justify-center">
               <Home className="w-6 h-6 text-white" />
@@ -85,19 +111,29 @@ const Sidebar = ({
         </div>
 
         {/* Profile Summary */}
-        <div className="p-6 border-b border-gray-300 overflow-y-hidden">
+        <div className="p-6 border-b border-gray-200">
           <div className="flex items-center gap-4 mb-6">
             <div className="relative">
-              <div className="w-14 h-14 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-2xl flex items-center justify-center text-white font-bold text-xl shadow-lg">
-                JD
-              </div>
+              {getProfileImage() ? (
+                <img
+                  src={getProfileImage()}
+                  alt={user?.name}
+                  className="w-14 h-14 rounded-2xl object-cover border-2 border-white shadow-lg"
+                />
+              ) : (
+                <div className="w-14 h-14 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-2xl flex items-center justify-center text-white font-bold text-xl shadow-lg">
+                  {getUserInitials()}
+                </div>
+              )}
               <div className="absolute -bottom-2 -right-2 w-6 h-6 bg-emerald-500 rounded-full border-4 border-white flex items-center justify-center">
                 <Star className="w-3 h-3 text-white" />
               </div>
             </div>
-            <div>
-              <h3 className="font-bold text-gray-900">John Doe</h3>
-              <p className="text-sm text-emerald-600 font-medium">Premium Agent</p>
+            <div className="flex-1 min-w-0">
+              <h3 className="font-bold text-gray-900 truncate">{user?.name || "User"}</h3>
+              <p className="text-sm text-emerald-600 font-medium">
+                {user?.provider === "google" ? "Google Account" : "Premium Member"}
+              </p>
             </div>
           </div>
           <div className="grid grid-cols-3 gap-3">
@@ -110,7 +146,7 @@ const Sidebar = ({
               <p className="text-xs text-gray-500 mt-1">Saved</p>
             </div>
             <div className="text-center p-3 bg-gray-50 rounded-xl">
-              <p className="text-lg font-bold text-gray-900">4.8</p>
+              <p className="text-lg font-bold text-gray-900">{user?.rating || "4.8"}</p>
               <p className="text-xs text-gray-500 mt-1">Rating</p>
             </div>
           </div>
@@ -139,7 +175,7 @@ const Sidebar = ({
                   <span className="font-medium">{item.label}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  {item.count !== undefined && (
+                  {item.count !== undefined && item.count > 0 && (
                     <span className={`px-2.5 py-1 rounded-lg text-xs font-semibold ${
                       activeSection === item.id
                         ? "bg-emerald-100 text-emerald-700"

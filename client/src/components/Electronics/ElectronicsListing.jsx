@@ -573,7 +573,7 @@ const ElectronicsListing = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen">
       <div className="bg-white border-b">
         <div className="px-3 sm:px-4 md:px-6 lg:px-8 py-3">
           <div className="flex items-center text-sm text-gray-600">

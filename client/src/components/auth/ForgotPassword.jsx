@@ -26,7 +26,26 @@ const ForgotPassword = () => {
   // Handle errors and success messages
   useEffect(() => {
     if (error) {
-      toast.error(error);
+      // Handle different error formats
+      let errorMessage = "An error occurred";
+      
+      if (typeof error === 'string') {
+        errorMessage = error;
+      } else if (error?.message) {
+        errorMessage = error.message;
+      } else if (error?.data?.message) {
+        errorMessage = error.data.message;
+      } else if (error?.errors) {
+        if (error.errors.email) {
+          errorMessage = error.errors.email;
+        } else if (typeof error.errors === 'object') {
+          errorMessage = Object.values(error.errors).join(", ");
+        } else {
+          errorMessage = String(error.errors);
+        }
+      }
+      
+      toast.error(errorMessage);
       clearAuthError();
     }
     
@@ -84,11 +103,15 @@ const ForgotPassword = () => {
     } catch (error) {
       console.log("Forgot password error:", error);
       // Error is already handled in useEffect
+      // But we can show a toast here as backup
+      if (error?.message) {
+        toast.error(error.message);
+      }
     }
   };
 
   const handleBackToLogin = () => {
-    navigate("/reset-otp");
+    navigate("/login");
   };
 
   return (

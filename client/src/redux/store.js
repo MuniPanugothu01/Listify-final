@@ -10,28 +10,30 @@ import {
   REGISTER,
 } from "redux-persist";
 import storage from "redux-persist/lib/storage";
-import authReducer from "./slices/authSlice";
-// Import other reducers as needed:
 
-// import userReducer from "./slices/userSlice";
-// import taskReducer from "./slices/taskSlice";
-// import notificationReducer from "./slices/notificationSlice";
+// Import reducers
+import authReducer from "./slices/authSlice";
+import profileReducer from "./slices/profileSlice";
+import listingsReducer from "./slices/listingsSlice";
+import messagesReducer from "./slices/messagesSlice";
+import devicesReducer from "./slices/devicesSlice";
+import activityReducer from "./slices/activitySlice";
 
 // Combine all reducers
 const rootReducer = combineReducers({
   auth: authReducer,
-  // user: userReducer,
-  // task: taskReducer,
-  // notification: notificationReducer,
+  profile: profileReducer,
+  listings: listingsReducer,
+  messages: messagesReducer,
+  devices: devicesReducer,
+  activity: activityReducer,
 });
 
 // Persist config
 const persistConfig = {
   key: "root",
   storage,
-  whitelist: ["auth"], // Only persist auth, other states can be temporary
-  // Or use blacklist to exclude specific states
-  // blacklist: ["notification"], // Don't persist notifications
+  whitelist: ["auth"], // Only persist auth, other states are temporary
 };
 
 // Create persisted reducer
@@ -46,26 +48,23 @@ const store = configureStore({
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
     }),
-  // Optional: Enable dev tools only in development
   devTools: import.meta.env.MODE !== "production",
 });
 
 // Create persistor
 const persistor = persistStore(store);
 
-// Export functions to manage persistence
 export const resetPersistedState = () => {
-  persistor.purge(); // Clear all persisted data
+  persistor.purge();
 };
 
 export const pausePersistence = () => {
-  persistor.pause(); // Pause persistence
+  persistor.pause();
 };
 
 export const resumePersistence = () => {
-  persistor.persist(); // Resume persistence
+  persistor.persist();
 };
 
-// Export store and persistor
+export { store, persistor };
 export default store;
-export { persistor };

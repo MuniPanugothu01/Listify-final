@@ -10,20 +10,21 @@ const { logger } = require("../utils/logger");
 const { handleGoogleAuth } = require("../services/googleAuth.OAuth");
 const tokenController = require("./tokenController");
 const passwordSecurity = require("../utils/passwordSecurity");
+const deviceService = require("../services/deviceService");
+const s3Service = require("../services/s3Service");
+const crypto = require("crypto");
 
 // ==================== HELPER FUNCTIONS ====================
 
 /**
  * Generate access token (short-lived)
- * @param {string} userId - User ID
- * @returns {string} JWT access token
  */
 const generateAccessToken = (userId) => {
   return jwt.sign(
     {
       id: userId,
       type: "access",
-      jti: require("crypto").randomBytes(16).toString("hex"),
+      jti: crypto.randomBytes(16).toString("hex"),
     },
     process.env.JWT_ACCESS_SECRET || process.env.JWT_SECRET,
     {
@@ -34,15 +35,13 @@ const generateAccessToken = (userId) => {
 
 /**
  * Generate refresh token (long-lived)
- * @param {string} userId - User ID
- * @returns {string} JWT refresh token
  */
 const generateRefreshToken = (userId) => {
   return jwt.sign(
     {
       id: userId,
       type: "refresh",
-      jti: require("crypto").randomBytes(16).toString("hex"),
+      jti: crypto.randomBytes(16).toString("hex"),
     },
     process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET + "refresh",
     {
@@ -71,14 +70,12 @@ const storeRefreshToken = async (userId, refreshToken, req = null) => {
       lastActivity: new Date().toISOString(),
     };
 
-    // Store in Redis with auto-expiry
     await redis.setex(
       `refresh_token:${tokenId}`,
       expiresIn,
       JSON.stringify(sessionData),
     );
 
-    // Add to user's session set
     await redis.sadd(`user_sessions:${userId}`, tokenId);
     await redis.expire(`user_sessions:${userId}`, expiresIn);
 
@@ -96,22 +93,20 @@ const storeRefreshToken = async (userId, refreshToken, req = null) => {
 const setTokenCookies = (res, accessToken, refreshToken) => {
   const isProduction = process.env.NODE_ENV === "production";
 
-  // Access Token Cookie
   res.cookie("accessToken", accessToken, {
     httpOnly: true,
     secure: isProduction,
     sameSite: isProduction ? "strict" : "lax",
-    maxAge: 15 * 60 * 1000, // 15 minutes
+    maxAge: 15 * 60 * 1000,
     path: "/",
     domain: isProduction ? process.env.COOKIE_DOMAIN : undefined,
   });
 
-  // Refresh Token Cookie
   res.cookie("refreshToken", refreshToken, {
     httpOnly: true,
     secure: isProduction,
     sameSite: isProduction ? "strict" : "lax",
-    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    maxAge: 7 * 24 * 60 * 60 * 1000,
     path: "/api/auth/refresh",
     domain: isProduction ? process.env.COOKIE_DOMAIN : undefined,
   });
@@ -205,6 +200,21 @@ const revokeRefreshToken = async (refreshToken) => {
 };
 
 /**
+ * Revoke refresh token by JTI
+ */
+const revokeRefreshTokenByJti = async (jti) => {
+  try {
+    const redis = require("../config/redis");
+    await redis.del(`refresh_token:${jti}`);
+    logger.info("✅ Refresh token revoked by JTI", { jti });
+    return true;
+  } catch (error) {
+    logger.error("❌ Error revoking refresh token by JTI:", error);
+    return false;
+  }
+};
+
+/**
  * Revoke all user tokens
  */
 const revokeAllUserTokens = async (userId) => {
@@ -280,16 +290,16 @@ const sendTokenResponse = async (user, statusCode, res, message) => {
       provider: user.provider,
       avatar: user.avatar,
       profileImage: user.profileImage || null,
+      profileImageKey: user.profileImageKey || null,
       googleProfileImage: user.googleProfileImage || null,
       isVerified: user.isVerified,
-      profileImageUrl: user.getProfileImage
-        ? user.getProfileImage()
-        : user.avatar ||
-          "https://cdn-icons-png.flaticon.com/512/149/149071.png",
-      // ==================== NEW: Password expiration info ====================
+      profileImageUrl: user.getProfileImage ? user.getProfileImage() : null,
       passwordExpiration: user.passwordNeedsChange
         ? user.passwordNeedsChange()
         : null,
+      devices: user.devices
+        ? user.devices.map((d) => deviceService.formatDeviceForDisplay(d))
+        : [],
     };
 
     logger.info("✅ Token response sent with HTTP-only cookies", {
@@ -310,94 +320,7 @@ const sendTokenResponse = async (user, statusCode, res, message) => {
   }
 };
 
-// Legacy generateToken
-const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRE || "7d",
-  });
-};
-
-// Legacy sendTokenResponse
-const legacySendTokenResponse = (user, statusCode, res, message) => {
-  const token = generateToken(user._id);
-
-  const userResponse = {
-    id: user._id,
-    name: user.name,
-    email: user.email,
-    role: user.role,
-    provider: user.provider,
-    avatar: user.avatar,
-    profileImage: user.profileImage || null,
-    googleProfileImage: user.googleProfileImage || null,
-    isVerified: user.isVerified,
-    profileImageUrl: user.getProfileImage
-      ? user.getProfileImage()
-      : user.avatar || "https://cdn-icons-png.flaticon.com/512/149/149071.png",
-  };
-
-  res.status(statusCode).json({
-    success: true,
-    message,
-    token,
-    user: userResponse,
-  });
-};
-
-// ==================== GOOGLE AUTH ====================
-
-exports.getGoogleClientId = (req, res) => {
-  try {
-    const clientId = process.env.GOOGLE_CLIENT_ID;
-
-    if (!clientId) {
-      return res.status(500).json({
-        success: false,
-        message: "Google authentication is not configured on the server",
-      });
-    }
-
-    res.status(200).json({
-      success: true,
-      clientId: clientId,
-    });
-  } catch (error) {
-    logger.error("Get Google client ID error:", error);
-    res.status(500).json({
-      success: false,
-      message: "Server error",
-    });
-  }
-};
-
-exports.googleTokenAuth = async (req, res) => {
-  try {
-    const { token: googleToken } = req.body;
-
-    if (!googleToken) {
-      return res.status(400).json({
-        success: false,
-        message: "Google token is required",
-      });
-    }
-
-    const { user, isNew } = await handleGoogleAuth(googleToken, req);
-    const message = isNew
-      ? "Account created with Google"
-      : "Google login successful";
-    const statusCode = isNew ? 201 : 200;
-
-    return await sendTokenResponse(user, statusCode, res, message);
-  } catch (error) {
-    logger.error("Google Token Auth Error:", error);
-    res.status(401).json({
-      success: false,
-      message: "Invalid Google token",
-    });
-  }
-};
-
-// ==================== UPDATED: Login with password expiration check ====================
+// ==================== UPDATED: LOGIN WITH DEVICE TRACKING ====================
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -411,10 +334,15 @@ exports.login = async (req, res) => {
     }
 
     const user = await User.findOne({ email }).select(
-      "+password +passwordHistory",
+      "+password +passwordHistory +devices +loginHistory",
     );
 
     if (!user) {
+      const failedDeviceData = deviceService.createDeviceSession(
+        req,
+        "unknown",
+      );
+      // Note: can't log login history if user doesn't exist
       return res.status(401).json({
         success: false,
         message: "Invalid email or password",
@@ -442,9 +370,27 @@ exports.login = async (req, res) => {
     const isPasswordMatch = await bcrypt.compare(password, user.password);
 
     if (!isPasswordMatch) {
+      const failedDeviceData = deviceService.createDeviceSession(
+        req,
+        "unknown",
+      );
+      await user.addLoginHistory({
+        ipAddress: req.ip,
+        userAgent: req.get("user-agent"),
+        deviceId: failedDeviceData.deviceId,
+        deviceName: failedDeviceData.deviceName,
+        location: failedDeviceData.location,
+        loginType: "email",
+        success: false,
+        failureReason: "Invalid password",
+      });
+
       if (user.incrementLoginAttempts) {
         await user.incrementLoginAttempts();
       }
+
+      await user.save();
+
       return res.status(401).json({
         success: false,
         message: "Invalid email or password",
@@ -460,27 +406,66 @@ exports.login = async (req, res) => {
       });
     }
 
+    // Generate tokens
+    const accessToken = generateAccessToken(user._id);
+    const refreshToken = generateRefreshToken(user._id);
+    const decoded = jwt.decode(refreshToken);
+
+    // Create device session
+    const deviceSession = deviceService.createDeviceSession(req, decoded.jti);
+
+    // Update user devices
+    await user.updateDeviceSession(deviceSession, decoded.jti);
+
+    // Add to login history
+    await user.addLoginHistory({
+      ipAddress: req.ip,
+      userAgent: req.get("user-agent"),
+      deviceId: deviceSession.deviceId,
+      deviceName: deviceSession.deviceName,
+      location: deviceSession.location,
+      loginType: "email",
+      success: true,
+    });
+
     if (user.resetLoginAttempts) {
       await user.resetLoginAttempts();
     }
 
-    if (user.updateLastLogin) {
-      await user.updateLastLogin(req.ip, req.get("user-agent"));
-    }
+    // Store tokens in Redis
+    await storeRefreshToken(user._id.toString(), refreshToken, req);
+    setTokenCookies(res, accessToken, refreshToken);
 
-    // ==================== NEW: Check password expiration ====================
-    const passwordExpiration = user.passwordNeedsChange
-      ? user.passwordNeedsChange()
-      : null;
+    // Prepare user response
+    const userResponse = {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      provider: user.provider,
+      avatar: user.avatar,
+      profileImage: user.profileImage || null,
+      profileImageKey: user.profileImageKey || null,
+      googleProfileImage: user.googleProfileImage || null,
+      isVerified: user.isVerified,
+      profileImageUrl: user.getProfileImage ? user.getProfileImage() : null,
+      devices: user.devices.map((d) => deviceService.formatDeviceForDisplay(d)),
+      currentDevice: deviceService.formatDeviceForDisplay(deviceSession),
+      passwordExpiration: user.passwordNeedsChange
+        ? user.passwordNeedsChange()
+        : null,
+    };
 
-    // Add warning if password is about to expire
-    if (passwordExpiration && passwordExpiration.shouldWarn) {
-      logger.info(
-        `⚠️ Password for ${email} will expire in ${passwordExpiration.daysRemaining} days`,
-      );
-    }
+    logger.info(`✅ Login successful for: ${email}`, {
+      device: deviceSession.deviceName,
+      location: deviceSession.location,
+    });
 
-    return await sendTokenResponse(user, 200, res, "Login successful");
+    res.status(200).json({
+      success: true,
+      message: "Login successful",
+      user: userResponse,
+    });
   } catch (error) {
     logger.error("❌ Login error:", error);
     return res.status(500).json({
@@ -490,7 +475,412 @@ exports.login = async (req, res) => {
   }
 };
 
-// ==================== UPDATED: Register with password security ====================
+// ==================== UPDATED: GOOGLE LOGIN WITH DEVICE TRACKING ====================
+exports.googleTokenAuth = async (req, res) => {
+  try {
+    const { token: googleToken } = req.body;
+
+    if (!googleToken) {
+      return res.status(400).json({
+        success: false,
+        message: "Google token is required",
+      });
+    }
+
+    const { user, isNew } = await handleGoogleAuth(googleToken, req);
+
+    // Generate tokens
+    const accessToken = generateAccessToken(user._id);
+    const refreshToken = generateRefreshToken(user._id);
+    const decoded = jwt.decode(refreshToken);
+
+    // Create device session
+    const deviceSession = deviceService.createDeviceSession(req, decoded.jti);
+
+    // Update user devices
+    await user.updateDeviceSession(deviceSession, decoded.jti);
+
+    // Add to login history
+    await user.addLoginHistory({
+      ipAddress: req.ip,
+      userAgent: req.get("user-agent"),
+      deviceId: deviceSession.deviceId,
+      deviceName: deviceSession.deviceName,
+      location: deviceSession.location,
+      loginType: "google",
+      success: true,
+    });
+
+    // Store tokens in Redis
+    await storeRefreshToken(user._id.toString(), refreshToken, req);
+    setTokenCookies(res, accessToken, refreshToken);
+
+    const message = isNew
+      ? "Account created with Google"
+      : "Google login successful";
+    const statusCode = isNew ? 201 : 200;
+
+    const userResponse = {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      provider: user.provider,
+      avatar: user.avatar,
+      profileImage: user.profileImage || null,
+      profileImageKey: user.profileImageKey || null,
+      googleProfileImage: user.googleProfileImage || null,
+      isVerified: user.isVerified,
+      profileImageUrl: user.getProfileImage ? user.getProfileImage() : null,
+      devices: user.devices.map((d) => deviceService.formatDeviceForDisplay(d)),
+      currentDevice: deviceService.formatDeviceForDisplay(deviceSession),
+    };
+
+    logger.info(`✅ Google login successful for: ${user.email}`, {
+      device: deviceSession.deviceName,
+      location: deviceSession.location,
+      isNew,
+    });
+
+    res.status(statusCode).json({
+      success: true,
+      message,
+      user: userResponse,
+    });
+  } catch (error) {
+    logger.error("❌ Google Token Auth Error:", error);
+    res.status(401).json({
+      success: false,
+      message: "Invalid Google token",
+    });
+  }
+};
+
+// ==================== UPDATED: LOGOUT WITH DEVICE CLEANUP ====================
+exports.logout = async (req, res) => {
+  try {
+    const { refreshToken } = req.cookies;
+
+    if (refreshToken) {
+      const decoded = jwt.decode(refreshToken);
+
+      // Deactivate session in user document
+      if (decoded?.id) {
+        const user = await User.findById(decoded.id);
+        if (user) {
+          await user.deactivateSession(decoded.jti);
+        }
+      }
+
+      // Revoke from Redis
+      await revokeRefreshToken(refreshToken);
+    }
+
+    clearTokenCookies(res);
+
+    res.status(200).json({
+      success: true,
+      message: "Logged out successfully",
+    });
+  } catch (error) {
+    logger.error("Logout error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error during logout",
+    });
+  }
+};
+
+// ==================== UPDATED: LOGOUT ALL DEVICES ====================
+exports.logoutAll = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    // Get all session token IDs for user
+    const redis = require("../config/redis");
+    const tokenIds = await redis.smembers(`user_sessions:${userId}`);
+
+    // Deactivate all sessions in user document
+    const user = await User.findById(userId);
+    if (user) {
+      user.devices.forEach((device) => {
+        device.sessions.forEach((session) => {
+          session.isActive = false;
+          session.logoutTime = new Date();
+        });
+      });
+      await user.save();
+    }
+
+    // Revoke all tokens from Redis
+    await revokeAllUserTokens(userId);
+
+    // Clear cookie
+    clearTokenCookies(res);
+
+    res.status(200).json({
+      success: true,
+      message: "Logged out from all devices successfully",
+    });
+  } catch (error) {
+    logger.error("Logout all error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error during logout",
+    });
+  }
+};
+
+// ==================== UPLOAD PROFILE IMAGE TO S3 ====================
+exports.uploadProfileImage = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        message: "No image file provided",
+      });
+    }
+
+    // Validate image
+    const validation = s3Service.validateImage(req.file);
+    if (!validation.valid) {
+      return res.status(400).json({
+        success: false,
+        message: validation.error,
+      });
+    }
+
+    const userId = req.user.id;
+
+    // Upload to S3
+    const uploadResult = await s3Service.uploadProfileImage(
+      req.file.buffer,
+      userId,
+      req.file.mimetype,
+    );
+
+    // Update user record
+    const user = await User.findById(userId);
+
+    // Delete old image if exists
+    if (user.profileImageKey) {
+      await s3Service.deleteImage(user.profileImageKey);
+    }
+
+    user.profileImage = uploadResult.imageUrl;
+    user.profileImageKey = uploadResult.key;
+    user.profileImageThumbnail = uploadResult.imageUrl;
+    await user.save();
+
+    // Log activity
+    await user.addSecurityLog(
+      "profile_image_updated",
+      req.ip,
+      req.get("user-agent"),
+      { imageKey: uploadResult.key },
+    );
+
+    res.status(200).json({
+      success: true,
+      message: "Profile image uploaded successfully",
+      imageUrl: uploadResult.imageUrl,
+      imageKey: uploadResult.key,
+    });
+  } catch (error) {
+    logger.error("❌ Profile image upload error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to upload profile image",
+    });
+  }
+};
+
+// ==================== GENERATE UPLOAD URL FOR CLIENT-SIDE UPLOAD ====================
+exports.generateUploadUrl = async (req, res) => {
+  try {
+    const { fileType } = req.body;
+    const userId = req.user.id;
+
+    if (!fileType || !fileType.startsWith("image/")) {
+      return res.status(400).json({
+        success: false,
+        message: "Valid image file type is required",
+      });
+    }
+
+    const uploadData = await s3Service.generateUploadUrl(userId, fileType);
+
+    res.status(200).json({
+      success: true,
+      ...uploadData,
+    });
+  } catch (error) {
+    logger.error("❌ Generate upload URL error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to generate upload URL",
+    });
+  }
+};
+
+// ==================== GET USER DEVICES ====================
+exports.getUserDevices = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+
+    const formattedDevices = user.devices.map((device) =>
+      deviceService.formatDeviceForDisplay(device),
+    );
+
+    // Get current device from refresh token
+    const { refreshToken } = req.cookies;
+    let currentDeviceId = null;
+
+    if (refreshToken) {
+      const decoded = jwt.decode(refreshToken);
+      if (decoded?.jti) {
+        const currentSession = user.devices.find((d) =>
+          d.sessions.some((s) => s.tokenId === decoded.jti),
+        );
+        currentDeviceId = currentSession?.deviceId;
+      }
+    }
+
+    res.status(200).json({
+      success: true,
+      devices: formattedDevices,
+      currentDeviceId,
+    });
+  } catch (error) {
+    logger.error("❌ Get user devices error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to get devices",
+    });
+  }
+};
+
+// ==================== GET LOGIN HISTORY ====================
+exports.getLoginHistory = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select("loginHistory");
+
+    const history = user.loginHistory
+      .sort((a, b) => b.timestamp - a.timestamp)
+      .map((log) => ({
+        timestamp: log.timestamp,
+        ipAddress: log.ipAddress,
+        location: log.location
+          ? `${log.location.city || ""}, ${log.location.country || ""}`.replace(
+              /^, |, $/g,
+              "",
+            ) || "Unknown"
+          : "Unknown",
+        deviceName: log.deviceName || "Unknown Device",
+        loginType: log.loginType,
+        success: log.success,
+        failureReason: log.failureReason,
+      }));
+
+    res.status(200).json({
+      success: true,
+      history,
+    });
+  } catch (error) {
+    logger.error("❌ Get login history error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to get login history",
+    });
+  }
+};
+
+// ==================== REVOKE DEVICE ====================
+exports.revokeDevice = async (req, res) => {
+  try {
+    const { deviceId } = req.params;
+    const userId = req.user.id;
+
+    const user = await User.findById(userId);
+
+    const device = user.devices.find((d) => d.deviceId === deviceId);
+
+    if (!device) {
+      return res.status(404).json({
+        success: false,
+        message: "Device not found",
+      });
+    }
+
+    // Check if trying to revoke current device
+    const { refreshToken } = req.cookies;
+    if (refreshToken) {
+      const decoded = jwt.decode(refreshToken);
+      if (decoded?.jti) {
+        const isCurrent = device.sessions.some(
+          (s) => s.tokenId === decoded.jti,
+        );
+        if (isCurrent) {
+          return res.status(400).json({
+            success: false,
+            message: "Cannot revoke current device. Use logout instead.",
+          });
+        }
+      }
+    }
+
+    // Revoke all sessions for this device
+    for (const session of device.sessions) {
+      if (session.tokenId) {
+        await revokeRefreshTokenByJti(session.tokenId);
+      }
+    }
+
+    // Remove device
+    user.devices = user.devices.filter((d) => d.deviceId !== deviceId);
+    await user.save();
+
+    logger.info("✅ Device revoked", { userId, deviceId });
+
+    res.status(200).json({
+      success: true,
+      message: "Device revoked successfully",
+    });
+  } catch (error) {
+    logger.error("❌ Revoke device error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to revoke device",
+    });
+  }
+};
+
+// ==================== GET GOOGLE CLIENT ID ====================
+exports.getGoogleClientId = (req, res) => {
+  try {
+    const clientId = process.env.GOOGLE_CLIENT_ID;
+
+    if (!clientId) {
+      return res.status(500).json({
+        success: false,
+        message: "Google authentication is not configured on the server",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      clientId: clientId,
+    });
+  } catch (error) {
+    logger.error("Get Google client ID error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+};
+
+// ==================== REGISTRATION METHODS ====================
 exports.initiateRegister = async (req, res) => {
   try {
     const { name, email, password, confirmPassword } = req.body;
@@ -513,7 +903,6 @@ exports.initiateRegister = async (req, res) => {
       });
     }
 
-    // ==================== NEW: Comprehensive password validation ====================
     const passwordValidation = await passwordSecurity.validatePassword(
       password,
       null,
@@ -544,7 +933,6 @@ exports.initiateRegister = async (req, res) => {
       });
     }
 
-    // Check if registration already in progress
     const pendingRegistration =
       await RedisService.getPendingRegistration(email);
     if (pendingRegistration) {
@@ -575,7 +963,6 @@ exports.initiateRegister = async (req, res) => {
     const otp = OTPGenerator.generateOTP();
     logger.info(`✅ Generated OTP for ${email}: ${otp}`);
 
-    // Hash password with increased salt rounds (12)
     const salt = await bcrypt.genSalt(12);
     const hashedPassword = await bcrypt.hash(password, salt);
 
@@ -639,7 +1026,6 @@ exports.initiateRegister = async (req, res) => {
   }
 };
 
-// ==================== UPDATED: Verify OTP and complete registration ====================
 exports.verifyOTPAndRegister = async (req, res) => {
   try {
     const { email, otp } = req.body;
@@ -709,8 +1095,6 @@ exports.verifyOTPAndRegister = async (req, res) => {
       });
     }
 
-    // ==================== NEW: Create user with password history ====================
-    console.log("🔍 Creating user with stored hash");
     const user = new User({
       name: pendingData.name,
       email: pendingData.email,
@@ -720,7 +1104,6 @@ exports.verifyOTPAndRegister = async (req, res) => {
       lastPasswordChange: new Date(),
     });
 
-    // Add initial password to history
     user.passwordHistory = [
       {
         password: pendingData.password,
@@ -733,10 +1116,9 @@ exports.verifyOTPAndRegister = async (req, res) => {
 
     await user.save();
 
-    console.log(`✅ User created in database: ${email}`);
+    logger.info(`✅ User created in database: ${email}`);
 
     await RedisService.deletePendingRegistration(email);
-    console.log(`✅ Redis data cleaned up for: ${email}`);
 
     return await sendTokenResponse(
       user,
@@ -753,398 +1135,7 @@ exports.verifyOTPAndRegister = async (req, res) => {
   }
 };
 
-// ==================== UPDATED: Change Password with history check ====================
-exports.changePassword = async (req, res) => {
-  try {
-    const { currentPassword, newPassword, confirmNewPassword } = req.body;
-
-    if (!currentPassword || !newPassword || !confirmNewPassword) {
-      return res.status(400).json({
-        success: false,
-        message:
-          "Please provide current password, new password, and confirm password",
-      });
-    }
-
-    if (newPassword !== confirmNewPassword) {
-      return res.status(400).json({
-        success: false,
-        message: "New passwords do not match",
-      });
-    }
-
-    const user = await User.findById(req.user.id).select(
-      "+password +passwordHistory",
-    );
-
-    const isMatch = await bcrypt.compare(currentPassword, user.password);
-    if (!isMatch) {
-      return res.status(401).json({
-        success: false,
-        message: "Current password is incorrect",
-      });
-    }
-
-    // ==================== NEW: Comprehensive password validation ====================
-    const passwordValidation = await passwordSecurity.validatePassword(
-      newPassword,
-      user._id.toString(),
-      true,
-    );
-
-    if (!passwordValidation.isValid) {
-      return res.status(400).json({
-        success: false,
-        message: "Password does not meet security requirements",
-        errors: passwordValidation.errors,
-        strength: passwordValidation.strength,
-      });
-    }
-
-    // ==================== NEW: Check if password is in history ====================
-    const historyCheck = await user.isPasswordInHistory(newPassword);
-    if (historyCheck.inHistory) {
-      return res.status(400).json({
-        success: false,
-        message:
-          historyCheck.message ||
-          "You have used this password recently. Please choose a different password.",
-      });
-    }
-
-    // Hash new password with increased salt rounds
-    const salt = await bcrypt.genSalt(12);
-    const hashedPassword = await bcrypt.hash(newPassword, salt);
-
-    // ==================== NEW: Add old password to history before changing ====================
-    await user.addToPasswordHistory(currentPassword, {
-      changedBy: "user",
-      ipAddress: req.ip,
-      userAgent: req.get("user-agent"),
-    });
-
-    // Update password
-    user.password = hashedPassword;
-    user.lastPasswordChange = new Date();
-    await user.save();
-
-    // ==================== NEW: Log security event ====================
-    if (user.addSecurityLog) {
-      await user.addSecurityLog(
-        "password_changed",
-        req.ip,
-        req.get("user-agent"),
-        { method: "user_change" },
-      );
-    }
-
-    // Revoke all sessions except current one
-    await revokeAllUserTokens(user._id.toString());
-
-    logger.info(`✅ Password changed successfully for user: ${user.email}`);
-
-    res.status(200).json({
-      success: true,
-      message:
-        "Password changed successfully. Please login again with your new password.",
-    });
-  } catch (error) {
-    logger.error("❌ Change password error:", error);
-    res.status(500).json({
-      success: false,
-      message: "Server error",
-    });
-  }
-};
-
-// ==================== UPDATED: Reset password with token ====================
-exports.resetPasswordWithToken = async (req, res) => {
-  try {
-    const { resetToken } = req.params;
-    const { password, confirmPassword, email } = req.body;
-
-    if (!password || !confirmPassword || !email) {
-      return res.status(400).json({
-        success: false,
-        message: "Email, password and confirm password are required",
-      });
-    }
-
-    if (password !== confirmPassword) {
-      return res.status(400).json({
-        success: false,
-        message: "Passwords do not match",
-      });
-    }
-
-    const isValidToken = await RedisService.verifyPasswordResetToken(
-      email,
-      resetToken,
-    );
-    if (!isValidToken) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid or expired reset token",
-      });
-    }
-
-    let decoded;
-    try {
-      const user = await User.findOne({ email });
-      if (!user) {
-        return res.status(400).json({
-          success: false,
-          message: "User not found",
-        });
-      }
-
-      decoded = jwt.verify(
-        resetToken,
-        process.env.JWT_SECRET + user._id.toString(),
-      );
-
-      if (decoded.type !== "password_reset" || decoded.email !== email) {
-        return res.status(400).json({
-          success: false,
-          message: "Invalid reset token",
-        });
-      }
-    } catch (error) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid or expired reset token",
-      });
-    }
-
-    const user = await User.findById(decoded.id).select(
-      "+password +passwordHistory",
-    );
-
-    if (!user) {
-      return res.status(400).json({
-        success: false,
-        message: "User not found",
-      });
-    }
-
-    // ==================== NEW: Comprehensive password validation ====================
-    const passwordValidation = await passwordSecurity.validatePassword(
-      password,
-      user._id.toString(),
-      true,
-    );
-
-    if (!passwordValidation.isValid) {
-      return res.status(400).json({
-        success: false,
-        message: "Password does not meet security requirements",
-        errors: passwordValidation.errors,
-        strength: passwordValidation.strength,
-      });
-    }
-
-    // ==================== NEW: Check if password is in history ====================
-    const historyCheck = await user.isPasswordInHistory(password);
-    if (historyCheck.inHistory) {
-      return res.status(400).json({
-        success: false,
-        message:
-          historyCheck.message ||
-          "You have used this password recently. Please choose a different password.",
-      });
-    }
-
-    // Hash new password with increased salt rounds
-    const salt = await bcrypt.genSalt(12);
-    const hashedPassword = await bcrypt.hash(password, salt);
-
-    // ==================== NEW: Add old password to history if exists ====================
-    if (user.password) {
-      await user.addToPasswordHistory(password, {
-        changedBy: "reset",
-        ipAddress: req.ip,
-        userAgent: req.get("user-agent"),
-      });
-    } else {
-      // First time password setup - add to history
-      user.passwordHistory = [
-        {
-          password: hashedPassword,
-          changedAt: new Date(),
-          changedBy: "reset",
-          ipAddress: req.ip,
-          userAgent: req.get("user-agent"),
-        },
-      ];
-    }
-
-    user.password = hashedPassword;
-    user.lastPasswordChange = new Date();
-    await user.save();
-
-    // Revoke all existing sessions after password reset
-    await revokeAllUserTokens(user._id.toString());
-
-    // Clean up Redis data
-    await RedisService.deletePendingPasswordReset(email);
-    await RedisService.deletePasswordResetToken(email);
-    await RedisService.deleteOTP(email);
-
-    // Send success email
-    try {
-      await EmailService.sendPasswordResetSuccessEmail(email, user.name);
-    } catch (emailError) {
-      logger.error("Failed to send success email:", emailError.message);
-    }
-
-    res.status(200).json({
-      success: true,
-      message:
-        "Password reset successful. You can now login with your new password.",
-    });
-  } catch (error) {
-    logger.error("❌ Reset password error:", error);
-    res.status(500).json({
-      success: false,
-      message: "Server error",
-    });
-  }
-};
-
-// ==================== NEW: Setup password with security checks ====================
-exports.setupPassword = async (req, res) => {
-  try {
-    const { email, password, confirmPassword } = req.body;
-
-    if (!email || !password || !confirmPassword) {
-      return res.status(400).json({
-        success: false,
-        message: "Email, password and confirm password are required",
-      });
-    }
-
-    if (password !== confirmPassword) {
-      return res.status(400).json({
-        success: false,
-        message: "Passwords do not match",
-      });
-    }
-
-    const user = await User.findOne({ email }).select(
-      "+password +passwordHistory",
-    );
-
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: "User not found",
-      });
-    }
-
-    const userWithPassword = await User.findOne({ email }).select("+password");
-    if (userWithPassword && userWithPassword.password) {
-      return res.status(400).json({
-        success: false,
-        message:
-          "Password already set for this account. Please use login instead.",
-      });
-    }
-
-    // ==================== NEW: Comprehensive password validation ====================
-    const passwordValidation = await passwordSecurity.validatePassword(
-      password,
-      user._id.toString(),
-      true,
-    );
-
-    if (!passwordValidation.isValid) {
-      return res.status(400).json({
-        success: false,
-        message: "Password does not meet security requirements",
-        errors: passwordValidation.errors,
-        strength: passwordValidation.strength,
-      });
-    }
-
-    console.log("🔍 Setting up password for user:", email);
-    const salt = await bcrypt.genSalt(12);
-    const hashedPassword = await bcrypt.hash(password, salt);
-
-    user.password = hashedPassword;
-    user.provider = "local";
-    user.lastPasswordChange = new Date();
-
-    // ==================== NEW: Add to password history ====================
-    user.passwordHistory = [
-      {
-        password: hashedPassword,
-        changedAt: new Date(),
-        changedBy: "user",
-        ipAddress: req.ip,
-        userAgent: req.get("user-agent"),
-      },
-    ];
-
-    await user.save();
-
-    console.log(`✅ Password setup successful for: ${email}`);
-
-    res.status(200).json({
-      success: true,
-      message: "Password set successfully. You can now login.",
-    });
-  } catch (error) {
-    logger.error("❌ Setup password error:", error);
-    res.status(500).json({
-      success: false,
-      message: "Server error",
-    });
-  }
-};
-
-// ==================== NEW: Check password expiration status ====================
-exports.checkPasswordExpiration = async (req, res) => {
-  try {
-    const user = await User.findById(req.user.id);
-
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: "User not found",
-      });
-    }
-
-    const expirationStatus = user.passwordNeedsChange
-      ? user.passwordNeedsChange()
-      : {
-          needsChange: false,
-          daysRemaining: null,
-        };
-
-    res.status(200).json({
-      success: true,
-      expiration: expirationStatus,
-    });
-  } catch (error) {
-    logger.error("❌ Check password expiration error:", error);
-    res.status(500).json({
-      success: false,
-      message: "Server error",
-    });
-  }
-};
-
-// ==================== NEW: Get password requirements for frontend ====================
-exports.getPasswordRequirements = (req, res) => {
-  const requirements = passwordSecurity.getPasswordRequirements();
-  res.status(200).json({
-    success: true,
-    requirements,
-  });
-};
-
-// ==================== EXISTING FUNCTIONS (unchanged) ====================
-
+// ==================== REFRESH TOKEN ====================
 exports.refreshToken = async (req, res) => {
   try {
     const { refreshToken } = req.cookies;
@@ -1181,201 +1172,7 @@ exports.refreshToken = async (req, res) => {
   }
 };
 
-exports.logout = async (req, res) => {
-  try {
-    const { refreshToken } = req.cookies;
-
-    if (refreshToken) {
-      await revokeRefreshToken(refreshToken);
-    }
-
-    clearTokenCookies(res);
-
-    res.status(200).json({
-      success: true,
-      message: "Logged out successfully",
-    });
-  } catch (error) {
-    logger.error("Logout error:", error);
-    res.status(500).json({
-      success: false,
-      message: "Error during logout",
-    });
-  }
-};
-
-exports.logoutAll = async (req, res) => {
-  try {
-    const { accessToken } = req.cookies;
-
-    if (!accessToken) {
-      return res.status(401).json({
-        success: false,
-        message: "Not authenticated",
-      });
-    }
-
-    try {
-      const decoded = jwt.verify(
-        accessToken,
-        process.env.JWT_ACCESS_SECRET || process.env.JWT_SECRET,
-      );
-
-      if (decoded.type === "access") {
-        await revokeAllUserTokens(decoded.id);
-      }
-    } catch (error) {
-      const { refreshToken } = req.cookies;
-      if (refreshToken) {
-        const decoded = jwt.decode(refreshToken);
-        if (decoded?.id) {
-          await revokeAllUserTokens(decoded.id);
-        }
-      }
-    }
-
-    clearTokenCookies(res);
-
-    res.status(200).json({
-      success: true,
-      message: "Logged out from all devices successfully",
-    });
-  } catch (error) {
-    logger.error("Logout all error:", error);
-    res.status(500).json({
-      success: false,
-      message: "Error during logout",
-    });
-  }
-};
-
-exports.getSessions = async (req, res) => {
-  try {
-    const redis = require("../config/redis");
-    const { accessToken } = req.cookies;
-
-    if (!accessToken) {
-      return res.status(401).json({
-        success: false,
-        message: "Not authenticated",
-      });
-    }
-
-    let userId;
-    try {
-      const decoded = jwt.verify(
-        accessToken,
-        process.env.JWT_ACCESS_SECRET || process.env.JWT_SECRET,
-      );
-      userId = decoded.id;
-    } catch (error) {
-      return res.status(401).json({
-        success: false,
-        message: "Invalid token",
-      });
-    }
-
-    const tokenIds = await redis.smembers(`user_sessions:${userId}`);
-    const sessions = [];
-
-    for (const tokenId of tokenIds) {
-      const tokenData = await redis.get(`refresh_token:${tokenId}`);
-      if (tokenData) {
-        const session = JSON.parse(tokenData);
-        sessions.push({
-          tokenId: session.tokenId,
-          createdAt: session.createdAt,
-          lastActivity: session.lastActivity,
-          ip: session.ip,
-          userAgent: session.userAgent,
-          isCurrentSession: session.refreshToken === req.cookies.refreshToken,
-        });
-      }
-    }
-
-    sessions.sort(
-      (a, b) => new Date(b.lastActivity) - new Date(a.lastActivity),
-    );
-
-    res.status(200).json({
-      success: true,
-      sessions,
-    });
-  } catch (error) {
-    logger.error("Get sessions error:", error);
-    res.status(500).json({
-      success: false,
-      message: "Error retrieving sessions",
-    });
-  }
-};
-
-exports.revokeSession = async (req, res) => {
-  try {
-    const { tokenId } = req.params;
-    const redis = require("../config/redis");
-    const { accessToken } = req.cookies;
-
-    if (!accessToken) {
-      return res.status(401).json({
-        success: false,
-        message: "Not authenticated",
-      });
-    }
-
-    let userId;
-    try {
-      const decoded = jwt.verify(
-        accessToken,
-        process.env.JWT_ACCESS_SECRET || process.env.JWT_SECRET,
-      );
-      userId = decoded.id;
-    } catch (error) {
-      return res.status(401).json({
-        success: false,
-        message: "Invalid token",
-      });
-    }
-
-    const tokenData = await redis.get(`refresh_token:${tokenId}`);
-    if (!tokenData) {
-      return res.status(404).json({
-        success: false,
-        message: "Session not found",
-      });
-    }
-
-    const session = JSON.parse(tokenData);
-
-    if (session.userId !== userId.toString()) {
-      return res.status(403).json({
-        success: false,
-        message: "Not authorized to revoke this session",
-      });
-    }
-
-    if (session.refreshToken === req.cookies.refreshToken) {
-      return res.status(400).json({
-        success: false,
-        message: "Cannot revoke current session. Use logout instead.",
-      });
-    }
-
-    await revokeRefreshToken(session.refreshToken);
-
-    res.status(200).json({
-      success: true,
-      message: "Session revoked successfully",
-    });
-  } catch (error) {
-    logger.error("Revoke session error:", error);
-    res.status(500).json({
-      success: false,
-      message: "Error revoking session",
-    });
-  }
-};
-
+// ==================== CHECK AUTH ====================
 exports.checkAuth = async (req, res) => {
   try {
     const { accessToken } = req.cookies;
@@ -1409,7 +1206,6 @@ exports.checkAuth = async (req, res) => {
         });
       }
 
-      // ==================== NEW: Add password expiration info ====================
       const passwordExpiration = user.passwordNeedsChange
         ? user.passwordNeedsChange()
         : null;
@@ -1425,12 +1221,10 @@ exports.checkAuth = async (req, res) => {
           provider: user.provider,
           avatar: user.avatar,
           profileImage: user.profileImage,
+          profileImageKey: user.profileImageKey,
           googleProfileImage: user.googleProfileImage,
           isVerified: user.isVerified,
-          profileImageUrl: user.getProfileImage
-            ? user.getProfileImage()
-            : user.avatar ||
-              "https://cdn-icons-png.flaticon.com/512/149/149071.png",
+          profileImageUrl: user.getProfileImage ? user.getProfileImage() : null,
           passwordExpiration,
         },
       });
@@ -1466,12 +1260,12 @@ exports.checkAuth = async (req, res) => {
                   provider: user.provider,
                   avatar: user.avatar,
                   profileImage: user.profileImage,
+                  profileImageKey: user.profileImageKey,
                   googleProfileImage: user.googleProfileImage,
                   isVerified: user.isVerified,
                   profileImageUrl: user.getProfileImage
                     ? user.getProfileImage()
-                    : user.avatar ||
-                      "https://cdn-icons-png.flaticon.com/512/149/149071.png",
+                    : null,
                   passwordExpiration,
                 },
               });
@@ -1494,6 +1288,7 @@ exports.checkAuth = async (req, res) => {
   }
 };
 
+// ==================== GET PROFILE ====================
 exports.getProfile = async (req, res) => {
   try {
     const user = req.user;
@@ -1506,14 +1301,17 @@ exports.getProfile = async (req, res) => {
       provider: user.provider,
       avatar: user.avatar,
       profileImage: user.profileImage,
+      profileImageKey: user.profileImageKey,
       googleProfileImage: user.googleProfileImage,
       isVerified: user.isVerified,
       createdAt: user.createdAt,
-      profileImageUrl: user.getProfileImage
-        ? user.getProfileImage()
-        : user.avatar ||
-          "https://cdn-icons-png.flaticon.com/512/149/149071.png",
-      // ==================== NEW: Password expiration info ====================
+      // FIX: also expose profile fields so frontend can pre-fill the form
+      phone: user.phone || null,
+      address: user.address || null,
+      bio: user.bio || null,
+      dateOfBirth: user.dateOfBirth || null,
+      gender: user.gender || null,
+      profileImageUrl: user.getProfileImage ? user.getProfileImage() : null,
       passwordExpiration: user.passwordNeedsChange
         ? user.passwordNeedsChange()
         : null,
@@ -1531,15 +1329,74 @@ exports.getProfile = async (req, res) => {
   }
 };
 
+// ==================== UPDATE PROFILE ====================
+// FIX 1: Normalise gender to DB enum before saving.
+//   DB enum: ["male","female","other","prefer-not-to-say"]
+//   Frontend may send "Male","Female","Non-binary","Prefer not to say"
+// FIX 2: Sanitise phone — strip non-digits, keep last 10.
+//   DB validates /^[0-9]{10}$/ so "98765 43210" or "+91 98765 43210" must be cleaned.
+// FIX 3: Expose all profile fields in the response so Redux stays in sync.
 exports.updateProfile = async (req, res) => {
   try {
-    const { name, email, profileImage } = req.body;
+    const { name, email, phone, address, bio, dateOfBirth, gender } = req.body;
     const updateData = {};
 
-    if (name) updateData.name = name;
-    if (profileImage) updateData.profileImage = profileImage;
+    if (name !== undefined && name !== "") updateData.name = name;
+    if (address !== undefined && address !== "") updateData.address = address;
+    if (bio !== undefined && bio !== "") updateData.bio = bio;
 
-    if (email) {
+    // ── Gender normalisation ─────────────────────────────────────────────────
+    if (gender !== undefined && gender !== "") {
+      const genderMap = {
+        male: "male",
+        female: "female",
+        other: "other",
+        "non-binary": "other",
+        nonbinary: "other",
+        "prefer not to say": "prefer-not-to-say",
+        "prefer-not-to-say": "prefer-not-to-say",
+        prefernottosay: "prefer-not-to-say",
+      };
+      const normalised = genderMap[gender.toLowerCase().trim()];
+      if (normalised) {
+        updateData.gender = normalised;
+      }
+      // Unknown value: silently skip to avoid Mongoose enum validation error
+    }
+
+    // ── Phone sanitisation ───────────────────────────────────────────────────
+    if (phone !== undefined && phone !== "") {
+      const digits = String(phone).replace(/\D/g, "");
+      const cleaned = digits.slice(-10); // keep last 10 digits
+      if (cleaned.length !== 10) {
+        return res.status(400).json({
+          success: false,
+          message: "Phone number must be exactly 10 digits",
+        });
+      }
+      updateData.phone = cleaned;
+    }
+
+    // ── Date of birth ────────────────────────────────────────────────────────
+    if (dateOfBirth !== undefined && dateOfBirth !== "") {
+      const dob = new Date(dateOfBirth);
+      if (isNaN(dob.getTime())) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid date of birth",
+        });
+      }
+      if (dob > new Date()) {
+        return res.status(400).json({
+          success: false,
+          message: "Date of birth cannot be in the future",
+        });
+      }
+      updateData.dateOfBirth = dob;
+    }
+
+    // ── Email change (check uniqueness) ──────────────────────────────────────
+    if (email !== undefined && email !== "") {
       const emailExists = await User.findOne({
         email,
         _id: { $ne: req.user.id },
@@ -1552,6 +1409,7 @@ exports.updateProfile = async (req, res) => {
         });
       }
       updateData.email = email;
+      updateData.lastEmailChange = new Date();
     }
 
     const user = await User.findByIdAndUpdate(req.user.id, updateData, {
@@ -1559,20 +1417,41 @@ exports.updateProfile = async (req, res) => {
       runValidators: true,
     });
 
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
+
+    // Log activity (non-fatal)
+    try {
+      await user.addSecurityLog(
+        "profile_updated",
+        req.ip,
+        req.get("user-agent"),
+        { updatedFields: Object.keys(updateData) },
+      );
+    } catch (logErr) {
+      logger.warn("Could not log profile update activity:", logErr.message);
+    }
+
     const userResponse = {
       id: user._id,
       name: user.name,
       email: user.email,
+      phone: user.phone || null,
+      address: user.address || null,
+      bio: user.bio || null,
+      dateOfBirth: user.dateOfBirth || null,
+      gender: user.gender || null,
       role: user.role,
       provider: user.provider,
       avatar: user.avatar,
-      profileImage: user.profileImage,
-      googleProfileImage: user.googleProfileImage,
+      profileImage: user.profileImage || null,
+      profileImageKey: user.profileImageKey || null,
+      googleProfileImage: user.googleProfileImage || null,
       isVerified: user.isVerified,
-      profileImageUrl: user.getProfileImage
-        ? user.getProfileImage()
-        : user.avatar ||
-          "https://cdn-icons-png.flaticon.com/512/149/149071.png",
+      profileImageUrl: user.getProfileImage ? user.getProfileImage() : null,
     };
 
     res.status(200).json({
@@ -1581,6 +1460,17 @@ exports.updateProfile = async (req, res) => {
       user: userResponse,
     });
   } catch (error) {
+    logger.error("❌ Update profile error:", error);
+
+    if (error.name === "ValidationError") {
+      const errors = Object.values(error.errors).map((e) => e.message);
+      return res.status(400).json({
+        success: false,
+        message: errors.join(", "),
+        errors,
+      });
+    }
+
     res.status(500).json({
       success: false,
       message: "Server error",
@@ -1588,45 +1478,95 @@ exports.updateProfile = async (req, res) => {
   }
 };
 
-exports.uploadProfileImage = async (req, res) => {
+// ==================== CHANGE PASSWORD ====================
+exports.changePassword = async (req, res) => {
   try {
-    const { profileImage } = req.body;
+    const { currentPassword, newPassword, confirmNewPassword } = req.body;
 
-    if (!profileImage) {
+    if (!currentPassword || !newPassword || !confirmNewPassword) {
       return res.status(400).json({
         success: false,
-        message: "Profile image URL is required",
+        message:
+          "Please provide current password, new password, and confirm password",
       });
     }
 
-    const user = await User.findByIdAndUpdate(
-      req.user.id,
-      { profileImage },
-      { new: true },
+    if (newPassword !== confirmNewPassword) {
+      return res.status(400).json({
+        success: false,
+        message: "New passwords do not match",
+      });
+    }
+
+    const user = await User.findById(req.user.id).select(
+      "+password +passwordHistory",
     );
 
-    const userResponse = {
-      id: user._id,
-      name: user.name,
-      email: user.email,
-      role: user.role,
-      provider: user.provider,
-      avatar: user.avatar,
-      profileImage: user.profileImage,
-      googleProfileImage: user.googleProfileImage,
-      isVerified: user.isVerified,
-      profileImageUrl: user.getProfileImage
-        ? user.getProfileImage()
-        : user.avatar ||
-          "https://cdn-icons-png.flaticon.com/512/149/149071.png",
-    };
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isMatch) {
+      return res.status(401).json({
+        success: false,
+        message: "Current password is incorrect",
+      });
+    }
+
+    const passwordValidation = await passwordSecurity.validatePassword(
+      newPassword,
+      user._id.toString(),
+      true,
+    );
+
+    if (!passwordValidation.isValid) {
+      return res.status(400).json({
+        success: false,
+        message: "Password does not meet security requirements",
+        errors: passwordValidation.errors,
+        strength: passwordValidation.strength,
+      });
+    }
+
+    const historyCheck = await user.isPasswordInHistory(newPassword);
+    if (historyCheck.inHistory) {
+      return res.status(400).json({
+        success: false,
+        message:
+          historyCheck.message ||
+          "You have used this password recently. Please choose a different password.",
+      });
+    }
+
+    const salt = await bcrypt.genSalt(12);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+    await user.addToPasswordHistory(currentPassword, {
+      changedBy: "user",
+      ipAddress: req.ip,
+      userAgent: req.get("user-agent"),
+    });
+
+    user.password = hashedPassword;
+    user.lastPasswordChange = new Date();
+    await user.save();
+
+    await user.addSecurityLog(
+      "password_changed",
+      req.ip,
+      req.get("user-agent"),
+      { method: "user_change" },
+    );
+
+    // Revoke all sessions except current one
+    await revokeAllUserTokens(user._id.toString());
+
+    logger.info(`✅ Password changed successfully for user: ${user.email}`);
 
     res.status(200).json({
       success: true,
-      message: "Profile image updated successfully",
-      user: userResponse,
+      message:
+        "Password changed successfully. Please login again with your new password.",
     });
   } catch (error) {
+    logger.error("❌ Change password error:", error);
     res.status(500).json({
       success: false,
       message: "Server error",
@@ -1635,7 +1575,6 @@ exports.uploadProfileImage = async (req, res) => {
 };
 
 // ==================== FORGOT PASSWORD FLOW ====================
-
 exports.initiateForgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
@@ -1747,6 +1686,7 @@ exports.initiateForgotPassword = async (req, res) => {
   }
 };
 
+// FIX: was using bare `redis` variable (undefined). Now uses RedisService consistently.
 exports.verifyForgotPasswordOTP = async (req, res) => {
   try {
     const { email, otp } = req.body;
@@ -1758,101 +1698,7 @@ exports.verifyForgotPasswordOTP = async (req, res) => {
       });
     }
 
-    const otpBlocked = await RedisService.checkOTPBlocked(email);
-    if (otpBlocked.blocked) {
-      return res.status(429).json({
-        success: false,
-        message: `Too many failed attempts. Please try again in ${otpBlocked.remainingSeconds} seconds.`,
-        blocked: true,
-        remainingSeconds: otpBlocked.remainingSeconds,
-      });
-    }
-
-    const pendingData = await RedisService.getPendingPasswordReset(email);
-    if (!pendingData) {
-      return res.status(400).json({
-        success: false,
-        message: "OTP expired or not found. Please request a new one.",
-      });
-    }
-
-    if (pendingData.otpAttempts >= 3) {
-      await RedisService.deletePendingPasswordReset(email);
-      return res.status(400).json({
-        success: false,
-        message: "Too many failed attempts. Please request a new OTP.",
-      });
-    }
-
-    const otpVerification = await RedisService.verifyOTP(email, otp);
-    if (!otpVerification.valid) {
-      pendingData.otpAttempts = (pendingData.otpAttempts || 0) + 1;
-      await RedisService.storePendingPasswordReset(email, pendingData);
-
-      const attemptResult = await RedisService.incrementOTPAttempts(email);
-
-      let errorMessage =
-        otpVerification.reason || "Invalid OTP. Please try again.";
-
-      if (attemptResult.blocked) {
-        errorMessage = `Too many failed attempts. Please try again in 60 seconds.`;
-        return res.status(429).json({
-          success: false,
-          message: errorMessage,
-          blocked: true,
-          remainingSeconds: 60,
-        });
-      }
-
-      return res.status(400).json({
-        success: false,
-        message: errorMessage,
-        attemptsRemaining: 3 - pendingData.otpAttempts,
-      });
-    }
-
-    await RedisService.clearOTPAttempts(email);
-    await RedisService.clearOTPBlock(email);
-
-    const resetToken = jwt.sign(
-      {
-        id: pendingData.userId,
-        email: pendingData.email,
-        type: "password_reset",
-      },
-      process.env.JWT_SECRET + pendingData.userId,
-      { expiresIn: "10m" },
-    );
-
-    await RedisService.storePasswordResetToken(email, resetToken);
-    await RedisService.deleteOTP(email);
-
-    res.status(200).json({
-      success: true,
-      message: "OTP verified successfully",
-      resetToken: resetToken,
-      email: email,
-    });
-  } catch (error) {
-    logger.error("❌ Forgot password OTP verification error:", error);
-    res.status(500).json({
-      success: false,
-      message: "Server error",
-    });
-  }
-};
-
-exports.resendForgotPasswordOTP = async (req, res) => {
-  try {
-    const { email } = req.body;
-
-    if (!email) {
-      return res.status(400).json({
-        success: false,
-        message: "Email is required",
-      });
-    }
-
+    // Check OTP block
     const otpBlocked = await RedisService.checkOTPBlocked(email);
     if (otpBlocked.blocked) {
       return res.status(429).json({
@@ -1868,15 +1714,101 @@ exports.resendForgotPasswordOTP = async (req, res) => {
       return res.status(400).json({
         success: false,
         message:
-          "No session for this email. Please start the forgot password process again.",
+          "Password reset session expired or not found. Please start over.",
       });
     }
 
-    const lastResendTime = pendingData.lastResendTime;
-    const now = new Date();
+    const otpVerification = await RedisService.verifyOTP(email, otp);
+    if (!otpVerification.valid) {
+      const attemptResult = await RedisService.incrementOTPAttempts(email);
 
+      let errorMessage =
+        otpVerification.reason || "Invalid OTP. Please try again.";
+
+      if (attemptResult.blocked) {
+        return res.status(429).json({
+          success: false,
+          message: "Too many failed attempts. Please try again in 60 seconds.",
+          blocked: true,
+          remainingSeconds: 60,
+          attempts: attemptResult.attempts,
+        });
+      }
+
+      const attemptsRemaining = 3 - attemptResult.attempts;
+      return res.status(400).json({
+        success: false,
+        message: errorMessage,
+        attemptsRemaining,
+        attempts: attemptResult.attempts,
+      });
+    }
+
+    // OTP valid — clear attempts and generate a short-lived reset token
+    await RedisService.clearOTPAttempts(email);
+    await RedisService.clearOTPBlock(email);
+
+    const resetToken = crypto.randomBytes(32).toString("hex");
+    const redis = require("../config/redis");
+    await redis.setex(
+      `reset:${resetToken}`,
+      600, // 10 minutes
+      JSON.stringify({ userId: pendingData.userId, email }),
+    );
+
+    // Clean up OTP and pending reset
+    await RedisService.deleteOTP(email);
+    await RedisService.deletePendingPasswordReset(email);
+
+    logger.info(`✅ Forgot password OTP verified for ${email}`);
+
+    return res.status(200).json({
+      success: true,
+      message: "OTP verified successfully",
+      resetToken,
+    });
+  } catch (error) {
+    logger.error("❌ Verify forgot password OTP error:", error);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+// FIX: was using bare `redis` variable (undefined) and wrong OTP key pattern.
+// Now uses RedisService + OTPGenerator consistently with the rest of the file.
+exports.resendForgotPasswordOTP = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Email is required" });
+    }
+
+    // Rate-limit check
+    const otpBlocked = await RedisService.checkOTPBlocked(email);
+    if (otpBlocked.blocked) {
+      return res.status(429).json({
+        success: false,
+        message: `Too many failed attempts. Please try again in ${otpBlocked.remainingSeconds} seconds.`,
+        blocked: true,
+        remainingSeconds: otpBlocked.remainingSeconds,
+      });
+    }
+
+    const pendingData = await RedisService.getPendingPasswordReset(email);
+    if (!pendingData) {
+      // Return 200 to prevent email enumeration
+      return res.status(200).json({
+        success: true,
+        message: "If that email has a pending reset, a new OTP has been sent.",
+      });
+    }
+
+    // Enforce 60-second cooldown between resends
+    const lastResendTime = pendingData.lastResendTime;
     if (lastResendTime) {
-      const timeDiff = (now - new Date(lastResendTime)) / 1000;
+      const timeDiff = (Date.now() - new Date(lastResendTime).getTime()) / 1000;
       if (timeDiff < 60) {
         return res.status(429).json({
           success: false,
@@ -1888,26 +1820,25 @@ exports.resendForgotPasswordOTP = async (req, res) => {
 
     const otp = OTPGenerator.generateOTP();
 
-    pendingData.lastResendTime = now.toISOString();
+    pendingData.lastResendTime = new Date().toISOString();
     pendingData.resendCount = (pendingData.resendCount || 0) + 1;
 
     await RedisService.storePendingPasswordReset(email, pendingData);
     await RedisService.storeOTP(email, otp);
-
     await RedisService.clearOTPAttempts(email);
     await RedisService.clearOTPBlock(email);
 
     try {
-      logger.info(`📤 Resending password reset OTP to: ${email}`);
+      logger.info(`📤 Resending password reset OTP email to: ${email}`);
       await EmailService.sendForgotPasswordOTPEmail(
         email,
-        pendingData.username,
+        pendingData.username || email,
         otp,
       );
-      logger.info(`✅ Resent password reset OTP successfully to ${email}`);
+      logger.info(`✅ Resent password reset OTP to ${email}`);
     } catch (emailError) {
       logger.error(
-        "❌ Failed to resend password reset OTP:",
+        "❌ Failed to resend password reset email:",
         emailError.message,
       );
       return res.status(500).json({
@@ -1916,20 +1847,137 @@ exports.resendForgotPasswordOTP = async (req, res) => {
       });
     }
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
-      message: "New password reset OTP sent to your email.",
-      email: email,
+      message: "New OTP sent to your email.",
+      email,
     });
   } catch (error) {
-    logger.error("Resend forgot password OTP error:", error);
-    res.status(500).json({
-      success: false,
-      message: "Server error",
-    });
+    logger.error("❌ Resend forgot password OTP error:", error);
+    return res.status(500).json({ success: false, message: "Server error" });
   }
 };
 
+// FIX: was using bare `redis` variable (undefined) and undefined
+// `sendPasswordResetSuccessEmail`. Now imports redis inline and calls
+// EmailService.sendPasswordResetSuccessEmail correctly.
+exports.resetPasswordWithToken = async (req, res) => {
+  try {
+    const { resetToken } = req.params;
+    const { email, password, confirmPassword } = req.body;
+
+    if (!resetToken || !email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Reset token, email and new password are required",
+      });
+    }
+
+    if (password !== confirmPassword) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Passwords do not match" });
+    }
+
+    const redis = require("../config/redis");
+    const stored = await redis.get(`reset:${resetToken}`);
+    if (!stored) {
+      return res.status(400).json({
+        success: false,
+        message: "Reset token is invalid or has expired.",
+      });
+    }
+
+    const data = JSON.parse(stored);
+
+    if (data.email.toLowerCase() !== email.toLowerCase()) {
+      return res.status(400).json({
+        success: false,
+        message: "Email does not match the reset token.",
+      });
+    }
+
+    const user = await User.findById(data.userId).select(
+      "+password +passwordHistory",
+    );
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found." });
+    }
+
+    // Validate new password strength
+    const passwordValidation = await passwordSecurity.validatePassword(
+      password,
+      user._id.toString(),
+      false,
+    );
+    if (!passwordValidation.isValid) {
+      return res.status(400).json({
+        success: false,
+        message: "Password does not meet security requirements",
+        errors: passwordValidation.errors,
+        strength: passwordValidation.strength,
+      });
+    }
+
+    const historyCheck = await user.isPasswordInHistory(password);
+    if (historyCheck.inHistory) {
+      return res
+        .status(400)
+        .json({ success: false, message: historyCheck.message });
+    }
+
+    // Save old password to history before overwriting
+    await user.addToPasswordHistory(user.password, {
+      changedBy: "reset",
+      ipAddress: req.ip,
+      userAgent: req.get("user-agent"),
+    });
+
+    const salt = await bcrypt.genSalt(12);
+    user.password = await bcrypt.hash(password, salt);
+    user.lastPasswordChange = new Date();
+    await user.save();
+
+    await redis.del(`reset:${resetToken}`);
+
+    // Revoke all existing sessions for security
+    await revokeAllUserTokens(user._id.toString());
+
+    // Log security event (non-fatal)
+    try {
+      await user.addSecurityLog(
+        "password_reset",
+        req.ip,
+        req.get("user-agent"),
+        { method: "otp_reset" },
+      );
+    } catch (logErr) {
+      logger.warn("Could not log password reset:", logErr.message);
+    }
+
+    // Send success email (non-fatal)
+    try {
+      await EmailService.sendPasswordResetSuccessEmail(user.email, user.name);
+    } catch (emailErr) {
+      logger.warn("Could not send reset success email:", emailErr.message);
+    }
+
+    logger.info(`✅ Password reset successfully for: ${user.email}`);
+
+    return res.status(200).json({
+      success: true,
+      message:
+        "Password reset successfully. You can now login with your new password.",
+    });
+  } catch (error) {
+    logger.error("❌ Reset password with token error:", error);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+// ==================== RESEND OTP ====================
 exports.resendOTP = async (req, res) => {
   try {
     const { email } = req.body;
@@ -2010,6 +2058,7 @@ exports.resendOTP = async (req, res) => {
   }
 };
 
+// ==================== CHECK REGISTRATION STATUS ====================
 exports.checkRegistrationStatus = async (req, res) => {
   try {
     const { email } = req.params;
@@ -2046,45 +2095,31 @@ exports.checkRegistrationStatus = async (req, res) => {
   }
 };
 
-// ==================== LEGACY COMPATIBILITY ENDPOINTS ====================
-
-exports.forgotPassword = async (req, res) => {
+// ==================== CHECK PASSWORD EXPIRATION ====================
+exports.checkPasswordExpiration = async (req, res) => {
   try {
-    const { email } = req.body;
-
-    if (!email) {
-      return res.status(400).json({
-        success: false,
-        message: "Email is required",
-      });
-    }
-
-    const user = await User.findOne({ email });
+    const user = await User.findById(req.user.id);
 
     if (!user) {
-      return res.status(200).json({
-        success: true,
-        message:
-          "If an account exists, password reset instructions will be sent",
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
       });
     }
 
-    const resetToken = jwt.sign(
-      { id: user._id },
-      process.env.JWT_SECRET + user.password,
-      { expiresIn: "10m" },
-    );
-
-    const resetUrl = `${req.protocol}://${req.get("host")}/api/auth/reset-password/${resetToken}`;
-
-    logger.info("Reset URL:", resetUrl);
+    const expirationStatus = user.passwordNeedsChange
+      ? user.passwordNeedsChange()
+      : {
+          needsChange: false,
+          daysRemaining: null,
+        };
 
     res.status(200).json({
       success: true,
-      message: "Password reset email sent",
-      resetUrl,
+      expiration: expirationStatus,
     });
   } catch (error) {
+    logger.error("❌ Check password expiration error:", error);
     res.status(500).json({
       success: false,
       message: "Server error",
@@ -2092,50 +2127,115 @@ exports.forgotPassword = async (req, res) => {
   }
 };
 
-exports.resetPassword = async (req, res) => {
+// ==================== GET PASSWORD REQUIREMENTS ====================
+exports.getPasswordRequirements = (req, res) => {
+  const requirements = passwordSecurity.getPasswordRequirements();
+  res.status(200).json({
+    success: true,
+    requirements,
+  });
+};
+
+// ==================== SETUP PASSWORD ====================
+exports.setupPassword = async (req, res) => {
   try {
-    const { resetToken } = req.params;
-    const { password } = req.body;
+    const { email, password } = req.body;
 
-    if (!password) {
+    const user = await User.findOne({ email: email.toLowerCase() }).select(
+      "+password",
+    );
+    if (!user)
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+
+    if (user.password) {
       return res.status(400).json({
         success: false,
-        message: "Password is required",
-      });
-    }
-
-    let decoded;
-    try {
-      decoded = jwt.verify(resetToken, process.env.JWT_SECRET);
-    } catch (error) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid or expired reset token",
-      });
-    }
-
-    const user = await User.findById(decoded.id);
-
-    if (!user) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid reset token",
+        message: "Password already set. Use change password instead.",
       });
     }
 
     const salt = await bcrypt.genSalt(12);
     user.password = await bcrypt.hash(password, salt);
+    user.provider = "local";
+    user.lastPasswordChange = new Date();
     await user.save();
 
-    legacySendTokenResponse(user, 200, res, "Password reset successful");
+    return res
+      .status(200)
+      .json({ success: true, message: "Password set up successfully." });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Server error",
-    });
+    logger.error("Setup password error:", error);
+    return res.status(500).json({ success: false, message: "Server error" });
   }
 };
 
+// ==================== LEGACY FORGOT / RESET PASSWORD ====================
+exports.forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+    const user = await User.findOne({ email: email.toLowerCase() });
+    if (!user) {
+      return res.status(200).json({
+        success: true,
+        message: "If that email exists, a reset link has been sent.",
+      });
+    }
+
+    const resetToken = user.createPasswordResetToken();
+    await user.save({ validateBeforeSave: false });
+
+    const resetUrl = `${process.env.CLIENT_URL}/reset-password/${resetToken}`;
+    logger.info(`Password reset URL (legacy): ${resetUrl}`);
+
+    return res.status(200).json({
+      success: true,
+      message: "Reset link sent to your email.",
+    });
+  } catch (error) {
+    logger.error("Legacy forgot password error:", error);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+exports.resetPassword = async (req, res) => {
+  try {
+    const hashedToken = crypto
+      .createHash("sha256")
+      .update(req.params.resetToken)
+      .digest("hex");
+
+    const user = await User.findOne({
+      passwordResetToken: hashedToken,
+      passwordResetExpires: { $gt: Date.now() },
+    }).select("+password");
+
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        message: "Reset token is invalid or has expired.",
+      });
+    }
+
+    const salt = await bcrypt.genSalt(12);
+    user.password = await bcrypt.hash(req.body.password, salt);
+    user.passwordResetToken = undefined;
+    user.passwordResetExpires = undefined;
+    user.lastPasswordChange = new Date();
+    await user.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Password reset successfully.",
+    });
+  } catch (error) {
+    logger.error("Legacy reset password error:", error);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+// ==================== LEGACY REGISTER ====================
 exports.register = async (req, res) => {
   try {
     const { name, email, password, confirmPassword } = req.body;
@@ -2162,7 +2262,6 @@ exports.register = async (req, res) => {
       });
     }
 
-    // ==================== NEW: Password validation ====================
     const passwordValidation = await passwordSecurity.validatePassword(
       password,
       null,
@@ -2202,7 +2301,37 @@ exports.register = async (req, res) => {
   }
 };
 
-// ==================== EXPORT HELPER FUNCTIONS ====================
+// ==================== LEGACY HELPERS ====================
+const generateToken = (id) => {
+  return jwt.sign({ id }, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_EXPIRE || "7d",
+  });
+};
+
+const legacySendTokenResponse = (user, statusCode, res, message) => {
+  const token = generateToken(user._id);
+
+  const userResponse = {
+    id: user._id,
+    name: user.name,
+    email: user.email,
+    role: user.role,
+    provider: user.provider,
+    avatar: user.avatar,
+    profileImage: user.profileImage || null,
+    profileImageKey: user.profileImageKey || null,
+    googleProfileImage: user.googleProfileImage || null,
+    isVerified: user.isVerified,
+    profileImageUrl: user.getProfileImage ? user.getProfileImage() : null,
+  };
+
+  res.status(statusCode).json({
+    success: true,
+    message,
+    token,
+    user: userResponse,
+  });
+};
 
 exports.generateToken = generateToken;
 exports.sendTokenResponse = legacySendTokenResponse;

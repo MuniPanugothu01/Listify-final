@@ -10,7 +10,7 @@ const SmallProfileHeader = ({ profilePic }) => (
     <div className="relative">
       <img 
         src={profilePic} 
-        alt="Profile" 
+        alt="Profile"   
         className="w-10 h-10 rounded-xl object-cover border-2 border-white shadow-xs" 
       />
       <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full border-2 border-white"></div>
