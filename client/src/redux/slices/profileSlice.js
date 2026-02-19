@@ -13,6 +13,7 @@ const initialState = {
   passwordRequirements: null,
   passwordExpiration: null,
   profilePicPreview: null,
+  syncToAuth: false,
 };
 
 // ==================== PROFILE THUNKS ====================
@@ -162,6 +163,19 @@ const profileSlice = createSlice({
       state.loginHistory = [];
       state.profilePicPreview = null;
     },
+    refreshProfileImage: (state) => {
+      if (state.profile) {
+        state.profilePicPreview = 
+          state.profile.profileImageUrl || 
+          state.profile.profileImage || 
+          state.profile.googleProfileImage || 
+          state.profile.avatar || 
+          null;
+      }
+    },
+    setSyncToAuth: (state, action) => {
+      state.syncToAuth = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -173,8 +187,12 @@ const profileSlice = createSlice({
       .addCase(fetchProfile.fulfilled, (state, action) => {
         state.loading = false;
         state.profile = action.payload;
-        if (action.payload?.profileImageUrl || action.payload?.avatar) {
-          state.profilePicPreview = action.payload.profileImageUrl || action.payload.avatar;
+        if (action.payload?.profileImageUrl || action.payload?.profileImage || action.payload?.googleProfileImage || action.payload?.avatar) {
+          state.profilePicPreview = 
+            action.payload.profileImageUrl || 
+            action.payload.profileImage || 
+            action.payload.googleProfileImage || 
+            action.payload.avatar;
         }
       })
       .addCase(fetchProfile.rejected, (state, action) => {
@@ -192,9 +210,12 @@ const profileSlice = createSlice({
         state.loading = false;
         state.success = true;
         state.profile = action.payload;
-        if (action.payload?.profileImageUrl) {
-          state.profilePicPreview = action.payload.profileImageUrl;
+        if (action.payload?.profileImageUrl || action.payload?.profileImage) {
+          state.profilePicPreview = 
+            action.payload.profileImageUrl || 
+            action.payload.profileImage;
         }
+        state.syncToAuth = true;
       })
       .addCase(updateProfile.rejected, (state, action) => {
         state.loading = false;
@@ -214,6 +235,7 @@ const profileSlice = createSlice({
           state.profile.profileImageKey = action.payload.imageKey;
           state.profilePicPreview = action.payload.imageUrl;
         }
+        state.syncToAuth = true;
       })
       .addCase(uploadProfileImage.rejected, (state, action) => {
         state.loading = false;
@@ -291,6 +313,8 @@ export const {
   setImageUploading,
   setProfilePicPreview,
   clearProfileData,
+  refreshProfileImage,
+  setSyncToAuth,
 } = profileSlice.actions;
 
 export default profileSlice.reducer;
