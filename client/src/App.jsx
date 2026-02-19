@@ -48,12 +48,12 @@ import CareCenterServices from "./components/TakeCare/CareCenterServices/CareCen
 
 
 // Electronics
-import Electronics from "./components/Electronics/Electronics.jsx";
+import Electronics from "./pages/Electronics/Electronics.jsx";
 import ElectronicsDetail from "./components/Electronics/ElectronicsDetail.jsx";
 
 
 // For Sale
-import ForSale from "./components/ForSale/ForSale.jsx";
+import ForSale from "./pages/ForSale/ForSale.jsx";
 import ForSaleDetail from "./components/ForSale/ForsaleDetail.jsx";
 
 // Roommates
