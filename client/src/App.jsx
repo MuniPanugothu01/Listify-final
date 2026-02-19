@@ -29,9 +29,9 @@ import ResetOtp from "./components/auth/ResetOtp.jsx";
 
 import ContactUs from "./pages/ContactPage/ContactUS.jsx";
 import AboutUs from "./pages/AboutPage/AboutUs.jsx";
-import OurServicesPage from "./pages/OurServices/OurServicesPage.jsx";
+import OurServices from "./pages/OurServices/OurServices.jsx";
 
-import PostaddPage from "./pages/PostaddPage/Postadd.jsx";
+import Postadd from "./pages/PostAdd/Postadd.jsx";
 
 
 import TakeCare from "./pages/TakeCare/TakeCare.jsx";
@@ -58,12 +58,12 @@ import EventsDetail from "./components/Events/EventsDetail.jsx";
 
 
 // Rentals
-import Rentals from "./pages/Rentalspage/Rentals";
+import Rentals from "./pages/Rentals/Rentals.jsx";
 import RentalsListings from "./components/Rentals/RentalsListings.jsx";
 import RentalDetailsPage from "./components/Rentals/RentalDetailsPage.jsx";
 
 // Jobs
-import JobsPage from "./pages/JobsPage/JobsPage.jsx";
+import Jobs from "./pages/Jobs/Jobs.jsx";
 import JobSearchPortal from "./components/Jobs/JobSearchPortal.jsx";
 import JobDetailsPage from "./components/Jobs/JobDetailsPage.jsx";
 import JobSeekerInterface from "./components/Jobs/JobSeekerInterface.jsx";
@@ -71,10 +71,10 @@ import JobSeekerResume from "./components/Jobs/JobSeekerResume.jsx";
 import JobSeekerResumesDetail from "./components/Jobs/JobSeekerResumesDetail.jsx";
 
 // Services
-import ServicesPage from "./pages/Services/ServicesPage.jsx";
+import Services from "./pages/Services/Services.jsx";
 
 // Cars categories
-import VehiclePage from "./pages/VehiclePage/VehiclePage.jsx";
+import Vehicles from "./pages/Vehicles/Vehicles.jsx";
 import VehicleDetail from "./components/Vehicles/VehicleDetail.jsx";
 
 
@@ -203,8 +203,8 @@ const AppContent = () => {
           {/* Contact & About Pages */}
           <Route path="/contact-us" element={<ContactUs />} />
           <Route path="/about-us" element={<AboutUs />} />
-          <Route path="/our-services" element={<OurServicesPage />} />
-          <Route path="/post-add" element={<PostaddPage />} />
+          <Route path="/our-services" element={<OurServices />} />
+          <Route path="/post-add" element={<Postadd />} />
           <Route path="/reviews" element={<Reviews />} />
 
           {/* TakeCare */}
@@ -230,7 +230,7 @@ const AppContent = () => {
           <Route path="/rental-details" element={<RentalDetailsPage />} />
 
           {/* Jobs */}
-          <Route path="/jobs" element={<JobsPage />} />
+          <Route path="/jobs" element={<Jobs />} />
           <Route path="/job-search" element={<JobSearchPortal />} />
           <Route path="/job-details/:id" element={<JobDetailsPage />} />
           <Route path="/job-seekers" element={<JobSeekerInterface />} />
@@ -246,10 +246,10 @@ const AppContent = () => {
 
 
           {/* Services Category */}
-          <Route path="/services" element={<ServicesPage />} />
+          <Route path="/services" element={<Services />} />
 
           {/* Cars categories */}
-          <Route path="/vehicles" element={<VehiclePage />} />
+          <Route path="/vehicles" element={<Vehicles />} />
           <Route path="/vehicles/:id" element={<VehicleDetail />} />
           
 

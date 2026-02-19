@@ -38,7 +38,7 @@ import {
   Smartphone
 } from 'lucide-react';
 
-const OurServicesPage = () => {
+const OurServices = () => {
   // Search filters state
   const [searchQuery, setSearchQuery] = useState('');
   const [location, setLocation] = useState('');
@@ -116,83 +116,6 @@ const OurServicesPage = () => {
       icon: <Wrench className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8" />,
       color: 'from-[#27BB97] to-[#1FA987]',
       listings: '4,200+'
-    }
-  ];
-
-  // How Listify Works
-  const howItWorks = [
-    {
-      title: 'Browse & Discover',
-      description: 'Search through our extensive directory of verified service providers. Filter by category, expertise, rating, and budget to find the perfect match.',
-      features: [
-        'Advanced search filters',
-        'Verified provider profiles',
-        'Authentic customer reviews',
-        'Transparent pricing'
-      ],
-      icon: <Eye className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12" />,
-      color: 'bg-gradient-to-r from-[#27BB97] to-[#1FA987]',
-      image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1920&q=80',
-      imagePosition: 'left'
-    },
-    {
-      title: 'Connect & Book',
-      description: 'Communicate directly with service professionals through our secure platform. Book appointments, get quotes, and schedule services effortlessly.',
-      features: [
-        'Instant messaging',
-        'Secure booking system',
-        'Real-time availability',
-        'Appointment scheduling'
-      ],
-      icon: <PhoneCall className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12" />,
-      color: 'bg-gradient-to-r from-[#27BB97] to-[#198F72]',
-      image: 'https://images.unsplash.com/photo-1545235617-9465d2a55698?w=1920&q=80',
-      imagePosition: 'right'
-    },
-    {
-      title: 'Experience & Review',
-      description: 'Receive quality services from trusted professionals. Share your feedback to help maintain our community standards and assist others.',
-      features: [
-        'Service completion tracking',
-        'Secure payment processing',
-        'Rating & review system',
-        'Dispute resolution'
-      ],
-      icon: <ClipboardCheck className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12" />,
-      color: 'bg-gradient-to-r from-[#27BB97] to-[#146C54]',
-      image: 'https://images.unsplash.com/photo-1559028012-481c04fa702d?w=1920&q=80',
-      imagePosition: 'left'
-    }
-  ];
-
-  // Enhanced Why Choose Listify Section with Images
-  const enhancedWhyChooseUs = [
-    {
-      icon: <Target className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12" />,
-      title: 'Local Expertise',
-      description: 'Connect with providers who understand your local needs and preferences, wherever you are located.',
-      stats: '500+ Service Areas',
-      color: 'bg-gradient-to-br from-[#27BB97]/20 to-[#1FA987]/10',
-      borderColor: 'border-[#27BB97]/20',
-      image: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=600&q=90'
-    },
-    {
-      icon: <ShieldCheck className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12" />,
-      title: 'Trust & Safety',
-      description: 'Every provider undergoes rigorous background checks, verification, and continuous quality monitoring.',
-      stats: '99.8% Verified',
-      color: 'bg-gradient-to-br from-[#27BB97]/20 to-[#198F72]/10',
-      borderColor: 'border-[#1FA987]/20',
-      image: 'https://images.unsplash.com/photo-1559028012-481c04fa702d?w=600&q=90'
-    },
-    {
-      icon: <TrendingUp className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12" />,
-      title: 'Quality Guarantee',
-      description: 'We stand behind every service. If you\'re not satisfied, we\'ll work to make it right or provide a refund.',
-      stats: '4.9/5 Average Rating',
-      color: 'bg-gradient-to-br from-[#27BB97]/20 to-[#146C54]/10',
-      borderColor: 'border-[#198F72]/20',
-      image: 'https://images.unsplash.com/photo-1545235617-9465d2a55698?w=600&q=90'
     }
   ];
 
@@ -593,142 +516,6 @@ const OurServicesPage = () => {
         </div>
       </section>
 
-      {/* How Listify Works Section - Uncommented */}
-      {/* <section className="py-12 sm:py-16 lg:py-20 bg-gradient-to-b from-white to-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-8 sm:mb-12 lg:mb-16 scroll-animate">
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-3 sm:mb-4">
-              How <span className="gradient-text">Listify Services</span> Works
-            </h2>
-            <p className="text-sm sm:text-base lg:text-lg text-gray-600 max-w-3xl mx-auto px-2 sm:px-0">
-              A seamless three-step process to connect you with trusted professionals
-            </p>
-          </div>
-
-          <div className="space-y-12 sm:space-y-16 lg:space-y-24">
-            {howItWorks.map((step, index) => (
-              <div 
-                key={index}
-                className={`scroll-animate`}
-              >
-                <div className={`grid lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12 items-center ${step.imagePosition === 'right' ? 'lg:flex-row-reverse' : ''}`}>
-                  
-                  <div className="relative group">
-                    <div className="relative overflow-hidden rounded-xl sm:rounded-2xl shadow-xl sm:shadow-2xl">
-                      <img
-                        src={step.image}
-                        alt={step.title}
-                        className="w-full h-48 sm:h-64 md:h-72 lg:h-[400px] object-cover transform transition-all duration-700 group-hover:scale-105"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
-                    </div>
-                  </div>
-
-                  <div className="">
-                    <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-4 sm:mb-6">
-                      {step.title}
-                    </h3>
-                    
-                    <p className="text-gray-600 text-sm sm:text-base lg:text-lg leading-relaxed mb-6 sm:mb-8">
-                      {step.description}
-                    </p>
-                    
-                    <ul className="space-y-2 sm:space-y-3">
-                      {step.features.map((feature, i) => (
-                        <li key={i} className="flex items-start gap-2 sm:gap-3">
-                          <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-[#27BB97] mt-0.5 sm:mt-1 flex-shrink-0" />
-                          <span className="text-gray-700 text-sm sm:text-base">{feature}</span>
-                        </li>
-                      ))}
-                    </ul>
-                    
-                    <button className="mt-6 sm:mt-8 px-4 sm:px-6 py-2.5 sm:py-3 bg-gradient-to-r from-[#27BB97] to-[#1FA987] text-white font-semibold rounded-lg hover:from-[#1FA987] hover:to-[#198F72] transition-all duration-300 hover:scale-105 text-sm sm:text-base">
-                      Get Started
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section> */}
-
-      {/* Why Trust Listify Section - Uncommented */}
-      {/* <section className="py-12 sm:py-16 lg:py-20 bg-gradient-to-b from-white to-gray-50 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 bg-gradient-to-br from-[#27bb97]/5 to-[#2d7dd7]/5 rounded-full blur-3xl -translate-y-24 sm:-translate-y-32 md:-translate-y-48 translate-x-24 sm:translate-x-32 md:translate-x-48"></div>
-        <div className="absolute bottom-0 left-0 w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 bg-gradient-to-tr from-[#27bb97]/5 to-[#1FA987]/5 rounded-full blur-3xl translate-y-24 sm:translate-y-32 md:translate-y-48 -translate-x-24 sm:-translate-x-32 md:-translate-x-48"></div>
-        
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="text-center mb-8 sm:mb-12 lg:mb-16 scroll-animate">
-            <div className="inline-flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
-              <ShieldCheck className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-[#27bb97]" />
-              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900">
-                Why Trust <span className="gradient-text">Listify</span> for Your Services
-              </h2>
-            </div>
-            <p className="text-sm sm:text-base lg:text-lg text-gray-600 max-w-3xl mx-auto px-2 sm:px-0">
-              We're not just a platform - we're your trusted partner in finding quality services
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 mb-8 sm:mb-12 lg:mb-16">
-            {enhancedWhyChooseUs.map((feature, index) => (
-              <div 
-                key={index}
-                className={`scroll-animate stagger-delay-${(index % 3) + 1}`}
-              >
-                <div className="relative group">
-                  <div className="absolute inset-0 rounded-xl sm:rounded-2xl overflow-hidden">
-                    <img
-                      src={feature.image}
-                      alt={feature.title}
-                      className="w-full h-full object-cover opacity-10 group-hover:opacity-20 transition-opacity duration-500"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-br from-white/95 to-white/90 backdrop-blur-sm"></div>
-                  </div>
-                  
-                  <div className="relative bg-gradient-to-br from-white/80 to-white/60 backdrop-blur-lg rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8 border border-white/40 shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 h-full">
-                    <div className="relative mb-4 sm:mb-6">
-                      <div className="absolute -inset-3 sm:-inset-4 bg-gradient-to-r from-[#27bb97]/20 to-[#1FA987]/20 rounded-full blur-lg opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                      <div className={`${feature.color} w-16 h-16 sm:w-18 sm:h-18 md:w-20 md:h-20 rounded-xl sm:rounded-2xl flex items-center justify-center relative z-10 transform group-hover:scale-110 transition-transform duration-300`}>
-                        <div className="text-[#27bb97]">
-                          {feature.icon}
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 mb-3 sm:mb-4 group-hover:text-[#27bb97] transition-colors">
-                      {feature.title}
-                    </h3>
-                    
-                    <p className="text-gray-600 mb-4 sm:mb-6 text-sm sm:text-base">
-                      {feature.description}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="scroll-animate rounded-xl sm:rounded-2xl lg:rounded-3xl p-4 sm:p-6 md:p-8 bg-gradient-to-r from-[#27BB97]/5 to-[#1FA987]/5 relative overflow-hidden">
-            <div className="relative z-10 grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 md:gap-8 items-center">
-              <div className="text-center">
-                <div className="text-3xl sm:text-4xl md:text-5xl font-black mb-1 sm:mb-2 text-gray-900">2M+</div>
-                <div className="text-gray-600 text-sm sm:text-base">Happy Customers</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl sm:text-4xl md:text-5xl font-black mb-1 sm:mb-2 text-gray-900">99.8%</div>
-                <div className="text-gray-600 text-sm sm:text-base">Satisfaction Rate</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl sm:text-4xl md:text-5xl font-black mb-1 sm:mb-2 text-gray-900">24/7</div>
-                <div className="text-gray-600 text-sm sm:text-base">Support Available</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section> */}
-
       {/* Optimize your service routine */}
       <section className="py-12 sm:py-16 lg:py-20 bg-white relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -909,4 +696,4 @@ const OurServicesPage = () => {
   );
 };
 
-export default OurServicesPage;
+export default OurServices;

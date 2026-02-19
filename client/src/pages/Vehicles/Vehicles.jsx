@@ -4,7 +4,7 @@ import React from "react";
 import VehicleHero from "../../components/Vehicles/HeroVehicles.jsx";
 import VehiclesListing from "../../components/Vehicles/VehiclesListing.jsx";
 
-const VehiclePage = () => {
+const Vehicles = () => {
   return (
     <div>
      
@@ -15,4 +15,4 @@ const VehiclePage = () => {
   );
 };
 
-export default VehiclePage;
+export default Vehicles;

@@ -12,7 +12,7 @@ import PopularNearbyServices from '../../components/Services/PopularNearbyServic
 import TopRatedProfessionals from '../../components/Services/TopRatedProfessionals';
 import PropertyExperts from '../../components/Services/PropertyExperts'
 
-const ServicesPage = () => {
+const Services = () => {
   return (
     <div>
 
@@ -31,4 +31,4 @@ const ServicesPage = () => {
   )
 }
 
-export default ServicesPage;
+export default Services;
