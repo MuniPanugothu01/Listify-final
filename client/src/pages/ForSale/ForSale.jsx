@@ -1,14 +1,12 @@
 import React from "react";
-
-import SubNavbar from "../../components/ForSale/SubNavbar";
+import ForSaleSubNavbar from "../../components/ForSale/ForSaleSubNavbar";
 import ForSaleHero from "../../components/ForSale/ForSaleHero";
 import ForSaleListing from "../../components/ForSale/ForSaleListing";
-
 
 const ForSale = () => {
     return (    
         <div className="">
-        <SubNavbar/>
+        <ForSaleSubNavbar/>
         <ForSaleHero />
         <ForSaleListing/>
         </div>

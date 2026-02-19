@@ -1,12 +1,12 @@
 import React from "react";
 
-import HeroElectronics from "../../components/Electronics/HeroElectronics.jsx";
+import ElectronicsHero from "../../components/Electronics/ElectronicsHero.jsx";
 import ElectronicsListing from "../../components/Electronics/ElectronicsListing.jsx";
 
 const Electronics = () => {
     return (    
         <div className="">  
-         <HeroElectronics />
+         <ElectronicsHero />
          <ElectronicsListing/>
         </div>
     )

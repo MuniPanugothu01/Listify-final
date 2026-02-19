@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const SubNavbar = () => {
+const ForSaleSubNavbar = () => {
   const [hoveredCategory, setHoveredCategory] = useState(null);
   const [showLeftArrow, setShowLeftArrow] = useState(false);
   const [showRightArrow, setShowRightArrow] = useState(true);
@@ -208,4 +208,4 @@ const SubNavbar = () => {
   );
 };
 
-export default SubNavbar;
+export default ForSaleSubNavbar;
