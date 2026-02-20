@@ -129,7 +129,7 @@ export default function SignUp() {
 
     try {
       const response = await axios.get(
-        `${process.env.REACT_APP_API_URL || "http://localhost:5000"}/api/auth/register/status/${encodeURIComponent(email)}`,
+        `${import.meta.env.REACT_APP_API_URL || "http://localhost:5000"}/api/auth/register/status/${encodeURIComponent(email)}`,
       );
 
       if (response.data.success && response.data.data) {

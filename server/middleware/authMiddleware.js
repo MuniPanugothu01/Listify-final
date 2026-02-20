@@ -1,89 +1,97 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
-const { 
-  revokeAllUserTokens, 
+const {
+  revokeAllUserTokens,
   revokeRefreshToken,
   clearRefreshTokenCookie,
-  verifyRefreshToken,
-  refreshTokens
+  refreshTokens,
 } = require('../utils/tokenUtils');
 const { logger } = require('../utils/logger');
 
-// Protect routes - verify JWT access token
+// ─────────────────────────────────────────────────────────────────────────────
+// HELPER: extract access token from request
+// Priority: HttpOnly cookie "accessToken"  →  Authorization: Bearer header
+// This is the KEY FIX — your frontend sends cookies (withCredentials:true),
+// but the old middleware only checked Bearer headers, so every request was 401.
+// ─────────────────────────────────────────────────────────────────────────────
+const extractAccessToken = (req) => {
+  if (req.cookies && req.cookies.accessToken) {
+    return req.cookies.accessToken;
+  }
+  if (req.headers.authorization && req.headers.authorization.startsWith('Bearer ')) {
+    return req.headers.authorization.split(' ')[1];
+  }
+  return null;
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// protect — verifies access token, attaches req.user
+// ─────────────────────────────────────────────────────────────────────────────
 exports.protect = async (req, res, next) => {
   try {
-    let token;
+    const token = extractAccessToken(req);
 
-    // Check if token exists in Authorization header (Bearer token)
-    if (
-      req.headers.authorization &&
-      req.headers.authorization.startsWith('Bearer')
-    ) {
-      token = req.headers.authorization.split(' ')[1];
-    }
-
-    // Check if token exists
     if (!token) {
       return res.status(401).json({
         success: false,
-        message: 'Not authorized to access this route. Please login.'
+        message: 'Not authorized to access this route. Please login.',
+        code: 'NO_TOKEN',
       });
     }
 
     try {
-      // Verify access token
       const decoded = jwt.verify(
-        token, 
+        token,
         process.env.JWT_ACCESS_SECRET || process.env.JWT_SECRET
       );
 
-      // Ensure it's an access token, not refresh token
+      // Reject refresh tokens used as access tokens
       if (decoded.type && decoded.type !== 'access') {
         return res.status(401).json({
           success: false,
-          message: 'Invalid token type. Please use access token.'
+          message: 'Invalid token type. Please use access token.',
+          code: 'INVALID_TOKEN_TYPE',
         });
       }
-      
-      // Get user from token
+
       req.user = await User.findById(decoded.id).select('-password');
-      
+
       if (!req.user) {
         return res.status(401).json({
           success: false,
-          message: 'User no longer exists'
+          message: 'User no longer exists.',
+          code: 'USER_NOT_FOUND',
         });
       }
-      
-      // Check if user is active
+
       if (req.user.status !== 'active') {
         return res.status(403).json({
           success: false,
-          message: `Your account is ${req.user.status}. Please contact support.`
+          message: `Your account is ${req.user.status}. Please contact support.`,
+          code: 'ACCOUNT_INACTIVE',
         });
       }
-      
+
       next();
     } catch (error) {
-      // Handle specific JWT errors
       if (error.name === 'JsonWebTokenError') {
         return res.status(401).json({
           success: false,
-          message: 'Invalid token. Please login again.'
+          message: 'Invalid token. Please login again.',
+          code: 'INVALID_TOKEN',
         });
       }
-      
       if (error.name === 'TokenExpiredError') {
         return res.status(401).json({
           success: false,
           message: 'Token expired. Please refresh token or login again.',
-          code: 'TOKEN_EXPIRED'
+          code: 'TOKEN_EXPIRED',
         });
       }
-      
       return res.status(401).json({
         success: false,
-        message: 'Not authorized to access this route'
+        message: 'Not authorized to access this route.',
+        code: 'AUTH_FAILED',
       });
     }
   } catch (error) {
@@ -91,154 +99,164 @@ exports.protect = async (req, res, next) => {
   }
 };
 
-/**
- * Refresh token endpoint handler
- * Expects refresh token in HttpOnly cookie
- */
+// ─────────────────────────────────────────────────────────────────────────────
+// refreshToken — issues new access + refresh token pair via cookie
+// FIX: also sets the new accessToken as an HttpOnly cookie so the frontend
+// automatically has it for the next request (no manual header injection needed).
+// ─────────────────────────────────────────────────────────────────────────────
 exports.refreshToken = async (req, res) => {
   try {
     const { refreshToken } = req.cookies;
-    
+
     if (!refreshToken) {
       return res.status(401).json({
         success: false,
-        message: 'No refresh token provided'
+        message: 'No refresh token provided.',
+        code: 'NO_REFRESH_TOKEN',
       });
     }
 
     const tokens = await refreshTokens(refreshToken);
 
     if (!tokens) {
-      // Clear invalid cookie
       clearRefreshTokenCookie(res);
-
       return res.status(401).json({
         success: false,
-        message: 'Invalid or expired refresh token'
+        message: 'Invalid or expired refresh token.',
+        code: 'INVALID_REFRESH_TOKEN',
       });
     }
 
-    // Set new refresh token cookie
     const { setRefreshTokenCookie } = require('../utils/tokenUtils');
+
+    // Set new refresh token cookie
     setRefreshTokenCookie(res, tokens.refreshToken);
 
-    // Return new access token
-    res.status(200).json({
+    // Set new access token cookie — this is what was MISSING before.
+    // Without this, the browser never gets the new access token after refresh,
+    // so the next protected request fails again with 401.
+    res.cookie('accessToken', tokens.accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
+      maxAge: 15 * 60 * 1000, // 15 minutes
+    });
+
+    return res.status(200).json({
       success: true,
-      message: 'Token refreshed successfully',
-      token: tokens.accessToken
+      message: 'Token refreshed successfully.',
+      token: tokens.accessToken, // also returned in body for flexibility
     });
   } catch (error) {
     logger.error('Refresh token error:', error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
-      message: 'Server error during token refresh'
+      message: 'Server error during token refresh.',
     });
   }
 };
 
-/**
- * Logout from current device
- */
+// ─────────────────────────────────────────────────────────────────────────────
+// logout — revoke current session, clear both cookies
+// ─────────────────────────────────────────────────────────────────────────────
 exports.logout = async (req, res) => {
   try {
     const { refreshToken } = req.cookies;
-    
+
     if (refreshToken) {
-      // Revoke from Redis
       await revokeRefreshToken(refreshToken);
-      
-      // Clear cookie
-      clearRefreshTokenCookie(res);
     }
 
-    res.status(200).json({
+    // Clear refresh token cookie
+    clearRefreshTokenCookie(res);
+
+    // Also clear access token cookie
+    res.clearCookie('accessToken', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
+    });
+
+    return res.status(200).json({
       success: true,
-      message: 'Logged out successfully'
+      message: 'Logged out successfully.',
     });
   } catch (error) {
     logger.error('Logout error:', error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
-      message: 'Error during logout'
+      message: 'Error during logout.',
     });
   }
 };
 
-/**
- * Logout from all devices
- */
+// ─────────────────────────────────────────────────────────────────────────────
+// logoutAll — revoke all tokens for the user, clear both cookies
+// ─────────────────────────────────────────────────────────────────────────────
 exports.logoutAll = async (req, res) => {
   try {
     const userId = req.user.id;
-    
-    // Revoke all user tokens from Redis
     await revokeAllUserTokens(userId);
-    
-    // Clear cookie
-    clearRefreshTokenCookie(res);
 
-    res.status(200).json({
+    clearRefreshTokenCookie(res);
+    res.clearCookie('accessToken', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
+    });
+
+    return res.status(200).json({
       success: true,
-      message: 'Logged out from all devices successfully'
+      message: 'Logged out from all devices successfully.',
     });
   } catch (error) {
     logger.error('Logout all error:', error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
-      message: 'Error during logout'
+      message: 'Error during logout.',
     });
   }
 };
 
-// Grant access to specific roles
+// ─────────────────────────────────────────────────────────────────────────────
+// authorize — role-based access control
+// ─────────────────────────────────────────────────────────────────────────────
 exports.authorize = (...roles) => {
   return (req, res, next) => {
     if (!req.user) {
       return res.status(401).json({
         success: false,
-        message: 'User not authenticated'
+        message: 'User not authenticated.',
       });
     }
-    
     if (!roles.includes(req.user.role)) {
       return res.status(403).json({
         success: false,
-        message: `User role ${req.user.role} is not authorized to access this route`
+        message: `User role '${req.user.role}' is not authorized to access this route.`,
       });
     }
-    
     next();
   };
 };
 
-// Optional authentication (user can be logged in or not)
+// ─────────────────────────────────────────────────────────────────────────────
+// optionalAuth — attach user if token present, else continue without error
+// ─────────────────────────────────────────────────────────────────────────────
 exports.optionalAuth = async (req, res, next) => {
   try {
-    let token;
-
-    if (
-      req.headers.authorization &&
-      req.headers.authorization.startsWith('Bearer')
-    ) {
-      token = req.headers.authorization.split(' ')[1];
-    }
+    const token = extractAccessToken(req);
 
     if (token) {
       try {
         const decoded = jwt.verify(
-          token, 
+          token,
           process.env.JWT_ACCESS_SECRET || process.env.JWT_SECRET
         );
-        
-        if (decoded.type && decoded.type !== 'access') {
-          return next();
+        if (!decoded.type || decoded.type === 'access') {
+          req.user = await User.findById(decoded.id).select('-password');
         }
-        
-        req.user = await User.findById(decoded.id).select('-password');
       } catch (error) {
-        // Token is invalid, but that's okay for optional auth
-        logger.debug('Optional auth - invalid token:', error.message);
+        logger.debug('Optional auth — invalid token:', error.message);
       }
     }
 

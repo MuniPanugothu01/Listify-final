@@ -102,6 +102,10 @@ export const useAuth = () => {
         throw new Error(error);
       } else if (error?.message) {
         throw new Error(error.message);
+      } else if (error?.errors) {
+        // Handle validation errors object
+        const errorMessages = Object.values(error.errors).join(", ");
+        throw new Error(errorMessages);
       } else {
         throw new Error("Invalid OTP. Please try again.");
       }
@@ -180,7 +184,33 @@ export const useAuth = () => {
       return await dispatch(initiateForgotPassword(email)).unwrap();
     } catch (error) {
       console.error("Forgot password initiation error in hook:", error);
-      throw error;
+
+      // Extract error message properly from the API response format
+      let errorMessage = "Failed to send reset OTP";
+
+      // Handle the specific error format: {success: false, errors: {email: "message"}}
+      if (error && typeof error === "object") {
+        // Check if it has the errors object with email property
+        if (error.errors && error.errors.email) {
+          errorMessage = error.errors.email;
+        }
+        // Check if it has a message property
+        else if (error.message) {
+          errorMessage = error.message;
+        }
+        // Check if it has data with message
+        else if (error.data?.message) {
+          errorMessage = error.data.message;
+        }
+        // If it's a string error
+        else if (typeof error === "string") {
+          errorMessage = error;
+        }
+      } else if (typeof error === "string") {
+        errorMessage = error;
+      }
+
+      throw new Error(errorMessage);
     }
   };
 
@@ -190,13 +220,21 @@ export const useAuth = () => {
     } catch (error) {
       console.error("Forgot password OTP verification error in hook:", error);
 
-      if (typeof error === "string") {
-        throw new Error(error);
-      } else if (error?.message) {
-        throw new Error(error.message);
-      } else {
-        throw new Error("Invalid OTP. Please try again.");
+      let errorMessage = "Invalid OTP. Please try again.";
+
+      if (error && typeof error === "object") {
+        if (error.errors && error.errors.otp) {
+          errorMessage = error.errors.otp;
+        } else if (error.message) {
+          errorMessage = error.message;
+        } else if (error.errors) {
+          errorMessage = Object.values(error.errors).join(", ");
+        }
+      } else if (typeof error === "string") {
+        errorMessage = error;
       }
+
+      throw new Error(errorMessage);
     }
   };
 
@@ -205,7 +243,22 @@ export const useAuth = () => {
       return await dispatch(resendForgotPasswordOTP(email)).unwrap();
     } catch (error) {
       console.error("Resend forgot password OTP error in hook:", error);
-      throw error;
+
+      let errorMessage = "Failed to resend OTP";
+
+      if (error && typeof error === "object") {
+        if (error.errors && error.errors.email) {
+          errorMessage = error.errors.email;
+        } else if (error.message) {
+          errorMessage = error.message;
+        } else if (error.errors) {
+          errorMessage = Object.values(error.errors).join(", ");
+        }
+      } else if (typeof error === "string") {
+        errorMessage = error;
+      }
+
+      throw new Error(errorMessage);
     }
   };
 
@@ -226,7 +279,20 @@ export const useAuth = () => {
       ).unwrap();
     } catch (error) {
       console.error("Reset password error in hook:", error);
-      throw error;
+
+      let errorMessage = "Failed to reset password";
+
+      if (error && typeof error === "object") {
+        if (error.message) {
+          errorMessage = error.message;
+        } else if (error.errors) {
+          errorMessage = Object.values(error.errors).join(", ");
+        }
+      } else if (typeof error === "string") {
+        errorMessage = error;
+      }
+
+      throw new Error(errorMessage);
     }
   };
 

@@ -201,11 +201,12 @@ export const verifyOTP = createAsyncThunk(
   },
 );
 
+// ==================== FIX: resendOTP ====================
 export const resendOTP = createAsyncThunk(
   "auth/resendOTP",
   async (email, { rejectWithValue }) => {
     try {
-      const response = await authAPI.resendOTP({ email });
+      const response = await authAPI.resendOTP(email);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
@@ -213,14 +214,21 @@ export const resendOTP = createAsyncThunk(
   },
 );
 
+// ==================== FIX: initiateForgotPassword ====================
 export const initiateForgotPassword = createAsyncThunk(
   "auth/initiateForgotPassword",
   async (email, { rejectWithValue }) => {
     try {
-      const response = await authAPI.initiateForgotPassword({ email });
+      const response = await authAPI.initiateForgotPassword(email);
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data || error.message);
+      // Pass the full response data object so useAuth can extract the right message
+      if (error.response?.data) {
+        return rejectWithValue(error.response.data);
+      }
+      return rejectWithValue({
+        message: error.message || "Failed to initiate forgot password",
+      });
     }
   },
 );
@@ -251,11 +259,12 @@ export const verifyForgotPasswordOTP = createAsyncThunk(
   },
 );
 
+// ==================== FIX: resendForgotPasswordOTP ====================
 export const resendForgotPasswordOTP = createAsyncThunk(
   "auth/resendForgotPasswordOTP",
   async (email, { rejectWithValue }) => {
     try {
-      const response = await authAPI.resendForgotPasswordOTP({ email });
+      const response = await authAPI.resendForgotPasswordOTP(email);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
@@ -857,7 +866,7 @@ export const {
   setResetEmail,
   clearResetEmail,
   setGoogleClientId,
-  refreshUserData,
+  refreshUserData, // Add this
 } = authSlice.actions;
 
 export default authSlice.reducer;

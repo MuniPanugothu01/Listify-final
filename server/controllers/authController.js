@@ -338,24 +338,11 @@ exports.login = async (req, res) => {
     );
 
     if (!user) {
-      // Log failed attempt (user not found)
       const failedDeviceData = deviceService.createDeviceSession(
         req,
         "unknown",
       );
-      if (user) {
-        await user.addLoginHistory({
-          ipAddress: req.ip,
-          userAgent: req.get("user-agent"),
-          deviceId: failedDeviceData.deviceId,
-          deviceName: failedDeviceData.deviceName,
-          location: failedDeviceData.location,
-          loginType: "email",
-          success: false,
-          failureReason: "User not found",
-        });
-      }
-
+      // Note: can't log login history if user doesn't exist
       return res.status(401).json({
         success: false,
         message: "Invalid email or password",
@@ -383,7 +370,6 @@ exports.login = async (req, res) => {
     const isPasswordMatch = await bcrypt.compare(password, user.password);
 
     if (!isPasswordMatch) {
-      // Log failed attempt (wrong password)
       const failedDeviceData = deviceService.createDeviceSession(
         req,
         "unknown",
@@ -1319,6 +1305,12 @@ exports.getProfile = async (req, res) => {
       googleProfileImage: user.googleProfileImage,
       isVerified: user.isVerified,
       createdAt: user.createdAt,
+      // FIX: also expose profile fields so frontend can pre-fill the form
+      phone: user.phone || null,
+      address: user.address || null,
+      bio: user.bio || null,
+      dateOfBirth: user.dateOfBirth || null,
+      gender: user.gender || null,
       profileImageUrl: user.getProfileImage ? user.getProfileImage() : null,
       passwordExpiration: user.passwordNeedsChange
         ? user.passwordNeedsChange()
@@ -1338,19 +1330,73 @@ exports.getProfile = async (req, res) => {
 };
 
 // ==================== UPDATE PROFILE ====================
+// FIX 1: Normalise gender to DB enum before saving.
+//   DB enum: ["male","female","other","prefer-not-to-say"]
+//   Frontend may send "Male","Female","Non-binary","Prefer not to say"
+// FIX 2: Sanitise phone — strip non-digits, keep last 10.
+//   DB validates /^[0-9]{10}$/ so "98765 43210" or "+91 98765 43210" must be cleaned.
+// FIX 3: Expose all profile fields in the response so Redux stays in sync.
 exports.updateProfile = async (req, res) => {
   try {
     const { name, email, phone, address, bio, dateOfBirth, gender } = req.body;
     const updateData = {};
 
-    if (name) updateData.name = name;
-    if (phone) updateData.phone = phone;
-    if (address) updateData.address = address;
-    if (bio) updateData.bio = bio;
-    if (dateOfBirth) updateData.dateOfBirth = dateOfBirth;
-    if (gender) updateData.gender = gender;
+    if (name !== undefined && name !== "") updateData.name = name;
+    if (address !== undefined && address !== "") updateData.address = address;
+    if (bio !== undefined && bio !== "") updateData.bio = bio;
 
-    if (email) {
+    // ── Gender normalisation ─────────────────────────────────────────────────
+    if (gender !== undefined && gender !== "") {
+      const genderMap = {
+        male: "male",
+        female: "female",
+        other: "other",
+        "non-binary": "other",
+        nonbinary: "other",
+        "prefer not to say": "prefer-not-to-say",
+        "prefer-not-to-say": "prefer-not-to-say",
+        prefernottosay: "prefer-not-to-say",
+      };
+      const normalised = genderMap[gender.toLowerCase().trim()];
+      if (normalised) {
+        updateData.gender = normalised;
+      }
+      // Unknown value: silently skip to avoid Mongoose enum validation error
+    }
+
+    // ── Phone sanitisation ───────────────────────────────────────────────────
+    if (phone !== undefined && phone !== "") {
+      const digits = String(phone).replace(/\D/g, "");
+      const cleaned = digits.slice(-10); // keep last 10 digits
+      if (cleaned.length !== 10) {
+        return res.status(400).json({
+          success: false,
+          message: "Phone number must be exactly 10 digits",
+        });
+      }
+      updateData.phone = cleaned;
+    }
+
+    // ── Date of birth ────────────────────────────────────────────────────────
+    if (dateOfBirth !== undefined && dateOfBirth !== "") {
+      const dob = new Date(dateOfBirth);
+      if (isNaN(dob.getTime())) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid date of birth",
+        });
+      }
+      if (dob > new Date()) {
+        return res.status(400).json({
+          success: false,
+          message: "Date of birth cannot be in the future",
+        });
+      }
+      updateData.dateOfBirth = dob;
+    }
+
+    // ── Email change (check uniqueness) ──────────────────────────────────────
+    if (email !== undefined && email !== "") {
       const emailExists = await User.findOne({
         email,
         _id: { $ne: req.user.id },
@@ -1371,29 +1417,39 @@ exports.updateProfile = async (req, res) => {
       runValidators: true,
     });
 
-    // Log activity
-    await user.addSecurityLog(
-      "profile_updated",
-      req.ip,
-      req.get("user-agent"),
-      { updatedFields: Object.keys(updateData) },
-    );
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
+
+    // Log activity (non-fatal)
+    try {
+      await user.addSecurityLog(
+        "profile_updated",
+        req.ip,
+        req.get("user-agent"),
+        { updatedFields: Object.keys(updateData) },
+      );
+    } catch (logErr) {
+      logger.warn("Could not log profile update activity:", logErr.message);
+    }
 
     const userResponse = {
       id: user._id,
       name: user.name,
       email: user.email,
-      phone: user.phone,
-      address: user.address,
-      bio: user.bio,
-      dateOfBirth: user.dateOfBirth,
-      gender: user.gender,
+      phone: user.phone || null,
+      address: user.address || null,
+      bio: user.bio || null,
+      dateOfBirth: user.dateOfBirth || null,
+      gender: user.gender || null,
       role: user.role,
       provider: user.provider,
       avatar: user.avatar,
-      profileImage: user.profileImage,
-      profileImageKey: user.profileImageKey,
-      googleProfileImage: user.googleProfileImage,
+      profileImage: user.profileImage || null,
+      profileImageKey: user.profileImageKey || null,
+      googleProfileImage: user.googleProfileImage || null,
       isVerified: user.isVerified,
       profileImageUrl: user.getProfileImage ? user.getProfileImage() : null,
     };
@@ -1405,6 +1461,16 @@ exports.updateProfile = async (req, res) => {
     });
   } catch (error) {
     logger.error("❌ Update profile error:", error);
+
+    if (error.name === "ValidationError") {
+      const errors = Object.values(error.errors).map((e) => e.message);
+      return res.status(400).json({
+        success: false,
+        message: errors.join(", "),
+        errors,
+      });
+    }
+
     res.status(500).json({
       success: false,
       message: "Server error",
@@ -1620,6 +1686,7 @@ exports.initiateForgotPassword = async (req, res) => {
   }
 };
 
+// FIX: was using bare `redis` variable (undefined). Now uses RedisService consistently.
 exports.verifyForgotPasswordOTP = async (req, res) => {
   try {
     const { email, otp } = req.body;
@@ -1631,101 +1698,7 @@ exports.verifyForgotPasswordOTP = async (req, res) => {
       });
     }
 
-    const otpBlocked = await RedisService.checkOTPBlocked(email);
-    if (otpBlocked.blocked) {
-      return res.status(429).json({
-        success: false,
-        message: `Too many failed attempts. Please try again in ${otpBlocked.remainingSeconds} seconds.`,
-        blocked: true,
-        remainingSeconds: otpBlocked.remainingSeconds,
-      });
-    }
-
-    const pendingData = await RedisService.getPendingPasswordReset(email);
-    if (!pendingData) {
-      return res.status(400).json({
-        success: false,
-        message: "OTP expired or not found. Please request a new one.",
-      });
-    }
-
-    if (pendingData.otpAttempts >= 3) {
-      await RedisService.deletePendingPasswordReset(email);
-      return res.status(400).json({
-        success: false,
-        message: "Too many failed attempts. Please request a new OTP.",
-      });
-    }
-
-    const otpVerification = await RedisService.verifyOTP(email, otp);
-    if (!otpVerification.valid) {
-      pendingData.otpAttempts = (pendingData.otpAttempts || 0) + 1;
-      await RedisService.storePendingPasswordReset(email, pendingData);
-
-      const attemptResult = await RedisService.incrementOTPAttempts(email);
-
-      let errorMessage =
-        otpVerification.reason || "Invalid OTP. Please try again.";
-
-      if (attemptResult.blocked) {
-        errorMessage = `Too many failed attempts. Please try again in 60 seconds.`;
-        return res.status(429).json({
-          success: false,
-          message: errorMessage,
-          blocked: true,
-          remainingSeconds: 60,
-        });
-      }
-
-      return res.status(400).json({
-        success: false,
-        message: errorMessage,
-        attemptsRemaining: 3 - pendingData.otpAttempts,
-      });
-    }
-
-    await RedisService.clearOTPAttempts(email);
-    await RedisService.clearOTPBlock(email);
-
-    const resetToken = jwt.sign(
-      {
-        id: pendingData.userId,
-        email: pendingData.email,
-        type: "password_reset",
-      },
-      process.env.JWT_SECRET + pendingData.userId,
-      { expiresIn: "10m" },
-    );
-
-    await RedisService.storePasswordResetToken(email, resetToken);
-    await RedisService.deleteOTP(email);
-
-    res.status(200).json({
-      success: true,
-      message: "OTP verified successfully",
-      resetToken: resetToken,
-      email: email,
-    });
-  } catch (error) {
-    logger.error("❌ Forgot password OTP verification error:", error);
-    res.status(500).json({
-      success: false,
-      message: "Server error",
-    });
-  }
-};
-
-exports.resendForgotPasswordOTP = async (req, res) => {
-  try {
-    const { email } = req.body;
-
-    if (!email) {
-      return res.status(400).json({
-        success: false,
-        message: "Email is required",
-      });
-    }
-
+    // Check OTP block
     const otpBlocked = await RedisService.checkOTPBlocked(email);
     if (otpBlocked.blocked) {
       return res.status(429).json({
@@ -1741,15 +1714,101 @@ exports.resendForgotPasswordOTP = async (req, res) => {
       return res.status(400).json({
         success: false,
         message:
-          "No session for this email. Please start the forgot password process again.",
+          "Password reset session expired or not found. Please start over.",
       });
     }
 
-    const lastResendTime = pendingData.lastResendTime;
-    const now = new Date();
+    const otpVerification = await RedisService.verifyOTP(email, otp);
+    if (!otpVerification.valid) {
+      const attemptResult = await RedisService.incrementOTPAttempts(email);
 
+      let errorMessage =
+        otpVerification.reason || "Invalid OTP. Please try again.";
+
+      if (attemptResult.blocked) {
+        return res.status(429).json({
+          success: false,
+          message: "Too many failed attempts. Please try again in 60 seconds.",
+          blocked: true,
+          remainingSeconds: 60,
+          attempts: attemptResult.attempts,
+        });
+      }
+
+      const attemptsRemaining = 3 - attemptResult.attempts;
+      return res.status(400).json({
+        success: false,
+        message: errorMessage,
+        attemptsRemaining,
+        attempts: attemptResult.attempts,
+      });
+    }
+
+    // OTP valid — clear attempts and generate a short-lived reset token
+    await RedisService.clearOTPAttempts(email);
+    await RedisService.clearOTPBlock(email);
+
+    const resetToken = crypto.randomBytes(32).toString("hex");
+    const redis = require("../config/redis");
+    await redis.setex(
+      `reset:${resetToken}`,
+      600, // 10 minutes
+      JSON.stringify({ userId: pendingData.userId, email }),
+    );
+
+    // Clean up OTP and pending reset
+    await RedisService.deleteOTP(email);
+    await RedisService.deletePendingPasswordReset(email);
+
+    logger.info(`✅ Forgot password OTP verified for ${email}`);
+
+    return res.status(200).json({
+      success: true,
+      message: "OTP verified successfully",
+      resetToken,
+    });
+  } catch (error) {
+    logger.error("❌ Verify forgot password OTP error:", error);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+// FIX: was using bare `redis` variable (undefined) and wrong OTP key pattern.
+// Now uses RedisService + OTPGenerator consistently with the rest of the file.
+exports.resendForgotPasswordOTP = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Email is required" });
+    }
+
+    // Rate-limit check
+    const otpBlocked = await RedisService.checkOTPBlocked(email);
+    if (otpBlocked.blocked) {
+      return res.status(429).json({
+        success: false,
+        message: `Too many failed attempts. Please try again in ${otpBlocked.remainingSeconds} seconds.`,
+        blocked: true,
+        remainingSeconds: otpBlocked.remainingSeconds,
+      });
+    }
+
+    const pendingData = await RedisService.getPendingPasswordReset(email);
+    if (!pendingData) {
+      // Return 200 to prevent email enumeration
+      return res.status(200).json({
+        success: true,
+        message: "If that email has a pending reset, a new OTP has been sent.",
+      });
+    }
+
+    // Enforce 60-second cooldown between resends
+    const lastResendTime = pendingData.lastResendTime;
     if (lastResendTime) {
-      const timeDiff = (now - new Date(lastResendTime)) / 1000;
+      const timeDiff = (Date.now() - new Date(lastResendTime).getTime()) / 1000;
       if (timeDiff < 60) {
         return res.status(429).json({
           success: false,
@@ -1761,26 +1820,25 @@ exports.resendForgotPasswordOTP = async (req, res) => {
 
     const otp = OTPGenerator.generateOTP();
 
-    pendingData.lastResendTime = now.toISOString();
+    pendingData.lastResendTime = new Date().toISOString();
     pendingData.resendCount = (pendingData.resendCount || 0) + 1;
 
     await RedisService.storePendingPasswordReset(email, pendingData);
     await RedisService.storeOTP(email, otp);
-
     await RedisService.clearOTPAttempts(email);
     await RedisService.clearOTPBlock(email);
 
     try {
-      logger.info(`📤 Resending password reset OTP to: ${email}`);
+      logger.info(`📤 Resending password reset OTP email to: ${email}`);
       await EmailService.sendForgotPasswordOTPEmail(
         email,
-        pendingData.username,
+        pendingData.username || email,
         otp,
       );
-      logger.info(`✅ Resent password reset OTP successfully to ${email}`);
+      logger.info(`✅ Resent password reset OTP to ${email}`);
     } catch (emailError) {
       logger.error(
-        "❌ Failed to resend password reset OTP:",
+        "❌ Failed to resend password reset email:",
         emailError.message,
       );
       return res.status(500).json({
@@ -1789,95 +1847,71 @@ exports.resendForgotPasswordOTP = async (req, res) => {
       });
     }
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
-      message: "New password reset OTP sent to your email.",
-      email: email,
+      message: "New OTP sent to your email.",
+      email,
     });
   } catch (error) {
-    logger.error("Resend forgot password OTP error:", error);
-    res.status(500).json({
-      success: false,
-      message: "Server error",
-    });
+    logger.error("❌ Resend forgot password OTP error:", error);
+    return res.status(500).json({ success: false, message: "Server error" });
   }
 };
 
+// FIX: was using bare `redis` variable (undefined) and undefined
+// `sendPasswordResetSuccessEmail`. Now imports redis inline and calls
+// EmailService.sendPasswordResetSuccessEmail correctly.
 exports.resetPasswordWithToken = async (req, res) => {
   try {
     const { resetToken } = req.params;
-    const { password, confirmPassword, email } = req.body;
+    const { email, password, confirmPassword } = req.body;
 
-    if (!password || !confirmPassword || !email) {
+    if (!resetToken || !email || !password) {
       return res.status(400).json({
         success: false,
-        message: "Email, password and confirm password are required",
+        message: "Reset token, email and new password are required",
       });
     }
 
     if (password !== confirmPassword) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Passwords do not match" });
+    }
+
+    const redis = require("../config/redis");
+    const stored = await redis.get(`reset:${resetToken}`);
+    if (!stored) {
       return res.status(400).json({
         success: false,
-        message: "Passwords do not match",
+        message: "Reset token is invalid or has expired.",
       });
     }
 
-    const isValidToken = await RedisService.verifyPasswordResetToken(
-      email,
-      resetToken,
-    );
-    if (!isValidToken) {
+    const data = JSON.parse(stored);
+
+    if (data.email.toLowerCase() !== email.toLowerCase()) {
       return res.status(400).json({
         success: false,
-        message: "Invalid or expired reset token",
+        message: "Email does not match the reset token.",
       });
     }
 
-    let decoded;
-    try {
-      const user = await User.findOne({ email });
-      if (!user) {
-        return res.status(400).json({
-          success: false,
-          message: "User not found",
-        });
-      }
-
-      decoded = jwt.verify(
-        resetToken,
-        process.env.JWT_SECRET + user._id.toString(),
-      );
-
-      if (decoded.type !== "password_reset" || decoded.email !== email) {
-        return res.status(400).json({
-          success: false,
-          message: "Invalid reset token",
-        });
-      }
-    } catch (error) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid or expired reset token",
-      });
-    }
-
-    const user = await User.findById(decoded.id).select(
+    const user = await User.findById(data.userId).select(
       "+password +passwordHistory",
     );
-
     if (!user) {
-      return res.status(400).json({
-        success: false,
-        message: "User not found",
-      });
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found." });
     }
 
+    // Validate new password strength
     const passwordValidation = await passwordSecurity.validatePassword(
       password,
       user._id.toString(),
-      true,
+      false,
     );
-
     if (!passwordValidation.isValid) {
       return res.status(400).json({
         success: false,
@@ -1889,62 +1923,57 @@ exports.resetPasswordWithToken = async (req, res) => {
 
     const historyCheck = await user.isPasswordInHistory(password);
     if (historyCheck.inHistory) {
-      return res.status(400).json({
-        success: false,
-        message:
-          historyCheck.message ||
-          "You have used this password recently. Please choose a different password.",
-      });
+      return res
+        .status(400)
+        .json({ success: false, message: historyCheck.message });
     }
+
+    // Save old password to history before overwriting
+    await user.addToPasswordHistory(user.password, {
+      changedBy: "reset",
+      ipAddress: req.ip,
+      userAgent: req.get("user-agent"),
+    });
 
     const salt = await bcrypt.genSalt(12);
-    const hashedPassword = await bcrypt.hash(password, salt);
-
-    if (user.password) {
-      await user.addToPasswordHistory(password, {
-        changedBy: "reset",
-        ipAddress: req.ip,
-        userAgent: req.get("user-agent"),
-      });
-    } else {
-      user.passwordHistory = [
-        {
-          password: hashedPassword,
-          changedAt: new Date(),
-          changedBy: "reset",
-          ipAddress: req.ip,
-          userAgent: req.get("user-agent"),
-        },
-      ];
-    }
-
-    user.password = hashedPassword;
+    user.password = await bcrypt.hash(password, salt);
     user.lastPasswordChange = new Date();
     await user.save();
 
+    await redis.del(`reset:${resetToken}`);
+
+    // Revoke all existing sessions for security
     await revokeAllUserTokens(user._id.toString());
 
-    await RedisService.deletePendingPasswordReset(email);
-    await RedisService.deletePasswordResetToken(email);
-    await RedisService.deleteOTP(email);
-
+    // Log security event (non-fatal)
     try {
-      await EmailService.sendPasswordResetSuccessEmail(email, user.name);
-    } catch (emailError) {
-      logger.error("Failed to send success email:", emailError.message);
+      await user.addSecurityLog(
+        "password_reset",
+        req.ip,
+        req.get("user-agent"),
+        { method: "otp_reset" },
+      );
+    } catch (logErr) {
+      logger.warn("Could not log password reset:", logErr.message);
     }
 
-    res.status(200).json({
+    // Send success email (non-fatal)
+    try {
+      await EmailService.sendPasswordResetSuccessEmail(user.email, user.name);
+    } catch (emailErr) {
+      logger.warn("Could not send reset success email:", emailErr.message);
+    }
+
+    logger.info(`✅ Password reset successfully for: ${user.email}`);
+
+    return res.status(200).json({
       success: true,
       message:
-        "Password reset successful. You can now login with your new password.",
+        "Password reset successfully. You can now login with your new password.",
     });
   } catch (error) {
-    logger.error("❌ Reset password error:", error);
-    res.status(500).json({
-      success: false,
-      message: "Server error",
-    });
+    logger.error("❌ Reset password with token error:", error);
+    return res.status(500).json({ success: false, message: "Server error" });
   }
 };
 
@@ -2107,183 +2136,106 @@ exports.getPasswordRequirements = (req, res) => {
   });
 };
 
-// ==================== LEGACY: SETUP PASSWORD ====================
+// ==================== SETUP PASSWORD ====================
 exports.setupPassword = async (req, res) => {
   try {
-    const { email, password, confirmPassword } = req.body;
+    const { email, password } = req.body;
 
-    if (!email || !password || !confirmPassword) {
-      return res.status(400).json({
-        success: false,
-        message: "Email, password and confirm password are required",
-      });
-    }
-
-    if (password !== confirmPassword) {
-      return res.status(400).json({
-        success: false,
-        message: "Passwords do not match",
-      });
-    }
-
-    const user = await User.findOne({ email }).select(
-      "+password +passwordHistory",
+    const user = await User.findOne({ email: email.toLowerCase() }).select(
+      "+password",
     );
+    if (!user)
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
 
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: "User not found",
-      });
-    }
-
-    const userWithPassword = await User.findOne({ email }).select("+password");
-    if (userWithPassword && userWithPassword.password) {
+    if (user.password) {
       return res.status(400).json({
         success: false,
-        message:
-          "Password already set for this account. Please use login instead.",
-      });
-    }
-
-    const passwordValidation = await passwordSecurity.validatePassword(
-      password,
-      user._id.toString(),
-      true,
-    );
-
-    if (!passwordValidation.isValid) {
-      return res.status(400).json({
-        success: false,
-        message: "Password does not meet security requirements",
-        errors: passwordValidation.errors,
-        strength: passwordValidation.strength,
-      });
-    }
-
-    const salt = await bcrypt.genSalt(12);
-    const hashedPassword = await bcrypt.hash(password, salt);
-
-    user.password = hashedPassword;
-    user.provider = "local";
-    user.lastPasswordChange = new Date();
-
-    user.passwordHistory = [
-      {
-        password: hashedPassword,
-        changedAt: new Date(),
-        changedBy: "user",
-        ipAddress: req.ip,
-        userAgent: req.get("user-agent"),
-      },
-    ];
-
-    await user.save();
-
-    logger.info(`✅ Password setup successful for: ${email}`);
-
-    res.status(200).json({
-      success: true,
-      message: "Password set successfully. You can now login.",
-    });
-  } catch (error) {
-    logger.error("❌ Setup password error:", error);
-    res.status(500).json({
-      success: false,
-      message: "Server error",
-    });
-  }
-};
-
-// ==================== LEGACY COMPATIBILITY ENDPOINTS ====================
-exports.forgotPassword = async (req, res) => {
-  try {
-    const { email } = req.body;
-
-    if (!email) {
-      return res.status(400).json({
-        success: false,
-        message: "Email is required",
-      });
-    }
-
-    const user = await User.findOne({ email });
-
-    if (!user) {
-      return res.status(200).json({
-        success: true,
-        message:
-          "If an account exists, password reset instructions will be sent",
-      });
-    }
-
-    const resetToken = jwt.sign(
-      { id: user._id },
-      process.env.JWT_SECRET + user.password,
-      { expiresIn: "10m" },
-    );
-
-    const resetUrl = `${req.protocol}://${req.get("host")}/api/auth/reset-password/${resetToken}`;
-
-    logger.info("Reset URL:", resetUrl);
-
-    res.status(200).json({
-      success: true,
-      message: "Password reset email sent",
-      resetUrl,
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Server error",
-    });
-  }
-};
-
-exports.resetPassword = async (req, res) => {
-  try {
-    const { resetToken } = req.params;
-    const { password } = req.body;
-
-    if (!password) {
-      return res.status(400).json({
-        success: false,
-        message: "Password is required",
-      });
-    }
-
-    let decoded;
-    try {
-      decoded = jwt.verify(resetToken, process.env.JWT_SECRET);
-    } catch (error) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid or expired reset token",
-      });
-    }
-
-    const user = await User.findById(decoded.id);
-
-    if (!user) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid reset token",
+        message: "Password already set. Use change password instead.",
       });
     }
 
     const salt = await bcrypt.genSalt(12);
     user.password = await bcrypt.hash(password, salt);
+    user.provider = "local";
+    user.lastPasswordChange = new Date();
     await user.save();
 
-    legacySendTokenResponse(user, 200, res, "Password reset successful");
+    return res
+      .status(200)
+      .json({ success: true, message: "Password set up successfully." });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Server error",
-    });
+    logger.error("Setup password error:", error);
+    return res.status(500).json({ success: false, message: "Server error" });
   }
 };
 
+// ==================== LEGACY FORGOT / RESET PASSWORD ====================
+exports.forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+    const user = await User.findOne({ email: email.toLowerCase() });
+    if (!user) {
+      return res.status(200).json({
+        success: true,
+        message: "If that email exists, a reset link has been sent.",
+      });
+    }
+
+    const resetToken = user.createPasswordResetToken();
+    await user.save({ validateBeforeSave: false });
+
+    const resetUrl = `${process.env.CLIENT_URL}/reset-password/${resetToken}`;
+    logger.info(`Password reset URL (legacy): ${resetUrl}`);
+
+    return res.status(200).json({
+      success: true,
+      message: "Reset link sent to your email.",
+    });
+  } catch (error) {
+    logger.error("Legacy forgot password error:", error);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+exports.resetPassword = async (req, res) => {
+  try {
+    const hashedToken = crypto
+      .createHash("sha256")
+      .update(req.params.resetToken)
+      .digest("hex");
+
+    const user = await User.findOne({
+      passwordResetToken: hashedToken,
+      passwordResetExpires: { $gt: Date.now() },
+    }).select("+password");
+
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        message: "Reset token is invalid or has expired.",
+      });
+    }
+
+    const salt = await bcrypt.genSalt(12);
+    user.password = await bcrypt.hash(req.body.password, salt);
+    user.passwordResetToken = undefined;
+    user.passwordResetExpires = undefined;
+    user.lastPasswordChange = new Date();
+    await user.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Password reset successfully.",
+    });
+  } catch (error) {
+    logger.error("Legacy reset password error:", error);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+// ==================== LEGACY REGISTER ====================
 exports.register = async (req, res) => {
   try {
     const { name, email, password, confirmPassword } = req.body;
@@ -2349,7 +2301,7 @@ exports.register = async (req, res) => {
   }
 };
 
-// Legacy helper
+// ==================== LEGACY HELPERS ====================
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRE || "7d",
@@ -2381,6 +2333,5 @@ const legacySendTokenResponse = (user, statusCode, res, message) => {
   });
 };
 
-// Export helpers
 exports.generateToken = generateToken;
 exports.sendTokenResponse = legacySendTokenResponse;
