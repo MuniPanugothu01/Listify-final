@@ -71,6 +71,7 @@ const SubNavbar = () => {
     }
   };
 
+  
   useEffect(() => {
     const container = scrollContainerRef.current;
     if (container) {
