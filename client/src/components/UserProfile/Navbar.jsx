@@ -14,6 +14,7 @@ import {
   FaUserCircle,
   FaChevronRight,
   FaTools,
+  FaSearch,
 } from "react-icons/fa";
 import NavSearchBar from "../../pages/Home/NavSearchBar.jsx";
 import { CgProfile } from "react-icons/cg";
@@ -37,6 +38,8 @@ const Navbar = () => {
   const [imageError, setImageError] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [notificationsLoading, setNotificationsLoading] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [showMobileSearch, setShowMobileSearch] = useState(false);
 
   const profileDropdownRef = useRef(null);
   const notificationDropdownRef = useRef(null);
@@ -178,6 +181,7 @@ const Navbar = () => {
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
+    if (showMobileSearch) setShowMobileSearch(false);
   };
 
   const handleProfileClick = () => {
@@ -303,6 +307,15 @@ const Navbar = () => {
     setImageError(true);
   }, []);
 
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
+      setSearchQuery("");
+      setShowMobileSearch(false);
+    }
+  };
+
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -325,6 +338,7 @@ const Navbar = () => {
       if (event.key === "Escape") {
         closeProfileDropdown();
         closeNotificationDropdown();
+        setShowMobileSearch(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -354,14 +368,14 @@ const Navbar = () => {
     };
   }, []);
 
-  // Your original CSS — untouched
+  // Updated CSS with search bar text color change on scroll
   const navbarStyles = `
     @keyframes slideDown {
       from { transform: translateY(-10px); opacity: 0; }
       to { transform: translateY(0); opacity: 1; }
     }
     .profile-dropdown { animation: slideDown 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
-    .nav-link { position: relative; transition: color 0.3s ease; }
+    .nav-link { position: relative; transition: color 0.3s ease; font-weight: 600; }
     .nav-link:hover { color: #1FA987; }
     .nav-link::after { content: ""; position: absolute; width: 0; height: 2px; bottom: -4px; left: 0; background-color: #1FA987; transition: width 0.3s ease; }
     .nav-link:hover::after { width: 100%; }
@@ -372,16 +386,196 @@ const Navbar = () => {
     .navbar-scrolled .nav-link { color: #ffffff; }
     .navbar-scrolled .nav-link:hover { color: #2d7a82; }
     .navbar-scrolled .logo-text { color: #ffffff; }
-    .navbar-scrolled .search-input { background-color: rgba(255, 255, 255, 0.1); border-color: rgba(255, 255, 255, 0.2); color: #ffffff; }
-    .navbar-scrolled .search-input::placeholder { color: rgba(255, 255, 255, 0.7); }
-    .navbar-scrolled .search-icon { color: rgba(255, 255, 255, 0.7); }
+    
+    /* Search bar styles - normal state */
+    .search-input {
+      width: 100%;
+      padding: 10px 20px;
+      padding-right: 45px;
+      border: 1.5px solid #e5e7eb;
+      border-radius: 9999px;
+      font-size: 15px;
+      outline: none;
+      transition: all 0.3s ease;
+      background-color: white;
+      font-weight: 500;
+      color: #1f2937;
+    }
+    
+    .search-input::placeholder {
+      color: #6b7280;
+      transition: color 0.3s ease;
+    }
+    
+    .search-input:focus {
+      border-color: #1FA987;
+      box-shadow: 0 0 0 3px rgba(31, 169, 135, 0.15);
+    }
+    
+    .search-button {
+      position: absolute;
+      right: 4px;
+      background: none;
+      border: none;
+      padding: 8px 16px;
+      color: #6b7280;
+      cursor: pointer;
+      transition: color 0.3s ease;
+    }
+    
+    .search-button:hover {
+      color: #1FA987;
+    }
+    
+    /* Search bar styles - scrolled state */
+    .navbar-scrolled .search-input {
+      background-color: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.2);
+      color: white;
+    }
+    
+    .navbar-scrolled .search-input::placeholder {
+      color: rgba(255, 255, 255, 0.7);
+    }
+    
+    .navbar-scrolled .search-button {
+      color: rgba(255, 255, 255, 0.7);
+    }
+    
+    .navbar-scrolled .search-button:hover {
+      color: white;
+    }
+    
     .navbar-scrolled .profile-button { border-color: rgba(255, 255, 255, 0.3); color: #ffffff; }
     .navbar-scrolled .profile-button:hover { background-color: rgba(255, 255, 255, 0.1); }
-    .notification-badge { position: absolute; top: -5px; right: -5px; background-color: #EF4444; color: white; border-radius: 50%; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold; }
+    .notification-badge { position: absolute; top: -5px; right: -5px; background-color: #EF4444; color: white; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold; }
     .notification-item-unread { background-color: #F0F9FF; border-left: 3px solid #3B82F6; }
     .user-profile-image { border-radius: 50%; object-fit: cover; border: 2px solid white; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); }
     .user-icon-container { background: linear-gradient(135deg, #27bb97, #1fa987); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
-    .message-count-badge { background-color: #EF4444; color: white; border-radius: 9999px; padding: 2px 6px; font-size: 10px; margin-left: 4px; }
+    .message-count-badge { background-color: #EF4444; color: white; border-radius: 9999px; padding: 3px 8px; font-size: 11px; margin-left: 6px; font-weight: 600; }
+    
+    /* Improved search bar styles */
+    .search-container {
+      flex: 1;
+      max-width: 500px;
+      margin: 0 20px;
+    }
+    
+    .search-form {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      position: relative;
+    }
+    
+    /* Mobile search styles */
+    .mobile-search-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .mobile-search-button:hover {
+      background-color: rgba(31, 169, 135, 0.1);
+    }
+    
+    .navbar-scrolled .mobile-search-button {
+      color: white;
+    }
+    
+    .mobile-search-overlay {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: white;
+      padding: 16px 20px;
+      box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.15);
+      z-index: 40;
+      animation: slideDown 0.3s ease;
+    }
+    
+    .navbar-scrolled .mobile-search-overlay {
+      background: rgba(0, 0, 0, 0.95);
+      backdrop-filter: blur(20px);
+    }
+    
+    .mobile-search-form {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .mobile-search-input {
+      flex: 1;
+      padding: 12px 20px;
+      border: 1.5px solid #e5e7eb;
+      border-radius: 9999px;
+      font-size: 15px;
+      outline: none;
+      font-weight: 500;
+      color: #1f2937;
+    }
+    
+    .mobile-search-input::placeholder {
+      color: #6b7280;
+    }
+    
+    .navbar-scrolled .mobile-search-input {
+      background-color: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.2);
+      color: white;
+    }
+    
+    .navbar-scrolled .mobile-search-input::placeholder {
+      color: rgba(255, 255, 255, 0.7);
+    }
+    
+    .mobile-search-close {
+      padding: 10px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #6b7280;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .navbar-scrolled .mobile-search-close {
+      color: white;
+    }
+    
+    /* Desktop menu items - increased font size */
+    .desktop-menu-item {
+      font-size: 15px !important;
+      padding: 8px 16px !important;
+    }
+    
+    /* Profile button text */
+    .profile-button-text {
+      font-size: 14px;
+      font-weight: 600;
+    }
+    
+    /* Logo size */
+    .logo-text {
+      font-size: 24px !important;
+      font-weight: 700;
+    }
+    
+    @media (min-width: 1024px) {
+      .logo-text {
+        font-size: 26px !important;
+      }
+    }
   `;
 
   const profileImage = getProfileImage();
@@ -400,443 +594,474 @@ const Navbar = () => {
           isScrolled ? "navbar-scrolled" : "bg-white shadow-sm"
         }`}
       >
-        <div className=" px-2 sm:px-4 lg:px-8">
-          <div className="flex items-center justify-between h-14 sm:h-16">
-            {/* Logo */}
-            <Link
-              to="/"
-              onClick={scrollToTop}
-              className="flex items-center gap-1 sm:gap-2 flex-shrink-0"
-            >
-              <span
-                className={`text-lg sm:text-xl font-bold logo-text ${
-                  isScrolled ? "text-white" : "text-gray-900"
-                }`}
+        <div className="max-w-7xl mx-auto">
+          <div className="px-3 sm:px-5 lg:px-8">
+            <div className="flex items-center justify-between h-16 sm:h-16 lg:h-18">
+              {/* Logo */}
+              <Link
+                to="/"
+                onClick={scrollToTop}
+                className="flex items-center gap-2 flex-shrink-0"
               >
-                Listify
-              </span>
-            </Link>
-
-            {/* Search Bar Component */}
-            <div className="hidden md:flex flex-1 max-w-xs sm:max-w-sm lg:max-w-md mx-2 sm:mx-4">
-              <NavSearchBar />
-            </div>
-
-            {/* Desktop Menu */}
-            <div className="hidden lg:flex items-center gap-0.5 sm:gap-1">
-              {mainMenuItems.map((item) => (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  onClick={scrollToTop}
-                  className={`nav-link px-2 sm:px-3 py-2 text-xs sm:text-sm font-semibold ${
-                    isScrolled ? "text-white" : "text-gray-700"
+                <span
+                  className={`logo-text ${
+                    isScrolled ? "text-white" : "text-gray-900"
                   }`}
                 >
-                  {item.name}
-                </Link>
-              ))}
-
-              <div
-                className="relative"
-                onMouseEnter={() => setShowMoreDropdown(true)}
-                onMouseLeave={() => setShowMoreDropdown(false)}
-              >
-                <button
-                  className={`nav-link flex items-center gap-1 px-2 sm:px-3 py-2 text-xs sm:text-sm font-semibold ${
-                    isScrolled ? "text-white" : "text-gray-700"
-                  }`}
-                >
-                  More <FaChevronDown className="text-xs" />
-                </button>
-
-                {/* More Dropdown */}
-                {showMoreDropdown && (
-                  <div className="absolute top-full left-0 mt-1 w-44 sm:w-48 bg-white rounded-lg shadow-lg border border-gray-100 py-1 z-50">
-                    {moreMenuItems.map((item, index) => (
-                      <Link
-                        key={index}
-                        to={item.path}
-                        onClick={() => {
-                          setShowMoreDropdown(false);
-                          scrollToTop();
-                        }}
-                        className="block font-semibold px-4 sm:px-5 py-2 sm:py-3 text-xs sm:text-sm text-gray-700 hover:bg-gray-100 transition-colors"
-                      >
-                        {item.name}
-                      </Link>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Right side actions */}
-            <div className="hidden md:flex items-center gap-1 sm:gap-2">
-              {/* Heart Icon (Saved Items) */}
-              <Link to="/saved" onClick={scrollToTop}>
-                <button
-                  className={`p-1.5 sm:p-2 rounded-full transition-colors ${
-                    isScrolled
-                      ? "text-white hover:bg-white/10"
-                      : "text-gray-600 hover:bg-gray-100"
-                  }`}
-                >
-                  <FaRegHeart size={16} className="sm:w-5 sm:h-5" />
-                </button>
+                  Listify
+                </span>
               </Link>
 
-              {/* Notification Icon */}
-              {isAuthenticated && (
-                <div className="relative">
+              {/* Desktop Search Bar - Hidden on tablets and below */}
+              <div className="hidden lg:block search-container relative">
+                <form onSubmit={handleSearch} className="search-form">
+                  <input
+                    type="text"
+                    placeholder="Search for products, brands and more..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="search-input"
+                  />
+                  <button type="submit" className="search-button">
+                    <FaSearch size={18} />
+                  </button>
+                </form>
+              </div>
+
+              {/* Desktop Menu - Now visible on lg screens and above */}
+              <div className="hidden lg:flex items-center gap-1">
+                {mainMenuItems.map((item) => (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    onClick={scrollToTop}
+                    className={`nav-link desktop-menu-item ${
+                      isScrolled ? "text-white" : "text-gray-700"
+                    }`}
+                  >
+                    {item.name}
+                  </Link>
+                ))}
+
+                <div
+                  className="relative"
+                  onMouseEnter={() => setShowMoreDropdown(true)}
+                  onMouseLeave={() => setShowMoreDropdown(false)}
+                >
                   <button
-                    onClick={handleNotificationClick}
-                    className={`notification-button relative p-1.5 sm:p-2 rounded-full transition-colors ${
+                    className={`nav-link desktop-menu-item flex items-center gap-1 ${
+                      isScrolled ? "text-white" : "text-gray-700"
+                    }`}
+                  >
+                    More <FaChevronDown className="text-xs ml-1" />
+                  </button>
+
+                  {/* More Dropdown */}
+                  {showMoreDropdown && (
+                    <div className="absolute top-full left-0 mt-1 w-48 bg-white rounded-lg shadow-lg border border-gray-100 py-1 z-50">
+                      {moreMenuItems.map((item, index) => (
+                        <Link
+                          key={index}
+                          to={item.path}
+                          onClick={() => {
+                            setShowMoreDropdown(false);
+                            scrollToTop();
+                          }}
+                          className="block font-semibold px-5 py-3 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                        >
+                          {item.name}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Right side actions - Visible on lg and above (changed from md to lg) */}
+              <div className="hidden lg:flex items-center gap-2">
+                {/* Heart Icon (Saved Items) */}
+                <Link to="/saved" onClick={scrollToTop}>
+                  <button
+                    className={`p-2 rounded-full transition-colors ${
                       isScrolled
                         ? "text-white hover:bg-white/10"
                         : "text-gray-600 hover:bg-gray-100"
                     }`}
                   >
-                    <FaBell size={16} className="sm:w-5 sm:h-5" />
-                    {unreadCount > 0 && (
-                      <span className="notification-badge">{unreadCount}</span>
+                    <FaRegHeart size={18} />
+                  </button>
+                </Link>
+
+                {/* Notification Icon */}
+                {isAuthenticated && (
+                  <div className="relative">
+                    <button
+                      onClick={handleNotificationClick}
+                      className={`notification-button relative p-2 rounded-full transition-colors ${
+                        isScrolled
+                          ? "text-white hover:bg-white/10"
+                          : "text-gray-600 hover:bg-gray-100"
+                      }`}
+                    >
+                      <FaBell size={18} />
+                      {unreadCount > 0 && (
+                        <span className="notification-badge">{unreadCount}</span>
+                      )}
+                    </button>
+
+                    {/* Notification Dropdown */}
+                    {showNotificationDropdown && (
+                      <div
+                        ref={notificationDropdownRef}
+                        className="profile-dropdown absolute right-0 top-full mt-2 w-80 bg-white rounded-xl shadow-xl border border-gray-100 z-50 overflow-hidden"
+                      >
+                        {/* Notification Header */}
+                        <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
+                          <h3 className="font-semibold text-base text-gray-900">
+                            Notifications
+                          </h3>
+                          {unreadCount > 0 && (
+                            <button
+                              onClick={markAllAsRead}
+                              className="text-sm text-blue-600 hover:underline"
+                            >
+                              Mark all as read
+                            </button>
+                          )}
+                        </div>
+
+                        {/* Notification List */}
+                        <div className="max-h-80 overflow-y-auto">
+                          {notificationsLoading ? (
+                            <div className="p-4 text-center text-gray-500 text-sm">
+                              Loading...
+                            </div>
+                          ) : notifications.length > 0 ? (
+                            notifications.map((notification) => (
+                              <div
+                                key={notification.id}
+                                onClick={() =>
+                                  markNotificationAsRead(notification.id)
+                                }
+                                className={`px-4 py-3 cursor-pointer hover:bg-gray-50 ${
+                                  !notification.read
+                                    ? "notification-item-unread"
+                                    : ""
+                                }`}
+                              >
+                                <p className="text-sm text-gray-800 font-medium">
+                                  {notification.text}
+                                </p>
+                                <p className="text-xs text-gray-400 mt-1">
+                                  {notification.time}
+                                </p>
+                              </div>
+                            ))
+                          ) : (
+                            <div className="p-4 text-center text-gray-500 text-sm">
+                              No notifications
+                            </div>
+                          )}
+                        </div>
+
+                        {/* View All Link */}
+                        <div className="border-t border-gray-100 px-4 py-2">
+                          <Link
+                            to="/notifications"
+                            className="text-sm text-blue-600 hover:underline"
+                          >
+                            View all notifications
+                          </Link>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Create Listing Button */}
+                <Link to="/post-add">
+                  <button className="flex items-center gap-2 px-4 py-2 bg-[#1FA987] text-white rounded-lg text-sm font-semibold hover:bg-[#1a9277] transition-colors">
+                    <FaPlus size={12} />
+                    Sell
+                  </button>
+                </Link>
+
+                {/* Profile/Login Button */}
+                <div className="relative">
+                  <button
+                    onClick={handleProfileClick}
+                    className={`profile-button flex items-center gap-2 px-3 py-2 rounded-lg border transition-colors ${
+                      isScrolled
+                        ? "border-white/30 text-white hover:bg-white/10"
+                        : "border-gray-200 text-gray-700 hover:bg-gray-50"
+                    }`}
+                  >
+                    {isAuthenticated ? (
+                      <>
+                        {/* Profile image FIRST */}
+                        {profileImage && !imageError ? (
+                          <img
+                            src={profileImage}
+                            alt={userFirstName}
+                            width={30}
+                            height={30}
+                            onError={handleImageError}
+                            className="user-profile-image"
+                            style={{ width: 30, height: 30 }}
+                          />
+                        ) : /* Static image for email users, gradient icon for Google users with broken photo */
+                        !googleUser ? (
+                          <img
+                            src={STATIC_PROFILE_IMAGE}
+                            alt={userFirstName}
+                            width={30}
+                            height={30}
+                            className="user-profile-image"
+                            style={{ width: 30, height: 30 }}
+                          />
+                        ) : (
+                          <div
+                            className="user-icon-container"
+                            style={{ width: 30, height: 30 }}
+                          >
+                            <FaUserCircle size={18} />
+                          </div>
+                        )}
+                        {/* First name SECOND */}
+                        <span className="hidden sm:inline max-w-[100px] truncate profile-button-text">
+                          {userFirstName}
+                        </span>
+                      </>
+                    ) : (
+                      <>
+                        <FaUserCircle size={18} />
+                        <span className="hidden sm:inline profile-button-text">
+                          Sign In
+                        </span>
+                      </>
                     )}
                   </button>
 
-                  {/* Notification Dropdown */}
-                  {showNotificationDropdown && (
+                  {/* Profile Dropdown Menu */}
+                  {showProfileDropdown && isAuthenticated && (
                     <div
-                      ref={notificationDropdownRef}
-                      className="profile-dropdown absolute right-0 top-full mt-2 w-72 sm:w-80 bg-white rounded-xl shadow-xl border border-gray-100 z-50 overflow-hidden"
+                      ref={profileDropdownRef}
+                      className="profile-dropdown absolute right-0 top-full mt-2 w-64 bg-white rounded-xl shadow-xl border border-gray-100 z-50 overflow-hidden"
                     >
-                      {/* Notification Header */}
-                      <div className="flex items-center justify-between px-3 sm:px-4 py-2 sm:py-3 border-b border-gray-100">
-                        <h3 className="font-semibold text-sm sm:text-base text-gray-900">
-                          Notifications
-                        </h3>
-                        {unreadCount > 0 && (
-                          <button
-                            onClick={markAllAsRead}
-                            className="text-xs text-blue-600 hover:underline"
-                          >
-                            Mark all as read
-                          </button>
-                        )}
-                      </div>
-
-                      {/* Notification List */}
-                      <div className="max-h-64 sm:max-h-80 overflow-y-auto">
-                        {notificationsLoading ? (
-                          <div className="p-4 text-center text-gray-500 text-sm">
-                            Loading...
-                          </div>
-                        ) : notifications.length > 0 ? (
-                          notifications.map((notification) => (
-                            <div
-                              key={notification.id}
-                              onClick={() =>
-                                markNotificationAsRead(notification.id)
-                              }
-                              className={`px-3 sm:px-4 py-2 sm:py-3 cursor-pointer hover:bg-gray-50 ${
-                                !notification.read
-                                  ? "notification-item-unread"
-                                  : ""
-                              }`}
-                            >
-                              <p className="text-xs sm:text-sm text-gray-800">
-                                {notification.text}
-                              </p>
-                              <p className="text-xs text-gray-400 mt-1">
-                                {notification.time}
-                              </p>
-                            </div>
-                          ))
+                      {/* User Info Header */}
+                      <div className="flex items-center gap-3 px-4 py-4 bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-100">
+                        {/* Profile image FIRST */}
+                        {profileImage && !imageError ? (
+                          <img
+                            src={profileImage}
+                            alt={userFullName}
+                            width={48}
+                            height={48}
+                            onError={handleImageError}
+                            className="user-profile-image flex-shrink-0"
+                            style={{ width: 48, height: 48 }}
+                          />
+                        ) : !googleUser ? (
+                          <img
+                            src={STATIC_PROFILE_IMAGE}
+                            alt={userFullName}
+                            width={48}
+                            height={48}
+                            className="user-profile-image flex-shrink-0"
+                            style={{ width: 48, height: 48 }}
+                          />
                         ) : (
-                          <div className="p-4 text-center text-gray-500 text-sm">
-                            No notifications
+                          <div
+                            className="user-icon-container flex-shrink-0"
+                            style={{ width: 48, height: 48 }}
+                          >
+                            <FaUserCircle size={30} />
                           </div>
                         )}
+
+                        {/* User details SECOND */}
+                        <div className="flex-1 min-w-0">
+                          <p className="font-semibold text-gray-900 text-base truncate">
+                            {userFullName}
+                          </p>
+                          <p className="text-sm text-gray-500 truncate">
+                            {userEmail}
+                          </p>
+                          {googleUser && (
+                            <span className="text-xs text-blue-500 font-medium">
+                              (Google)
+                            </span>
+                          )}
+                        </div>
                       </div>
 
-                      {/* View All Link */}
-                      <div className="border-t border-gray-100 px-3 sm:px-4 py-2">
-                        <Link
-                          to="/notifications"
-                          className="text-xs sm:text-sm text-blue-600 hover:underline"
-                        >
-                          View all notifications
-                        </Link>
+                      {/* Menu Items */}
+                      <div className="py-1">
+                        {profileMenuItems.map((item, index) => (
+                          <button
+                            key={index}
+                            onClick={() => handleProfileMenuItemClick(item.path)}
+                            className="profile-dropdown-link w-full flex items-center justify-between gap-3 px-4 py-3 text-sm text-gray-700 hover:text-blue-600 font-medium"
+                          >
+                            <div className="flex items-center gap-3">
+                              <item.icon size={16} />
+                              <span>{item.name}</span>
+                            </div>
+                            {item.count > 0 && (
+                              <span className="message-count-badge">
+                                {item.count}
+                              </span>
+                            )}
+                          </button>
+                        ))}
                       </div>
                     </div>
                   )}
                 </div>
-              )}
-
-              {/* Create Listing Button */}
-              <Link to="/create-listing">
-                <button className="flex items-center gap-1 px-2 sm:px-4 py-1.5 sm:py-2 bg-[#1FA987] text-white rounded-lg text-xs sm:text-sm font-semibold hover:bg-[#1a9277] transition-colors">
-                  <FaPlus size={10} className="sm:w-3 sm:h-3" />
-                  Sell
-                </button>
-              </Link>
-
-              {/* Profile/Login Button */}
-              <div className="relative">
-                <button
-                  onClick={handleProfileClick}
-                  className={`profile-button flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg border transition-colors text-xs sm:text-sm font-semibold ${
-                    isScrolled
-                      ? "border-white/30 text-white hover:bg-white/10"
-                      : "border-gray-200 text-gray-700 hover:bg-gray-50"
-                  }`}
-                >
-                  {isAuthenticated ? (
-                    <>
-                      {/* Profile image FIRST */}
-                      {profileImage && !imageError ? (
-                        <img
-                          src={profileImage}
-                          alt={userFirstName}
-                          width={28}
-                          height={28}
-                          onError={handleImageError}
-                          className="user-profile-image"
-                          style={{ width: 28, height: 28 }}
-                        />
-                      ) : /* Static image for email users, gradient icon for Google users with broken photo */
-                      !googleUser ? (
-                        <img
-                          src={STATIC_PROFILE_IMAGE}
-                          alt={userFirstName}
-                          width={28}
-                          height={28}
-                          className="user-profile-image"
-                          style={{ width: 28, height: 28 }}
-                        />
-                      ) : (
-                        <div
-                          className="user-icon-container"
-                          style={{ width: 28, height: 28 }}
-                        >
-                          <FaUserCircle size={16} />
-                        </div>
-                      )}
-                      {/* First name SECOND */}
-                      <span className="hidden sm:inline max-w-[80px] truncate">
-                        {userFirstName}
-                      </span>
-                    </>
-                  ) : (
-                    <>
-                      <FaUserCircle size={16} className="sm:w-5 sm:h-5" />
-                      <span className="hidden sm:inline">Sign In</span>
-                    </>
-                  )}
-                </button>
-
-                {/* Profile Dropdown Menu */}
-                {showProfileDropdown && isAuthenticated && (
-                  <div
-                    ref={profileDropdownRef}
-                    className="profile-dropdown absolute right-0 top-full mt-2 w-56 sm:w-64 bg-white rounded-xl shadow-xl border border-gray-100 z-50 overflow-hidden"
-                  >
-                    {/* User Info Header */}
-                    <div className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-4 bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-100">
-                      {/* Profile image FIRST */}
-                      {profileImage && !imageError ? (
-                        <img
-                          src={profileImage}
-                          alt={userFullName}
-                          width={44}
-                          height={44}
-                          onError={handleImageError}
-                          className="user-profile-image flex-shrink-0"
-                          style={{ width: 44, height: 44 }}
-                        />
-                      ) : !googleUser ? (
-                        <img
-                          src={STATIC_PROFILE_IMAGE}
-                          alt={userFullName}
-                          width={44}
-                          height={44}
-                          className="user-profile-image flex-shrink-0"
-                          style={{ width: 44, height: 44 }}
-                        />
-                      ) : (
-                        <div
-                          className="user-icon-container flex-shrink-0"
-                          style={{ width: 44, height: 44 }}
-                        >
-                          <FaUserCircle size={28} />
-                        </div>
-                      )}
-
-                      {/* User details SECOND */}
-                      <div className="flex-1 min-w-0">
-                        <p className="font-semibold text-gray-900 text-sm truncate">
-                          {userFullName}
-                        </p>
-                        <p className="text-xs text-gray-500 truncate">
-                          {userEmail}
-                        </p>
-                        {googleUser && (
-                          <span className="text-xs text-blue-500">
-                            (Google)
-                          </span>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Menu Items */}
-                    <div className="py-1">
-                      {profileMenuItems.map((item, index) => (
-                        <button
-                          key={index}
-                          onClick={() => handleProfileMenuItemClick(item.path)}
-                          className="profile-dropdown-link w-full flex items-center justify-between gap-2 sm:gap-3 px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-700 hover:text-blue-600"
-                        >
-                          <div className="flex items-center gap-2 sm:gap-3">
-                            <item.icon size={14} />
-                            <span>{item.name}</span>
-                          </div>
-                          {item.count > 0 && (
-                            <span className="message-count-badge">
-                              {item.count}
-                            </span>
-                          )}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
               </div>
-            </div>
 
-            {/* Mobile menu button and icons */}
-            <div className="flex md:hidden items-center gap-1 sm:gap-2">
-              {/* Mobile Heart Icon */}
-              <Link to="/saved" onClick={scrollToTop}>
+              {/* Mobile/Tablet menu button and icons - Visible on lg and below */}
+              <div className="flex lg:hidden items-center gap-2">
+                {/* Mobile Search Button */}
                 <button
-                  className={`p-1.5 rounded-full ${
+                  onClick={() => setShowMobileSearch(!showMobileSearch)}
+                  className={`mobile-search-button ${
                     isScrolled ? "text-white" : "text-gray-600"
                   }`}
                 >
-                  <FaRegHeart size={16} />
+                  <FaSearch size={18} />
                 </button>
-              </Link>
 
-              {/* Mobile Notification Icon */}
-              {isAuthenticated && (
-                <div className="relative">
+                {/* Mobile Heart Icon */}
+                <Link to="/saved" onClick={scrollToTop}>
                   <button
-                    onClick={handleNotificationClick}
-                    className={`notification-button relative p-1.5 ${
+                    className={`p-2 rounded-full ${
                       isScrolled ? "text-white" : "text-gray-600"
                     }`}
                   >
-                    <FaBell size={16} />
-                    {unreadCount > 0 && (
-                      <span className="notification-badge">{unreadCount}</span>
-                    )}
+                    <FaRegHeart size={18} />
                   </button>
-                </div>
-              )}
+                </Link>
 
-              {/* Mobile Create Listing Button */}
-              <Link to="/create-listing">
-                <button className="flex items-center gap-0.5 px-2 py-1.5 bg-[#1FA987] text-white rounded-lg text-xs font-semibold">
-                  <FaPlus size={8} /> Post
-                </button>
-              </Link>
-
-              {/* Mobile Menu Toggle */}
-              <button
-                onClick={toggleMobileMenu}
-                className={`p-1.5 rounded-lg ${
-                  isScrolled ? "text-white" : "text-gray-700"
-                }`}
-              >
-                {isMobileMenuOpen ? (
-                  <FaTimes size={20} />
-                ) : (
-                  <FaBars size={20} />
-                )}
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Mobile Menu */}
-        {isMobileMenuOpen && (
-          <div className="md:hidden bg-white border-t border-gray-100 shadow-lg">
-            <div className="px-3 sm:px-4 py-3 sm:py-4 space-y-1">
-              {/* User Info in Mobile Menu */}
-              {isAuthenticated && (user || profile) && (
-                <div className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 bg-gray-50 rounded-xl mb-3">
-                  {/* Profile image FIRST */}
-                  {profileImage && !imageError ? (
-                    <img
-                      src={profileImage}
-                      alt={userFullName}
-                      width={44}
-                      height={44}
-                      onError={handleImageError}
-                      className="user-profile-image flex-shrink-0"
-                      style={{ width: 44, height: 44 }}
-                    />
-                  ) : !googleUser ? (
-                    <img
-                      src={STATIC_PROFILE_IMAGE}
-                      alt={userFullName}
-                      width={44}
-                      height={44}
-                      className="user-profile-image flex-shrink-0"
-                      style={{ width: 44, height: 44 }}
-                    />
-                  ) : (
-                    <div
-                      className="user-icon-container flex-shrink-0"
-                      style={{ width: 44, height: 44 }}
+                {/* Mobile Notification Icon */}
+                {isAuthenticated && (
+                  <div className="relative">
+                    <button
+                      onClick={handleNotificationClick}
+                      className={`notification-button relative p-2 ${
+                        isScrolled ? "text-white" : "text-gray-600"
+                      }`}
                     >
-                      <FaUserCircle size={28} />
-                    </div>
-                  )}
-
-                  {/* User details SECOND */}
-                  <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-gray-900 text-sm truncate">
-                      {userFullName}
-                    </p>
-                    <p className="text-xs text-gray-500 truncate">
-                      {userEmail}
-                    </p>
-                    {googleUser && (
-                      <span className="text-xs text-blue-500">(Google)</span>
-                    )}
+                      <FaBell size={18} />
+                      {unreadCount > 0 && (
+                        <span className="notification-badge">{unreadCount}</span>
+                      )}
+                    </button>
                   </div>
-                </div>
-              )}
+                )}
 
-              {mainMenuItems.map((item) => (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  onClick={() => {
-                    setIsMobileMenuOpen(false);
-                    scrollToTop();
-                  }}
-                  className={`nav-link px-3 py-2 text-xs sm:text-sm hover:bg-gray-100 rounded font-semibold block ${
-                    isScrolled
-                      ? "text-white hover:bg-white/10"
-                      : "text-gray-700"
+                {/* Mobile Create Listing Button */}
+                <Link to="/post-add">
+                  <button className="flex items-center gap-1 px-3 py-1.5 bg-[#1FA987] text-white rounded-lg text-sm font-semibold">
+                    <FaPlus size={10} /> Post
+                  </button>
+                </Link>
+
+                {/* Mobile Menu Toggle */}
+                <button
+                  onClick={toggleMobileMenu}
+                  className={`p-2 rounded-lg ${
+                    isScrolled ? "text-white" : "text-gray-700"
                   }`}
                 >
-                  {item.name}
-                </Link>
-              ))}
+                  {isMobileMenuOpen ? (
+                    <FaTimes size={20} />
+                  ) : (
+                    <FaBars size={20} />
+                  )}
+                </button>
+              </div>
+            </div>
 
-              <div className="border-t border-gray-100 pt-1">
-                {moreMenuItems.slice(0, 6).map((item) => (
+            {/* Mobile Search Overlay */}
+            {showMobileSearch && (
+              <div className="mobile-search-overlay lg:hidden">
+                <form onSubmit={handleSearch} className="mobile-search-form">
+                  <input
+                    type="text"
+                    placeholder="Search for products, brands and more..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="mobile-search-input"
+                    autoFocus
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowMobileSearch(false)}
+                    className="mobile-search-close"
+                  >
+                    <FaTimes size={18} />
+                  </button>
+                </form>
+              </div>
+            )}
+          </div>
+
+          {/* Mobile Menu */}
+          {isMobileMenuOpen && (
+            <div className="lg:hidden bg-white border-t border-gray-100 shadow-lg max-h-[calc(100vh-4rem)] overflow-y-auto">
+              <div className="px-4 py-4 space-y-1">
+                {/* User Info in Mobile Menu */}
+                {isAuthenticated && (user || profile) && (
+                  <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl mb-4">
+                    {/* Profile image FIRST */}
+                    {profileImage && !imageError ? (
+                      <img
+                        src={profileImage}
+                        alt={userFullName}
+                        width={48}
+                        height={48}
+                        onError={handleImageError}
+                        className="user-profile-image flex-shrink-0"
+                        style={{ width: 48, height: 48 }}
+                      />
+                    ) : !googleUser ? (
+                      <img
+                        src={STATIC_PROFILE_IMAGE}
+                        alt={userFullName}
+                        width={48}
+                        height={48}
+                        className="user-profile-image flex-shrink-0"
+                        style={{ width: 48, height: 48 }}
+                      />
+                    ) : (
+                      <div
+                        className="user-icon-container flex-shrink-0"
+                        style={{ width: 48, height: 48 }}
+                      >
+                        <FaUserCircle size={30} />
+                      </div>
+                    )}
+
+                    {/* User details SECOND */}
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-gray-900 text-base truncate">
+                        {userFullName}
+                      </p>
+                      <p className="text-sm text-gray-500 truncate">
+                        {userEmail}
+                      </p>
+                      {googleUser && (
+                        <span className="text-xs text-blue-500 font-medium">
+                          (Google)
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* Main Menu Items */}
+                {mainMenuItems.map((item) => (
                   <Link
                     key={item.path}
                     to={item.path}
@@ -844,121 +1069,119 @@ const Navbar = () => {
                       setIsMobileMenuOpen(false);
                       scrollToTop();
                     }}
-                    className={`nav-link px-3 py-2 text-xs sm:text-sm hover:bg-gray-100 rounded font-semibold block ${
-                      isScrolled
-                        ? "text-white hover:bg-white/10"
-                        : "text-gray-700"
-                    }`}
+                    className="nav-link block px-3 py-3 text-base font-semibold text-gray-700 hover:bg-gray-100 rounded"
                   >
                     {item.name}
                   </Link>
                 ))}
+
+                {/* More Menu Items */}
+                <div className="border-t border-gray-100 pt-2 mt-2">
+                  <p className="px-3 py-2 text-sm font-semibold text-gray-500 uppercase tracking-wider">
+                    More Categories
+                  </p>
+                  {moreMenuItems.map((item) => (
+                    <Link
+                      key={item.path}
+                      to={item.path}
+                      onClick={() => {
+                        setIsMobileMenuOpen(false);
+                        scrollToTop();
+                      }}
+                      className="nav-link block px-3 py-3 text-base font-semibold text-gray-700 hover:bg-gray-100 rounded"
+                    >
+                      {item.name}
+                    </Link>
+                  ))}
+                </div>
+
+                {/* Mobile Saved Items Link */}
+                <div className="border-t border-gray-100 pt-2 mt-2">
+                  <Link
+                    to="/saved"
+                    onClick={() => {
+                      setIsMobileMenuOpen(false);
+                      scrollToTop();
+                    }}
+                    className="nav-link px-3 py-3 text-base font-semibold text-gray-700 hover:bg-gray-100 rounded flex items-center gap-3"
+                  >
+                    <FaRegHeart size={16} />
+                    Saved Items
+                  </Link>
+                </div>
+
+                {/* Mobile Notifications Link */}
+                {isAuthenticated && (
+                  <Link
+                    to="/notifications"
+                    onClick={() => {
+                      setIsMobileMenuOpen(false);
+                      scrollToTop();
+                    }}
+                    className="nav-link px-3 py-3 text-base font-semibold text-gray-700 hover:bg-gray-100 rounded flex items-center gap-3"
+                  >
+                    <FaBell size={16} />
+                    Notifications {unreadCount > 0 && `(${unreadCount})`}
+                  </Link>
+                )}
+
+                {/* Mobile Profile/Sign In Links */}
+                <div className="border-t border-gray-100 pt-2 mt-2">
+                  {isAuthenticated ? (
+                    <>
+                      <Link
+                        to="/dashboard"
+                        onClick={() => {
+                          setIsMobileMenuOpen(false);
+                          scrollToTop();
+                        }}
+                        className="nav-link px-3 py-3 text-base font-semibold text-gray-700 hover:bg-gray-100 rounded flex items-center gap-3"
+                      >
+                        <CgProfile size={16} />
+                        Dashboard
+                      </Link>
+
+                      <Link
+                        to="/profile"
+                        onClick={() => {
+                          setIsMobileMenuOpen(false);
+                          scrollToTop();
+                        }}
+                        className="nav-link px-3 py-3 text-base font-semibold text-gray-700 hover:bg-gray-100 rounded flex items-center gap-3"
+                      >
+                        <FaUserFriends size={16} />
+                        My Profile
+                      </Link>
+
+                      <button
+                        onClick={() => {
+                          setIsMobileMenuOpen(false);
+                          handleProfileMenuItemClick("/logout");
+                        }}
+                        className="nav-link px-3 py-3 text-base font-semibold text-gray-700 hover:bg-gray-100 rounded flex items-center gap-3 w-full text-left"
+                      >
+                        <FaChevronRight size={16} />
+                        Sign Out
+                      </button>
+                    </>
+                  ) : (
+                    <Link
+                      to="/signin"
+                      onClick={() => {
+                        setIsMobileMenuOpen(false);
+                        scrollToTop();
+                      }}
+                      className="nav-link px-3 py-3 text-base font-semibold text-gray-700 hover:bg-gray-100 rounded flex items-center gap-3"
+                    >
+                      <FaUserCircle size={16} />
+                      Sign In
+                    </Link>
+                  )}
+                </div>
               </div>
-
-              {/* Mobile Saved Items Link */}
-              <Link
-                to="/saved"
-                onClick={() => {
-                  setIsMobileMenuOpen(false);
-                  scrollToTop();
-                }}
-                className={`nav-link px-3 py-2 text-xs sm:text-sm hover:bg-gray-100 rounded font-semibold flex items-center gap-2 ${
-                  isScrolled ? "text-white hover:bg-white/10" : "text-gray-700"
-                }`}
-              >
-                <FaRegHeart size={14} />
-                Saved Items
-              </Link>
-
-              {/* Mobile Notifications Link */}
-              {isAuthenticated && (
-                <Link
-                  to="/notifications"
-                  onClick={() => {
-                    setIsMobileMenuOpen(false);
-                    scrollToTop();
-                  }}
-                  className={`nav-link px-3 py-2 text-xs sm:text-sm hover:bg-gray-100 rounded font-semibold flex items-center gap-2 ${
-                    isScrolled
-                      ? "text-white hover:bg-white/10"
-                      : "text-gray-700"
-                  }`}
-                >
-                  <FaBell size={14} />
-                  Notifications {unreadCount > 0 && `(${unreadCount})`}
-                </Link>
-              )}
-
-              {/* Mobile Profile/Sign In Links */}
-              {isAuthenticated ? (
-                <>
-                  <Link
-                    to="/dashboard"
-                    onClick={() => {
-                      setIsMobileMenuOpen(false);
-                      scrollToTop();
-                    }}
-                    className={`nav-link px-3 py-2 text-xs sm:text-sm hover:bg-gray-100 rounded font-semibold flex items-center gap-2 ${
-                      isScrolled
-                        ? "text-white hover:bg-white/10"
-                        : "text-gray-700"
-                    }`}
-                  >
-                    <CgProfile size={14} />
-                    Dashboard
-                  </Link>
-
-                  <Link
-                    to="/profile"
-                    onClick={() => {
-                      setIsMobileMenuOpen(false);
-                      scrollToTop();
-                    }}
-                    className={`nav-link px-3 py-2 text-xs sm:text-sm hover:bg-gray-100 rounded font-semibold flex items-center gap-2 ${
-                      isScrolled
-                        ? "text-white hover:bg-white/10"
-                        : "text-gray-700"
-                    }`}
-                  >
-                    <FaUserFriends size={14} />
-                    My Profile
-                  </Link>
-
-                  <button
-                    onClick={() => {
-                      setIsMobileMenuOpen(false);
-                      handleProfileMenuItemClick("/logout");
-                    }}
-                    className={`nav-link px-3 py-2 text-xs sm:text-sm hover:bg-gray-100 rounded font-semibold text-left w-full flex items-center gap-2 ${
-                      isScrolled
-                        ? "text-white hover:bg-white/10"
-                        : "text-gray-700"
-                    }`}
-                  >
-                    <FaChevronRight size={14} />
-                    Sign Out
-                  </button>
-                </>
-              ) : (
-                <Link
-                  to="/signin"
-                  onClick={() => {
-                    setIsMobileMenuOpen(false);
-                    scrollToTop();
-                  }}
-                  className={`nav-link px-3 py-2 text-xs sm:text-sm hover:bg-gray-100 rounded font-semibold flex items-center gap-2 ${
-                    isScrolled
-                      ? "text-white hover:bg-white/10"
-                      : "text-gray-700"
-                  }`}
-                >
-                  <FaUserCircle size={14} />
-                  Sign In
-                </Link>
-              )}
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </nav>
     </>
   );
