@@ -55,7 +55,7 @@ const Questions = () => {
   ];
 
   return (
-    <div className="min-h-screen  mt-8 sm:mt-10 md:mt-12 lg:mt-10 rounded-[5%] sm:rounded-[8%] lg:rounded-[10%] py-6 sm:py-7 md:py-8 lg:py-10 flex flex-col items-center justify-center px-3 sm:px-4 md:px-6 lg:px-8 xl:px-10 text-black">
+    <div className="bg-gray-50 min-h-screen  py-6 sm:py-7 md:py-8 lg:py-10 flex flex-col items-center justify-center px-3 sm:px-4 md:px-6 lg:px-8 xl:px-10 text-black">
       {/* Header Section */}
       <div className="flex flex-col items-center text-center mb-6 sm:mb-8 md:mb-10">
         <h1

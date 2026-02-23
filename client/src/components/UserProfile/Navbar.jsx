@@ -594,8 +594,8 @@ const Navbar = () => {
           isScrolled ? "navbar-scrolled" : "bg-white shadow-sm"
         }`}
       >
-        <div className="max-w-7xl mx-auto">
-          <div className="px-3 sm:px-5 lg:px-8">
+        <div className="">
+          <div className="px-4 sm:px-4 lg:px-6">
             <div className="flex items-center justify-between h-16 sm:h-16 lg:h-18">
               {/* Logo */}
               <Link

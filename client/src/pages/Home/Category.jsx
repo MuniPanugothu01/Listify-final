@@ -288,7 +288,7 @@ const Category = () => {
 
   return (
     <div className="min-h-screen px-4 py-4">
-      <div className="">
+      <div className="max-w-7xl mx-auto">
         {/* Header Section */}
         <div className="text-center">
           <h1 className="text-[#27BB97] text-2xl sm:text-3xl md:text-4xl font-['Dancing_Script'] leading-tight">

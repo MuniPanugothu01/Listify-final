@@ -273,7 +273,7 @@ const Reviews = () => {
   }, []);
 
   return (
-    <div className="bg-gray-100 py-10 sm:py-14 md:py-16 lg:py-20 px-3 sm:px-4 md:px-6 lg:px-8">
+    <div className="bg-gray-50 py-10 sm:py-14 md:py-16 lg:py-20 px-3 sm:px-4 md:px-6 lg:px-8">
       <section className="max-w-7xl mx-auto">
         <div className="text-center mb-10 sm:mb-12 md:mb-14 lg:mb-16">
           <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-800 mb-3 sm:mb-4 uppercase">
