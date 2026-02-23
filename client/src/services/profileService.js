@@ -121,8 +121,24 @@ export const profileAPI = {
   getLoginHistory: () => profileApi.get("/login-history"),
 
   /** POST /api/auth/change-password → { success, message } */
-  changePassword: (passwordData) =>
-    profileApi.post("/change-password", passwordData),
+  changePassword: (passwordData) => {
+    console.log("🔑 Sending change password request with data:", {
+      currentPassword: passwordData.currentPassword ? "****" : "missing",
+      newPassword: passwordData.newPassword ? "****" : "missing",
+      confirmNewPassword: passwordData.confirmPassword || passwordData.confirmNewPassword ? "****" : "missing"
+    });
+    
+    // FIX: Transform the data to match backend expectations
+    // Backend expects: currentPassword, newPassword, confirmNewPassword
+    // Frontend sends: currentPassword, newPassword, confirmPassword
+    const transformedData = {
+      currentPassword: passwordData.currentPassword,
+      newPassword: passwordData.newPassword,
+      confirmNewPassword: passwordData.confirmPassword || passwordData.confirmNewPassword
+    };
+    
+    return profileApi.post("/change-password", transformedData);
+  },
 
   /** GET /api/auth/password-requirements → { success, requirements } */
   getPasswordRequirements: () => profileApi.get("/password-requirements"),

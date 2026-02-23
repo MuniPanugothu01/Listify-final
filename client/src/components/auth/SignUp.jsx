@@ -26,6 +26,9 @@ export default function SignUp() {
     clearOtpAuthState,
   } = useAuth();
 
+  // ==================== Navigation flag to prevent multiple navigations ====================
+  const navigationPerformedRef = useRef(false);
+
   // ==================== Email in progress popup state ====================
   const [showEmailProgressPopup, setShowEmailProgressPopup] = useState(false);
   const [inProgressEmail, setInProgressEmail] = useState("");
@@ -77,6 +80,13 @@ export default function SignUp() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [errors, setErrors] = useState({});
+
+  // Reset navigation flag on unmount
+  useEffect(() => {
+    return () => {
+      navigationPerformedRef.current = false;
+    };
+  }, []);
 
   // ==================== Add animation styles ====================
   useEffect(() => {
@@ -348,10 +358,15 @@ export default function SignUp() {
 
   // Handle OTP verification success
   useEffect(() => {
-    if (success && !otpSent) {
+    if (success && !otpSent && !navigationPerformedRef.current) {
+      navigationPerformedRef.current = true;
       toast.success("Account created successfully!");
       setTimeout(() => {
         navigate("/");
+        // Reset navigation flag after navigation
+        setTimeout(() => {
+          navigationPerformedRef.current = false;
+        }, 1000);
       }, 2000);
       resetAuthSuccess();
     }

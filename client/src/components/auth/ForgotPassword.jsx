@@ -111,7 +111,7 @@ const ForgotPassword = () => {
   };
 
   const handleBackToLogin = () => {
-    navigate("/login");
+    navigate("/signin");
   };
 
   return (
@@ -265,7 +265,7 @@ const ForgotPassword = () => {
 
               <p className="text-xs mt-6 text-gray-600">
                 Remember your password?{" "}
-                <Link to="/login">
+                <Link to="/signin">
                   <span className="text-[#27bb97] underline cursor-pointer hover:text-[#1fa987] transition-colors duration-200">
                     Login
                   </span>

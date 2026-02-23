@@ -36,9 +36,6 @@ import { refreshUserData } from "../../redux/slices/authSlice";
 const FALLBACK_AVATAR =
   "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop";
 
-// Values match the MongoDB enum exactly: "male"|"female"|"other"|"prefer-not-to-say"
-// This is the FIX for the gender mismatch — old code sent "Male"/"Female" but DB
-// only accepts lowercase values with the enum above.
 const GENDER_OPTIONS = [
   { label: "Select gender", value: "" },
   { label: "Male", value: "male" },
@@ -148,11 +145,9 @@ export default function PersonalDetailsSection() {
       phone: profile.phone || "",
       address: profile.address || "",
       bio: profile.bio || "",
-      // dateOfBirth may arrive as "2000-01-15T00:00:00.000Z" — strip time part
       dateOfBirth: profile.dateOfBirth
         ? String(profile.dateOfBirth).split("T")[0]
         : "",
-      // profile.gender is already the DB enum value ("male", "female", etc.)
       gender: profile.gender || "",
     });
   }, [profile]);
@@ -202,20 +197,44 @@ export default function PersonalDetailsSection() {
       toast.error("Name is required");
       return;
     }
-    // form.gender is already the correct DB enum value ("male", "female", etc.)
-    // because GENDER_OPTIONS.value matches the DB enum directly.
     dispatch(updateProfile(form));
   };
 
   const handleImageChange = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    
     // Show local preview immediately
     const reader = new FileReader();
-    reader.onloadend = () => dispatch(setProfilePicPreview(reader.result));
+    reader.onloadend = () => {
+      dispatch(setProfilePicPreview(reader.result));
+      // Also update localStorage preview temporarily
+      const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+      currentUser.profileImageUrl = reader.result;
+      localStorage.setItem('user', JSON.stringify(currentUser));
+    };
     reader.readAsDataURL(file);
+    
     // Upload to server
-    dispatch(uploadProfileImage(file));
+    dispatch(uploadProfileImage(file)).then((result) => {
+      if (result.payload?.imageUrl) {
+        // Update localStorage with the actual URL
+        const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+        currentUser.profileImageUrl = result.payload.imageUrl;
+        currentUser.profileImage = result.payload.imageUrl;
+        localStorage.setItem('user', JSON.stringify(currentUser));
+        
+        // Refresh auth user data
+        if (refreshUserData) {
+          dispatch(refreshUserData());
+        }
+        
+        toast.success("Profile image updated successfully!");
+      }
+    }).catch((error) => {
+      toast.error("Failed to upload image. Please try again.");
+      console.error("Image upload error:", error);
+    });
   };
 
   const handlePasswordSave = async () => {

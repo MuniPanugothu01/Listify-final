@@ -22,7 +22,7 @@ import {
   FaBell,
   FaUserCircle,
 } from "react-icons/fa";
-import NavSearchBar from "./NavSearchBar";
+import NavSearchBar from "../../pages/Home/NavSearchBar.jsx";
 import {
   MdOutlineEventAvailable,
   MdOutlineRealEstateAgent,

@@ -30,11 +30,36 @@ const ResetPassword = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [errors, setErrors] = useState({});
+  const [submitError, setSubmitError] = useState("");
+  const [validationErrors, setValidationErrors] = useState({});
 
   // Handle errors and success messages
   useEffect(() => {
     if (error) {
-      toast.error(error);
+      // Handle object errors
+      if (typeof error === 'object' && error !== null) {
+        if (error.message) {
+          toast.error(error.message);
+          setSubmitError(error.message);
+        } else if (error.strength) {
+          toast.error("Password does not meet security requirements");
+          setSubmitError("Password does not meet security requirements");
+        } else {
+          toast.error("Password reset failed");
+          setSubmitError("Password reset failed");
+        }
+        
+        // Handle validation errors
+        if (error.errors) {
+          setValidationErrors(error.errors);
+        }
+      } else if (typeof error === 'string') {
+        toast.error(error);
+        setSubmitError(error);
+      } else {
+        toast.error("Password reset failed");
+        setSubmitError("Password reset failed");
+      }
       clearAuthError();
     }
     
@@ -62,6 +87,8 @@ const ResetPassword = () => {
       ...prev,
       [name]: value,
     }));
+    setSubmitError("");
+    setValidationErrors({});
 
     if (errors[name]) {
       setErrors((prev) => ({
@@ -76,8 +103,26 @@ const ResetPassword = () => {
 
     if (!formData.password.trim()) {
       newErrors.password = "Password is required";
-    } else if (formData.password.length < 6) {
-      newErrors.password = "Password must be at least 6 characters";
+    } else if (formData.password.length < 8) {
+      newErrors.password = "Password must be at least 8 characters";
+    } else if (formData.password.length > 128) {
+      newErrors.password = "Password cannot exceed 128 characters";
+    } else {
+      // Check password strength (must meet all requirements)
+      const hasUpperCase = /[A-Z]/.test(formData.password);
+      const hasLowerCase = /[a-z]/.test(formData.password);
+      const hasNumbers = /[0-9]/.test(formData.password);
+      const hasSpecialChar = /[!@#$%^&*()_+\-=\[\]{}|;:,.<>?]/.test(formData.password);
+      
+      if (!hasUpperCase) {
+        newErrors.password = "Password must contain at least one uppercase letter";
+      } else if (!hasLowerCase) {
+        newErrors.password = "Password must contain at least one lowercase letter";
+      } else if (!hasNumbers) {
+        newErrors.password = "Password must contain at least one number";
+      } else if (!hasSpecialChar) {
+        newErrors.password = "Password must contain at least one special character (!@#$%^&*()_+-=[]{}|;:,.<>?)";
+      }
     }
 
     if (!formData.confirmPassword.trim()) {
@@ -92,6 +137,8 @@ const ResetPassword = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setSubmitError("");
+    setValidationErrors({});
 
     if (!validateForm()) {
       toast.error("Please fix the errors in the form");
@@ -105,14 +152,42 @@ const ResetPassword = () => {
         formData.password,
         formData.confirmPassword,
       );
-    } catch (error) {
-      console.log("Reset password error:", error);
-      // Error is already handled in useEffect
+    } catch (err) {
+      console.log("Reset password error:", err);
+      
+      // Handle different error types
+      let errorMessage = "Password reset failed";
+      
+      if (err && typeof err === 'object') {
+        if (err instanceof Error) {
+          errorMessage = err.message;
+        } else if (err.message) {
+          errorMessage = err.message;
+        } else if (err.error) {
+          errorMessage = err.error;
+        } else {
+          errorMessage = "Password reset failed";
+        }
+        
+        if (err.errors) {
+          setValidationErrors(err.errors);
+          if (err.errors.password) {
+            errorMessage = err.errors.password;
+          } else if (err.errors.confirmPassword) {
+            errorMessage = err.errors.confirmPassword;
+          }
+        }
+      } else if (typeof err === 'string') {
+        errorMessage = err;
+      }
+      
+      setSubmitError(errorMessage);
+      toast.error(errorMessage);
     }
   };
 
   const handleBackToLogin = () => {
-    navigate("/login");
+    navigate("/signin");
   };
 
   const handleBackToForgotPassword = () => {
@@ -122,14 +197,19 @@ const ResetPassword = () => {
   // Password strength indicator
   const getPasswordStrength = () => {
     const password = formData.password;
-    if (!password) return { text: "", color: "gray", width: "0%" };
+    if (!password) return { text: "", color: "bg-gray-300", width: "0%" };
 
     let strength = 0;
-    if (password.length >= 6) strength += 1;
+    if (password.length >= 8) strength += 1;
+    if (password.length >= 10) strength += 1;
     if (/[A-Z]/.test(password)) strength += 1;
+    if (/[a-z]/.test(password)) strength += 1;
     if (/[0-9]/.test(password)) strength += 1;
-    if (/[^A-Za-z0-9]/.test(password)) strength += 1;
+    if (/[!@#$%^&*()_+\-=\[\]{}|;:,.<>?]/.test(password)) strength += 1;
 
+    // Convert to 0-4 scale for display (max 4 bars)
+    const displayStrength = Math.min(Math.floor(strength / 1.5), 4);
+    
     const strengths = [
       { text: "Very Weak", color: "bg-red-500", width: "25%" },
       { text: "Weak", color: "bg-orange-500", width: "50%" },
@@ -137,12 +217,39 @@ const ResetPassword = () => {
       { text: "Strong", color: "bg-green-500", width: "100%" },
     ];
 
-    return (
-      strengths[strength] || { text: "", color: "bg-gray-300", width: "0%" }
-    );
+    return strengths[displayStrength - 1] || { text: "", color: "bg-gray-300", width: "0%" };
   };
 
   const passwordStrength = getPasswordStrength();
+
+  // Get password requirements
+  const getPasswordRequirements = () => {
+    const password = formData.password;
+    return [
+      { 
+        text: "At least 8 characters", 
+        met: password.length >= 8 
+      },
+      { 
+        text: "At least one uppercase letter", 
+        met: /[A-Z]/.test(password) 
+      },
+      { 
+        text: "At least one lowercase letter", 
+        met: /[a-z]/.test(password) 
+      },
+      { 
+        text: "At least one number", 
+        met: /[0-9]/.test(password) 
+      },
+      { 
+        text: "At least one special character (!@#$%^&*()_+-=[]{}|;:,.<>?)", 
+        met: /[!@#$%^&*()_+\-=\[\]{}|;:,.<>?]/.test(password) 
+      },
+    ];
+  };
+
+  const passwordRequirements = getPasswordRequirements();
 
   return (
     <div className="min-h-screen relative overflow-hidden">
@@ -257,6 +364,24 @@ const ResetPassword = () => {
                 </p>
               </div>
 
+              {/* Error Message Display */}
+              {submitError && (
+                <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+                  <p className="text-sm text-red-600 text-center">{submitError}</p>
+                </div>
+              )}
+
+              {/* Validation Errors Display */}
+              {Object.keys(validationErrors).length > 0 && (
+                <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+                  {Object.entries(validationErrors).map(([field, message]) => (
+                    <p key={field} className="text-sm text-red-600">
+                      {field}: {message}
+                    </p>
+                  ))}
+                </div>
+              )}
+
               {/* Reset Password Form */}
               <form onSubmit={handleSubmit} className="space-y-5">
                 {/* New Password Input */}
@@ -272,7 +397,7 @@ const ResetPassword = () => {
                       value={formData.password}
                       onChange={handleChange}
                       className={`w-full px-4 py-3 rounded-lg border focus:outline-none focus:ring-1 focus:border-transparent bg-white/80 pr-12 ${
-                        errors.password
+                        errors.password || validationErrors.password
                           ? "border-red-300 focus:ring-red-500"
                           : "border-gray-300 focus:ring-[#27bb97]"
                       }`}
@@ -305,54 +430,6 @@ const ResetPassword = () => {
                           style={{ width: passwordStrength.width }}
                         ></div>
                       </div>
-                      <div className="mt-2 grid grid-cols-2 gap-1">
-                        <div className="flex items-center gap-1">
-                          <div
-                            className={`w-2 h-2 rounded-full ${
-                              formData.password.length >= 6
-                                ? "bg-green-500"
-                                : "bg-gray-300"
-                            }`}
-                          ></div>
-                          <span className="text-xs text-gray-600">
-                            6+ characters
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <div
-                            className={`w-2 h-2 rounded-full ${
-                              /[A-Z]/.test(formData.password)
-                                ? "bg-green-500"
-                                : "bg-gray-300"
-                            }`}
-                          ></div>
-                          <span className="text-xs text-gray-600">
-                            Uppercase letter
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <div
-                            className={`w-2 h-2 rounded-full ${
-                              /[0-9]/.test(formData.password)
-                                ? "bg-green-500"
-                                : "bg-gray-300"
-                            }`}
-                          ></div>
-                          <span className="text-xs text-gray-600">Number</span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <div
-                            className={`w-2 h-2 rounded-full ${
-                              /[^A-Za-z0-9]/.test(formData.password)
-                                ? "bg-green-500"
-                                : "bg-gray-300"
-                            }`}
-                          ></div>
-                          <span className="text-xs text-gray-600">
-                            Special character
-                          </span>
-                        </div>
-                      </div>
                     </div>
                   )}
 
@@ -376,7 +453,7 @@ const ResetPassword = () => {
                       value={formData.confirmPassword}
                       onChange={handleChange}
                       className={`w-full px-4 py-3 rounded-lg border focus:outline-none focus:ring-1 focus:border-transparent bg-white/80 pr-12 ${
-                        errors.confirmPassword
+                        errors.confirmPassword || validationErrors.confirmPassword
                           ? "border-red-300 focus:ring-red-500"
                           : "border-gray-300 focus:ring-[#27bb97]"
                       }`}
@@ -410,22 +487,18 @@ const ResetPassword = () => {
                     Password Requirements:
                   </h3>
                   <ul className="text-xs text-blue-700 space-y-1">
-                    <li className="flex items-center gap-2">
-                      <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                      At least 6 characters long
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                      Include uppercase and lowercase letters
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                      Include at least one number
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                      Use a unique password not used elsewhere
-                    </li>
+                    {passwordRequirements.map((req, index) => (
+                      <li key={index} className="flex items-center gap-2">
+                        <div 
+                          className={`w-2 h-2 rounded-full ${
+                            req.met ? "bg-green-500" : "bg-blue-500"
+                          }`}
+                        ></div>
+                        <span className={req.met ? "text-green-600" : ""}>
+                          {req.text}
+                        </span>
+                      </li>
+                    ))}
                   </ul>
                 </div>
 
@@ -493,7 +566,7 @@ const ResetPassword = () => {
                   <span className="text-gray-600">
                     Remember your password?{" "}
                   </span>
-                  <Link to="/login">
+                  <Link to="/signin">
                     <button className="text-gray-900 font-medium hover:underline cursor-pointer">
                       Log in here
                     </button>

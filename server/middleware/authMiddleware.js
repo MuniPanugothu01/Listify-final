@@ -11,8 +11,6 @@ const { logger } = require('../utils/logger');
 // ─────────────────────────────────────────────────────────────────────────────
 // HELPER: extract access token from request
 // Priority: HttpOnly cookie "accessToken"  →  Authorization: Bearer header
-// This is the KEY FIX — your frontend sends cookies (withCredentials:true),
-// but the old middleware only checked Bearer headers, so every request was 401.
 // ─────────────────────────────────────────────────────────────────────────────
 const extractAccessToken = (req) => {
   if (req.cookies && req.cookies.accessToken) {
@@ -82,9 +80,10 @@ exports.protect = async (req, res, next) => {
         });
       }
       if (error.name === 'TokenExpiredError') {
+        // Don't return error here - let the frontend handle refresh
         return res.status(401).json({
           success: false,
-          message: 'Token expired. Please refresh token or login again.',
+          message: 'Token expired. Please refresh token.',
           code: 'TOKEN_EXPIRED',
         });
       }
@@ -101,8 +100,6 @@ exports.protect = async (req, res, next) => {
 
 // ─────────────────────────────────────────────────────────────────────────────
 // refreshToken — issues new access + refresh token pair via cookie
-// FIX: also sets the new accessToken as an HttpOnly cookie so the frontend
-// automatically has it for the next request (no manual header injection needed).
 // ─────────────────────────────────────────────────────────────────────────────
 exports.refreshToken = async (req, res) => {
   try {
@@ -132,20 +129,28 @@ exports.refreshToken = async (req, res) => {
     // Set new refresh token cookie
     setRefreshTokenCookie(res, tokens.refreshToken);
 
-    // Set new access token cookie — this is what was MISSING before.
-    // Without this, the browser never gets the new access token after refresh,
-    // so the next protected request fails again with 401.
+    // Set new access token cookie
     res.cookie('accessToken', tokens.accessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
       maxAge: 15 * 60 * 1000, // 15 minutes
+      path: '/',
+    });
+
+    // Also set a non-httpOnly token for client-side checks (optional)
+    res.cookie('tokenExists', 'true', {
+      httpOnly: false,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
+      maxAge: 15 * 60 * 1000,
+      path: '/',
     });
 
     return res.status(200).json({
       success: true,
       message: 'Token refreshed successfully.',
-      token: tokens.accessToken, // also returned in body for flexibility
+      token: tokens.accessToken,
     });
   } catch (error) {
     logger.error('Refresh token error:', error);
@@ -170,11 +175,20 @@ exports.logout = async (req, res) => {
     // Clear refresh token cookie
     clearRefreshTokenCookie(res);
 
-    // Also clear access token cookie
+    // Clear access token cookie
     res.clearCookie('accessToken', {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
+      path: '/',
+    });
+
+    // Clear tokenExists cookie
+    res.clearCookie('tokenExists', {
+      httpOnly: false,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
+      path: '/',
     });
 
     return res.status(200).json({
@@ -203,6 +217,14 @@ exports.logoutAll = async (req, res) => {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
+      path: '/',
+    });
+    
+    res.clearCookie('tokenExists', {
+      httpOnly: false,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
+      path: '/',
     });
 
     return res.status(200).json({

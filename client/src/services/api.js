@@ -15,7 +15,6 @@ const api = axios.create({
 });
 
 // Request interceptor - NO MANUAL TOKEN ADDITION
-// Tokens are automatically sent via cookies
 api.interceptors.request.use(
   (config) => {
     console.log(`🚀 Request: ${config.method.toUpperCase()} ${config.url}`);
@@ -27,7 +26,7 @@ api.interceptors.request.use(
   },
 );
 
-// Response interceptor - Handle token refresh automatically
+// ==================== FIXED: Response interceptor with better error handling ====================
 api.interceptors.response.use(
   (response) => {
     return response;
@@ -35,50 +34,104 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
+    // Log the full error for debugging
+    console.error("API Error Details:", {
+      status: error.response?.status,
+      statusText: error.response?.statusText,
+      data: error.response?.data,
+      message: error.message,
+      url: originalRequest?.url,
+      method: originalRequest?.method
+    });
+
     // If error is 401 (Unauthorized) and not already retrying
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
+      // Don't refresh on login or register endpoints
+      if (originalRequest.url.includes('/login') || 
+          originalRequest.url.includes('/register') ||
+          originalRequest.url.includes('/google') ||
+          originalRequest.url.includes('/refresh')) {
+        return Promise.reject(error);
+      }
+
       try {
+        console.log("Attempting to refresh token...");
+        
         // Try to refresh the token
-        // This calls the refresh endpoint which sets new cookies
-        await axios.post(
+        const refreshResponse = await axios.post(
           `${API_URL}/refresh`,
           {},
           {
             withCredentials: true,
-          },
+            timeout: 10000,
+          }
         );
 
-        // Retry the original request
-        return api(originalRequest);
+        if (refreshResponse.status === 200) {
+          console.log("Token refreshed successfully, retrying original request");
+          // Retry the original request
+          return api(originalRequest);
+        }
       } catch (refreshError) {
-        // Refresh failed - redirect to login
-        console.error("Token refresh failed:", refreshError);
-
-        // Clear any stored user data
-        localStorage.removeItem("user");
-        localStorage.removeItem("persist:root");
-
-        // Redirect to login page
-        if (!window.location.pathname.includes("/signin") && 
-            !window.location.pathname.includes("/login") &&
-            !window.location.pathname.includes("/signup")) {
+        console.error("Token refresh failed:", refreshError.message);
+        
+        // Only redirect if we're not on an auth page and not in the middle of login
+        const currentPath = window.location.pathname;
+        if (!currentPath.includes('/signin') && 
+            !currentPath.includes('/login') && 
+            !currentPath.includes('/signup') &&
+            !currentPath.includes('/forgot-password') &&
+            !originalRequest.url.includes('/login')) {
+          
+          // Clear user data
+          localStorage.removeItem("user");
+          localStorage.removeItem("persist:root");
+          
+          // Redirect to login
           window.location.href = "/signin";
         }
-
+        
         return Promise.reject(refreshError);
       }
     }
 
-    // Handle other errors
-    console.error("API Error:", {
-      status: error.response?.status,
-      data: error.response?.data,
-      message: error.message,
-    });
+    // Handle other errors - FIXED: Better error object formatting
+    let errorResponse = {
+      success: false,
+      message: "An error occurred",
+      status: error.response?.status || 500
+    };
 
-    return Promise.reject(error);
+    if (error.response?.data) {
+      const errorData = error.response.data;
+      
+      // Extract message from various possible formats
+      if (typeof errorData === 'string') {
+        errorResponse.message = errorData;
+      } else if (errorData.message) {
+        errorResponse.message = errorData.message;
+      } else if (errorData.error) {
+        errorResponse.message = errorData.error;
+      } else if (errorData.errors) {
+        // Handle validation errors
+        errorResponse.errors = errorData.errors;
+        if (typeof errorData.errors === 'object') {
+          const firstError = Object.values(errorData.errors)[0];
+          if (firstError) {
+            errorResponse.message = firstError;
+          }
+        }
+      }
+      
+      // Preserve additional data
+      if (errorData.errors) errorResponse.errors = errorData.errors;
+      if (errorData.strength) errorResponse.strength = errorData.strength;
+      if (errorData.token) errorResponse.token = errorData.token;
+    }
+
+    return Promise.reject(errorResponse);
   },
 );
 
@@ -120,7 +173,6 @@ export const authAPI = {
   },
 
   // OTP Registration - Resend OTP
-  // FIX: receives email string directly, wraps into { email } here
   resendOTP: (email) => {
     return api.post(
       "/register/resend-otp",
@@ -135,17 +187,14 @@ export const authAPI = {
   },
 
   // ==================== PROFILE APIS ====================
-  // Get user profile
   getProfile: () => {
     return api.get("/profile", { withCredentials: true });
   },
 
-  // Update profile
   updateProfile: (userData) => {
     return api.put("/update-profile", userData, { withCredentials: true });
   },
 
-  // Upload profile image (multipart/form-data) with progress tracking
   uploadProfileImage: (formData, onProgress) => {
     return api.post("/profile/upload-image", formData, {
       withCredentials: true,
@@ -163,57 +212,47 @@ export const authAPI = {
     });
   },
 
-  // Generate upload URL for direct S3 upload
   generateUploadUrl: (fileType) => {
     return api.post("/profile/generate-upload-url", { fileType }, { withCredentials: true });
   },
 
   // ==================== DEVICE & SESSION APIS ====================
-  // Get user devices
   getDevices: () => {
     return api.get("/devices", { withCredentials: true });
   },
 
-  // Revoke device
   revokeDevice: (deviceId) => {
     return api.delete(`/devices/${deviceId}`, { withCredentials: true });
   },
 
-  // Get login history
   getLoginHistory: () => {
     return api.get("/login-history", { withCredentials: true });
   },
 
-  // Get active sessions
   getSessions: () => {
     return api.get("/sessions", { withCredentials: true });
   },
 
-  // Revoke specific session
   revokeSession: (tokenId) => {
     return api.delete(`/sessions/${tokenId}`, { withCredentials: true });
   },
 
   // ==================== PASSWORD MANAGEMENT APIS ====================
-  // Change password
   changePassword: (passwordData) => {
     return api.post("/change-password", passwordData, {
       withCredentials: true,
     });
   },
 
-  // Get password requirements
   getPasswordRequirements: () => {
     return api.get("/password-requirements", { withCredentials: true });
   },
 
-  // Check password expiration
   checkPasswordExpiration: () => {
     return api.get("/password-expiration", { withCredentials: true });
   },
 
   // ==================== FORGOT PASSWORD APIS ====================
-  // FIX: receives email string directly, wraps into { email } here
   initiateForgotPassword: (email) => {
     return api.post(
       "/forgot-password/initiate",
@@ -222,14 +261,12 @@ export const authAPI = {
     );
   },
 
-  // Verify forgot password OTP
   verifyForgotPasswordOTP: (otpData) => {
     return api.post("/forgot-password/verify-otp", otpData, {
       withCredentials: true,
     });
   },
 
-  // FIX: receives email string directly, wraps into { email } here
   resendForgotPasswordOTP: (email) => {
     return api.post(
       "/forgot-password/resend-otp",
@@ -238,55 +275,46 @@ export const authAPI = {
     );
   },
 
-  // FIX: increased timeout to 60s — bcrypt hashing + Redis + MongoDB calls can be slow
   resetPasswordWithToken: (resetToken, email, password, confirmPassword) => {
     return api.put(
       `/reset-password/${resetToken}`,
       { email, password, confirmPassword },
       {
         withCredentials: true,
-        timeout: 60000, // 60 seconds for this call
+        timeout: 60000,
       },
     );
   },
 
-  // Legacy forgot password
   legacyForgotPassword: (email) => {
     return api.post("/forgot-password", { email }, { withCredentials: true });
   },
 
-  // Legacy reset password
   legacyResetPassword: (resetToken, password) => {
     return api.put(`/reset-password-legacy/${resetToken}`, { password }, { withCredentials: true });
   },
 
-  // Legacy register
   legacyRegister: (userData) => {
     return api.post("/register-legacy", userData, { withCredentials: true });
   },
 
-  // Setup password (for users without password)
   setupPassword: (passwordData) => {
     return api.post("/setup-password", passwordData, { withCredentials: true });
   },
 
   // ==================== SESSION MANAGEMENT APIS ====================
-  // Logout from current device
   logout: () => {
     return api.post("/logout", {}, { withCredentials: true });
   },
 
-  // Logout from all devices
   logoutAll: () => {
     return api.post("/logout-all", {}, { withCredentials: true });
   },
 
-  // Refresh token manually (usually handled automatically)
   refreshToken: () => {
     return api.post("/refresh", {}, { withCredentials: true });
   },
 
-  // Check authentication status
   checkAuth: () => {
     return api.get("/check", { withCredentials: true });
   },
@@ -311,69 +339,83 @@ listingsApi.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
+// ==================== FIXED: Listings API response interceptor ====================
 listingsApi.interceptors.response.use(
   (response) => response,
   async (error) => {
-    if (error.response?.status === 401 && !error.config._retry) {
-      error.config._retry = true;
+    const originalRequest = error.config;
+    
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
       try {
         await axios.post(`${API_URL}/refresh`, {}, { withCredentials: true });
-        return listingsApi(error.config);
+        return listingsApi(originalRequest);
       } catch (refreshError) {
+        console.error("Listings API token refresh failed:", refreshError.message);
         return Promise.reject(refreshError);
       }
     }
-    return Promise.reject(error);
+    
+    // Transform error response
+    let errorResponse = {
+      success: false,
+      message: "An error occurred",
+      status: error.response?.status || 500
+    };
+
+    if (error.response?.data) {
+      const errorData = error.response.data;
+      if (typeof errorData === 'string') {
+        errorResponse.message = errorData;
+      } else if (errorData.message) {
+        errorResponse.message = errorData.message;
+      } else if (errorData.error) {
+        errorResponse.message = errorData.error;
+      }
+      if (errorData.errors) errorResponse.errors = errorData.errors;
+    }
+    
+    return Promise.reject(errorResponse);
   }
 );
 
 export const listingsAPI = {
-  // Get my listings
   getMyListings: () => {
     return listingsApi.get("/my-posts", { withCredentials: true });
   },
 
-  // Get saved items
   getSavedItems: () => {
     return listingsApi.get("/saved", { withCredentials: true });
   },
 
-  // Toggle save item
   toggleSaveItem: (itemId) => {
     return listingsApi.post(`/${itemId}/toggle-save`, {}, { withCredentials: true });
   },
 
-  // Get alerts
   getAlerts: () => {
     return listingsApi.get("/alerts", { withCredentials: true });
   },
 
-  // Create alert
   createAlert: (alertData) => {
     return listingsApi.post("/alerts", alertData, { withCredentials: true });
   },
 
-  // Delete alert
   deleteAlert: (alertId) => {
     return listingsApi.delete(`/alerts/${alertId}`, { withCredentials: true });
   },
 
-  // Create new listing
   createListing: (listingData) => {
     return listingsApi.post("/", listingData, { withCredentials: true });
   },
 
-  // Update listing
   updateListing: (listingId, listingData) => {
     return listingsApi.put(`/${listingId}`, listingData, { withCredentials: true });
   },
 
-  // Delete listing
   deleteListing: (listingId) => {
     return listingsApi.delete(`/${listingId}`, { withCredentials: true });
   },
 
-  // Get listing by ID
   getListingById: (listingId) => {
     return listingsApi.get(`/${listingId}`, { withCredentials: true });
   },
@@ -398,54 +440,71 @@ messagesApi.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
+// ==================== FIXED: Messages API response interceptor ====================
 messagesApi.interceptors.response.use(
   (response) => response,
   async (error) => {
-    if (error.response?.status === 401 && !error.config._retry) {
-      error.config._retry = true;
+    const originalRequest = error.config;
+    
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
       try {
         await axios.post(`${API_URL}/refresh`, {}, { withCredentials: true });
-        return messagesApi(error.config);
+        return messagesApi(originalRequest);
       } catch (refreshError) {
+        console.error("Messages API token refresh failed:", refreshError.message);
         return Promise.reject(refreshError);
       }
     }
-    return Promise.reject(error);
+    
+    // Transform error response
+    let errorResponse = {
+      success: false,
+      message: "An error occurred",
+      status: error.response?.status || 500
+    };
+
+    if (error.response?.data) {
+      const errorData = error.response.data;
+      if (typeof errorData === 'string') {
+        errorResponse.message = errorData;
+      } else if (errorData.message) {
+        errorResponse.message = errorData.message;
+      } else if (errorData.error) {
+        errorResponse.message = errorData.error;
+      }
+      if (errorData.errors) errorResponse.errors = errorData.errors;
+    }
+    
+    return Promise.reject(errorResponse);
   }
 );
 
 export const messagesAPI = {
-  // Get conversations
   getConversations: () => {
     return messagesApi.get("/conversations", { withCredentials: true });
   },
 
-  // Get messages for a conversation
   getMessages: (conversationId) => {
     return messagesApi.get(`/${conversationId}`, { withCredentials: true });
   },
 
-  // Send message
   sendMessage: (conversationId, content) => {
     return messagesApi.post(`/${conversationId}`, { content }, { withCredentials: true });
   },
 
-  // Mark conversation as read
   markAsRead: (conversationId) => {
     return messagesApi.put(`/${conversationId}/read`, {}, { withCredentials: true });
   },
 
-  // Create new conversation
   createConversation: (recipientId, initialMessage) => {
     return messagesApi.post("/conversations", { recipientId, message: initialMessage }, { withCredentials: true });
   },
 
-  // Delete conversation
   deleteConversation: (conversationId) => {
     return messagesApi.delete(`/${conversationId}`, { withCredentials: true });
   },
 
-  // Get conversation by ID
   getConversationById: (conversationId) => {
     return messagesApi.get(`/conversations/${conversationId}`, { withCredentials: true });
   },
@@ -453,12 +512,10 @@ export const messagesAPI = {
 
 // ==================== ADMIN APIS ====================
 export const adminAPI = {
-  // Get user sessions (admin)
   getUserSessions: (userId) => {
     return api.get(`/admin/sessions/${userId}`, { withCredentials: true });
   },
 
-  // Cleanup expired tokens (admin)
   cleanupTokens: () => {
     return api.post("/admin/cleanup-tokens", {}, { withCredentials: true });
   },

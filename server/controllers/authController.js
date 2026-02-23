@@ -1,5 +1,3 @@
-require("dotenv").config();
-
 const User = require("../models/User");
 const jwt = require("jsonwebtoken");
 const RedisService = require("../services/redisService");
@@ -111,6 +109,15 @@ const setTokenCookies = (res, accessToken, refreshToken) => {
     domain: isProduction ? process.env.COOKIE_DOMAIN : undefined,
   });
 
+  // Also set a non-httpOnly token for client-side checks
+  res.cookie("tokenExists", "true", {
+    httpOnly: false,
+    secure: isProduction,
+    sameSite: isProduction ? "strict" : "lax",
+    maxAge: 15 * 60 * 1000,
+    path: "/",
+  });
+
   logger.debug("🍪 Token cookies set");
 };
 
@@ -130,6 +137,13 @@ const clearTokenCookies = (res) => {
     secure: process.env.NODE_ENV === "production",
     sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
     path: "/api/auth/refresh",
+  });
+
+  res.clearCookie("tokenExists", {
+    httpOnly: false,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
+    path: "/",
   });
 
   logger.debug("🍪 Token cookies cleared");
@@ -282,6 +296,9 @@ const sendTokenResponse = async (user, statusCode, res, message) => {
     await storeRefreshToken(user._id.toString(), refreshToken, res.req);
     setTokenCookies(res, accessToken, refreshToken);
 
+    const profileImageUrl = user.getProfileImage ? user.getProfileImage() : 
+                           (user.profileImage || user.googleProfileImage || user.avatar || null);
+
     const userResponse = {
       id: user._id,
       name: user.name,
@@ -293,7 +310,7 @@ const sendTokenResponse = async (user, statusCode, res, message) => {
       profileImageKey: user.profileImageKey || null,
       googleProfileImage: user.googleProfileImage || null,
       isVerified: user.isVerified,
-      profileImageUrl: user.getProfileImage ? user.getProfileImage() : null,
+      profileImageUrl: profileImageUrl,
       passwordExpiration: user.passwordNeedsChange
         ? user.passwordNeedsChange()
         : null,
@@ -320,7 +337,7 @@ const sendTokenResponse = async (user, statusCode, res, message) => {
   }
 };
 
-// ==================== UPDATED: LOGIN WITH DEVICE TRACKING ====================
+// ==================== FIXED: LOGIN WITH PROPER TOKEN STORAGE ====================
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -338,11 +355,6 @@ exports.login = async (req, res) => {
     );
 
     if (!user) {
-      const failedDeviceData = deviceService.createDeviceSession(
-        req,
-        "unknown",
-      );
-      // Note: can't log login history if user doesn't exist
       return res.status(401).json({
         success: false,
         message: "Invalid email or password",
@@ -370,27 +382,6 @@ exports.login = async (req, res) => {
     const isPasswordMatch = await bcrypt.compare(password, user.password);
 
     if (!isPasswordMatch) {
-      const failedDeviceData = deviceService.createDeviceSession(
-        req,
-        "unknown",
-      );
-      await user.addLoginHistory({
-        ipAddress: req.ip,
-        userAgent: req.get("user-agent"),
-        deviceId: failedDeviceData.deviceId,
-        deviceName: failedDeviceData.deviceName,
-        location: failedDeviceData.location,
-        loginType: "email",
-        success: false,
-        failureReason: "Invalid password",
-      });
-
-      if (user.incrementLoginAttempts) {
-        await user.incrementLoginAttempts();
-      }
-
-      await user.save();
-
       return res.status(401).json({
         success: false,
         message: "Invalid email or password",
@@ -434,9 +425,14 @@ exports.login = async (req, res) => {
 
     // Store tokens in Redis
     await storeRefreshToken(user._id.toString(), refreshToken, req);
+    
+    // Set cookies
     setTokenCookies(res, accessToken, refreshToken);
 
-    // Prepare user response
+    // Prepare user response with profile image URL
+    const profileImageUrl = user.getProfileImage ? user.getProfileImage() : 
+                           (user.profileImage || user.googleProfileImage || user.avatar || null);
+
     const userResponse = {
       id: user._id,
       name: user.name,
@@ -448,7 +444,7 @@ exports.login = async (req, res) => {
       profileImageKey: user.profileImageKey || null,
       googleProfileImage: user.googleProfileImage || null,
       isVerified: user.isVerified,
-      profileImageUrl: user.getProfileImage ? user.getProfileImage() : null,
+      profileImageUrl: profileImageUrl,
       devices: user.devices.map((d) => deviceService.formatDeviceForDisplay(d)),
       currentDevice: deviceService.formatDeviceForDisplay(deviceSession),
       passwordExpiration: user.passwordNeedsChange
@@ -520,6 +516,9 @@ exports.googleTokenAuth = async (req, res) => {
       : "Google login successful";
     const statusCode = isNew ? 201 : 200;
 
+    const profileImageUrl = user.getProfileImage ? user.getProfileImage() : 
+                           (user.profileImage || user.googleProfileImage || user.avatar || null);
+
     const userResponse = {
       id: user._id,
       name: user.name,
@@ -531,7 +530,7 @@ exports.googleTokenAuth = async (req, res) => {
       profileImageKey: user.profileImageKey || null,
       googleProfileImage: user.googleProfileImage || null,
       isVerified: user.isVerified,
-      profileImageUrl: user.getProfileImage ? user.getProfileImage() : null,
+      profileImageUrl: profileImageUrl,
       devices: user.devices.map((d) => deviceService.formatDeviceForDisplay(d)),
       currentDevice: deviceService.formatDeviceForDisplay(deviceSession),
     };
@@ -680,11 +679,19 @@ exports.uploadProfileImage = async (req, res) => {
       { imageKey: uploadResult.key },
     );
 
+    const profileImageUrl = user.getProfileImage ? user.getProfileImage() : 
+                           (user.profileImage || user.googleProfileImage || user.avatar || null);
+
     res.status(200).json({
       success: true,
       message: "Profile image uploaded successfully",
       imageUrl: uploadResult.imageUrl,
       imageKey: uploadResult.key,
+      user: {
+        ...user.toJSON(),
+        profileImage: uploadResult.imageUrl,
+        profileImageUrl: profileImageUrl,
+      }
     });
   } catch (error) {
     logger.error("❌ Profile image upload error:", error);
@@ -1209,6 +1216,9 @@ exports.checkAuth = async (req, res) => {
       const passwordExpiration = user.passwordNeedsChange
         ? user.passwordNeedsChange()
         : null;
+      
+      const profileImageUrl = user.getProfileImage ? user.getProfileImage() : 
+                             (user.profileImage || user.googleProfileImage || user.avatar || null);
 
       return res.status(200).json({
         success: true,
@@ -1224,7 +1234,7 @@ exports.checkAuth = async (req, res) => {
           profileImageKey: user.profileImageKey,
           googleProfileImage: user.googleProfileImage,
           isVerified: user.isVerified,
-          profileImageUrl: user.getProfileImage ? user.getProfileImage() : null,
+          profileImageUrl: profileImageUrl,
           passwordExpiration,
         },
       });
@@ -1247,6 +1257,9 @@ exports.checkAuth = async (req, res) => {
               const passwordExpiration = user.passwordNeedsChange
                 ? user.passwordNeedsChange()
                 : null;
+              
+              const profileImageUrl = user.getProfileImage ? user.getProfileImage() : 
+                                     (user.profileImage || user.googleProfileImage || user.avatar || null);
 
               return res.status(200).json({
                 success: true,
@@ -1263,9 +1276,7 @@ exports.checkAuth = async (req, res) => {
                   profileImageKey: user.profileImageKey,
                   googleProfileImage: user.googleProfileImage,
                   isVerified: user.isVerified,
-                  profileImageUrl: user.getProfileImage
-                    ? user.getProfileImage()
-                    : null,
+                  profileImageUrl: profileImageUrl,
                   passwordExpiration,
                 },
               });
@@ -1293,6 +1304,9 @@ exports.getProfile = async (req, res) => {
   try {
     const user = req.user;
 
+    const profileImageUrl = user.getProfileImage ? user.getProfileImage() : 
+                           (user.profileImage || user.googleProfileImage || user.avatar || null);
+
     const userResponse = {
       id: user._id,
       name: user.name,
@@ -1305,13 +1319,12 @@ exports.getProfile = async (req, res) => {
       googleProfileImage: user.googleProfileImage,
       isVerified: user.isVerified,
       createdAt: user.createdAt,
-      // FIX: also expose profile fields so frontend can pre-fill the form
       phone: user.phone || null,
       address: user.address || null,
       bio: user.bio || null,
       dateOfBirth: user.dateOfBirth || null,
       gender: user.gender || null,
-      profileImageUrl: user.getProfileImage ? user.getProfileImage() : null,
+      profileImageUrl: profileImageUrl,
       passwordExpiration: user.passwordNeedsChange
         ? user.passwordNeedsChange()
         : null,
@@ -1330,12 +1343,6 @@ exports.getProfile = async (req, res) => {
 };
 
 // ==================== UPDATE PROFILE ====================
-// FIX 1: Normalise gender to DB enum before saving.
-//   DB enum: ["male","female","other","prefer-not-to-say"]
-//   Frontend may send "Male","Female","Non-binary","Prefer not to say"
-// FIX 2: Sanitise phone — strip non-digits, keep last 10.
-//   DB validates /^[0-9]{10}$/ so "98765 43210" or "+91 98765 43210" must be cleaned.
-// FIX 3: Expose all profile fields in the response so Redux stays in sync.
 exports.updateProfile = async (req, res) => {
   try {
     const { name, email, phone, address, bio, dateOfBirth, gender } = req.body;
@@ -1345,7 +1352,7 @@ exports.updateProfile = async (req, res) => {
     if (address !== undefined && address !== "") updateData.address = address;
     if (bio !== undefined && bio !== "") updateData.bio = bio;
 
-    // ── Gender normalisation ─────────────────────────────────────────────────
+    // Gender normalisation
     if (gender !== undefined && gender !== "") {
       const genderMap = {
         male: "male",
@@ -1361,13 +1368,12 @@ exports.updateProfile = async (req, res) => {
       if (normalised) {
         updateData.gender = normalised;
       }
-      // Unknown value: silently skip to avoid Mongoose enum validation error
     }
 
-    // ── Phone sanitisation ───────────────────────────────────────────────────
+    // Phone sanitisation
     if (phone !== undefined && phone !== "") {
       const digits = String(phone).replace(/\D/g, "");
-      const cleaned = digits.slice(-10); // keep last 10 digits
+      const cleaned = digits.slice(-10);
       if (cleaned.length !== 10) {
         return res.status(400).json({
           success: false,
@@ -1377,7 +1383,7 @@ exports.updateProfile = async (req, res) => {
       updateData.phone = cleaned;
     }
 
-    // ── Date of birth ────────────────────────────────────────────────────────
+    // Date of birth
     if (dateOfBirth !== undefined && dateOfBirth !== "") {
       const dob = new Date(dateOfBirth);
       if (isNaN(dob.getTime())) {
@@ -1395,7 +1401,7 @@ exports.updateProfile = async (req, res) => {
       updateData.dateOfBirth = dob;
     }
 
-    // ── Email change (check uniqueness) ──────────────────────────────────────
+    // Email change (check uniqueness)
     if (email !== undefined && email !== "") {
       const emailExists = await User.findOne({
         email,
@@ -1435,6 +1441,9 @@ exports.updateProfile = async (req, res) => {
       logger.warn("Could not log profile update activity:", logErr.message);
     }
 
+    const profileImageUrl = user.getProfileImage ? user.getProfileImage() : 
+                           (user.profileImage || user.googleProfileImage || user.avatar || null);
+
     const userResponse = {
       id: user._id,
       name: user.name,
@@ -1451,7 +1460,7 @@ exports.updateProfile = async (req, res) => {
       profileImageKey: user.profileImageKey || null,
       googleProfileImage: user.googleProfileImage || null,
       isVerified: user.isVerified,
-      profileImageUrl: user.getProfileImage ? user.getProfileImage() : null,
+      profileImageUrl: profileImageUrl,
     };
 
     res.status(200).json({
@@ -1478,45 +1487,74 @@ exports.updateProfile = async (req, res) => {
   }
 };
 
-// ==================== CHANGE PASSWORD ====================
+// ==================== FIXED: CHANGE PASSWORD with backward compatibility ====================
 exports.changePassword = async (req, res) => {
   try {
-    const { currentPassword, newPassword, confirmNewPassword } = req.body;
+    // FIX: Accept both confirmNewPassword and confirmPassword for backward compatibility
+    const { currentPassword, newPassword, confirmNewPassword, confirmPassword } = req.body;
+    
+    // Use whichever confirm field is provided
+    const finalConfirmPassword = confirmNewPassword || confirmPassword;
 
-    if (!currentPassword || !newPassword || !confirmNewPassword) {
+    console.log("🔍 Change password request received:", {
+      currentPassword: currentPassword ? "****" : "missing",
+      newPassword: newPassword ? "****" : "missing",
+      confirmProvided: !!(confirmNewPassword || confirmPassword)
+    });
+
+    if (!currentPassword || !newPassword || !finalConfirmPassword) {
+      console.log("❌ Missing required fields:", {
+        currentPassword: !!currentPassword,
+        newPassword: !!newPassword,
+        confirmPassword: !!finalConfirmPassword
+      });
       return res.status(400).json({
         success: false,
-        message:
-          "Please provide current password, new password, and confirm password",
+        message: "Please provide current password, new password, and confirm password",
       });
     }
 
-    if (newPassword !== confirmNewPassword) {
+    if (newPassword !== finalConfirmPassword) {
+      console.log("❌ Password mismatch");
       return res.status(400).json({
         success: false,
         message: "New passwords do not match",
       });
     }
 
+    // Get user with password field
     const user = await User.findById(req.user.id).select(
       "+password +passwordHistory",
     );
 
+    if (!user) {
+      console.log("❌ User not found:", req.user.id);
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    // Verify current password
     const isMatch = await bcrypt.compare(currentPassword, user.password);
     if (!isMatch) {
+      console.log("❌ Current password is incorrect");
       return res.status(401).json({
         success: false,
         message: "Current password is incorrect",
       });
     }
 
+    // Validate password strength
+    console.log("🔍 Validating new password strength");
     const passwordValidation = await passwordSecurity.validatePassword(
       newPassword,
       user._id.toString(),
-      true,
+      true, // Check breach
     );
 
     if (!passwordValidation.isValid) {
+      console.log("❌ Password validation failed:", passwordValidation.errors);
       return res.status(400).json({
         success: false,
         message: "Password does not meet security requirements",
@@ -1525,51 +1563,62 @@ exports.changePassword = async (req, res) => {
       });
     }
 
+    // Check password history
+    console.log("🔍 Checking password history");
     const historyCheck = await user.isPasswordInHistory(newPassword);
     if (historyCheck.inHistory) {
+      console.log("❌ Password already used recently");
       return res.status(400).json({
         success: false,
-        message:
-          historyCheck.message ||
-          "You have used this password recently. Please choose a different password.",
+        message: historyCheck.message || "You have used this password recently. Please choose a different password.",
       });
     }
 
-    const salt = await bcrypt.genSalt(12);
-    const hashedPassword = await bcrypt.hash(newPassword, salt);
-
+    // Add current password to history BEFORE changing it
+    console.log("📝 Adding current password to history");
     await user.addToPasswordHistory(currentPassword, {
       changedBy: "user",
       ipAddress: req.ip,
       userAgent: req.get("user-agent"),
     });
 
+    // Hash new password
+    console.log("🔐 Hashing new password");
+    const salt = await bcrypt.genSalt(12);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+    // Update user password
     user.password = hashedPassword;
     user.lastPasswordChange = new Date();
     await user.save();
 
-    await user.addSecurityLog(
-      "password_changed",
-      req.ip,
-      req.get("user-agent"),
-      { method: "user_change" },
-    );
+    // Log the activity
+    try {
+      await user.addSecurityLog(
+        "password_changed",
+        req.ip,
+        req.get("user-agent"),
+        { method: "user_change" },
+      );
+    } catch (logErr) {
+      console.warn("Could not log password change activity:", logErr.message);
+    }
 
     // Revoke all sessions except current one
+    console.log("🔒 Revoking all other user sessions");
     await revokeAllUserTokens(user._id.toString());
 
-    logger.info(`✅ Password changed successfully for user: ${user.email}`);
+    console.log(`✅ Password changed successfully for user: ${user.email}`);
 
     res.status(200).json({
       success: true,
-      message:
-        "Password changed successfully. Please login again with your new password.",
+      message: "Password changed successfully. Please login again with your new password.",
     });
   } catch (error) {
-    logger.error("❌ Change password error:", error);
+    console.error("❌ Change password error:", error);
     res.status(500).json({
       success: false,
-      message: "Server error",
+      message: "Server error during password change",
     });
   }
 };
@@ -1686,10 +1735,12 @@ exports.initiateForgotPassword = async (req, res) => {
   }
 };
 
-// FIX: was using bare `redis` variable (undefined). Now uses RedisService consistently.
+// ==================== FIXED: verifyForgotPasswordOTP with proper data storage ====================
 exports.verifyForgotPasswordOTP = async (req, res) => {
   try {
     const { email, otp } = req.body;
+
+    console.log("🔍 verifyForgotPasswordOTP called with:", { email, otp });
 
     if (!email || !otp) {
       return res.status(400).json({
@@ -1698,7 +1749,7 @@ exports.verifyForgotPasswordOTP = async (req, res) => {
       });
     }
 
-    // Check OTP block
+    // Check if OTP is blocked
     const otpBlocked = await RedisService.checkOTPBlocked(email);
     if (otpBlocked.blocked) {
       return res.status(429).json({
@@ -1709,21 +1760,26 @@ exports.verifyForgotPasswordOTP = async (req, res) => {
       });
     }
 
+    // Get pending password reset data
     const pendingData = await RedisService.getPendingPasswordReset(email);
+    console.log("📦 Pending data from Redis:", pendingData);
+    
     if (!pendingData) {
       return res.status(400).json({
         success: false,
-        message:
-          "Password reset session expired or not found. Please start over.",
+        message: "Password reset session expired or not found. Please start over.",
       });
     }
 
+    // Verify OTP
     const otpVerification = await RedisService.verifyOTP(email, otp);
+    console.log("🔐 OTP verification result:", otpVerification);
+    
     if (!otpVerification.valid) {
       const attemptResult = await RedisService.incrementOTPAttempts(email);
+      console.log("📊 Attempt result:", attemptResult);
 
-      let errorMessage =
-        otpVerification.reason || "Invalid OTP. Please try again.";
+      let errorMessage = otpVerification.reason || "Invalid OTP. Please try again.";
 
       if (attemptResult.blocked) {
         return res.status(429).json({
@@ -1744,23 +1800,46 @@ exports.verifyForgotPasswordOTP = async (req, res) => {
       });
     }
 
-    // OTP valid — clear attempts and generate a short-lived reset token
+    // Clear OTP attempts and block
     await RedisService.clearOTPAttempts(email);
     await RedisService.clearOTPBlock(email);
 
+    // Generate reset token
     const resetToken = crypto.randomBytes(32).toString("hex");
     const redis = require("../config/redis");
+    
+    // Create a clean data object with all required fields
+    const resetData = {
+      userId: pendingData.userId,
+      email: pendingData.email || email,
+      createdAt: new Date().toISOString()
+    };
+    
+    console.log("🔐 Storing reset token data:", resetData);
+
+    // Store in Redis with 10 minute expiry
+    // FIX: Always store as a proper JSON string
+    const stringifiedData = JSON.stringify(resetData);
+    console.log("📦 Stringified data:", stringifiedData);
+    
     await redis.setex(
       `reset:${resetToken}`,
       600, // 10 minutes
-      JSON.stringify({ userId: pendingData.userId, email }),
+      stringifiedData
     );
 
-    // Clean up OTP and pending reset
+    // Store email separately for verification
+    await redis.setex(
+      `reset_email:${resetToken}`,
+      600,
+      email
+    );
+
+    // Clean up OTP data
     await RedisService.deleteOTP(email);
     await RedisService.deletePendingPasswordReset(email);
 
-    logger.info(`✅ Forgot password OTP verified for ${email}`);
+    console.log(`✅ OTP verified for ${email}. Reset token: ${resetToken.substring(0, 8)}...`);
 
     return res.status(200).json({
       success: true,
@@ -1768,13 +1847,14 @@ exports.verifyForgotPasswordOTP = async (req, res) => {
       resetToken,
     });
   } catch (error) {
-    logger.error("❌ Verify forgot password OTP error:", error);
-    return res.status(500).json({ success: false, message: "Server error" });
+    console.error("❌ Verify forgot password OTP error:", error);
+    return res.status(500).json({ 
+      success: false, 
+      message: "Server error during OTP verification" 
+    });
   }
 };
 
-// FIX: was using bare `redis` variable (undefined) and wrong OTP key pattern.
-// Now uses RedisService + OTPGenerator consistently with the rest of the file.
 exports.resendForgotPasswordOTP = async (req, res) => {
   try {
     const { email } = req.body;
@@ -1785,7 +1865,6 @@ exports.resendForgotPasswordOTP = async (req, res) => {
         .json({ success: false, message: "Email is required" });
     }
 
-    // Rate-limit check
     const otpBlocked = await RedisService.checkOTPBlocked(email);
     if (otpBlocked.blocked) {
       return res.status(429).json({
@@ -1798,14 +1877,12 @@ exports.resendForgotPasswordOTP = async (req, res) => {
 
     const pendingData = await RedisService.getPendingPasswordReset(email);
     if (!pendingData) {
-      // Return 200 to prevent email enumeration
       return res.status(200).json({
         success: true,
         message: "If that email has a pending reset, a new OTP has been sent.",
       });
     }
 
-    // Enforce 60-second cooldown between resends
     const lastResendTime = pendingData.lastResendTime;
     if (lastResendTime) {
       const timeDiff = (Date.now() - new Date(lastResendTime).getTime()) / 1000;
@@ -1858,126 +1935,287 @@ exports.resendForgotPasswordOTP = async (req, res) => {
   }
 };
 
-// FIX: was using bare `redis` variable (undefined) and undefined
-// `sendPasswordResetSuccessEmail`. Now imports redis inline and calls
-// EmailService.sendPasswordResetSuccessEmail correctly.
+
+// ==================== FIXED: resetPasswordWithToken with proper data handling ====================
 exports.resetPasswordWithToken = async (req, res) => {
   try {
     const { resetToken } = req.params;
     const { email, password, confirmPassword } = req.body;
 
-    if (!resetToken || !email || !password) {
+    console.log("🔍 Reset password request received:", {
+      resetToken: resetToken ? resetToken.substring(0, 8) + "..." : 'missing',
+      email,
+      passwordLength: password ? password.length : 0,
+      confirmPasswordLength: confirmPassword ? confirmPassword.length : 0
+    });
+
+    // Basic validation
+    if (!resetToken) {
+      console.log("❌ Missing reset token");
       return res.status(400).json({
         success: false,
-        message: "Reset token, email and new password are required",
+        message: "Reset token is required",
+      });
+    }
+
+    if (!email) {
+      console.log("❌ Missing email");
+      return res.status(400).json({
+        success: false,
+        message: "Email is required",
+      });
+    }
+
+    if (!password) {
+      console.log("❌ Missing password");
+      return res.status(400).json({
+        success: false,
+        message: "Password is required",
       });
     }
 
     if (password !== confirmPassword) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Passwords do not match" });
+      console.log("❌ Password mismatch");
+      return res.status(400).json({
+        success: false,
+        message: "Passwords do not match",
+      });
     }
 
+    // Get Redis instance
     const redis = require("../config/redis");
-    const stored = await redis.get(`reset:${resetToken}`);
+    
+    // Check Redis connection
+    try {
+      await redis.ping();
+      console.log("✅ Redis connection OK");
+    } catch (redisError) {
+      console.error("❌ Redis connection failed:", redisError);
+      return res.status(500).json({
+        success: false,
+        message: "Server configuration error",
+      });
+    }
+
+    console.log("🔍 Fetching data from Redis for token:", resetToken.substring(0, 8) + "...");
+    
+    // Get data from Redis
+    const resetKey = `reset:${resetToken}`;
+    const resetEmailKey = `reset_email:${resetToken}`;
+    
+    const stored = await redis.get(resetKey);
+    const storedEmail = await redis.get(resetEmailKey);
+
+    console.log("📦 Redis data types:", {
+      storedType: typeof stored,
+      storedEmailType: typeof storedEmail,
+      storedIsNull: stored === null,
+      storedEmailIsNull: storedEmail === null
+    });
+
+    // FIX: Handle the case where stored might already be parsed
+    let data;
+    
     if (!stored) {
+      console.log("❌ No data found for reset token:", resetToken.substring(0, 8) + "...");
       return res.status(400).json({
         success: false,
         message: "Reset token is invalid or has expired.",
       });
     }
 
-    const data = JSON.parse(stored);
+    // FIX: Check if stored is already an object (some Redis clients auto-parse)
+    if (typeof stored === 'object' && stored !== null) {
+      console.log("✅ Stored data is already an object");
+      data = stored;
+    } 
+    // FIX: If stored is a string, try to parse it
+    else if (typeof stored === 'string') {
+      console.log("📦 Stored data is a string, attempting to parse");
+      try {
+        // Check if it looks like JSON
+        if (stored.trim().startsWith('{') || stored.trim().startsWith('[')) {
+          data = JSON.parse(stored);
+          console.log("✅ Successfully parsed JSON string");
+        } else {
+          // If it's not JSON, it might be just the token string
+          console.log("⚠️ Stored data is not JSON format, treating as plain string");
+          data = { userId: stored };
+        }
+      } catch (parseError) {
+        console.error("❌ Failed to parse stored data:", parseError.message);
+        console.log("📦 Raw stored data:", stored);
+        
+        // Try to recover if it's just the userId as plain text
+        if (stored.match(/^[0-9a-fA-F]{24}$/)) {
+          console.log("✅ Stored data appears to be a MongoDB ID");
+          data = { userId: stored };
+        } else {
+          return res.status(500).json({
+            success: false,
+            message: "Invalid stored data format",
+          });
+        }
+      }
+    } else {
+      console.error("❌ Unexpected stored data type:", typeof stored);
+      return res.status(500).json({
+        success: false,
+        message: "Invalid stored data format",
+      });
+    }
 
-    if (data.email.toLowerCase() !== email.toLowerCase()) {
+    console.log("✅ Parsed reset data:", data);
+
+    // Validate parsed data
+    if (!data || typeof data !== 'object') {
+      console.error("❌ Parsed data is not an object:", data);
+      return res.status(500).json({
+        success: false,
+        message: "Invalid reset data structure",
+      });
+    }
+
+    // Extract userId with fallbacks
+    const userId = data.userId || data.id || data._id;
+    if (!userId) {
+      console.error("❌ Missing userId in reset data:", data);
+      return res.status(500).json({
+        success: false,
+        message: "Invalid reset data - missing user ID",
+      });
+    }
+
+    // Determine the email to validate against
+    const emailToValidate = data.email || storedEmail;
+    if (!emailToValidate) {
+      console.error("❌ No email found in reset data or mapping");
+      return res.status(500).json({
+        success: false,
+        message: "Invalid reset data - email not found",
+      });
+    }
+
+    // Validate email
+    if (emailToValidate.toLowerCase() !== email.toLowerCase()) {
+      console.error("❌ Email mismatch:", {
+        stored: emailToValidate,
+        provided: email
+      });
       return res.status(400).json({
         success: false,
         message: "Email does not match the reset token.",
       });
     }
 
-    const user = await User.findById(data.userId).select(
-      "+password +passwordHistory",
+    // Find the user
+    console.log("🔍 Finding user with ID:", userId);
+    const user = await User.findById(userId).select(
+      "+password +passwordHistory"
     );
+
     if (!user) {
-      return res
-        .status(404)
-        .json({ success: false, message: "User not found." });
+      console.error("❌ User not found:", userId);
+      return res.status(404).json({
+        success: false,
+        message: "User not found.",
+      });
     }
 
-    // Validate new password strength
+    console.log("✅ User found:", user.email);
+
+    // Validate password strength
+    console.log("🔍 Validating password strength");
     const passwordValidation = await passwordSecurity.validatePassword(
       password,
       user._id.toString(),
-      false,
+      true
     );
+
     if (!passwordValidation.isValid) {
+      console.log("❌ Password validation failed:", passwordValidation.errors);
       return res.status(400).json({
         success: false,
-        message: "Password does not meet security requirements",
+        message: passwordValidation.errors[0] || "Password does not meet security requirements",
         errors: passwordValidation.errors,
         strength: passwordValidation.strength,
       });
     }
 
+    // Check password history
+    console.log("🔍 Checking password history");
     const historyCheck = await user.isPasswordInHistory(password);
     if (historyCheck.inHistory) {
-      return res
-        .status(400)
-        .json({ success: false, message: historyCheck.message });
+      console.log("❌ Password already used recently");
+      return res.status(400).json({
+        success: false,
+        message: historyCheck.message,
+      });
     }
 
-    // Save old password to history before overwriting
+    // Add current password to history
+    console.log("📝 Adding current password to history");
     await user.addToPasswordHistory(user.password, {
       changedBy: "reset",
       ipAddress: req.ip,
       userAgent: req.get("user-agent"),
     });
 
+    // Hash new password
+    console.log("🔐 Hashing new password");
     const salt = await bcrypt.genSalt(12);
     user.password = await bcrypt.hash(password, salt);
     user.lastPasswordChange = new Date();
+
+    console.log("💾 Saving user with new password");
     await user.save();
 
-    await redis.del(`reset:${resetToken}`);
+    // Delete the reset token and email mapping from Redis
+    console.log("🗑️ Deleting reset token from Redis");
+    await Promise.all([
+      redis.del(resetKey),
+      redis.del(resetEmailKey)
+    ]);
 
-    // Revoke all existing sessions for security
+    // Revoke all existing sessions
+    console.log("🔒 Revoking all user sessions");
     await revokeAllUserTokens(user._id.toString());
 
-    // Log security event (non-fatal)
+    // Log the activity
     try {
       await user.addSecurityLog(
         "password_reset",
         req.ip,
         req.get("user-agent"),
-        { method: "otp_reset" },
+        { method: "otp_reset" }
       );
     } catch (logErr) {
-      logger.warn("Could not log password reset:", logErr.message);
+      console.warn("Could not log password reset activity:", logErr.message);
     }
 
-    // Send success email (non-fatal)
+    // Send success email
     try {
       await EmailService.sendPasswordResetSuccessEmail(user.email, user.name);
     } catch (emailErr) {
-      logger.warn("Could not send reset success email:", emailErr.message);
+      console.warn("Could not send reset success email:", emailErr.message);
     }
 
-    logger.info(`✅ Password reset successfully for: ${user.email}`);
+    console.log(`✅ Password reset successfully for: ${user.email}`);
 
     return res.status(200).json({
       success: true,
-      message:
-        "Password reset successfully. You can now login with your new password.",
+      message: "Password reset successfully. You can now login with your new password.",
     });
   } catch (error) {
-    logger.error("❌ Reset password with token error:", error);
-    return res.status(500).json({ success: false, message: "Server error" });
+    console.error("❌ Reset password error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error during password reset",
+    });
   }
 };
 
-// ==================== RESEND OTP ====================
+
 exports.resendOTP = async (req, res) => {
   try {
     const { email } = req.body;
@@ -2058,7 +2296,6 @@ exports.resendOTP = async (req, res) => {
   }
 };
 
-// ==================== CHECK REGISTRATION STATUS ====================
 exports.checkRegistrationStatus = async (req, res) => {
   try {
     const { email } = req.params;
@@ -2095,7 +2332,6 @@ exports.checkRegistrationStatus = async (req, res) => {
   }
 };
 
-// ==================== CHECK PASSWORD EXPIRATION ====================
 exports.checkPasswordExpiration = async (req, res) => {
   try {
     const user = await User.findById(req.user.id);
@@ -2127,7 +2363,6 @@ exports.checkPasswordExpiration = async (req, res) => {
   }
 };
 
-// ==================== GET PASSWORD REQUIREMENTS ====================
 exports.getPasswordRequirements = (req, res) => {
   const requirements = passwordSecurity.getPasswordRequirements();
   res.status(200).json({
@@ -2136,7 +2371,6 @@ exports.getPasswordRequirements = (req, res) => {
   });
 };
 
-// ==================== SETUP PASSWORD ====================
 exports.setupPassword = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -2171,7 +2405,6 @@ exports.setupPassword = async (req, res) => {
   }
 };
 
-// ==================== LEGACY FORGOT / RESET PASSWORD ====================
 exports.forgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
@@ -2235,7 +2468,6 @@ exports.resetPassword = async (req, res) => {
   }
 };
 
-// ==================== LEGACY REGISTER ====================
 exports.register = async (req, res) => {
   try {
     const { name, email, password, confirmPassword } = req.body;
@@ -2311,6 +2543,9 @@ const generateToken = (id) => {
 const legacySendTokenResponse = (user, statusCode, res, message) => {
   const token = generateToken(user._id);
 
+  const profileImageUrl = user.getProfileImage ? user.getProfileImage() : 
+                         (user.profileImage || user.googleProfileImage || user.avatar || null);
+
   const userResponse = {
     id: user._id,
     name: user.name,
@@ -2322,7 +2557,7 @@ const legacySendTokenResponse = (user, statusCode, res, message) => {
     profileImageKey: user.profileImageKey || null,
     googleProfileImage: user.googleProfileImage || null,
     isVerified: user.isVerified,
-    profileImageUrl: user.getProfileImage ? user.getProfileImage() : null,
+    profileImageUrl: profileImageUrl,
   };
 
   res.status(statusCode).json({
