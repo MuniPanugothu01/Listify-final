@@ -12,7 +12,7 @@ export const ScrollProgress = forwardRef(function ScrollProgress(
     <motion.div
       ref={ref}
       className={cn(
-        "fixed inset-x-0 top-14 md:top-16 sm:top-16 lg:top-16 z-10 h-[4px]  origin-left bg-gradient-to-r from-[#90C67C] via-[#67AE6E] to-[#328E6E] ",
+        "fixed inset-x-0 top-14 md:top-16 sm:top-16 lg:top-16 z-10 h-[4px] p-1.5 md:p-1.5 origin-left bg-gradient-to-r from-[#90C67C] via-[#67AE6E] to-[#328E6E] ",
         className
       )}
       style={{ scaleX: scrollYProgress }}

@@ -15,6 +15,7 @@ import {
   FaChevronRight,
   FaTools,
   FaSearch,
+  FaMapMarkerAlt,
 } from "react-icons/fa";
 import NavSearchBar from "../../pages/Home/NavSearchBar.jsx";
 import { CgProfile } from "react-icons/cg";
@@ -27,12 +28,43 @@ import toast from "react-hot-toast";
 const STATIC_PROFILE_IMAGE =
   "https://cdn-icons-png.flaticon.com/512/149/149071.png";
 
+// Popular cities for location suggestions
+const POPULAR_CITIES = [
+  "New York",
+  "Los Angeles",
+  "Chicago",
+  "Houston",
+  "Phoenix",
+  "Philadelphia",
+  "San Antonio",
+  "San Diego",
+  "Dallas",
+  "San Jose",
+  "Austin",
+  "Jacksonville",
+  "Fort Worth",
+  "Columbus",
+  "Charlotte",
+  "San Francisco",
+  "Indianapolis",
+  "Seattle",
+  "Denver",
+  "Washington",
+  "Boston",
+  "El Paso",
+  "Nashville",
+  "Detroit",
+  "Portland",
+];
+
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   const [showMoreDropdown, setShowMoreDropdown] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState("");
+  const [showLocationSuggestions, setShowLocationSuggestions] = useState(false);
+  const [locationSuggestions, setLocationSuggestions] = useState([]);
   const [showNotificationDropdown, setShowNotificationDropdown] =
     useState(false);
   const [imageError, setImageError] = useState(false);
@@ -43,6 +75,7 @@ const Navbar = () => {
 
   const profileDropdownRef = useRef(null);
   const notificationDropdownRef = useRef(null);
+  const locationInputRef = useRef(null);
   const navigate = useNavigate();
 
   const dispatch = useAppDispatch();
@@ -204,6 +237,29 @@ const Navbar = () => {
     setShowNotificationDropdown(false);
   };
 
+  const handleLocationChange = (e) => {
+    const value = e.target.value;
+    setSelectedLocation(value);
+    
+    // Filter location suggestions
+    if (value.trim()) {
+      const filtered = POPULAR_CITIES.filter(city =>
+        city.toLowerCase().includes(value.toLowerCase())
+      ).slice(0, 5);
+      setLocationSuggestions(filtered);
+      setShowLocationSuggestions(true);
+    } else {
+      setLocationSuggestions([]);
+      setShowLocationSuggestions(false);
+    }
+  };
+
+  const handleLocationSelect = (city) => {
+    setSelectedLocation(city);
+    setShowLocationSuggestions(false);
+    setLocationSuggestions([]);
+  };
+
   const handleProfileMenuItemClick = async (path) => {
     if (path === "/logout") {
       try {
@@ -309,10 +365,22 @@ const Navbar = () => {
 
   const handleSearch = (e) => {
     e.preventDefault();
+    const params = new URLSearchParams();
     if (searchQuery.trim()) {
-      navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
-      setSearchQuery("");
-      setShowMobileSearch(false);
+      params.append("q", searchQuery.trim());
+    }
+    if (selectedLocation.trim()) {
+      params.append("location", selectedLocation.trim());
+    }
+    navigate(`/search?${params.toString()}`);
+    setSearchQuery("");
+    setShowMobileSearch(false);
+    setShowLocationSuggestions(false);
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      handleSearch(e);
     }
   };
 
@@ -333,12 +401,19 @@ const Navbar = () => {
       ) {
         closeNotificationDropdown();
       }
+      if (
+        locationInputRef.current &&
+        !locationInputRef.current.contains(event.target)
+      ) {
+        setShowLocationSuggestions(false);
+      }
     };
     const handleEscapeKey = (event) => {
       if (event.key === "Escape") {
         closeProfileDropdown();
         closeNotificationDropdown();
         setShowMobileSearch(false);
+        setShowLocationSuggestions(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -368,7 +443,7 @@ const Navbar = () => {
     };
   }, []);
 
-  // Updated CSS with search bar text color change on scroll
+  // Updated CSS with separate location and search inputs
   const navbarStyles = `
     @keyframes slideDown {
       from { transform: translateY(-10px); opacity: 0; }
@@ -387,63 +462,175 @@ const Navbar = () => {
     .navbar-scrolled .nav-link:hover { color: #2d7a82; }
     .navbar-scrolled .logo-text { color: #ffffff; }
     
-    /* Search bar styles - normal state */
-    .search-input {
-      width: 100%;
-      padding: 10px 20px;
-      padding-right: 45px;
+    /* Search container styles - Only visible on lg screens and above */
+    .search-container {
+      flex: 1;
+      max-width: 700px;
+      margin: 0 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    /* Separate location input styles */
+    .location-input-container {
+      flex: 0 0 140px;
+      position: relative;
+    }
+    
+    .location-input-wrapper {
+      display: flex;
+      align-items: center;
+      background-color: white;
       border: 1.5px solid #e5e7eb;
       border-radius: 9999px;
-      font-size: 15px;
-      outline: none;
+      padding: 8px 12px;
       transition: all 0.3s ease;
-      background-color: white;
-      font-weight: 500;
-      color: #1f2937;
     }
     
-    .search-input::placeholder {
-      color: #6b7280;
-      transition: color 0.3s ease;
-    }
-    
-    .search-input:focus {
+    .location-input-wrapper:focus-within {
       border-color: #1FA987;
       box-shadow: 0 0 0 3px rgba(31, 169, 135, 0.15);
     }
     
-    .search-button {
-      position: absolute;
-      right: 4px;
-      background: none;
-      border: none;
-      padding: 8px 16px;
+    .location-icon {
       color: #6b7280;
+      margin-right: 8px;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+    
+    .location-input {
+      border: none;
+      outline: none;
+      font-size: 14px;
+      font-weight: 500;
+      color: #1f2937;
+      width: 100%;
+      background: transparent;
+    }
+    
+    .location-input::placeholder {
+      color: #6b7280;
+      font-weight: 400;
+    }
+    
+    /* Separate search input styles */
+    .search-input-container {
+      flex: 1;
+      position: relative;
+    }
+    
+    .search-input-wrapper {
+      display: flex;
+      align-items: center;
+      background-color: white;
+      border: 1.5px solid #e5e7eb;
+      border-radius: 9999px;
+      padding: 8px 12px;
+      transition: all 0.3s ease;
       cursor: pointer;
-      transition: color 0.3s ease;
     }
     
-    .search-button:hover {
-      color: #1FA987;
+    .search-input-wrapper:focus-within {
+      border-color: #1FA987;
+      box-shadow: 0 0 0 3px rgba(31, 169, 135, 0.15);
     }
     
-    /* Search bar styles - scrolled state */
-    .navbar-scrolled .search-input {
+    .search-icon {
+      color: #6b7280;
+      margin-right: 8px;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+    
+    .search-input {
+      border: none;
+      outline: none;
+      font-size: 14px;
+      font-weight: 500;
+      color: #1f2937;
+      width: 100%;
+      background: transparent;
+    }
+    
+    .search-input::placeholder {
+      color: #6b7280;
+      font-weight: 400;
+    }
+    
+    /* Scrolled state styles */
+    .navbar-scrolled .location-input-wrapper,
+    .navbar-scrolled .search-input-wrapper {
       background-color: rgba(255, 255, 255, 0.1);
       border-color: rgba(255, 255, 255, 0.2);
+    }
+    
+    .navbar-scrolled .location-icon,
+    .navbar-scrolled .search-icon {
+      color: rgba(255, 255, 255, 0.7);
+    }
+    
+    .navbar-scrolled .location-input,
+    .navbar-scrolled .search-input {
       color: white;
     }
     
+    .navbar-scrolled .location-input::placeholder,
     .navbar-scrolled .search-input::placeholder {
       color: rgba(255, 255, 255, 0.7);
     }
     
-    .navbar-scrolled .search-button {
-      color: rgba(255, 255, 255, 0.7);
+    /* Location suggestions dropdown */
+    .location-suggestions {
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 0;
+      right: 0;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      z-index: 60;
+      max-height: 300px;
+      overflow-y: auto;
+      animation: slideDown 0.2s ease;
     }
     
-    .navbar-scrolled .search-button:hover {
+    .navbar-scrolled .location-suggestions {
+      background: #1f2937;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .location-suggestion-item {
+      padding: 12px 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      color: #1f2937;
+      transition: all 0.2s ease;
+    }
+    
+    .navbar-scrolled .location-suggestion-item {
       color: white;
+    }
+    
+    .location-suggestion-item:hover {
+      background-color: #f3f4f6;
+    }
+    
+    .navbar-scrolled .location-suggestion-item:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    .location-suggestion-item .suggestion-icon {
+      color: #6b7280;
+      font-size: 12px;
+    }
+    
+    .navbar-scrolled .location-suggestion-item .suggestion-icon {
+      color: rgba(255, 255, 255, 0.5);
     }
     
     .navbar-scrolled .profile-button { border-color: rgba(255, 255, 255, 0.3); color: #ffffff; }
@@ -454,21 +641,7 @@ const Navbar = () => {
     .user-icon-container { background: linear-gradient(135deg, #27bb97, #1fa987); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
     .message-count-badge { background-color: #EF4444; color: white; border-radius: 9999px; padding: 3px 8px; font-size: 11px; margin-left: 6px; font-weight: 600; }
     
-    /* Improved search bar styles */
-    .search-container {
-      flex: 1;
-      max-width: 500px;
-      margin: 0 20px;
-    }
-    
-    .search-form {
-      display: flex;
-      align-items: center;
-      width: 100%;
-      position: relative;
-    }
-    
-    /* Mobile search styles */
+    /* Mobile search styles - Only visible below lg screens */
     .mobile-search-button {
       display: flex;
       align-items: center;
@@ -509,31 +682,61 @@ const Navbar = () => {
     
     .mobile-search-form {
       display: flex;
-      align-items: center;
+      flex-direction: column;
       gap: 12px;
     }
     
-    .mobile-search-input {
+    .mobile-search-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .mobile-location-field,
+    .mobile-search-field {
       flex: 1;
-      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      background: white;
       border: 1.5px solid #e5e7eb;
       border-radius: 9999px;
-      font-size: 15px;
+      padding: 0 16px;
+    }
+    
+    .navbar-scrolled .mobile-location-field,
+    .navbar-scrolled .mobile-search-field {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+    
+    .mobile-location-field .location-icon,
+    .mobile-search-field .search-icon {
+      color: #6b7280;
+      margin-right: 8px;
+    }
+    
+    .navbar-scrolled .mobile-location-field .location-icon,
+    .navbar-scrolled .mobile-search-field .search-icon {
+      color: rgba(255, 255, 255, 0.7);
+    }
+    
+    .mobile-location-input,
+    .mobile-search-input {
+      width: 100%;
+      padding: 12px 0;
+      border: none;
       outline: none;
-      font-weight: 500;
+      font-size: 15px;
+      background: transparent;
       color: #1f2937;
     }
     
-    .mobile-search-input::placeholder {
-      color: #6b7280;
-    }
-    
+    .navbar-scrolled .mobile-location-input,
     .navbar-scrolled .mobile-search-input {
-      background-color: rgba(255, 255, 255, 0.1);
-      border-color: rgba(255, 255, 255, 0.2);
       color: white;
     }
     
+    .navbar-scrolled .mobile-location-input::placeholder,
     .navbar-scrolled .mobile-search-input::placeholder {
       color: rgba(255, 255, 255, 0.7);
     }
@@ -551,6 +754,37 @@ const Navbar = () => {
     
     .navbar-scrolled .mobile-search-close {
       color: white;
+    }
+    
+    .mobile-search-submit {
+      width: 100%;
+      padding: 12px;
+      background-color: #1FA987;
+      color: white;
+      border: none;
+      border-radius: 9999px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    
+    .mobile-search-submit:hover {
+      background-color: #1a9277;
+    }
+    
+    /* Mobile location suggestions */
+    .mobile-location-suggestions {
+      margin-top: 8px;
+      background: white;
+      border-radius: 12px;
+      border: 1px solid #e5e7eb;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+    
+    .navbar-scrolled .mobile-location-suggestions {
+      background: #1f2937;
+      border-color: rgba(255, 255, 255, 0.1);
     }
     
     /* Desktop menu items - increased font size */
@@ -574,6 +808,40 @@ const Navbar = () => {
     @media (min-width: 1024px) {
       .logo-text {
         font-size: 26px !important;
+      }
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 1280px) {
+      .location-input-container {
+        flex: 0 0 120px;
+      }
+    }
+    
+    @media (max-width: 1150px) {
+      .desktop-menu-item {
+        padding: 8px 10px !important;
+        font-size: 14px !important;
+      }
+      
+      .location-input-container {
+        flex: 0 0 100px;
+      }
+    }
+    
+    /* Ensure mobile search button is only visible below lg */
+    @media (min-width: 1024px) {
+      .mobile-search-button {
+        display: none !important;
+      }
+      .mobile-search-overlay {
+        display: none !important;
+      }
+    }
+    
+    @media (max-width: 1023px) {
+      .search-container {
+        display: none !important;
       }
     }
   `;
@@ -612,20 +880,68 @@ const Navbar = () => {
                 </span>
               </Link>
 
-              {/* Desktop Search Bar - Hidden on tablets and below */}
-              <div className="hidden lg:block search-container relative">
-                <form onSubmit={handleSearch} className="search-form">
-                  <input
-                    type="text"
-                    placeholder="Search for products, brands and more..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="search-input"
-                  />
-                  <button type="submit" className="search-button">
-                    <FaSearch size={18} />
-                  </button>
-                </form>
+              {/* Desktop Search Bar with Separate Location - Only visible on lg screens and above */}
+              <div className="search-container">
+                {/* Location Input - Separate Div */}
+                <div className="location-input-container" ref={locationInputRef}>
+                  <div className="location-input-wrapper">
+                    <FaMapMarkerAlt className="location-icon" size={14} />
+                    <input
+                      type="text"
+                      placeholder="Location"
+                      value={selectedLocation}
+                      onChange={handleLocationChange}
+                      onFocus={() => {
+                        if (selectedLocation) {
+                          handleLocationChange({ target: { value: selectedLocation } });
+                        } else {
+                          setLocationSuggestions(POPULAR_CITIES.slice(0, 5));
+                          setShowLocationSuggestions(true);
+                        }
+                      }}
+                      onKeyPress={handleKeyPress}
+                      className="location-input"
+                    />
+                  </div>
+                  
+                  {/* Location Suggestions Dropdown */}
+                  {showLocationSuggestions && (
+                    <div className="location-suggestions">
+                      {locationSuggestions.length > 0 ? (
+                        locationSuggestions.map((city, index) => (
+                          <div
+                            key={index}
+                            onClick={() => handleLocationSelect(city)}
+                            className="location-suggestion-item"
+                          >
+                            <FaMapMarkerAlt className="suggestion-icon" size={12} />
+                            <span>{city}</span>
+                          </div>
+                        ))
+                      ) : (
+                        <div className="location-suggestion-item">
+                          <FaMapMarkerAlt className="suggestion-icon" size={12} />
+                          <span>No locations found</span>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+                
+                {/* Search Input - Separate Div with Icon Inside */}
+                <div className="search-input-container">
+                  <div className="search-input-wrapper">
+                    <FaSearch className="search-icon" size={14} />
+                    <input
+                      type="text"
+                      placeholder="Search for products, brands and more..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      onKeyPress={handleKeyPress}
+                      className="search-input"
+                    />
+                  </div>
+                </div>
               </div>
 
               {/* Desktop Menu - Now visible on lg screens and above */}
@@ -677,7 +993,7 @@ const Navbar = () => {
                 </div>
               </div>
 
-              {/* Right side actions - Visible on lg and above (changed from md to lg) */}
+              {/* Right side actions - Visible on lg and above */}
               <div className="hidden lg:flex items-center gap-2">
                 {/* Heart Icon (Saved Items) */}
                 <Link to="/saved" onClick={scrollToTop}>
@@ -920,7 +1236,7 @@ const Navbar = () => {
                 </div>
               </div>
 
-              {/* Mobile/Tablet menu button and icons - Visible on lg and below */}
+              {/* Mobile/Tablet menu button and icons - Visible below lg screens */}
               <div className="flex lg:hidden items-center gap-2">
                 {/* Mobile Search Button */}
                 <button
@@ -983,25 +1299,81 @@ const Navbar = () => {
               </div>
             </div>
 
-            {/* Mobile Search Overlay */}
+            {/* Mobile Search Overlay with Separate Location - Only visible below lg screens */}
             {showMobileSearch && (
-              <div className="mobile-search-overlay lg:hidden">
+              <div className="mobile-search-overlay">
                 <form onSubmit={handleSearch} className="mobile-search-form">
-                  <input
-                    type="text"
-                    placeholder="Search for products, brands and more..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="mobile-search-input"
-                    autoFocus
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowMobileSearch(false)}
-                    className="mobile-search-close"
-                  >
-                    <FaTimes size={18} />
-                  </button>
+                  {/* Location Field - Separate */}
+                  <div className="mobile-location-field">
+                    <FaMapMarkerAlt className="location-icon" size={14} />
+                    <input
+                      type="text"
+                      placeholder="Location"
+                      value={selectedLocation}
+                      onChange={handleLocationChange}
+                      onFocus={() => {
+                        if (selectedLocation) {
+                          handleLocationChange({ target: { value: selectedLocation } });
+                        } else {
+                          setLocationSuggestions(POPULAR_CITIES.slice(0, 5));
+                          setShowLocationSuggestions(true);
+                        }
+                      }}
+                      className="mobile-location-input"
+                    />
+                  </div>
+                  
+                  {/* Mobile Location Suggestions */}
+                  {showLocationSuggestions && (
+                    <div className="mobile-location-suggestions">
+                      {locationSuggestions.length > 0 ? (
+                        locationSuggestions.map((city, index) => (
+                          <div
+                            key={index}
+                            onClick={() => {
+                              handleLocationSelect(city);
+                              setShowLocationSuggestions(false);
+                            }}
+                            className="location-suggestion-item"
+                          >
+                            <FaMapMarkerAlt className="suggestion-icon" size={12} />
+                            <span>{city}</span>
+                          </div>
+                        ))
+                      ) : (
+                        <div className="location-suggestion-item">
+                          <FaMapMarkerAlt className="suggestion-icon" size={12} />
+                          <span>No locations found</span>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                  
+                  {/* Search Field - Separate with Icon Inside */}
+                  <div className="mobile-search-field">
+                    <FaSearch className="search-icon" size={14} />
+                    <input
+                      type="text"
+                      placeholder="Search for products, brands and more..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="mobile-search-input"
+                      autoFocus
+                    />
+                  </div>
+                  
+                  <div className="mobile-search-row">
+                    <button type="submit" className="mobile-search-submit">
+                      Search
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setShowMobileSearch(false)}
+                      className="mobile-search-close"
+                    >
+                      <FaTimes size={18} />
+                    </button>
+                  </div>
                 </form>
               </div>
             )}
