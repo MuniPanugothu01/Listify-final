@@ -10,7 +10,7 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 // Import Loading Spinner Component
 import LoadingSpinner from "./components/LoadingSpinner.jsx"; // Make sure path is correct
 
-import Navbar from "./pages/Home/Navbar.jsx";
+import Navbar from "./components/UserProfile/Navbar.jsx";
 import Hero from "./pages/Home/Hero.jsx";
 import Heading from "./pages/Home/Heading.jsx";
 import Category from "./pages/Home/Category.jsx";
