@@ -1,7 +1,6 @@
 import React from "react";
 import StatsCard from "./StatsCard";
 import RecentMessages from "./RecentMessages";
-import MyAgenda from "./MyAgenda";
 import { Heart, FileText, Bell, TrendingUp, DollarSign } from "lucide-react";
 
 const HomeSection = ({ savedHouses, myPosts, myAlerts, messages, agendaEvents, onViewAll, user }) => {
