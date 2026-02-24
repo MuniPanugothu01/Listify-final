@@ -3,7 +3,7 @@ import { Eye, EyeOff, ArrowLeft } from "lucide-react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { HiDotsHorizontal } from "react-icons/hi";
 import { useAuth } from "../../hooks/useAuth";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 
 const ResetPassword = () => {
   const navigate = useNavigate();
@@ -253,31 +253,6 @@ const ResetPassword = () => {
 
   return (
     <div className="min-h-screen relative overflow-hidden">
-      {/* Toast Notifications */}
-      <Toaster
-        position="top-right"
-        toastOptions={{
-          duration: 4000,
-          style: {
-            background: "#363636",
-            color: "#fff",
-          },
-          success: {
-            duration: 3000,
-            iconTheme: {
-              primary: "#10b981",
-              secondary: "#fff",
-            },
-          },
-          error: {
-            duration: 4000,
-            iconTheme: {
-              primary: "#ef4444",
-              secondary: "#fff",
-            },
-          },
-        }}
-      />
 
       {/* Full Screen Background Image Layer */}
       <div className="fixed inset-0 z-0">

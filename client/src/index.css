@@ -323,17 +323,33 @@ html {
 
 
 
-/* toast animation */
+/* toast animation — slow slide from top, slow exit */
 
+@keyframes toastEnter {
+  0% {
+    opacity: 0;
+    transform: translateY(-40px) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
 
-@keyframes fadeInScale {
-  0% { opacity: 0; transform: scale(0.9); }
-  100% { opacity: 1; transform: scale(1); }
+@keyframes toastExit {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-40px) scale(0.95);
+  }
 }
-@keyframes fadeOutScale {
-  0% { opacity: 1; transform: scale(1); }
-  100% { opacity: 0; transform: scale(0.9); }
-}
-.toast-animation {
-  animation: fadeInScale 0.5s ease-in-out, fadeOutScale 0.5s ease-in-out 3.5s forwards !important;
+
+/* react-hot-toast animation overrides */
+[data-testid="toast"],
+div[style*="animation"] {
+  animation-duration: 0.8s !important;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1) !important;
 }

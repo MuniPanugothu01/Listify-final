@@ -97,7 +97,7 @@ import Profile from "./pages/Home/Profile.jsx";
 // ChatBot
 import ChatBot from "./components/ChatBot.jsx";
 import { ScrollProgress } from "./components/ui/scroll-progress.jsx";
-import { Toaster } from "react-hot-toast";
+import { Toaster, ToastBar } from "react-hot-toast";
 
 // Get Google Client ID from environment
 const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
@@ -192,7 +192,58 @@ const AppContent = () => {
 
       {/* Main Content */}
       <main className="flex-grow">
-        <Toaster position="top-right" />
+        <Toaster
+          position="top-center"
+          reverseOrder={false}
+          gutter={12}
+          toastOptions={{
+            duration: 4000,
+            style: {
+              background: "#fefefa",
+              color: "#1a1a1a",
+              padding: "14px 20px",
+              borderRadius: "12px",
+              fontSize: "14px",
+              fontWeight: "500",
+              boxShadow: "0 8px 30px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04)",
+              border: "1px solid rgba(0, 0, 0, 0.06)",
+              maxWidth: "420px",
+              lineHeight: "1.5",
+            },
+            success: {
+              duration: 3000,
+              iconTheme: {
+                primary: "#16a34a",
+                secondary: "#ffffff",
+              },
+              style: {
+                borderLeft: "4px solid #16a34a",
+              },
+            },
+            error: {
+              duration: 4500,
+              iconTheme: {
+                primary: "#dc2626",
+                secondary: "#ffffff",
+              },
+              style: {
+                borderLeft: "4px solid #dc2626",
+              },
+            },
+          }}
+        >
+          {(t) => (
+            <div
+              style={{
+                animation: t.visible
+                  ? "toastEnter 0.8s cubic-bezier(0.16, 1, 0.3, 1)"
+                  : "toastExit 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards",
+              }}
+            >
+              <ToastBar toast={t} />
+            </div>
+          )}
+        </Toaster>
         <Routes>
           {/* Home */}
           <Route

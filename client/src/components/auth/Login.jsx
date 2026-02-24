@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { HiDotsHorizontal } from "react-icons/hi";
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser, clearError } from "../../redux/slices/authSlice";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import SocialAuth from "./SocialAuth";
 
 const Login = () => {
@@ -240,16 +240,6 @@ const Login = () => {
 
   return (
     <div className="min-h-screen relative overflow-hidden">
-      <Toaster
-        position="top-right"
-        toastOptions={{
-          duration: 4000,
-          style: {
-            background: "#363636",
-            color: "#fff",
-          },
-        }}
-      />
 
       {/* Background Image Layer */}
       <div className="fixed inset-0 z-0">
