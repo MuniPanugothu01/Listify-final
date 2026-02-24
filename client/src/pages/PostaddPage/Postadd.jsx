@@ -128,7 +128,7 @@ const PostAdPage = () => {
     <div className="page-enter min-h-screen bg-slate-50">
       {/* Header */}
       <div className="bg-white/80 backdrop-blur-md border-b border-slate-100 sticky top-0 z-50">
-        <div className="max-w-2xl mx-auto px-4">
+        <div className="max-w-7xl mx-auto px-4">
           <div className="flex items-center justify-between h-16">
             <Link to="/" className="flex items-center gap-2">
               <div className="w-8 h-8 bg-gradient-to-br from-[#27BB97] to-[#1fa987] rounded-xl flex items-center justify-center shadow-lg shadow-[#27BB97]/20">
@@ -140,7 +140,7 @@ const PostAdPage = () => {
             </Link>
             
             <div className="flex items-center gap-2">
-              <span className="text-sm text-slate-500 mr-2">Demo Mode</span>
+              <span className="text-sm text-slate-500 mr-2">Back</span>
               <button
                 onClick={() => navigate(-1)}
                 className="w-9 h-9 flex items-center justify-center bg-slate-100 hover:bg-slate-200 rounded-xl transition-colors"
@@ -154,7 +154,7 @@ const PostAdPage = () => {
         </div>
       </div>
 
-      <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="mb-8">
           <h1 className="text-3xl font-black text-slate-900">Post Your Ad</h1>
           <p className="text-slate-500 mt-1">Fill in the details below to list your item for free.</p>
