@@ -128,7 +128,7 @@ exports.revokeSession = async (req, res) => {
       });
     }
     
-    const session = JSON.parse(tokenData);
+    const session = typeof tokenData === 'string' ? JSON.parse(tokenData) : tokenData;
     
     // Verify this session belongs to the user
     if (session.userId !== userId) {

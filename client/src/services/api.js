@@ -26,114 +26,145 @@ api.interceptors.request.use(
   },
 );
 
-// ==================== FIXED: Response interceptor with better error handling ====================
-api.interceptors.response.use(
-  (response) => {
-    return response;
-  },
-  async (error) => {
-    const originalRequest = error.config;
+// ==================== SHARED TOKEN REFRESH LOGIC ====================
+// Single refresh queue shared across ALL axios instances to prevent
+// concurrent refresh calls that would invalidate each other via token rotation.
+let isRefreshing = false;
+let failedQueue = [];
 
-    // Log the full error for debugging
-    console.error("API Error Details:", {
-      status: error.response?.status,
-      statusText: error.response?.statusText,
-      data: error.response?.data,
-      message: error.message,
-      url: originalRequest?.url,
-      method: originalRequest?.method
-    });
+const processQueue = (error, token = null) => {
+  failedQueue.forEach(prom => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve(token);
+    }
+  });
+  failedQueue = [];
+};
 
-    // If error is 401 (Unauthorized) and not already retrying
-    if (error.response?.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true;
+/**
+ * Shared 401 handler — call this from ANY axios instance's response interceptor.
+ * It ensures only ONE refresh request happens at a time; all other 401 callers
+ * wait in a queue and retry once the single refresh completes.
+ *
+ * @param {AxiosError}    error           – the 401 error  
+ * @param {AxiosInstance} axiosInstance    – the instance to retry with  
+ * @returns {Promise}     retried response or rejection  
+ */
+export const handle401 = async (error, axiosInstance) => {
+  const originalRequest = error.config;
 
-      // Don't refresh on login or register endpoints
-      if (originalRequest.url.includes('/login') || 
-          originalRequest.url.includes('/register') ||
-          originalRequest.url.includes('/google') ||
-          originalRequest.url.includes('/refresh')) {
-        return Promise.reject(error);
-      }
+  // Don't refresh on auth endpoints themselves
+  if (
+    originalRequest.url.includes('/login') ||
+    originalRequest.url.includes('/register') ||
+    originalRequest.url.includes('/google') ||
+    originalRequest.url.includes('/refresh')
+  ) {
+    return Promise.reject(error);
+  }
 
-      try {
-        console.log("Attempting to refresh token...");
-        
-        // Try to refresh the token
-        const refreshResponse = await axios.post(
-          `${API_URL}/refresh`,
-          {},
-          {
-            withCredentials: true,
-            timeout: 10000,
-          }
-        );
+  // If already refreshing, queue this request
+  if (isRefreshing) {
+    return new Promise((resolve, reject) => {
+      failedQueue.push({ resolve, reject });
+    }).then(() => axiosInstance(originalRequest))
+      .catch(err => Promise.reject(err));
+  }
 
-        if (refreshResponse.status === 200) {
-          console.log("Token refreshed successfully, retrying original request");
-          // Retry the original request
-          return api(originalRequest);
-        }
-      } catch (refreshError) {
-        console.error("Token refresh failed:", refreshError.message);
-        
-        // Only redirect if we're not on an auth page and not in the middle of login
-        const currentPath = window.location.pathname;
-        if (!currentPath.includes('/signin') && 
-            !currentPath.includes('/login') && 
-            !currentPath.includes('/signup') &&
-            !currentPath.includes('/forgot-password') &&
-            !originalRequest.url.includes('/login')) {
-          
-          // Clear user data
-          localStorage.removeItem("user");
-          localStorage.removeItem("persist:root");
-          
-          // Redirect to login
-          window.location.href = "/signin";
-        }
-        
-        return Promise.reject(refreshError);
+  originalRequest._retry = true;
+  isRefreshing = true;
+
+  try {
+    console.log("🔄 Attempting to refresh token...");
+    const refreshResponse = await axios.post(
+      `${API_URL}/refresh`,
+      {},
+      { withCredentials: true, timeout: 10000 }
+    );
+
+    if (refreshResponse.status === 200) {
+      console.log("✅ Token refreshed successfully, retrying queued requests");
+      processQueue(null);
+      return axiosInstance(originalRequest);
+    }
+  } catch (refreshError) {
+    console.error("❌ Token refresh failed:", refreshError.message);
+    processQueue(refreshError);
+
+    // Only force-logout when the server explicitly says the refresh token
+    // is gone (expired / revoked).  Network blips should NOT log the user out.
+    const refreshStatus = refreshError.response?.status;
+    const refreshCode  = refreshError.response?.data?.code;
+
+    if (
+      refreshStatus === 401 &&
+      (refreshCode === 'INVALID_REFRESH_TOKEN' || refreshCode === 'NO_REFRESH_TOKEN')
+    ) {
+      const currentPath = window.location.pathname;
+      if (
+        !currentPath.includes('/signin') &&
+        !currentPath.includes('/login') &&
+        !currentPath.includes('/signup') &&
+        !currentPath.includes('/forgot-password')
+      ) {
+        localStorage.removeItem("user");
+        localStorage.removeItem("persist:root");
+        window.location.href = "/signin";
       }
     }
 
-    // Handle other errors - FIXED: Better error object formatting
-    let errorResponse = {
-      success: false,
-      message: "An error occurred",
-      status: error.response?.status || 500
-    };
+    return Promise.reject(refreshError);
+  } finally {
+    isRefreshing = false;
+  }
+};
 
-    if (error.response?.data) {
-      const errorData = error.response.data;
-      
-      // Extract message from various possible formats
-      if (typeof errorData === 'string') {
-        errorResponse.message = errorData;
-      } else if (errorData.message) {
-        errorResponse.message = errorData.message;
-      } else if (errorData.error) {
-        errorResponse.message = errorData.error;
-      } else if (errorData.errors) {
-        // Handle validation errors
-        errorResponse.errors = errorData.errors;
-        if (typeof errorData.errors === 'object') {
-          const firstError = Object.values(errorData.errors)[0];
-          if (firstError) {
-            errorResponse.message = firstError;
-          }
-        }
+/**
+ * Helper: build a standard error-transform interceptor for any axios instance.
+ */
+const createResponseInterceptor = (axiosInstance, label = "API") => {
+  axiosInstance.interceptors.response.use(
+    (response) => response,
+    async (error) => {
+      const originalRequest = error.config;
+
+      console.error(`${label} Error:`, {
+        status: error.response?.status,
+        data: error.response?.data,
+        url: originalRequest?.url,
+      });
+
+      // 401 → delegate to the shared refresh handler
+      if (error.response?.status === 401 && !originalRequest._retry) {
+        return handle401(error, axiosInstance);
       }
-      
-      // Preserve additional data
-      if (errorData.errors) errorResponse.errors = errorData.errors;
-      if (errorData.strength) errorResponse.strength = errorData.strength;
-      if (errorData.token) errorResponse.token = errorData.token;
-    }
 
-    return Promise.reject(errorResponse);
-  },
-);
+      // Transform non-401 errors into a consistent shape
+      let errorResponse = {
+        success: false,
+        message: "An error occurred",
+        status: error.response?.status || 500,
+      };
+
+      if (error.response?.data) {
+        const d = error.response.data;
+        if (typeof d === 'string')      errorResponse.message = d;
+        else if (d.message)             errorResponse.message = d.message;
+        else if (d.error)               errorResponse.message = d.error;
+        if (d.errors)    errorResponse.errors   = d.errors;
+        if (d.strength)  errorResponse.strength = d.strength;
+        if (d.token)     errorResponse.token    = d.token;
+      }
+
+      return Promise.reject(errorResponse);
+    }
+  );
+};
+
+// Apply the shared interceptor to the main api instance
+createResponseInterceptor(api, "Auth API");
 
 // Auth API methods - NO TOKEN HANDLING, just make requests
 export const authAPI = {
@@ -330,7 +361,7 @@ const listingsApi = axios.create({
   withCredentials: true,
 });
 
-// Apply same interceptors
+// Apply shared interceptors
 listingsApi.interceptors.request.use(
   (config) => {
     console.log(`🚀 Listings Request: ${config.method.toUpperCase()} ${config.url}`);
@@ -338,46 +369,7 @@ listingsApi.interceptors.request.use(
   },
   (error) => Promise.reject(error)
 );
-
-// ==================== FIXED: Listings API response interceptor ====================
-listingsApi.interceptors.response.use(
-  (response) => response,
-  async (error) => {
-    const originalRequest = error.config;
-    
-    if (error.response?.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true;
-      try {
-        await axios.post(`${API_URL}/refresh`, {}, { withCredentials: true });
-        return listingsApi(originalRequest);
-      } catch (refreshError) {
-        console.error("Listings API token refresh failed:", refreshError.message);
-        return Promise.reject(refreshError);
-      }
-    }
-    
-    // Transform error response
-    let errorResponse = {
-      success: false,
-      message: "An error occurred",
-      status: error.response?.status || 500
-    };
-
-    if (error.response?.data) {
-      const errorData = error.response.data;
-      if (typeof errorData === 'string') {
-        errorResponse.message = errorData;
-      } else if (errorData.message) {
-        errorResponse.message = errorData.message;
-      } else if (errorData.error) {
-        errorResponse.message = errorData.error;
-      }
-      if (errorData.errors) errorResponse.errors = errorData.errors;
-    }
-    
-    return Promise.reject(errorResponse);
-  }
-);
+createResponseInterceptor(listingsApi, "Listings API");
 
 export const listingsAPI = {
   getMyListings: () => {
@@ -431,7 +423,7 @@ const messagesApi = axios.create({
   withCredentials: true,
 });
 
-// Apply same interceptors
+// Apply shared interceptors
 messagesApi.interceptors.request.use(
   (config) => {
     console.log(`🚀 Messages Request: ${config.method.toUpperCase()} ${config.url}`);
@@ -439,46 +431,7 @@ messagesApi.interceptors.request.use(
   },
   (error) => Promise.reject(error)
 );
-
-// ==================== FIXED: Messages API response interceptor ====================
-messagesApi.interceptors.response.use(
-  (response) => response,
-  async (error) => {
-    const originalRequest = error.config;
-    
-    if (error.response?.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true;
-      try {
-        await axios.post(`${API_URL}/refresh`, {}, { withCredentials: true });
-        return messagesApi(originalRequest);
-      } catch (refreshError) {
-        console.error("Messages API token refresh failed:", refreshError.message);
-        return Promise.reject(refreshError);
-      }
-    }
-    
-    // Transform error response
-    let errorResponse = {
-      success: false,
-      message: "An error occurred",
-      status: error.response?.status || 500
-    };
-
-    if (error.response?.data) {
-      const errorData = error.response.data;
-      if (typeof errorData === 'string') {
-        errorResponse.message = errorData;
-      } else if (errorData.message) {
-        errorResponse.message = errorData.message;
-      } else if (errorData.error) {
-        errorResponse.message = errorData.error;
-      }
-      if (errorData.errors) errorResponse.errors = errorData.errors;
-    }
-    
-    return Promise.reject(errorResponse);
-  }
-);
+createResponseInterceptor(messagesApi, "Messages API");
 
 export const messagesAPI = {
   getConversations: () => {

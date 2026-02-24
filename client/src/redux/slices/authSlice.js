@@ -788,22 +788,26 @@ const authSlice = createSlice({
 
       // ==================== NEW: Check Auth ====================
       .addCase(checkAuth.pending, (state) => {
-        state.loading = true;
+        // Don't set loading=true — this runs in background
         state.error = null;
       })
       .addCase(checkAuth.fulfilled, (state, action) => {
-        state.loading = false;
         if (action.payload.isAuthenticated) {
           state.user = action.payload.user;
-        } else {
+        }
+        // If isAuthenticated is false AND we don't have a user, that's fine.
+        // But if we DO have a user in state, don't clear it — the access token
+        // might have expired and checkAuth couldn't refresh. The interceptor
+        // will handle refresh on next API call.
+        if (!action.payload.isAuthenticated && !state.user) {
           state.user = null;
         }
         state.token = null; // Always null
       })
       .addCase(checkAuth.rejected, (state) => {
-        state.loading = false;
-        state.user = null;
-        state.token = null;
+        // DON'T clear user on network errors — only clear if we're sure
+        // the session is truly invalid. Network hiccups shouldn't log out.
+        console.warn("checkAuth failed — keeping current user state");
       })
 
       // ==================== NEW: Get Sessions ====================
@@ -837,19 +841,18 @@ const authSlice = createSlice({
 
       // ==================== NEW: Refresh Token ====================
       .addCase(refreshToken.pending, (state) => {
-        state.loading = true;
+        // Don't set loading=true for background refresh — it causes UI flicker
         state.error = null;
       })
       .addCase(refreshToken.fulfilled, (state) => {
-        state.loading = false;
         // Token refreshed successfully - no state change needed
         // New token is in HTTP-only cookie
       })
       .addCase(refreshToken.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
-        // If refresh fails, user might need to login again
-        state.user = null;
+        // DON'T clear user here — the refresh might have failed due to a
+        // transient network error. Only clear user if we know for sure the
+        // refresh token is invalid (the API interceptor handles redirect).
+        console.warn("Token refresh rejected:", action.payload);
       });
   },
 });

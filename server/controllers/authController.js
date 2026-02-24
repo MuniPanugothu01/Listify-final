@@ -105,7 +105,7 @@ const setTokenCookies = (res, accessToken, refreshToken) => {
     secure: isProduction,
     sameSite: isProduction ? "strict" : "lax",
     maxAge: 7 * 24 * 60 * 60 * 1000,
-    path: "/api/auth/refresh",
+    path: "/api/auth",
     domain: isProduction ? process.env.COOKIE_DOMAIN : undefined,
   });
 
@@ -136,7 +136,7 @@ const clearTokenCookies = (res) => {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
-    path: "/api/auth/refresh",
+    path: "/api/auth",
   });
 
   res.clearCookie("tokenExists", {
@@ -170,7 +170,7 @@ const verifyRefreshToken = async (refreshToken) => {
       return null;
     }
 
-    const session = JSON.parse(tokenData);
+    const session = typeof tokenData === 'string' ? JSON.parse(tokenData) : tokenData;
 
     if (session.refreshToken !== refreshToken) {
       return null;
@@ -200,7 +200,7 @@ const revokeRefreshToken = async (refreshToken) => {
 
     const tokenData = await redis.get(`refresh_token:${decoded.jti}`);
     if (tokenData) {
-      const session = JSON.parse(tokenData);
+      const session = typeof tokenData === 'string' ? JSON.parse(tokenData) : tokenData;
       await redis.srem(`user_sessions:${session.userId}`, decoded.jti);
     }
 

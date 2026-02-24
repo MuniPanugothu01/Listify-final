@@ -6,6 +6,7 @@ import {
   useLocation,
 } from "react-router-dom";
 import { GoogleOAuthProvider } from "@react-oauth/google";
+import { useTokenRefresh } from "./hooks/useTokenRefresh";
 
 // Import Loading Spinner Component
 import LoadingSpinner from "./components/LoadingSpinner.jsx"; // Make sure path is correct
@@ -119,6 +120,10 @@ const AppContent = () => {
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const location = useLocation();
+
+  // Proactive background token refresh — keeps the user logged in
+  // as long as the refresh token (7 days) is valid
+  useTokenRefresh();
 
   // Initial app loading
   useEffect(() => {

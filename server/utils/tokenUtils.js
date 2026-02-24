@@ -118,7 +118,7 @@ const verifyRefreshToken = async (refreshToken) => {
       return null;
     }
 
-    const session = JSON.parse(tokenData);
+    const session = typeof tokenData === 'string' ? JSON.parse(tokenData) : tokenData;
     
     // Verify token matches stored token
     if (session.refreshToken !== refreshToken) {
@@ -171,7 +171,7 @@ const revokeRefreshToken = async (refreshToken) => {
     const tokenData = await redis.get(`refresh_token:${decoded.jti}`);
     
     if (tokenData) {
-      const session = JSON.parse(tokenData);
+      const session = typeof tokenData === 'string' ? JSON.parse(tokenData) : tokenData;
       
       // Remove from user sessions set in Redis
       await redis.srem(`user_sessions:${session.userId}`, decoded.jti);
@@ -281,7 +281,7 @@ const getUserSessions = async (userId) => {
     for (const tokenId of tokenIds) {
       const tokenData = await redis.get(`refresh_token:${tokenId}`);
       if (tokenData) {
-        const session = JSON.parse(tokenData);
+        const session = typeof tokenData === 'string' ? JSON.parse(tokenData) : tokenData;
         sessions.push({
           tokenId: session.tokenId,
           createdAt: session.createdAt,
@@ -313,14 +313,14 @@ const setRefreshTokenCookie = (res, refreshToken) => {
     secure: isProduction,  // HTTPS only in production
     sameSite: isProduction ? 'strict' : 'lax',
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-    path: '/api/auth/refresh', // Only sent to refresh endpoint
+    path: '/api/auth', // Sent to all auth endpoints (refresh, check, logout)
     domain: isProduction ? process.env.COOKIE_DOMAIN : undefined
   });
 
   logger.debug('🍪 Refresh token cookie set', {
     secure: isProduction,
     sameSite: isProduction ? 'strict' : 'lax',
-    path: '/api/auth/refresh'
+    path: '/api/auth'
   });
 };
 
@@ -333,7 +333,7 @@ const clearRefreshTokenCookie = (res) => {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
-    path: '/api/auth/refresh'
+    path: '/api/auth'
   });
 
   logger.debug('🍪 Refresh token cookie cleared');
