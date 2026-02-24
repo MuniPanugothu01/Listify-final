@@ -2,12 +2,6 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 
-// Mock user
-const MOCK_USER = {
-  name: "Demo User",
-  email: "demo@example.com",
-  id: "demo-123",
-};
 
 const CATEGORIES = [
   "Electronics",
