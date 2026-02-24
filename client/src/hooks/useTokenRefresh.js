@@ -1,8 +1,6 @@
 import { useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
-import axios from "axios";
-
-const API_URL = "http://localhost:5000/api/auth";
+import { doRefresh } from "../services/api";
 
 // Refresh the access token every 12 minutes (access token expires in 15 min)
 const REFRESH_INTERVAL = 12 * 60 * 1000; // 12 minutes
@@ -29,18 +27,8 @@ export const useTokenRefresh = () => {
 
     const refreshAccessToken = async () => {
       try {
-        const response = await axios.post(
-          `${API_URL}/refresh`,
-          {},
-          {
-            withCredentials: true,
-            timeout: 10000,
-          }
-        );
-
-        if (response.status === 200) {
-          console.log("🔄 Background token refresh successful");
-        }
+        await doRefresh();
+        console.log("🔄 Background token refresh successful");
       } catch (error) {
         // Don't log out on transient errors — the interceptor handles
         // actual session expiration on the next real API call.

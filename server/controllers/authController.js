@@ -341,7 +341,7 @@ const sendTokenResponse = async (user, statusCode, res, message) => {
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
-    logger.info("🔍 Login attempt for:", email);
+    logger.info("🔍 Login attempt for:", { email });
 
     if (!email || !password) {
       return res.status(400).json({

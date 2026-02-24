@@ -77,18 +77,10 @@ export const handle401 = async (error, axiosInstance) => {
   isRefreshing = true;
 
   try {
-    console.log("🔄 Attempting to refresh token...");
-    const refreshResponse = await axios.post(
-      `${API_URL}/refresh`,
-      {},
-      { withCredentials: true, timeout: 10000 }
-    );
-
-    if (refreshResponse.status === 200) {
-      console.log("✅ Token refreshed successfully, retrying queued requests");
-      processQueue(null);
-      return axiosInstance(originalRequest);
-    }
+    await _doRefreshRequest();
+    console.log("✅ Token refreshed successfully, retrying queued requests");
+    processQueue(null);
+    return axiosInstance(originalRequest);
   } catch (refreshError) {
     console.error("❌ Token refresh failed:", refreshError.message);
     processQueue(refreshError);
@@ -119,6 +111,46 @@ export const handle401 = async (error, axiosInstance) => {
   } finally {
     isRefreshing = false;
   }
+};
+
+/**
+ * Internal helper — makes the actual refresh POST request.
+ * Shared between handle401 and doRefresh so there's only one code-path.
+ */
+const _doRefreshRequest = () =>
+  axios.post(
+    `${API_URL}/refresh`,
+    {},
+    { withCredentials: true, timeout: 10000 }
+  );
+
+/**
+ * Proactive refresh — call from useTokenRefresh or anywhere else.
+ * Uses the same isRefreshing / failedQueue as handle401 so that
+ * a background refresh never races with a 401-triggered refresh.
+ */
+export const doRefresh = () => {
+  if (isRefreshing) {
+    // A refresh is already in flight — just wait for it
+    return new Promise((resolve, reject) => {
+      failedQueue.push({ resolve, reject });
+    });
+  }
+
+  isRefreshing = true;
+
+  return _doRefreshRequest()
+    .then((res) => {
+      processQueue(null);
+      return res;
+    })
+    .catch((err) => {
+      processQueue(err);
+      throw err;
+    })
+    .finally(() => {
+      isRefreshing = false;
+    });
 };
 
 /**

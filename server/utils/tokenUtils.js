@@ -341,11 +341,48 @@ const clearRefreshTokenCookie = (res) => {
 
 /**
  * Refresh access token using refresh token (Token Rotation)
+ * Uses a Redis lock (SETNX) to prevent concurrent refreshes
+ * from racing and creating orphaned tokens.
  * @param {string} refreshToken - JWT refresh token
  * @returns {Promise<Object|null>} New tokens or null if failed
  */
 const refreshTokens = async (refreshToken) => {
+  let lockKey = null;
   try {
+    // Decode to get jti for the lock key
+    const decodedJwt = jwt.decode(refreshToken);
+    if (!decodedJwt?.jti) return null;
+
+    lockKey = `refresh_lock:${decodedJwt.jti}`;
+
+    // Acquire a short-lived lock so only the first request proceeds.
+    // SETNX returns 1 if the key was set (lock acquired), 0 if it already existed.
+    const lockAcquired = await redis.set(lockKey, '1', { ex: 10, nx: true });
+
+    if (!lockAcquired) {
+      // Another request is already refreshing this exact token.
+      // Wait briefly and return the new tokens that the winner stored.
+      logger.info('🔒 Refresh lock exists — waiting for first request to finish', {
+        jti: decodedJwt.jti,
+      });
+
+      // Wait up to 5 seconds for the first request to complete
+      for (let i = 0; i < 10; i++) {
+        await new Promise((r) => setTimeout(r, 500));
+        const lockStillExists = await redis.get(lockKey);
+        if (!lockStillExists) break;
+      }
+
+      // The first request already rotated the token and the browser now has
+      // new cookies from that winning response. We can't return the new tokens
+      // here (the new refresh token is only in the cookie set by the first response),
+      // so return null. The client's shared queue ensures only one request actually
+      // triggers the refresh and all others just retry with the new access token.
+      return null;
+    }
+
+    // --- Lock acquired: proceed with rotation ---
+
     // Verify refresh token in Redis
     const session = await verifyRefreshToken(refreshToken);
     if (!session) {
@@ -364,7 +401,7 @@ const refreshTokens = async (refreshToken) => {
 
     logger.info('🔄 Token rotation complete', { 
       userId: session.userId,
-      oldToken: jwt.decode(refreshToken).jti,
+      oldToken: decodedJwt.jti,
       newToken: jwt.decode(newRefreshToken).jti
     });
 
@@ -375,6 +412,11 @@ const refreshTokens = async (refreshToken) => {
   } catch (error) {
     logger.error('❌ Error refreshing tokens:', error);
     return null;
+  } finally {
+    // Release the lock
+    if (lockKey) {
+      await redis.del(lockKey).catch(() => {});
+    }
   }
 };
 
