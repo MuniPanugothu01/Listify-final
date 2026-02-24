@@ -1,45 +1,67 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { toast } from 'react-hot-toast';
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-hot-toast";
 
 // Mock user
 const MOCK_USER = {
-  name: 'Demo User',
-  email: 'demo@example.com',
-  id: 'demo-123'
+  name: "Demo User",
+  email: "demo@example.com",
+  id: "demo-123",
 };
 
 const CATEGORIES = [
-  'Electronics',
-  'Vehicles',
-  'Mobiles',
-  'Furniture',
-  'Fashion',
-  'Books, Sports'
+  "Electronics",
+  "Vehicles",
+  "Mobiles",
+  "Furniture",
+  "Fashion",
+  "Books, Sports",
 ];
 
 const SUBCATEGORIES = {
-  'Electronics': [
-    'TVs, Video - Audio',
-    'Kitchen & Other Appliances',
-    'Fridges',
-    'Washing Machines',
-    'ACs',
-    'Computers & Laptops',
-    'Computer Accessories',
-    'Hard Disks, Printers & Monitors',
-    'Cameras & Lenses'
+  Electronics: [
+    "TVs, Video - Audio",
+    "Kitchen & Other Appliances",
+    "Fridges",
+    "Washing Machines",
+    "ACs",
+    "Computers & Laptops",
+    "Computer Accessories",
+    "Hard Disks, Printers & Monitors",
+    "Cameras & Lenses",
   ],
-  'Vehicles': ['Cars', 'Motorcycles', 'Scooters', 'Bicycles', 'Spare Parts'],
-  'Mobiles': ['Mobile Phones', 'Accessories', 'Tablets'],
-  'Furniture': ['Sofas & Dining', 'Beds & Wardrobes', 'Tables & Chairs', 'Home Decor', 'Office Furniture'],
-  'Fashion': ["Men's Clothing", "Women's Clothing", 'Kids Clothing', 'Footwear', 'Watches', 'Accessories'],
-  'Books, Sports': ['Books', 'Gym & Fitness', 'Sports Equipment', 'Musical Instruments', 'Hobbies', 'Cycling']
+  Vehicles: ["Cars", "Motorcycles", "Scooters", "Bicycles", "Spare Parts"],
+  Mobiles: ["Mobile Phones", "Accessories", "Tablets"],
+  Furniture: [
+    "Sofas & Dining",
+    "Beds & Wardrobes",
+    "Tables & Chairs",
+    "Home Decor",
+    "Office Furniture",
+  ],
+  Fashion: [
+    "Men's Clothing",
+    "Women's Clothing",
+    "Kids Clothing",
+    "Footwear",
+    "Watches",
+    "Accessories",
+  ],
+  "Books, Sports": [
+    "Books",
+    "Gym & Fitness",
+    "Sports Equipment",
+    "Musical Instruments",
+    "Hobbies",
+    "Cycling",
+  ],
 };
 
 const Field = ({ label, error, children }) => (
   <div>
-    <label className="block text-sm font-medium text-slate-700 mb-1.5">{label}</label>
+    <label className="block text-sm font-medium text-slate-700 mb-1.5">
+      {label}
+    </label>
     {children}
     {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
   </div>
@@ -49,14 +71,14 @@ const PostAdPage = () => {
   const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedSubcategory, setSelectedSubcategory] = useState(null);
-  const [mobileView, setMobileView] = useState('categories'); // 'categories' or 'subcategories'
+  const [mobileView, setMobileView] = useState("categories"); // 'categories' or 'subcategories'
 
   const [form, setForm] = useState({
-    title: '',
-    description: '',
-    price: '',
-    location: '',
-    phone: '',
+    title: "",
+    description: "",
+    price: "",
+    location: "",
+    phone: "",
     images: [],
   });
 
@@ -64,15 +86,16 @@ const PostAdPage = () => {
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
-  const setField = (field) => (e) => setForm(f => ({ ...f, [field]: e.target.value }));
+  const setField = (field) => (e) =>
+    setForm((f) => ({ ...f, [field]: e.target.value }));
 
   const handleFiles = (e) => {
     const files = Array.from(e.target.files);
-    setForm(f => ({ ...f, images: [...f.images, ...files].slice(0, 6) }));
+    setForm((f) => ({ ...f, images: [...f.images, ...files].slice(0, 6) }));
   };
 
   const removeImage = (index) => {
-    setForm(f => ({ ...f, images: f.images.filter((_, i) => i !== index) }));
+    setForm((f) => ({ ...f, images: f.images.filter((_, i) => i !== index) }));
   };
 
   const handleCategorySelect = (category) => {
@@ -80,14 +103,14 @@ const PostAdPage = () => {
     setSelectedSubcategory(null);
     // On mobile, switch to subcategories view
     if (window.innerWidth < 1024) {
-      setMobileView('subcategories');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      setMobileView("subcategories");
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
 
   const handleBackToCategories = () => {
-    setMobileView('categories');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setMobileView("categories");
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleSubcategorySelect = (subcategory) => {
@@ -101,32 +124,35 @@ const PostAdPage = () => {
       title: form.title.trim(),
       description: form.description.trim(),
       location: form.location.trim(),
-      phone: form.phone.replace(/[\s-]/g, ''),
+      phone: form.phone.replace(/[\s-]/g, ""),
     };
 
-    if (!trimmed.title) errs.title = 'Title is required';
-    if (!selectedCategory) errs.category = 'Please select a category';
-    if (!selectedSubcategory) errs.subcategory = 'Please select a subcategory';
-    if (!form.price || isNaN(form.price) || Number(form.price) <= 0) errs.price = 'Enter a valid price';
-    if (trimmed.description.length < 20) errs.description = 'Description must be at least 20 characters';
-    if (!trimmed.location) errs.location = 'Location is required';
-    if (!trimmed.phone || !/^\d{10}$/.test(trimmed.phone)) errs.phone = 'Enter a valid 10-digit phone number';
+    if (!trimmed.title) errs.title = "Title is required";
+    if (!selectedCategory) errs.category = "Please select a category";
+    if (!selectedSubcategory) errs.subcategory = "Please select a subcategory";
+    if (!form.price || isNaN(form.price) || Number(form.price) <= 0)
+      errs.price = "Enter a valid price";
+    if (trimmed.description.length < 20)
+      errs.description = "Description must be at least 20 characters";
+    if (!trimmed.location) errs.location = "Location is required";
+    if (!trimmed.phone || !/^\d{10}$/.test(trimmed.phone))
+      errs.phone = "Enter a valid 10-digit phone number";
 
-    setForm(f => ({ ...f, ...trimmed }));
+    setForm((f) => ({ ...f, ...trimmed }));
     setErrors(errs);
     return Object.keys(errs).length === 0;
   };
 
   const saveLocalProduct = (product) => {
-    const existing = JSON.parse(localStorage.getItem('localProducts') || '[]');
+    const existing = JSON.parse(localStorage.getItem("localProducts") || "[]");
     existing.push(product);
-    localStorage.setItem('localProducts', JSON.stringify(existing));
+    localStorage.setItem("localProducts", JSON.stringify(existing));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!validate()) {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.scrollTo({ top: 0, behavior: "smooth" });
       return;
     }
 
@@ -140,39 +166,61 @@ const PostAdPage = () => {
       subcategory: selectedSubcategory,
       description: form.description,
       location: form.location,
-      seller: { name: MOCK_USER.name, rating: 5.0, since: '2026' },
-      images: form.images.length > 0 ? form.images.map(img => URL.createObjectURL(img)) : ['https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&q=80'],
-      postedAt: new Date().toISOString().split('T')[0],
-      featured: false
+      seller: { name: MOCK_USER.name, rating: 5.0, since: "2026" },
+      images:
+        form.images.length > 0
+          ? form.images.map((img) => URL.createObjectURL(img))
+          : [
+              "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&q=80",
+            ],
+      postedAt: new Date().toISOString().split("T")[0],
+      featured: false,
     };
 
     setTimeout(() => {
       saveLocalProduct(newProduct);
       setLoading(false);
       setSubmitted(true);
-      toast.success('Listing posted successfully!');
+      toast.success("Listing posted successfully!");
     }, 1500);
   };
 
   const resetForm = () => {
     setSubmitted(false);
-    setForm({title:'', description:'', price:'', location:'', phone:'', images:[]});
+    setForm({
+      title: "",
+      description: "",
+      price: "",
+      location: "",
+      phone: "",
+      images: [],
+    });
     setSelectedCategory(null);
     setSelectedSubcategory(null);
-    setMobileView('categories');
+    setMobileView("categories");
   };
 
   if (submitted) {
     return (
       <div className="min-h-[60vh] flex flex-col items-center justify-center gap-6 text-center px-4 page-enter">
-        <div className="w-20 h-20 rounded-full bg-emerald-100 flex items-center justify-center text-4xl">🎉</div>
-        <h2 className="text-2xl font-bold text-slate-900">Ad Posted Successfully!</h2>
+        <div className="w-20 h-20 rounded-full bg-emerald-100 flex items-center justify-center text-4xl">
+          🎉
+        </div>
+        <h2 className="text-2xl font-bold text-slate-900">
+          Ad Posted Successfully!
+        </h2>
         <p className="text-slate-500 max-w-sm">Your listing is now live.</p>
         <div className="flex gap-3">
-          <button onClick={resetForm} className="px-6 py-3 border border-slate-200 text-slate-700 font-semibold rounded-xl hover:bg-slate-50 transition-all">
+          <button
+            onClick={resetForm}
+            className="px-6 py-3 border border-slate-200 text-slate-700 font-semibold rounded-xl hover:bg-slate-50 transition-all"
+          >
             Post Another
           </button>
-          <button onClick={() => navigate('/')} className="px-6 py-3 bg-gradient-to-r from-[#27BB97] to-[#1fa987] text-white font-semibold rounded-xl hover:shadow-lg hover:shadow-[#27BB97]/20 transition-all">
+          <button
+            onClick={() => navigate("/")}
+            className="px-6 py-3 bg-gradient-to-r from-[#27BB97] to-[#1fa987] text-white font-semibold rounded-xl hover:shadow-lg hover:shadow-[#27BB97]/20 transition-all"
+          >
             Go to Home
           </button>
         </div>
@@ -198,9 +246,22 @@ const PostAdPage = () => {
               </Link>
               <div className="flex items-center gap-2">
                 <span className="text-sm text-slate-500 mr-2">Back</span>
-                <button onClick={() => navigate(-1)} className="w-9 h-9 flex items-center justify-center bg-slate-100 hover:bg-slate-200 rounded-xl transition-colors">
-                  <svg className="w-5 h-5 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <button
+                  onClick={() => navigate(-1)}
+                  className="w-9 h-9 flex items-center justify-center bg-slate-100 hover:bg-slate-200 rounded-xl transition-colors"
+                >
+                  <svg
+                    className="w-5 h-5 text-slate-600"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
                   </svg>
                 </button>
               </div>
@@ -213,46 +274,65 @@ const PostAdPage = () => {
             {/* Header with back arrow */}
             <div className="flex items-center gap-4 mb-6">
               {/* Back arrow - visible on mobile when in subcategories, on desktop always visible */}
-              {(mobileView === 'subcategories' || window.innerWidth >= 1024) && selectedCategory && (
-                <button
-                  onClick={handleBackToCategories}
-                  className="p-2 -ml-2 hover:bg-slate-100 rounded-lg transition lg:block"
-                  aria-label="Back to categories"
-                >
-                  <svg className="w-6 h-6 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                  </svg>
-                </button>
-              )}
+              {(mobileView === "subcategories" || window.innerWidth >= 1024) &&
+                selectedCategory && (
+                  <button
+                    onClick={handleBackToCategories}
+                    className="p-2 -ml-2 hover:bg-slate-100 rounded-lg transition lg:block"
+                    aria-label="Back to categories"
+                  >
+                    <svg
+                      className="w-6 h-6 text-slate-600"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M15 19l-7-7 7-7"
+                      />
+                    </svg>
+                  </button>
+                )}
               <div>
-                <h1 className="text-3xl font-black text-slate-900">Post Your Ad</h1>
+                <h1 className="text-3xl font-black text-slate-900">
+                  Post Your Ad
+                </h1>
                 <p className="text-slate-500 mt-1">
-                  {selectedCategory 
-                    ? `Choose a subcategory for ${selectedCategory}` 
-                    : 'Choose a category to continue'}
+                  {selectedCategory
+                    ? `Choose a subcategory for ${selectedCategory}`
+                    : "Choose a category to continue"}
                 </p>
               </div>
             </div>
 
             {/* Desktop Headers */}
             <div className="hidden lg:grid lg:grid-cols-2 gap-6">
-              <h2 className="text-lg font-semibold text-slate-800">SELECT CATEGORY</h2>
               <h2 className="text-lg font-semibold text-slate-800">
-                {selectedCategory ? 'SELECT SUBCATEGORY' : 'SUBCATEGORIES'}
+                SELECT CATEGORY
+              </h2>
+              <h2 className="text-lg font-semibold text-slate-800">
+                {selectedCategory ? "SELECT SUBCATEGORY" : "SUBCATEGORIES"}
               </h2>
             </div>
 
             {/* Mobile Header */}
             <div className="lg:hidden mb-4">
               <h2 className="text-lg font-semibold text-slate-800">
-                {mobileView === 'categories' ? 'SELECT CATEGORY' : `SELECT SUBCATEGORY`}
+                {mobileView === "categories"
+                  ? "SELECT CATEGORY"
+                  : `SELECT SUBCATEGORY`}
               </h2>
             </div>
 
             {/* Categories and Subcategories Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-4">
               {/* Categories - Always visible on desktop, conditionally on mobile */}
-              <div className={`${mobileView === 'categories' ? 'block' : 'hidden lg:block'}`}>
+              <div
+                className={`${mobileView === "categories" ? "block" : "hidden lg:block"}`}
+              >
                 <div className="space-y-1 max-h-[480px] overflow-y-auto pr-2">
                   {CATEGORIES.map((cat) => (
                     <button
@@ -260,17 +340,21 @@ const PostAdPage = () => {
                       type="button"
                       onClick={() => handleCategorySelect(cat)}
                       className={`w-full flex items-center justify-between px-4 py-3.5 border-b border-slate-200 hover:bg-slate-50 transition text-left
-                        ${selectedCategory === cat ? 'bg-[#27BB97]/10 font-medium text-[#27BB97]' : ''}`}
+                        ${selectedCategory === cat ? "bg-[#27BB97]/10 font-medium text-[#27BB97]" : ""}`}
                     >
                       <span>{cat}</span>
-                      <span className="text-slate-400 text-xl lg:hidden">›</span>
+                      <span className="text-slate-400 text-xl lg:hidden">
+                        ›
+                      </span>
                     </button>
                   ))}
                 </div>
               </div>
 
               {/* Subcategories - Always visible on desktop, conditionally on mobile */}
-              <div className={`${mobileView === 'subcategories' ? 'block' : 'hidden lg:block'} lg:border-l border-slate-200 lg:pl-6`}>
+              <div
+                className={`${mobileView === "subcategories" ? "block" : "hidden lg:block"} lg:border-l border-slate-200 lg:pl-6`}
+              >
                 {selectedCategory ? (
                   <div className="space-y-1 max-h-[480px] overflow-y-auto">
                     {SUBCATEGORIES[selectedCategory]?.map((sub) => (
@@ -279,7 +363,7 @@ const PostAdPage = () => {
                         type="button"
                         onClick={() => handleSubcategorySelect(sub)}
                         className={`w-full px-4 py-3.5 border-b border-slate-200 hover:bg-slate-50 transition text-left
-                          ${selectedSubcategory === sub ? 'bg-[#27BB97]/10 font-medium text-[#27BB97]' : ''}`}
+                          ${selectedSubcategory === sub ? "bg-[#27BB97]/10 font-medium text-[#27BB97]" : ""}`}
                       >
                         {sub}
                       </button>
@@ -315,9 +399,22 @@ const PostAdPage = () => {
             </Link>
             <div className="flex items-center gap-2">
               <span className="text-sm text-slate-500 mr-2">Back</span>
-              <button onClick={() => navigate(-1)} className="w-9 h-9 flex items-center justify-center bg-slate-100 hover:bg-slate-200 rounded-xl transition-colors">
-                <svg className="w-5 h-5 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              <button
+                onClick={() => navigate(-1)}
+                className="w-9 h-9 flex items-center justify-center bg-slate-100 hover:bg-slate-200 rounded-xl transition-colors"
+              >
+                <svg
+                  className="w-5 h-5 text-slate-600"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
               </button>
             </div>
@@ -335,17 +432,29 @@ const PostAdPage = () => {
                 onClick={() => {
                   setSelectedCategory(null);
                   setSelectedSubcategory(null);
-                  setMobileView('categories');
+                  setMobileView("categories");
                 }}
                 className="p-2 -ml-2 hover:bg-slate-100 rounded-lg transition"
                 aria-label="Back to categories"
               >
-                <svg className="w-6 h-6 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                <svg
+                  className="w-6 h-6 text-slate-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M15 19l-7-7 7-7"
+                  />
                 </svg>
               </button>
               <div>
-                <h1 className="text-3xl font-black text-slate-900">Post Your Ad</h1>
+                <h1 className="text-3xl font-black text-slate-900">
+                  Post Your Ad
+                </h1>
                 <div className="flex items-center gap-2 mt-2">
                   <span className="text-sm bg-slate-100 px-3 py-1.5 rounded-lg text-slate-700">
                     {selectedCategory}
@@ -364,7 +473,7 @@ const PostAdPage = () => {
               <input
                 type="text"
                 value={form.title}
-                onChange={setField('title')}
+                onChange={setField("title")}
                 placeholder="e.g., iPhone 14 Pro Max 256GB"
                 className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:border-[#27BB97] focus:ring-2 focus:ring-[#27BB97]/20 outline-none transition"
               />
@@ -372,11 +481,13 @@ const PostAdPage = () => {
 
             <Field label="Price (₹) *" error={errors.price}>
               <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-medium">₹</span>
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-medium">
+                  ₹
+                </span>
                 <input
                   type="number"
                   value={form.price}
-                  onChange={setField('price')}
+                  onChange={setField("price")}
                   placeholder="0"
                   className="w-full pl-8 pr-4 py-3 border border-slate-200 rounded-lg focus:border-[#27BB97] focus:ring-2 focus:ring-[#27BB97]/20 outline-none transition"
                   min="1"
@@ -387,19 +498,21 @@ const PostAdPage = () => {
             <Field label="Description *" error={errors.description}>
               <textarea
                 value={form.description}
-                onChange={setField('description')}
+                onChange={setField("description")}
                 placeholder="Describe your item in detail — include brand, model, age, any damage, reason for selling…"
                 rows={4}
                 className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:border-[#27BB97] focus:ring-2 focus:ring-[#27BB97]/20 outline-none transition resize-none"
               />
-              <p className="text-xs text-slate-400 mt-1">{form.description.length} / 20 minimum characters</p>
+              <p className="text-xs text-slate-400 mt-1">
+                {form.description.length} / 20 minimum characters
+              </p>
             </Field>
 
             <Field label="Location *" error={errors.location}>
               <input
                 type="text"
                 value={form.location}
-                onChange={setField('location')}
+                onChange={setField("location")}
                 placeholder="e.g., Kukatpally, Hyderabad"
                 className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:border-[#27BB97] focus:ring-2 focus:ring-[#27BB97]/20 outline-none transition"
               />
@@ -407,11 +520,13 @@ const PostAdPage = () => {
 
             <Field label="Phone Number *" error={errors.phone}>
               <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium">+91</span>
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium">
+                  +91
+                </span>
                 <input
                   type="tel"
                   value={form.phone}
-                  onChange={setField('phone')}
+                  onChange={setField("phone")}
                   placeholder="9999999999"
                   maxLength={10}
                   className="w-full pl-12 pr-4 py-3 border border-slate-200 rounded-lg focus:border-[#27BB97] focus:ring-2 focus:ring-[#27BB97]/20 outline-none transition"
@@ -444,10 +559,10 @@ const PostAdPage = () => {
 
                 {form.images.length < 6 && (
                   <label className="flex flex-col items-center justify-center border-2 border-dashed border-slate-200 rounded-xl h-32 cursor-pointer hover:border-[#27BB97] hover:bg-[#27BB97]/5 transition-all">
-                    <input 
-                      type="file" 
-                      accept="image/*" 
-                      onChange={handleFiles} 
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleFiles}
                       className="hidden"
                       multiple
                     />
@@ -459,7 +574,8 @@ const PostAdPage = () => {
                 )}
 
                 <p className="text-xs text-slate-400">
-                  You can upload up to 6 images. First image will be the cover photo.
+                  You can upload up to 6 images. First image will be the cover
+                  photo.
                 </p>
               </div>
             </Field>
@@ -471,14 +587,29 @@ const PostAdPage = () => {
             >
               {loading ? (
                 <span className="flex items-center justify-center gap-2">
-                  <svg className="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                  <svg
+                    className="animate-spin h-5 w-5 text-white"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    />
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    />
                   </svg>
                   Processing listing…
                 </span>
               ) : (
-                'Post Ad for Free →'
+                "Post Ad for Free →"
               )}
             </button>
           </form>
