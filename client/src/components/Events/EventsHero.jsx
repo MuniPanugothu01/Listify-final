@@ -97,7 +97,7 @@ export default function EventsHero() {
   };
 
   return (
-    <div className="relative h-[300px] sm:h-[300px] md:h-[300px] lg:h-[300px] overflow-hidden">
+    <div className="relative h-[300px] sm:h-[300px] md:h-[300px] lg:h-[300px] overflow-hidden mt-16 md:mt-16 lg:mt-18">
       {/* Carousel Container */}
       <div className="">
         {carouselItems.map((item, index) => {
