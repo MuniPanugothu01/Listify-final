@@ -301,18 +301,28 @@ const ElectronicsDetail = () => {
               <p className="text-gray-600 leading-relaxed">
                 {product.description}
               </p>
-              
-              <div className="mt-6 pt-6 border-t border-gray-100">
-                <h4 className="text-lg font-semibold mb-3">Key Features</h4>
-                <ul className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  {product.features.map((feature, index) => (
-                    <li key={index} className="flex items-center">
-                      <Check className="w-5 h-5 text-[#27bb97] mr-3 flex-shrink-0" />
-                      <span className="text-gray-700">{feature}</span>
-                    </li>
+
+                  {/* Specifications */}
+              {/* <div className="bg-white rounded-lg shadow-sm p-6">
+                <h3 className="text-lg font-bold mb-4 tracking-wider text-gray-700">
+                  SPECIFICATIONS
+                </h3>
+                <div className="grid grid-cols-2 gap-y-4">
+                  {getProductSpecs().map((spec, index) => (
+                    <div key={index} className="flex items-center gap-3">
+                      <div className="w-10 h-10 flex items-center justify-center bg-gray-50 rounded-lg">
+                        {spec.icon}
+                      </div>
+                      <div>
+                        <div className="text-xs text-gray-500">{spec.label}</div>
+                        <div className="text-sm font-medium text-gray-700">{spec.value}</div>
+                      </div>
+                    </div>
                   ))}
-                </ul>
-              </div>
+                </div>
+              </div> */}
+              
+
             </div>
           </div>
 
@@ -337,54 +347,13 @@ const ElectronicsDetail = () => {
                 {/* Condition & Location */}
                 <div className="flex items-center gap-4 text-gray-600 mb-6">
                   <div className="flex items-center">
-                    <Shield className="w-4 h-4 mr-1.5" />
-                    <span className="font-medium">{product.condition}</span>
-                  </div>
-                  <div className="flex items-center">
                     <MapPin className="w-4 h-4 mr-1.5" />
                     <span>{product.location}</span>
                   </div>
                 </div>
 
-                {/* Quantity Selector */}
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                      className="w-10 h-10 rounded-full border-2 border-gray-300 flex items-center justify-center hover:border-gray-400 transition"
-                    >
-                      <FaMinus className="w-3.5 h-3.5 text-gray-600" />
-                    </button>
-                    <span className="text-xl font-semibold w-10 text-center">
-                      {quantity}
-                    </span>
-                    <button
-                      onClick={() => setQuantity(quantity + 1)}
-                      className="w-10 h-10 rounded-full border-2 border-gray-300 flex items-center justify-center hover:border-gray-400 transition"
-                    >
-                      <FaPlus className="w-3.5 h-3.5 text-gray-600" />
-                    </button>
-                  </div>
-                </div>
 
-                {/* Action Buttons */}
-                <div className="space-y-3">
-                  <button className="w-full py-4 bg-[#27bb97] hover:bg-[#1fa987] text-white rounded-lg font-semibold transition-all shadow-md hover:shadow-lg text-base uppercase">
-                    <MessageCircle className="w-5 h-5 inline mr-2" />
-                    Contact Seller
-                  </button>
-                  
-                  <div className="grid grid-cols-2 gap-3">
-                    <button className="py-3 bg-white border-2 border-gray-200 text-gray-700 rounded-lg font-medium hover:border-gray-300 transition-colors">
-                      Make Offer
-                    </button>
-                    <button className="py-3 bg-white border-2 border-[#27bb97] text-[#27bb97] rounded-lg font-medium hover:bg-[#27bb97]/5 transition-colors">
-                      Save Item
-                    </button>
-                  </div>
-                </div>
-              </div>
-
+                
                {/* Seller Info */}
               <div className="bg-white rounded-lg shadow-sm p-6">
                 <div className="flex items-center justify-between mb-4">
@@ -420,25 +389,25 @@ const ElectronicsDetail = () => {
                 </div>
               </div>
 
-              {/* Specifications */}
-              <div className="bg-white rounded-lg shadow-sm p-6">
-                <h3 className="text-lg font-bold mb-4 tracking-wider text-gray-700">
-                  SPECIFICATIONS
-                </h3>
-                <div className="grid grid-cols-2 gap-y-4">
-                  {getProductSpecs().map((spec, index) => (
-                    <div key={index} className="flex items-center gap-3">
-                      <div className="w-10 h-10 flex items-center justify-center bg-gray-50 rounded-lg">
-                        {spec.icon}
-                      </div>
-                      <div>
-                        <div className="text-xs text-gray-500">{spec.label}</div>
-                        <div className="text-sm font-medium text-gray-700">{spec.value}</div>
-                      </div>
-                    </div>
-                  ))}
+                {/* Action Buttons */}
+                <div className="space-y-3 mt-2">
+                  <button className="w-full py-4 bg-[#27bb97] hover:bg-[#1fa987] text-white rounded-lg font-semibold transition-all shadow-md hover:shadow-lg text-base uppercase">
+                    <MessageCircle className="w-5 h-5 inline mr-2" />
+                    Contact Seller
+                  </button>
+                  
+                  <div className="grid grid-cols-2 gap-3">
+                    <button className="py-3 bg-white border-2 border-gray-200 text-gray-700 rounded-lg font-medium hover:border-gray-300 transition-colors">
+                      Make Offer
+                    </button>
+                    <button className="py-3 bg-white border-2 border-[#27bb97] text-[#27bb97] rounded-lg font-medium hover:bg-[#27bb97]/5 transition-colors">
+                      Save Item
+                    </button>
+                  </div>
                 </div>
               </div>
+
+
             </div>
           </div>
         </div>
