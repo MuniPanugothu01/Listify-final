@@ -1,7 +1,6 @@
 import React from "react";
 import StatsCard from "./StatsCard";
 import RecentMessages from "./RecentMessages";
-import MyListings from "./MyListings";
 import MyAgenda from "./MyAgenda";
 import { Heart, FileText, Bell, TrendingUp, DollarSign } from "lucide-react";
 
@@ -71,18 +70,6 @@ const HomeSection = ({ savedHouses, myPosts, myAlerts, messages, agendaEvents, o
         <div className="lg:col-span-2 space-y-6">
           <RecentMessages messages={messages || []} />
         </div>
-        
-        {/* Right Column */}
-        <div className="hidden lg:block space-y-6">
-          <MyListings count={myPosts?.length || 0} onViewAll={() => onViewAll('posts')} />
-          <MyAgenda events={agendaEvents || {}} />
-        </div>
-      </div>
-
-      {/* Mobile Bottom Row */}
-      <div className="lg:hidden space-y-6 mt-6">
-        <MyListings count={myPosts?.length || 0} onViewAll={() => onViewAll('posts')} />
-        <MyAgenda events={agendaEvents || {}} />
       </div>
     </>
   );
