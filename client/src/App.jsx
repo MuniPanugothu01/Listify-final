@@ -52,7 +52,7 @@ import CareCenterServices from "./components/TakeCare/CareCenterServices/CareCen
 import Electronics from "./components/Electronics/Electronics.jsx";
 import ElectronicsDetail from "./components/Electronics/ElectronicsDetail.jsx";
 
-
+// Cars
 // For Sale
 import ForSale from "./components/ForSale/ForSale.jsx";
 import ForSaleDetail from "./components/ForSale/ForsaleDetail.jsx";
