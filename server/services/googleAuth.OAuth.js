@@ -1,4 +1,5 @@
-require("dotenv").config();
+const path = require("path");
+require("dotenv").config({ path: path.join(__dirname, "..", ".env") });
 const { OAuth2Client } = require("google-auth-library");
 const { logger } = require("../utils/logger");
 const User = require("../models/User");
