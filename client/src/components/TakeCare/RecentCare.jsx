@@ -11,7 +11,8 @@ const LatestMatches = () => {
       role: "Elder Care Provider / Nurse",
       timeAgo: "37 mins ago",
       availableFrom: "Jan 01, 2026",
-      avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&q=80",
+      avatar:
+        "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&q=80",
     },
     {
       type: "Careseeker",
@@ -21,7 +22,8 @@ const LatestMatches = () => {
       role: "Nanny",
       timeAgo: "50 mins ago",
       neededFrom: "Jan 01, 2026",
-      avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80",
+      avatar:
+        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80",
     },
     {
       type: "Careseeker",
@@ -31,7 +33,8 @@ const LatestMatches = () => {
       role: "Cook",
       timeAgo: "2 hrs ago",
       neededFrom: "Dec 2025",
-      avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80",
+      avatar:
+        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80",
     },
     {
       type: "Careseeker",
@@ -41,7 +44,8 @@ const LatestMatches = () => {
       role: "Nanny",
       timeAgo: "4 hrs ago",
       neededFrom: "Jan 05, 2026",
-      avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80",
+      avatar:
+        "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80",
     },
   ];
 
@@ -75,7 +79,9 @@ const LatestMatches = () => {
                   />
                   <span
                     className={`absolute -bottom-1 -right-1 px-2 py-0.5 text-xs font-bold rounded-full text-white ${
-                      item.type === "Caregiver" ? "bg-[#27BB97]" : "bg-[#1FA987]"
+                      item.type === "Caregiver"
+                        ? "bg-[#27BB97]"
+                        : "bg-[#1FA987]"
                     }`}
                   >
                     {item.type}
@@ -85,14 +91,18 @@ const LatestMatches = () => {
                   <h3 className="text-base sm:text-lg font-bold text-gray-900 line-clamp-2 sm:line-clamp-1 group-hover:text-[#27BB97] transition-colors">
                     {item.title}
                   </h3>
-                  <p className="text-xs sm:text-sm text-gray-600 mt-1">{item.role}</p>
+                  <p className="text-xs sm:text-sm text-gray-600 mt-1">
+                    {item.role}
+                  </p>
                 </div>
               </div>
 
               {/* Content */}
               <div className="p-4 sm:p-5 flex flex-col flex-grow">
                 <p className="text-xs sm:text-sm text-gray-700 mb-3 sm:mb-4">
-                  {item.type === "Caregiver" ? "Available From: " : "Needed From: "}
+                  {item.type === "Caregiver"
+                    ? "Available From: "
+                    : "Needed From: "}
                   <span className="font-medium text-gray-900">
                     {item.availableFrom || item.neededFrom}
                   </span>
@@ -119,7 +129,9 @@ const LatestMatches = () => {
                       <span className="text-base sm:text-lg font-bold text-[#27BB97]">
                         ${item.price}
                       </span>
-                      <span className="text-gray-600 text-xs sm:text-sm">/hr</span>
+                      <span className="text-gray-600 text-xs sm:text-sm">
+                        /hr
+                      </span>
                     </div>
                   </div>
 

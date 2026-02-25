@@ -229,7 +229,7 @@ const ChatBot = () => {
         <div
           className={`bg-white rounded-2xl shadow-2xl border border-gray-100 transition-all duration-300 ${
             isMinimized
-              ? "w-72 md:w-80 h-14 md:h-16 opacity-95" 
+              ? "w-72 md:w-80 h-14 md:h-16 opacity-95"
               : "w-[95vw] max-w-sm md:max-w-md lg:w-96 h-[85vh] max-h-[32rem] md:h-[32rem] opacity-100"
           }`}
           style={{
@@ -485,7 +485,6 @@ const ChatBot = () => {
                 ...(window.innerWidth >= 768 && {
                   width: 56,
                   height: 56,
-                
                 }),
               }}
             />

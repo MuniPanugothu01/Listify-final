@@ -1,28 +1,39 @@
-import React from 'react';
-import { Search, MapPin, Calendar, Phone, ArrowRight, Home } from 'lucide-react';
+import React from "react";
+import {
+  Search,
+  MapPin,
+  Calendar,
+  Phone,
+  ArrowRight,
+  Home,
+} from "lucide-react";
 
 const CareCenterHowItWorks = () => {
   const steps = [
     {
       icon: <Search className="w-8 h-8 xs:w-10 xs:h-10 sm:w-12 sm:h-12" />,
-      title: 'Search Centers',
-      description: 'Search for care centers by location, services offered, ratings, and specific care needs.'
+      title: "Search Centers",
+      description:
+        "Search for care centers by location, services offered, ratings, and specific care needs.",
     },
     {
       icon: <MapPin className="w-8 h-8 xs:w-10 xs:h-10 sm:w-12 sm:h-12" />,
-      title: 'Compare Options',
-      description: 'Compare facilities based on amenities, staff qualifications, pricing, and resident reviews.'
+      title: "Compare Options",
+      description:
+        "Compare facilities based on amenities, staff qualifications, pricing, and resident reviews.",
     },
     {
       icon: <Calendar className="w-8 h-8 xs:w-10 xs:h-10 sm:w-12 sm:h-12" />,
-      title: 'Schedule Tours',
-      description: 'Book virtual or in-person tours with multiple care centers to find the best fit.'
+      title: "Schedule Tours",
+      description:
+        "Book virtual or in-person tours with multiple care centers to find the best fit.",
     },
     {
       icon: <Phone className="w-8 h-8 xs:w-10 xs:h-10 sm:w-12 sm:h-12" />,
-      title: 'Get Assistance',
-      description: 'Our care advisors help you with paperwork, funding options, and transition planning.'
-    }
+      title: "Get Assistance",
+      description:
+        "Our care advisors help you with paperwork, funding options, and transition planning.",
+    },
   ];
 
   return (
@@ -49,14 +60,14 @@ const CareCenterHowItWorks = () => {
               <div className="absolute -top-3 -right-3 w-8 h-8 xs:w-10 xs:h-10 bg-[#27BB97] text-white rounded-full flex items-center justify-center text-sm xs:text-base font-bold shadow-md">
                 {index + 1}
               </div>
-              
+
               {/* Icon */}
               <div className="text-[#27BB97] mb-4 xs:mb-5 sm:mb-6">
                 <div className="p-3 xs:p-4 bg-[#27BB97]/10 rounded-xl xs:rounded-2xl group-hover:scale-105 sm:group-hover:scale-110 transition-transform duration-300">
                   {step.icon}
                 </div>
               </div>
-              
+
               {/* Content */}
               <h3 className="text-lg xs:text-xl sm:text-xl font-bold text-gray-900 text-center mb-2 xs:mb-3 line-clamp-1">
                 {step.title}
@@ -64,7 +75,7 @@ const CareCenterHowItWorks = () => {
               <p className="text-gray-600 text-center text-xs xs:text-sm sm:text-sm leading-relaxed flex-grow">
                 {step.description}
               </p>
-              
+
               {/* Bottom border effect */}
               <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 group-hover:w-16 xs:group-hover:w-20 sm:group-hover:w-24 h-1 bg-[#27BB97] transition-all duration-300 rounded-t-full"></div>
             </div>
@@ -83,7 +94,8 @@ const CareCenterHowItWorks = () => {
                 Find a Care Center
               </h3>
               <p className="text-gray-600 mb-6 sm:mb-8 leading-relaxed text-sm xs:text-base sm:text-base">
-                Looking for quality care facilities? Search licensed centers, compare options, and schedule tours.
+                Looking for quality care facilities? Search licensed centers,
+                compare options, and schedule tours.
               </p>
             </div>
             <button className="w-full bg-gradient-to-r from-[#27BB97] to-[#1EA583] hover:from-[#1EA583] hover:to-[#168F6F] text-white font-semibold py-2.5 xs:py-3 sm:py-3 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 shadow-sm hover:shadow-lg text-sm xs:text-base sm:text-base focus:outline-none focus:ring-2 focus:ring-[#27BB97] focus:ring-offset-2">
@@ -102,7 +114,8 @@ const CareCenterHowItWorks = () => {
                 List Your Center
               </h3>
               <p className="text-gray-600 mb-6 sm:mb-8 leading-relaxed text-sm xs:text-base sm:text-base">
-                Own a care facility? List your center to connect with families seeking quality care services.
+                Own a care facility? List your center to connect with families
+                seeking quality care services.
               </p>
             </div>
             <button className="w-full bg-gradient-to-r from-[#27BB97] to-[#1EA583] hover:from-[#1EA583] hover:to-[#168F6F] text-white font-semibold py-2.5 xs:py-3 sm:py-3 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 shadow-sm hover:shadow-lg text-sm xs:text-base sm:text-base focus:outline-none focus:ring-2 focus:ring-[#27BB97] focus:ring-offset-2">

@@ -19,7 +19,7 @@ export const fetchLoginHistory = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || error.message);
     }
-  }
+  },
 );
 
 export const fetchSessions = createAsyncThunk(
@@ -31,7 +31,7 @@ export const fetchSessions = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || error.message);
     }
-  }
+  },
 );
 
 export const revokeSession = createAsyncThunk(
@@ -43,7 +43,7 @@ export const revokeSession = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || error.message);
     }
-  }
+  },
 );
 
 const activitySlice = createSlice({
@@ -93,16 +93,15 @@ const activitySlice = createSlice({
 
       // Revoke Session
       .addCase(revokeSession.fulfilled, (state, action) => {
-        state.sessions = state.sessions.filter(s => s.tokenId !== action.payload.tokenId);
+        state.sessions = state.sessions.filter(
+          (s) => s.tokenId !== action.payload.tokenId,
+        );
         state.success = true;
       });
   },
 });
 
-export const {
-  clearActivityError,
-  resetActivitySuccess,
-  clearActivityData,
-} = activitySlice.actions;
+export const { clearActivityError, resetActivitySuccess, clearActivityData } =
+  activitySlice.actions;
 
 export default activitySlice.reducer;

@@ -40,7 +40,7 @@ import {
   FaTicketAlt,
   FaCalendarAlt,
 } from "react-icons/fa";
-import EventsSubNav from '../../components/Events/EventsSubNav';
+import EventsSubNav from "../../components/Events/EventsSubNav";
 import Footer from "../../pages/Home/Footer.jsx";
 
 // Events Data (using your EventsShowcase data)
@@ -53,7 +53,8 @@ const allEvents = [
       "https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?w=800&q=80",
     ],
     title: "Sunburn Goa 2025",
-    description: "Asia's biggest electronic dance music festival featuring top international DJs",
+    description:
+      "Asia's biggest electronic dance music festival featuring top international DJs",
     date: "2024-12-27",
     displayDate: "Dec 27–30",
     location: "Vagator Beach, Goa",
@@ -87,9 +88,10 @@ const allEvents = [
       "Parking",
       "Security",
       "Medical Facilities",
-      "Chill Zones"
+      "Chill Zones",
     ],
-    details: "Sunburn Goa is Asia's premier electronic dance music festival. Experience 4 days of non-stop music across multiple stages with world-class production, lighting, and sound systems. Featuring top international DJs and artists from around the globe.",
+    details:
+      "Sunburn Goa is Asia's premier electronic dance music festival. Experience 4 days of non-stop music across multiple stages with world-class production, lighting, and sound systems. Featuring top international DJs and artists from around the globe.",
     tags: ["EDM", "Festival", "Electronic Music", "Beach Party", "Nightlife"],
     immediate: true,
     discount: "Early Bird",
@@ -104,7 +106,8 @@ const allEvents = [
       "https://images.unsplash.com/photo-1605001011156-cbf0b0f67a51?w=800&q=80",
     ],
     title: "Rangoli Night Market",
-    description: "Traditional Indian festival market with food, shopping, and cultural performances",
+    description:
+      "Traditional Indian festival market with food, shopping, and cultural performances",
     date: "2024-11-02",
     displayDate: "Nov 2",
     location: "DLF CyberHub, Gurgaon",
@@ -136,9 +139,10 @@ const allEvents = [
       "Cultural Performances",
       "Kids Zone",
       "Parking",
-      "Free Entry"
+      "Free Entry",
     ],
-    details: "Experience the vibrant colors and flavors of India at Rangoli Night Market. Featuring traditional food stalls, handicraft vendors, cultural performances, and interactive workshops. Perfect for families and culture enthusiasts.",
+    details:
+      "Experience the vibrant colors and flavors of India at Rangoli Night Market. Featuring traditional food stalls, handicraft vendors, cultural performances, and interactive workshops. Perfect for families and culture enthusiasts.",
     tags: ["Cultural", "Food", "Shopping", "Family Friendly", "Traditional"],
     immediate: true,
     discount: "Free Entry",
@@ -153,7 +157,8 @@ const allEvents = [
       "https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?w=800&q=80",
     ],
     title: "Stand-up Comedy Night",
-    description: "Laugh out loud with India's top comedians in an intimate setting",
+    description:
+      "Laugh out loud with India's top comedians in an intimate setting",
     date: "2024-10-25",
     displayDate: "Oct 25",
     location: "The Comedy Club, Mumbai",
@@ -184,9 +189,10 @@ const allEvents = [
       "Food & Drinks",
       "Open Mic",
       "Parking",
-      "AC Hall"
+      "AC Hall",
     ],
-    details: "An evening of laughter with India's finest comedians. Featuring both established names and rising stars. Perfect for date nights, friend gatherings, or corporate outings. Limited seats available for an intimate experience.",
+    details:
+      "An evening of laughter with India's finest comedians. Featuring both established names and rising stars. Perfect for date nights, friend gatherings, or corporate outings. Limited seats available for an intimate experience.",
     tags: ["Comedy", "Entertainment", "Night Out", "Social"],
     immediate: true,
     discount: "Group Discount",
@@ -232,9 +238,10 @@ const allEvents = [
       "Yoga Mats",
       "Meditation",
       "Sunrise View",
-      "Free Session"
+      "Free Session",
     ],
-    details: "Start your Sunday with rejuvenating yoga by the sea. Professional instructors guide you through asanas, pranayama, and meditation. All levels welcome. Experience peace and tranquility with the sound of waves.",
+    details:
+      "Start your Sunday with rejuvenating yoga by the sea. Professional instructors guide you through asanas, pranayama, and meditation. All levels welcome. Experience peace and tranquility with the sound of waves.",
     tags: ["Yoga", "Wellness", "Beach", "Meditation", "Free"],
     immediate: false,
     discount: "Free Session",
@@ -281,9 +288,10 @@ const allEvents = [
       "Food Courts",
       "Merchandise",
       "Parking",
-      "Security"
+      "Security",
     ],
-    details: "Witness Coldplay's spectacular live performance featuring hits from their entire career. The concert includes stunning visual effects, pyrotechnics, and audience interaction. Don't miss this once-in-a-lifetime experience.",
+    details:
+      "Witness Coldplay's spectacular live performance featuring hits from their entire career. The concert includes stunning visual effects, pyrotechnics, and audience interaction. Don't miss this once-in-a-lifetime experience.",
     tags: ["Coldplay", "Concert", "International", "Music", "Live"],
     immediate: true,
     discount: "VIP Packages",
@@ -330,9 +338,10 @@ const allEvents = [
       "Food Stalls",
       "Stadium Seating",
       "Security",
-      "Parking"
+      "Parking",
     ],
-    details: "Witness the spectacular opening ceremony of IPL 2025 featuring Bollywood stars, international artists, and breathtaking fireworks. The ceremony sets the stage for another exciting season of cricket.",
+    details:
+      "Witness the spectacular opening ceremony of IPL 2025 featuring Bollywood stars, international artists, and breathtaking fireworks. The ceremony sets the stage for another exciting season of cricket.",
     tags: ["IPL", "Cricket", "Sports", "Ceremony", "Entertainment"],
     immediate: false,
     discount: "Season Pass",
@@ -379,9 +388,10 @@ const allEvents = [
       "Dance Floor",
       "Photo Booth",
       "VIP Sections",
-      "Security"
+      "Security",
     ],
-    details: "Ring in the New Year with the most extravagant party featuring top DJs, unlimited drinks, and amazing company. Multiple venues across the city with shuttle services available.",
+    details:
+      "Ring in the New Year with the most extravagant party featuring top DJs, unlimited drinks, and amazing company. Multiple venues across the city with shuttle services available.",
     tags: ["New Year", "Party", "DJ", "Celebration", "Nightlife"],
     immediate: true,
     discount: "Couple Offer",
@@ -427,9 +437,10 @@ const allEvents = [
       "Camping",
       "Bonfire",
       "Food Stalls",
-      "Adventure Activities"
+      "Adventure Activities",
     ],
-    details: "Experience music like never before in the snow-clad mountains of Manali. Featuring indie artists, acoustic sessions, bonfire nights, and adventure activities. Package includes accommodation and meals.",
+    details:
+      "Experience music like never before in the snow-clad mountains of Manali. Featuring indie artists, acoustic sessions, bonfire nights, and adventure activities. Package includes accommodation and meals.",
     tags: ["Mountain", "Indie", "Camping", "Adventure", "Music"],
     immediate: true,
     discount: "Early Bird",
@@ -451,14 +462,7 @@ const searchTypes = [
 
 const locationTypes = ["By City", "By Metro", "By Venue", "By Neighborhood"];
 
-const radiusOptions = [
-  "5 km",
-  "10 km",
-  "25 km",
-  "50 km",
-  "100 km",
-  "Anywhere",
-];
+const radiusOptions = ["5 km", "10 km", "25 km", "50 km", "100 km", "Anywhere"];
 
 const budgetOptions = [
   "Any Budget",
@@ -482,14 +486,14 @@ const eventTypes = [
 ];
 
 const eventCategories = [
-  { id: 'all', name: 'All Events', icon: FaCalendarAlt },
-  { id: 'music', name: 'Music', icon: FaMusic },
-  { id: 'sports', name: 'Sports', icon: FaFutbol },
-  { id: 'food', name: 'Food & Drink', icon: FaUtensils },
-  { id: 'entertainment', name: 'Entertainment', icon: FaFilm },
-  { id: 'conference', name: 'Conference', icon: FaConference },
-  { id: 'wellness', name: 'Wellness', icon: FaHeartbeat },
-  { id: 'festival', name: 'Festival', icon: FaGlassCheers }
+  { id: "all", name: "All Events", icon: FaCalendarAlt },
+  { id: "music", name: "Music", icon: FaMusic },
+  { id: "sports", name: "Sports", icon: FaFutbol },
+  { id: "food", name: "Food & Drink", icon: FaUtensils },
+  { id: "entertainment", name: "Entertainment", icon: FaFilm },
+  { id: "conference", name: "Conference", icon: FaConference },
+  { id: "wellness", name: "Wellness", icon: FaHeartbeat },
+  { id: "festival", name: "Festival", icon: FaGlassCheers },
 ];
 
 const itemsPerPageOptions = [4, 8, 12, 16];
@@ -517,7 +521,7 @@ const EventList = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState({});
   const [showEventDropdown, setShowEventDropdown] = useState(false);
   const [showPlusDropdown, setShowPlusDropdown] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
@@ -529,11 +533,11 @@ const EventList = () => {
       setIsMobile(width < 768);
       setIsTablet(width >= 768 && width < 1024);
     };
-    
+
     checkScreenSize();
-    window.addEventListener('resize', checkScreenSize);
-    
-    return () => window.removeEventListener('resize', checkScreenSize);
+    window.addEventListener("resize", checkScreenSize);
+
+    return () => window.removeEventListener("resize", checkScreenSize);
   }, []);
 
   // Toggle more amenities view
@@ -618,7 +622,7 @@ const EventList = () => {
   // Handle message
   const handleMessage = (event) => {
     alert(
-      `Opening chat with ${event.organizer}. This would redirect to your messaging system.`
+      `Opening chat with ${event.organizer}. This would redirect to your messaging system.`,
     );
   };
 
@@ -683,12 +687,12 @@ const EventList = () => {
     "Food Courts": <FaUtensils size={14} />,
     "Bar Services": <FaGlassCheers size={14} />,
     "VIP Lounge": <Star size={14} />,
-    "Parking": <FaMapMarkerAlt size={14} />,
-    "Security": <CheckCircle size={14} />,
+    Parking: <FaMapMarkerAlt size={14} />,
+    Security: <CheckCircle size={14} />,
     "Medical Facilities": <FaHeartbeat size={14} />,
     "Chill Zones": <Home size={14} />,
     "Food Stalls": <FaUtensils size={14} />,
-    "Shopping": <Tag size={14} />,
+    Shopping: <Tag size={14} />,
     "Cultural Performances": <FaMusic size={14} />,
     "Kids Zone": <Users size={14} />,
     "Free Entry": <Tag size={14} />,
@@ -697,14 +701,14 @@ const EventList = () => {
     "AC Hall": <Home size={14} />,
     "Beach Front": <MapPin size={14} />,
     "Yoga Mats": <FaHeartbeat size={14} />,
-    "Meditation": <FaHeartbeat size={14} />,
+    Meditation: <FaHeartbeat size={14} />,
     "Sunrise View": <Eye size={14} />,
     "Free Session": <Tag size={14} />,
     "World-class Production": <FaMusic size={14} />,
     "Multiple Screens": <Images size={14} />,
-    "Merchandise": <Tag size={14} />,
+    Merchandise: <Tag size={14} />,
     "Celebrity Performances": <Star size={14} />,
-    "Fireworks": <Eye size={14} />,
+    Fireworks: <Eye size={14} />,
     "Stadium Seating": <Users size={14} />,
     "Multiple DJs": <FaMusic size={14} />,
     "Open Bar": <FaGlassCheers size={14} />,
@@ -712,8 +716,8 @@ const EventList = () => {
     "Photo Booth": <Images size={14} />,
     "VIP Sections": <Star size={14} />,
     "Mountain Setting": <MapPin size={14} />,
-    "Camping": <Home size={14} />,
-    "Bonfire": <Eye size={14} />,
+    Camping: <Home size={14} />,
+    Bonfire: <Eye size={14} />,
     "Adventure Activities": <FaFutbol size={14} />,
   };
 
@@ -938,8 +942,8 @@ const EventList = () => {
                     {isMobile && event.title.length > 50
                       ? `${event.title.slice(0, 50)}...`
                       : isTablet && event.title.length > 70
-                      ? `${event.title.slice(0, 70)}...`
-                      : event.title}
+                        ? `${event.title.slice(0, 70)}...`
+                        : event.title}
                   </h3>
 
                   {/* Location and Quick Info */}
@@ -965,8 +969,7 @@ const EventList = () => {
                       reviews={event.reviews}
                     />
                     <div className="text-xs sm:text-sm text-gray-600">
-                      ⚡ {event.responseRate} response •{" "}
-                      {event.responseTime}
+                      ⚡ {event.responseRate} response • {event.responseTime}
                     </div>
                   </div>
 
@@ -994,8 +997,14 @@ const EventList = () => {
                 {/* Price Section */}
                 <div className="text-right">
                   <div className="text-xl sm:text-2xl font-bold text-[#27bb97] mb-1">
-                    {event.price === 0 ? "FREE" : `₹${event.price.toLocaleString()}`}
-                    {event.price > 0 && <span className="text-xs sm:text-sm font-normal text-gray-600">/person</span>}
+                    {event.price === 0
+                      ? "FREE"
+                      : `₹${event.price.toLocaleString()}`}
+                    {event.price > 0 && (
+                      <span className="text-xs sm:text-sm font-normal text-gray-600">
+                        /person
+                      </span>
+                    )}
                   </div>
                   <div className="text-xs sm:text-sm text-gray-500">
                     {event.ticketsLeft} tickets left
@@ -1025,15 +1034,19 @@ const EventList = () => {
                   Event Features
                 </h4>
                 <div className="flex flex-wrap gap-1">
-                  {event.amenities.slice(0, isMobile ? 4 : 6).map((amenity, index) => (
-                    <span
-                      key={index}
-                      className="flex items-center gap-1.5 text-xs text-[#27bb97] px-2 py-1.5 rounded-lg border-[#27bb97]/20 hover:bg-[#27bb97]/10 transition-colors"
-                    >
-                      {amenityIcons[amenity] || <FaMusic size={14} />}
-                      <span className="truncate max-w-[120px]">{amenity}</span>
-                    </span>
-                  ))}
+                  {event.amenities
+                    .slice(0, isMobile ? 4 : 6)
+                    .map((amenity, index) => (
+                      <span
+                        key={index}
+                        className="flex items-center gap-1.5 text-xs text-[#27bb97] px-2 py-1.5 rounded-lg border-[#27bb97]/20 hover:bg-[#27bb97]/10 transition-colors"
+                      >
+                        {amenityIcons[amenity] || <FaMusic size={14} />}
+                        <span className="truncate max-w-[120px]">
+                          {amenity}
+                        </span>
+                      </span>
+                    ))}
                   {event.amenities.length > (isMobile ? 4 : 6) && (
                     <div className="relative">
                       <button
@@ -1099,7 +1112,9 @@ const EventList = () => {
                 {showContact[event.id] ? (
                   <div className="flex items-center gap-1">
                     <Phone size={14} />
-                    <span className="font-medium text-xs sm:text-sm">{event.contact}</span>
+                    <span className="font-medium text-xs sm:text-sm">
+                      {event.contact}
+                    </span>
                   </div>
                 ) : (
                   <button
@@ -1210,7 +1225,9 @@ const EventList = () => {
       <div className="min-h-screen p-3 sm:p-4 lg:p-6 mt-4">
         <div className="max-w-7xl mx-auto">
           {/* Tabs - Hidden on mobile when menu is collapsed */}
-          <div className={`${isMobile && !showMobileMenu ? 'hidden' : 'block'}`}>
+          <div
+            className={`${isMobile && !showMobileMenu ? "hidden" : "block"}`}
+          >
             <div className="flex flex-col lg:flex-row lg:items-center w-full lg:w-[85%] border-gray-200 gap-4 mb-6">
               <div className="flex overflow-x-auto gap-4 lg:gap-8 pb-2 scrollbar-hide">
                 <button
@@ -1257,7 +1274,9 @@ const EventList = () => {
               <div className="lg:-mt-2 ml-auto lg:ml-0">
                 <button className="flex items-center gap-2 bg-[#27bb97] hover:bg-[#1fa582] text-white px-4 py-2 rounded text-sm font-medium transition-colors justify-center w-full lg:w-auto">
                   <FaMap />
-                  <span className="hidden sm:inline">Switch to Calendar View</span>
+                  <span className="hidden sm:inline">
+                    Switch to Calendar View
+                  </span>
                   <span className="sm:hidden">Calendar View</span>
                 </button>
               </div>
@@ -1282,7 +1301,9 @@ const EventList = () => {
                   </div>
                   <div className="flex items-center gap-4">
                     <div className="flex items-center gap-2">
-                      <span className="text-xs sm:text-sm text-gray-600">Sort by</span>
+                      <span className="text-xs sm:text-sm text-gray-600">
+                        Sort by
+                      </span>
                       <select
                         value={sortBy}
                         onChange={(e) => setSortBy(e.target.value)}
@@ -1290,8 +1311,12 @@ const EventList = () => {
                       >
                         <option value="featured">Featured first</option>
                         <option value="date">Date</option>
-                        <option value="price-low-high">Price: Low to High</option>
-                        <option value="price-high-low">Price: High to Low</option>
+                        <option value="price-low-high">
+                          Price: Low to High
+                        </option>
+                        <option value="price-high-low">
+                          Price: High to Low
+                        </option>
                         <option value="rating">Highest Rated</option>
                         <option value="popularity">Most Popular</option>
                       </select>
@@ -1339,7 +1364,9 @@ const EventList = () => {
                 <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
                   {/* Items per page selector */}
                   <div className="flex items-center gap-3">
-                    <span className="text-xs sm:text-sm text-gray-600">Show:</span>
+                    <span className="text-xs sm:text-sm text-gray-600">
+                      Show:
+                    </span>
                     <select
                       value={itemsPerPage}
                       onChange={(e) => handleItemsPerPageChange(e.target.value)}
@@ -1356,8 +1383,8 @@ const EventList = () => {
                   {/* Page info */}
                   <div className="text-xs sm:text-sm text-gray-600 text-center">
                     Showing {(currentPage - 1) * itemsPerPage + 1} to{" "}
-                    {Math.min(currentPage * itemsPerPage, allEvents.length)}{" "}
-                    of {allEvents.length} events
+                    {Math.min(currentPage * itemsPerPage, allEvents.length)} of{" "}
+                    {allEvents.length} events
                   </div>
 
                   {/* Pagination controls */}
@@ -1379,7 +1406,9 @@ const EventList = () => {
                       {getPageNumbers().map((page, index) => (
                         <React.Fragment key={index}>
                           {page === "..." ? (
-                            <span className="px-2 sm:px-3 py-1.5 sm:py-2 text-gray-500">...</span>
+                            <span className="px-2 sm:px-3 py-1.5 sm:py-2 text-gray-500">
+                              ...
+                            </span>
                           ) : (
                             <button
                               onClick={() => handlePageChange(page)}
@@ -1414,7 +1443,9 @@ const EventList = () => {
             </div>
 
             {/* Right side - Hidden on mobile/tablet, 30% on desktop */}
-            <div className={`${isMobile ? 'hidden' : isTablet ? 'hidden' : 'w-full lg:w-[30%] space-y-6'}`}>
+            <div
+              className={`${isMobile ? "hidden" : isTablet ? "hidden" : "w-full lg:w-[30%] space-y-6"}`}
+            >
               {/* Categories near Location */}
               <div className="bg-white rounded-lg p-4 sm:p-6 shadow-sm">
                 <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-2">
@@ -1484,7 +1515,8 @@ const EventList = () => {
                       href="#"
                       className="text-[#27bb97] hover:text-[#1fa582] hover:underline text-sm transition-colors"
                     >
-                      {festival.name} <span className="text-gray-500">({festival.date})</span>
+                      {festival.name}{" "}
+                      <span className="text-gray-500">({festival.date})</span>
                     </a>
                   ))}
                 </div>
@@ -1541,8 +1573,13 @@ const EventList = () => {
                             {organizer.events}
                           </p>
                           <div className="flex items-center gap-1 mt-1">
-                            <Star size={12} className="text-yellow-400 fill-current" />
-                            <span className="text-xs text-gray-600">{organizer.rating}/5</span>
+                            <Star
+                              size={12}
+                              className="text-yellow-400 fill-current"
+                            />
+                            <span className="text-xs text-gray-600">
+                              {organizer.rating}/5
+                            </span>
                           </div>
                         </div>
                       </div>
@@ -1558,7 +1595,7 @@ const EventList = () => {
                 </h2>
                 <div className="space-y-4 sm:space-y-5">
                   {allEvents
-                    .filter(e => e.price === 0)
+                    .filter((e) => e.price === 0)
                     .slice(0, 3)
                     .map((event) => (
                       <div
@@ -1582,7 +1619,8 @@ const EventList = () => {
                           </div>
                         </div>
                         <div className="text-xs sm:text-sm text-gray-700">
-                          <span className="font-medium">Time:</span> {event.time}
+                          <span className="font-medium">Time:</span>{" "}
+                          {event.time}
                         </div>
                       </div>
                     ))}
@@ -1591,7 +1629,9 @@ const EventList = () => {
 
               {/* Newsletter Subscription */}
               <div className="bg-gradient-to-r from-[#27bb97] to-[#1fa582] rounded-xl p-5 sm:p-6 text-white text-center">
-                <h3 className="text-base sm:text-lg font-bold mb-3">Never Miss an Event!</h3>
+                <h3 className="text-base sm:text-lg font-bold mb-3">
+                  Never Miss an Event!
+                </h3>
                 <p className="text-xs sm:text-sm mb-4 opacity-90">
                   Get weekly updates on the best events in your city
                 </p>

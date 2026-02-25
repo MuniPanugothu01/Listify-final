@@ -8,17 +8,17 @@ import {
   setCurrentChat,
   addMessage,
   updateUnreadCount,
-} from '../slices/messagesSlice';
+} from "../slices/messagesSlice";
 
 export const messageActions = {
   // Fetch conversations
   getConversations: () => async (dispatch) => {
     try {
       const result = await dispatch(fetchConversations()).unwrap();
-      return { 
-        success: true, 
+      return {
+        success: true,
         conversations: result.conversations,
-        unreadCount: result.unreadCount 
+        unreadCount: result.unreadCount,
       };
     } catch (error) {
       return { success: false, error };
@@ -42,14 +42,16 @@ export const messageActions = {
       const tempMessage = {
         id: `temp-${Date.now()}`,
         content,
-        sender: 'me',
+        sender: "me",
         timestamp: new Date().toISOString(),
-        status: 'sending',
+        status: "sending",
       };
       dispatch(addMessage(tempMessage));
 
-      const result = await dispatch(sendMessage({ conversationId, content })).unwrap();
-      
+      const result = await dispatch(
+        sendMessage({ conversationId, content }),
+      ).unwrap();
+
       return { success: true, message: result.message };
     } catch (error) {
       // Remove optimistic message on error

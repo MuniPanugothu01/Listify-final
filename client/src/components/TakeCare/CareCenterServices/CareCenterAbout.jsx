@@ -1,44 +1,50 @@
-import React from 'react';
-import { Award, Home, BadgeCheck, Users, Clock, Heart } from 'lucide-react';
+import React from "react";
+import { Award, Home, BadgeCheck, Users, Clock, Heart } from "lucide-react";
 
 const CareCenterAbout = () => {
   const features = [
     {
-      id: '01',
+      id: "01",
       icon: <Award className="w-8 h-8 xs:w-10 xs:h-10 sm:w-10 sm:h-10" />,
-      title: 'We are the experts',
-      description: 'Thousands of families already trust Listify for finding quality care centers and nursing homes.',
+      title: "We are the experts",
+      description:
+        "Thousands of families already trust Listify for finding quality care centers and nursing homes.",
     },
     {
-      id: '02',
+      id: "02",
       icon: <Home className="w-8 h-8 xs:w-10 xs:h-10 sm:w-10 sm:h-10" />,
-      title: 'Wide Range of Facilities',
-      description: 'Choose from assisted living, nursing homes, memory care, rehabilitation centers, and specialized care facilities.',
+      title: "Wide Range of Facilities",
+      description:
+        "Choose from assisted living, nursing homes, memory care, rehabilitation centers, and specialized care facilities.",
     },
     {
-      id: '03',
+      id: "03",
       icon: <BadgeCheck className="w-8 h-8 xs:w-10 xs:h-10 sm:w-10 sm:h-10" />,
-      title: 'Quality Assurance',
-      description: 'All listed care centers are licensed, inspected, and meet our quality standards for professional care.',
+      title: "Quality Assurance",
+      description:
+        "All listed care centers are licensed, inspected, and meet our quality standards for professional care.",
     },
     {
-      id: '04',
+      id: "04",
       icon: <Users className="w-8 h-8 xs:w-10 xs:h-10 sm:w-10 sm:h-10" />,
-      title: 'Experienced Staff',
-      description: 'Centers staffed with certified professionals including nurses, therapists, and care specialists.',
+      title: "Experienced Staff",
+      description:
+        "Centers staffed with certified professionals including nurses, therapists, and care specialists.",
     },
     {
-      id: '05',
+      id: "05",
       icon: <Clock className="w-8 h-8 xs:w-10 xs:h-10 sm:w-10 sm:h-10" />,
-      title: '24/7 Care',
-      description: 'Find facilities offering round-the-clock care, perfect for seniors and individuals needing constant support.',
+      title: "24/7 Care",
+      description:
+        "Find facilities offering round-the-clock care, perfect for seniors and individuals needing constant support.",
     },
     {
-      id: '06',
+      id: "06",
       icon: <Heart className="w-8 h-8 xs:w-10 xs:h-10 sm:w-10 sm:h-10" />,
-      title: 'Peace of Mind',
-      description: 'Ensure your loved ones receive quality care in safe, professional environments with compassionate staff.',
-    }
+      title: "Peace of Mind",
+      description:
+        "Ensure your loved ones receive quality care in safe, professional environments with compassionate staff.",
+    },
   ];
 
   return (
@@ -47,22 +53,25 @@ const CareCenterAbout = () => {
         {/* Header */}
         <div className="text-center mb-8 sm:mb-10 lg:mb-16 px-2">
           <h2 className="text-2xl xs:text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-3 sm:mb-4 leading-tight">
-            ABOUT <span className='text-[#27BB97]'>US</span> 
+            ABOUT <span className="text-[#27BB97]">US</span>
           </h2>
           <p className="text-gray-600 text-sm xs:text-base sm:text-lg lg:text-lg">
-            Why Find <span className='text-[#27BB97] font-medium'>Care Centers with Listify</span>?
+            Why Find{" "}
+            <span className="text-[#27BB97] font-medium">
+              Care Centers with Listify
+            </span>
+            ?
           </p>
         </div>
 
         {/* Layout Strategy */}
         <div className="flex flex-col items-center">
-          
           {/* Mobile Layout - Single column for screens < 768px */}
           <div className="w-full md:hidden">
             <div className="grid grid-cols-1 gap-4 xs:gap-5 sm:gap-6">
               {features.map((feature) => (
-                <div 
-                  key={feature.id} 
+                <div
+                  key={feature.id}
                   className="bg-white rounded-xl sm:rounded-2xl p-4 xs:p-5 sm:p-6 shadow-sm hover:shadow-md transition-shadow relative"
                 >
                   <div className="absolute top-4 xs:top-5 right-4 xs:right-5 text-4xl xs:text-5xl sm:text-6xl font-bold text-gray-100">
@@ -88,8 +97,8 @@ const CareCenterAbout = () => {
           <div className="hidden md:block lg:hidden w-full">
             <div className="grid grid-cols-2 gap-4 sm:gap-6">
               {features.map((feature) => (
-                <div 
-                  key={feature.id} 
+                <div
+                  key={feature.id}
                   className="bg-white rounded-2xl p-5 sm:p-6 shadow-sm hover:shadow-md transition-shadow relative"
                 >
                   <div className="absolute top-5 right-5 text-5xl sm:text-6xl font-bold text-gray-100">

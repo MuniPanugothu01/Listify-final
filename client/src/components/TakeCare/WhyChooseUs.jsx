@@ -1,26 +1,36 @@
 import React from "react";
-import { ShieldCheck, ThumbsUp, Clock, Phone, MessageSquare, Star } from "lucide-react";
+import {
+  ShieldCheck,
+  ThumbsUp,
+  Clock,
+  Phone,
+  MessageSquare,
+  Star,
+} from "lucide-react";
 
 const WhyChooseUs = () => {
   const features = [
     {
       icon: <ShieldCheck className="w-8 h-8 xs:w-10 xs:h-10 sm:w-12 sm:h-12" />,
       title: "Verified Safety",
-      description: "Every provider undergoes our rigorous 5-step verification process ensuring complete safety and reliability.",
-      details: ["Background Checks", "ID Verification", "Safety Rating"]
+      description:
+        "Every provider undergoes our rigorous 5-step verification process ensuring complete safety and reliability.",
+      details: ["Background Checks", "ID Verification", "Safety Rating"],
     },
     {
       icon: <ThumbsUp className="w-8 h-8 xs:w-10 xs:h-10 sm:w-12 sm:h-12" />,
       title: "Quality Excellence",
-      description: "Backed by thousands of 5-star reviews and our 100% satisfaction guarantee for peace of mind.",
+      description:
+        "Backed by thousands of 5-star reviews and our 100% satisfaction guarantee for peace of mind.",
       rating: "4.8",
-      reviews: "10,000+ Reviews"
+      reviews: "10,000+ Reviews",
     },
     {
       icon: <Clock className="w-8 h-8 xs:w-10 xs:h-10 sm:w-12 sm:h-12" />,
       title: "Always Available",
-      description: "24/7 dedicated support team ready to assist you with any questions or concerns, anytime.",
-      support: ["Phone Support", "Live Chat", "Email Help"]
+      description:
+        "24/7 dedicated support team ready to assist you with any questions or concerns, anytime.",
+      support: ["Phone Support", "Live Chat", "Email Help"],
     },
   ];
 
@@ -50,7 +60,7 @@ const WhyChooseUs = () => {
                   {feature.icon}
                 </div>
               </div>
-              
+
               {/* Gradient Ring Effect */}
               <div className="absolute inset-0 rounded-full border-2 border-transparent">
                 <div className="absolute inset-0 rounded-full bg-gradient-to-r from-[#27BB97] to-[#1FA987] opacity-0 group-hover:opacity-20 transition-opacity duration-300" />
@@ -71,7 +81,10 @@ const WhyChooseUs = () => {
             {feature.details && (
               <div className="w-full space-y-2">
                 {feature.details.map((detail, idx) => (
-                  <div key={idx} className="flex items-center justify-between p-2 bg-gray-50 rounded-lg group-hover:bg-gray-100 transition-colors">
+                  <div
+                    key={idx}
+                    className="flex items-center justify-between p-2 bg-gray-50 rounded-lg group-hover:bg-gray-100 transition-colors"
+                  >
                     <span className="text-gray-700 font-medium text-xs sm:text-sm">
                       {detail}
                     </span>
@@ -105,7 +118,10 @@ const WhyChooseUs = () => {
             {feature.support && (
               <div className="w-full space-y-2">
                 {feature.support.map((item, idx) => (
-                  <div key={idx} className="flex items-center gap-2 text-gray-700 p-2 bg-gray-50 rounded-lg group-hover:bg-gray-100 transition-colors">
+                  <div
+                    key={idx}
+                    className="flex items-center gap-2 text-gray-700 p-2 bg-gray-50 rounded-lg group-hover:bg-gray-100 transition-colors"
+                  >
                     <div className="w-1.5 h-1.5 xs:w-2 xs:h-2 bg-[#27BB97] rounded-full flex-shrink-0" />
                     <span className="text-xs sm:text-sm text-left">{item}</span>
                   </div>
@@ -134,8 +150,18 @@ const WhyChooseUs = () => {
       <div className="mt-8 xs:mt-10 sm:mt-12 text-center">
         <button className="inline-flex items-center justify-center gap-2 px-4 xs:px-5 sm:px-6 py-2.5 xs:py-3 sm:py-3 text-[#27BB97] font-semibold rounded-lg xs:rounded-lg sm:rounded-lg hover:bg-[#27BB97] hover:text-white hover:shadow-lg border border-[#27BB97] transition-all duration-300 shadow-md hover:scale-105 transform text-xs xs:text-sm sm:text-sm min-w-[140px] xs:min-w-[160px]">
           Join Our Community
-          <svg className="w-3 h-3 xs:w-4 xs:h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+          <svg
+            className="w-3 h-3 xs:w-4 xs:h-4 group-hover:translate-x-1 transition-transform"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M17 8l4 4m0 0l-4 4m4-4H3"
+            />
           </svg>
         </button>
       </div>

@@ -162,12 +162,12 @@ const LatestJobs = () => {
         remote: false,
       },
     ],
-    []
+    [],
   );
 
   const filteredJobs = useMemo(
     () => jobs.filter((job) => job.type === activeTab),
-    [jobs, activeTab]
+    [jobs, activeTab],
   );
 
   const handleApply = (jobId) => {

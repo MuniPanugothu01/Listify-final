@@ -16,7 +16,7 @@ const HeroSection = () => {
             Find Your Dream Car
           </h1>
         </div>
-  
+
         {/* two buttons */}
 
         <div className="flex justify-center gap-2">

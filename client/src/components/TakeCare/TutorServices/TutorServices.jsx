@@ -12,15 +12,15 @@ import TutorContact from "./TutorContact";
 const TutorServices = () => {
   return (
     <div>
-        <TutorHero/>
-        <TutorAbout/>
-        <TutorHowItWorks/>
-        <TutorProfile/>
-        <TutorJobs/>
-        <CareServices />
-        <TutorFaq/>
-        <TutorContact/> 
+      <TutorHero />
+      <TutorAbout />
+      <TutorHowItWorks />
+      <TutorProfile />
+      <TutorJobs />
+      <CareServices />
+      <TutorFaq />
+      <TutorContact />
     </div>
   );
-}
+};
 export default TutorServices;

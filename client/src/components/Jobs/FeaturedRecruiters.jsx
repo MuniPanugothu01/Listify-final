@@ -50,13 +50,15 @@ const FeaturedRecruiters = () => {
 
         {/* Horizontal Scroll Container */}
         <div className="relative">
-          <div className="flex gap-6 overflow-x-auto pb-8 px-2
+          <div
+            className="flex gap-6 overflow-x-auto pb-8 px-2
             [&::-webkit-scrollbar]:h-1.5
             [&::-webkit-scrollbar-track]:bg-gray-100
             [&::-webkit-scrollbar-track]:rounded-full
             [&::-webkit-scrollbar-thumb]:bg-gray-300
             [&::-webkit-scrollbar-thumb]:rounded-full
-            [&::-webkit-scrollbar-thumb]:hover:bg-gray-400">
+            [&::-webkit-scrollbar-thumb]:hover:bg-gray-400"
+          >
             {recruiters.map((rec, i) => (
               <div
                 key={i}

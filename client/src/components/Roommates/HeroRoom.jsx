@@ -11,31 +11,31 @@ export default function HeroRoom() {
 
   const searchTypes = [
     "Need a Room for Share",
-    "Need a Property for Rent", 
+    "Need a Property for Rent",
     "Have a Room to Share",
     "Have a Property for Rent",
-    "Have a Commercial space to Rent"
+    "Have a Commercial space to Rent",
   ];
 
   const propertyTypes = [
     "Single Room",
-    "Shared Room", 
+    "Shared Room",
     "Paying Guest",
     "Entire Apartment",
     "Studio",
     "House",
-    "Condominium"
+    "Condominium",
   ];
 
   const locationTypes = [
     "By Metros",
     "By City",
-    "By Neighbourhood", 
+    "By Neighbourhood",
     "By County",
     "By Apartment",
     "By States",
     "By University",
-    "By Landmark"
+    "By Landmark",
   ];
 
   const genders = [
@@ -43,16 +43,16 @@ export default function HeroRoom() {
     "Male Only",
     "Female Only",
     "Couples Only",
-    "Family Only"
+    "Family Only",
   ];
 
   const priceRanges = [
     "$100-$500",
-    "$500-$1000", 
+    "$500-$1000",
     "$1000-$1500",
     "$1500-$2000",
     "$2000-$2500",
-    "$2500+"
+    "$2500+",
   ];
 
   return (
@@ -60,7 +60,7 @@ export default function HeroRoom() {
       {/* FULL WIDTH IMAGE WITH 50% HEIGHT */}
       <div className=" w-full h-[50vh] min-h-[500px] max-h-[600px]">
         <img
-          src="/roommates3.jpg" 
+          src="/roommates3.jpg"
           alt="Roommates"
           className="w-full hidden lg:flex h-full object-cover z-0 object-center"
         />
@@ -109,7 +109,9 @@ export default function HeroRoom() {
                         onChange={(e) => setSearchType(e.target.value)}
                       >
                         {searchTypes.map((type) => (
-                          <option key={type} value={type}>{type}</option>
+                          <option key={type} value={type}>
+                            {type}
+                          </option>
                         ))}
                       </select>
                       <ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 w-3 h-3 pointer-events-none" />
@@ -129,7 +131,9 @@ export default function HeroRoom() {
                         onChange={(e) => setPropertyType(e.target.value)}
                       >
                         {propertyTypes.map((type) => (
-                          <option key={type} value={type}>{type}</option>
+                          <option key={type} value={type}>
+                            {type}
+                          </option>
                         ))}
                       </select>
                       <ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 w-3 h-3 pointer-events-none" />
@@ -149,7 +153,9 @@ export default function HeroRoom() {
                         onChange={(e) => setLocationType(e.target.value)}
                       >
                         {locationTypes.map((type) => (
-                          <option key={type} value={type}>{type}</option>
+                          <option key={type} value={type}>
+                            {type}
+                          </option>
                         ))}
                       </select>
                       <ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 w-3 h-3 pointer-events-none" />
@@ -186,7 +192,9 @@ export default function HeroRoom() {
                         onChange={(e) => setGender(e.target.value)}
                       >
                         {genders.map((gender) => (
-                          <option key={gender} value={gender}>{gender}</option>
+                          <option key={gender} value={gender}>
+                            {gender}
+                          </option>
                         ))}
                       </select>
                       <ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 w-3 h-3 pointer-events-none" />
@@ -206,7 +214,9 @@ export default function HeroRoom() {
                         onChange={(e) => setPriceRange(e.target.value)}
                       >
                         {priceRanges.map((range) => (
-                          <option key={range} value={range}>{range}</option>
+                          <option key={range} value={range}>
+                            {range}
+                          </option>
                         ))}
                       </select>
                       <ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 w-3 h-3 pointer-events-none" />

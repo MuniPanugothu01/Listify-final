@@ -58,78 +58,77 @@ export default function RentalsByArea() {
         </div>
 
         {/* Cards Grid - Now 3 columns on large screens */}
-       <Link to="/rentals-listings">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
-          {areas.map((area, index) => (
-            <div
-              key={index}
-              className="flex flex-col md:flex-row bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-all cursor-pointer group"
-            >
-              {/* LEFT IMAGE */}
-              <div className="w-full md:w-40 h-40 md:h-auto flex-shrink-0">
-                <img
-                  src={area.image}
-                  alt={area.name}
-                  className="w-full h-full object-cover rounded-t-xl md:rounded-l-xl md:rounded-tr-none"
-                />
-              </div>
-
-              {/* RIGHT TEXT */}
-              <div className="p-5 flex flex-col justify-center flex-grow">
-                {/* Title with hover color */}
-                <div className="flex items-center gap-2 group">
+        <Link to="/rentals-listings">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
+            {areas.map((area, index) => (
+              <div
+                key={index}
+                className="flex flex-col md:flex-row bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-all cursor-pointer group"
+              >
+                {/* LEFT IMAGE */}
+                <div className="w-full md:w-40 h-40 md:h-auto flex-shrink-0">
                   <img
-                    src={locationIcon}
-                    alt="location"
-                    className="
+                    src={area.image}
+                    alt={area.name}
+                    className="w-full h-full object-cover rounded-t-xl md:rounded-l-xl md:rounded-tr-none"
+                  />
+                </div>
+
+                {/* RIGHT TEXT */}
+                <div className="p-5 flex flex-col justify-center flex-grow">
+                  {/* Title with hover color */}
+                  <div className="flex items-center gap-2 group">
+                    <img
+                      src={locationIcon}
+                      alt="location"
+                      className="
       w-4 h-4 opacity-70
       transition-transform duration-300 ease-in-out
       group-hover:scale-110
     "
-                  />
+                    />
 
-                  <h3
-                    className="
+                    <h3
+                      className="
       text-xl font-semibold text-gray-900
       transition-colors duration-300 ease-in-out
       group-hover:text-[#27bb97]
     "
-                  >
-                    {area.name}
-                  </h3>
-                </div>
+                    >
+                      {area.name}
+                    </h3>
+                  </div>
 
-                {/* Homes count */}
-                <div className="flex items-center gap-2 mt-1">
-                  <img
-                    src={homeIcon}
-                    alt="homes"
-                    className="w-4 h-4 opacity-70"
-                  />
-                  <p className="text-gray-500">
-                    {area.homes.toLocaleString()} homes available
+                  {/* Homes count */}
+                  <div className="flex items-center gap-2 mt-1">
+                    <img
+                      src={homeIcon}
+                      alt="homes"
+                      className="w-4 h-4 opacity-70"
+                    />
+                    <p className="text-gray-500">
+                      {area.homes.toLocaleString()} homes available
+                    </p>
+                  </div>
+
+                  {/* Description */}
+                  <p className="text-gray-600 text-sm mt-3">
+                    Explore rental properties in {area.name} with verified
+                    listings and virtual tours.
                   </p>
-                </div>
 
-                {/* Description */}
-                <p className="text-gray-600 text-sm mt-3">
-                  Explore rental properties in {area.name} with verified
-                  listings and virtual tours.
-                </p>
-
-                {/* View Rentals Button */}
-                <div className="mt-4 text-blue-600 font-medium flex items-center gap-1">
-                  <span className="group-hover:underline">View Rentals</span>
-                  <span className="transition-transform group-hover:translate-x-1">
-                    →
-                  </span>
+                  {/* View Rentals Button */}
+                  <div className="mt-4 text-blue-600 font-medium flex items-center gap-1">
+                    <span className="group-hover:underline">View Rentals</span>
+                    <span className="transition-transform group-hover:translate-x-1">
+                      →
+                    </span>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
-       </Link>
-
+            ))}
+          </div>
+        </Link>
 
         {/* Additional text section moved to right side */}
         <div className="mt-12 flex flex-col md:flex-row items-center justify-between">

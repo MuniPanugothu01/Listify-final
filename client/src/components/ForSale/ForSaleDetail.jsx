@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import toast from 'react-hot-toast';
-import { useParams, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import toast from "react-hot-toast";
+import { useParams, useNavigate } from "react-router-dom";
 import {
   Heart,
   Share2,
@@ -25,8 +25,8 @@ import {
   DollarSign,
   User,
   Send,
-} from 'lucide-react';
-import { FaMinus, FaPlus } from 'react-icons/fa';
+} from "lucide-react";
+import { FaMinus, FaPlus } from "react-icons/fa";
 
 // Location Map Component (unchanged)
 const LocationMap = ({ location }) => {
@@ -39,24 +39,27 @@ const LocationMap = ({ location }) => {
         </h3>
         <p className="text-gray-600 mt-2">{location}</p>
       </div>
-      
+
       <div className="relative h-64 sm:h-72 md:h-80 bg-gray-100">
         <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-gray-50">
-          <div className="absolute inset-0" style={{
-            backgroundImage: `
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundImage: `
               linear-gradient(to right, #cbd5e1 1px, transparent 1px),
               linear-gradient(to bottom, #cbd5e1 1px, transparent 1px)
             `,
-            backgroundSize: '40px 40px'
-          }}></div>
-          
+              backgroundSize: "40px 40px",
+            }}
+          ></div>
+
           <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
             <div className="relative">
               <MapPin className="w-12 h-12 text-red-500 animate-pulse" />
               <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-red-500 rounded-full"></div>
             </div>
           </div>
-          
+
           <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
             <div className="bg-white px-4 py-2 rounded-lg shadow-lg text-center">
               <p className="font-medium text-gray-800">{location}</p>
@@ -64,12 +67,12 @@ const LocationMap = ({ location }) => {
             </div>
           </div>
         </div>
-        
+
         <div className="absolute top-4 right-4 bg-white p-2 rounded-lg shadow-sm">
           <Navigation className="w-4 h-4 text-gray-600" />
         </div>
       </div>
-      
+
       <div className="p-4 border-t border-gray-100 bg-gray-50">
         <div className="flex items-center justify-between">
           <div className="flex items-center text-sm text-gray-600">
@@ -87,8 +90,8 @@ const LocationMap = ({ location }) => {
 
 // Make Offer Modal Component
 const MakeOfferModal = ({ isOpen, onClose, product, onSubmit }) => {
-  const [offerAmount, setOfferAmount] = useState('');
-  const [message, setMessage] = useState('');
+  const [offerAmount, setOfferAmount] = useState("");
+  const [message, setMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   if (!isOpen) return null;
@@ -96,7 +99,7 @@ const MakeOfferModal = ({ isOpen, onClose, product, onSubmit }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
+
     // Simulate API call
     setTimeout(() => {
       onSubmit({
@@ -145,7 +148,9 @@ const MakeOfferModal = ({ isOpen, onClose, product, onSubmit }) => {
               />
               <div>
                 <h4 className="font-medium text-gray-900">{product.title}</h4>
-                <p className="text-sm text-gray-500">Listed price: ${product.price.toLocaleString()}</p>
+                <p className="text-sm text-gray-500">
+                  Listed price: ${product.price.toLocaleString()}
+                </p>
               </div>
             </div>
           </div>
@@ -203,7 +208,8 @@ const MakeOfferModal = ({ isOpen, onClose, product, onSubmit }) => {
 
           <div className="bg-blue-50 p-4 rounded-lg">
             <p className="text-sm text-blue-800">
-              <strong>Note:</strong> Your offer is binding. If the seller accepts, you'll be notified and can proceed with the purchase.
+              <strong>Note:</strong> Your offer is binding. If the seller
+              accepts, you'll be notified and can proceed with the purchase.
             </p>
           </div>
 
@@ -221,7 +227,7 @@ const MakeOfferModal = ({ isOpen, onClose, product, onSubmit }) => {
               className="flex-1 py-3 bg-[#27bb97] hover:bg-[#1fa987] text-white rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               {isSubmitting ? (
-                'Sending...'
+                "Sending..."
               ) : (
                 <>
                   <Send className="w-4 h-4" />
@@ -268,10 +274,12 @@ const ViewProfileModal = ({ isOpen, onClose, seller }) => {
                 {[...Array(5)].map((_, i) => (
                   <Star
                     key={i}
-                    className={`w-5 h-5 ${i < Math.floor(seller.rating) ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
+                    className={`w-5 h-5 ${i < Math.floor(seller.rating) ? "text-yellow-400 fill-current" : "text-gray-300"}`}
                   />
                 ))}
-                <span className="ml-2 text-gray-600">({seller.reviews} reviews)</span>
+                <span className="ml-2 text-gray-600">
+                  ({seller.reviews} reviews)
+                </span>
               </div>
               <div className="flex items-center text-gray-500 mt-2">
                 <Clock className="w-4 h-4 mr-1" />
@@ -300,20 +308,28 @@ const ViewProfileModal = ({ isOpen, onClose, seller }) => {
           <div className="mb-8">
             <h4 className="text-lg font-bold text-gray-900 mb-3">About</h4>
             <p className="text-gray-600 leading-relaxed">
-              Passionate seller with over 5 years of experience on the platform. 
-              Specializing in electronics and collectibles. All items are carefully 
-              inspected before listing. Fast shipping and excellent customer service guaranteed!
+              Passionate seller with over 5 years of experience on the platform.
+              Specializing in electronics and collectibles. All items are
+              carefully inspected before listing. Fast shipping and excellent
+              customer service guaranteed!
             </p>
           </div>
 
           {/* Seller's Items */}
           <div>
-            <h4 className="text-lg font-bold text-gray-900 mb-3">Seller's Other Items</h4>
+            <h4 className="text-lg font-bold text-gray-900 mb-3">
+              Seller's Other Items
+            </h4>
             <div className="grid grid-cols-2 gap-4">
               {[1, 2].map((item) => (
-                <div key={item} className="border border-gray-200 rounded-lg p-3 hover:shadow-md transition-shadow">
+                <div
+                  key={item}
+                  className="border border-gray-200 rounded-lg p-3 hover:shadow-md transition-shadow"
+                >
                   <div className="aspect-square bg-gray-100 rounded-md mb-2"></div>
-                  <p className="font-medium text-gray-900">Sample Item {item}</p>
+                  <p className="font-medium text-gray-900">
+                    Sample Item {item}
+                  </p>
                   <p className="text-[#27bb97] font-bold">$XX.XX</p>
                 </div>
               ))}
@@ -350,9 +366,9 @@ const ForSaleDetail = () => {
 
   useEffect(() => {
     // Get product data from localStorage (passed from listing page)
-    const storedProduct = localStorage.getItem('selectedProduct');
-    const storedProducts = localStorage.getItem('allProducts');
-    
+    const storedProduct = localStorage.getItem("selectedProduct");
+    const storedProducts = localStorage.getItem("allProducts");
+
     if (storedProduct) {
       const parsedProduct = JSON.parse(storedProduct);
       // Verify that the ID matches (in case user navigates directly to a different URL)
@@ -360,7 +376,7 @@ const ForSaleDetail = () => {
         setProduct(parsedProduct);
       }
     }
-    
+
     // Get all products for similar items
     if (storedProducts) {
       setAllProducts(JSON.parse(storedProducts));
@@ -369,30 +385,41 @@ const ForSaleDetail = () => {
 
   const productImages = [
     product?.image,
-    'https://images.unsplash.com/photo-1579586337278-3f576cfc5113?w=500&q=80',
-    'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=500&q=80',
-    'https://images.unsplash.com/photo-1546054451-aa224c0e8c23?w=500&q=80',
-    'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=500&q=80',
-    'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=500&q=80',
+    "https://images.unsplash.com/photo-1579586337278-3f576cfc5113?w=500&q=80",
+    "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=500&q=80",
+    "https://images.unsplash.com/photo-1546054451-aa224c0e8c23?w=500&q=80",
+    "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=500&q=80",
+    "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=500&q=80",
   ].filter(Boolean);
 
   const handleThumbnailClick = (index) => setSelectedImageIndex(index);
   const handlePrevImage = () =>
-    setSelectedImageIndex((prev) => (prev === 0 ? productImages.length - 1 : prev - 1));
+    setSelectedImageIndex((prev) =>
+      prev === 0 ? productImages.length - 1 : prev - 1,
+    );
   const handleNextImage = () =>
-    setSelectedImageIndex((prev) => (prev === productImages.length - 1 ? 0 : prev + 1));
+    setSelectedImageIndex((prev) =>
+      prev === productImages.length - 1 ? 0 : prev + 1,
+    );
 
   const handleMakeOffer = (offerData) => {
     // Here you would typically send this to your backend
-    console.log('Offer submitted:', offerData);
+    console.log("Offer submitted:", offerData);
     // You can store in localStorage for demo purposes
-    const existingOffers = JSON.parse(localStorage.getItem('userOffers') || '[]');
-    localStorage.setItem('userOffers', JSON.stringify([...existingOffers, offerData]));
+    const existingOffers = JSON.parse(
+      localStorage.getItem("userOffers") || "[]",
+    );
+    localStorage.setItem(
+      "userOffers",
+      JSON.stringify([...existingOffers, offerData]),
+    );
   };
 
   const handleContactSeller = () => {
     // Navigate to messages or open chat
-    navigate('/dashboard', { state: { seller: product?.seller, product: product } });
+    navigate("/dashboard", {
+      state: { seller: product?.seller, product: product },
+    });
   };
 
   const handleShare = async () => {
@@ -404,18 +431,18 @@ const ForSaleDetail = () => {
           url: window.location.href,
         });
       } catch (error) {
-        console.log('Error sharing:', error);
+        console.log("Error sharing:", error);
       }
     } else {
       // Fallback - copy to clipboard
       navigator.clipboard.writeText(window.location.href);
-      toast('Link copied to clipboard!');
+      toast("Link copied to clipboard!");
     }
   };
 
   // Get similar products (excluding current product)
   const similarProducts = allProducts
-    .filter(p => p.id !== product?.id)
+    .filter((p) => p.id !== product?.id)
     .slice(0, 4);
 
   if (!product) {
@@ -425,10 +452,14 @@ const ForSaleDetail = () => {
           <div className="w-20 h-20 sm:w-24 sm:h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
             <Package className="w-10 h-10 sm:w-12 sm:h-12 text-gray-400" />
           </div>
-          <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">Product not found</h2>
-          <p className="text-gray-600 mb-6">Please select a product from the listing page.</p>
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">
+            Product not found
+          </h2>
+          <p className="text-gray-600 mb-6">
+            Please select a product from the listing page.
+          </p>
           <button
-            onClick={() => navigate('/forsale')}
+            onClick={() => navigate("/forsale")}
             className="px-6 py-3 bg-[#27BB97] text-white rounded-lg hover:bg-[#1E9E7E] transition-colors font-medium text-base sm:text-lg"
           >
             Back to For Sale
@@ -441,55 +472,196 @@ const ForSaleDetail = () => {
   // Generate specs based on product type (unchanged)
   const getProductSpecs = () => {
     const title = product.title.toLowerCase();
-    
-    if (title.includes('harley') || title.includes('motorcycle') || title.includes('honda') || title.includes('yamaha')) {
+
+    if (
+      title.includes("harley") ||
+      title.includes("motorcycle") ||
+      title.includes("honda") ||
+      title.includes("yamaha")
+    ) {
       return [
-        { icon: <Battery className="text-[#27bb97] text-xl" />, label: 'Engine', value: title.includes('harley') ? 'V-Twin' : 'Inline-4' },
-        { icon: <Wifi className="text-[#27bb97] text-xl" />, label: 'Mileage', value: 'Varies' },
-        { icon: <Shield className="text-[#27bb97] text-xl" />, label: 'Year', value: product.title.split(' ')[0] },
-        { icon: <Package className="text-[#27bb97] text-xl" />, label: 'Condition', value: product.condition },
+        {
+          icon: <Battery className="text-[#27bb97] text-xl" />,
+          label: "Engine",
+          value: title.includes("harley") ? "V-Twin" : "Inline-4",
+        },
+        {
+          icon: <Wifi className="text-[#27bb97] text-xl" />,
+          label: "Mileage",
+          value: "Varies",
+        },
+        {
+          icon: <Shield className="text-[#27bb97] text-xl" />,
+          label: "Year",
+          value: product.title.split(" ")[0],
+        },
+        {
+          icon: <Package className="text-[#27bb97] text-xl" />,
+          label: "Condition",
+          value: product.condition,
+        },
       ];
-    } else if (title.includes('bmw') || title.includes('mercedes') || title.includes('audi') || title.includes('ford') || title.includes('toyota') || title.includes('ram')) {
+    } else if (
+      title.includes("bmw") ||
+      title.includes("mercedes") ||
+      title.includes("audi") ||
+      title.includes("ford") ||
+      title.includes("toyota") ||
+      title.includes("ram")
+    ) {
       return [
-        { icon: <Battery className="text-[#27bb97] text-xl" />, label: 'Engine', value: title.includes('hybrid') ? 'Hybrid' : 'V6/V8' },
-        { icon: <Wifi className="text-[#27bb97] text-xl" />, label: 'Mileage', value: 'Varies' },
-        { icon: <Shield className="text-[#27bb97] text-xl" />, label: 'Year', value: product.title.split(' ')[0] },
-        { icon: <Package className="text-[#27bb97] text-xl" />, label: 'Condition', value: product.condition },
+        {
+          icon: <Battery className="text-[#27bb97] text-xl" />,
+          label: "Engine",
+          value: title.includes("hybrid") ? "Hybrid" : "V6/V8",
+        },
+        {
+          icon: <Wifi className="text-[#27bb97] text-xl" />,
+          label: "Mileage",
+          value: "Varies",
+        },
+        {
+          icon: <Shield className="text-[#27bb97] text-xl" />,
+          label: "Year",
+          value: product.title.split(" ")[0],
+        },
+        {
+          icon: <Package className="text-[#27bb97] text-xl" />,
+          label: "Condition",
+          value: product.condition,
+        },
       ];
-    } else if (title.includes('tv') || title.includes('samsung') || title.includes('sony') || title.includes('lg')) {
+    } else if (
+      title.includes("tv") ||
+      title.includes("samsung") ||
+      title.includes("sony") ||
+      title.includes("lg")
+    ) {
       return [
-        { icon: <Battery className="text-[#27bb97] text-xl" />, label: 'Screen Size', value: title.includes('65') ? '65"' : 'Various' },
-        { icon: <Wifi className="text-[#27bb97] text-xl" />, label: 'Resolution', value: '4K' },
-        { icon: <Shield className="text-[#27bb97] text-xl" />, label: 'Smart TV', value: 'Yes' },
-        { icon: <Package className="text-[#27bb97] text-xl" />, label: 'Condition', value: product.condition },
+        {
+          icon: <Battery className="text-[#27bb97] text-xl" />,
+          label: "Screen Size",
+          value: title.includes("65") ? '65"' : "Various",
+        },
+        {
+          icon: <Wifi className="text-[#27bb97] text-xl" />,
+          label: "Resolution",
+          value: "4K",
+        },
+        {
+          icon: <Shield className="text-[#27bb97] text-xl" />,
+          label: "Smart TV",
+          value: "Yes",
+        },
+        {
+          icon: <Package className="text-[#27bb97] text-xl" />,
+          label: "Condition",
+          value: product.condition,
+        },
       ];
-    } else if (title.includes('macbook') || title.includes('laptop') || title.includes('computer')) {
+    } else if (
+      title.includes("macbook") ||
+      title.includes("laptop") ||
+      title.includes("computer")
+    ) {
       return [
-        { icon: <Battery className="text-[#27bb97] text-xl" />, label: 'Processor', value: title.includes('m1') ? 'M1 Chip' : 'Intel i7' },
-        { icon: <Wifi className="text-[#27bb97] text-xl" />, label: 'RAM', value: '16GB' },
-        { icon: <Shield className="text-[#27bb97] text-xl" />, label: 'Storage', value: '512GB' },
-        { icon: <Package className="text-[#27bb97] text-xl" />, label: 'Condition', value: product.condition },
+        {
+          icon: <Battery className="text-[#27bb97] text-xl" />,
+          label: "Processor",
+          value: title.includes("m1") ? "M1 Chip" : "Intel i7",
+        },
+        {
+          icon: <Wifi className="text-[#27bb97] text-xl" />,
+          label: "RAM",
+          value: "16GB",
+        },
+        {
+          icon: <Shield className="text-[#27bb97] text-xl" />,
+          label: "Storage",
+          value: "512GB",
+        },
+        {
+          icon: <Package className="text-[#27bb97] text-xl" />,
+          label: "Condition",
+          value: product.condition,
+        },
       ];
-    } else if (title.includes('camera') || title.includes('canon') || title.includes('nikon')) {
+    } else if (
+      title.includes("camera") ||
+      title.includes("canon") ||
+      title.includes("nikon")
+    ) {
       return [
-        { icon: <Camera className="text-[#27bb97] text-xl" />, label: 'Megapixels', value: '20MP+' },
-        { icon: <Wifi className="text-[#27bb97] text-xl" />, label: 'Video', value: '4K' },
-        { icon: <Shield className="text-[#27bb97] text-xl" />, label: 'Stabilization', value: 'Yes' },
-        { icon: <Package className="text-[#27bb97] text-xl" />, label: 'Condition', value: product.condition },
+        {
+          icon: <Camera className="text-[#27bb97] text-xl" />,
+          label: "Megapixels",
+          value: "20MP+",
+        },
+        {
+          icon: <Wifi className="text-[#27bb97] text-xl" />,
+          label: "Video",
+          value: "4K",
+        },
+        {
+          icon: <Shield className="text-[#27bb97] text-xl" />,
+          label: "Stabilization",
+          value: "Yes",
+        },
+        {
+          icon: <Package className="text-[#27bb97] text-xl" />,
+          label: "Condition",
+          value: product.condition,
+        },
       ];
-    } else if (title.includes('playstation') || title.includes('xbox') || title.includes('nintendo')) {
+    } else if (
+      title.includes("playstation") ||
+      title.includes("xbox") ||
+      title.includes("nintendo")
+    ) {
       return [
-        { icon: <Battery className="text-[#27bb97] text-xl" />, label: 'Storage', value: '1TB' },
-        { icon: <Wifi className="text-[#27bb97] text-xl" />, label: 'Resolution', value: '4K' },
-        { icon: <Shield className="text-[#27bb97] text-xl" />, label: 'Controllers', value: '1 included' },
-        { icon: <Package className="text-[#27bb97] text-xl" />, label: 'Condition', value: product.condition },
+        {
+          icon: <Battery className="text-[#27bb97] text-xl" />,
+          label: "Storage",
+          value: "1TB",
+        },
+        {
+          icon: <Wifi className="text-[#27bb97] text-xl" />,
+          label: "Resolution",
+          value: "4K",
+        },
+        {
+          icon: <Shield className="text-[#27bb97] text-xl" />,
+          label: "Controllers",
+          value: "1 included",
+        },
+        {
+          icon: <Package className="text-[#27bb97] text-xl" />,
+          label: "Condition",
+          value: product.condition,
+        },
       ];
     } else {
       return [
-        { icon: <Package className="text-[#27bb97] text-xl" />, label: 'Condition', value: product.condition },
-        { icon: <Shield className="text-[#27bb97] text-xl" />, label: 'Returns', value: 'Not accepted' },
-        { icon: <Truck className="text-[#27bb97] text-xl" />, label: 'Shipping', value: 'Local pickup' },
-        { icon: <Clock className="text-[#27bb97] text-xl" />, label: 'Listed', value: 'Recently' },
+        {
+          icon: <Package className="text-[#27bb97] text-xl" />,
+          label: "Condition",
+          value: product.condition,
+        },
+        {
+          icon: <Shield className="text-[#27bb97] text-xl" />,
+          label: "Returns",
+          value: "Not accepted",
+        },
+        {
+          icon: <Truck className="text-[#27bb97] text-xl" />,
+          label: "Shipping",
+          value: "Local pickup",
+        },
+        {
+          icon: <Clock className="text-[#27bb97] text-xl" />,
+          label: "Listed",
+          value: "Recently",
+        },
       ];
     }
   };
@@ -503,7 +675,7 @@ const ForSaleDetail = () => {
         product={product}
         onSubmit={handleMakeOffer}
       />
-      
+
       <ViewProfileModal
         isOpen={isProfileModalOpen}
         onClose={() => setIsProfileModalOpen(false)}
@@ -521,13 +693,15 @@ const ForSaleDetail = () => {
           <div className="flex items-center justify-between h-14 sm:h-16">
             <div className="flex items-center space-x-1.5 sm:space-x-2 text-sm text-gray-600 min-w-0 flex-1">
               <button
-                onClick={() => navigate('/forsale')}
+                onClick={() => navigate("/forsale")}
                 className="hover:text-[#27bb97] transition-colors whitespace-nowrap"
               >
                 For Sale
               </button>
               <ChevronRight className="w-4 h-4 flex-shrink-0" />
-              <span className="font-medium text-gray-900 truncate">{product.title}</span>
+              <span className="font-medium text-gray-900 truncate">
+                {product.title}
+              </span>
             </div>
           </div>
         </div>
@@ -546,33 +720,35 @@ const ForSaleDetail = () => {
                   alt={product.title}
                   className="w-full h-auto max-h-[500px] rounded-md object-cover bg-gray-50"
                 />
-                
+
                 <button
                   onClick={handlePrevImage}
                   className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 backdrop-blur-sm rounded-full shadow-lg flex items-center justify-center hover:bg-white transition-all hover:shadow-xl z-20"
                 >
                   <ChevronLeft className="w-6 h-6 text-gray-700" />
                 </button>
-                
+
                 <button
                   onClick={handleNextImage}
                   className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 backdrop-blur-sm rounded-full shadow-lg flex items-center justify-center hover:bg-white transition-all hover:shadow-xl z-20"
                 >
                   <ChevronRightIcon className="w-6 h-6 text-gray-700" />
                 </button>
-                
+
                 <div className="absolute bottom-4 right-4 bg-black/70 text-white px-3 py-1.5 rounded-full text-sm font-medium backdrop-blur-sm z-10">
                   {selectedImageIndex + 1} / {productImages.length}
                 </div>
 
                 <div className="absolute top-4 right-4 flex gap-2 z-10">
-                  <button 
+                  <button
                     onClick={() => setIsLiked(!isLiked)}
                     className="p-2.5 bg-white/90 backdrop-blur-sm rounded-lg shadow-sm hover:shadow-md transition-shadow"
                   >
-                    <Heart className={`w-5 h-5 ${isLiked ? 'fill-red-500 text-red-500' : 'text-gray-600'}`} />
+                    <Heart
+                      className={`w-5 h-5 ${isLiked ? "fill-red-500 text-red-500" : "text-gray-600"}`}
+                    />
                   </button>
-                  <button 
+                  <button
                     onClick={handleShare}
                     className="p-2.5 bg-white/90 backdrop-blur-sm rounded-lg shadow-sm hover:shadow-md transition-shadow"
                   >
@@ -590,8 +766,8 @@ const ForSaleDetail = () => {
                   onClick={() => handleThumbnailClick(index)}
                   className={`min-w-[180px] md:min-w-0 w-32 h-24 rounded-md overflow-hidden cursor-pointer transition-all ${
                     selectedImageIndex === index
-                      ? 'border-2 border-[#27bb97] shadow-md'
-                      : 'hover:border-2 hover:border-gray-300 shadow-sm'
+                      ? "border-2 border-[#27bb97] shadow-md"
+                      : "hover:border-2 hover:border-gray-300 shadow-sm"
                   }`}
                 >
                   <img
@@ -608,11 +784,13 @@ const ForSaleDetail = () => {
 
             {/* Additional Information Below Images */}
             <div className="mt-8 bg-white rounded-lg shadow-sm p-6">
-              <h3 className="text-xl font-bold mb-4 text-gray-900">Product Description</h3>
+              <h3 className="text-xl font-bold mb-4 text-gray-900">
+                Product Description
+              </h3>
               <p className="text-gray-600 leading-relaxed">
                 {product.description}
               </p>
-              
+
               <div className="mt-6 pt-6 border-t border-gray-100">
                 <h4 className="text-lg font-semibold mb-3">Key Features</h4>
                 <ul className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -635,7 +813,7 @@ const ForSaleDetail = () => {
                 <h2 className="text-3xl lg:text-3xl font-bold text-gray-900 mb-4">
                   {product.title}
                 </h2>
-                
+
                 <div className="mb-6">
                   <div className="text-sm text-gray-500 mb-1 tracking-wider font-medium">
                     ASKING PRICE
@@ -680,30 +858,30 @@ const ForSaleDetail = () => {
 
                 {/* Action Buttons */}
                 <div className="space-y-3">
-                  <button 
+                  <button
                     onClick={handleContactSeller}
                     className="w-full py-4 bg-[#27bb97] hover:bg-[#1fa987] text-white rounded-lg font-semibold transition-all shadow-md hover:shadow-lg text-base uppercase"
                   >
                     <MessageCircle className="w-5 h-5 inline mr-2" />
                     Contact Seller
                   </button>
-                  
+
                   <div className="grid grid-cols-2 gap-3">
-                    <button 
+                    <button
                       onClick={() => setIsOfferModalOpen(true)}
                       className="py-3 bg-white border-2 border-gray-200 text-gray-700 rounded-lg font-medium hover:border-gray-300 transition-colors"
                     >
                       Make Offer
                     </button>
-                    <button 
+                    <button
                       onClick={() => setIsSaved(!isSaved)}
                       className={`py-3 border-2 rounded-lg font-medium transition-colors ${
-                        isSaved 
-                          ? 'bg-[#27bb97] border-[#27bb97] text-white hover:bg-[#1fa987]' 
-                          : 'bg-white border-[#27bb97] text-[#27bb97] hover:bg-[#27bb97]/5'
+                        isSaved
+                          ? "bg-[#27bb97] border-[#27bb97] text-white hover:bg-[#1fa987]"
+                          : "bg-white border-[#27bb97] text-[#27bb97] hover:bg-[#27bb97]/5"
                       }`}
                     >
-                      {isSaved ? 'Saved' : 'Save Item'}
+                      {isSaved ? "Saved" : "Save Item"}
                     </button>
                   </div>
                 </div>
@@ -712,8 +890,10 @@ const ForSaleDetail = () => {
               {/* Seller Info */}
               <div className="bg-white rounded-lg shadow-sm p-6">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-bold text-gray-700">SELLER INFORMATION</h3>
-                  <button 
+                  <h3 className="text-lg font-bold text-gray-700">
+                    SELLER INFORMATION
+                  </h3>
+                  <button
                     onClick={() => setIsProfileModalOpen(true)}
                     className="text-[#27bb97] text-sm font-medium hover:text-[#1fa987] flex items-center gap-1"
                   >
@@ -721,7 +901,7 @@ const ForSaleDetail = () => {
                     View Profile →
                   </button>
                 </div>
-                
+
                 <div className="flex items-center gap-4">
                   <div className="w-16 h-16 bg-gradient-to-br from-[#27bb97] to-[#1E9E7E] rounded-full flex items-center justify-center text-white text-2xl font-bold">
                     {product.seller[0]}
@@ -735,10 +915,12 @@ const ForSaleDetail = () => {
                       {[...Array(5)].map((_, i) => (
                         <Star
                           key={i}
-                          className={`w-4 h-4 ${i < Math.floor(product.sellerRating) ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
+                          className={`w-4 h-4 ${i < Math.floor(product.sellerRating) ? "text-yellow-400 fill-current" : "text-gray-300"}`}
                         />
                       ))}
-                      <span className="ml-2 text-sm text-gray-600">({product.sellerReviews})</span>
+                      <span className="ml-2 text-sm text-gray-600">
+                        ({product.sellerReviews})
+                      </span>
                     </div>
                     <div className="flex items-center text-gray-500 text-sm mt-1">
                       <Clock className="w-4 h-4 mr-1" />
@@ -760,8 +942,12 @@ const ForSaleDetail = () => {
                         {spec.icon}
                       </div>
                       <div>
-                        <div className="text-xs text-gray-500">{spec.label}</div>
-                        <div className="text-sm font-medium text-gray-700">{spec.value}</div>
+                        <div className="text-xs text-gray-500">
+                          {spec.label}
+                        </div>
+                        <div className="text-sm font-medium text-gray-700">
+                          {spec.value}
+                        </div>
                       </div>
                     </div>
                   ))}
@@ -775,9 +961,11 @@ const ForSaleDetail = () => {
         {similarProducts.length > 0 && (
           <div className="mt-16">
             <div className="flex items-center justify-between mb-8">
-              <h2 className="text-2xl font-bold text-gray-900">Similar Items You Might Like</h2>
-              <button 
-                onClick={() => navigate('/forsale')}
+              <h2 className="text-2xl font-bold text-gray-900">
+                Similar Items You Might Like
+              </h2>
+              <button
+                onClick={() => navigate("/forsale")}
                 className="text-[#27bb97] hover:text-[#1E9E7E] font-medium"
               >
                 View all →
@@ -788,7 +976,10 @@ const ForSaleDetail = () => {
                 <div
                   key={item.id}
                   onClick={() => {
-                    localStorage.setItem('selectedProduct', JSON.stringify(item));
+                    localStorage.setItem(
+                      "selectedProduct",
+                      JSON.stringify(item),
+                    );
                     navigate(`/forsale/${item.id}`);
                   }}
                   className="group bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer border border-gray-100 overflow-hidden"

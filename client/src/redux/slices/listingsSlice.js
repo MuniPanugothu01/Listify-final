@@ -20,7 +20,7 @@ export const fetchMyListings = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || error.message);
     }
-  }
+  },
 );
 
 export const fetchSavedItems = createAsyncThunk(
@@ -32,7 +32,7 @@ export const fetchSavedItems = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || error.message);
     }
-  }
+  },
 );
 
 export const toggleSaveItem = createAsyncThunk(
@@ -44,7 +44,7 @@ export const toggleSaveItem = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || error.message);
     }
-  }
+  },
 );
 
 export const fetchAlerts = createAsyncThunk(
@@ -56,7 +56,7 @@ export const fetchAlerts = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || error.message);
     }
-  }
+  },
 );
 
 export const createAlert = createAsyncThunk(
@@ -68,7 +68,7 @@ export const createAlert = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || error.message);
     }
-  }
+  },
 );
 
 export const deleteAlert = createAsyncThunk(
@@ -80,7 +80,7 @@ export const deleteAlert = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || error.message);
     }
-  }
+  },
 );
 
 export const createListing = createAsyncThunk(
@@ -92,7 +92,7 @@ export const createListing = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || error.message);
     }
-  }
+  },
 );
 
 export const updateListing = createAsyncThunk(
@@ -104,7 +104,7 @@ export const updateListing = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || error.message);
     }
-  }
+  },
 );
 
 export const deleteListing = createAsyncThunk(
@@ -116,7 +116,7 @@ export const deleteListing = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || error.message);
     }
-  }
+  },
 );
 
 const listingsSlice = createSlice({
@@ -133,7 +133,9 @@ const listingsSlice = createSlice({
       state.savedHouses.push(action.payload);
     },
     removeSavedItem: (state, action) => {
-      state.savedHouses = state.savedHouses.filter(item => item.id !== action.payload);
+      state.savedHouses = state.savedHouses.filter(
+        (item) => item.id !== action.payload,
+      );
     },
     clearListingsData: (state) => {
       state.myPosts = [];
@@ -208,7 +210,9 @@ const listingsSlice = createSlice({
 
       // Delete Alert
       .addCase(deleteAlert.fulfilled, (state, action) => {
-        state.myAlerts = state.myAlerts.filter(alert => alert.id !== action.payload);
+        state.myAlerts = state.myAlerts.filter(
+          (alert) => alert.id !== action.payload,
+        );
         state.success = true;
       })
 
@@ -220,7 +224,9 @@ const listingsSlice = createSlice({
 
       // Update Listing
       .addCase(updateListing.fulfilled, (state, action) => {
-        const index = state.myPosts.findIndex(p => p.id === action.payload.id);
+        const index = state.myPosts.findIndex(
+          (p) => p.id === action.payload.id,
+        );
         if (index !== -1) {
           state.myPosts[index] = action.payload;
         }
@@ -229,7 +235,7 @@ const listingsSlice = createSlice({
 
       // Delete Listing
       .addCase(deleteListing.fulfilled, (state, action) => {
-        state.myPosts = state.myPosts.filter(p => p.id !== action.payload);
+        state.myPosts = state.myPosts.filter((p) => p.id !== action.payload);
         state.success = true;
       });
   },

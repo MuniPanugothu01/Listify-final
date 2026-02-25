@@ -23,8 +23,8 @@ export default function StylePreview() {
             Sample Card Title
           </h2>
           <p className="text-[#7A7A7A] leading-relaxed">
-            This card demonstrates the neutral backgrounds, border styling, and accent
-            color for section headers.
+            This card demonstrates the neutral backgrounds, border styling, and
+            accent color for section headers.
           </p>
         </div>
       </div>

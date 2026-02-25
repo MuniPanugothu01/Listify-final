@@ -101,12 +101,12 @@ const TrendingWeek = () => {
           </p>
         </div>
 
-     <Link to="/roommate-details">
-        <button className="text-[#27bb97] hover:text-[#1fa987] font-semibold text-sm cursor-pointer whitespace-nowrap flex items-center gap-1 transition-colors duration-200 hover:underline">
-          View All Trending
-          <span className="text-lg">→</span>
-        </button>
-     </Link>
+        <Link to="/roommate-details">
+          <button className="text-[#27bb97] hover:text-[#1fa987] font-semibold text-sm cursor-pointer whitespace-nowrap flex items-center gap-1 transition-colors duration-200 hover:underline">
+            View All Trending
+            <span className="text-lg">→</span>
+          </button>
+        </Link>
       </div>
 
       {/* Cards Grid */}

@@ -7,7 +7,7 @@ import {
   resetListingsSuccess,
   addSavedItem,
   removeSavedItem,
-} from '../slices/listingsSlice';
+} from "../slices/listingsSlice";
 
 export const listingActions = {
   // Fetch my listings
@@ -34,19 +34,19 @@ export const listingActions = {
   toggleSaveItem: (itemId) => async (dispatch, getState) => {
     try {
       const { listings } = getState();
-      const isSaved = listings.savedHouses.some(item => item.id === itemId);
-      
+      const isSaved = listings.savedHouses.some((item) => item.id === itemId);
+
       // Optimistic update
       if (isSaved) {
         dispatch(removeSavedItem(itemId));
       }
 
       const result = await dispatch(toggleSaveItem(itemId)).unwrap();
-      
-      return { 
-        success: true, 
+
+      return {
+        success: true,
         isSaved: result.isSaved,
-        item: result.item 
+        item: result.item,
       };
     } catch (error) {
       // Revert optimistic update on error

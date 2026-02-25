@@ -54,7 +54,7 @@ export const useProfilePage = () => {
   const listings = useSelector((state) => state.listings);
   const messages = useSelector((state) => state.messages);
   const activity = useSelector((state) => state.activity);
-  
+
   return {
     auth,
     profile,

@@ -4,118 +4,89 @@ import { Users, Home, ShoppingCart, Briefcase, Music } from "lucide-react";
 
 const Category = () => {
   const navigate = useNavigate();
-  
+
   const categories = [
-     {
+    {
       id: 1,
       title: "For Sale",
       path: "/forsale",
       image: "/for-sale-2.jpg",
       icon: ShoppingCart,
-      subcategories: [
-        "Furniture",
-        "Clothing",
-        "Home Appliances",
-      ],
+      subcategories: ["Furniture", "Clothing", "Home Appliances"],
     },
-  
+
     {
       id: 2,
       title: "Electronics",
       path: "/electronics",
-      image: "https://thumbs.dreamstime.com/b/modern-electronics-store-showcasing-macbook-air-laptops-smartphones-technology-accessories-lviv-ukraine-march-high-end-macbook-368559879.jpg",
+      image:
+        "https://thumbs.dreamstime.com/b/modern-electronics-store-showcasing-macbook-air-laptops-smartphones-technology-accessories-lviv-ukraine-march-high-end-macbook-368559879.jpg",
       icon: ShoppingCart,
-      subcategories: [
-        "Smartphones",
-        "Laptops & Tablets",
-        "TVs & Audio",
-      ],
+      subcategories: ["Smartphones", "Laptops & Tablets", "TVs & Audio"],
     },
     {
       id: 3,
       title: "Cars",
       path: "/cars",
-      image: "https://www.huntermoss.com/images/best-cars-for-road-trips/a-img.webp",
+      image:
+        "https://www.huntermoss.com/images/best-cars-for-road-trips/a-img.webp",
       icon: Briefcase,
-      subcategories: [
-        "Used Cars",
-        "New Cars",
-        "SUVs & Trucks",
-      ],
+      subcategories: ["Used Cars", "New Cars", "SUVs & Trucks"],
     },
-       {
+    {
       id: 4,
       title: "Events",
       path: "/events",
-      image: "https://thumbs.dreamstime.com/b/dj-celebrating-stage-arms-raised-vibrant-concert-dynamic-scene-standing-triumphantly-high-celebration-as-373546700.jpg",
+      image:
+        "https://thumbs.dreamstime.com/b/dj-celebrating-stage-arms-raised-vibrant-concert-dynamic-scene-standing-triumphantly-high-celebration-as-373546700.jpg",
       icon: Music,
-      subcategories: [
-        "Concerts",
-        "DJ Nights",
-        "Parties",
-      ],
+      subcategories: ["Concerts", "DJ Nights", "Parties"],
     },
     {
       id: 5,
       title: "Services",
       path: "/services",
-      image: "https://www.professionalhomerepair.net/images/services/handyman-tools.webp",
+      image:
+        "https://www.professionalhomerepair.net/images/services/handyman-tools.webp",
       icon: Briefcase,
-      subcategories: [
-        "Plumbing",
-        "Electrical",
-        "Cleaning",
-      ],
+      subcategories: ["Plumbing", "Electrical", "Cleaning"],
     },
     {
       id: 6,
       title: "Take Care",
       path: "/takecare",
-      image: "https://www.hopehospice.com/wp-content/uploads/2020/06/blog-banner-caregiver-help-2.jpg",
+      image:
+        "https://www.hopehospice.com/wp-content/uploads/2020/06/blog-banner-caregiver-help-2.jpg",
       icon: Users,
-      subcategories: [
-        "Elderly Care",
-        "Home Nursing",
-        "Caregivers",
-      ],
+      subcategories: ["Elderly Care", "Home Nursing", "Caregivers"],
     },
     {
       id: 7,
       title: "Jobs",
       path: "/jobs",
-      image: "https://plus.unsplash.com/premium_photo-1661537653118-93a6f2a43d23?fm=jpg&q=60&w=3000",
+      image:
+        "https://plus.unsplash.com/premium_photo-1661537653118-93a6f2a43d23?fm=jpg&q=60&w=3000",
       icon: Briefcase,
-      subcategories: [
-        "Full-time Jobs",
-        "Part-time",
-        "Remote Work",
-      ],
+      subcategories: ["Full-time Jobs", "Part-time", "Remote Work"],
     },
-      {
+    {
       id: 8,
       title: "Roommates",
       path: "/roommates",
-      image: "https://www.shutterstock.com/image-photo/laughing-phone-sharing-friends-on-260nw-2701402047.jpg",
+      image:
+        "https://www.shutterstock.com/image-photo/laughing-phone-sharing-friends-on-260nw-2701402047.jpg",
       icon: Users,
-      subcategories: [
-        "Shared Apartments",
-        "Room for Rent",
-        "Flatmates Wanted",
-      ],
+      subcategories: ["Shared Apartments", "Room for Rent", "Flatmates Wanted"],
     },
-     {
+    {
       id: 9,
       title: "Rentals",
       path: "/rentals",
-      image: "https://hips.hearstapps.com/hmg-prod/images/designed-by-arlyn-hernandez-photo-by-sara-ligorria-tramp-5-652db3f539ed5.jpg",
+      image:
+        "https://hips.hearstapps.com/hmg-prod/images/designed-by-arlyn-hernandez-photo-by-sara-ligorria-tramp-5-652db3f539ed5.jpg",
       icon: Home,
-      subcategories: [
-        "Apartments",
-        "Studio Flats",
-        "Short-term Rentals",
-      ],
+      subcategories: ["Apartments", "Studio Flats", "Short-term Rentals"],
     },
-   
   ];
 
   const [expandedCard, setExpandedCard] = useState(null);
@@ -123,13 +94,13 @@ const Category = () => {
   const [tapCount, setTapCount] = useState({}); // Track tap count per card
 
   const checkIsMobile = useCallback(() => {
-    return typeof window !== 'undefined' && window.innerWidth < 768;
+    return typeof window !== "undefined" && window.innerWidth < 768;
   }, []);
 
   // Handle card click - different behavior for mobile and desktop
   const handleCardClick = (category, event) => {
     event.stopPropagation();
-    
+
     if (isMobile) {
       // Mobile behavior: first tap expands, second tap navigates
       if (expandedCard === category.id) {
@@ -158,39 +129,42 @@ const Category = () => {
   };
 
   // Handle click outside to collapse (mobile only)
-  const handleClickOutside = useCallback((event) => {
-    if (isMobile && expandedCard !== null) {
-      const isClickInsideCard = event.target.closest('.category-card');
-      if (!isClickInsideCard) {
-        setExpandedCard(null);
+  const handleClickOutside = useCallback(
+    (event) => {
+      if (isMobile && expandedCard !== null) {
+        const isClickInsideCard = event.target.closest(".category-card");
+        if (!isClickInsideCard) {
+          setExpandedCard(null);
+        }
       }
-    }
-  }, [expandedCard, isMobile]);
+    },
+    [expandedCard, isMobile],
+  );
 
   // Update screen size
   useEffect(() => {
     const handleResize = () => {
       const mobile = checkIsMobile();
       setIsMobile(mobile);
-      
+
       if (!mobile) {
         setExpandedCard(null);
       }
     };
-    
+
     handleResize();
-    window.addEventListener('resize', handleResize);
-    document.addEventListener('click', handleClickOutside);
-    
+    window.addEventListener("resize", handleResize);
+    document.addEventListener("click", handleClickOutside);
+
     return () => {
-      window.removeEventListener('resize', handleResize);
-      document.removeEventListener('click', handleClickOutside);
+      window.removeEventListener("resize", handleResize);
+      document.removeEventListener("click", handleClickOutside);
     };
   }, [checkIsMobile, handleClickOutside]);
 
   const renderCard = (category) => {
     const isExpanded = expandedCard === category.id;
-    
+
     return (
       <div
         key={category.id}
@@ -204,7 +178,8 @@ const Category = () => {
           className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 ease-out group-hover:scale-110"
           onError={(e) => {
             e.target.onerror = null;
-            e.target.src = "https://images.unsplash.com/photo-1502082553048-f009c37129b9?w=600&h=400&fit=crop";
+            e.target.src =
+              "https://images.unsplash.com/photo-1502082553048-f009c37129b9?w=600&h=400&fit=crop";
           }}
         />
 
@@ -212,10 +187,14 @@ const Category = () => {
         <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-all duration-700"></div>
 
         {/* Title at Bottom - Hides on Hover (desktop) or when expanded (mobile) */}
-        <div className={`absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/70 to-transparent p-3 sm:p-4 md:p-5 transition-all duration-700 ${
-          (!isMobile && 'opacity-100 group-hover:opacity-0 group-hover:translate-y-4') ||
-          (isMobile && (isExpanded ? 'opacity-0 translate-y-4' : 'opacity-100'))
-        }`}>
+        <div
+          className={`absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/70 to-transparent p-3 sm:p-4 md:p-5 transition-all duration-700 ${
+            (!isMobile &&
+              "opacity-100 group-hover:opacity-0 group-hover:translate-y-4") ||
+            (isMobile &&
+              (isExpanded ? "opacity-0 translate-y-4" : "opacity-100"))
+          }`}
+        >
           <h3 className="text-white font-semibold text-base sm:text-lg md:text-xl text-center">
             {category.title}
           </h3>
@@ -236,21 +215,27 @@ const Category = () => {
         )}
 
         {/* Hover/Click Overlay - Slides Up with Subcategories */}
-        <div className={`absolute inset-0 bg-gradient-to-b from-black/80 via-black/65 to-black/90 flex flex-col justify-center items-center pt-4 sm:pt-5 md:pt-6 transition-all duration-800 ease-in-out ${
-          (!isMobile && 'translate-y-full group-hover:translate-y-0') ||
-          (isMobile && (isExpanded ? 'translate-y-0' : 'translate-y-full'))
-        }`}>
+        <div
+          className={`absolute inset-0 bg-gradient-to-b from-black/80 via-black/65 to-black/90 flex flex-col justify-center items-center pt-4 sm:pt-5 md:pt-6 transition-all duration-800 ease-in-out ${
+            (!isMobile && "translate-y-full group-hover:translate-y-0") ||
+            (isMobile && (isExpanded ? "translate-y-0" : "translate-y-full"))
+          }`}
+        >
           <ul className="space-y-1 sm:space-y-1.5 md:space-y-2 text-center px-1 sm:px-2">
             {category.subcategories.map((sub, index) => (
               <li
                 key={index}
                 className={`text-white/90 text-xs sm:text-sm cursor-pointer px-2 sm:px-3 md:px-4 py-0.5 sm:py-1 rounded-md hover:text-white hover:bg-gray-700 transition-all duration-500 ease-out ${
-                  (!isMobile && 'translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100') ||
-                  (isMobile && (isExpanded ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'))
+                  (!isMobile &&
+                    "translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100") ||
+                  (isMobile &&
+                    (isExpanded
+                      ? "translate-y-0 opacity-100"
+                      : "translate-y-4 opacity-0"))
                 }`}
                 onClick={(e) => handleSubcategoryClick(category.path, e)}
-                style={{ 
-                  transitionDelay: !isMobile ? `${index * 80}ms` : '0ms' 
+                style={{
+                  transitionDelay: !isMobile ? `${index * 80}ms` : "0ms",
                 }}
               >
                 {sub}
@@ -259,7 +244,7 @@ const Category = () => {
           </ul>
 
           {/* More Button */}
-          <button 
+          <button
             onClick={(e) => handleMoreButtonClick(category.path, e)}
             className="bg-[#27bb97] absolute bottom-0 hover:bg-[#1fa987] h-8 sm:h-9 md:h-10 w-full text-white font-medium text-xs sm:text-sm md:text-[15px] transition-colors duration-300"
           >
@@ -268,7 +253,7 @@ const Category = () => {
 
           {/* Close button for mobile */}
           {isMobile && isExpanded && (
-            <button 
+            <button
               onClick={(e) => {
                 e.stopPropagation();
                 setExpandedCard(null);
@@ -298,13 +283,15 @@ const Category = () => {
             OUR CATEGORIES
           </h1>
           <p className="font-semibold max-w-3xl mx-auto leading-relaxed mt-4 sm:mt-5 md:mt-6 lg:mt-7 text-sm sm:text-base md:text-lg px-3 sm:px-4">
-            Browse through our diverse categories to find exactly what you're looking for. 
-            From housing and services to jobs and marketplace items, everything is just a click away.
+            Browse through our diverse categories to find exactly what you're
+            looking for. From housing and services to jobs and marketplace
+            items, everything is just a click away.
           </p>
           {/* Mobile instructions */}
           {isMobile && (
             <p className="text-sm text-gray-600 mt-2">
-              Tap a card to expand, tap again to navigate, or tap "Explore" button
+              Tap a card to expand, tap again to navigate, or tap "Explore"
+              button
             </p>
           )}
         </div>

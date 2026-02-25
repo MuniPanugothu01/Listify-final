@@ -1,9 +1,17 @@
-import React from 'react';
-import { MapPin, Star, ChevronRight } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import React from "react";
+import { MapPin, Star, ChevronRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
-const ApartmentCard = ({ image, title, city, state, zip, rating = 4.5, onClick }) => (
-  <div 
+const ApartmentCard = ({
+  image,
+  title,
+  city,
+  state,
+  zip,
+  rating = 4.5,
+  onClick,
+}) => (
+  <div
     className="
       group cursor-pointer bg-white rounded-lg border border-gray-200 
       overflow-hidden transition-all duration-300 
@@ -12,15 +20,17 @@ const ApartmentCard = ({ image, title, city, state, zip, rating = 4.5, onClick }
     onClick={onClick}
   >
     {/* Card Wrapper */}
-    <div className="
+    <div
+      className="
       group cursor-pointer bg-white rounded-lg border border-gray-200 
       overflow-hidden transition-all duration-300 
       hover:shadow-md hover:-translate-y-1
-    ">
+    "
+    >
       {/* Image */}
       <div className="relative overflow-hidden">
-        <img 
-          src={image} 
+        <img
+          src={image}
           alt={title}
           className="
             w-full h-40 object-cover 
@@ -55,19 +65,25 @@ const ApartmentCard = ({ image, title, city, state, zip, rating = 4.5, onClick }
       {/* Location */}
       <div className="flex items-start gap-1 text-gray-600 text-sm mb-3">
         <MapPin className="w-4 h-4 flex-shrink-0 mt-0.5" />
-        <span className="truncate">{city}, {state}, {zip}</span>
+        <span className="truncate">
+          {city}, {state}, {zip}
+        </span>
       </div>
 
       {/* Price + Button */}
       <div className="flex items-center justify-between pt-3 border-t border-gray-100">
         <span className="text-gray-600 text-sm">
-          Starting at <span className="font-semibold text-blue-500">$2,850</span> <span className='font-semibold text-blue-500'>/mo </span> 
+          Starting at{" "}
+          <span className="font-semibold text-blue-500">$2,850</span>{" "}
+          <span className="font-semibold text-blue-500">/mo </span>
         </span>
 
-        <button className="
+        <button
+          className="
           opacity-0 group-hover:opacity-100 transition-opacity duration-200
           flex items-center gap-1 text-[#27bb97] text-sm font-medium
-        ">
+        "
+        >
           View Details
           <ChevronRight className="w-4 h-4" />
         </button>
@@ -80,17 +96,18 @@ export default function ApartmentListings() {
   const navigate = useNavigate();
 
   const handleCardClick = () => {
-    navigate('/rentals-listings');
+    navigate("/rentals-listings");
   };
 
   const apartments = [
     {
-      image: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800",
+      image:
+        "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800",
       title: "Ravens Crest Apartments",
       city: "Plainsboro",
       state: "NJ",
       zip: "08536",
-      rating: 4.8
+      rating: 4.8,
     },
     {
       image: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800",
@@ -98,7 +115,7 @@ export default function ApartmentListings() {
       city: "North Brunswick",
       state: "NJ",
       zip: "08902",
-      rating: 4.6
+      rating: 4.6,
     },
     {
       image: "https://images.unsplash.com/photo-1556020685-ae41abfc9365?w=800",
@@ -106,32 +123,35 @@ export default function ApartmentListings() {
       city: "Avenel",
       state: "NJ",
       zip: "07001",
-      rating: 4.7
+      rating: 4.7,
     },
     {
-      image: "https://images.unsplash.com/photo-1536376072261-38c75010e6c9?w=800",
+      image:
+        "https://images.unsplash.com/photo-1536376072261-38c75010e6c9?w=800",
       title: "201 St Pauls Apartments",
       city: "Jersey City",
       state: "NJ",
       zip: "07306",
-      rating: 4.4
+      rating: 4.4,
     },
     {
-      image: "https://images.unsplash.com/photo-1515263487990-61b07816b324?w=800",
+      image:
+        "https://images.unsplash.com/photo-1515263487990-61b07816b324?w=800",
       title: "Margate Tenants Corporation",
       city: "Edison",
       state: "NJ",
       zip: "08837",
-      rating: 4.9
+      rating: 4.9,
     },
     {
-      image: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800",
+      image:
+        "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800",
       title: "Rivendell Apartments At Edison",
       city: "Edison",
       state: "NJ",
       zip: "08817",
-      rating: 4.5
-    }
+      rating: 4.5,
+    },
   ];
 
   return (
@@ -148,11 +168,7 @@ export default function ApartmentListings() {
         {/* Apartments Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {apartments.map((apt, index) => (
-            <ApartmentCard 
-              key={index} 
-              {...apt} 
-              onClick={handleCardClick}
-            />
+            <ApartmentCard key={index} {...apt} onClick={handleCardClick} />
           ))}
         </div>
       </div>

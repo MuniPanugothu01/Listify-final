@@ -262,102 +262,106 @@ export const useAuth = () => {
     }
   };
 
-// ==================== FIXED: Reset Password Request with better validation ====================
-const resetPasswordRequest = async (
-  resetToken,
-  email,
-  password,
-  confirmPassword,
-) => {
-  try {
-    // Client-side validation - match backend requirements
-    if (password.length < 8) {
-      throw new Error("Password must be at least 8 characters long");
-    }
-    
-    if (password.length > 128) {
-      throw new Error("Password cannot exceed 128 characters");
-    }
-    
-    if (password !== confirmPassword) {
-      throw new Error("Passwords do not match");
-    }
-    
-    // Password strength validation (must match backend)
-    const hasUpperCase = /[A-Z]/.test(password);
-    const hasLowerCase = /[a-z]/.test(password);
-    const hasNumbers = /[0-9]/.test(password);
-    const hasSpecialChar = /[!@#$%^&*()_+\-=\[\]{}|;:,.<>?]/.test(password);
-    
-    const errors = [];
-    if (!hasUpperCase) errors.push("uppercase letter");
-    if (!hasLowerCase) errors.push("lowercase letter");
-    if (!hasNumbers) errors.push("number");
-    if (!hasSpecialChar) errors.push("special character");
-    
-    if (errors.length > 0) {
-      throw new Error(`Password must contain at least one ${errors.join(", ")}`);
-    }
-    
-    console.log(`🔧 Calling resetPasswordWithToken with token: ${resetToken.substring(0, 8)}...`);
-    
-    const result = await dispatch(
-      resetPasswordWithToken({
-        resetToken,
-        email,
-        password,
-        confirmPassword,
-      }),
-    ).unwrap();
-    
-    return result;
-  } catch (error) {
-    console.error("Reset password error in hook:", error);
-
-    // Handle different error types
-    let errorMessage = "Failed to reset password";
-
-    if (error && typeof error === 'object') {
-      // Handle the error object from our API interceptor
-      if (error.message) {
-        errorMessage = error.message;
-      } 
-      // Handle error with data property
-      else if (error.data?.message) {
-        errorMessage = error.data.message;
+  // ==================== FIXED: Reset Password Request with better validation ====================
+  const resetPasswordRequest = async (
+    resetToken,
+    email,
+    password,
+    confirmPassword,
+  ) => {
+    try {
+      // Client-side validation - match backend requirements
+      if (password.length < 8) {
+        throw new Error("Password must be at least 8 characters long");
       }
-      // Handle error with response property
-      else if (error.response?.data?.message) {
-        errorMessage = error.response.data.message;
+
+      if (password.length > 128) {
+        throw new Error("Password cannot exceed 128 characters");
       }
-      // Handle error with errors object
-      else if (error.errors) {
-        if (typeof error.errors === 'object') {
-          const firstError = Object.values(error.errors)[0];
-          errorMessage = firstError || "Validation failed";
-        } else {
-          errorMessage = error.errors;
+
+      if (password !== confirmPassword) {
+        throw new Error("Passwords do not match");
+      }
+
+      // Password strength validation (must match backend)
+      const hasUpperCase = /[A-Z]/.test(password);
+      const hasLowerCase = /[a-z]/.test(password);
+      const hasNumbers = /[0-9]/.test(password);
+      const hasSpecialChar = /[!@#$%^&*()_+\-=\[\]{}|;:,.<>?]/.test(password);
+
+      const errors = [];
+      if (!hasUpperCase) errors.push("uppercase letter");
+      if (!hasLowerCase) errors.push("lowercase letter");
+      if (!hasNumbers) errors.push("number");
+      if (!hasSpecialChar) errors.push("special character");
+
+      if (errors.length > 0) {
+        throw new Error(
+          `Password must contain at least one ${errors.join(", ")}`,
+        );
+      }
+
+      console.log(
+        `🔧 Calling resetPasswordWithToken with token: ${resetToken.substring(0, 8)}...`,
+      );
+
+      const result = await dispatch(
+        resetPasswordWithToken({
+          resetToken,
+          email,
+          password,
+          confirmPassword,
+        }),
+      ).unwrap();
+
+      return result;
+    } catch (error) {
+      console.error("Reset password error in hook:", error);
+
+      // Handle different error types
+      let errorMessage = "Failed to reset password";
+
+      if (error && typeof error === "object") {
+        // Handle the error object from our API interceptor
+        if (error.message) {
+          errorMessage = error.message;
         }
-      }
-      // Handle error with strength property (password requirements)
-      else if (error.strength) {
-        errorMessage = "Password does not meet security requirements";
-      }
-      // Handle Error object
-      else if (error instanceof Error) {
-        errorMessage = error.message;
-      }
-      // Handle string error
-      else if (typeof error === 'string') {
+        // Handle error with data property
+        else if (error.data?.message) {
+          errorMessage = error.data.message;
+        }
+        // Handle error with response property
+        else if (error.response?.data?.message) {
+          errorMessage = error.response.data.message;
+        }
+        // Handle error with errors object
+        else if (error.errors) {
+          if (typeof error.errors === "object") {
+            const firstError = Object.values(error.errors)[0];
+            errorMessage = firstError || "Validation failed";
+          } else {
+            errorMessage = error.errors;
+          }
+        }
+        // Handle error with strength property (password requirements)
+        else if (error.strength) {
+          errorMessage = "Password does not meet security requirements";
+        }
+        // Handle Error object
+        else if (error instanceof Error) {
+          errorMessage = error.message;
+        }
+        // Handle string error
+        else if (typeof error === "string") {
+          errorMessage = error;
+        }
+      } else if (typeof error === "string") {
         errorMessage = error;
       }
-    } else if (typeof error === 'string') {
-      errorMessage = error;
-    }
 
-    throw new Error(errorMessage);
-  }
-};
+      throw new Error(errorMessage);
+    }
+  };
 
   // ==================== Google Auth ====================
   const getGoogleClientIdAction = async () => {

@@ -19,22 +19,21 @@ const VehiclePage = () => {
     <div>
       {/* <HeroSection /> */}
       {/* <CarsSubNav/> */}
-      <VehicleHero/>
+      <VehicleHero />
 
-      <VehiclesListing/>
+      <VehiclesListing />
 
       {/* <BrowseCategories /> */}
       {/* <BrowseCategories2 /> */}
 
       {/* <FeaturedCars /> */}
-   
+
       {/* <PostCars /> */}
       {/* <CarListings /> */}
       {/* <TrendingCars /> */}
       {/* <WhyChooseUs/> */}
 
-
-   {/* <AllCarsCard/> */}
+      {/* <AllCarsCard/> */}
     </div>
   );
 };

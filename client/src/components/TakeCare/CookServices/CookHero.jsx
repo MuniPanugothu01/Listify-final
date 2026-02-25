@@ -6,22 +6,23 @@ const CookHero = () => {
   const heroData = {
     title: "Find Expert Cooks & Chefs",
     subtitle: "Professional culinary talent for your home or events",
-    description: "Connect with verified cooks, chefs, and culinary experts for daily meals, special occasions, or event catering. All professionals are vetted and reviewed.",
+    description:
+      "Connect with verified cooks, chefs, and culinary experts for daily meals, special occasions, or event catering. All professionals are vetted and reviewed.",
   };
 
   return (
     <section className="relative min-h-[60vh] sm:min-h-[70vh] lg:min-h-[80vh] flex items-center justify-center overflow-hidden">
       {/* Background Image - Fixed on desktop, scroll on mobile for performance */}
-      <div 
+      <div
         className="absolute inset-0  bg-center bg-fit bg-cover "
         style={{
           backgroundImage: `url('/cook-4.jpg')`,
         }}
       />
-      
+
       {/* Dark Overlay */}
       <div className="absolute inset-0 bg-black/50" />
-      
+
       <div className="relative z-10 w-full max-w-7xl mx-auto px-3 xs:px-4 sm:px-6 lg:px-8">
         <div className="text-center text-white py-8 sm:py-12 lg:py-16 px-2">
           <h1 className="text-3xl xs:text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-black mb-4 sm:mb-6 leading-tight tracking-tight">
@@ -45,7 +46,7 @@ const CookHero = () => {
           </div>
 
           {/* Additional CTA Button */}
-          <button 
+          <button
             className="inline-flex items-center justify-center gap-2 sm:gap-3 px-6 sm:px-8 py-3 sm:py-4 bg-white text-gray-900 rounded-lg sm:rounded-xl font-medium hover:bg-gray-100 transition-all duration-300 hover:shadow-lg hover:shadow-gray-300/30 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-transparent"
             aria-label="Find cooks near me"
           >
@@ -70,7 +71,7 @@ const CookHero = () => {
             background-attachment: scroll !important;
           }
         }
-        
+
         @media (max-width: 640px) {
           .min-h-\\[60vh\\] {
             min-height: 60vh !important;
@@ -82,4 +83,3 @@ const CookHero = () => {
 };
 
 export default CookHero;
-

@@ -1,48 +1,53 @@
-import React from 'react';
-import { User, Image, Lightbulb, Award, Send } from 'lucide-react';
+import React from "react";
+import { User, Image, Lightbulb, Award, Send } from "lucide-react";
 
 export default function NannyProfile() {
   const steps = [
     {
       icon: <User className="w-6 h-6 xs:w-7 xs:h-7 sm:w-8 sm:h-8" />,
       iconColor: "text-white",
-      title: "Register with your email, password, and personal details to create a profile. Use Neighborhood-Based Matching to connect with local families effortlessly.",
+      title:
+        "Register with your email, password, and personal details to create a profile. Use Neighborhood-Based Matching to connect with local families effortlessly.",
       buttonText: "Sign Up",
       buttonColor: "bg-[#27BB97] hover:bg-[#1FA987]",
-      bgImage: "/babycare-1.jpg"
+      bgImage: "/babycare-1.jpg",
     },
     {
       icon: <Image className="w-6 h-6 xs:w-7 xs:h-7 sm:w-8 sm:h-8" />,
       iconColor: "text-white",
-      title: "Add a professional, welcoming photo to make your profile stand out to attract more families in your area.",
+      title:
+        "Add a professional, welcoming photo to make your profile stand out to attract more families in your area.",
       buttonText: "Upload a Photo",
       buttonColor: "bg-[#27BB97] hover:bg-[#1FA987]",
-      bgImage: "/babycare-2.jpg"
+      bgImage: "/babycare-2.jpg",
     },
     {
       icon: <Lightbulb className="w-6 h-6 xs:w-7 xs:h-7 sm:w-8 sm:h-8" />,
       iconColor: "text-white",
-      title: "List your caregiving skills, certifications, and availability. Real-time updates ensure families know when you're available.",
+      title:
+        "List your caregiving skills, certifications, and availability. Real-time updates ensure families know when you're available.",
       buttonText: "Highlight Skills",
       buttonColor: "bg-[#27BB97] hover:bg-[#1FA987]",
-      bgImage: "/babycare-3.jpg"
+      bgImage: "/babycare-3.jpg",
     },
     {
       icon: <Award className="w-6 h-6 xs:w-7 xs:h-7 sm:w-8 sm:h-8" />,
       iconColor: "text-white",
-      title: "Verify your email and phone number to build trust. Reach more families through our Mobile App integration.",
+      title:
+        "Verify your email and phone number to build trust. Reach more families through our Mobile App integration.",
       buttonText: "Verification Check",
       buttonColor: "bg-[#27BB97] hover:bg-[#1FA987]",
-      bgImage: "/babycare-4.jpg"
+      bgImage: "/babycare-4.jpg",
     },
     {
       icon: <Send className="w-6 h-6 xs:w-7 xs:h-7 sm:w-8 sm:h-8" />,
       iconColor: "text-white",
-      title: "Review your profile for accuracy. Use Smart Dashboard Features to manage responses and track performance.",
+      title:
+        "Review your profile for accuracy. Use Smart Dashboard Features to manage responses and track performance.",
       buttonText: "Submit & Review",
       buttonColor: "bg-[#27BB97] hover:bg-[#1FA987]",
-      bgImage: "/babycare-5.jpg"
-    }
+      bgImage: "/babycare-5.jpg",
+    },
   ];
 
   return (
@@ -63,11 +68,9 @@ export default function NannyProfile() {
           {steps.map((step, index) => (
             <div key={index} className="relative group">
               {/* Card with Background Image */}
-              <div 
-                className="rounded-lg sm:rounded-xl shadow-sm hover:shadow-lg sm:shadow-md transition-all duration-300 h-56 xs:h-60 sm:h-64 lg:h-80 flex flex-col relative overflow-hidden hover:scale-[1.02]"
-              >
+              <div className="rounded-lg sm:rounded-xl shadow-sm hover:shadow-lg sm:shadow-md transition-all duration-300 h-56 xs:h-60 sm:h-64 lg:h-80 flex flex-col relative overflow-hidden hover:scale-[1.02]">
                 {/* Background Image with dark overlay */}
-                <div 
+                <div
                   className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105"
                   style={{ backgroundImage: `url(${step.bgImage})` }}
                 ></div>
@@ -77,9 +80,11 @@ export default function NannyProfile() {
                 <div className="relative z-10 flex-grow flex flex-col p-4 xs:p-5 sm:p-6">
                   {/* Step Number */}
                   <div className="absolute top-3 xs:top-4 right-3 xs:right-4 w-6 h-6 xs:w-7 xs:h-7 sm:w-8 sm:h-8 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
-                    <span className="text-white font-bold text-xs xs:text-sm">{index + 1}</span>
+                    <span className="text-white font-bold text-xs xs:text-sm">
+                      {index + 1}
+                    </span>
                   </div>
-                  
+
                   {/* Icon */}
                   <div className={`${step.iconColor} mb-3 xs:mb-4`}>
                     {step.icon}
@@ -92,7 +97,7 @@ export default function NannyProfile() {
                 </div>
 
                 {/* Button */}
-                <button 
+                <button
                   className={`w-full ${step.buttonColor} text-white font-semibold py-2.5 xs:py-3 sm:py-4 rounded-b-lg sm:rounded-b-xl transition-all duration-200 shadow-sm hover:shadow-md text-xs xs:text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-transparent relative z-10`}
                   aria-label={`Step ${index + 1}: ${step.buttonText}`}
                 >
@@ -107,8 +112,8 @@ export default function NannyProfile() {
         <div className="lg:hidden flex justify-center mb-6 sm:mb-8">
           <div className="flex items-center gap-1">
             {steps.map((_, index) => (
-              <div 
-                key={index} 
+              <div
+                key={index}
                 className="w-1.5 h-1.5 rounded-full bg-gray-300"
               />
             ))}
@@ -117,14 +122,14 @@ export default function NannyProfile() {
 
         {/* CTA Button */}
         <div className="text-center">
-          <button 
+          <button
             className="bg-gradient-to-r from-[#27BB97] to-[#1FA987] hover:from-[#1FA987] hover:to-[#198F72] text-white font-semibold py-3 xs:py-3.5 sm:py-4 px-8 xs:px-10 sm:px-12 rounded-full sm:rounded-full shadow-lg hover:shadow-xl transition-all duration-300 inline-flex items-center gap-2 text-sm xs:text-base sm:text-lg focus:outline-none focus:ring-2 focus:ring-[#27BB97] focus:ring-offset-2"
             aria-label="Create your nanny profile"
           >
             <span>Create your profile</span>
             <span className="text-lg xs:text-xl">→</span>
           </button>
-          
+
           {/* Additional Info */}
           <p className="mt-4 sm:mt-6 text-gray-500 text-xs xs:text-sm">
             Join thousands of caregivers already connected with families

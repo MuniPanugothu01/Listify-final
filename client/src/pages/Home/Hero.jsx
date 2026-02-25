@@ -6,7 +6,7 @@ import {
   FaBriefcase,
   FaTimes,
   FaArrowRight,
-  FaShoppingCart
+  FaShoppingCart,
 } from "react-icons/fa";
 import { MdCleaningServices } from "react-icons/md";
 import { GiCarWheel, GiHouseKeys, GiPartyPopper } from "react-icons/gi";
@@ -73,17 +73,19 @@ export default function Hero() {
   const handleIconClick = (categoryName) => {
     // Convert category name to route path
     const routeMap = {
-      "Cars": "/cars",
-      "Rentals": "/rentals",
+      Cars: "/cars",
+      Rentals: "/rentals",
       "Home Care": "/home-care",
-      "Services": "/services",
-      "Automobiles": "/automobiles",
-      "Events": "/events",
+      Services: "/services",
+      Automobiles: "/automobiles",
+      Events: "/events",
       "For Sale": "/for-sale",
-      "Jobs": "/jobs"
+      Jobs: "/jobs",
     };
 
-    const route = routeMap[categoryName] || `/${categoryName.toLowerCase().replace(/\s+/g, '-')}`;
+    const route =
+      routeMap[categoryName] ||
+      `/${categoryName.toLowerCase().replace(/\s+/g, "-")}`;
     navigate(route);
   };
 
@@ -91,7 +93,11 @@ export default function Hero() {
     { name: "Rentals", image: "/house.png", color: "bg-purple-100" },
     { name: "Jobs", image: "/car1.png", color: "bg-blue-100" },
     { name: "Services", image: "/carservice.png", color: "bg-green-100" },
-    { name: "TakeCare", image: "/categories/amazon.png", color: "bg-yellow-100" },
+    {
+      name: "TakeCare",
+      image: "/categories/amazon.png",
+      color: "bg-yellow-100",
+    },
     { name: "Marketplace", image: "/Furniture.png", color: "bg-blue-50" },
     { name: "Events", image: "/bike.png", color: "bg-teal-100" },
   ];
@@ -206,23 +212,33 @@ export default function Hero() {
 
   // Responsive size classes
   const getSizeClasses = (position) => {
-    const isCorner = ["top-right", "top-left", "bottom-right", "bottom-left"].includes(position);
-    
+    const isCorner = [
+      "top-right",
+      "top-left",
+      "bottom-right",
+      "bottom-left",
+    ].includes(position);
+
     if (isCorner) {
       return "w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 lg:w-14 lg:h-14";
     }
-    
+
     return "w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 lg:w-16 lg:h-16";
   };
 
   // Responsive icon sizes
   const getIconSizeClasses = (position) => {
-    const isCorner = ["top-right", "top-left", "bottom-right", "bottom-left"].includes(position);
-    
+    const isCorner = [
+      "top-right",
+      "top-left",
+      "bottom-right",
+      "bottom-left",
+    ].includes(position);
+
     if (isCorner) {
       return "w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6";
     }
-    
+
     return "w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 lg:w-8 lg:h-8";
   };
 
@@ -237,7 +253,9 @@ export default function Hero() {
         onMouseLeave={() => setActiveCategory(null)}
         onClick={() => handleIconClick(category.name)} // Add onClick handler
       >
-        <div className="relative flex items-center space-x-0 cursor-pointer"> {/* Add cursor-pointer */}
+        <div className="relative flex items-center space-x-0 cursor-pointer">
+          {" "}
+          {/* Add cursor-pointer */}
           {/* Label on LEFT side for Services, Events, Jobs */}
           {isLabelLeft && (
             <div
@@ -259,7 +277,6 @@ export default function Hero() {
               {category.name}
             </div>
           )}
-
           {/* Icon Container */}
           <div
             className={`
@@ -288,7 +305,6 @@ export default function Hero() {
               </div>
             </div>
           </div>
-
           {/* Label on RIGHT side for all others */}
           {!isLabelLeft && (
             <div
@@ -381,10 +397,10 @@ export default function Hero() {
               ref={dropdownRef}
               className={`mt-4 sm:mt-6 bg-white rounded-xl sm:rounded-2xl shadow-xl sm:shadow-2xl 
                 border border-gray-200 overflow-hidden transform transition-all duration-500 ease-out ${
-                isAnimating
-                  ? "translate-y-0 opacity-100 scale-100"
-                  : "translate-y-4 opacity-0 scale-95"
-              }`}
+                  isAnimating
+                    ? "translate-y-0 opacity-100 scale-100"
+                    : "translate-y-4 opacity-0 scale-95"
+                }`}
               style={{
                 transformOrigin: "top center",
               }}
@@ -395,9 +411,11 @@ export default function Hero() {
                   <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-800">
                     Browse Categories
                   </h3>
-                  <button className="flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 
+                  <button
+                    className="flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 
                     rounded-lg hover:bg-[#27BB97] hover:text-white transition-all duration-300 
-                    group text-gray-700 hover:shadow-md text-sm sm:text-base">
+                    group text-gray-700 hover:shadow-md text-sm sm:text-base"
+                  >
                     <span className="font-semibold">View all categories</span>
                     <FaArrowRight className="w-3 h-3 sm:w-4 sm:h-4 transform group-hover:translate-x-1 transition-transform duration-200" />
                   </button>
@@ -432,8 +450,10 @@ export default function Hero() {
                           <div className="w-4 h-4 sm:w-6 sm:h-6 md:w-8 md:h-8 bg-gray-300 rounded-full"></div>
                         )}
                       </div>
-                      <span className="text-xs sm:text-sm font-medium text-gray-700 text-center 
-                        group-hover:text-[#27BB97] break-words px-1">
+                      <span
+                        className="text-xs sm:text-sm font-medium text-gray-700 text-center 
+                        group-hover:text-[#27BB97] break-words px-1"
+                      >
                         {category.name}
                       </span>
                     </div>
@@ -517,18 +537,22 @@ export default function Hero() {
           <div
             className={`relative flex justify-center items-center transition-all duration-300 
               order-1 lg:order-2 mb-4 sm:mb-6 md:mb-8 lg:mb-0   ${
-              isSearchActive ? "opacity-30" : "opacity-100"
-            }`}
+                isSearchActive ? "opacity-30" : "opacity-100"
+              }`}
           >
             {/* Orange image container */}
-            <div className="relative z-10 bg-orange-400 rounded-full 
+            <div
+              className="relative z-10 bg-orange-400 rounded-full 
               w-[200px] h-[200px] sm:w-[250px] sm:h-[250px] md:w-[300px] md:h-[300px] 
               lg:w-[350px] lg:h-[350px] xl:w-[400px] xl:h-[400px] 
-              overflow-hidden flex items-center justify-center mx-auto">
-              <div className="bg-orange-300 rounded-full 
+              overflow-hidden flex items-center justify-center mx-auto"
+            >
+              <div
+                className="bg-orange-300 rounded-full 
                 w-[160px] h-[160px] sm:w-[200px] sm:h-[200px] md:w-[240px] md:h-[240px] 
                 lg:w-[280px] lg:h-[280px] xl:w-[320px] xl:h-[320px] 
-                overflow-hidden">
+                overflow-hidden"
+              >
                 <img
                   src="/Services/HomeServices/hero-1.png"
                   alt="Hero-image"
@@ -538,11 +562,12 @@ export default function Hero() {
             </div>
 
             {/* Rotating circle with icons */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 
+            <div
+              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 
               w-[300px] h-[300px] sm:w-[350px] sm:h-[350px] md:w-[400px] md:h-[400px] 
               lg:w-[450px] lg:h-[450px] xl:w-[500px] xl:h-[500px] 
-              border border-green-200 rounded-full">
-              
+              border border-green-200 rounded-full"
+            >
               {/* Render all category icons */}
               {categories.map((category) => (
                 <CategoryIcon key={category.id} category={category} />
@@ -575,7 +600,7 @@ export default function Hero() {
             transform: translateY(0);
           }
         }
-        
+
         /* Mobile optimizations */
         @media (max-width: 640px) {
           .break-words {

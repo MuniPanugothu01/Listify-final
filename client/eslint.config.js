@@ -1,13 +1,13 @@
-import js from '@eslint/js';
-import react from 'eslint-plugin-react';
-import reactHooks from 'eslint-plugin-react-hooks';
-import prettier from 'eslint-plugin-prettier';
-import prettierConfig from 'eslint-config-prettier';
+import js from "@eslint/js";
+import react from "eslint-plugin-react";
+import reactHooks from "eslint-plugin-react-hooks";
+import prettier from "eslint-plugin-prettier";
+import prettierConfig from "eslint-config-prettier";
 
 export default [
   // Ignore generated files
   {
-    ignores: ['dist/**', 'coverage/**', 'node_modules/**'],
+    ignores: ["dist/**", "coverage/**", "node_modules/**"],
   },
 
   // Base JS rules
@@ -15,25 +15,25 @@ export default [
 
   // ✅ React + JSX + Browser environment
   {
-    files: ['**/*.{js,jsx}'],
+    files: ["**/*.{js,jsx}"],
 
     languageOptions: {
-      ecmaVersion: 'latest',
-      sourceType: 'module',
+      ecmaVersion: "latest",
+      sourceType: "module",
       parserOptions: {
         ecmaFeatures: {
           jsx: true,
         },
       },
       globals: {
-        window: 'readonly',
-        document: 'readonly',
+        window: "readonly",
+        document: "readonly",
       },
     },
 
     plugins: {
       react,
-      'react-hooks': reactHooks,
+      "react-hooks": reactHooks,
       prettier,
     },
 
@@ -42,16 +42,16 @@ export default [
       ...reactHooks.configs.recommended.rules,
 
       // React 17+
-      'react/react-in-jsx-scope': 'off',
-      'no-console': 'error',
+      "react/react-in-jsx-scope": "off",
+      "no-console": "error",
 
       // Formatting enforced
-      'prettier/prettier': 'error',
+      "prettier/prettier": "error",
     },
 
     settings: {
       react: {
-        version: 'detect',
+        version: "detect",
       },
     },
   },

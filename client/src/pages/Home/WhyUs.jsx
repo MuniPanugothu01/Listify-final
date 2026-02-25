@@ -32,22 +32,33 @@ const WhyUs = () => {
 
           <div className="flex items-center gap-1 sm:gap-2 mt-4 sm:mt-5 md:mt-6 lg:mt-7 ">
             {[...Array(6)].map((_, i) => (
-              <div key={i} className="bg-gray-400 h-2 w-2 sm:h-3 sm:w-3 rounded-full" />
+              <div
+                key={i}
+                className="bg-gray-400 h-2 w-2 sm:h-3 sm:w-3 rounded-full"
+              />
             ))}
           </div>
         </div>
 
         {/* Center - Step Number */}
         <div className="flex flex-row lg:flex-col items-center justify-center gap-3 sm:gap-4 order-3 lg:order-2 w-full lg:w-auto">
-          <h1 className="font-extrabold text-4xl sm:text-5xl md:text-6xl lg:text-[60px] text-[#27BB97] ">01</h1>
+          <h1 className="font-extrabold text-4xl sm:text-5xl md:text-6xl lg:text-[60px] text-[#27BB97] ">
+            01
+          </h1>
           <div className="hidden lg:flex flex-col items-center gap-3 pl-10">
             {[...Array(5)].map((_, i) => (
-              <div key={i} className="bg-gray-300 h-2 w-2 sm:h-3 sm:w-3 rounded-full" />
+              <div
+                key={i}
+                className="bg-gray-300 h-2 w-2 sm:h-3 sm:w-3 rounded-full"
+              />
             ))}
           </div>
           <div className="flex lg:hidden items-center gap-2 sm:gap-3 pl-4">
             {[...Array(5)].map((_, i) => (
-              <div key={i} className="bg-gray-300 h-2 w-2 sm:h-3 sm:w-3 rounded-full" />
+              <div
+                key={i}
+                className="bg-gray-300 h-2 w-2 sm:h-3 sm:w-3 rounded-full"
+              />
             ))}
           </div>
         </div>
@@ -79,15 +90,23 @@ const WhyUs = () => {
 
         {/* Center - Step Number */}
         <div className="flex flex-row lg:flex-col items-center justify-center gap-3 sm:gap-4 order-3 lg:order-2 w-full lg:w-auto">
-          <h1 className="font-extrabold text-4xl sm:text-5xl md:text-6xl lg:text-[60px] text-[#27BB97]">02</h1>
+          <h1 className="font-extrabold text-4xl sm:text-5xl md:text-6xl lg:text-[60px] text-[#27BB97]">
+            02
+          </h1>
           <div className="hidden lg:flex flex-col items-center gap-3 pl-10">
             {[...Array(5)].map((_, i) => (
-              <div key={i} className="bg-gray-300 h-2 w-2 sm:h-3 sm:w-3 rounded-full" />
+              <div
+                key={i}
+                className="bg-gray-300 h-2 w-2 sm:h-3 sm:w-3 rounded-full"
+              />
             ))}
           </div>
           <div className="flex lg:hidden items-center gap-2 sm:gap-3 pl-4">
             {[...Array(5)].map((_, i) => (
-              <div key={i} className="bg-gray-300 h-2 w-2 sm:h-3 sm:w-3 rounded-full" />
+              <div
+                key={i}
+                className="bg-gray-300 h-2 w-2 sm:h-3 sm:w-3 rounded-full"
+              />
             ))}
           </div>
         </div>
@@ -109,7 +128,10 @@ const WhyUs = () => {
 
           <div className="flex items-center gap-1 sm:gap-2 mt-4 sm:mt-5 md:mt-6 lg:mt-7">
             {[...Array(6)].map((_, i) => (
-              <div key={i} className="bg-gray-400 h-2 w-2 sm:h-3 sm:w-3 rounded-full" />
+              <div
+                key={i}
+                className="bg-gray-400 h-2 w-2 sm:h-3 sm:w-3 rounded-full"
+              />
             ))}
           </div>
         </div>
@@ -157,22 +179,33 @@ const WhyUs = () => {
           </ul>
           <div className="flex items-center gap-1 sm:gap-2 mt-4 sm:mt-5 md:mt-6 lg:mt-7">
             {[...Array(6)].map((_, i) => (
-              <div key={i} className="bg-gray-400 h-2 w-2 sm:h-3 sm:w-3 rounded-full" />
+              <div
+                key={i}
+                className="bg-gray-400 h-2 w-2 sm:h-3 sm:w-3 rounded-full"
+              />
             ))}
           </div>
         </div>
 
         {/* Center - Step Number */}
         <div className="flex flex-row lg:flex-col items-center justify-center gap-3 sm:gap-4 order-3 lg:order-2 w-full lg:w-auto">
-          <h1 className="font-extrabold text-4xl sm:text-5xl md:text-6xl lg:text-[60px] text-[#27BB97]">03</h1>
+          <h1 className="font-extrabold text-4xl sm:text-5xl md:text-6xl lg:text-[60px] text-[#27BB97]">
+            03
+          </h1>
           <div className="hidden lg:flex flex-col items-center gap-3 pl-10">
             {[...Array(5)].map((_, i) => (
-              <div key={i} className="bg-gray-300 h-2 w-2 sm:h-3 sm:w-3 rounded-full" />
+              <div
+                key={i}
+                className="bg-gray-300 h-2 w-2 sm:h-3 sm:w-3 rounded-full"
+              />
             ))}
           </div>
           <div className="flex lg:hidden items-center gap-2 sm:gap-3 pl-4">
             {[...Array(5)].map((_, i) => (
-              <div key={i} className="bg-gray-300 h-2 w-2 sm:h-3 sm:w-3 rounded-full" />
+              <div
+                key={i}
+                className="bg-gray-300 h-2 w-2 sm:h-3 sm:w-3 rounded-full"
+              />
             ))}
           </div>
         </div>

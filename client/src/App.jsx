@@ -34,7 +34,6 @@ import OurServicesPage from "./pages/OurServices/OurServicesPage.jsx";
 
 import PostaddPage from "./pages/PostaddPage/Postadd.jsx";
 
-
 import TakeCare from "./pages/TakeCare/TakeCare.jsx";
 import TakeCareDetail from "./components/TakeCare/TakeCareDetail.jsx";
 
@@ -46,7 +45,6 @@ import TutorServices from "./components/TakeCare/TutorServices/TutorServices.jsx
 import ElderCareServices from "./components/TakeCare/ElderCareServices/ElderCareServices.jsx";
 import PetCareService from "./components/TakeCare/PetCareServices/PetCareServices.jsx";
 import CareCenterServices from "./components/TakeCare/CareCenterServices/CareCenterServices.jsx";
-
 
 // Electronics
 import Electronics from "./components/Electronics/Electronics.jsx";
@@ -102,8 +100,6 @@ import { Toaster, ToastBar } from "react-hot-toast";
 // Get Google Client ID from environment
 const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
-
-
 // ScrollToTop Component
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -134,7 +130,7 @@ const AppContent = () => {
 
     return () => clearTimeout(timer);
   }, []);
-  
+
   // Check if current route should hide navbar and footer
   const hideNavbarFooterPaths = [
     "/signup",
@@ -205,7 +201,8 @@ const AppContent = () => {
               borderRadius: "12px",
               fontSize: "14px",
               fontWeight: "500",
-              boxShadow: "0 8px 30px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04)",
+              boxShadow:
+                "0 8px 30px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04)",
               border: "1px solid rgba(0, 0, 0, 0.06)",
               maxWidth: "420px",
               lineHeight: "1.5",
@@ -284,8 +281,6 @@ const AppContent = () => {
           <Route path="/takecare/babysitter" element={<BabysitterService />} />
           <Route path="/takecare/cook" element={<CookServices />} />
 
-
-
           <Route
             path="/takecare/housekeeper"
             element={<HousekeeperServices />}
@@ -302,7 +297,6 @@ const AppContent = () => {
           {/* electronics*/}
           <Route path="/electronics" element={<Electronics />} />
           <Route path="/electronics/:id" element={<ElectronicsDetail />} />
-      
 
           {/* Roommates */}
           <Route path="/roommates" element={<Roommates />} />
@@ -332,14 +326,13 @@ const AppContent = () => {
           <Route path="/events/:eventId" element={<EventDetailPage />} />
           <Route path="/events-list" element={<EventList />} />
 
-
           {/* Services Category */}
           <Route path="/services" element={<ServicesPage />} />
 
           {/* Cars categories */}
           <Route path="/vehicles" element={<VehiclePage />} />
           <Route path="/vehicles/:id" element={<VehicleDetail />} />
-          
+
           <Route path="/car-listings" element={<CarListing />} />
           <Route path="/car-details" element={<CarDetails />} />
 

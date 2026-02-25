@@ -1,5 +1,5 @@
 import React from "react";
-import { 
+import {
   TrendingUp,
   Award,
   BadgeCheck,
@@ -9,23 +9,23 @@ import {
   Star,
   Calendar,
   MapPin,
-  Clock
+  Clock,
 } from "lucide-react";
 import { useSelector } from "react-redux";
 
 const ProfileMain = ({ user, profilePic, myPosts }) => {
   const { devices } = useSelector((state) => state.profile);
-  
+
   // Get current device
-  const currentDevice = devices?.find(d => d.isCurrentDevice);
-  
+  const currentDevice = devices?.find((d) => d.isCurrentDevice);
+
   // Format join date
   const formatJoinDate = () => {
     if (!user?.createdAt) return "2023";
-    return new Date(user.createdAt).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
+    return new Date(user.createdAt).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
     });
   };
 
@@ -35,9 +35,9 @@ const ProfileMain = ({ user, profilePic, myPosts }) => {
       <div className="bg-white rounded-2xl border border-gray-200 p-6">
         <div className="flex items-center gap-4 pb-6 border-b border-gray-100">
           <div className="relative">
-            <img 
-              src={profilePic} 
-              alt="Profile" 
+            <img
+              src={profilePic}
+              alt="Profile"
               className="w-20 h-20 rounded-2xl object-cover border-4 border-white shadow-lg"
             />
             <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-emerald-500 rounded-full border-4 border-white flex items-center justify-center">
@@ -54,7 +54,9 @@ const ProfileMain = ({ user, profilePic, myPosts }) => {
             <p className="text-sm text-gray-500 truncate">{user?.email}</p>
             <div className="flex items-center gap-1 mt-2">
               <Star className="w-4 h-4 text-amber-500 fill-amber-500" />
-              <span className="text-sm font-semibold text-gray-900">{user?.rating || "4.8"}</span>
+              <span className="text-sm font-semibold text-gray-900">
+                {user?.rating || "4.8"}
+              </span>
               <span className="text-xs text-gray-500">(124 reviews)</span>
             </div>
           </div>
@@ -63,19 +65,27 @@ const ProfileMain = ({ user, profilePic, myPosts }) => {
         {/* Quick Stats */}
         <div className="grid grid-cols-2 gap-4 py-6">
           <div className="text-center p-3 bg-gray-50 rounded-xl">
-            <p className="text-2xl font-bold text-gray-900">{myPosts?.length || 0}</p>
+            <p className="text-2xl font-bold text-gray-900">
+              {myPosts?.length || 0}
+            </p>
             <p className="text-xs text-gray-500 mt-1">Active Listings</p>
           </div>
           <div className="text-center p-3 bg-gray-50 rounded-xl">
-            <p className="text-2xl font-bold text-gray-900">{user?.totalViews || "1.2K"}</p>
+            <p className="text-2xl font-bold text-gray-900">
+              {user?.totalViews || "1.2K"}
+            </p>
             <p className="text-xs text-gray-500 mt-1">Total Views</p>
           </div>
           <div className="text-center p-3 bg-gray-50 rounded-xl">
-            <p className="text-2xl font-bold text-gray-900">{user?.responseRate || "89"}%</p>
+            <p className="text-2xl font-bold text-gray-900">
+              {user?.responseRate || "89"}%
+            </p>
             <p className="text-xs text-gray-500 mt-1">Response Rate</p>
           </div>
           <div className="text-center p-3 bg-gray-50 rounded-xl">
-            <p className="text-2xl font-bold text-gray-900">{user?.inquiries || "42"}</p>
+            <p className="text-2xl font-bold text-gray-900">
+              {user?.inquiries || "42"}
+            </p>
             <p className="text-xs text-gray-500 mt-1">Inquiries</p>
           </div>
         </div>
@@ -90,7 +100,9 @@ const ProfileMain = ({ user, profilePic, myPosts }) => {
             <div className="flex items-center gap-3 text-sm text-gray-600">
               <Smartphone className="w-4 h-4" />
               <span>Active on {currentDevice.deviceName}</span>
-              <span className="text-xs text-gray-400">• {currentDevice.lastActiveText}</span>
+              <span className="text-xs text-gray-400">
+                • {currentDevice.lastActiveText}
+              </span>
             </div>
           )}
         </div>
@@ -98,7 +110,9 @@ const ProfileMain = ({ user, profilePic, myPosts }) => {
         {/* Badges */}
         <div className="pt-6 border-t border-gray-100">
           <div className="flex items-center justify-between mb-4">
-            <h4 className="text-sm font-semibold text-gray-900">Achievements</h4>
+            <h4 className="text-sm font-semibold text-gray-900">
+              Achievements
+            </h4>
             <Award className="w-5 h-5 text-amber-500" />
           </div>
           <div className="flex flex-wrap gap-2">
@@ -172,7 +186,9 @@ const ProfileMain = ({ user, profilePic, myPosts }) => {
               <Eye className="w-5 h-5 text-emerald-600" />
             </div>
             <div className="flex-1">
-              <p className="text-sm font-medium text-gray-900">Your listing got 45 views</p>
+              <p className="text-sm font-medium text-gray-900">
+                Your listing got 45 views
+              </p>
               <p className="text-xs text-gray-500 mt-1">2 hours ago</p>
             </div>
           </div>
@@ -181,7 +197,9 @@ const ProfileMain = ({ user, profilePic, myPosts }) => {
               <MessageSquare className="w-5 h-5 text-blue-600" />
             </div>
             <div className="flex-1">
-              <p className="text-sm font-medium text-gray-900">New inquiry received</p>
+              <p className="text-sm font-medium text-gray-900">
+                New inquiry received
+              </p>
               <p className="text-xs text-gray-500 mt-1">4 hours ago</p>
             </div>
           </div>
@@ -190,7 +208,9 @@ const ProfileMain = ({ user, profilePic, myPosts }) => {
               <Users className="w-5 h-5 text-purple-600" />
             </div>
             <div className="flex-1">
-              <p className="text-sm font-medium text-gray-900">Scheduled viewing confirmed</p>
+              <p className="text-sm font-medium text-gray-900">
+                Scheduled viewing confirmed
+              </p>
               <p className="text-xs text-gray-500 mt-1">Yesterday</p>
             </div>
           </div>

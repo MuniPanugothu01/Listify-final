@@ -1,5 +1,11 @@
 import React, { useRef, useState } from "react";
-import { FiNavigation, FiChevronLeft, FiChevronRight, FiMapPin, FiTrendingUp } from "react-icons/fi";
+import {
+  FiNavigation,
+  FiChevronLeft,
+  FiChevronRight,
+  FiMapPin,
+  FiTrendingUp,
+} from "react-icons/fi";
 import { MdApartment, MdOutlineBed } from "react-icons/md";
 
 // -----------------------------------------------------
@@ -17,15 +23,16 @@ const NeighborhoodCard = ({ name, city, state, distance, image }) => {
   const handleMouseEnter = () => {
     setIsHovered(true);
     if (cardRef.current) {
-      cardRef.current.style.transform = 'translateY(-8px) scale(1.02)';
-      cardRef.current.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+      cardRef.current.style.transform = "translateY(-8px) scale(1.02)";
+      cardRef.current.style.transition =
+        "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)";
     }
   };
 
   const handleMouseLeave = () => {
     setIsHovered(false);
     if (cardRef.current) {
-      cardRef.current.style.transform = 'translateY(0) scale(1)';
+      cardRef.current.style.transform = "translateY(0) scale(1)";
     }
   };
 
@@ -44,60 +51,75 @@ const NeighborhoodCard = ({ name, city, state, distance, image }) => {
     >
       {/* Image Container with Overlay */}
       <div className="relative w-full h-32 overflow-hidden">
-        <img 
-          src={image} 
+        <img
+          src={image}
           alt={`${name} neighborhood in ${city}, ${state}`}
           className={`
             w-full h-full object-cover transition-all duration-700 ease-out
-            ${isHovered ? 'scale-110 rotate-1' : 'scale-100'}
+            ${isHovered ? "scale-110 rotate-1" : "scale-100"}
           `}
           loading="lazy"
         />
-        
+
         {/* Gradient Overlay */}
-        <div className={`
+        <div
+          className={`
           absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent
           transition-all duration-500 ease-out
-          ${isHovered ? 'opacity-100' : 'opacity-60'}
-        `} />
-        
+          ${isHovered ? "opacity-100" : "opacity-60"}
+        `}
+        />
+
         {/* Distance Badge */}
-        <div className={`
+        <div
+          className={`
           absolute top-3 right-3 transition-all duration-300 ease-out
-          ${isHovered ? 'scale-110 rotate-12' : 'scale-100'}
-        `}>
-          <div className="
+          ${isHovered ? "scale-110 rotate-12" : "scale-100"}
+        `}
+        >
+          <div
+            className="
             bg-white/95 backdrop-blur-sm px-3 py-1 
             rounded-full text-xs font-semibold text-gray-800
             flex items-center gap-1 transition-all duration-300
             hover:bg-[#27bb97] hover:text-white
-          ">
+          "
+          >
             <FiNavigation className="w-3 h-3 transition-transform duration-300" />
             {distance} mi
           </div>
         </div>
-        
+
         {/* Hover Title Overlay */}
-        <div className={`
+        <div
+          className={`
           absolute bottom-0 left-0 right-0 p-4
           transition-all duration-500 ease-out transform
-          ${isHovered ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}
-        `}>
-          <h3 className="
+          ${isHovered ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"}
+        `}
+        >
+          <h3
+            className="
             text-white text-lg font-bold mb-1
             drop-shadow-lg transform transition-transform duration-300
             ${isHovered ? 'translate-x-0' : 'translate-x-2'}
-          ">
+          "
+          >
             {name}
           </h3>
-          <div className="flex items-center text-white/90 text-sm
+          <div
+            className="flex items-center text-white/90 text-sm
             transform transition-transform duration-300 delay-75
             ${isHovered ? 'translate-x-0' : 'translate-x-2'}
-          ">
-            <FiMapPin className="w-4 h-4 mr-1 transition-transform duration-300
-              ${isHovered ? 'scale-110' : 'scale-100'}" 
+          "
+          >
+            <FiMapPin
+              className="w-4 h-4 mr-1 transition-transform duration-300
+              ${isHovered ? 'scale-110' : 'scale-100'}"
             />
-            <span>{city}, {state}</span>
+            <span>
+              {city}, {state}
+            </span>
           </div>
         </div>
       </div>
@@ -105,18 +127,24 @@ const NeighborhoodCard = ({ name, city, state, distance, image }) => {
       {/* Main Content */}
       <div className="p-4">
         {/* Always Visible Title */}
-        <div className={`
+        <div
+          className={`
           transition-all duration-300 ease-out overflow-hidden
-          ${isHovered ? 'opacity-0 max-h-0' : 'opacity-100 max-h-20'}
-        `}>
-          <h3 className="text-gray-900 font-semibold text-base mb-1 transform transition-transform duration-300
+          ${isHovered ? "opacity-0 max-h-0" : "opacity-100 max-h-20"}
+        `}
+        >
+          <h3
+            className="text-gray-900 font-semibold text-base mb-1 transform transition-transform duration-300
             ${isHovered ? 'translate-y-4' : 'translate-y-0'}
-          ">
+          "
+          >
             {name}
           </h3>
-          <div className="flex items-center gap-2 text-sm text-gray-500 transform transition-transform duration-300 delay-75
+          <div
+            className="flex items-center gap-2 text-sm text-gray-500 transform transition-transform duration-300 delay-75
             ${isHovered ? 'translate-y-4' : 'translate-y-0'}
-          ">
+          "
+          >
             <FiNavigation className="w-4 h-4 flex-shrink-0" />
             <span className="truncate">
               {city}, {state}
@@ -125,30 +153,38 @@ const NeighborhoodCard = ({ name, city, state, distance, image }) => {
         </div>
 
         {/* Hover Content - Rental Stats */}
-        <div className={`
+        <div
+          className={`
           transition-all duration-500 ease-out overflow-hidden
-          ${isHovered ? 'max-h-48 opacity-100 mt-0' : 'max-h-0 opacity-0 mt-4'}
-        `}>
+          ${isHovered ? "max-h-48 opacity-100 mt-0" : "max-h-0 opacity-0 mt-4"}
+        `}
+        >
           {/* Divider */}
-          <div className={`
+          <div
+            className={`
             border-t border-gray-100 my-3 transition-all duration-300
-            ${isHovered ? 'opacity-100' : 'opacity-0'}
-          `}></div>
-          
+            ${isHovered ? "opacity-100" : "opacity-0"}
+          `}
+          ></div>
+
           {/* Rental Statistics */}
           <div className="space-y-3">
             {/* Average Rent */}
-            <div className={`
+            <div
+              className={`
               flex items-center justify-between transform transition-all duration-300
-              ${isHovered ? 'translate-x-0 opacity-100' : 'translate-x-4 opacity-0'}
-            `}>
+              ${isHovered ? "translate-x-0 opacity-100" : "translate-x-4 opacity-0"}
+            `}
+            >
               <div className="flex items-center gap-2 text-gray-600">
-                <MdApartment className="w-4 h-4 text-[#27bb97] transition-transform duration-300
-                  ${isHovered ? 'scale-110' : 'scale-100'}" 
+                <MdApartment
+                  className="w-4 h-4 text-[#27bb97] transition-transform duration-300
+                  ${isHovered ? 'scale-110' : 'scale-100'}"
                 />
                 <span className="text-sm">Avg Rent</span>
               </div>
-              <div className="text-gray-900 font-semibold transform transition-transform duration-300
+              <div
+                className="text-gray-900 font-semibold transform transition-transform duration-300
                 ${isHovered ? 'scale-105' : 'scale-100'}"
               >
                 ${avgRent.toLocaleString()}
@@ -157,17 +193,21 @@ const NeighborhoodCard = ({ name, city, state, distance, image }) => {
             </div>
 
             {/* Listings Count */}
-            <div className={`
+            <div
+              className={`
               flex items-center justify-between transform transition-all duration-300 delay-75
-              ${isHovered ? 'translate-x-0 opacity-100' : 'translate-x-4 opacity-0'}
-            `}>
+              ${isHovered ? "translate-x-0 opacity-100" : "translate-x-4 opacity-0"}
+            `}
+            >
               <div className="flex items-center gap-2 text-gray-600">
-                <FiTrendingUp className="w-4 h-4 text-[#27bb97] transition-transform duration-300
-                  ${isHovered ? 'scale-110' : 'scale-100'}" 
+                <FiTrendingUp
+                  className="w-4 h-4 text-[#27bb97] transition-transform duration-300
+                  ${isHovered ? 'scale-110' : 'scale-100'}"
                 />
                 <span className="text-sm">Listings</span>
               </div>
-              <div className="text-gray-900 font-semibold transform transition-transform duration-300
+              <div
+                className="text-gray-900 font-semibold transform transition-transform duration-300
                 ${isHovered ? 'scale-105' : 'scale-100'}"
               >
                 {listingsCount}+
@@ -175,17 +215,21 @@ const NeighborhoodCard = ({ name, city, state, distance, image }) => {
             </div>
 
             {/* Average Bedrooms */}
-            <div className={`
+            <div
+              className={`
               flex items-center justify-between transform transition-all duration-300 delay-100
-              ${isHovered ? 'translate-x-0 opacity-100' : 'translate-x-4 opacity-0'}
-            `}>
+              ${isHovered ? "translate-x-0 opacity-100" : "translate-x-4 opacity-0"}
+            `}
+            >
               <div className="flex items-center gap-2 text-gray-600">
-                <MdOutlineBed className="w-4 h-4 text-[#27bb97] transition-transform duration-300
-                  ${isHovered ? 'scale-110' : 'scale-100'}" 
+                <MdOutlineBed
+                  className="w-4 h-4 text-[#27bb97] transition-transform duration-300
+                  ${isHovered ? 'scale-110' : 'scale-100'}"
                 />
                 <span className="text-sm">Avg Beds</span>
               </div>
-              <div className="text-gray-900 font-semibold transform transition-transform duration-300
+              <div
+                className="text-gray-900 font-semibold transform transition-transform duration-300
                 ${isHovered ? 'scale-105' : 'scale-100'}"
               >
                 {avgBedrooms}
@@ -194,39 +238,54 @@ const NeighborhoodCard = ({ name, city, state, distance, image }) => {
           </div>
 
           {/* Explore Button */}
-          <button className={`
+          <button
+            className={`
             w-full mt-4 py-2 px-4 
             bg-gradient-to-r from-[#27bb97] to-[#1fa888] text-white 
             rounded-lg font-medium text-sm
             hover:from-[#1fa888] hover:to-[#27bb97]
             transition-all duration-300 ease-out
             flex items-center justify-center gap-2
-            transform ${isHovered ? 'translate-y-0 opacity-100 scale-100' : 'translate-y-4 opacity-0 scale-95'}
+            transform ${isHovered ? "translate-y-0 opacity-100 scale-100" : "translate-y-4 opacity-0 scale-95"}
             shadow-lg hover:shadow-xl
             active:scale-95
-          `}>
+          `}
+          >
             Explore Rentals
-            <svg className="w-4 h-4 transition-transform duration-300 hover:translate-x-1" 
-              fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+            <svg
+              className="w-4 h-4 transition-transform duration-300 hover:translate-x-1"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M14 5l7 7m0 0l-7 7m7-7H3"
+              />
             </svg>
           </button>
         </div>
       </div>
 
       {/* Hover Border Effect */}
-      <div className={`
+      <div
+        className={`
         absolute inset-0 border-2 border-[#27bb97] rounded-xl
         transition-all duration-500 ease-out pointer-events-none
-        ${isHovered ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}
-      `} />
+        ${isHovered ? "opacity-100 scale-100" : "opacity-0 scale-95"}
+      `}
+      />
 
       {/* Glow Effect */}
-      <div className={`
+      <div
+        className={`
         absolute inset-0 rounded-xl
         transition-all duration-500 ease-out pointer-events-none
-        ${isHovered ? 'shadow-[0_0_30px_rgba(39,187,151,0.3)]' : 'shadow-none'}
-      `} />
+        ${isHovered ? "shadow-[0_0_30px_rgba(39,187,151,0.3)]" : "shadow-none"}
+      `}
+      />
     </div>
   );
 };
@@ -237,7 +296,7 @@ const NeighborhoodCard = ({ name, city, state, distance, image }) => {
 const ScrollButton = ({ direction, onClick }) => {
   const Icon = direction === "left" ? FiChevronLeft : FiChevronRight;
   const [isHovered, setIsHovered] = useState(false);
-  
+
   return (
     <button
       onClick={onClick}
@@ -255,13 +314,14 @@ const ScrollButton = ({ direction, onClick }) => {
       "
       aria-label={`Scroll ${direction}`}
       style={{
-        transform: isHovered 
-          ? `translateY(-50%) scale(1.1) ${direction === 'left' ? 'translateX(-4px)' : 'translateX(4px)'}`
-          : 'translateY(-50%) scale(1)'
+        transform: isHovered
+          ? `translateY(-50%) scale(1.1) ${direction === "left" ? "translateX(-4px)" : "translateX(4px)"}`
+          : "translateY(-50%) scale(1)",
       }}
     >
-      <Icon className="w-6 h-6 transition-transform duration-300
-        ${isHovered ? 'scale-110' : 'scale-100'}" 
+      <Icon
+        className="w-6 h-6 transition-transform duration-300
+        ${isHovered ? 'scale-110' : 'scale-100'}"
       />
     </button>
   );
@@ -389,7 +449,8 @@ export default function NeighborhoodListings() {
             Explore rentals in popular neighborhoods in and near New York, NY
           </h1>
           <p className="text-gray-600 mt-3 text-base md:text-lg max-w-3xl">
-            Hover over any neighborhood to see detailed rental statistics and available listings.
+            Hover over any neighborhood to see detailed rental statistics and
+            available listings.
           </p>
         </header>
 
@@ -432,9 +493,13 @@ export default function NeighborhoodListings() {
         {/* Scroll Indicator */}
         <div className="flex justify-center mt-8">
           <div className="flex items-center gap-2 text-gray-500 text-sm animate-pulse">
-            <span className="transition-transform duration-1000 hover:scale-110">←</span>
+            <span className="transition-transform duration-1000 hover:scale-110">
+              ←
+            </span>
             <span>Scroll to explore more neighborhoods</span>
-            <span className="transition-transform duration-1000 hover:scale-110">→</span>
+            <span className="transition-transform duration-1000 hover:scale-110">
+              →
+            </span>
           </div>
         </div>
       </div>

@@ -1,61 +1,75 @@
-import React, { useState } from 'react';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import React, { useState } from "react";
+import { ChevronDown, ChevronUp } from "lucide-react";
 
 export default function HousekeeperFaq() {
-  const [activeTab, setActiveTab] = useState('client');
+  const [activeTab, setActiveTab] = useState("client");
   const [openQuestion, setOpenQuestion] = useState(null);
 
   const clientFAQs = [
     {
       question: "How much does it cost to hire a housekeeper?",
-      answer: "The cost of hiring a housekeeper varies based on location, experience, and services needed. On average, housekeepers charge between $20-40 per hour. Rates may be higher for deep cleaning, specialized services, or larger homes."
+      answer:
+        "The cost of hiring a housekeeper varies based on location, experience, and services needed. On average, housekeepers charge between $20-40 per hour. Rates may be higher for deep cleaning, specialized services, or larger homes.",
     },
     {
       question: "What are the typical working hours for a housekeeper?",
-      answer: "Housekeeping hours are flexible based on your needs. Common arrangements include weekly or bi-weekly cleaning, daily housekeeping, move-in/move-out cleaning, or one-time deep cleaning services."
+      answer:
+        "Housekeeping hours are flexible based on your needs. Common arrangements include weekly or bi-weekly cleaning, daily housekeeping, move-in/move-out cleaning, or one-time deep cleaning services.",
     },
     {
-      question: "What are the benefits of hiring a regular housekeeper versus occasional cleaning?",
-      answer: "Regular housekeepers provide consistency, understand your home's specific needs, and can maintain cleanliness over time. Occasional cleaning is ideal for special events or seasonal deep cleaning."
+      question:
+        "What are the benefits of hiring a regular housekeeper versus occasional cleaning?",
+      answer:
+        "Regular housekeepers provide consistency, understand your home's specific needs, and can maintain cleanliness over time. Occasional cleaning is ideal for special events or seasonal deep cleaning.",
     },
     {
       question: "How do I create an attractive job post to find a housekeeper?",
-      answer: "Include details about home size, specific cleaning needs, frequency, preferred schedule, pay rate, and any special requirements. Be clear about expectations and highlight what makes your home a great place to work."
+      answer:
+        "Include details about home size, specific cleaning needs, frequency, preferred schedule, pay rate, and any special requirements. Be clear about expectations and highlight what makes your home a great place to work.",
     },
     {
       question: "How do I check a housekeeper's references?",
-      answer: "Contact at least 2-3 previous clients, ask about cleaning quality, reliability, trustworthiness, and professionalism. Verify experience with similar homes and ask about attention to detail."
-    }
+      answer:
+        "Contact at least 2-3 previous clients, ask about cleaning quality, reliability, trustworthiness, and professionalism. Verify experience with similar homes and ask about attention to detail.",
+    },
   ];
 
   const housekeeperFAQs = [
     {
-      question: "What qualifications do I need to become a professional housekeeper?",
-      answer: "While formal certifications are helpful, most clients look for housekeepers with cleaning experience, reliability, and good references. Knowledge of cleaning products, techniques, and organization skills are highly valued."
+      question:
+        "What qualifications do I need to become a professional housekeeper?",
+      answer:
+        "While formal certifications are helpful, most clients look for housekeepers with cleaning experience, reliability, and good references. Knowledge of cleaning products, techniques, and organization skills are highly valued.",
     },
     {
       question: "What are the typical responsibilities of a housekeeper?",
-      answer: "Typical responsibilities include dusting, vacuuming, mopping, bathroom cleaning, kitchen cleaning, laundry, organization, and maintaining cleanliness standards. Some positions may include additional tasks like grocery shopping or pet care."
+      answer:
+        "Typical responsibilities include dusting, vacuuming, mopping, bathroom cleaning, kitchen cleaning, laundry, organization, and maintaining cleanliness standards. Some positions may include additional tasks like grocery shopping or pet care.",
     },
     {
       question: "How do I create a standout profile on Sulekha Care Services?",
-      answer: "Include professional photos, detailed experience with different cleaning types, certifications, specialty skills (eco-friendly cleaning, organization), and a compelling bio. Highlight your availability and preferred cleaning arrangements."
+      answer:
+        "Include professional photos, detailed experience with different cleaning types, certifications, specialty skills (eco-friendly cleaning, organization), and a compelling bio. Highlight your availability and preferred cleaning arrangements.",
     },
     {
-      question: "Can I apply to multiple jobs at once on Sulekha Care Services?",
-      answer: "Yes, you can apply to multiple positions simultaneously. This increases your chances of finding the right fit. Customize your application for each client to show understanding of their specific cleaning needs."
+      question:
+        "Can I apply to multiple jobs at once on Sulekha Care Services?",
+      answer:
+        "Yes, you can apply to multiple positions simultaneously. This increases your chances of finding the right fit. Customize your application for each client to show understanding of their specific cleaning needs.",
     },
     {
-      question: "What are the advantages of having cleaning certifications as a housekeeper?",
-      answer: "Cleaning certifications demonstrate professionalism, knowledge of proper cleaning techniques, and commitment to quality service. These certifications often make you more competitive and can justify higher rates."
-    }
+      question:
+        "What are the advantages of having cleaning certifications as a housekeeper?",
+      answer:
+        "Cleaning certifications demonstrate professionalism, knowledge of proper cleaning techniques, and commitment to quality service. These certifications often make you more competitive and can justify higher rates.",
+    },
   ];
 
   const toggleQuestion = (index) => {
     setOpenQuestion(openQuestion === index ? null : index);
   };
 
-  const currentFAQs = activeTab === 'client' ? clientFAQs : housekeeperFAQs;
+  const currentFAQs = activeTab === "client" ? clientFAQs : housekeeperFAQs;
 
   return (
     <div className="px-3 xs:px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
@@ -71,7 +85,8 @@ export default function HousekeeperFaq() {
                 The answers you're looking for
               </h1>
               <p className="text-gray-600 text-sm xs:text-base sm:text-lg leading-relaxed">
-                We've Answered Common Questions to Help You Find the Perfect Housekeeper or Housekeeping Job.
+                We've Answered Common Questions to Help You Find the Perfect
+                Housekeeper or Housekeeping Job.
               </p>
             </div>
           </div>
@@ -82,22 +97,22 @@ export default function HousekeeperFaq() {
             <div className="flex justify-start lg:justify-end mb-4 sm:mb-6">
               <div className="inline-flex bg-white rounded-full p-1 shadow-sm sm:shadow-md border border-gray-200 w-full lg:w-auto">
                 <button
-                  onClick={() => setActiveTab('client')}
+                  onClick={() => setActiveTab("client")}
                   className={`flex-1 lg:flex-none px-3 xs:px-4 sm:px-5 lg:px-6 py-2 xs:py-2.5 sm:py-2.5 rounded-full font-medium transition-all duration-200 text-xs xs:text-sm ${
-                    activeTab === 'client'
-                      ? 'bg-gradient-to-r from-[#27BB97] to-[#1FA987] text-white shadow-sm'
-                      : 'bg-transparent text-gray-600 hover:text-gray-900'
+                    activeTab === "client"
+                      ? "bg-gradient-to-r from-[#27BB97] to-[#1FA987] text-white shadow-sm"
+                      : "bg-transparent text-gray-600 hover:text-gray-900"
                   }`}
                   aria-label="View client FAQs"
                 >
                   Client
                 </button>
                 <button
-                  onClick={() => setActiveTab('housekeeper')}
+                  onClick={() => setActiveTab("housekeeper")}
                   className={`flex-1 lg:flex-none px-3 xs:px-4 sm:px-5 lg:px-6 py-2 xs:py-2.5 sm:py-2.5 rounded-full font-medium transition-all duration-200 text-xs xs:text-sm ${
-                    activeTab === 'housekeeper'
-                      ? 'bg-gradient-to-r from-[#27BB97] to-[#1FA987] text-white shadow-sm'
-                      : 'bg-transparent text-gray-600 hover:text-gray-900'
+                    activeTab === "housekeeper"
+                      ? "bg-gradient-to-r from-[#27BB97] to-[#1FA987] text-white shadow-sm"
+                      : "bg-transparent text-gray-600 hover:text-gray-900"
                   }`}
                   aria-label="View housekeeper FAQs"
                 >
@@ -108,7 +123,7 @@ export default function HousekeeperFaq() {
 
             {/* Section Title */}
             <h2 className="text-lg xs:text-xl sm:text-2xl font-bold text-[#27BB97] mb-4 sm:mb-6">
-              {activeTab === 'client' ? 'Client' : 'Housekeeper'}
+              {activeTab === "client" ? "Client" : "Housekeeper"}
             </h2>
 
             {/* FAQ Accordion */}
@@ -135,9 +150,9 @@ export default function HousekeeperFaq() {
                       )}
                     </div>
                   </button>
-                  
+
                   {openQuestion === index && (
-                    <div 
+                    <div
                       id={`faq-answer-${index}`}
                       className="px-4 xs:px-5 sm:px-6 pb-4 xs:pb-5 pt-0 border-t border-gray-100"
                     >

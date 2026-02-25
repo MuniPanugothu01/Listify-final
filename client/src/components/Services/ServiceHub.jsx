@@ -255,10 +255,7 @@ const ServiceHub = () => {
             : section.services.slice(0, 6);
 
           return (
-            <section
-              key={sectionKey}
-              className=" bg-white  p-6"
-            >
+            <section key={sectionKey} className=" bg-white  p-6">
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center overflow-hidden">
@@ -269,7 +266,7 @@ const ServiceHub = () => {
                       onError={(e) => {
                         e.target.onerror = null;
                         e.target.src = `https://via.placeholder.com/48/27bb97/ffffff?text=${section.title.charAt(
-                          0
+                          0,
                         )}`;
                       }}
                     />
@@ -315,7 +312,7 @@ const ServiceHub = () => {
                         onError={(e) => {
                           e.target.onerror = null;
                           e.target.src = `https://via.placeholder.com/48/cccccc/333333?text=${service.label.charAt(
-                            0
+                            0,
                           )}`;
                         }}
                       />

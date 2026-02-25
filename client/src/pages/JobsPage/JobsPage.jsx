@@ -11,19 +11,18 @@ import LatestsJobs2 from "../../components/Jobs/LatestsJobs2";
 import FeaturedRecruiters from "../../components/Jobs/FeaturedRecruiters";
 import FreelancerGrid from "../../components/Jobs/FreelancerGrid";
 
-
 const JobsPage = () => {
   return (
     <div>
       <SubNavbar />
       <HeroSectionJobs />
       <FeaturedJobs />
-      <CompaniesLIst/>
-      <FreelancerGrid/>
+      <CompaniesLIst />
+      <FreelancerGrid />
       {/* <LatestJobs/> */}
-      <LatestsJobs2/>
-      <FeaturedRecruiters/>
-      <JobSeekerResume/>
+      <LatestsJobs2 />
+      <FeaturedRecruiters />
+      <JobSeekerResume />
     </div>
   );
 };

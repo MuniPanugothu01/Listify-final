@@ -164,10 +164,7 @@ export default function OtpVerification({ email, onVerify, onResend, onBack }) {
       }
     } else if (value.length > 1) {
       // Handle multi-digit input (autofill, etc.)
-      const digits = value
-        .replace(/\D/g, "")
-        .slice(0, OTP_LENGTH)
-        .split("");
+      const digits = value.replace(/\D/g, "").slice(0, OTP_LENGTH).split("");
       digits.forEach((digit, i) => {
         if (index + i < OTP_LENGTH) newOtp[index + i] = digit;
       });
@@ -175,7 +172,9 @@ export default function OtpVerification({ email, onVerify, onResend, onBack }) {
 
       const nextEmpty = newOtp.findIndex((d, i) => i >= index && d === "");
       setFocusedIndex(
-        nextEmpty !== -1 ? nextEmpty : Math.min(index + digits.length, OTP_LENGTH - 1),
+        nextEmpty !== -1
+          ? nextEmpty
+          : Math.min(index + digits.length, OTP_LENGTH - 1),
       );
     } else {
       newOtp[index] = "";
@@ -429,8 +428,7 @@ export default function OtpVerification({ email, onVerify, onResend, onBack }) {
               } else if (digit) {
                 borderColor = "border-[#27bb97]";
                 bgColor = "bg-[#27bb97]/5";
-                focusRingColor =
-                  "focus:ring-[#27bb97] focus:border-[#27bb97]";
+                focusRingColor = "focus:ring-[#27bb97] focus:border-[#27bb97]";
               }
 
               return (
@@ -530,7 +528,9 @@ export default function OtpVerification({ email, onVerify, onResend, onBack }) {
             Didn't receive the code?{" "}
             <button
               onClick={handleResend}
-              disabled={isResending || countdown > 0 || isBlocked || isVerifying}
+              disabled={
+                isResending || countdown > 0 || isBlocked || isVerifying
+              }
               className={`font-medium ${
                 isBlocked
                   ? "text-gray-400 cursor-not-allowed"

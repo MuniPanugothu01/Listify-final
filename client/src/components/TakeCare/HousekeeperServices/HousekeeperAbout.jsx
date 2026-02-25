@@ -1,44 +1,57 @@
-import React from 'react';
-import { Award, Shuffle, BadgeCheck, Users, Clock, HandHeart } from 'lucide-react';
+import React from "react";
+import {
+  Award,
+  Shuffle,
+  BadgeCheck,
+  Users,
+  Clock,
+  HandHeart,
+} from "lucide-react";
 
 const HousekeeperAbout = () => {
   const features = [
     {
-      id: '01',
+      id: "01",
       icon: <Award className="w-8 h-8 xs:w-10 xs:h-10 sm:w-10 sm:h-10" />,
-      title: 'We are the experts',
-      description: 'Thousands of homeowners already love, trust, and rely on Sulekha for professional housekeeping services.',
+      title: "We are the experts",
+      description:
+        "Thousands of homeowners already love, trust, and rely on Sulekha for professional housekeeping services.",
     },
     {
-      id: '02',
+      id: "02",
       icon: <Shuffle className="w-8 h-8 xs:w-10 xs:h-10 sm:w-10 sm:h-10" />,
-      title: 'Flexible Options',
-      description: 'Choose from regular cleaning, deep cleaning, move-in/move-out cleaning, and specialized household services.',
+      title: "Flexible Options",
+      description:
+        "Choose from regular cleaning, deep cleaning, move-in/move-out cleaning, and specialized household services.",
     },
     {
-      id: '03',
+      id: "03",
       icon: <BadgeCheck className="w-8 h-8 xs:w-10 xs:h-10 sm:w-10 sm:h-10" />,
-      title: 'Quality Assurance',
-      description: '97% satisfaction rate from clients, ensuring you receive thorough and reliable housekeeping service.',
+      title: "Quality Assurance",
+      description:
+        "97% satisfaction rate from clients, ensuring you receive thorough and reliable housekeeping service.",
     },
     {
-      id: '04',
+      id: "04",
       icon: <Users className="w-8 h-8 xs:w-10 xs:h-10 sm:w-10 sm:h-10" />,
-      title: 'Experienced Housekeepers',
-      description: 'With thousands of successful engagements, our cleaning professionals bring proven expertise.',
+      title: "Experienced Housekeepers",
+      description:
+        "With thousands of successful engagements, our cleaning professionals bring proven expertise.",
     },
     {
-      id: '05',
+      id: "05",
       icon: <Clock className="w-8 h-8 xs:w-10 xs:h-10 sm:w-10 sm:h-10" />,
-      title: 'Quick Matches',
-      description: 'Find the right housekeeper within hours, perfect for last-minute cleaning needs or regular schedules.',
+      title: "Quick Matches",
+      description:
+        "Find the right housekeeper within hours, perfect for last-minute cleaning needs or regular schedules.",
     },
     {
-      id: '06',
+      id: "06",
       icon: <HandHeart className="w-8 h-8 xs:w-10 xs:h-10 sm:w-10 sm:h-10" />,
-      title: 'Peace of Mind',
-      description: 'Enjoy a clean, organized home knowing your housekeeping needs are in professional and trustworthy hands.',
-    }
+      title: "Peace of Mind",
+      description:
+        "Enjoy a clean, organized home knowing your housekeeping needs are in professional and trustworthy hands.",
+    },
   ];
 
   return (
@@ -47,22 +60,25 @@ const HousekeeperAbout = () => {
         {/* Header */}
         <div className="text-center mb-8 sm:mb-10 lg:mb-16 px-2">
           <h2 className="text-2xl xs:text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-3 sm:mb-4 leading-tight">
-            ABOUT <span className='text-[#27BB97]'>US</span> 
+            ABOUT <span className="text-[#27BB97]">US</span>
           </h2>
           <p className="text-gray-600 text-sm xs:text-base sm:text-lg lg:text-lg">
-            Why Find a <span className='text-[#27BB97] font-medium'>Housekeeper with Listify</span>?
+            Why Find a{" "}
+            <span className="text-[#27BB97] font-medium">
+              Housekeeper with Listify
+            </span>
+            ?
           </p>
         </div>
 
         {/* Layout Strategy */}
         <div className="flex flex-col items-center">
-          
           {/* Mobile Layout - Single column for screens < 768px */}
           <div className="w-full md:hidden">
             <div className="grid grid-cols-1 gap-4 xs:gap-5 sm:gap-6">
               {features.map((feature) => (
-                <div 
-                  key={feature.id} 
+                <div
+                  key={feature.id}
                   className="bg-white rounded-xl sm:rounded-2xl p-4 xs:p-5 sm:p-6 shadow-sm hover:shadow-md transition-shadow relative"
                 >
                   <div className="absolute top-4 xs:top-5 right-4 xs:right-5 text-4xl xs:text-5xl sm:text-6xl font-bold text-gray-100">
@@ -88,8 +104,8 @@ const HousekeeperAbout = () => {
           <div className="hidden md:block lg:hidden w-full">
             <div className="grid grid-cols-2 gap-4 sm:gap-6">
               {features.map((feature) => (
-                <div 
-                  key={feature.id} 
+                <div
+                  key={feature.id}
                   className="bg-white rounded-2xl p-5 sm:p-6 shadow-sm hover:shadow-md transition-shadow relative"
                 >
                   <div className="absolute top-5 right-5 text-5xl sm:text-6xl font-bold text-gray-100">

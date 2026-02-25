@@ -1191,7 +1191,8 @@ export default function JobSeekerInterface() {
         <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 p-4 bg-gradient-to-t from-white via-white to-transparent">
           <div className="flex justify-center">
             <Link to="/jobs">
-              <div className="
+              <div
+                className="
                 flex 
                 items-center 
                 justify-center 
@@ -1216,7 +1217,8 @@ export default function JobSeekerInterface() {
                 hover:shadow-xl
                 hover:-translate-y-0.5
                 active:translate-y-0
-              ">
+              "
+              >
                 <GoArrowUpLeft className="w-5 h-5" />
                 <span>back to home</span>
               </div>

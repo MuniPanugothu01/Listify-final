@@ -8,87 +8,96 @@ const CareServices = () => {
   const scrollContainerRef = useRef(null);
   const [showLeftButton, setShowLeftButton] = useState(false);
   const [showRightButton, setShowRightButton] = useState(true);
-  
+
   // Check if we're on a specific service page (not the main takecare page)
   const currentPath = location.pathname;
-  const isOnSpecificServicePage = currentPath !== '/takecare' && currentPath !== '/';
-  
+  const isOnSpecificServicePage =
+    currentPath !== "/takecare" && currentPath !== "/";
+
   const allServices = [
     {
       id: "nanny",
       title: "Nanny",
       description: "Find a Nanny or Nanny Job",
-      image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&h=200&fit=crop&crop=face",
-      color: "from-pink-500 to-rose-500"
+      image:
+        "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&h=200&fit=crop&crop=face",
+      color: "from-pink-500 to-rose-500",
     },
     {
       id: "babysitter",
       title: "Babysitter",
       description: "Discover or Secure a Babysitter",
-      image: "https://images.unsplash.com/photo-1519457431-44ccd64a579b?w=200&h=200&fit=crop&crop=face",
-      color: "from-blue-500 to-cyan-500"
+      image:
+        "https://images.unsplash.com/photo-1519457431-44ccd64a579b?w=200&h=200&fit=crop&crop=face",
+      color: "from-blue-500 to-cyan-500",
     },
     {
       id: "cook",
       title: "Cook",
       description: "Join or Book a Cooking Service",
-      image: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=200&h=200&fit=crop&crop=face",
-      color: "from-orange-500 to-amber-500"
+      image:
+        "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=200&h=200&fit=crop&crop=face",
+      color: "from-orange-500 to-amber-500",
     },
     {
       id: "housekeeper",
       title: "Housekeeper",
       description: "Manage or Request Household Help",
-      image: "https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=200&h=200&fit=crop&crop=face",
-      color: "from-green-500 to-emerald-500"
+      image:
+        "https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=200&h=200&fit=crop&crop=face",
+      color: "from-green-500 to-emerald-500",
     },
     {
       id: "tutor",
       title: "Tutor",
       description: "Find a Tutor or Tutor Job",
-      image: "https://images.unsplash.com/photo-1577896851231-70ef18881754?w=200&h=200&fit=crop&crop=face",
-      color: "from-purple-500 to-violet-500"
+      image:
+        "https://images.unsplash.com/photo-1577896851231-70ef18881754?w=200&h=200&fit=crop&crop=face",
+      color: "from-purple-500 to-violet-500",
     },
     {
       id: "carecenter",
       title: "Care Center",
       description: "Discover or List a Care Center",
-      image: "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=200&h=200&fit=crop&crop=face",
-      color: "from-teal-500 to-cyan-500"
+      image:
+        "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=200&h=200&fit=crop&crop=face",
+      color: "from-teal-500 to-cyan-500",
     },
     {
       id: "eldercare",
       title: "Eldercare",
       description: "Offer or Arrange Senior Care",
       image: "/elder-care.jpg",
-      color: "from-indigo-500 to-blue-500"
+      color: "from-indigo-500 to-blue-500",
     },
     {
       id: "petcare",
       title: "Pet Care",
       description: "Find a Pet Care Provider or Job",
-      image: "https://images.unsplash.com/photo-1558788353-f76d92427f16?w=200&h=200&fit=crop&crop=face",
-      color: "from-yellow-500 to-orange-500"
-    }
+      image:
+        "https://images.unsplash.com/photo-1558788353-f76d92427f16?w=200&h=200&fit=crop&crop=face",
+      color: "from-yellow-500 to-orange-500",
+    },
   ];
 
   // Get current service ID from URL (e.g., /takecare/nanny -> "nanny")
   const getCurrentServiceId = () => {
-    const pathParts = currentPath.split('/');
+    const pathParts = currentPath.split("/");
     return pathParts[pathParts.length - 1];
   };
 
   const currentServiceId = getCurrentServiceId();
-  
+
   // Filter out current service if we're on its specific page
-  const services = isOnSpecificServicePage 
-    ? allServices.filter(service => service.id !== currentServiceId)
+  const services = isOnSpecificServicePage
+    ? allServices.filter((service) => service.id !== currentServiceId)
     : allServices;
 
   // Update scroll button visibility
   const updateScrollButtons = () => {
     if (scrollContainerRef.current) {
-      const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current;
+      const { scrollLeft, scrollWidth, clientWidth } =
+        scrollContainerRef.current;
       setShowLeftButton(scrollLeft > 0);
       setShowRightButton(scrollLeft < scrollWidth - clientWidth - 10);
     }
@@ -97,10 +106,10 @@ const CareServices = () => {
   useEffect(() => {
     const container = scrollContainerRef.current;
     if (container) {
-      container.addEventListener('scroll', updateScrollButtons);
+      container.addEventListener("scroll", updateScrollButtons);
       updateScrollButtons(); // Initial check
-      
-      return () => container.removeEventListener('scroll', updateScrollButtons);
+
+      return () => container.removeEventListener("scroll", updateScrollButtons);
     }
   }, [services]); // Re-run when services change
 
@@ -110,9 +119,9 @@ const CareServices = () => {
     window.scrollTo({
       top: 0,
       left: 0,
-      behavior: 'smooth'
+      behavior: "smooth",
     });
-    
+
     // Then navigate to the service page
     navigate(`/takecare/${serviceId}`);
   };
@@ -120,14 +129,20 @@ const CareServices = () => {
   const scrollLeft = () => {
     if (scrollContainerRef.current) {
       const cardWidth = 288; // w-72 = 288px
-      scrollContainerRef.current.scrollBy({ left: -cardWidth, behavior: 'smooth' });
+      scrollContainerRef.current.scrollBy({
+        left: -cardWidth,
+        behavior: "smooth",
+      });
     }
   };
 
   const scrollRight = () => {
     if (scrollContainerRef.current) {
       const cardWidth = 288; // w-72 = 288px
-      scrollContainerRef.current.scrollBy({ left: cardWidth, behavior: 'smooth' });
+      scrollContainerRef.current.scrollBy({
+        left: cardWidth,
+        behavior: "smooth",
+      });
     }
   };
 
@@ -137,10 +152,14 @@ const CareServices = () => {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 sm:mb-10 lg:mb-12 gap-4 ">
         <div className="text-left">
           <h2 className="text-2xl xs:text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-2 sm:mb-3 lg:mb-4 leading-tight">
-            {isOnSpecificServicePage ? "OTHER CARE SERVICES" : "ALL IN ONE PLACE"}
+            {isOnSpecificServicePage
+              ? "OTHER CARE SERVICES"
+              : "ALL IN ONE PLACE"}
           </h2>
           <p className="text-base sm:text-lg lg:text-xl text-gray-600 max-w-2xl">
-            {isOnSpecificServicePage ? "Explore other care services we offer" : "Providing care, finding care"}
+            {isOnSpecificServicePage
+              ? "Explore other care services we offer"
+              : "Providing care, finding care"}
           </p>
         </div>
 
@@ -149,7 +168,7 @@ const CareServices = () => {
           <button
             onClick={scrollLeft}
             className={`bg-white border border-gray-300 rounded-full p-2 lg:p-3 shadow-md hover:bg-gray-50 hover:shadow-lg hover:border-[#27BB97] transition-all duration-300 flex items-center justify-center ${
-              !showLeftButton ? 'opacity-50 cursor-not-allowed' : ''
+              !showLeftButton ? "opacity-50 cursor-not-allowed" : ""
             }`}
             aria-label="Scroll left"
             disabled={!showLeftButton}
@@ -159,7 +178,7 @@ const CareServices = () => {
           <button
             onClick={scrollRight}
             className={`bg-gradient-to-r from-[#27BB97] to-[#1FA987] text-white rounded-full p-2 lg:p-3 shadow-md hover:from-[#1FA987] hover:to-[#198F72] hover:shadow-lg transition-all duration-300 flex items-center justify-center ${
-              !showRightButton ? 'opacity-50 cursor-not-allowed' : ''
+              !showRightButton ? "opacity-50 cursor-not-allowed" : ""
             }`}
             aria-label="Scroll right"
             disabled={!showRightButton}
@@ -184,7 +203,7 @@ const CareServices = () => {
           <button
             onClick={scrollLeft}
             className={`bg-white/90 backdrop-blur-sm border border-gray-300 rounded-full p-2 shadow-lg hover:bg-white hover:shadow-xl hover:border-[#27BB97] transition-all duration-300 flex items-center justify-center ${
-              !showLeftButton ? 'opacity-0 pointer-events-none' : ''
+              !showLeftButton ? "opacity-0 pointer-events-none" : ""
             }`}
             aria-label="Scroll left"
           >
@@ -193,7 +212,7 @@ const CareServices = () => {
           <button
             onClick={scrollRight}
             className={`bg-gradient-to-r from-[#27BB97] to-[#1FA987] text-white rounded-full p-2 shadow-lg hover:from-[#1FA987] hover:to-[#198F72] hover:shadow-xl transition-all duration-300 flex items-center justify-center ${
-              !showRightButton ? 'opacity-0 pointer-events-none' : ''
+              !showRightButton ? "opacity-0 pointer-events-none" : ""
             }`}
             aria-label="Scroll right"
           >
@@ -201,21 +220,21 @@ const CareServices = () => {
           </button>
         </div>
 
-        <div 
+        <div
           ref={scrollContainerRef}
           className="flex overflow-x-auto scrollbar-hide gap-4 xs:gap-5 sm:gap-6 pb-4 sm:pb-6 px-2 xs:px-3 sm:px-0 snap-x snap-mandatory"
-          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
           {services.length > 0 ? (
             services.map((service) => (
-              <div 
+              <div
                 key={service.id}
                 className="flex-shrink-0 w-[260px] xs:w-[280px] sm:w-72 flex flex-col items-center text-center p-6 sm:p-8 rounded-xl sm:rounded-2xl border border-gray-200 hover:border-[#27BB97] hover:shadow-lg sm:hover:shadow-xl transition-all duration-300 group cursor-pointer bg-white snap-center"
                 onClick={() => handleServiceClick(service.id)}
                 role="link"
                 tabIndex={0}
                 onKeyPress={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
+                  if (e.key === "Enter" || e.key === " ") {
                     handleServiceClick(service.id);
                   }
                 }}
@@ -232,7 +251,9 @@ const CareServices = () => {
                   </div>
                   {/* Gradient Ring Effect */}
                   <div className="absolute inset-0 rounded-full border-2 border-transparent">
-                    <div className={`absolute inset-0 rounded-full bg-gradient-to-r ${service.color} opacity-0 group-hover:opacity-20 transition-opacity duration-300`} />
+                    <div
+                      className={`absolute inset-0 rounded-full bg-gradient-to-r ${service.color} opacity-0 group-hover:opacity-20 transition-opacity duration-300`}
+                    />
                   </div>
                 </div>
 
@@ -247,7 +268,7 @@ const CareServices = () => {
                 </p>
 
                 {/* Explore Button */}
-                <button 
+                <button
                   className="w-full flex items-center justify-center gap-2 px-4 xs:px-5 sm:px-6 py-2.5 xs:py-3 sm:py-3 text-[#27BB97] font-semibold rounded-lg xs:rounded-lg sm:rounded-lg border border-[#27BB97] hover:bg-[#27BB97] hover:text-white transition-all group-hover:shadow-md text-xs xs:text-sm sm:text-sm"
                   onClick={(e) => {
                     e.stopPropagation();
@@ -271,11 +292,11 @@ const CareServices = () => {
         {/* Scroll progress indicator */}
         <div className="hidden sm:block mt-4">
           <div className="h-1 w-full bg-gray-200 rounded-full overflow-hidden">
-            <div 
+            <div
               className="h-full bg-gradient-to-r from-[#27BB97] to-[#1FA987] rounded-full transition-all duration-300"
               style={{
-                width: showRightButton ? '50%' : '100%',
-                transform: showLeftButton ? 'translateX(50%)' : 'translateX(0)',
+                width: showRightButton ? "50%" : "100%",
+                transform: showLeftButton ? "translateX(50%)" : "translateX(0)",
               }}
             />
           </div>
@@ -291,7 +312,7 @@ const CareServices = () => {
         .scrollbar-hide::-webkit-scrollbar {
           display: none;
         }
-        
+
         /* Better snap scrolling for mobile */
         @media (max-width: 640px) {
           .snap-x {

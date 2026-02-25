@@ -11,8 +11,8 @@ import {
   setImageUploading,
   clearProfileData,
   setProfilePicPreview,
-} from '../slices/profileSlice';
-import s3Service from '../../services/s3Service';
+} from "../slices/profileSlice";
+import s3Service from "../../services/s3Service";
 
 export const profileActions = {
   // Fetch profile
@@ -60,7 +60,7 @@ export const profileActions = {
         updateProfile({
           profileImage: uploadResult.imageUrl,
           profileImageKey: uploadResult.fileKey,
-        })
+        }),
       ).unwrap();
 
       dispatch(setImageUploading(false));

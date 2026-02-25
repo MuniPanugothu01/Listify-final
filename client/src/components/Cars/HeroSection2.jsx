@@ -10,7 +10,7 @@ export default function HeroSection2() {
     <div className="w-full relative mt-0 z-0">
       {/* Hero Section with Background */}
       <div
-        className="relative h-[300px] sm:h-[300px]  md:h-[300px] lg:h-[300px] overflow-hidden bg-cover bg-black/30 bg-blend-darken" 
+        className="relative h-[300px] sm:h-[300px]  md:h-[300px] lg:h-[300px] overflow-hidden bg-cover bg-black/30 bg-blend-darken"
         style={{
           backgroundImage: `url('/cars-4.jpg') `,
         }}

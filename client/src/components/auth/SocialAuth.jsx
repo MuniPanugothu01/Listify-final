@@ -78,7 +78,9 @@ const SocialAuth = ({ onSuccess, isSignUp = false, onLoginStart }) => {
     try {
       // Prevent multiple login attempts
       if (loginInProgress.current || navigationPerformed.current) {
-        console.log("Login already in progress or navigation performed, skipping");
+        console.log(
+          "Login already in progress or navigation performed, skipping",
+        );
         return;
       }
 
@@ -155,7 +157,7 @@ const SocialAuth = ({ onSuccess, isSignUp = false, onLoginStart }) => {
           });
           toastShown.current = true;
         }
-        
+
         loginInProgress.current = false;
         navigationPerformed.current = false;
       }
@@ -170,7 +172,7 @@ const SocialAuth = ({ onSuccess, isSignUp = false, onLoginStart }) => {
         });
         toastShown.current = true;
       }
-      
+
       loginInProgress.current = false;
       navigationPerformed.current = false;
     }
@@ -190,7 +192,7 @@ const SocialAuth = ({ onSuccess, isSignUp = false, onLoginStart }) => {
       );
       toastShown.current = true;
     }
-    
+
     loginInProgress.current = false;
     navigationPerformed.current = false;
   };
@@ -200,7 +202,7 @@ const SocialAuth = ({ onSuccess, isSignUp = false, onLoginStart }) => {
     <button
       onClick={() => {
         if (loginInProgress.current || navigationPerformed.current) return;
-        
+
         if (!googleButtonReady) {
           getGoogleClientIdAction();
         }

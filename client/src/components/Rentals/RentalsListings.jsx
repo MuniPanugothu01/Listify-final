@@ -1867,7 +1867,6 @@ const RentalsListings = () => {
                                 </label>
                               ))}
                             </div>
-                            
                           </div>
 
                           {/* Quick Action Buttons */}

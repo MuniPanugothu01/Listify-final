@@ -20,10 +20,12 @@ const profileApi = axios.create({
 // ── Request interceptor ───────────────────────────────────────────────────────
 profileApi.interceptors.request.use(
   (config) => {
-    console.log(`🚀 Profile Request: ${config.method.toUpperCase()} ${config.url}`);
+    console.log(
+      `🚀 Profile Request: ${config.method.toUpperCase()} ${config.url}`,
+    );
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => Promise.reject(error),
 );
 
 // ── Response interceptor ──────────────────────────────────────────────────────
@@ -45,7 +47,7 @@ profileApi.interceptors.response.use(
     });
 
     return Promise.reject(error);
-  }
+  },
 );
 
 // ── API methods ───────────────────────────────────────────────────────────────
@@ -73,7 +75,7 @@ export const profileAPI = {
       onUploadProgress: (progressEvent) => {
         if (onProgress && progressEvent.total) {
           const pct = Math.round(
-            (progressEvent.loaded * 100) / progressEvent.total
+            (progressEvent.loaded * 100) / progressEvent.total,
           );
           onProgress(pct);
         }
@@ -99,18 +101,22 @@ export const profileAPI = {
     console.log("🔑 Sending change password request with data:", {
       currentPassword: passwordData.currentPassword ? "****" : "missing",
       newPassword: passwordData.newPassword ? "****" : "missing",
-      confirmNewPassword: passwordData.confirmPassword || passwordData.confirmNewPassword ? "****" : "missing"
+      confirmNewPassword:
+        passwordData.confirmPassword || passwordData.confirmNewPassword
+          ? "****"
+          : "missing",
     });
-    
+
     // FIX: Transform the data to match backend expectations
     // Backend expects: currentPassword, newPassword, confirmNewPassword
     // Frontend sends: currentPassword, newPassword, confirmPassword
     const transformedData = {
       currentPassword: passwordData.currentPassword,
       newPassword: passwordData.newPassword,
-      confirmNewPassword: passwordData.confirmPassword || passwordData.confirmNewPassword
+      confirmNewPassword:
+        passwordData.confirmPassword || passwordData.confirmNewPassword,
     };
-    
+
     return profileApi.post("/change-password", transformedData);
   },
 

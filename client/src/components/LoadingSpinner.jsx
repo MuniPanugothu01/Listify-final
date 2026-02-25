@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 const LoadingSpinner = ({ fullScreen = true, text = "Loading..." }) => {
   const spinner = (
@@ -6,7 +6,10 @@ const LoadingSpinner = ({ fullScreen = true, text = "Loading..." }) => {
       <div className="relative">
         <div className="w-16 h-16 border-4 border-gray-200 rounded-full"></div>
         <div className="absolute top-0 left-0 w-16 h-16 border-4 border-[#27bb97] border-t-transparent rounded-full animate-spin"></div>
-        <div className="absolute top-0 left-0 w-16 h-16 border-4 border-[#27bb97] border-r-transparent rounded-full animate-spin" style={{ animationDuration: '2s' }}></div>
+        <div
+          className="absolute top-0 left-0 w-16 h-16 border-4 border-[#27bb97] border-r-transparent rounded-full animate-spin"
+          style={{ animationDuration: "2s" }}
+        ></div>
       </div>
       {text && <p className="mt-4 text-gray-600 font-medium">{text}</p>}
     </div>

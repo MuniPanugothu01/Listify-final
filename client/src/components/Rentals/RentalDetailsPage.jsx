@@ -656,7 +656,9 @@ const RentalDetailsPage = () => {
                           className="flex items-center gap-3 p-3 border border-gray-200 rounded-lg"
                         >
                           {rule.icon}
-                          <span className="font-medium text-gray-500">{rule.rule}</span>
+                          <span className="font-medium text-gray-500">
+                            {rule.rule}
+                          </span>
                         </div>
                       ))}
                     </div>
@@ -692,23 +694,33 @@ const RentalDetailsPage = () => {
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="space-y-4">
-                      <h4 className="font-semibold text-lg text-gray-700">What's Nearby</h4>
+                      <h4 className="font-semibold text-lg text-gray-700">
+                        What's Nearby
+                      </h4>
                       <ul className="space-y-3">
                         <li className="flex items-center gap-3">
                           <span className="w-2 h-2 bg-green-500 rounded-full"></span>
-                          <span className="text-gray-400">Supermarkets: 3 within 0.5 miles</span>
+                          <span className="text-gray-400">
+                            Supermarkets: 3 within 0.5 miles
+                          </span>
                         </li>
                         <li className="flex items-center gap-3">
                           <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
-                          <span className="text-gray-400">Restaurants: 15+ within walking distance</span>
+                          <span className="text-gray-400">
+                            Restaurants: 15+ within walking distance
+                          </span>
                         </li>
                         <li className="flex items-center gap-3">
                           <span className="w-2 h-2 bg-purple-500 rounded-full"></span>
-                          <span className="text-gray-400">Parks: 2 parks within 1 mile</span>
+                          <span className="text-gray-400">
+                            Parks: 2 parks within 1 mile
+                          </span>
                         </li>
                         <li className="flex items-center gap-3">
                           <span className="w-2 h-2 bg-red-500 rounded-full"></span>
-                          <span className="text-gray-400">Schools: 4 schools in the area</span>
+                          <span className="text-gray-400">
+                            Schools: 4 schools in the area
+                          </span>
                         </li>
                       </ul>
                     </div>
@@ -756,7 +768,9 @@ const RentalDetailsPage = () => {
                       </div>
                     </div>
                     <div className="p-4 bg-gray-50 rounded-lg">
-                      <h4 className="font-semibold mb-2 text-gray-600">Parking</h4>
+                      <h4 className="font-semibold mb-2 text-gray-600">
+                        Parking
+                      </h4>
                       <p className="text-gray-400">
                         {property.amenities.includes("Parking")
                           ? "Parking available on premises"

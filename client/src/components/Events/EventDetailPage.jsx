@@ -1,7 +1,7 @@
 // src/components/Events/EventDetailPage.jsx
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import EventsSubNav from '../../components/Events/EventsSubNav';
+import EventsSubNav from "../../components/Events/EventsSubNav";
 import {
   Calendar,
   MapPin,
@@ -132,7 +132,8 @@ const allEvents = [
       "Charging Stations",
       "Medical Aid",
     ],
-    details: "Experience Asia's biggest music festival with top international DJs and artists. 4 days of non-stop music across 8 stages, featuring EDM, techno, house, and more. Camping options available.",
+    details:
+      "Experience Asia's biggest music festival with top international DJs and artists. 4 days of non-stop music across 8 stages, featuring EDM, techno, house, and more. Camping options available.",
     price: 2999,
     ticketsAvailable: 45,
     location: "Goa, India",
@@ -160,8 +161,8 @@ const allEvents = [
     coordinates: {
       lat: 15.5939,
       lng: 73.7749,
-      address: "Vagator Beach, North Goa, Goa 403509"
-    }
+      address: "Vagator Beach, North Goa, Goa 403509",
+    },
   },
   {
     id: 2,
@@ -189,7 +190,8 @@ const allEvents = [
       "Kids Zone",
       "Photo Booths",
     ],
-    details: "Experience the vibrant colors and flavors of India. 100+ food stalls, cultural performances, traditional crafts shopping, and family entertainment.",
+    details:
+      "Experience the vibrant colors and flavors of India. 100+ food stalls, cultural performances, traditional crafts shopping, and family entertainment.",
     price: 0,
     ticketsAvailable: 1000,
     location: "Gurgaon, India",
@@ -216,8 +218,8 @@ const allEvents = [
     coordinates: {
       lat: 28.4916,
       lng: 77.0946,
-      address: "DLF CyberHub, Cyber City, Gurugram, Haryana 122002"
-    }
+      address: "DLF CyberHub, Cyber City, Gurugram, Haryana 122002",
+    },
   },
   {
     id: 3,
@@ -244,7 +246,8 @@ const allEvents = [
       "AC Hall",
       "Merchandise",
     ],
-    details: "Laugh your heart out with India's top comedians. An evening of fresh jokes, hilarious observations, and non-stop entertainment.",
+    details:
+      "Laugh your heart out with India's top comedians. An evening of fresh jokes, hilarious observations, and non-stop entertainment.",
     price: 599,
     ticketsAvailable: 150,
     location: "Mumbai, India",
@@ -270,10 +273,10 @@ const allEvents = [
     organizers: "The Comedy Club Mumbai",
     hashtags: ["#ComedyNight", "#StandUp", "#MumbaiEvents"],
     coordinates: {
-      lat: 19.0760,
+      lat: 19.076,
       lng: 72.8777,
-      address: "The Comedy Club, Bandra West, Mumbai, Maharashtra 400050"
-    }
+      address: "The Comedy Club, Bandra West, Mumbai, Maharashtra 400050",
+    },
   },
   {
     id: 4,
@@ -302,7 +305,8 @@ const allEvents = [
       "Parking",
       "Charging Stations",
     ],
-    details: "Join India's largest tech startup gathering. Featuring keynote speakers, pitch sessions, investor meetings, and workshops on AI, Blockchain, and SaaS.",
+    details:
+      "Join India's largest tech startup gathering. Featuring keynote speakers, pitch sessions, investor meetings, and workshops on AI, Blockchain, and SaaS.",
     price: 2499,
     ticketsAvailable: 300,
     location: "Bangalore, India",
@@ -330,8 +334,9 @@ const allEvents = [
     coordinates: {
       lat: 12.9716,
       lng: 77.5946,
-      address: "Bangalore International Center, Domlur, Bengaluru, Karnataka 560071"
-    }
+      address:
+        "Bangalore International Center, Domlur, Bengaluru, Karnataka 560071",
+    },
   },
   {
     id: 5,
@@ -360,7 +365,8 @@ const allEvents = [
       "Ayurvedic Spa",
       "Library",
     ],
-    details: "Rejuvenate your mind, body, and soul in the yoga capital of the world. Daily yoga sessions, meditation, healthy meals, and spiritual guidance.",
+    details:
+      "Rejuvenate your mind, body, and soul in the yoga capital of the world. Daily yoga sessions, meditation, healthy meals, and spiritual guidance.",
     price: 8999,
     ticketsAvailable: 50,
     location: "Rishikesh, India",
@@ -387,8 +393,8 @@ const allEvents = [
     coordinates: {
       lat: 30.0869,
       lng: 78.2676,
-      address: "Parmarth Niketan Ashram, Rishikesh, Uttarakhand 249304"
-    }
+      address: "Parmarth Niketan Ashram, Rishikesh, Uttarakhand 249304",
+    },
   },
   {
     id: 6,
@@ -416,7 +422,8 @@ const allEvents = [
       "Parking",
       "AC Theater",
     ],
-    details: "Watch all Avengers movies back-to-back! Includes Infinity War and Endgame. Special merchandise and unlimited popcorn for attendees.",
+    details:
+      "Watch all Avengers movies back-to-back! Includes Infinity War and Endgame. Special merchandise and unlimited popcorn for attendees.",
     price: 1299,
     ticketsAvailable: 200,
     location: "Delhi, India",
@@ -440,8 +447,8 @@ const allEvents = [
     coordinates: {
       lat: 28.7041,
       lng: 77.1025,
-      address: "PVR Select Citywalk, Saket, New Delhi, Delhi 110017"
-    }
+      address: "PVR Select Citywalk, Saket, New Delhi, Delhi 110017",
+    },
   },
   {
     id: 7,
@@ -469,7 +476,8 @@ const allEvents = [
       "Parking",
       "Wheelchair Access",
     ],
-    details: "Exhibition featuring works by MF Husain, FN Souza, SH Raza, and other modern Indian masters. Curated collection with rare pieces.",
+    details:
+      "Exhibition featuring works by MF Husain, FN Souza, SH Raza, and other modern Indian masters. Curated collection with rare pieces.",
     price: 200,
     ticketsAvailable: 500,
     location: "Delhi, India",
@@ -493,8 +501,8 @@ const allEvents = [
     coordinates: {
       lat: 28.6139,
       lng: 77.2295,
-      address: "National Gallery of Modern Art, Jaipur House, New Delhi 110003"
-    }
+      address: "National Gallery of Modern Art, Jaipur House, New Delhi 110003",
+    },
   },
   {
     id: 8,
@@ -523,7 +531,8 @@ const allEvents = [
       "Parking",
       "Restrooms",
     ],
-    details: "Taste global flavors from 50+ food trucks. Featuring Mexican, Italian, Asian, and Indian street food. Live music and entertainment.",
+    details:
+      "Taste global flavors from 50+ food trucks. Featuring Mexican, Italian, Asian, and Indian street food. Live music and entertainment.",
     price: 0,
     ticketsAvailable: 2000,
     location: "Chennai, India",
@@ -550,8 +559,8 @@ const allEvents = [
     coordinates: {
       lat: 13.0827,
       lng: 80.2707,
-      address: "Phoenix Marketcity, Velachery, Chennai, Tamil Nadu 600042"
-    }
+      address: "Phoenix Marketcity, Velachery, Chennai, Tamil Nadu 600042",
+    },
   },
   {
     id: 9,
@@ -580,7 +589,8 @@ const allEvents = [
       "Changing Rooms",
       "Breakfast",
     ],
-    details: "21km run along Marine Drive. All proceeds go to education for underprivileged children. Timing chips, medals, and certificates for all finishers.",
+    details:
+      "21km run along Marine Drive. All proceeds go to education for underprivileged children. Timing chips, medals, and certificates for all finishers.",
     price: 800,
     ticketsAvailable: 5000,
     location: "Mumbai, India",
@@ -602,10 +612,11 @@ const allEvents = [
     organizers: "Mumbai Runners Association",
     hashtags: ["#Marathon", "#RunForEducation", "#MumbaiRun"],
     coordinates: {
-      lat: 18.9440,
+      lat: 18.944,
       lng: 72.8229,
-      address: "Marine Drive, Netaji Subhash Chandra Bose Rd, Mumbai, Maharashtra 400020"
-    }
+      address:
+        "Marine Drive, Netaji Subhash Chandra Bose Rd, Mumbai, Maharashtra 400020",
+    },
   },
   {
     id: 10,
@@ -634,7 +645,8 @@ const allEvents = [
       "Coat Check",
       "Smoking Area",
     ],
-    details: "Discover India's best indie bands and solo artists. Featuring alternative rock, indie pop, and experimental music genres.",
+    details:
+      "Discover India's best indie bands and solo artists. Featuring alternative rock, indie pop, and experimental music genres.",
     price: 999,
     ticketsAvailable: 300,
     location: "Bangalore, India",
@@ -662,8 +674,8 @@ const allEvents = [
     coordinates: {
       lat: 12.9762,
       lng: 77.6033,
-      address: "Purple Haze, Church Street, Bengaluru, Karnataka 560001"
-    }
+      address: "Purple Haze, Church Street, Bengaluru, Karnataka 560001",
+    },
   },
   {
     id: 11,
@@ -691,7 +703,8 @@ const allEvents = [
       "Valet Parking",
       "Lounge Seating",
     ],
-    details: "Experience curated wine tasting with international wines paired with artisanal cheeses. Led by master sommelier.",
+    details:
+      "Experience curated wine tasting with international wines paired with artisanal cheeses. Led by master sommelier.",
     price: 2999,
     ticketsAvailable: 40,
     location: "Gurgaon, India",
@@ -709,16 +722,14 @@ const allEvents = [
     responseRate: "99%",
     responseTime: "< 1h",
     availableForCall: true,
-    performers: [
-      { name: "Master Sommelier", type: "Expert" },
-    ],
+    performers: [{ name: "Master Sommelier", type: "Expert" }],
     organizers: "The Oberoi Hotels & Resorts",
     hashtags: ["#WineTasting", "#CheesePairing", "#GurgaonEvents"],
     coordinates: {
       lat: 28.4595,
       lng: 77.0266,
-      address: "The Oberoi, Udyog Vihar, Gurugram, Haryana 122016"
-    }
+      address: "The Oberoi, Udyog Vihar, Gurugram, Haryana 122016",
+    },
   },
   {
     id: 12,
@@ -747,7 +758,8 @@ const allEvents = [
       "Insurance",
       "Bonfire",
     ],
-    details: "Moderate winter trek to Triund with stunning Himalayan views. Includes camping overnight and bonfire under the stars.",
+    details:
+      "Moderate winter trek to Triund with stunning Himalayan views. Includes camping overnight and bonfire under the stars.",
     price: 3499,
     ticketsAvailable: 30,
     location: "Dharamshala, India",
@@ -769,10 +781,11 @@ const allEvents = [
     organizers: "Adventure Nation Treks",
     hashtags: ["#WinterTrek", "#Triund", "#Himalayas"],
     coordinates: {
-      lat: 32.2190,
+      lat: 32.219,
       lng: 76.3234,
-      address: "Triund Trek Starting Point, Dharamshala, Himachal Pradesh 176215"
-    }
+      address:
+        "Triund Trek Starting Point, Dharamshala, Himachal Pradesh 176215",
+    },
   },
   {
     id: 13,
@@ -800,7 +813,8 @@ const allEvents = [
       "Seating",
       "Parking",
     ],
-    details: "Meet the author of 'The Midnight Library' for an intimate discussion, Q&A session, and book signing.",
+    details:
+      "Meet the author of 'The Midnight Library' for an intimate discussion, Q&A session, and book signing.",
     price: 0,
     ticketsAvailable: 100,
     location: "Kolkata, India",
@@ -818,16 +832,14 @@ const allEvents = [
     responseRate: "93%",
     responseTime: "< 2h",
     availableForCall: false,
-    performers: [
-      { name: "Matt Haig", type: "Author" },
-    ],
+    performers: [{ name: "Matt Haig", type: "Author" }],
     organizers: "Oxford Bookstore Kolkata",
     hashtags: ["#BookLaunch", "#AuthorTalk", "#KolkataEvents"],
     coordinates: {
       lat: 22.5726,
       lng: 88.3639,
-      address: "Oxford Bookstore, Park Street, Kolkata, West Bengal 700016"
-    }
+      address: "Oxford Bookstore, Park Street, Kolkata, West Bengal 700016",
+    },
   },
   {
     id: 14,
@@ -855,7 +867,8 @@ const allEvents = [
       "Aprons",
       "Studio Access",
     ],
-    details: "Learn basic pottery techniques including wheel throwing and hand building. Take home your creations after firing.",
+    details:
+      "Learn basic pottery techniques including wheel throwing and hand building. Take home your creations after firing.",
     price: 1999,
     ticketsAvailable: 15,
     location: "Pune, India",
@@ -873,16 +886,14 @@ const allEvents = [
     responseRate: "97%",
     responseTime: "< 3h",
     availableForCall: true,
-    performers: [
-      { name: "Master Potter", type: "Instructor" },
-    ],
+    performers: [{ name: "Master Potter", type: "Instructor" }],
     organizers: "Artisan Studio Pune",
     hashtags: ["#PotteryWorkshop", "#Creative", "#PuneEvents"],
     coordinates: {
       lat: 18.5204,
       lng: 73.8567,
-      address: "Artisan Studio, Koregaon Park, Pune, Maharashtra 411001"
-    }
+      address: "Artisan Studio, Koregaon Park, Pune, Maharashtra 411001",
+    },
   },
   {
     id: 15,
@@ -911,7 +922,8 @@ const allEvents = [
       "Valet Parking",
       "Smoking Lounge",
     ],
-    details: "Experience the ultimate Bollywood vs Hollywood music battle with top DJs. Premium sound system and light show.",
+    details:
+      "Experience the ultimate Bollywood vs Hollywood music battle with top DJs. Premium sound system and light show.",
     price: 1499,
     ticketsAvailable: 200,
     location: "Delhi, India",
@@ -938,8 +950,8 @@ const allEvents = [
     coordinates: {
       lat: 28.6315,
       lng: 77.2167,
-      address: "Kitty Su, The Lalit Hotel, Connaught Place, New Delhi 110001"
-    }
+      address: "Kitty Su, The Lalit Hotel, Connaught Place, New Delhi 110001",
+    },
   },
   {
     id: 16,
@@ -968,7 +980,8 @@ const allEvents = [
       "Equipment Support",
       "Photo Review Sessions",
     ],
-    details: "Capture the stunning landscapes of Ladakh with professional photographers. Visit Pangong Lake, Nubra Valley, and more.",
+    details:
+      "Capture the stunning landscapes of Ladakh with professional photographers. Visit Pangong Lake, Nubra Valley, and more.",
     price: 45999,
     ticketsAvailable: 12,
     location: "Ladakh, India",
@@ -994,10 +1007,10 @@ const allEvents = [
     hashtags: ["#PhotographyTour", "#Ladakh", "#LandscapePhotography"],
     coordinates: {
       lat: 34.1526,
-      lng: 77.5770,
-      address: "Leh Main Market, Leh, Ladakh 194101"
-    }
-  }
+      lng: 77.577,
+      address: "Leh Main Market, Leh, Ladakh 194101",
+    },
+  },
 ];
 
 // Options data
@@ -1078,16 +1091,18 @@ const EventMap = ({ eventData }) => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768);
     };
-    
+
     checkMobile();
-    window.addEventListener('resize', checkMobile);
-    
-    return () => window.removeEventListener('resize', checkMobile);
+    window.addEventListener("resize", checkMobile);
+
+    return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
   // Generate Google Maps URL for the event
   const getGoogleMapsUrl = () => {
-    const query = encodeURIComponent(`${eventData.title} ${eventData.description}`);
+    const query = encodeURIComponent(
+      `${eventData.title} ${eventData.description}`,
+    );
     return `https://www.google.com/maps/search/?api=1&query=${query}`;
   };
 
@@ -1100,24 +1115,26 @@ const EventMap = ({ eventData }) => {
   const getEventCoordinates = () => {
     // Default coordinates for India
     const defaultCoords = { lat: 20.5937, lng: 78.9629 };
-    
+
     // Mock coordinates based on location
     const locationMap = {
-      'Goa, India': { lat: 15.5939, lng: 73.7749 },
-      'Mumbai, India': { lat: 19.0760, lng: 72.8777 },
-      'Delhi, India': { lat: 28.7041, lng: 77.1025 },
-      'Bangalore, India': { lat: 12.9716, lng: 77.5946 },
-      'Gurgaon, India': { lat: 28.4595, lng: 77.0266 },
-      'Chennai, India': { lat: 13.0827, lng: 80.2707 },
-      'Rishikesh, India': { lat: 30.0869, lng: 78.2676 },
-      'Dharamshala, India': { lat: 32.2190, lng: 76.3234 },
-      'Kolkata, India': { lat: 22.5726, lng: 88.3639 },
-      'Pune, India': { lat: 18.5204, lng: 73.8567 },
-      'Ladakh, India': { lat: 34.1526, lng: 77.5770 },
-      'Ahmedabad, India': { lat: 23.0225, lng: 72.5714 },
+      "Goa, India": { lat: 15.5939, lng: 73.7749 },
+      "Mumbai, India": { lat: 19.076, lng: 72.8777 },
+      "Delhi, India": { lat: 28.7041, lng: 77.1025 },
+      "Bangalore, India": { lat: 12.9716, lng: 77.5946 },
+      "Gurgaon, India": { lat: 28.4595, lng: 77.0266 },
+      "Chennai, India": { lat: 13.0827, lng: 80.2707 },
+      "Rishikesh, India": { lat: 30.0869, lng: 78.2676 },
+      "Dharamshala, India": { lat: 32.219, lng: 76.3234 },
+      "Kolkata, India": { lat: 22.5726, lng: 88.3639 },
+      "Pune, India": { lat: 18.5204, lng: 73.8567 },
+      "Ladakh, India": { lat: 34.1526, lng: 77.577 },
+      "Ahmedabad, India": { lat: 23.0225, lng: 72.5714 },
     };
-    
-    return eventData.coordinates || locationMap[eventData.location] || defaultCoords;
+
+    return (
+      eventData.coordinates || locationMap[eventData.location] || defaultCoords
+    );
   };
 
   const coordinates = getEventCoordinates();
@@ -1127,19 +1144,29 @@ const EventMap = ({ eventData }) => {
       <div className="p-4 sm:p-6">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-4 sm:mb-6">
           <div className="mb-4 sm:mb-0">
-            <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-1 sm:mb-2">Location & Directions</h3>
-            <p className="text-xs sm:text-sm text-gray-600">Find how to reach the event venue</p>
+            <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-1 sm:mb-2">
+              Location & Directions
+            </h3>
+            <p className="text-xs sm:text-sm text-gray-600">
+              Find how to reach the event venue
+            </p>
           </div>
-          
+
           <div className="flex gap-2 sm:gap-3 flex-wrap">
             <button
               onClick={() => setShowInteractiveMap(!showInteractiveMap)}
               className="flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-2 bg-blue-50 text-blue-700 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors text-xs sm:text-sm"
             >
               <FaMap className="text-xs sm:text-sm" />
-              {showInteractiveMap ? (isMobile ? "Hide Map" : "Hide Interactive Map") : (isMobile ? "Show Map" : "Interactive Map")}
+              {showInteractiveMap
+                ? isMobile
+                  ? "Hide Map"
+                  : "Hide Interactive Map"
+                : isMobile
+                  ? "Show Map"
+                  : "Interactive Map"}
             </button>
-            
+
             <a
               href={getDirectionsUrl()}
               target="_blank"
@@ -1162,11 +1189,15 @@ const EventMap = ({ eventData }) => {
                   <FaMapMarkerAlt className="text-blue-600 text-sm sm:text-lg" />
                 </div>
                 <div>
-                  <h4 className="font-semibold text-gray-900 text-sm sm:text-lg">Venue Address</h4>
+                  <h4 className="font-semibold text-gray-900 text-sm sm:text-lg">
+                    Venue Address
+                  </h4>
                   <p className="text-gray-700 mt-1 sm:mt-2 leading-relaxed text-xs sm:text-sm">
                     {eventData.description}
                     <br />
-                    <span className="text-gray-500 text-xs sm:text-sm">{eventData.location}</span>
+                    <span className="text-gray-500 text-xs sm:text-sm">
+                      {eventData.location}
+                    </span>
                   </p>
                 </div>
               </div>
@@ -1174,19 +1205,26 @@ const EventMap = ({ eventData }) => {
 
             {/* Transport Info */}
             <div className="bg-gray-50 p-3 sm:p-4 rounded-lg border border-gray-200">
-              <h4 className="font-semibold text-gray-900 text-sm sm:text-lg mb-3 sm:mb-4">How to Get There</h4>
-              
+              <h4 className="font-semibold text-gray-900 text-sm sm:text-lg mb-3 sm:mb-4">
+                How to Get There
+              </h4>
+
               <div className="space-y-3 sm:space-y-4">
                 {/* Public Transport */}
                 <div>
                   <div className="flex items-center gap-1.5 sm:gap-2 mb-1 sm:mb-2">
                     <div className="p-1 sm:p-1.5 bg-purple-100 rounded">
-                      <span className="text-purple-600 text-xs sm:text-sm">🚇</span>
+                      <span className="text-purple-600 text-xs sm:text-sm">
+                        🚇
+                      </span>
                     </div>
-                    <span className="font-medium text-gray-900 text-xs sm:text-sm">Nearest Metro Station</span>
+                    <span className="font-medium text-gray-900 text-xs sm:text-sm">
+                      Nearest Metro Station
+                    </span>
                   </div>
                   <p className="text-gray-700 ml-6 sm:ml-8 text-xs sm:text-sm">
-                    {eventData.distance || "Walking distance from nearest metro station"}
+                    {eventData.distance ||
+                      "Walking distance from nearest metro station"}
                   </p>
                 </div>
 
@@ -1194,12 +1232,17 @@ const EventMap = ({ eventData }) => {
                 <div>
                   <div className="flex items-center gap-1.5 sm:gap-2 mb-1 sm:mb-2">
                     <div className="p-1 sm:p-1.5 bg-green-100 rounded">
-                      <span className="text-green-600 text-xs sm:text-sm">🚌</span>
+                      <span className="text-green-600 text-xs sm:text-sm">
+                        🚌
+                      </span>
                     </div>
-                    <span className="font-medium text-gray-900 text-xs sm:text-sm">Bus Stop</span>
+                    <span className="font-medium text-gray-900 text-xs sm:text-sm">
+                      Bus Stop
+                    </span>
                   </div>
                   <p className="text-gray-700 ml-6 sm:ml-8 text-xs sm:text-sm">
-                    {eventData.busStopDistance || "Multiple bus routes available nearby"}
+                    {eventData.busStopDistance ||
+                      "Multiple bus routes available nearby"}
                   </p>
                 </div>
 
@@ -1207,13 +1250,17 @@ const EventMap = ({ eventData }) => {
                 <div>
                   <div className="flex items-center gap-1.5 sm:gap-2 mb-1 sm:mb-2">
                     <div className="p-1 sm:p-1.5 bg-blue-100 rounded">
-                      <span className="text-blue-600 text-xs sm:text-sm">🅿️</span>
+                      <span className="text-blue-600 text-xs sm:text-sm">
+                        🅿️
+                      </span>
                     </div>
-                    <span className="font-medium text-gray-900 text-xs sm:text-sm">Parking</span>
+                    <span className="font-medium text-gray-900 text-xs sm:text-sm">
+                      Parking
+                    </span>
                   </div>
                   <p className="text-gray-700 ml-6 sm:ml-8 text-xs sm:text-sm">
-                    {eventData.amenities?.includes("Parking") 
-                      ? "Parking available at venue" 
+                    {eventData.amenities?.includes("Parking")
+                      ? "Parking available at venue"
                       : "Limited street parking available"}
                   </p>
                 </div>
@@ -1239,9 +1286,13 @@ const EventMap = ({ eventData }) => {
                 <div className="absolute top-2 sm:top-4 right-2 sm:right-4 bg-white rounded-lg shadow-lg p-2 sm:p-3">
                   <div className="flex items-center gap-1 sm:gap-2">
                     <div className="w-2 h-2 sm:w-3 sm:h-3 bg-red-500 rounded-full animate-pulse"></div>
-                    <span className="text-xs sm:text-sm font-semibold">Event Location</span>
+                    <span className="text-xs sm:text-sm font-semibold">
+                      Event Location
+                    </span>
                   </div>
-                  <p className="text-xs text-gray-600 mt-1 max-w-[120px] sm:max-w-[200px] truncate">{eventData.description}</p>
+                  <p className="text-xs text-gray-600 mt-1 max-w-[120px] sm:max-w-[200px] truncate">
+                    {eventData.description}
+                  </p>
                 </div>
               </div>
             ) : (
@@ -1252,8 +1303,12 @@ const EventMap = ({ eventData }) => {
                     <div className="inline-block p-3 sm:p-4 bg-blue-100 rounded-full mb-3 sm:mb-4">
                       <FaMapMarkerAlt className="text-blue-600 text-2xl sm:text-3xl" />
                     </div>
-                    <h4 className="text-base sm:text-lg font-semibold text-gray-900 mb-1 sm:mb-2">Event Location</h4>
-                    <p className="text-gray-700 mb-3 sm:mb-4 max-w-md mx-auto text-xs sm:text-sm">{eventData.description}</p>
+                    <h4 className="text-base sm:text-lg font-semibold text-gray-900 mb-1 sm:mb-2">
+                      Event Location
+                    </h4>
+                    <p className="text-gray-700 mb-3 sm:mb-4 max-w-md mx-auto text-xs sm:text-sm">
+                      {eventData.description}
+                    </p>
                     <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 justify-center">
                       <a
                         href={getGoogleMapsUrl()}
@@ -1274,14 +1329,14 @@ const EventMap = ({ eventData }) => {
                     </div>
                   </div>
                 </div>
-                
+
                 {/* Map Preview with Marker */}
                 <div className="absolute inset-0 pointer-events-none">
                   <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
                     <div className="relative">
                       <div className="w-6 h-6 sm:w-8 sm:h-8 bg-red-500 rounded-full border-4 border-white shadow-lg animate-bounce"></div>
                       <div className="absolute -bottom-6 sm:-bottom-8 left-1/2 transform -translate-x-1/2 bg-white px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg shadow-md whitespace-nowrap text-xs sm:text-sm font-medium">
-                        📍 {eventData.location.split(',')[0]}
+                        📍 {eventData.location.split(",")[0]}
                       </div>
                     </div>
                   </div>
@@ -1300,7 +1355,7 @@ const EventDetailPage = () => {
   const { eventId } = useParams();
   const [isMobile, setIsMobile] = useState(false);
   const [isTablet, setIsTablet] = useState(false);
-  
+
   // State for search filters
   const [searchType, setSearchType] = useState("Music Events");
   const [locationType, setLocationType] = useState("By City");
@@ -1327,16 +1382,16 @@ const EventDetailPage = () => {
       setIsMobile(width < 768);
       setIsTablet(width >= 768 && width < 1024);
     };
-    
+
     checkScreenSize();
-    window.addEventListener('resize', checkScreenSize);
-    
-    return () => window.removeEventListener('resize', checkScreenSize);
+    window.addEventListener("resize", checkScreenSize);
+
+    return () => window.removeEventListener("resize", checkScreenSize);
   }, []);
 
   useEffect(() => {
     // Find the event by ID
-    const foundEvent = allEvents.find(e => e.id === parseInt(eventId));
+    const foundEvent = allEvents.find((e) => e.id === parseInt(eventId));
     if (foundEvent) {
       setEventData(foundEvent);
     }
@@ -1345,7 +1400,7 @@ const EventDetailPage = () => {
 
   // Enhanced navigation function
   const handleNavigate = (path) => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: "smooth" });
     setTimeout(() => {
       navigate(path);
     }, 100);
@@ -1466,12 +1521,12 @@ const EventDetailPage = () => {
   // Get event icon based on category
   const getEventIcon = (category) => {
     switch (category.toLowerCase()) {
-      case 'music festival':
-      case 'music concert':
+      case "music festival":
+      case "music concert":
         return <Music size={16} className="text-blue-600" />;
-      case 'food festival':
+      case "food festival":
         return <Utensils size={16} className="text-red-600" />;
-      case 'cultural festival':
+      case "cultural festival":
         return <Sparkles size={16} className="text-yellow-600" />;
       default:
         return <Calendar size={16} className="text-gray-600" />;
@@ -1482,7 +1537,7 @@ const EventDetailPage = () => {
   const amenityIcons = {
     "Multiple Stages": <Music size={14} />,
     "Food Court": <Utensils size={14} />,
-    "Parking": <Car size={14} />,
+    Parking: <Car size={14} />,
     "Merch Store": <Shirt size={14} />,
     "Medical Aid": <Heart size={14} />,
     "Cultural Performances": <Users size={14} />,
@@ -1490,7 +1545,7 @@ const EventDetailPage = () => {
     "Photo Booths": <Camera size={14} />,
     "Food & Drinks": <Coffee size={14} />,
     "AC Hall": <Snowflake size={14} />,
-    "Merchandise": <Gift size={14} />,
+    Merchandise: <Gift size={14} />,
   };
 
   // Event Card Component
@@ -1560,7 +1615,9 @@ const EventDetailPage = () => {
                 {event.price === 0 ? (
                   <Badge type="free">Free Entry</Badge>
                 ) : (
-                  event.discount && <Badge type="discount">{event.discount}</Badge>
+                  event.discount && (
+                    <Badge type="discount">{event.discount}</Badge>
+                  )
                 )}
               </div>
 
@@ -1623,8 +1680,8 @@ const EventDetailPage = () => {
                     className="text-base sm:text-lg font-bold text-gray-800 mb-2 leading-tight hover:text-blue-600 transition-colors cursor-pointer"
                     onClick={handleTitleClick}
                   >
-                    {isMobile && event.title.length > 60 
-                      ? `${event.title.substring(0, 60)}...` 
+                    {isMobile && event.title.length > 60
+                      ? `${event.title.substring(0, 60)}...`
                       : event.title}
                   </h3>
 
@@ -1680,7 +1737,9 @@ const EventDetailPage = () => {
                     ) : (
                       <>
                         ₹{event.price.toLocaleString()}
-                        <span className="text-xs sm:text-sm font-normal text-gray-600">/person</span>
+                        <span className="text-xs sm:text-sm font-normal text-gray-600">
+                          /person
+                        </span>
                       </>
                     )}
                   </div>
@@ -1694,7 +1753,9 @@ const EventDetailPage = () => {
               <div className="grid grid-cols-3 gap-2 text-xs mb-4 p-3 bg-gray-50 rounded-lg">
                 <div className="text-center">
                   <div className="font-semibold text-gray-900">Type</div>
-                  <div className="text-gray-600 truncate">{event.eventType}</div>
+                  <div className="text-gray-600 truncate">
+                    {event.eventType}
+                  </div>
                 </div>
                 <div className="text-center">
                   <div className="font-semibold text-gray-900">Age Limit</div>
@@ -1712,23 +1773,27 @@ const EventDetailPage = () => {
                   Event Features
                 </h4>
                 <div className="flex flex-wrap gap-1">
-                  {event.amenities.slice(0, isMobile ? 2 : 4).map((amenity, index) => (
-                    <span
-                      key={index}
-                      className="flex items-center gap-1.5 text-xs text-blue-700 px-2 py-1.5 rounded-lg border-blue-100 hover:bg-blue-100 transition-colors"
-                    >
-                      {amenityIcons[amenity] || <Sparkles size={14} />}
-                      <span className="truncate max-w-[100px] sm:max-w-none">{amenity}</span>
-                    </span>
-                  ))}
+                  {event.amenities
+                    .slice(0, isMobile ? 2 : 4)
+                    .map((amenity, index) => (
+                      <span
+                        key={index}
+                        className="flex items-center gap-1.5 text-xs text-blue-700 px-2 py-1.5 rounded-lg border-blue-100 hover:bg-blue-100 transition-colors"
+                      >
+                        {amenityIcons[amenity] || <Sparkles size={14} />}
+                        <span className="truncate max-w-[100px] sm:max-w-none">
+                          {amenity}
+                        </span>
+                      </span>
+                    ))}
                   {event.amenities.length > (isMobile ? 2 : 4) && (
                     <div className="relative">
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          setShowMoreAmenities(prev => ({
+                          setShowMoreAmenities((prev) => ({
                             ...prev,
-                            [event.id]: !prev[event.id]
+                            [event.id]: !prev[event.id],
                           }));
                         }}
                         className="flex items-center gap-1.5 text-xs bg-gray-100 text-gray-600 px-3 py-2 rounded-lg border border-gray-200 hover:bg-gray-200 transition-colors"
@@ -1770,7 +1835,9 @@ const EventDetailPage = () => {
                 {showContact[event.id] ? (
                   <div className="flex items-center gap-1">
                     <Phone size={14} />
-                    <span className="font-medium text-xs sm:text-sm">{event.contact}</span>
+                    <span className="font-medium text-xs sm:text-sm">
+                      {event.contact}
+                    </span>
                   </div>
                 ) : (
                   <button
@@ -1845,9 +1912,11 @@ const EventDetailPage = () => {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-800 mb-4">Event not found</h2>
+          <h2 className="text-2xl font-bold text-gray-800 mb-4">
+            Event not found
+          </h2>
           <button
-            onClick={() => navigate('/events')}
+            onClick={() => navigate("/events")}
             className={`bg-[${PRIMARY_COLOR}] text-white px-6 py-3 rounded-lg hover:bg-[${PRIMARY_HOVER}] transition-colors`}
           >
             Browse All Events
@@ -1882,16 +1951,16 @@ const EventDetailPage = () => {
           {/* Breadcrumb Navigation - Hidden on mobile */}
           {!isMobile && (
             <div className="flex items-center gap-2 text-sm mb-4">
-              <button 
-                onClick={() => handleNavigate('/')}
+              <button
+                onClick={() => handleNavigate("/")}
                 className="flex items-center gap-1 text-gray-600 hover:text-gray-900"
               >
                 <Home size={14} />
                 Home
               </button>
               <span className="text-gray-400">→</span>
-              <button 
-                onClick={() => handleNavigate('/events')}
+              <button
+                onClick={() => handleNavigate("/events")}
                 className="text-gray-600 hover:text-gray-900"
               >
                 Events
@@ -1920,26 +1989,31 @@ const EventDetailPage = () => {
                     ) : (
                       <Badge type="discount">TICKETS AVAILABLE</Badge>
                     )}
-                    {eventData.verified && <Badge type="verified">VERIFIED</Badge>}
+                    {eventData.verified && (
+                      <Badge type="verified">VERIFIED</Badge>
+                    )}
                   </div>
                   <div className="absolute bottom-3 sm:bottom-4 right-3 sm:right-4 bg-black/70 text-white px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm">
-                    {(currentImageIndex[eventData.id] || 0) + 1} / {eventData.images.length}
+                    {(currentImageIndex[eventData.id] || 0) + 1} /{" "}
+                    {eventData.images.length}
                   </div>
                 </div>
-                
+
                 {/* Thumbnail Images */}
                 <div className="flex gap-2 mt-3 sm:mt-4">
                   {eventData.images.slice(0, 4).map((img, index) => (
                     <button
                       key={index}
-                      onClick={() => setCurrentImageIndex(prev => ({
-                        ...prev,
-                        [eventData.id]: index
-                      }))}
+                      onClick={() =>
+                        setCurrentImageIndex((prev) => ({
+                          ...prev,
+                          [eventData.id]: index,
+                        }))
+                      }
                       className={`w-16 h-16 sm:w-20 sm:h-20 rounded-lg overflow-hidden border-2 ${
                         (currentImageIndex[eventData.id] || 0) === index
-                          ? 'border-blue-500'
-                          : 'border-gray-200'
+                          ? "border-blue-500"
+                          : "border-gray-200"
                       }`}
                     >
                       <img
@@ -1957,14 +2031,16 @@ const EventDetailPage = () => {
                 <div className="flex justify-between items-start mb-3 sm:mb-4">
                   <div>
                     <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-1 sm:mb-2">
-                      {isMobile && eventData.title.length > 70 
-                        ? `${eventData.title.substring(0, 70)}...` 
+                      {isMobile && eventData.title.length > 70
+                        ? `${eventData.title.substring(0, 70)}...`
                         : eventData.title}
                     </h1>
                     <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-gray-600 mb-3 sm:mb-4">
                       <div className="flex items-center gap-1 text-sm sm:text-base">
                         <MapPin size={16} />
-                        <span className="truncate">{eventData.description}</span>
+                        <span className="truncate">
+                          {eventData.description}
+                        </span>
                       </div>
                       <div className="flex items-center gap-1 text-sm sm:text-base">
                         <Calendar size={16} />
@@ -1977,13 +2053,15 @@ const EventDetailPage = () => {
                       onClick={() => toggleLike(eventData.id)}
                       className={`p-2 sm:p-3 rounded-full ${
                         likedEvents[eventData.id]
-                          ? 'bg-red-100 text-red-600'
-                          : 'bg-gray-100 text-gray-600'
+                          ? "bg-red-100 text-red-600"
+                          : "bg-gray-100 text-gray-600"
                       } hover:bg-gray-200 transition-colors`}
                     >
                       <Heart
                         size={18}
-                        fill={likedEvents[eventData.id] ? 'currentColor' : 'none'}
+                        fill={
+                          likedEvents[eventData.id] ? "currentColor" : "none"
+                        }
                       />
                     </button>
                     <button
@@ -1998,34 +2076,54 @@ const EventDetailPage = () => {
                 {/* Event Stats */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4 mb-4 sm:mb-6">
                   <div className="bg-gray-50 p-3 sm:p-4 rounded-lg">
-                    <div className="text-xs sm:text-sm text-gray-500 mb-1">Price</div>
+                    <div className="text-xs sm:text-sm text-gray-500 mb-1">
+                      Price
+                    </div>
                     <div className="text-lg sm:text-xl lg:text-2xl font-bold text-blue-600">
-                      {eventData.price === 0 ? 'FREE' : `₹${eventData.price}`}
+                      {eventData.price === 0 ? "FREE" : `₹${eventData.price}`}
                     </div>
                   </div>
                   <div className="bg-gray-50 p-3 sm:p-4 rounded-lg">
-                    <div className="text-xs sm:text-sm text-gray-500 mb-1">Duration</div>
-                    <div className="text-base sm:text-lg lg:text-xl font-semibold text-gray-900">{eventData.duration}</div>
+                    <div className="text-xs sm:text-sm text-gray-500 mb-1">
+                      Duration
+                    </div>
+                    <div className="text-base sm:text-lg lg:text-xl font-semibold text-gray-900">
+                      {eventData.duration}
+                    </div>
                   </div>
                   <div className="bg-gray-50 p-3 sm:p-4 rounded-lg">
-                    <div className="text-xs sm:text-sm text-gray-500 mb-1">Age Limit</div>
-                    <div className="text-base sm:text-lg lg:text-xl font-semibold text-gray-900">{eventData.ageLimit}</div>
+                    <div className="text-xs sm:text-sm text-gray-500 mb-1">
+                      Age Limit
+                    </div>
+                    <div className="text-base sm:text-lg lg:text-xl font-semibold text-gray-900">
+                      {eventData.ageLimit}
+                    </div>
                   </div>
                   <div className="bg-gray-50 p-3 sm:p-4 rounded-lg">
-                    <div className="text-xs sm:text-sm text-gray-500 mb-1">Tickets Left</div>
-                    <div className="text-base sm:text-lg lg:text-xl font-semibold text-gray-900">{eventData.ticketsAvailable}</div>
+                    <div className="text-xs sm:text-sm text-gray-500 mb-1">
+                      Tickets Left
+                    </div>
+                    <div className="text-base sm:text-lg lg:text-xl font-semibold text-gray-900">
+                      {eventData.ticketsAvailable}
+                    </div>
                   </div>
                 </div>
 
                 {/* Event Description */}
                 <div className="mb-4 sm:mb-6">
-                  <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2 sm:mb-3">About this Event</h3>
-                  <p className="text-gray-700 leading-relaxed text-sm sm:text-base">{eventData.details}</p>
+                  <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2 sm:mb-3">
+                    About this Event
+                  </h3>
+                  <p className="text-gray-700 leading-relaxed text-sm sm:text-base">
+                    {eventData.details}
+                  </p>
                 </div>
 
                 {/* Performers */}
                 <div className="mb-4 sm:mb-6">
-                  <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2 sm:mb-3">Featured Performers</h3>
+                  <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2 sm:mb-3">
+                    Featured Performers
+                  </h3>
                   <div className="flex flex-wrap gap-2 sm:gap-3">
                     {eventData.performers.map((performer, index) => (
                       <div
@@ -2036,8 +2134,12 @@ const EventDetailPage = () => {
                           {performer.name.charAt(0)}
                         </div>
                         <div className="min-w-0">
-                          <div className="font-semibold text-gray-900 text-sm sm:text-base truncate">{performer.name}</div>
-                          <div className="text-xs sm:text-sm text-gray-600 truncate">{performer.type}</div>
+                          <div className="font-semibold text-gray-900 text-sm sm:text-base truncate">
+                            {performer.name}
+                          </div>
+                          <div className="text-xs sm:text-sm text-gray-600 truncate">
+                            {performer.type}
+                          </div>
                         </div>
                       </div>
                     ))}
@@ -2047,7 +2149,9 @@ const EventDetailPage = () => {
                 {/* Action Buttons */}
                 <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                   <button
-                    onClick={() => alert(`Booking tickets for ${eventData.title}`)}
+                    onClick={() =>
+                      alert(`Booking tickets for ${eventData.title}`)
+                    }
                     className={`flex-1 bg-[${PRIMARY_COLOR}] hover:bg-[${PRIMARY_HOVER}] text-white font-semibold py-3 sm:py-4 px-6 sm:px-8 rounded-lg transition-colors flex items-center justify-center gap-2 sm:gap-3 text-sm sm:text-base`}
                   >
                     <Ticket size={18} />
@@ -2073,44 +2177,60 @@ const EventDetailPage = () => {
                   <Calendar size={18} className="text-blue-600" />
                 </div>
                 <div>
-                  <div className="font-semibold text-gray-900 text-sm sm:text-base">Date & Time</div>
-                  <div className="text-xs sm:text-sm text-gray-600">{eventData.date} • {eventData.time}</div>
+                  <div className="font-semibold text-gray-900 text-sm sm:text-base">
+                    Date & Time
+                  </div>
+                  <div className="text-xs sm:text-sm text-gray-600">
+                    {eventData.date} • {eventData.time}
+                  </div>
                 </div>
               </div>
             </div>
-            
+
             <div className="bg-white p-3 sm:p-4 rounded-lg border border-gray-200">
               <div className="flex items-center gap-2 sm:gap-3 mb-2">
                 <div className="p-1.5 sm:p-2 bg-green-100 rounded-lg">
                   <MapPin size={18} className="text-green-600" />
                 </div>
                 <div>
-                  <div className="font-semibold text-gray-900 text-sm sm:text-base">Venue</div>
-                  <div className="text-xs sm:text-sm text-gray-600 truncate">{eventData.description}</div>
+                  <div className="font-semibold text-gray-900 text-sm sm:text-base">
+                    Venue
+                  </div>
+                  <div className="text-xs sm:text-sm text-gray-600 truncate">
+                    {eventData.description}
+                  </div>
                 </div>
               </div>
             </div>
-            
+
             <div className="bg-white p-3 sm:p-4 rounded-lg border border-gray-200">
               <div className="flex items-center gap-2 sm:gap-3 mb-2">
                 <div className="p-1.5 sm:p-2 bg-purple-100 rounded-lg">
                   <Users size={18} className="text-purple-600" />
                 </div>
                 <div>
-                  <div className="font-semibold text-gray-900 text-sm sm:text-base">Organizer</div>
-                  <div className="text-xs sm:text-sm text-gray-600">{eventData.postedBy}</div>
+                  <div className="font-semibold text-gray-900 text-sm sm:text-base">
+                    Organizer
+                  </div>
+                  <div className="text-xs sm:text-sm text-gray-600">
+                    {eventData.postedBy}
+                  </div>
                 </div>
               </div>
             </div>
-            
+
             <div className="bg-white p-3 sm:p-4 rounded-lg border border-gray-200">
               <div className="flex items-center gap-2 sm:gap-3 mb-2">
                 <div className="p-1.5 sm:p-2 bg-orange-100 rounded-lg">
                   <FaTag size={18} className="text-orange-600" />
                 </div>
                 <div>
-                  <div className="font-semibold text-gray-900 text-sm sm:text-base">Category</div>
-                  <div className="text-xs sm:text-sm text-gray-600">{eventData.category}</div>
+                  <div className="font-semibold text-gray-900 text-sm sm:text-base">
+                    Category
+                  </div>
+                  <div className="text-xs sm:text-sm text-gray-600">
+                    {eventData.category}
+                  </div>
                 </div>
               </div>
             </div>
@@ -2122,8 +2242,10 @@ const EventDetailPage = () => {
           {/* Search Section for Related Events */}
           <div className="mt-8 sm:mt-12">
             <div className="bg-white rounded-lg p-4 sm:p-6 border border-gray-200">
-              <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4">Find Similar Events</h2>
-              
+              <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4">
+                Find Similar Events
+              </h2>
+
               {/* Search Bar */}
               <div className="flex flex-col lg:flex-row items-stretch lg:items-center gap-3 mb-4 sm:mb-6">
                 <div className="w-full lg:w-auto">
@@ -2190,8 +2312,10 @@ const EventDetailPage = () => {
       {/* Related Events Section */}
       <div className="py-6 sm:py-8 px-3 sm:px-6 lg:px-8 xl:px-12 bg-gray-50">
         <div className="max-w-7xl mx-auto">
-          <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 sm:mb-6">Similar Events You Might Like</h2>
-          
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 sm:mb-6">
+            Similar Events You Might Like
+          </h2>
+
           {/* Tabs */}
           <div className="flex overflow-x-auto border-b border-gray-200 mb-4 sm:mb-6 scrollbar-hide">
             <button
@@ -2229,7 +2353,7 @@ const EventDetailPage = () => {
           {/* Event Cards Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-4 sm:gap-6">
             {allEvents
-              .filter(event => event.id !== eventData.id)
+              .filter((event) => event.id !== eventData.id)
               .slice(0, isMobile ? 2 : isTablet ? 3 : 14)
               .map((event) => (
                 <EventCard key={event.id} event={event} />

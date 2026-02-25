@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import {
   Heart,
   Share2,
@@ -23,11 +23,11 @@ import {
   Wrench,
   Battery,
   Settings,
-} from 'lucide-react';
-import { FaMinus, FaPlus } from 'react-icons/fa';
+} from "lucide-react";
+import { FaMinus, FaPlus } from "react-icons/fa";
 
 // Import vehicles data
-import { vehiclesData } from './VehiclesListing';
+import { vehiclesData } from "./VehiclesListing";
 
 // Static Map Component for Vehicles
 const VehicleLocationMap = ({ location }) => {
@@ -40,19 +40,22 @@ const VehicleLocationMap = ({ location }) => {
         </h3>
         <p className="text-gray-600 mt-2">{location}</p>
       </div>
-      
+
       <div className="relative h-64 sm:h-72 md:h-80 bg-gray-100">
         {/* Map-like background with grid */}
         <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-gray-50">
           {/* Grid lines */}
-          <div className="absolute inset-0" style={{
-            backgroundImage: `
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundImage: `
               linear-gradient(to right, #cbd5e1 1px, transparent 1px),
               linear-gradient(to bottom, #cbd5e1 1px, transparent 1px)
             `,
-            backgroundSize: '40px 40px'
-          }}></div>
-          
+              backgroundSize: "40px 40px",
+            }}
+          ></div>
+
           {/* Location pin */}
           <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
             <div className="relative">
@@ -60,17 +63,19 @@ const VehicleLocationMap = ({ location }) => {
               <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-[#27bb97] rounded-full"></div>
             </div>
           </div>
-          
+
           {/* Location label */}
           <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
             <div className="bg-white px-4 py-2 rounded-lg shadow-lg text-center">
               <p className="font-medium text-gray-800">{location}</p>
-              <p className="text-xs text-gray-500 mt-1">Contact seller for test drive</p>
+              <p className="text-xs text-gray-500 mt-1">
+                Contact seller for test drive
+              </p>
             </div>
           </div>
         </div>
       </div>
-      
+
       <div className="p-4 border-t border-gray-100 bg-gray-50">
         <div className="flex items-center justify-between">
           <div className="flex items-center text-sm text-gray-600">
@@ -106,18 +111,22 @@ const SellerDetails = ({ seller, rating, reviews, joined }) => {
             <h4 className="font-bold text-gray-900 text-lg">{seller}</h4>
             <Verified className="w-5 h-5 text-blue-500" />
           </div>
-          
+
           <div className="flex items-center mb-2">
             <div className="flex items-center mr-2">
               {[...Array(5)].map((_, i) => (
                 <Star
                   key={i}
-                  className={`w-4 h-4 ${i < Math.floor(rating) ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
+                  className={`w-4 h-4 ${i < Math.floor(rating) ? "text-yellow-400 fill-current" : "text-gray-300"}`}
                 />
               ))}
             </div>
-            <span className="text-sm font-medium text-gray-700">{rating.toFixed(1)}</span>
-            <span className="text-sm text-gray-500 ml-2">({reviews} reviews)</span>
+            <span className="text-sm font-medium text-gray-700">
+              {rating.toFixed(1)}
+            </span>
+            <span className="text-sm text-gray-500 ml-2">
+              ({reviews} reviews)
+            </span>
           </div>
 
           <div className="flex items-center gap-4 text-sm text-gray-600">
@@ -151,17 +160,21 @@ const VehicleDetail = () => {
   // Additional images for gallery
   const vehicleImages = [
     vehicle?.image,
-    'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?w=800&q=80',
-    'https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=800&q=80',
-    'https://images.unsplash.com/photo-1555212697-194d092e3b8f?w=800&q=80',
-    'https://images.unsplash.com/photo-1580273916550-e323be2ae537?w=800&q=80',
+    "https://images.unsplash.com/photo-1549399542-7e3f8b79c341?w=800&q=80",
+    "https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=800&q=80",
+    "https://images.unsplash.com/photo-1555212697-194d092e3b8f?w=800&q=80",
+    "https://images.unsplash.com/photo-1580273916550-e323be2ae537?w=800&q=80",
   ].filter(Boolean);
 
   const handleThumbnailClick = (index) => setSelectedImageIndex(index);
   const handlePrevImage = () =>
-    setSelectedImageIndex((prev) => (prev === 0 ? vehicleImages.length - 1 : prev - 1));
+    setSelectedImageIndex((prev) =>
+      prev === 0 ? vehicleImages.length - 1 : prev - 1,
+    );
   const handleNextImage = () =>
-    setSelectedImageIndex((prev) => (prev === vehicleImages.length - 1 ? 0 : prev + 1));
+    setSelectedImageIndex((prev) =>
+      prev === vehicleImages.length - 1 ? 0 : prev + 1,
+    );
 
   if (!vehicle) {
     return (
@@ -170,9 +183,11 @@ const VehicleDetail = () => {
           <div className="w-20 h-20 sm:w-24 sm:h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
             <Car className="w-10 h-10 sm:w-12 sm:h-12 text-gray-400" />
           </div>
-          <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">Vehicle not found</h2>
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">
+            Vehicle not found
+          </h2>
           <button
-            onClick={() => navigate('/vehicles')}
+            onClick={() => navigate("/vehicles")}
             className="px-6 py-3 bg-[#27bb97] text-white rounded-lg hover:bg-[#1E9E7E] transition-colors font-medium text-base sm:text-lg"
           >
             Back to Vehicles
@@ -184,22 +199,70 @@ const VehicleDetail = () => {
 
   // Vehicle details for the sidebar
   const vehicleDetails = [
-    { icon: <Calendar className="text-[#27bb97] text-xl" />, label: 'Year', value: vehicle.year },
-    { icon: <Gauge className="text-[#27bb97] text-xl" />, label: 'Mileage', value: `${vehicle.mileage} mi` },
-    { icon: <Cog className="text-[#27bb97] text-xl" />, label: 'Transmission', value: vehicle.transmission },
-    { icon: <Fuel className="text-[#27bb97] text-xl" />, label: 'Fuel Type', value: vehicle.fuelType },
-    { icon: <Car className="text-[#27bb97] text-xl" />, label: 'Color', value: vehicle.color },
-    { icon: <Shield className="text-[#27bb97] text-xl" />, label: 'Condition', value: vehicle.condition },
+    {
+      icon: <Calendar className="text-[#27bb97] text-xl" />,
+      label: "Year",
+      value: vehicle.year,
+    },
+    {
+      icon: <Gauge className="text-[#27bb97] text-xl" />,
+      label: "Mileage",
+      value: `${vehicle.mileage} mi`,
+    },
+    {
+      icon: <Cog className="text-[#27bb97] text-xl" />,
+      label: "Transmission",
+      value: vehicle.transmission,
+    },
+    {
+      icon: <Fuel className="text-[#27bb97] text-xl" />,
+      label: "Fuel Type",
+      value: vehicle.fuelType,
+    },
+    {
+      icon: <Car className="text-[#27bb97] text-xl" />,
+      label: "Color",
+      value: vehicle.color,
+    },
+    {
+      icon: <Shield className="text-[#27bb97] text-xl" />,
+      label: "Condition",
+      value: vehicle.condition,
+    },
   ];
 
   // Vehicle specifications
   const vehicleSpecs = [
-    { icon: <Car className="text-[#27bb97] text-xl" />, label: 'Body Type', value: vehicle.category },
-    { icon: <Users className="text-[#27bb97] text-xl" />, label: 'Doors', value: '4 Doors' },
-    { icon: <Settings className="text-[#27bb97] text-xl" />, label: 'Engine', value: '2.5L 4-Cylinder' },
-    { icon: <Wrench className="text-[#27bb97] text-xl" />, label: 'Drive Type', value: vehicle.category === 'SUV' ? 'AWD' : 'FWD' },
-    { icon: <Battery className="text-[#27bb97] text-xl" />, label: 'VIN', value: '1HGCM82633A123456' },
-    { icon: <Shield className="text-[#27bb97] text-xl" />, label: 'Title Status', value: 'Clean' },
+    {
+      icon: <Car className="text-[#27bb97] text-xl" />,
+      label: "Body Type",
+      value: vehicle.category,
+    },
+    {
+      icon: <Users className="text-[#27bb97] text-xl" />,
+      label: "Doors",
+      value: "4 Doors",
+    },
+    {
+      icon: <Settings className="text-[#27bb97] text-xl" />,
+      label: "Engine",
+      value: "2.5L 4-Cylinder",
+    },
+    {
+      icon: <Wrench className="text-[#27bb97] text-xl" />,
+      label: "Drive Type",
+      value: vehicle.category === "SUV" ? "AWD" : "FWD",
+    },
+    {
+      icon: <Battery className="text-[#27bb97] text-xl" />,
+      label: "VIN",
+      value: "1HGCM82633A123456",
+    },
+    {
+      icon: <Shield className="text-[#27bb97] text-xl" />,
+      label: "Title Status",
+      value: "Clean",
+    },
   ];
 
   // Find similar vehicles (same category)
@@ -215,13 +278,15 @@ const VehicleDetail = () => {
           <div className="flex items-center justify-between h-14 sm:h-16">
             <div className="flex items-center space-x-1.5 sm:space-x-2 text-sm text-gray-600 min-w-0 flex-1">
               <button
-                onClick={() => navigate('/vehicles')}
+                onClick={() => navigate("/vehicles")}
                 className="hover:text-[#27bb97] transition-colors whitespace-nowrap"
               >
                 Vehicles
               </button>
               <ChevronRight className="w-4 h-4 flex-shrink-0" />
-              <span className="font-medium text-gray-900 truncate">{vehicle.title}</span>
+              <span className="font-medium text-gray-900 truncate">
+                {vehicle.title}
+              </span>
             </div>
             <div className="flex items-center space-x-2 sm:space-x-4">
               <button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
@@ -248,7 +313,7 @@ const VehicleDetail = () => {
                   alt={vehicle.title}
                   className="w-full h-auto max-h-[500px] rounded-md object-cover bg-gray-50"
                 />
-                
+
                 {/* Navigation Buttons */}
                 <button
                   onClick={handlePrevImage}
@@ -256,7 +321,7 @@ const VehicleDetail = () => {
                 >
                   <ChevronLeft className="w-6 h-6 text-gray-700" />
                 </button>
-                
+
                 <button
                   onClick={handleNextImage}
                   className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 backdrop-blur-sm rounded-full shadow-lg flex items-center justify-center hover:bg-white transition-all hover:shadow-xl z-20"
@@ -274,8 +339,8 @@ const VehicleDetail = () => {
                   onClick={() => handleThumbnailClick(index)}
                   className={`w-20 h-20 rounded-md overflow-hidden cursor-pointer transition-all ${
                     selectedImageIndex === index
-                      ? 'border-2 border-[#27bb97] shadow-md'
-                      : 'hover:border-2 hover:border-gray-300'
+                      ? "border-2 border-[#27bb97] shadow-md"
+                      : "hover:border-2 hover:border-gray-300"
                   }`}
                 >
                   <img
@@ -292,11 +357,13 @@ const VehicleDetail = () => {
 
             {/* Vehicle Description */}
             <div className="bg-white rounded-lg shadow-sm p-6 mt-8">
-              <h3 className="text-xl font-bold mb-4 text-gray-900">Vehicle Description</h3>
+              <h3 className="text-xl font-bold mb-4 text-gray-900">
+                Vehicle Description
+              </h3>
               <p className="text-gray-600 leading-relaxed mb-6">
                 {vehicle.description}
               </p>
-              
+
               <div className="pt-6 border-t border-gray-100">
                 <h4 className="text-lg font-semibold mb-3">Key Features</h4>
                 <ul className="space-y-2">
@@ -321,11 +388,11 @@ const VehicleDetail = () => {
                     {vehicle.category}
                   </span>
                 </div>
-                
+
                 <h2 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-4">
                   {vehicle.title}
                 </h2>
-                
+
                 {/* Price */}
                 <div className="mb-6">
                   <div className="text-sm text-gray-500 mb-1 font-medium">
@@ -339,13 +406,20 @@ const VehicleDetail = () => {
                 {/* Vehicle Details */}
                 <div className="grid grid-cols-2 gap-4 mb-6">
                   {vehicleDetails.map((detail, index) => (
-                    <div key={index} className="flex items-center text-gray-600">
+                    <div
+                      key={index}
+                      className="flex items-center text-gray-600"
+                    >
                       <div className="w-8 h-8 flex items-center justify-center mr-3">
                         {detail.icon}
                       </div>
                       <div>
-                        <div className="text-xs text-gray-500">{detail.label}</div>
-                        <div className="font-medium text-sm">{detail.value}</div>
+                        <div className="text-xs text-gray-500">
+                          {detail.label}
+                        </div>
+                        <div className="font-medium text-sm">
+                          {detail.value}
+                        </div>
                       </div>
                     </div>
                   ))}
@@ -357,7 +431,7 @@ const VehicleDetail = () => {
                     <MessageCircle className="w-5 h-5 inline mr-2" />
                     Schedule Test Drive
                   </button>
-                  
+
                   <div className="grid grid-cols-2 gap-3">
                     <button className="py-3 bg-white border-2 border-gray-200 text-gray-700 rounded-lg font-medium hover:border-gray-300 transition-colors">
                       Make Offer
@@ -382,14 +456,18 @@ const VehicleDetail = () => {
                         {spec.icon}
                       </div>
                       <div>
-                        <div className="text-xs text-gray-500">{spec.label}</div>
-                        <div className="text-sm font-medium text-gray-700">{spec.value}</div>
+                        <div className="text-xs text-gray-500">
+                          {spec.label}
+                        </div>
+                        <div className="text-sm font-medium text-gray-700">
+                          {spec.value}
+                        </div>
                       </div>
                     </div>
                   ))}
                 </div>
               </div>
-              
+
               {/* Seller Info */}
               <SellerDetails
                 seller={vehicle.seller}
@@ -405,9 +483,11 @@ const VehicleDetail = () => {
         {similarVehicles.length > 0 && (
           <div className="mt-16">
             <div className="flex items-center justify-between mb-8">
-              <h2 className="text-2xl font-bold text-gray-900">Similar {vehicle.category}s</h2>
-              <button 
-                onClick={() => navigate('/vehicles')}
+              <h2 className="text-2xl font-bold text-gray-900">
+                Similar {vehicle.category}s
+              </h2>
+              <button
+                onClick={() => navigate("/vehicles")}
                 className="text-[#27bb97] hover:text-[#1E9E7E] font-medium"
               >
                 View all vehicles →

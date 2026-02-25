@@ -55,7 +55,12 @@ const Login = () => {
 
   // Handle errors from Redux
   useEffect(() => {
-    console.log("Current auth state:", { loading, error, success, user: !!user });
+    console.log("Current auth state:", {
+      loading,
+      error,
+      success,
+      user: !!user,
+    });
 
     if (error && !toastShownRef.current) {
       console.log("Redux error detected:", error);
@@ -90,7 +95,7 @@ const Login = () => {
     // FIX: Prevent multiple navigations
     if (success && user && !navigationPerformedRef.current) {
       console.log("Login successful, preparing navigation");
-      
+
       if (loginMethodRef.current === "email" && !toastShownRef.current) {
         console.log("Email login successful, showing toast");
         toastShownRef.current = true;
@@ -121,12 +126,15 @@ const Login = () => {
         return () => clearTimeout(timer);
       }
 
-      if (loginMethodRef.current === "google" && !navigationPerformedRef.current) {
+      if (
+        loginMethodRef.current === "google" &&
+        !navigationPerformedRef.current
+      ) {
         console.log("Google login successful - navigating");
-        
+
         // Set navigation flag
         navigationPerformedRef.current = true;
-        
+
         const timer = setTimeout(() => {
           console.log("Navigating to home page (Google)");
           navigate("/");
@@ -240,7 +248,6 @@ const Login = () => {
 
   return (
     <div className="min-h-screen relative overflow-hidden">
-
       {/* Background Image Layer */}
       <div className="fixed inset-0 z-0">
         <img

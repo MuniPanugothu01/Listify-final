@@ -1,22 +1,25 @@
-import React from 'react';
+import React from "react";
 
 export default function ElectronicsRecommended() {
   const recommendedProducts = [
     {
-      title: 'Smartphones & Tablets',
-      image: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=800&h=600&fit=crop',
-      buttonText: 'Shop Mobile'
+      title: "Smartphones & Tablets",
+      image:
+        "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=800&h=600&fit=crop",
+      buttonText: "Shop Mobile",
     },
     {
-      title: 'Laptops & Computers',
-      image: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=800&h=600&fit=crop',
-      buttonText: 'Shop Laptops'
+      title: "Laptops & Computers",
+      image:
+        "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=800&h=600&fit=crop",
+      buttonText: "Shop Laptops",
     },
     {
-      title: 'Audio & Headphones',
-      image: 'https://images.unsplash.com/photo-1583394838336-acd977736f90?w=800&h=600&fit=crop',
-      buttonText: 'Shop Audio'
-    }
+      title: "Audio & Headphones",
+      image:
+        "https://images.unsplash.com/photo-1583394838336-acd977736f90?w=800&h=600&fit=crop",
+      buttonText: "Shop Audio",
+    },
   ];
 
   return (
@@ -27,7 +30,8 @@ export default function ElectronicsRecommended() {
             Recommended <span className="gradient-text">Electronics</span>
           </h2>
           <p className="text-sm sm:text-base md:text-lg text-gray-600 max-w-2xl mx-auto px-2">
-            Discover personalized electronics recommendations based on your tech preferences
+            Discover personalized electronics recommendations based on your tech
+            preferences
           </p>
         </div>
 
@@ -43,17 +47,17 @@ export default function ElectronicsRecommended() {
               <h3 className="text-white text-xl sm:text-2xl md:text-3xl font-bold mb-3 sm:mb-4">
                 {recommendedProducts[0].title}
               </h3>
-              <button 
+              <button
                 className="px-4 sm:px-6 py-1.5 sm:py-2.5 rounded-full font-medium transition-colors text-sm sm:text-base"
-                style={{ 
-                  backgroundColor: '#27BB97',
-                  color: 'white'
+                style={{
+                  backgroundColor: "#27BB97",
+                  color: "white",
                 }}
                 onMouseEnter={(e) => {
-                  e.target.style.backgroundColor = '#1E9E7E';
+                  e.target.style.backgroundColor = "#1E9E7E";
                 }}
                 onMouseLeave={(e) => {
-                  e.target.style.backgroundColor = '#27BB97';
+                  e.target.style.backgroundColor = "#27BB97";
                 }}
               >
                 {recommendedProducts[0].buttonText}
@@ -73,17 +77,17 @@ export default function ElectronicsRecommended() {
                 <h3 className="text-white text-lg sm:text-xl md:text-2xl font-bold mb-2 sm:mb-3">
                   {recommendedProducts[1].title}
                 </h3>
-                <button 
+                <button
                   className="px-3 sm:px-5 py-1 sm:py-2 rounded-full text-xs sm:text-sm font-medium transition-colors"
-                  style={{ 
-                    backgroundColor: '#27BB97',
-                    color: 'white'
+                  style={{
+                    backgroundColor: "#27BB97",
+                    color: "white",
                   }}
                   onMouseEnter={(e) => {
-                    e.target.style.backgroundColor = '#1E9E7E';
+                    e.target.style.backgroundColor = "#1E9E7E";
                   }}
                   onMouseLeave={(e) => {
-                    e.target.style.backgroundColor = '#27BB97';
+                    e.target.style.backgroundColor = "#27BB97";
                   }}
                 >
                   {recommendedProducts[1].buttonText}
@@ -102,17 +106,17 @@ export default function ElectronicsRecommended() {
                 <h3 className="text-white text-lg sm:text-xl md:text-2xl font-bold mb-2 sm:mb-3">
                   {recommendedProducts[2].title}
                 </h3>
-                <button 
+                <button
                   className="px-3 sm:px-5 py-1 sm:py-2 rounded-full text-xs sm:text-sm font-medium transition-colors"
-                  style={{ 
-                    backgroundColor: '#27BB97',
-                    color: 'white'
+                  style={{
+                    backgroundColor: "#27BB97",
+                    color: "white",
                   }}
                   onMouseEnter={(e) => {
-                    e.target.style.backgroundColor = '#1E9E7E';
+                    e.target.style.backgroundColor = "#1E9E7E";
                   }}
                   onMouseLeave={(e) => {
-                    e.target.style.backgroundColor = '#27BB97';
+                    e.target.style.backgroundColor = "#27BB97";
                   }}
                 >
                   {recommendedProducts[2].buttonText}

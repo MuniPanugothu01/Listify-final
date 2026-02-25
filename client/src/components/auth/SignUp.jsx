@@ -513,7 +513,6 @@ export default function SignUp() {
 
   return (
     <div className="min-h-screen relative overflow-hidden">
-
       {/* Email In Progress Popup */}
       <EmailProgressPopup
         isOpen={showEmailProgressPopup}

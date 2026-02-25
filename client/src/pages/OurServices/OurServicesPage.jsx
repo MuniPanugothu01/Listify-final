@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { 
+import React, { useState, useEffect } from "react";
+import {
   Search,
   MapPin,
   Heart,
@@ -35,257 +35,295 @@ import {
   ClipboardCheck,
   PhoneCall,
   Cpu,
-  Smartphone
-} from 'lucide-react';
+  Smartphone,
+} from "lucide-react";
 
 const OurServicesPage = () => {
   // Search filters state
-  const [searchQuery, setSearchQuery] = useState('');
-  const [location, setLocation] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
+  const [location, setLocation] = useState("");
 
   // Top Service Categories
   const serviceCategories = [
     {
-      id: 'wedding',
-      name: 'Wedding Services',
-      description: 'Planners, venues, photographers, catering & more for your special day',
-      image: 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=800&q=90',
+      id: "wedding",
+      name: "Wedding Services",
+      description:
+        "Planners, venues, photographers, catering & more for your special day",
+      image:
+        "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=800&q=90",
       icon: <Heart className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8" />,
-      color: 'from-[#27BB97] to-[#1FA987]',
-      listings: '1,200+'
+      color: "from-[#27BB97] to-[#1FA987]",
+      listings: "1,200+",
     },
     {
-      id: 'real-estate',
-      name: 'Real Estate',
-      description: 'Buy, sell, rent properties with trusted agents and verified listings',
-      image: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&q=90',
+      id: "real-estate",
+      name: "Real Estate",
+      description:
+        "Buy, sell, rent properties with trusted agents and verified listings",
+      image:
+        "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&q=90",
       icon: <Home className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8" />,
-      color: 'from-[#27BB97] to-[#198F72]',
-      listings: '3,500+'
+      color: "from-[#27BB97] to-[#198F72]",
+      listings: "3,500+",
     },
     {
-      id: 'food',
-      name: 'Food & Catering',
-      description: 'Restaurants, catering services, food delivery & culinary experiences',
-      image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=800&q=90',
+      id: "food",
+      name: "Food & Catering",
+      description:
+        "Restaurants, catering services, food delivery & culinary experiences",
+      image:
+        "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=800&q=90",
       icon: <Utensils className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8" />,
-      color: 'from-[#27BB97] to-[#1FA987]',
-      listings: '2,800+'
+      color: "from-[#27BB97] to-[#1FA987]",
+      listings: "2,800+",
     },
     {
-      id: 'education',
-      name: 'Education',
-      description: 'Tutoring, online courses, workshops, language classes & skill development',
-      image: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800&q=90',
+      id: "education",
+      name: "Education",
+      description:
+        "Tutoring, online courses, workshops, language classes & skill development",
+      image:
+        "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800&q=90",
       icon: <GraduationCap className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8" />,
-      color: 'from-[#27BB97] to-[#198F72]',
-      listings: '1,900+'
+      color: "from-[#27BB97] to-[#198F72]",
+      listings: "1,900+",
     },
     {
-      id: 'health',
-      name: 'Health & Wellness',
-      description: 'Doctors, fitness trainers, yoga studios, nutritionists & wellness centers',
-      image: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d6b?w=800&q=90',
+      id: "health",
+      name: "Health & Wellness",
+      description:
+        "Doctors, fitness trainers, yoga studios, nutritionists & wellness centers",
+      image:
+        "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d6b?w=800&q=90",
       icon: <Dumbbell className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8" />,
-      color: 'from-[#27BB97] to-[#1FA987]',
-      listings: '1,500+'
+      color: "from-[#27BB97] to-[#1FA987]",
+      listings: "1,500+",
     },
     {
-      id: 'automotive',
-      name: 'Automotive',
-      description: 'Car sales, repairs, rentals, detailing services & auto parts',
-      image: 'https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=800&q=90',
+      id: "automotive",
+      name: "Automotive",
+      description:
+        "Car sales, repairs, rentals, detailing services & auto parts",
+      image:
+        "https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=800&q=90",
       icon: <Car className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8" />,
-      color: 'from-[#27BB97] to-[#198F72]',
-      listings: '2,300+'
+      color: "from-[#27BB97] to-[#198F72]",
+      listings: "2,300+",
     },
     {
-      id: 'electronics',
-      name: 'Electronics',
-      description: 'Tech gadgets, repairs, installations, smart home solutions & accessories',
-      image: 'https://images.unsplash.com/photo-1498049794561-7780e7231661?w=800&q=90',
+      id: "electronics",
+      name: "Electronics",
+      description:
+        "Tech gadgets, repairs, installations, smart home solutions & accessories",
+      image:
+        "https://images.unsplash.com/photo-1498049794561-7780e7231661?w=800&q=90",
       icon: <Laptop className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8" />,
-      color: 'from-gray-700 to-black',
-      listings: '1,800+'
+      color: "from-gray-700 to-black",
+      listings: "1,800+",
     },
     {
-      id: 'home',
-      name: 'Home Services',
-      description: 'Plumbing, cleaning, renovations, gardening & maintenance professionals',
-      image: 'https://images.unsplash.com/photo-1484154218962-a197022b5858?w=800&q=90',
+      id: "home",
+      name: "Home Services",
+      description:
+        "Plumbing, cleaning, renovations, gardening & maintenance professionals",
+      image:
+        "https://images.unsplash.com/photo-1484154218962-a197022b5858?w=800&q=90",
       icon: <Wrench className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8" />,
-      color: 'from-[#27BB97] to-[#1FA987]',
-      listings: '4,200+'
-    }
+      color: "from-[#27BB97] to-[#1FA987]",
+      listings: "4,200+",
+    },
   ];
 
   // How Listify Works
   const howItWorks = [
     {
-      title: 'Browse & Discover',
-      description: 'Search through our extensive directory of verified service providers. Filter by category, expertise, rating, and budget to find the perfect match.',
+      title: "Browse & Discover",
+      description:
+        "Search through our extensive directory of verified service providers. Filter by category, expertise, rating, and budget to find the perfect match.",
       features: [
-        'Advanced search filters',
-        'Verified provider profiles',
-        'Authentic customer reviews',
-        'Transparent pricing'
+        "Advanced search filters",
+        "Verified provider profiles",
+        "Authentic customer reviews",
+        "Transparent pricing",
       ],
       icon: <Eye className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12" />,
-      color: 'bg-gradient-to-r from-[#27BB97] to-[#1FA987]',
-      image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1920&q=80',
-      imagePosition: 'left'
+      color: "bg-gradient-to-r from-[#27BB97] to-[#1FA987]",
+      image:
+        "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1920&q=80",
+      imagePosition: "left",
     },
     {
-      title: 'Connect & Book',
-      description: 'Communicate directly with service professionals through our secure platform. Book appointments, get quotes, and schedule services effortlessly.',
+      title: "Connect & Book",
+      description:
+        "Communicate directly with service professionals through our secure platform. Book appointments, get quotes, and schedule services effortlessly.",
       features: [
-        'Instant messaging',
-        'Secure booking system',
-        'Real-time availability',
-        'Appointment scheduling'
+        "Instant messaging",
+        "Secure booking system",
+        "Real-time availability",
+        "Appointment scheduling",
       ],
       icon: <PhoneCall className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12" />,
-      color: 'bg-gradient-to-r from-[#27BB97] to-[#198F72]',
-      image: 'https://images.unsplash.com/photo-1545235617-9465d2a55698?w=1920&q=80',
-      imagePosition: 'right'
+      color: "bg-gradient-to-r from-[#27BB97] to-[#198F72]",
+      image:
+        "https://images.unsplash.com/photo-1545235617-9465d2a55698?w=1920&q=80",
+      imagePosition: "right",
     },
     {
-      title: 'Experience & Review',
-      description: 'Receive quality services from trusted professionals. Share your feedback to help maintain our community standards and assist others.',
+      title: "Experience & Review",
+      description:
+        "Receive quality services from trusted professionals. Share your feedback to help maintain our community standards and assist others.",
       features: [
-        'Service completion tracking',
-        'Secure payment processing',
-        'Rating & review system',
-        'Dispute resolution'
+        "Service completion tracking",
+        "Secure payment processing",
+        "Rating & review system",
+        "Dispute resolution",
       ],
-      icon: <ClipboardCheck className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12" />,
-      color: 'bg-gradient-to-r from-[#27BB97] to-[#146C54]',
-      image: 'https://images.unsplash.com/photo-1559028012-481c04fa702d?w=1920&q=80',
-      imagePosition: 'left'
-    }
+      icon: (
+        <ClipboardCheck className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12" />
+      ),
+      color: "bg-gradient-to-r from-[#27BB97] to-[#146C54]",
+      image:
+        "https://images.unsplash.com/photo-1559028012-481c04fa702d?w=1920&q=80",
+      imagePosition: "left",
+    },
   ];
 
   // Enhanced Why Choose Listify Section with Images
   const enhancedWhyChooseUs = [
     {
       icon: <Target className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12" />,
-      title: 'Local Expertise',
-      description: 'Connect with providers who understand your local needs and preferences, wherever you are located.',
-      stats: '500+ Service Areas',
-      color: 'bg-gradient-to-br from-[#27BB97]/20 to-[#1FA987]/10',
-      borderColor: 'border-[#27BB97]/20',
-      image: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=600&q=90'
+      title: "Local Expertise",
+      description:
+        "Connect with providers who understand your local needs and preferences, wherever you are located.",
+      stats: "500+ Service Areas",
+      color: "bg-gradient-to-br from-[#27BB97]/20 to-[#1FA987]/10",
+      borderColor: "border-[#27BB97]/20",
+      image:
+        "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=600&q=90",
     },
     {
       icon: <ShieldCheck className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12" />,
-      title: 'Trust & Safety',
-      description: 'Every provider undergoes rigorous background checks, verification, and continuous quality monitoring.',
-      stats: '99.8% Verified',
-      color: 'bg-gradient-to-br from-[#27BB97]/20 to-[#198F72]/10',
-      borderColor: 'border-[#1FA987]/20',
-      image: 'https://images.unsplash.com/photo-1559028012-481c04fa702d?w=600&q=90'
+      title: "Trust & Safety",
+      description:
+        "Every provider undergoes rigorous background checks, verification, and continuous quality monitoring.",
+      stats: "99.8% Verified",
+      color: "bg-gradient-to-br from-[#27BB97]/20 to-[#198F72]/10",
+      borderColor: "border-[#1FA987]/20",
+      image:
+        "https://images.unsplash.com/photo-1559028012-481c04fa702d?w=600&q=90",
     },
     {
       icon: <TrendingUp className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12" />,
-      title: 'Quality Guarantee',
-      description: 'We stand behind every service. If you\'re not satisfied, we\'ll work to make it right or provide a refund.',
-      stats: '4.9/5 Average Rating',
-      color: 'bg-gradient-to-br from-[#27BB97]/20 to-[#146C54]/10',
-      borderColor: 'border-[#198F72]/20',
-      image: 'https://images.unsplash.com/photo-1545235617-9465d2a55698?w=600&q=90'
-    }
+      title: "Quality Guarantee",
+      description:
+        "We stand behind every service. If you're not satisfied, we'll work to make it right or provide a refund.",
+      stats: "4.9/5 Average Rating",
+      color: "bg-gradient-to-br from-[#27BB97]/20 to-[#146C54]/10",
+      borderColor: "border-[#198F72]/20",
+      image:
+        "https://images.unsplash.com/photo-1545235617-9465d2a55698?w=600&q=90",
+    },
   ];
 
   // Enhanced Service Providers
   const enhancedServiceProviders = [
     {
-      name: 'Elite Wedding Planners',
-      category: 'Wedding Services',
+      name: "Elite Wedding Planners",
+      category: "Wedding Services",
       rating: 4.9,
       reviews: 247,
-      price: '$$$',
-      location: 'Multiple Locations',
-      image: 'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=800&q=90',
+      price: "$$$",
+      location: "Multiple Locations",
+      image:
+        "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=800&q=90",
       featured: true,
-      specialties: ['Venue Booking', 'Catering', 'Photography'],
-      responseTime: '< 1 hour'
+      specialties: ["Venue Booking", "Catering", "Photography"],
+      responseTime: "< 1 hour",
     },
     {
-      name: 'Metro Realty Group',
-      category: 'Real Estate',
+      name: "Metro Realty Group",
+      category: "Real Estate",
       rating: 4.8,
       reviews: 512,
-      price: '$$$$',
-      location: 'National Coverage',
-      image: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800&q=90',
+      price: "$$$$",
+      location: "National Coverage",
+      image:
+        "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800&q=90",
       featured: true,
-      specialties: ['Property Sales', 'Rentals', 'Commercial'],
-      responseTime: '< 2 hours'
+      specialties: ["Property Sales", "Rentals", "Commercial"],
+      responseTime: "< 2 hours",
     },
     {
-      name: 'TechFix Solutions',
-      category: 'Electronics Repair',
+      name: "TechFix Solutions",
+      category: "Electronics Repair",
       rating: 4.7,
       reviews: 189,
-      price: '$$',
-      location: 'Major Cities',
-      image: 'https://images.unsplash.com/photo-1581092580497-e0d4cb184827?w=800&q=90',
+      price: "$$",
+      location: "Major Cities",
+      image:
+        "https://images.unsplash.com/photo-1581092580497-e0d4cb184827?w=800&q=90",
       featured: false,
-      specialties: ['Phone Repair', 'Laptop Service', 'Data Recovery'],
-      responseTime: '< 30 mins'
+      specialties: ["Phone Repair", "Laptop Service", "Data Recovery"],
+      responseTime: "< 30 mins",
     },
     {
-      name: 'Green Thumb Landscaping',
-      category: 'Home Services',
+      name: "Green Thumb Landscaping",
+      category: "Home Services",
       rating: 4.9,
       reviews: 324,
-      price: '$$$',
-      location: 'Urban & Suburban',
-      image: 'https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=800&q=90',
+      price: "$$$",
+      location: "Urban & Suburban",
+      image:
+        "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=800&q=90",
       featured: true,
-      specialties: ['Lawn Care', 'Gardening', 'Landscape Design'],
-      responseTime: '< 4 hours'
-    }
+      specialties: ["Lawn Care", "Gardening", "Landscape Design"],
+      responseTime: "< 4 hours",
+    },
   ];
 
   // Enhanced Daily Routine Section
   const enhancedDailyRoutine = [
     {
-      time: 'Morning Routine',
-      title: 'Plan Your Day',
-      description: 'Browse morning listings and schedule services for the day ahead',
+      time: "Morning Routine",
+      title: "Plan Your Day",
+      description:
+        "Browse morning listings and schedule services for the day ahead",
       icon: <Calendar className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8" />,
-      color: 'bg-gradient-to-r from-[#27BB97] to-[#1FA987]',
-      steps: ['Check notifications', 'Review bookings', 'Plan schedule'],
-      timeSlot: '8-10 AM'
+      color: "bg-gradient-to-r from-[#27BB97] to-[#1FA987]",
+      steps: ["Check notifications", "Review bookings", "Plan schedule"],
+      timeSlot: "8-10 AM",
     },
     {
-      time: 'Afternoon Routine',
-      title: 'Compare & Decide',
-      description: 'Research and compare different providers to make informed choices',
+      time: "Afternoon Routine",
+      title: "Compare & Decide",
+      description:
+        "Research and compare different providers to make informed choices",
       icon: <BarChart3 className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8" />,
-      color: 'bg-gradient-to-r from-[#1FA987] to-[#198F72]',
-      steps: ['Compare quotes', 'Read reviews', 'Check availability'],
-      timeSlot: '12-2 PM'
+      color: "bg-gradient-to-r from-[#1FA987] to-[#198F72]",
+      steps: ["Compare quotes", "Read reviews", "Check availability"],
+      timeSlot: "12-2 PM",
     },
     {
-      time: 'Evening Routine',
-      title: 'Book Services',
-      description: 'Finalize bookings and prepare for upcoming service appointments',
+      time: "Evening Routine",
+      title: "Book Services",
+      description:
+        "Finalize bookings and prepare for upcoming service appointments",
       icon: <CheckCircle className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8" />,
-      color: 'bg-gradient-to-r from-[#198F72] to-[#146C54]',
-      steps: ['Confirm appointments', 'Arrange payment', 'Set reminders'],
-      timeSlot: '5-7 PM'
+      color: "bg-gradient-to-r from-[#198F72] to-[#146C54]",
+      steps: ["Confirm appointments", "Arrange payment", "Set reminders"],
+      timeSlot: "5-7 PM",
     },
     {
-      time: 'Night Routine',
-      title: 'Review & Share',
-      description: 'Share your experiences and help build our trusted community',
+      time: "Night Routine",
+      title: "Review & Share",
+      description:
+        "Share your experiences and help build our trusted community",
       icon: <ThumbsUp className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8" />,
-      color: 'bg-gradient-to-r from-[#146C54] to-[#0D4C3C]',
-      steps: ['Rate providers', 'Write reviews', 'Share recommendations'],
-      timeSlot: '8-10 PM'
-    }
+      color: "bg-gradient-to-r from-[#146C54] to-[#0D4C3C]",
+      steps: ["Rate providers", "Write reviews", "Share recommendations"],
+      timeSlot: "8-10 PM",
+    },
   ];
 
   // Animation styles
@@ -441,15 +479,18 @@ const OurServicesPage = () => {
 
   // Intersection Observer for scroll animations
   useEffect(() => {
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-        }
-      });
-    }, { threshold: 0.1 });
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("visible");
+          }
+        });
+      },
+      { threshold: 0.1 },
+    );
 
-    document.querySelectorAll('.scroll-animate').forEach(el => {
+    document.querySelectorAll(".scroll-animate").forEach((el) => {
       observer.observe(el);
     });
 
@@ -459,11 +500,11 @@ const OurServicesPage = () => {
   return (
     <div className="min-h-screen ">
       <style>{animationStyles}</style>
-      
+
       {/* Hero Section with Background Image */}
       <section className="relative min-h-[70vh] sm:min-h-[60vh] lg:min-h-[70vh] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0">
-          <img 
+          <img
             src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=1920&q=90"
             alt="Modern workspace with services"
             className="w-full h-full object-cover"
@@ -475,12 +516,15 @@ const OurServicesPage = () => {
           <div className="max-w-3xl">
             <div className="mb-4 sm:mb-6 animate-fade-in-up">
               <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-5xl font-black text-white leading-tight mb-4 sm:mb-6 text-center sm:text-left">
-                Find Trusted Services  with<br />
+                Find Trusted Services with
+                <br />
                 <span className="text-[#27BB97]">Listify</span>
               </h1>
-              
+
               <p className="text-base sm:text-lg lg:text-xl text-white/90 mb-6 sm:mb-10 leading-relaxed text-center sm:text-left">
-                Connect with verified professionals for roommates, takeCare, automotive, electronics, home services and more. Your trusted marketplace for quality services.
+                Connect with verified professionals for roommates, takeCare,
+                automotive, electronics, home services and more. Your trusted
+                marketplace for quality services.
               </p>
             </div>
 
@@ -528,16 +572,18 @@ const OurServicesPage = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8 sm:mb-12 lg:mb-16 scroll-animate">
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-3 sm:mb-4">
-              Explore Our <span className="gradient-text">Service Categories</span>
+              Explore Our{" "}
+              <span className="gradient-text">Service Categories</span>
             </h2>
             <p className="text-sm sm:text-base lg:text-lg text-gray-600 max-w-3xl mx-auto px-2 sm:px-0">
-              Discover quality services across various categories. All providers are verified and ready to serve you.
+              Discover quality services across various categories. All providers
+              are verified and ready to serve you.
             </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
             {serviceCategories.map((category, index) => (
-              <div 
+              <div
                 key={category.id}
                 className={`scroll-animate stagger-delay-${(index % 4) + 1} hover-lift`}
               >
@@ -548,9 +594,9 @@ const OurServicesPage = () => {
                       alt={category.name}
                       className="w-full h-full object-cover transform hover:scale-110 transition-transform duration-500"
                     />
-                    
+
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-                    
+
                     <div className="absolute bottom-3 sm:bottom-4 left-3 sm:left-4">
                       <span className="px-2 sm:px-3 py-1 bg-white/90 backdrop-blur-sm text-gray-800 text-xs sm:text-sm font-semibold rounded-full">
                         {category.listings} Listings
@@ -562,17 +608,17 @@ const OurServicesPage = () => {
                     <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2 sm:mb-3">
                       {category.name}
                     </h3>
-                    
+
                     <p className="text-gray-600 mb-3 sm:mb-4 text-xs sm:text-sm leading-relaxed">
                       {category.description}
                     </p>
-                    
+
                     <div className="flex items-center justify-between mt-4 sm:mt-6 pt-3 sm:pt-6 border-t border-gray-100">
                       <button className="text-[#27BB97] font-semibold text-xs sm:text-sm hover:text-[#1FA987] transition-colors flex items-center gap-1 sm:gap-2">
                         Browse Services
                         <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4" />
                       </button>
-                      
+
                       <div className="text-xs text-gray-500">
                         Available Nationwide
                       </div>
@@ -736,18 +782,20 @@ const OurServicesPage = () => {
             <div className="inline-flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
               <Calendar className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-[#27bb97]" />
               <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900">
-                Optimize Your <span className="gradient-text">Service Routine</span>
+                Optimize Your{" "}
+                <span className="gradient-text">Service Routine</span>
               </h2>
             </div>
             <p className="text-sm sm:text-base lg:text-lg text-gray-600 max-w-3xl mx-auto px-2 sm:px-0">
-              Follow our proven daily routine to maximize your service experience
+              Follow our proven daily routine to maximize your service
+              experience
             </p>
           </div>
 
           <div className="scroll-animate">
             <div className="flex overflow-x-auto pb-4 sm:pb-6 lg:pb-8 snap-x snap-mandatory gap-4 sm:gap-6 px-4 -mx-4 scrollbar-hide">
               {enhancedDailyRoutine.map((routine, index) => (
-                <div 
+                <div
                   key={index}
                   className="min-w-[280px] sm:min-w-[320px] md:min-w-[360px] lg:min-w-[400px] flex-shrink-0 snap-center"
                 >
@@ -756,34 +804,41 @@ const OurServicesPage = () => {
                       {/* Card Header with Image Background */}
                       <div className="relative h-32 sm:h-36 md:h-40 overflow-hidden">
                         <img
-                          src={`https://images.unsplash.com/photo-${index === 0 ? '1497366754035-f200968a6e72' : index === 1 ? '1559028012-481c04fa702d' : index === 2 ? '1545235617-9465d2a55698' : '1521791136064-7986c2920216'}?w=800&q=90`}
+                          src={`https://images.unsplash.com/photo-${index === 0 ? "1497366754035-f200968a6e72" : index === 1 ? "1559028012-481c04fa702d" : index === 2 ? "1545235617-9465d2a55698" : "1521791136064-7986c2920216"}?w=800&q=90`}
                           alt={routine.time}
                           className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
                         />
                         <div className="absolute inset-0 bg-gradient-to-r from-[#27bb97]/90 to-[#1FA987]/90 mix-blend-multiply"></div>
-                        
+
                         <div className="absolute top-3 sm:top-4 left-3 sm:left-4">
                           <div className="px-3 sm:px-4 py-1 sm:py-2 bg-white/20 backdrop-blur-sm rounded-full">
-                            <span className="text-white font-bold text-xs sm:text-sm">{routine.timeSlot}</span>
+                            <span className="text-white font-bold text-xs sm:text-sm">
+                              {routine.timeSlot}
+                            </span>
                           </div>
                         </div>
                       </div>
 
                       <div className="p-4 sm:p-6">
                         <div className="mb-3 sm:mb-4">
-                          <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-1 sm:mb-2">{routine.title}</h3>
+                          <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-1 sm:mb-2">
+                            {routine.title}
+                          </h3>
                           <span className="text-xs sm:text-sm font-medium text-[#27bb97] bg-[#27bb97]/10 px-2 sm:px-3 py-1 rounded-full">
                             {routine.time}
                           </span>
                         </div>
-                        
+
                         <p className="text-gray-600 mb-4 sm:mb-6 text-xs sm:text-sm">
                           {routine.description}
                         </p>
-                        
+
                         <div className="space-y-2 sm:space-y-3 mb-4 sm:mb-6">
                           {routine.steps.map((step, stepIndex) => (
-                            <div key={stepIndex} className="flex items-start gap-2 sm:gap-3">
+                            <div
+                              key={stepIndex}
+                              className="flex items-start gap-2 sm:gap-3"
+                            >
                               <div className="flex-shrink-0 w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-[#27bb97]/10 flex items-center justify-center mt-0.5">
                                 <CheckCircle className="w-2 h-2 sm:w-3 sm:h-3 text-[#27bb97]" />
                               </div>
@@ -793,7 +848,7 @@ const OurServicesPage = () => {
                             </div>
                           ))}
                         </div>
-                        
+
                         <button className="w-full py-2.5 sm:py-3 border border-[#27BB97] text-[#27BB97] hover:bg-[#27BB97] hover:text-white font-semibold rounded-lg hover:from-[#1FA987] hover:to-[#198F72] transition-all duration-300 flex items-center justify-center gap-1 sm:gap-2 text-xs sm:text-sm">
                           <Clock className="w-3 h-3 sm:w-4 sm:h-4" />
                           Set Reminder
@@ -823,7 +878,7 @@ const OurServicesPage = () => {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
             {enhancedServiceProviders.map((provider, index) => (
-              <div 
+              <div
                 key={index}
                 className={`scroll-animate stagger-delay-${(index % 4) + 1} hover-lift`}
               >
@@ -834,9 +889,9 @@ const OurServicesPage = () => {
                       alt={provider.name}
                       className="w-full h-full object-cover transform hover:scale-110 transition-transform duration-700"
                     />
-                    
+
                     <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"></div>
-                    
+
                     {provider.featured && (
                       <div className="absolute top-3 sm:top-4 left-3 sm:left-4">
                         <span className="px-2 sm:px-3 py-1 bg-gradient-to-r from-[#27BB97] to-[#1FA987] text-white text-xs font-bold rounded-full shadow-lg">
@@ -844,7 +899,7 @@ const OurServicesPage = () => {
                         </span>
                       </div>
                     )}
-                    
+
                     <div className="absolute bottom-3 sm:bottom-4 right-3 sm:right-4 flex flex-col items-end gap-1 sm:gap-2">
                       <span className="px-2 sm:px-3 py-1 bg-white/90 backdrop-blur-sm text-gray-800 text-xs sm:text-sm font-semibold rounded-full">
                         {provider.price}
@@ -858,35 +913,52 @@ const OurServicesPage = () => {
                   <div className="p-4 sm:p-6">
                     <div className="flex items-start justify-between mb-3 sm:mb-4">
                       <div className="flex-1">
-                        <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-1">{provider.name}</h3>
-                        <p className="text-xs sm:text-sm text-gray-500 mb-2">{provider.category}</p>
-                        
+                        <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-1">
+                          {provider.name}
+                        </h3>
+                        <p className="text-xs sm:text-sm text-gray-500 mb-2">
+                          {provider.category}
+                        </p>
+
                         <div className="flex flex-wrap gap-1 sm:gap-2 mt-1 sm:mt-2">
-                          {provider.specialties.slice(0, 2).map((specialty, i) => (
-                            <span key={i} className="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full">
-                              {specialty}
-                            </span>
-                          ))}
+                          {provider.specialties
+                            .slice(0, 2)
+                            .map((specialty, i) => (
+                              <span
+                                key={i}
+                                className="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full"
+                              >
+                                {specialty}
+                              </span>
+                            ))}
                         </div>
                       </div>
-                      
+
                       <div className="flex flex-col items-end">
                         <div className="flex items-center gap-1">
                           <Star className="w-3 h-3 sm:w-4 sm:h-4 text-yellow-400 fill-current" />
-                          <span className="font-bold text-gray-900 text-sm sm:text-base">{provider.rating}</span>
+                          <span className="font-bold text-gray-900 text-sm sm:text-base">
+                            {provider.rating}
+                          </span>
                         </div>
-                        <span className="text-xs text-gray-500">({provider.reviews} reviews)</span>
+                        <span className="text-xs text-gray-500">
+                          ({provider.reviews} reviews)
+                        </span>
                       </div>
                     </div>
-                    
+
                     <div className="flex items-center justify-between mb-4 sm:mb-6 pt-3 sm:pt-4 border-t border-gray-100">
                       <div className="flex items-center gap-1 sm:gap-2">
                         <MapPin className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400" />
-                        <span className="text-xs sm:text-sm text-gray-600">{provider.location}</span>
+                        <span className="text-xs sm:text-sm text-gray-600">
+                          {provider.location}
+                        </span>
                       </div>
-                      <span className="text-xs sm:text-sm font-semibold text-[#27BB97]">✓ Available</span>
+                      <span className="text-xs sm:text-sm font-semibold text-[#27BB97]">
+                        ✓ Available
+                      </span>
                     </div>
-                    
+
                     <button className="w-full py-2.5 sm:py-3 border border-[#27BB97] text-[#27BB97] hover:bg-[#27BB97] hover:text-white font-semibold rounded-lg hover:from-[#1FA987] hover:to-[#198F72] transition-all duration-300 hover:scale-105 text-sm sm:text-base">
                       Contact Provider
                     </button>

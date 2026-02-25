@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 export default function FeaturedJobs() {
   const navigate = useNavigate();
-  
+
   const jobs = [
     {
       id: 1,
@@ -83,7 +83,7 @@ export default function FeaturedJobs() {
   const [startIndex, setStartIndex] = useState(0);
   const [cardsPerRow, setCardsPerRow] = useState(4);
   const [savedJobs, setSavedJobs] = useState(
-    jobs.reduce((acc, job) => ({ ...acc, [job.id]: job.saved }), {})
+    jobs.reduce((acc, job) => ({ ...acc, [job.id]: job.saved }), {}),
   );
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
@@ -96,7 +96,7 @@ export default function FeaturedJobs() {
       else if (window.innerWidth < 1024) setCardsPerRow(2);
       else setCardsPerRow(4);
     };
-    
+
     updateCardsPerRow();
     window.addEventListener("resize", updateCardsPerRow);
     return () => window.removeEventListener("resize", updateCardsPerRow);
@@ -116,7 +116,7 @@ export default function FeaturedJobs() {
 
   const toggleSave = (id, e) => {
     e.stopPropagation(); // Prevent card click when clicking save button
-    setSavedJobs(prev => ({ ...prev, [id]: !prev[id] }));
+    setSavedJobs((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
   const handleViewAllPositions = () => {
@@ -143,20 +143,26 @@ export default function FeaturedJobs() {
     setIsDragging(false);
   };
 
-  const handleMouseMove = useCallback((e) => {
-    if (!isDragging) return;
-    e.preventDefault();
-    
-    const x = e.pageX - containerRef.current.offsetLeft;
-    const walk = (x - startX) * 2;
-    
-    const cardWidth = 340;
-    const dragIndex = Math.round((scrollLeft - walk) / cardWidth);
-    
-    const clampedIndex = Math.max(0, Math.min(dragIndex, jobs.length - cardsPerRow));
-    
-    setStartIndex(clampedIndex);
-  }, [isDragging, startX, scrollLeft, jobs.length, cardsPerRow]);
+  const handleMouseMove = useCallback(
+    (e) => {
+      if (!isDragging) return;
+      e.preventDefault();
+
+      const x = e.pageX - containerRef.current.offsetLeft;
+      const walk = (x - startX) * 2;
+
+      const cardWidth = 340;
+      const dragIndex = Math.round((scrollLeft - walk) / cardWidth);
+
+      const clampedIndex = Math.max(
+        0,
+        Math.min(dragIndex, jobs.length - cardsPerRow),
+      );
+
+      setStartIndex(clampedIndex);
+    },
+    [isDragging, startX, scrollLeft, jobs.length, cardsPerRow],
+  );
 
   // Touch handlers for mobile
   const handleTouchStart = (e) => {
@@ -165,25 +171,33 @@ export default function FeaturedJobs() {
     setScrollLeft(startIndex * 340);
   };
 
-  const handleTouchMove = useCallback((e) => {
-    if (!isDragging) return;
-    
-    const x = e.touches[0].pageX - containerRef.current.offsetLeft;
-    const walk = (x - startX) * 2;
-    
-    const cardWidth = 340;
-    const dragIndex = Math.round((scrollLeft - walk) / cardWidth);
-    
-    const clampedIndex = Math.max(0, Math.min(dragIndex, jobs.length - cardsPerRow));
-    
-    setStartIndex(clampedIndex);
-  }, [isDragging, startX, scrollLeft, jobs.length, cardsPerRow]);
+  const handleTouchMove = useCallback(
+    (e) => {
+      if (!isDragging) return;
+
+      const x = e.touches[0].pageX - containerRef.current.offsetLeft;
+      const walk = (x - startX) * 2;
+
+      const cardWidth = 340;
+      const dragIndex = Math.round((scrollLeft - walk) / cardWidth);
+
+      const clampedIndex = Math.max(
+        0,
+        Math.min(dragIndex, jobs.length - cardsPerRow),
+      );
+
+      setStartIndex(clampedIndex);
+    },
+    [isDragging, startX, scrollLeft, jobs.length, cardsPerRow],
+  );
 
   return (
     <div className="min-h-screen bg-gray-100 p-6 md:p-10 relative -mt-12">
       {/* Title */}
       <div className="text-center mb-10">
-        <h1 className="text-3xl md:text-[40px] font-bold text-gray-900">Featured Jobs</h1>
+        <h1 className="text-3xl md:text-[40px] font-bold text-gray-900">
+          Featured Jobs
+        </h1>
         <div className="flex flex-col items-center gap-1 mt-4">
           <div className="h-1 w-28 bg-green-400 rounded"></div>
           <div className="h-1 w-20 bg-green-400 rounded"></div>
@@ -210,7 +224,7 @@ export default function FeaturedJobs() {
       )}
 
       {/* Card Container with Drag Support */}
-      <div 
+      <div
         ref={containerRef}
         className="overflow-hidden max-w-7xl mx-auto px-4 select-none"
         onMouseDown={handleMouseDown}
@@ -220,9 +234,9 @@ export default function FeaturedJobs() {
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleMouseUp}
-        style={{ 
-          cursor: isDragging ? 'grabbing' : 'grab',
-          userSelect: 'none'
+        style={{
+          cursor: isDragging ? "grabbing" : "grab",
+          userSelect: "none",
         }}
       >
         <div
@@ -236,7 +250,7 @@ export default function FeaturedJobs() {
               key={job.id}
               onClick={() => handleCardClick(job.id)}
               className="min-w-[300px] md:min-w-[340px] bg-white rounded-3xl p-5 md:p-6 shadow-md hover:shadow-xl transition-all border border-gray-200 hover:border-green-300 select-text cursor-pointer"
-              style={{ pointerEvents: isDragging ? 'none' : 'auto' }}
+              style={{ pointerEvents: isDragging ? "none" : "auto" }}
             >
               {/* Header */}
               <div className="flex justify-between items-start mb-6">
@@ -252,7 +266,7 @@ export default function FeaturedJobs() {
                   />
                 </div>
 
-                <button 
+                <button
                   onClick={(e) => toggleSave(job.id, e)}
                   className="flex items-center gap-2 px-3 md:px-4 py-1.5 md:py-2 rounded-lg border border-gray-300 hover:bg-gray-50 transition z-20"
                 >
@@ -333,27 +347,32 @@ export default function FeaturedJobs() {
       {/* Drag hint text */}
       <div className="text-center mt-4 text-gray-500 text-sm">
         <span className="hidden md:inline">Click and drag to scroll • </span>
-        <span>{startIndex + 1} - {Math.min(startIndex + cardsPerRow, jobs.length)} of {jobs.length} jobs</span>
+        <span>
+          {startIndex + 1} - {Math.min(startIndex + cardsPerRow, jobs.length)}{" "}
+          of {jobs.length} jobs
+        </span>
       </div>
 
       {/* Pagination Dots */}
       <div className="flex justify-center gap-2 mt-6">
-        {Array.from({ length: Math.ceil(jobs.length / cardsPerRow) }).map((_, index) => (
-          <button
-            key={index}
-            onClick={() => setStartIndex(index * cardsPerRow)}
-            className={`w-2 h-2 rounded-full ${
-              Math.floor(startIndex / cardsPerRow) === index 
-                ? "bg-[#27bb97]" 
-                : "bg-gray-300"
-            }`}
-          />
-        ))}
+        {Array.from({ length: Math.ceil(jobs.length / cardsPerRow) }).map(
+          (_, index) => (
+            <button
+              key={index}
+              onClick={() => setStartIndex(index * cardsPerRow)}
+              className={`w-2 h-2 rounded-full ${
+                Math.floor(startIndex / cardsPerRow) === index
+                  ? "bg-[#27bb97]"
+                  : "bg-gray-300"
+              }`}
+            />
+          ),
+        )}
       </div>
 
       {/* View More Button */}
       <div className="text-center mt-16">
-        <button 
+        <button
           onClick={handleViewAllPositions}
           className="px-8 py-3 border-2 border-[#27bb97] text-[#27bb97] font-semibold rounded-lg hover:bg-[#27bb97] hover:text-white transition-all duration-300 hover:shadow-lg cursor-pointer"
         >

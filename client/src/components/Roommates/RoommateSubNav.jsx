@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { RainbowButton } from "../../components/ui/rainbow-button"
-import { 
-  FaChevronDown, 
-  FaFilter, 
-  FaBed, 
-  FaUsers, 
-  FaUserLock, 
-  FaBuilding, 
-  FaHome, 
-  FaCity, 
-  FaHouseUser, 
+import { RainbowButton } from "../../components/ui/rainbow-button";
+import {
+  FaChevronDown,
+  FaFilter,
+  FaBed,
+  FaUsers,
+  FaUserLock,
+  FaBuilding,
+  FaHome,
+  FaCity,
+  FaHouseUser,
   FaMapMarkerAlt,
-  FaEllipsisH
+  FaEllipsisH,
 } from "react-icons/fa";
 
 const subNavItems = [
@@ -74,10 +74,10 @@ export default function RoommateSubNav() {
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
-    
+
     // Initial check
     handleScroll();
-    
+
     return () => window.removeEventListener("scroll", handleScroll);
   }, [lastScrollY]);
 
@@ -105,7 +105,10 @@ export default function RoommateSubNav() {
       if (showFilters && !event.target.closest(".filter-container")) {
         setShowFilters(false);
       }
-      if (showMoreDropdown && !event.target.closest(".more-dropdown-container")) {
+      if (
+        showMoreDropdown &&
+        !event.target.closest(".more-dropdown-container")
+      ) {
         setShowMoreDropdown(false);
       }
     };
@@ -133,13 +136,15 @@ export default function RoommateSubNav() {
                   key={index}
                   onClick={() => handleCategoryClick(item)}
                   className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm transition-all whitespace-nowrap min-w-max cursor-pointer ${
-                    item.name === "Home" 
-                      ? "bg-[#27bb97] text-white hover:bg-[#1FA987]" 
+                    item.name === "Home"
+                      ? "bg-[#27bb97] text-white hover:bg-[#1FA987]"
                       : "text-gray-700 hover:bg-teal-50 hover:text-teal-500"
                   } ${item.iconOnly ? "px-3" : "px-4"}`}
                   title={item.name}
                 >
-                  <IconComponent className={`${item.iconOnly ? "w-5 h-5" : "w-4 h-4"}`} />
+                  <IconComponent
+                    className={`${item.iconOnly ? "w-5 h-5" : "w-4 h-4"}`}
+                  />
                   {!item.iconOnly && <span>{item.name}</span>}
                 </button>
               );
@@ -153,7 +158,9 @@ export default function RoommateSubNav() {
               >
                 <FaEllipsisH className="w-4 h-4" />
                 <span>More</span>
-                <FaChevronDown className={`w-3 h-3 transition-transform ${showMoreDropdown ? "rotate-180" : ""}`} />
+                <FaChevronDown
+                  className={`w-3 h-3 transition-transform ${showMoreDropdown ? "rotate-180" : ""}`}
+                />
               </button>
 
               {/* Dropdown Menu */}
@@ -175,7 +182,7 @@ export default function RoommateSubNav() {
                 </div>
               )}
             </div>
-            
+
             <RainbowButton className="bg-red">I'm Searching</RainbowButton>
             <RainbowButton>Invite Someone in</RainbowButton>
           </div>
@@ -183,7 +190,7 @@ export default function RoommateSubNav() {
 
         {/* Active Filters Display */}
         {Object.values(selectedFilters).some(
-          (filter) => filter !== "Any" && !filter.includes("Any")
+          (filter) => filter !== "Any" && !filter.includes("Any"),
         ) && (
           <div className="flex items-center gap-2 py-2 border-t border-gray-200">
             <span className="text-sm text-gray-600">Active filters:</span>
@@ -202,10 +209,10 @@ export default function RoommateSubNav() {
                           key === "price"
                             ? "Any Price"
                             : key === "gender"
-                            ? "Any Gender"
-                            : key === "availability"
-                            ? "Any Date"
-                            : "Any"
+                              ? "Any Gender"
+                              : key === "availability"
+                                ? "Any Date"
+                                : "Any",
                         )
                       }
                       className="hover:text-teal-900 ml-1"

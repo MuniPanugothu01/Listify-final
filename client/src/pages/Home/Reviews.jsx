@@ -89,16 +89,10 @@ const ReviewCard = ({ name, position, description, rating, imageSrc }) => (
     <div className="bg-white rounded-3xl shadow-xl px-6 pt-16 pb-8 text-center relative min-h-[380px]">
       {/* Image on top - full visible */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-28 h-28 sm:w-32 sm:h-32 rounded-full overflow-hidden border-8 border-white shadow-xl">
-        <img
-          src={imageSrc}
-          alt={name}
-          className="w-full h-full object-cover"
-        />
+        <img src={imageSrc} alt={name} className="w-full h-full object-cover" />
       </div>
 
-      <h3 className="text-xl sm:text-2xl font-bold text-gray-800">
-        {name}
-      </h3>
+      <h3 className="text-xl sm:text-2xl font-bold text-gray-800">{name}</h3>
       <p className="text-black font-semibold text-xs sm:text-sm uppercase tracking-wide mt-2 mb-4">
         {position}
       </p>
@@ -121,7 +115,7 @@ const Reviews = () => {
 
   // Get visible cards based on screen size
   const getVisibleCards = () => {
-    if (typeof window === 'undefined') return 1;
+    if (typeof window === "undefined") return 1;
     if (window.innerWidth >= 1024) return 3;
     if (window.innerWidth >= 768) return 2;
     return 1;
@@ -134,15 +128,15 @@ const Reviews = () => {
   const getCardWidth = () => {
     if (!containerRef.current) return 320;
     const container = containerRef.current;
-    const cards = container.querySelectorAll('.flex-shrink-0');
+    const cards = container.querySelectorAll(".flex-shrink-0");
     if (cards.length === 0) return 320;
-    
+
     const firstCard = cards[0];
     const cardStyle = window.getComputedStyle(firstCard);
     const width = parseFloat(cardStyle.width);
     const marginLeft = parseFloat(cardStyle.marginLeft) || 0;
     const marginRight = parseFloat(cardStyle.marginRight) || 0;
-    
+
     return width + marginLeft + marginRight;
   };
 
@@ -157,31 +151,31 @@ const Reviews = () => {
 
     const scrollToIndex = (index) => {
       if (isAnimating || !containerRef.current) return;
-      
+
       isAnimating = true;
       setIsTransitioning(true);
-      
+
       const container = containerRef.current;
       const cardWidth = getCardWidth();
       const scrollPosition = index * cardWidth;
-      
-      container.style.scrollBehavior = 'smooth';
+
+      container.style.scrollBehavior = "smooth";
       container.scrollLeft = scrollPosition;
-      
+
       // Update the visible index (modulo totalCards for infinite effect)
       const actualIndex = index % totalCards;
       setCurrentIndex(actualIndex);
-      
+
       // Reset scroll position when reaching the cloned section
       const resetTimer = setTimeout(() => {
         if (index >= totalCards) {
-          container.style.scrollBehavior = 'auto';
+          container.style.scrollBehavior = "auto";
           container.scrollLeft = (index - totalCards) * cardWidth;
         }
         isAnimating = false;
         setIsTransitioning(false);
       }, 500); // Match this with CSS transition duration
-      
+
       return () => clearTimeout(resetTimer);
     };
 
@@ -189,21 +183,21 @@ const Reviews = () => {
 
     autoScrollRef.current = setInterval(() => {
       if (isAnimating) return;
-      
+
       currentScrollIndex++;
-      
+
       // If we're at the end of cloned cards, reset to beginning
       if (currentScrollIndex >= clonedCards.length - visibleCards) {
         currentScrollIndex = 0;
-        containerRef.current.style.scrollBehavior = 'auto';
+        containerRef.current.style.scrollBehavior = "auto";
         containerRef.current.scrollLeft = 0;
         setTimeout(() => {
           if (containerRef.current) {
-            containerRef.current.style.scrollBehavior = 'smooth';
+            containerRef.current.style.scrollBehavior = "smooth";
           }
         }, 50);
       }
-      
+
       scrollToIndex(currentScrollIndex);
     }, 2000); // Auto scroll every 2 seconds
 
@@ -217,22 +211,22 @@ const Reviews = () => {
   // Handle manual click on dots
   const handleDotClick = (index) => {
     if (isTransitioning) return;
-    
+
     const container = containerRef.current;
     const cardWidth = getCardWidth();
-    
+
     if (container && cardWidth > 0) {
       setIsTransitioning(true);
-      container.style.scrollBehavior = 'smooth';
+      container.style.scrollBehavior = "smooth";
       container.scrollLeft = index * cardWidth;
       setCurrentIndex(index);
-      
+
       // Reset transition state
       setTimeout(() => {
         setIsTransitioning(false);
       }, 500);
     }
-    
+
     // Reset auto-scroll timer
     if (autoScrollRef.current) {
       clearInterval(autoScrollRef.current);
@@ -242,17 +236,17 @@ const Reviews = () => {
           const currentScroll = containerRef.current.scrollLeft;
           const nextScroll = currentScroll + cardWidth;
           const maxScroll = (clonedCards.length - visibleCards) * cardWidth;
-          
+
           if (nextScroll >= maxScroll) {
-            containerRef.current.style.scrollBehavior = 'auto';
+            containerRef.current.style.scrollBehavior = "auto";
             containerRef.current.scrollLeft = 0;
             setTimeout(() => {
               if (containerRef.current) {
-                containerRef.current.style.scrollBehavior = 'smooth';
+                containerRef.current.style.scrollBehavior = "smooth";
               }
             }, 50);
           } else {
-            containerRef.current.style.scrollBehavior = 'smooth';
+            containerRef.current.style.scrollBehavior = "smooth";
             containerRef.current.scrollLeft = nextScroll;
           }
         }
@@ -280,7 +274,8 @@ const Reviews = () => {
             Our Clients Reviews
           </h1>
           <p className="text-base sm:text-lg md:text-xl text-gray-600 mb-4 sm:mb-5 md:mb-6 max-w-2xl mx-auto px-2">
-            Discover what our satisfied users say about their Listify experience. Real feedback from real people in our community.
+            Discover what our satisfied users say about their Listify
+            experience. Real feedback from real people in our community.
           </p>
           <div className="w-12 sm:w-16 md:w-20 h-0.5 sm:h-1 bg-[#27BB97] mx-auto rounded-full"></div>
         </div>
@@ -290,10 +285,10 @@ const Reviews = () => {
           <div
             ref={containerRef}
             className="overflow-x-auto scrollbar-hide"
-            style={{ 
-              scrollbarWidth: 'none',
-              msOverflowStyle: 'none',
-              scrollBehavior: 'smooth'
+            style={{
+              scrollbarWidth: "none",
+              msOverflowStyle: "none",
+              scrollBehavior: "smooth",
             }}
           >
             <div className="flex items-stretch py-12 mt-8">
@@ -302,7 +297,11 @@ const Reviews = () => {
                 <ReviewCard
                   key={`${member.name}-${index}`}
                   {...member}
-                  imageSrc={professionalImages.teamMembers[index % professionalImages.teamMembers.length]}
+                  imageSrc={
+                    professionalImages.teamMembers[
+                      index % professionalImages.teamMembers.length
+                    ]
+                  }
                 />
               ))}
             </div>
@@ -315,7 +314,9 @@ const Reviews = () => {
                 key={index}
                 onClick={() => handleDotClick(index)}
                 className={`h-2 rounded-full transition-all duration-300 ${
-                  index === currentIndex ? 'bg-[#27BB97] w-8' : 'bg-gray-300 w-2 hover:bg-gray-400'
+                  index === currentIndex
+                    ? "bg-[#27BB97] w-8"
+                    : "bg-gray-300 w-2 hover:bg-gray-400"
                 }`}
                 aria-label={`Go to slide ${index + 1}`}
                 disabled={isTransitioning}

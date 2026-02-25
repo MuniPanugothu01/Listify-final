@@ -31,9 +31,17 @@ const careTakerData = [
     rating: 4.9,
     reviews: 124,
     age: 32,
-    image: "https://images.unsplash.com/photo-1582750433449-648ed127bb54?w=800&q=80",
-    description: "Certified professional nanny with extensive experience in childcare. Specialized in newborn care and early childhood development.",
-    services: ["Newborn Care", "Toddler Activities", "Meal Preparation", "Educational Play", "Light Housekeeping"],
+    image:
+      "https://images.unsplash.com/photo-1582750433449-648ed127bb54?w=800&q=80",
+    description:
+      "Certified professional nanny with extensive experience in childcare. Specialized in newborn care and early childhood development.",
+    services: [
+      "Newborn Care",
+      "Toddler Activities",
+      "Meal Preparation",
+      "Educational Play",
+      "Light Housekeeping",
+    ],
     category: "Nanny",
     availability: "Full-time",
     languages: ["English", "Spanish"],
@@ -50,9 +58,17 @@ const careTakerData = [
     rating: 4.7,
     reviews: 89,
     age: 28,
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&q=80",
-    description: "Reliable babysitter with tutoring background. Great with school-age children and homework help.",
-    services: ["Homework Help", "After-school Care", "Weekend Sitting", "Activity Planning", "Transportation"],
+    image:
+      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&q=80",
+    description:
+      "Reliable babysitter with tutoring background. Great with school-age children and homework help.",
+    services: [
+      "Homework Help",
+      "After-school Care",
+      "Weekend Sitting",
+      "Activity Planning",
+      "Transportation",
+    ],
     category: "Babysitter",
     availability: "Part-time",
     languages: ["English", "Mandarin"],
@@ -69,9 +85,17 @@ const careTakerData = [
     rating: 4.8,
     reviews: 156,
     age: 45,
-    image: "https://images.unsplash.com/photo-1551836026-d5c2c5af78e4?w=800&q=80",
-    description: "Experienced elder care specialist with medical background. Patient and attentive to seniors' needs.",
-    services: ["Medication Management", "Mobility Assistance", "Meal Preparation", "Companionship", "Doctor Appointments"],
+    image:
+      "https://images.unsplash.com/photo-1551836026-d5c2c5af78e4?w=800&q=80",
+    description:
+      "Experienced elder care specialist with medical background. Patient and attentive to seniors' needs.",
+    services: [
+      "Medication Management",
+      "Mobility Assistance",
+      "Meal Preparation",
+      "Companionship",
+      "Doctor Appointments",
+    ],
     category: "Elder Care",
     availability: "Full-time",
     languages: ["English", "Spanish"],
@@ -88,13 +112,25 @@ const careTakerData = [
     rating: 4.9,
     reviews: 203,
     age: 29,
-    image: "https://images.unsplash.com/photo-1504593811423-6dd665756598?w=800&q=80",
-    description: "Animal lover with professional pet care training. Experienced with all breeds and special needs pets.",
-    services: ["Dog Walking", "Pet Sitting", "Grooming", "Medication Administration", "Overnight Care"],
+    image:
+      "https://images.unsplash.com/photo-1504593811423-6dd665756598?w=800&q=80",
+    description:
+      "Animal lover with professional pet care training. Experienced with all breeds and special needs pets.",
+    services: [
+      "Dog Walking",
+      "Pet Sitting",
+      "Grooming",
+      "Medication Administration",
+      "Overnight Care",
+    ],
     category: "Pet Care",
     availability: "Flexible",
     languages: ["English"],
-    certifications: ["Pet First Aid", "Animal Behavior", "Grooming Certification"],
+    certifications: [
+      "Pet First Aid",
+      "Animal Behavior",
+      "Grooming Certification",
+    ],
   },
   {
     id: 5,
@@ -107,13 +143,25 @@ const careTakerData = [
     rating: 4.8,
     reviews: 178,
     age: 35,
-    image: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=800&q=80",
-    description: "Specialized in newborn and infant care. Creating nurturing environments for early development.",
-    services: ["Infant Care", "Sleep Training", "Developmental Activities", "Bottle Feeding", "Baby Laundry"],
+    image:
+      "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=800&q=80",
+    description:
+      "Specialized in newborn and infant care. Creating nurturing environments for early development.",
+    services: [
+      "Infant Care",
+      "Sleep Training",
+      "Developmental Activities",
+      "Bottle Feeding",
+      "Baby Laundry",
+    ],
     category: "Nanny",
     availability: "Full-time",
     languages: ["English", "French"],
-    certifications: ["Newborn Care Specialist", "Infant CPR", "Child Development"],
+    certifications: [
+      "Newborn Care Specialist",
+      "Infant CPR",
+      "Child Development",
+    ],
   },
   {
     id: 6,
@@ -126,9 +174,17 @@ const careTakerData = [
     rating: 4.6,
     reviews: 67,
     age: 26,
-    image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=800&q=80",
-    description: "Active babysitter who engages children in sports and outdoor activities. Great for active families.",
-    services: ["Sports Activities", "Outdoor Play", "Healthy Cooking", "Homework Supervision", "Weekend Care"],
+    image:
+      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=800&q=80",
+    description:
+      "Active babysitter who engages children in sports and outdoor activities. Great for active families.",
+    services: [
+      "Sports Activities",
+      "Outdoor Play",
+      "Healthy Cooking",
+      "Homework Supervision",
+      "Weekend Care",
+    ],
     category: "Babysitter",
     availability: "Evenings & Weekends",
     languages: ["English"],
@@ -145,13 +201,25 @@ const careTakerData = [
     rating: 4.9,
     reviews: 234,
     age: 52,
-    image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=800&q=80",
-    description: "Compassionate caregiver specializing in Alzheimer's and dementia care. Creating safe, engaging environments.",
-    services: ["Dementia Care", "Memory Exercises", "Nutrition Planning", "Personal Care", "Therapy Exercises"],
+    image:
+      "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=800&q=80",
+    description:
+      "Compassionate caregiver specializing in Alzheimer's and dementia care. Creating safe, engaging environments.",
+    services: [
+      "Dementia Care",
+      "Memory Exercises",
+      "Nutrition Planning",
+      "Personal Care",
+      "Therapy Exercises",
+    ],
     category: "Elder Care",
     availability: "Live-in Available",
     languages: ["English", "Korean"],
-    certifications: ["Alzheimer's Specialist", "Physical Therapy Aid", "Medication Certified"],
+    certifications: [
+      "Alzheimer's Specialist",
+      "Physical Therapy Aid",
+      "Medication Certified",
+    ],
   },
   {
     id: 8,
@@ -164,13 +232,25 @@ const careTakerData = [
     rating: 4.8,
     reviews: 189,
     age: 31,
-    image: "https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d?w=800&q=80",
-    description: "Professional dog trainer offering specialized pet care services. Expert in behavior modification.",
-    services: ["Dog Training", "Behavior Modification", "Agility Training", "Pet Boarding", "Special Needs Care"],
+    image:
+      "https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d?w=800&q=80",
+    description:
+      "Professional dog trainer offering specialized pet care services. Expert in behavior modification.",
+    services: [
+      "Dog Training",
+      "Behavior Modification",
+      "Agility Training",
+      "Pet Boarding",
+      "Special Needs Care",
+    ],
     category: "Pet Care",
     availability: "Weekdays",
     languages: ["English", "Spanish"],
-    certifications: ["Professional Dog Trainer", "Animal Psychology", "Behavior Specialist"],
+    certifications: [
+      "Professional Dog Trainer",
+      "Animal Psychology",
+      "Behavior Specialist",
+    ],
   },
   {
     id: 9,
@@ -183,9 +263,17 @@ const careTakerData = [
     rating: 4.7,
     reviews: 145,
     age: 30,
-    image: "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=800&q=80",
-    description: "Multilingual nanny offering language immersion and educational support for children.",
-    services: ["Language Immersion", "Academic Tutoring", "Cultural Activities", "Art & Music", "Travel Companion"],
+    image:
+      "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=800&q=80",
+    description:
+      "Multilingual nanny offering language immersion and educational support for children.",
+    services: [
+      "Language Immersion",
+      "Academic Tutoring",
+      "Cultural Activities",
+      "Art & Music",
+      "Travel Companion",
+    ],
     category: "Nanny",
     availability: "Full-time",
     languages: ["English", "Korean", "Japanese", "French"],
@@ -202,13 +290,25 @@ const careTakerData = [
     rating: 4.9,
     reviews: 312,
     age: 62,
-    image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=800&q=80",
-    description: "Retired RN providing professional medical care for seniors at home. Extensive hospital experience.",
-    services: ["Medical Care", "Wound Care", "Physical Therapy", "Medical Equipment", "24/7 Monitoring"],
+    image:
+      "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=800&q=80",
+    description:
+      "Retired RN providing professional medical care for seniors at home. Extensive hospital experience.",
+    services: [
+      "Medical Care",
+      "Wound Care",
+      "Physical Therapy",
+      "Medical Equipment",
+      "24/7 Monitoring",
+    ],
     category: "Elder Care",
     availability: "Full-time",
     languages: ["English"],
-    certifications: ["Registered Nurse", "Geriatric Specialist", "Emergency Care"],
+    certifications: [
+      "Registered Nurse",
+      "Geriatric Specialist",
+      "Emergency Care",
+    ],
   },
   {
     id: 11,
@@ -221,9 +321,17 @@ const careTakerData = [
     rating: 4.8,
     reviews: 98,
     age: 27,
-    image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=800&q=80",
-    description: "Cat lover specializing in feline care. Expert in cat behavior and special needs cats.",
-    services: ["Cat Sitting", "Litter Maintenance", "Play Therapy", "Medication", "Multiple Cat Households"],
+    image:
+      "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=800&q=80",
+    description:
+      "Cat lover specializing in feline care. Expert in cat behavior and special needs cats.",
+    services: [
+      "Cat Sitting",
+      "Litter Maintenance",
+      "Play Therapy",
+      "Medication",
+      "Multiple Cat Households",
+    ],
     category: "Pet Care",
     availability: "Flexible",
     languages: ["English", "Spanish"],
@@ -240,9 +348,17 @@ const careTakerData = [
     rating: 4.5,
     reviews: 56,
     age: 22,
-    image: "https://images.unsplash.com/photo-1507591064344-4c6ce005-128?w=800&q=80",
-    description: "Education major offering fun, educational babysitting services. Great with school projects.",
-    services: ["Homework Help", "STEM Activities", "Creative Arts", "Evening Care", "Summer Camp Activities"],
+    image:
+      "https://images.unsplash.com/photo-1507591064344-4c6ce005-128?w=800&q=80",
+    description:
+      "Education major offering fun, educational babysitting services. Great with school projects.",
+    services: [
+      "Homework Help",
+      "STEM Activities",
+      "Creative Arts",
+      "Evening Care",
+      "Summer Camp Activities",
+    ],
     category: "Babysitter",
     availability: "Evenings & Weekends",
     languages: ["English"],
@@ -253,10 +369,10 @@ const careTakerData = [
 // Care Taker Card Component
 const CareTakerCard = ({ careTaker, onClick }) => {
   const categoryIcons = {
-    'Nanny': <Baby className="w-4 h-4" />,
-    'Babysitter': <Users className="w-4 h-4" />,
-    'Elder Care': <Shield className="w-4 h-4" />,
-    'Pet Care': <PawPrint className="w-4 h-4" />,
+    Nanny: <Baby className="w-4 h-4" />,
+    Babysitter: <Users className="w-4 h-4" />,
+    "Elder Care": <Shield className="w-4 h-4" />,
+    "Pet Care": <PawPrint className="w-4 h-4" />,
   };
 
   return (
@@ -264,7 +380,7 @@ const CareTakerCard = ({ careTaker, onClick }) => {
       onClick={onClick}
       className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer group border border-gray-200"
     >
-       <div className="relative pt-[75%] sm:pt-[75%] overflow-hidden bg-gray-100">
+      <div className="relative pt-[75%] sm:pt-[75%] overflow-hidden bg-gray-100">
         <img
           src={careTaker.image}
           alt={careTaker.name}
@@ -277,7 +393,9 @@ const CareTakerCard = ({ careTaker, onClick }) => {
           <Heart className="w-4 h-4 text-gray-600 hover:text-red-500" />
         </button>
         <div className="absolute top-2 left-2 px-2 py-1 bg-black/70 text-white text-xs rounded-full flex items-center z-10">
-          {categoryIcons[careTaker.category] || <User className="w-3 h-3 mr-1" />}
+          {categoryIcons[careTaker.category] || (
+            <User className="w-3 h-3 mr-1" />
+          )}
           <span className="ml-1">{careTaker.category}</span>
         </div>
       </div>
@@ -287,8 +405,12 @@ const CareTakerCard = ({ careTaker, onClick }) => {
           <h3 className="font-bold text-gray-900 text-sm">{careTaker.name}</h3>
           <div className="flex items-center">
             <Star className="w-3 h-3 text-yellow-400 fill-current mr-1" />
-            <span className="text-xs font-medium text-gray-700">{careTaker.rating}</span>
-            <span className="text-xs text-gray-500 ml-1">({careTaker.reviews})</span>
+            <span className="text-xs font-medium text-gray-700">
+              {careTaker.rating}
+            </span>
+            <span className="text-xs text-gray-500 ml-1">
+              ({careTaker.reviews})
+            </span>
           </div>
         </div>
 
@@ -298,7 +420,8 @@ const CareTakerCard = ({ careTaker, onClick }) => {
 
         <div className="flex items-center justify-between mb-2">
           <span className="text-base sm:text-lg font-bold text-[#27bb97]">
-            ${careTaker.price}<span className="text-xs text-gray-500 font-normal">/hr</span>
+            ${careTaker.price}
+            <span className="text-xs text-gray-500 font-normal">/hr</span>
           </span>
           <span className="text-xs text-gray-500 px-2 py-1 bg-gray-100 rounded-full">
             <Briefcase className="w-3 h-3 inline mr-1" />
@@ -328,16 +451,21 @@ const CareTakerListing = () => {
   const [selectedAvailability, setSelectedAvailability] = useState([]);
 
   // Get unique categories and availability options
-  const categories = [...new Set(careTakerData.map(p => p.category))];
-  const availabilityOptions = [...new Set(careTakerData.map(p => p.availability))];
+  const categories = [...new Set(careTakerData.map((p) => p.category))];
+  const availabilityOptions = [
+    ...new Set(careTakerData.map((p) => p.availability)),
+  ];
 
   const filteredCareTakers = careTakerData.filter((careTaker) => {
     // Search filter
-    if (searchQuery && !careTaker.name.toLowerCase().includes(searchQuery.toLowerCase()) && 
-        !careTaker.title.toLowerCase().includes(searchQuery.toLowerCase())) {
+    if (
+      searchQuery &&
+      !careTaker.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
+      !careTaker.title.toLowerCase().includes(searchQuery.toLowerCase())
+    ) {
       return false;
     }
-    
+
     // Price filter
     if (priceMin && careTaker.price < parseFloat(priceMin)) {
       return false;
@@ -345,17 +473,23 @@ const CareTakerListing = () => {
     if (priceMax && careTaker.price > parseFloat(priceMax)) {
       return false;
     }
-    
+
     // Category filter
-    if (selectedCategories.length > 0 && !selectedCategories.includes(careTaker.category)) {
+    if (
+      selectedCategories.length > 0 &&
+      !selectedCategories.includes(careTaker.category)
+    ) {
       return false;
     }
-    
+
     // Availability filter
-    if (selectedAvailability.length > 0 && !selectedAvailability.includes(careTaker.availability)) {
+    if (
+      selectedAvailability.length > 0 &&
+      !selectedAvailability.includes(careTaker.availability)
+    ) {
       return false;
     }
-    
+
     return true;
   });
 
@@ -364,18 +498,18 @@ const CareTakerListing = () => {
   };
 
   const handleCategoryChange = (category) => {
-    setSelectedCategories(prev => 
+    setSelectedCategories((prev) =>
       prev.includes(category)
-        ? prev.filter(c => c !== category)
-        : [...prev, category]
+        ? prev.filter((c) => c !== category)
+        : [...prev, category],
     );
   };
 
   const handleAvailabilityChange = (availability) => {
-    setSelectedAvailability(prev =>
+    setSelectedAvailability((prev) =>
       prev.includes(availability)
-        ? prev.filter(a => a !== availability)
-        : [...prev, availability]
+        ? prev.filter((a) => a !== availability)
+        : [...prev, availability],
     );
   };
 
@@ -491,7 +625,9 @@ const CareTakerListing = () => {
                       onChange={() => handleAvailabilityChange(availability)}
                       className="w-4 h-4 text-[#27bb97] border-gray-300 rounded focus:ring-[#27bb97]"
                     />
-                    <span className="ml-2 text-sm text-gray-700">{availability}</span>
+                    <span className="ml-2 text-sm text-gray-700">
+                      {availability}
+                    </span>
                   </label>
                 ))}
               </div>
@@ -569,7 +705,8 @@ const CareTakerListing = () => {
 
             {/* Desktop Results Count */}
             <div className="mt-8 text-center text-gray-600 hidden lg:block">
-              Showing {filteredCareTakers.length} of {careTakerData.length} care takers
+              Showing {filteredCareTakers.length} of {careTakerData.length} care
+              takers
             </div>
 
             {/* No Results */}

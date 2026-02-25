@@ -1,63 +1,143 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const SubNavbar = () => {
   const [hoveredCategory, setHoveredCategory] = useState(null);
   const [showLeftArrow, setShowLeftArrow] = useState(false);
   const [showRightArrow, setShowRightArrow] = useState(true);
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
-  
+
   const scrollContainerRef = useRef(null);
   const navRef = useRef(null);
   const categoryRefs = useRef({});
   const navigate = useNavigate();
 
   const categories = {
-    'Electronics': {
-      path: '/electronics',
-      subcategories: ['Computers', 'TVs', 'Cameras', 'Audio', 'Gaming', 'Phones', 'Tablets', 'Accessories']
+    Electronics: {
+      path: "/electronics",
+      subcategories: [
+        "Computers",
+        "TVs",
+        "Cameras",
+        "Audio",
+        "Gaming",
+        "Phones",
+        "Tablets",
+        "Accessories",
+      ],
     },
-     'Vehicles': {
-      path: '/vehicles',
-      subcategories: ['Cars', 'Motorcycles', 'Trucks', 'Parts', 'Boats', 'RVs', 'ATVs']
+    Vehicles: {
+      path: "/vehicles",
+      subcategories: [
+        "Cars",
+        "Motorcycles",
+        "Trucks",
+        "Parts",
+        "Boats",
+        "RVs",
+        "ATVs",
+      ],
     },
-    'Home & Garden': {
-      path: '/home-garden',
-      subcategories: ['Furniture', 'Appliances', 'Tools', 'Decor', 'Outdoor', 'Kitchen', 'Lighting']
+    "Home & Garden": {
+      path: "/home-garden",
+      subcategories: [
+        "Furniture",
+        "Appliances",
+        "Tools",
+        "Decor",
+        "Outdoor",
+        "Kitchen",
+        "Lighting",
+      ],
     },
-    'Clothing': {
-      path: '/clothing',
-      subcategories: ["Men's Clothing", "Women's Clothing", 'Shoes', 'Jewelry', 'Bags', 'Watches']
+    Clothing: {
+      path: "/clothing",
+      subcategories: [
+        "Men's Clothing",
+        "Women's Clothing",
+        "Shoes",
+        "Jewelry",
+        "Bags",
+        "Watches",
+      ],
     },
-    'Baby & Kids': {
-      path: '/baby-kids',
-      subcategories: ['Baby Gear', 'Toys', 'Kids Clothing', 'Nursery', 'Strollers', 'Car Seats']
+    "Baby & Kids": {
+      path: "/baby-kids",
+      subcategories: [
+        "Baby Gear",
+        "Toys",
+        "Kids Clothing",
+        "Nursery",
+        "Strollers",
+        "Car Seats",
+      ],
     },
-   
-    'Toys & Games': {
-      path: '/toys-games',
-      subcategories: ['Action Figures', 'Board Games', 'Collectibles', 'Crafts', 'Video Games', 'Puzzles']
+
+    "Toys & Games": {
+      path: "/toys-games",
+      subcategories: [
+        "Action Figures",
+        "Board Games",
+        "Collectibles",
+        "Crafts",
+        "Video Games",
+        "Puzzles",
+      ],
     },
-    'Sports': {
-      path: '/sports',
-      subcategories: ['Exercise', 'Camping', 'Bikes', 'Sports Equipment', 'Hunting', 'Fishing']
+    Sports: {
+      path: "/sports",
+      subcategories: [
+        "Exercise",
+        "Camping",
+        "Bikes",
+        "Sports Equipment",
+        "Hunting",
+        "Fishing",
+      ],
     },
-    'Collectibles': {
-      path: '/collectibles',
-      subcategories: ['Antiques', 'Art', 'Coins', 'Memorabilia', 'Vintage', 'Stamps']
+    Collectibles: {
+      path: "/collectibles",
+      subcategories: [
+        "Antiques",
+        "Art",
+        "Coins",
+        "Memorabilia",
+        "Vintage",
+        "Stamps",
+      ],
     },
-    'Pets': {
-      path: '/pets',
-      subcategories: ['Dog Supplies', 'Cat Supplies', 'Bird Supplies', 'Fish Supplies', 'Reptile Supplies']
+    Pets: {
+      path: "/pets",
+      subcategories: [
+        "Dog Supplies",
+        "Cat Supplies",
+        "Bird Supplies",
+        "Fish Supplies",
+        "Reptile Supplies",
+      ],
     },
-    'Books': {
-      path: '/books',
-      subcategories: ['Fiction', 'Non-Fiction', "Children's Books", 'Textbooks', 'Comics', 'Magazines']
+    Books: {
+      path: "/books",
+      subcategories: [
+        "Fiction",
+        "Non-Fiction",
+        "Children's Books",
+        "Textbooks",
+        "Comics",
+        "Magazines",
+      ],
     },
-    'Beauty': {
-      path: '/beauty',
-      subcategories: ['Makeup', 'Skincare', 'Hair Care', 'Fragrance', 'Vitamins', 'Personal Care']
-    }
+    Beauty: {
+      path: "/beauty",
+      subcategories: [
+        "Makeup",
+        "Skincare",
+        "Hair Care",
+        "Fragrance",
+        "Vitamins",
+        "Personal Care",
+      ],
+    },
   };
 
   // Check scroll position
@@ -66,21 +146,21 @@ const SubNavbar = () => {
     if (container) {
       setShowLeftArrow(container.scrollLeft > 0);
       setShowRightArrow(
-        container.scrollLeft < container.scrollWidth - container.clientWidth - 10
+        container.scrollLeft <
+          container.scrollWidth - container.clientWidth - 10,
       );
     }
   };
 
-  
   useEffect(() => {
     const container = scrollContainerRef.current;
     if (container) {
-      container.addEventListener('scroll', checkScroll);
+      container.addEventListener("scroll", checkScroll);
       checkScroll();
-      window.addEventListener('resize', checkScroll);
+      window.addEventListener("resize", checkScroll);
       return () => {
-        container.removeEventListener('scroll', checkScroll);
-        window.removeEventListener('resize', checkScroll);
+        container.removeEventListener("scroll", checkScroll);
+        window.removeEventListener("resize", checkScroll);
       };
     }
   }, []);
@@ -90,8 +170,8 @@ const SubNavbar = () => {
     if (container) {
       const scrollAmount = 200;
       container.scrollBy({
-        left: direction === 'left' ? -scrollAmount : scrollAmount,
-        behavior: 'smooth'
+        left: direction === "left" ? -scrollAmount : scrollAmount,
+        behavior: "smooth",
       });
     }
   };
@@ -117,7 +197,7 @@ const SubNavbar = () => {
 
   return (
     <>
-      <nav 
+      <nav
         ref={navRef}
         className="bg-white shadow-sm border-b top-0 z-40 mt-16 md:mt-16 lg:mt-18 sticky"
       >
@@ -125,11 +205,21 @@ const SubNavbar = () => {
           {/* Left Scroll Arrow */}
           {showLeftArrow && (
             <button
-              onClick={() => scroll('left')}
+              onClick={() => scroll("left")}
               className="absolute left-0 top-1/2 -translate-y-1/2 z-30 bg-white hover:bg-gray-50 text-gray-600 hover:text-teal-600 rounded-full shadow-md p-1.5 transition-all duration-200 border border-gray-200"
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15 19l-7-7 7-7"
+                />
               </svg>
             </button>
           )}
@@ -137,11 +227,21 @@ const SubNavbar = () => {
           {/* Right Scroll Arrow */}
           {showRightArrow && (
             <button
-              onClick={() => scroll('right')}
+              onClick={() => scroll("right")}
               className="absolute right-0 top-1/2 -translate-y-1/2 z-30 bg-white hover:bg-gray-50 text-gray-600 hover:text-teal-600 rounded-full shadow-md p-1.5 transition-all duration-200 border border-gray-200"
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
               </svg>
             </button>
           )}
@@ -150,7 +250,7 @@ const SubNavbar = () => {
           <div
             ref={scrollContainerRef}
             className="flex items-center overflow-x-auto scrollbar-hide scroll-smooth py-2"
-            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+            style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
           >
             {Object.keys(categories).map((category) => (
               <div
@@ -174,17 +274,17 @@ const SubNavbar = () => {
 
       {/* Compact Dropdown */}
       {hoveredCategory && (
-        <div 
+        <div
           className="fixed bg-white rounded-md shadow-lg border border-gray-200 py-1 z-50 text-sm"
           style={{
             top: dropdownPosition.top,
             left: dropdownPosition.left,
-            minWidth: '180px',
-            maxWidth: '250px'
+            minWidth: "180px",
+            maxWidth: "250px",
           }}
           onMouseEnter={() => setHoveredCategory(hoveredCategory)}
           onMouseLeave={() => setHoveredCategory(null)}
-        >  
+        >
           {/* Subcategories - Compact */}
           <div className="max-h-80 overflow-y-auto">
             {categories[hoveredCategory].subcategories.map((subcategory) => (

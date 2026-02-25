@@ -30,9 +30,17 @@ const vehiclesData = [
     sellerRating: 4.8,
     sellerReviews: 342,
     sellerJoined: "Jan 2019",
-    image: "https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=800&q=80",
-    description: "2022 Toyota Camry XLE with only 18,500 miles. Excellent condition, one owner, no accidents. All maintenance records available.",
-    features: ["18,500 Miles", "One Owner", "No Accidents", "Leather Seats", "Sunroof"],
+    image:
+      "https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=800&q=80",
+    description:
+      "2022 Toyota Camry XLE with only 18,500 miles. Excellent condition, one owner, no accidents. All maintenance records available.",
+    features: [
+      "18,500 Miles",
+      "One Owner",
+      "No Accidents",
+      "Leather Seats",
+      "Sunroof",
+    ],
     category: "Sedan",
     mileage: "18,500",
     transmission: "Automatic",
@@ -51,9 +59,17 @@ const vehiclesData = [
     sellerRating: 4.6,
     sellerReviews: 189,
     sellerJoined: "Mar 2020",
-    image: "https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=800&q=80",
-    description: "2020 Honda CR-V EX with 32,000 miles. Well-maintained SUV with all features working perfectly.",
-    features: ["32,000 Miles", "AWD", "Backup Camera", "Bluetooth", "Heated Seats"],
+    image:
+      "https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=800&q=80",
+    description:
+      "2020 Honda CR-V EX with 32,000 miles. Well-maintained SUV with all features working perfectly.",
+    features: [
+      "32,000 Miles",
+      "AWD",
+      "Backup Camera",
+      "Bluetooth",
+      "Heated Seats",
+    ],
     category: "SUV",
     mileage: "32,000",
     transmission: "Automatic",
@@ -72,9 +88,17 @@ const vehiclesData = [
     sellerRating: 4.9,
     sellerReviews: 456,
     sellerJoined: "Aug 2018",
-    image: "https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=800&q=80",
-    description: "2023 Tesla Model 3 with Enhanced Autopilot. Premium interior, long range battery.",
-    features: ["12,000 Miles", "Enhanced Autopilot", "Premium Interior", "Long Range", "One Owner"],
+    image:
+      "https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=800&q=80",
+    description:
+      "2023 Tesla Model 3 with Enhanced Autopilot. Premium interior, long range battery.",
+    features: [
+      "12,000 Miles",
+      "Enhanced Autopilot",
+      "Premium Interior",
+      "Long Range",
+      "One Owner",
+    ],
     category: "Electric",
     mileage: "12,000",
     transmission: "Automatic",
@@ -93,9 +117,17 @@ const vehiclesData = [
     sellerRating: 4.7,
     sellerReviews: 234,
     sellerJoined: "Nov 2019",
-    image: "https://images.unsplash.com/photo-1553440569-bcc63803a83d?w=800&q=80",
-    description: "2019 Ford F-150 XLT with 45,000 miles. Crew cab, 4x4, tow package included.",
-    features: ["45,000 Miles", "4x4", "Crew Cab", "Tow Package", "Backup Camera"],
+    image:
+      "https://images.unsplash.com/photo-1553440569-bcc63803a83d?w=800&q=80",
+    description:
+      "2019 Ford F-150 XLT with 45,000 miles. Crew cab, 4x4, tow package included.",
+    features: [
+      "45,000 Miles",
+      "4x4",
+      "Crew Cab",
+      "Tow Package",
+      "Backup Camera",
+    ],
     category: "Truck",
     mileage: "45,000",
     transmission: "Automatic",
@@ -114,9 +146,17 @@ const vehiclesData = [
     sellerRating: 4.8,
     sellerReviews: 312,
     sellerJoined: "Feb 2020",
-    image: "https://images.unsplash.com/photo-1555212697-194d092e3b8f?w=800&q=80",
-    description: "2021 BMW 330i with M Sport package. Low miles, excellent condition.",
-    features: ["22,000 Miles", "M Sport Package", "Premium Sound", "Navigation", "Heated Seats"],
+    image:
+      "https://images.unsplash.com/photo-1555212697-194d092e3b8f?w=800&q=80",
+    description:
+      "2021 BMW 330i with M Sport package. Low miles, excellent condition.",
+    features: [
+      "22,000 Miles",
+      "M Sport Package",
+      "Premium Sound",
+      "Navigation",
+      "Heated Seats",
+    ],
     category: "Luxury",
     mileage: "22,000",
     transmission: "Automatic",
@@ -135,9 +175,17 @@ const vehiclesData = [
     sellerRating: 4.5,
     sellerReviews: 167,
     sellerJoined: "Jun 2021",
-    image: "https://images.unsplash.com/photo-1580273916550-e323be2ae537?w=800&q=80",
-    description: "2018 Toyota RAV4 LE with 55,000 miles. Reliable SUV, great for families.",
-    features: ["55,000 Miles", "Good Condition", "Backup Camera", "Bluetooth", "Spare Key"],
+    image:
+      "https://images.unsplash.com/photo-1580273916550-e323be2ae537?w=800&q=80",
+    description:
+      "2018 Toyota RAV4 LE with 55,000 miles. Reliable SUV, great for families.",
+    features: [
+      "55,000 Miles",
+      "Good Condition",
+      "Backup Camera",
+      "Bluetooth",
+      "Spare Key",
+    ],
     category: "SUV",
     mileage: "55,000",
     transmission: "Automatic",
@@ -156,9 +204,17 @@ const vehiclesData = [
     sellerRating: 4.7,
     sellerReviews: 278,
     sellerJoined: "Apr 2019",
-    image: "https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?w=800&q=80",
-    description: "2020 Subaru Outback with 28,000 miles. All-wheel drive, excellent for all weather.",
-    features: ["28,000 Miles", "AWD", "EyeSight Safety", "Roof Rails", "All-Weather Mats"],
+    image:
+      "https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?w=800&q=80",
+    description:
+      "2020 Subaru Outback with 28,000 miles. All-wheel drive, excellent for all weather.",
+    features: [
+      "28,000 Miles",
+      "AWD",
+      "EyeSight Safety",
+      "Roof Rails",
+      "All-Weather Mats",
+    ],
     category: "Wagon",
     mileage: "28,000",
     transmission: "Automatic",
@@ -177,9 +233,17 @@ const vehiclesData = [
     sellerRating: 4.4,
     sellerReviews: 145,
     sellerJoined: "Oct 2020",
-    image: "https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=800&q=80",
-    description: "2017 Honda Civic EX with 65,000 miles. Great fuel economy, reliable daily driver.",
-    features: ["65,000 Miles", "Great MPG", "Backup Camera", "Sunroof", "Clean Interior"],
+    image:
+      "https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=800&q=80",
+    description:
+      "2017 Honda Civic EX with 65,000 miles. Great fuel economy, reliable daily driver.",
+    features: [
+      "65,000 Miles",
+      "Great MPG",
+      "Backup Camera",
+      "Sunroof",
+      "Clean Interior",
+    ],
     category: "Sedan",
     mileage: "65,000",
     transmission: "Automatic",
@@ -198,9 +262,17 @@ const vehiclesData = [
     sellerRating: 4.6,
     sellerReviews: 189,
     sellerJoined: "May 2019",
-    image: "https://images.unsplash.com/photo-1553440569-bcc63803a83d?w=800&q=80",
-    description: "2021 Jeep Wrangler Sahara with 15,000 miles. 4x4, hard top, premium package.",
-    features: ["15,000 Miles", "4x4", "Hard Top", "Premium Package", "Low Miles"],
+    image:
+      "https://images.unsplash.com/photo-1553440569-bcc63803a83d?w=800&q=80",
+    description:
+      "2021 Jeep Wrangler Sahara with 15,000 miles. 4x4, hard top, premium package.",
+    features: [
+      "15,000 Miles",
+      "4x4",
+      "Hard Top",
+      "Premium Package",
+      "Low Miles",
+    ],
     category: "SUV",
     mileage: "15,000",
     transmission: "Automatic",
@@ -219,9 +291,17 @@ const vehiclesData = [
     sellerRating: 4.8,
     sellerReviews: 423,
     sellerJoined: "Jan 2018",
-    image: "https://images.unsplash.com/photo-1553440569-bcc63803a83d?w=800&q=80",
-    description: "2019 Mercedes-Benz C300 with 30,000 miles. Luxury sedan in excellent condition.",
-    features: ["30,000 Miles", "Premium Package", "Leather Interior", "Panoramic Roof", "Burmester Sound"],
+    image:
+      "https://images.unsplash.com/photo-1553440569-bcc63803a83d?w=800&q=80",
+    description:
+      "2019 Mercedes-Benz C300 with 30,000 miles. Luxury sedan in excellent condition.",
+    features: [
+      "30,000 Miles",
+      "Premium Package",
+      "Leather Interior",
+      "Panoramic Roof",
+      "Burmester Sound",
+    ],
     category: "Luxury",
     mileage: "30,000",
     transmission: "Automatic",
@@ -240,9 +320,17 @@ const vehiclesData = [
     sellerRating: 4.5,
     sellerReviews: 178,
     sellerJoined: "Mar 2021",
-    image: "https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=800&q=80",
-    description: "2020 Hyundai Tucson SEL with 35,000 miles. Great family SUV with warranty remaining.",
-    features: ["35,000 Miles", "Warranty Remaining", "Apple CarPlay", "Heated Seats", "Blind Spot Monitor"],
+    image:
+      "https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=800&q=80",
+    description:
+      "2020 Hyundai Tucson SEL with 35,000 miles. Great family SUV with warranty remaining.",
+    features: [
+      "35,000 Miles",
+      "Warranty Remaining",
+      "Apple CarPlay",
+      "Heated Seats",
+      "Blind Spot Monitor",
+    ],
     category: "SUV",
     mileage: "35,000",
     transmission: "Automatic",
@@ -261,9 +349,17 @@ const vehiclesData = [
     sellerRating: 4.3,
     sellerReviews: 132,
     sellerJoined: "Sep 2020",
-    image: "https://images.unsplash.com/photo-1580273916550-e323be2ae537?w=800&q=80",
-    description: "2016 Toyota Prius with 75,000 miles. Excellent fuel economy, well-maintained.",
-    features: ["75,000 Miles", "Great MPG", "Hybrid", "Backup Camera", "Clean History"],
+    image:
+      "https://images.unsplash.com/photo-1580273916550-e323be2ae537?w=800&q=80",
+    description:
+      "2016 Toyota Prius with 75,000 miles. Excellent fuel economy, well-maintained.",
+    features: [
+      "75,000 Miles",
+      "Great MPG",
+      "Hybrid",
+      "Backup Camera",
+      "Clean History",
+    ],
     category: "Hybrid",
     mileage: "75,000",
     transmission: "Automatic",
@@ -282,9 +378,17 @@ const vehiclesData = [
     sellerRating: 4.8,
     sellerReviews: 312,
     sellerJoined: "Feb 2020",
-    image: "https://images.unsplash.com/photo-1555212697-194d092e3b8f?w=800&q=80",
-    description: "2022 Audi A4 Premium with 20,000 miles. Luxury sedan with advanced features.",
-    features: ["20,000 Miles", "Premium Package", "Leather Interior", "Virtual Cockpit", "Bang & Olufsen Sound"],
+    image:
+      "https://images.unsplash.com/photo-1555212697-194d092e3b8f?w=800&q=80",
+    description:
+      "2022 Audi A4 Premium with 20,000 miles. Luxury sedan with advanced features.",
+    features: [
+      "20,000 Miles",
+      "Premium Package",
+      "Leather Interior",
+      "Virtual Cockpit",
+      "Bang & Olufsen Sound",
+    ],
     category: "Luxury",
     mileage: "20,000",
     transmission: "Automatic",
@@ -292,7 +396,7 @@ const vehiclesData = [
     year: "2022",
     color: "Gray",
   },
-    {
+  {
     id: 14,
     title: "2018 Nissan Rogue SV",
     price: 18900,
@@ -303,17 +407,25 @@ const vehiclesData = [
     sellerRating: 4.6,
     sellerReviews: 189,
     sellerJoined: "Mar 2020",
-    image: "https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=800&q=80",
-    description: "2018 Nissan Rogue SV with 40,000 miles. Comfortable SUV with great features.",
-    features: ["40,000 Miles", "SV Package", "Backup Camera", "Bluetooth", "Remote Start"],
+    image:
+      "https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=800&q=80",
+    description:
+      "2018 Nissan Rogue SV with 40,000 miles. Comfortable SUV with great features.",
+    features: [
+      "40,000 Miles",
+      "SV Package",
+      "Backup Camera",
+      "Bluetooth",
+      "Remote Start",
+    ],
     category: "SUV",
     mileage: "40,000",
     transmission: "Automatic",
     fuelType: "Gasoline",
     year: "2018",
     color: "Silver",
-    },
-    {
+  },
+  {
     id: 15,
     title: "2019 Kia Soul +",
     price: 15900,
@@ -324,17 +436,25 @@ const vehiclesData = [
     sellerRating: 4.4,
     sellerReviews: 145,
     sellerJoined: "Oct 2020",
-    image: "https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=800&q=80",
-    description: "2019 Kia Soul + with 30,000 miles. Unique design, great for city driving.",
-    features: ["30,000 Miles", "Unique Design", "Backup Camera", "Touchscreen Display", "Bluetooth"],
+    image:
+      "https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=800&q=80",
+    description:
+      "2019 Kia Soul + with 30,000 miles. Unique design, great for city driving.",
+    features: [
+      "30,000 Miles",
+      "Unique Design",
+      "Backup Camera",
+      "Touchscreen Display",
+      "Bluetooth",
+    ],
     category: "Wagon",
     mileage: "30,000",
     transmission: "Automatic",
     fuelType: "Gasoline",
     year: "2019",
     color: "Red",
-    },
-    {
+  },
+  {
     id: 16,
     title: "2020 Chevrolet Silverado 1500 LT",
     price: 33900,
@@ -345,28 +465,36 @@ const vehiclesData = [
     sellerRating: 4.7,
     sellerReviews: 234,
     sellerJoined: "Nov 2019",
-    image: "https://images.unsplash.com/photo-1553440569-bcc63803a83d?w=800&q=80",
-    description: "2020 Chevrolet Silverado 1500 LT with 25,000 miles. Powerful truck with great towing capacity.",
-    features: ["25,000 Miles", "V8 Engine", "Crew Cab", "Tow Package", "Backup Camera"],
+    image:
+      "https://images.unsplash.com/photo-1553440569-bcc63803a83d?w=800&q=80",
+    description:
+      "2020 Chevrolet Silverado 1500 LT with 25,000 miles. Powerful truck with great towing capacity.",
+    features: [
+      "25,000 Miles",
+      "V8 Engine",
+      "Crew Cab",
+      "Tow Package",
+      "Backup Camera",
+    ],
     category: "Truck",
     mileage: "25,000",
     transmission: "Automatic",
     fuelType: "Gasoline",
     year: "2020",
     color: "Blue",
-    }
+  },
 ];
 
 // Vehicle Card Component
 const VehicleCard = ({ vehicle, onClick }) => {
   const categoryIcons = {
-    'Sedan': <Car className="w-4 h-4" />,
-    'SUV': <Users className="w-4 h-4" />,
-    'Electric': <Car className="w-4 h-4" />,
-    'Truck': <Car className="w-4 h-4" />,
-    'Luxury': <Shield className="w-4 h-4" />,
-    'Wagon': <Car className="w-4 h-4" />,
-    'Hybrid': <Fuel className="w-4 h-4" />,
+    Sedan: <Car className="w-4 h-4" />,
+    SUV: <Users className="w-4 h-4" />,
+    Electric: <Car className="w-4 h-4" />,
+    Truck: <Car className="w-4 h-4" />,
+    Luxury: <Shield className="w-4 h-4" />,
+    Wagon: <Car className="w-4 h-4" />,
+    Hybrid: <Fuel className="w-4 h-4" />,
   };
 
   return (
@@ -374,7 +502,7 @@ const VehicleCard = ({ vehicle, onClick }) => {
       onClick={onClick}
       className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer group border border-gray-200"
     >
-    <div className="relative pt-[75%] sm:pt-[75%] overflow-hidden bg-gray-100">
+      <div className="relative pt-[75%] sm:pt-[75%] overflow-hidden bg-gray-100">
         <img
           src={vehicle.image}
           alt={vehicle.title}
@@ -436,15 +564,20 @@ const VehiclesListing = () => {
   const [selectedYears, setSelectedYears] = useState([]);
 
   // Get unique categories and years
-  const categories = [...new Set(vehiclesData.map(p => p.category))];
-  const years = [...new Set(vehiclesData.map(p => p.year))].sort((a, b) => b - a);
+  const categories = [...new Set(vehiclesData.map((p) => p.category))];
+  const years = [...new Set(vehiclesData.map((p) => p.year))].sort(
+    (a, b) => b - a,
+  );
 
   const filteredVehicles = vehiclesData.filter((vehicle) => {
     // Search filter
-    if (searchQuery && !vehicle.title.toLowerCase().includes(searchQuery.toLowerCase())) {
+    if (
+      searchQuery &&
+      !vehicle.title.toLowerCase().includes(searchQuery.toLowerCase())
+    ) {
       return false;
     }
-    
+
     // Price filter
     if (priceMin && vehicle.price < parseFloat(priceMin)) {
       return false;
@@ -452,17 +585,20 @@ const VehiclesListing = () => {
     if (priceMax && vehicle.price > parseFloat(priceMax)) {
       return false;
     }
-    
+
     // Category filter
-    if (selectedCategories.length > 0 && !selectedCategories.includes(vehicle.category)) {
+    if (
+      selectedCategories.length > 0 &&
+      !selectedCategories.includes(vehicle.category)
+    ) {
       return false;
     }
-    
+
     // Year filter
     if (selectedYears.length > 0 && !selectedYears.includes(vehicle.year)) {
       return false;
     }
-    
+
     return true;
   });
 
@@ -471,18 +607,16 @@ const VehiclesListing = () => {
   };
 
   const handleCategoryChange = (category) => {
-    setSelectedCategories(prev => 
+    setSelectedCategories((prev) =>
       prev.includes(category)
-        ? prev.filter(c => c !== category)
-        : [...prev, category]
+        ? prev.filter((c) => c !== category)
+        : [...prev, category],
     );
   };
 
   const handleYearChange = (year) => {
-    setSelectedYears(prev =>
-      prev.includes(year)
-        ? prev.filter(y => y !== year)
-        : [...prev, year]
+    setSelectedYears((prev) =>
+      prev.includes(year) ? prev.filter((y) => y !== year) : [...prev, year],
     );
   };
 
@@ -676,7 +810,8 @@ const VehiclesListing = () => {
 
             {/* Desktop Results Count */}
             <div className="mt-8 text-center text-gray-600 hidden lg:block">
-              Showing {filteredVehicles.length} of {vehiclesData.length} vehicles
+              Showing {filteredVehicles.length} of {vehiclesData.length}{" "}
+              vehicles
             </div>
 
             {/* No Results */}

@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
-import { Phone, Mail, MapPin, Send } from 'lucide-react';
+import React, { useState } from "react";
+import { Phone, Mail, MapPin, Send } from "lucide-react";
 
 const ContactUS = () => {
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    subject: '',
-    message: '',
+    name: "",
+    email: "",
+    subject: "",
+    message: "",
   });
 
   const handleChange = (e) => {
@@ -15,9 +15,9 @@ const ContactUS = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('Submitted:', formData);
-    alert('Thank you! We\'ll get back to you soon.');
-    setFormData({ name: '', email: '', subject: '', message: '' });
+    console.log("Submitted:", formData);
+    alert("Thank you! We'll get back to you soon.");
+    setFormData({ name: "", email: "", subject: "", message: "" });
   };
 
   return (
@@ -29,8 +29,9 @@ const ContactUS = () => {
             Get In Touch
           </h2>
           <p className="text-base sm:text-lg text-gray-600 max-w-3xl mx-auto px-4">
-            We'll create high-quality linkable content and build at least 40 high-authority links to each asset,
-            paving the way for you to grow your rankings, improve brand.
+            We'll create high-quality linkable content and build at least 40
+            high-authority links to each asset, paving the way for you to grow
+            your rankings, improve brand.
           </p>
         </div>
 
@@ -44,9 +45,12 @@ const ContactUS = () => {
               <div className="absolute -top-12 -left-12 w-28 h-28 sm:w-40 sm:h-40 bg-teal-700 rounded-full opacity-30"></div>
 
               <div className="relative z-10">
-                <h3 className="text-xl sm:text-2xl font-bold mb-6 lg:mb-8">Contact Information</h3>
+                <h3 className="text-xl sm:text-2xl font-bold mb-6 lg:mb-8">
+                  Contact Information
+                </h3>
                 <p className="text-teal-100 mb-8 lg:mb-10 text-sm sm:text-base leading-relaxed">
-                  We'll create high-quality linkable content and build at least 40 high-authority links.
+                  We'll create high-quality linkable content and build at least
+                  40 high-authority links.
                 </p>
 
                 <div className="space-y-6 sm:space-y-8">
@@ -56,8 +60,12 @@ const ContactUS = () => {
                     </div>
                     <div className="min-w-0">
                       <p className="text-xs sm:text-sm opacity-90">Phone</p>
-                      <p className="font-semibold text-base sm:text-lg">+8801778777666</p>
-                      <p className="font-semibold text-base sm:text-lg">+8801788323866</p>
+                      <p className="font-semibold text-base sm:text-lg">
+                        +8801778777666
+                      </p>
+                      <p className="font-semibold text-base sm:text-lg">
+                        +8801788323866
+                      </p>
                     </div>
                   </div>
 
@@ -67,7 +75,9 @@ const ContactUS = () => {
                     </div>
                     <div className="min-w-0">
                       <p className="text-xs sm:text-sm opacity-90">Email</p>
-                      <p className="font-semibold text-base sm:text-lg break-words">support@Listify.com</p>
+                      <p className="font-semibold text-base sm:text-lg break-words">
+                        support@Listify.com
+                      </p>
                     </div>
                   </div>
 
@@ -77,7 +87,9 @@ const ContactUS = () => {
                     </div>
                     <div>
                       <p className="text-xs sm:text-sm opacity-90">Address</p>
-                      <p className="font-semibold text-base sm:text-lg">New York, USA</p>
+                      <p className="font-semibold text-base sm:text-lg">
+                        New York, USA
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -86,10 +98,15 @@ const ContactUS = () => {
 
             {/* Right Column - Form (White Background) */}
             <div className="lg:w-2/3 p-6 sm:p-8 lg:p-10">
-              <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6 h-full flex flex-col">
+              <form
+                onSubmit={handleSubmit}
+                className="space-y-4 sm:space-y-6 h-full flex flex-col"
+              >
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Your Name</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Your Name
+                    </label>
                     <input
                       type="text"
                       name="name"
@@ -101,7 +118,9 @@ const ContactUS = () => {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Your Email</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Your Email
+                    </label>
                     <input
                       type="email"
                       name="email"
@@ -115,7 +134,9 @@ const ContactUS = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Your Subject</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Your Subject
+                  </label>
                   <input
                     type="text"
                     name="subject"
@@ -128,7 +149,9 @@ const ContactUS = () => {
                 </div>
 
                 <div className="flex-grow">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Message</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Message
+                  </label>
                   <textarea
                     name="message"
                     value={formData.message}

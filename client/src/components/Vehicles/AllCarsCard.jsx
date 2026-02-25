@@ -11,7 +11,6 @@ import {
 // react icons
 import { RiArrowRightWideLine } from "react-icons/ri";
 
-
 const AllCarsCard = ({
   //   carImage = "/cars/toyota.webp",
   category = "SMALL",
@@ -42,7 +41,7 @@ const AllCarsCard = ({
           />
           {/* Arrow Button */}
           <button className="absolute right-1 top-1/2 transform -translate-y-1/2">
-            <RiArrowRightWideLine  className=" text-green-600" size={80}  />
+            <RiArrowRightWideLine className=" text-green-600" size={80} />
           </button>
         </div>
 
@@ -151,8 +150,6 @@ const AllCarsCard = ({
                   <ChevronRight className="w-4 h-4" />
                 </button>
               </div>
-
-
             </div>
           </div>
         </div>

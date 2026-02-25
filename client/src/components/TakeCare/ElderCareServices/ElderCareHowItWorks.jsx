@@ -1,28 +1,42 @@
-import React from 'react';
-import { UserPlus, Search, ClipboardCheck, LayoutDashboard, ArrowRight } from 'lucide-react';
+import React from "react";
+import {
+  UserPlus,
+  Search,
+  ClipboardCheck,
+  LayoutDashboard,
+  ArrowRight,
+} from "lucide-react";
 
 const ElderCareHowItWorks = () => {
   const steps = [
     {
       icon: <UserPlus className="w-8 h-8 xs:w-10 xs:h-10 sm:w-12 sm:h-12" />,
-      title: 'Sign Up',
-      description: 'Register on our website and provide your personal or caregiving details to set up your profile.'
+      title: "Sign Up",
+      description:
+        "Register on our website and provide your personal or caregiving details to set up your profile.",
     },
     {
       icon: <Search className="w-8 h-8 xs:w-10 xs:h-10 sm:w-12 sm:h-12" />,
-      title: 'Search & Connect',
-      description: 'Use our platform to find elder care jobs or caregivers that meet your senior care needs and schedule.'
+      title: "Search & Connect",
+      description:
+        "Use our platform to find elder care jobs or caregivers that meet your senior care needs and schedule.",
     },
     {
-      icon: <ClipboardCheck className="w-8 h-8 xs:w-10 xs:h-10 sm:w-12 sm:h-12" />,
-      title: 'Review & Hire',
-      description: 'Review profiles, conduct interviews, and hire or get hired for elder care positions.'
+      icon: (
+        <ClipboardCheck className="w-8 h-8 xs:w-10 xs:h-10 sm:w-12 sm:h-12" />
+      ),
+      title: "Review & Hire",
+      description:
+        "Review profiles, conduct interviews, and hire or get hired for elder care positions.",
     },
     {
-      icon: <LayoutDashboard className="w-8 h-8 xs:w-10 xs:h-10 sm:w-12 sm:h-12" />,
-      title: 'Dashboard & Support',
-      description: 'Utilize customer support and dashboards provided by our website for families and care professionals.'
-    }
+      icon: (
+        <LayoutDashboard className="w-8 h-8 xs:w-10 xs:h-10 sm:w-12 sm:h-12" />
+      ),
+      title: "Dashboard & Support",
+      description:
+        "Utilize customer support and dashboards provided by our website for families and care professionals.",
+    },
   ];
 
   return (
@@ -34,7 +48,8 @@ const ElderCareHowItWorks = () => {
             How It <span className="text-[#27BB97]">Works</span>
           </h2>
           <p className="text-gray-600 text-sm xs:text-base sm:text-lg max-w-3xl mx-auto">
-            Simple steps to find compassionate elder care or your ideal caregiving job
+            Simple steps to find compassionate elder care or your ideal
+            caregiving job
           </p>
         </div>
 
@@ -49,14 +64,14 @@ const ElderCareHowItWorks = () => {
               <div className="absolute -top-3 -right-3 w-8 h-8 xs:w-10 xs:h-10 bg-[#27BB97] text-white rounded-full flex items-center justify-center text-sm xs:text-base font-bold shadow-md">
                 {index + 1}
               </div>
-              
+
               {/* Icon */}
               <div className="text-[#27BB97] mb-4 xs:mb-5 sm:mb-6">
                 <div className="p-3 xs:p-4 bg-[#27BB97]/10 rounded-xl xs:rounded-2xl group-hover:scale-105 sm:group-hover:scale-110 transition-transform duration-300">
                   {step.icon}
                 </div>
               </div>
-              
+
               {/* Content */}
               <h3 className="text-lg xs:text-xl sm:text-xl font-bold text-gray-900 text-center mb-2 xs:mb-3 line-clamp-1">
                 {step.title}
@@ -64,7 +79,7 @@ const ElderCareHowItWorks = () => {
               <p className="text-gray-600 text-center text-xs xs:text-sm sm:text-sm leading-relaxed flex-grow">
                 {step.description}
               </p>
-              
+
               {/* Bottom border effect */}
               <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 group-hover:w-16 xs:group-hover:w-20 sm:group-hover:w-24 h-1 bg-[#27BB97] transition-all duration-300 rounded-t-full"></div>
             </div>
@@ -102,7 +117,8 @@ const ElderCareHowItWorks = () => {
                 Find Caregiving Jobs
               </h3>
               <p className="text-gray-600 mb-6 sm:mb-8 leading-relaxed text-sm xs:text-base sm:text-base">
-                Ready to provide compassionate care? Set up your profile and apply for elder care jobs with flexible schedules.
+                Ready to provide compassionate care? Set up your profile and
+                apply for elder care jobs with flexible schedules.
               </p>
             </div>
             <button className="w-full bg-gradient-to-r from-[#27BB97] to-[#1EA583] hover:from-[#1EA583] hover:to-[#168F6F] text-white font-semibold py-2.5 xs:py-3 sm:py-3 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 shadow-sm hover:shadow-lg text-sm xs:text-base sm:text-base focus:outline-none focus:ring-2 focus:ring-[#27BB97] focus:ring-offset-2">
@@ -121,7 +137,8 @@ const ElderCareHowItWorks = () => {
                 Hire Elder Care
               </h3>
               <p className="text-gray-600 mb-6 sm:mb-8 leading-relaxed text-sm xs:text-base sm:text-base">
-                Need compassionate senior care? Create a profile and find skilled caregivers for your loved ones.
+                Need compassionate senior care? Create a profile and find
+                skilled caregivers for your loved ones.
               </p>
             </div>
             <button className="w-full bg-gradient-to-r from-[#27BB97] to-[#1EA583] hover:from-[#1EA583] hover:to-[#168F6F] text-white font-semibold py-2.5 xs:py-3 sm:py-3 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 shadow-sm hover:shadow-lg text-sm xs:text-base sm:text-base focus:outline-none focus:ring-2 focus:ring-[#27BB97] focus:ring-offset-2">
@@ -141,7 +158,8 @@ const ElderCareHowItWorks = () => {
             <div className="w-8 xs:w-10 sm:w-12 h-0.5 bg-gray-300"></div>
           </div>
           <p className="text-gray-500 text-xs xs:text-sm">
-            Join thousands of families and care professionals who trust our platform
+            Join thousands of families and care professionals who trust our
+            platform
           </p>
         </div>
       </div>

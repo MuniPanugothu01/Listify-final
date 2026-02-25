@@ -41,7 +41,11 @@ const Footer = () => {
   const marketplaceLinks = [
     { name: "Roommates", path: "/roommates", description: "Find great deals" },
     { name: "Rentals", path: "/rentals", description: "Sell your items" },
-    { name: "Services", path: "/services", description: "Professional services", },
+    {
+      name: "Services",
+      path: "/services",
+      description: "Professional services",
+    },
     { name: "Jobs", path: "/jobs", description: "Career opportunities" },
     { name: "Events", path: "/events", description: "Events" },
     { name: "Take Care", path: "/takecare", description: " " },
@@ -60,7 +64,7 @@ const Footer = () => {
     { name: "About Us", path: "/about-us" },
     { name: "Services", path: "/our-services" },
     { name: "Post-add", path: "/post-add" },
-    { name: "Contact", path: "/contact-us" }, 
+    { name: "Contact", path: "/contact-us" },
     { name: "Reviews", path: "/reviews" },
   ];
 
@@ -219,14 +223,14 @@ const Footer = () => {
                 Get Our App
               </h4>
               <div className="space-y-3">
-                <button 
+                <button
                   onClick={scrollToTop}
                   className="w-full flex items-center justify-center space-x-3 bg-black  text-white py-3 px-4 rounded-lg transition-all duration-200 text-sm cursor-pointer shadow-lg "
                 >
                   <Download className="w-4 h-4" />
                   <span>App Store</span>
                 </button>
-                <button 
+                <button
                   onClick={scrollToTop}
                   className="w-full flex items-center justify-center space-x-3 bg-black  text-white py-3 px-4 rounded-lg transition-all duration-200 text-sm cursor-pointer shadow-lg hover:shadow-xl"
                 >

@@ -2,12 +2,12 @@ import React, { useEffect } from "react";
 import { X, Clock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-const EmailProgressPopup = ({ 
-  isOpen, 
-  onClose, 
-  email, 
-  expiryTime, 
-  countdown 
+const EmailProgressPopup = ({
+  isOpen,
+  onClose,
+  email,
+  expiryTime,
+  countdown,
 }) => {
   const navigate = useNavigate();
 
@@ -47,7 +47,8 @@ const EmailProgressPopup = ({
 
           <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-4">
             <p className="text-amber-800 text-sm">
-              This email is already in the registration process. Please check your inbox for the OTP or wait for the session to expire.
+              This email is already in the registration process. Please check
+              your inbox for the OTP or wait for the session to expire.
             </p>
           </div>
 
@@ -74,7 +75,9 @@ const EmailProgressPopup = ({
                 onClose();
                 // Focus on email field
                 setTimeout(() => {
-                  const emailInput = document.querySelector('input[name="email"]');
+                  const emailInput = document.querySelector(
+                    'input[name="email"]',
+                  );
                   if (emailInput) emailInput.focus();
                 }, 100);
               }}
@@ -97,7 +100,8 @@ const EmailProgressPopup = ({
         {/* Footer */}
         <div className="p-4 border-t border-gray-200 bg-gray-50 rounded-b-2xl">
           <p className="text-xs text-gray-500 text-center">
-            The OTP will expire in {expiryTime} seconds. You can request a new OTP after that.
+            The OTP will expire in {expiryTime} seconds. You can request a new
+            OTP after that.
           </p>
         </div>
       </div>

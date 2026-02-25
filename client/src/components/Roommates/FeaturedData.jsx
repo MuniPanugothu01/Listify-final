@@ -186,90 +186,91 @@ const FeaturedData = () => {
         </p>
 
         {/* Property Cards Grid */}
-    <Link to="/details">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-7xl mx-auto cursor-pointer mt-10">
-          {displayedProperties.map((property) => (
-            <div
-              key={property.id}
-              className="bg-white rounded-xl shadow-sm hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-100"
-            >
-              <div className="flex flex-col sm:flex-row">
-                {/* Image Section */}
-                <div className="sm:w-2/5 h-48 sm:h-auto relative">
-                  <img
-                    src={property.image}
-                    alt={property.title}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
+        <Link to="/details">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-7xl mx-auto cursor-pointer mt-10">
+            {displayedProperties.map((property) => (
+              <div
+                key={property.id}
+                className="bg-white rounded-xl shadow-sm hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-100"
+              >
+                <div className="flex flex-col sm:flex-row">
+                  {/* Image Section */}
+                  <div className="sm:w-2/5 h-48 sm:h-auto relative">
+                    <img
+                      src={property.image}
+                      alt={property.title}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
 
-                {/* Content Section */}
-                <div className="sm:w-3/5 p-5 flex flex-col justify-between">
-                  {/* Title and Rating */}
-                  <div>
-                    <div className="flex items-center justify-between w-full">
-                      <h3 className="text-lg font-bold text-gray-800 mb-2">
-                        {property.title}
-                      </h3>
-                      <div className="text-blue-600 px-3 py-1 font-bold text-[20px]">
-                        ${property.price.toLocaleString()}
+                  {/* Content Section */}
+                  <div className="sm:w-3/5 p-5 flex flex-col justify-between">
+                    {/* Title and Rating */}
+                    <div>
+                      <div className="flex items-center justify-between w-full">
+                        <h3 className="text-lg font-bold text-gray-800 mb-2">
+                          {property.title}
+                        </h3>
+                        <div className="text-blue-600 px-3 py-1 font-bold text-[20px]">
+                          ${property.price.toLocaleString()}
+                        </div>
                       </div>
-                    </div>
-                    <div className="flex items-center gap-2 mb-3">
-                      <div className="flex text-yellow-400">
-                        {[...Array(5)].map((_, i) => (
-                          <span key={i}>★</span>
-                        ))}
-                      </div>
-                      <span className="text-sm text-gray-500">
-                        ({property.reviews} Reviews)
-                      </span>
-                    </div>
-
-                    {/* Price and Label */}
-                    <div className="flex items-center justify-between mb-4">
-                      <div>
-                        <span className="inline-block px-3 py-1 bg-orange-100 text-orange-600 text-xs font-semibold rounded-full">
-                          {property.type}
+                      <div className="flex items-center gap-2 mb-3">
+                        <div className="flex text-yellow-400">
+                          {[...Array(5)].map((_, i) => (
+                            <span key={i}>★</span>
+                          ))}
+                        </div>
+                        <span className="text-sm text-gray-500">
+                          ({property.reviews} Reviews)
                         </span>
                       </div>
-                    </div>
 
-                    {/* Property Details */}
-                    <div className="flex items-center gap-4 text-gray-600 text-sm mb-4">
-                      <div className="flex items-center gap-1">
-                        <Home size={16} />
-                        <span>{property.beds} Beds</span>
+                      {/* Price and Label */}
+                      <div className="flex items-center justify-between mb-4">
+                        <div>
+                          <span className="inline-block px-3 py-1 bg-orange-100 text-orange-600 text-xs font-semibold rounded-full">
+                            {property.type}
+                          </span>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-1">
-                        <Bath size={16} />
-                        <span>{property.baths} Bath</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <Maximize2 size={16} />
-                        <span>{property.sqft} sqft</span>
-                      </div>
-                    </div>
 
-                    {/* Horizontal Line */}
-                    <div className="border-t border-gray-200 mb-4"></div>
-
-                    {/* Location and Button */}
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-1 text-gray-500 text-sm">
-                        <MapPin size={14} />
-                        <span>{property.location}</span>
+                      {/* Property Details */}
+                      <div className="flex items-center gap-4 text-gray-600 text-sm mb-4">
+                        <div className="flex items-center gap-1">
+                          <Home size={16} />
+                          <span>{property.beds} Beds</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Bath size={16} />
+                          <span>{property.baths} Bath</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Maximize2 size={16} />
+                          <span>{property.sqft} sqft</span>
+                        </div>
                       </div>
-                      <button className="bg-[#27bb97] hover:bg-[#1FA987] text-white px-5 py-2 rounded-full text-sm font-medium transition-colors cursor-pointer">
-                        View
-                      </button>
+
+                      {/* Horizontal Line */}
+                      <div className="border-t border-gray-200 mb-4"></div>
+
+                      {/* Location and Button */}
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-1 text-gray-500 text-sm">
+                          <MapPin size={14} />
+                          <span>{property.location}</span>
+                        </div>
+                        <button className="bg-[#27bb97] hover:bg-[#1FA987] text-white px-5 py-2 rounded-full text-sm font-medium transition-colors cursor-pointer">
+                          View
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div></Link>
+            ))}
+          </div>
+        </Link>
 
         {/* Browse More Properties Button - Always visible */}
         <div className="flex justify-center mt-12">

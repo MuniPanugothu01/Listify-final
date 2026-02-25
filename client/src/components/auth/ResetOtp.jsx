@@ -21,7 +21,7 @@ const ResetOtp = () => {
 
   // Get email from location state
   const email = location.state?.email || "";
-  
+
   // OTP State
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [otpLoading, setOtpLoading] = useState(false);
@@ -47,11 +47,14 @@ const ResetOtp = () => {
   // Handle success - only navigate when we have resetToken
   useEffect(() => {
     if (success && resetToken && !navigationInProgress.current) {
-      console.log("Reset token received, navigating to reset-password:", resetToken);
+      console.log(
+        "Reset token received, navigating to reset-password:",
+        resetToken,
+      );
       navigationInProgress.current = true;
       toast.success("OTP verified successfully!");
       resetAuthSuccess();
-      
+
       navigate("/reset-password", {
         state: {
           email: email,
@@ -65,7 +68,9 @@ const ResetOtp = () => {
   // Check if we have email
   useEffect(() => {
     if (!email) {
-      toast.error("No email found. Please start the password reset process again.");
+      toast.error(
+        "No email found. Please start the password reset process again.",
+      );
       navigate("/forgot-password", { replace: true });
     }
   }, [email, navigate]);
@@ -86,13 +91,13 @@ const ResetOtp = () => {
     setIsBlocked(false);
     setLockCountdown(0);
     setAttempts(0);
-    
+
     setTimeout(() => {
       if (inputRefs.current[0]) {
         inputRefs.current[0].focus();
       }
     }, 100);
-    
+
     navigationInProgress.current = false;
     verificationInProgress.current = false;
   }, []);
@@ -141,7 +146,7 @@ const ResetOtp = () => {
     if (!/^\d*$/.test(value)) return;
 
     const newOtp = [...otp];
-    
+
     if (value.length === 1) {
       newOtp[index] = value;
       setOtp(newOtp);
@@ -161,8 +166,13 @@ const ResetOtp = () => {
       setOtp(newOtp);
       setOtpError("");
 
-      const nextEmptyIndex = newOtp.findIndex((digit, i) => i >= index && digit === "");
-      const targetIndex = nextEmptyIndex !== -1 ? nextEmptyIndex : Math.min(index + value.length, 5);
+      const nextEmptyIndex = newOtp.findIndex(
+        (digit, i) => i >= index && digit === "",
+      );
+      const targetIndex =
+        nextEmptyIndex !== -1
+          ? nextEmptyIndex
+          : Math.min(index + value.length, 5);
       setFocusedIndex(targetIndex);
     } else if (value === "") {
       newOtp[index] = "";
@@ -179,7 +189,7 @@ const ResetOtp = () => {
   const handleKeyDown = (index, e) => {
     if (e.key === "Enter") {
       e.preventDefault();
-      if (otp.every(digit => digit !== "")) {
+      if (otp.every((digit) => digit !== "")) {
         handleVerifyOtp(otp.join(""));
       }
       return;
@@ -187,9 +197,9 @@ const ResetOtp = () => {
 
     if (e.key === "Backspace") {
       e.preventDefault();
-      
+
       const newOtp = [...otp];
-      
+
       if (newOtp[index]) {
         newOtp[index] = "";
         setOtp(newOtp);
@@ -201,12 +211,12 @@ const ResetOtp = () => {
       }
       return;
     }
-    
+
     if (e.key === "ArrowLeft" && index > 0) {
       e.preventDefault();
       setFocusedIndex(index - 1);
     }
-    
+
     if (e.key === "ArrowRight" && index < 5) {
       e.preventDefault();
       setFocusedIndex(index + 1);
@@ -235,7 +245,7 @@ const ResetOtp = () => {
       });
 
       setOtp(newOtp);
-      
+
       const nextEmptyIndex = newOtp.findIndex((digit) => digit === "");
       const targetIndex = nextEmptyIndex !== -1 ? nextEmptyIndex : 5;
       setFocusedIndex(targetIndex);
@@ -246,7 +256,7 @@ const ResetOtp = () => {
     if (!isBlocked) {
       setFocusedIndex(index);
       e.target.select();
-      
+
       setTimeout(() => {
         if (inputRefs.current[index]) {
           inputRefs.current[index].focus();
@@ -260,7 +270,7 @@ const ResetOtp = () => {
     if (!isBlocked) {
       setTimeout(() => {
         if (document.activeElement === document.body) {
-          const firstEmptyIndex = otp.findIndex(digit => digit === "");
+          const firstEmptyIndex = otp.findIndex((digit) => digit === "");
           const targetIndex = firstEmptyIndex !== -1 ? firstEmptyIndex : 0;
           if (inputRefs.current[targetIndex]) {
             inputRefs.current[targetIndex].focus();
@@ -323,23 +333,26 @@ const ResetOtp = () => {
       await verifyForgotPasswordOTPRequest(email, otpValue);
     } catch (err) {
       console.error("OTP verification error:", err);
-      
+
       let errorMessage = "Invalid OTP. Please try again.";
-      
-      if (err && typeof err === 'object') {
-        errorMessage = err.message || err.error || err.toString() || errorMessage;
-      } else if (typeof err === 'string') {
+
+      if (err && typeof err === "object") {
+        errorMessage =
+          err.message || err.error || err.toString() || errorMessage;
+      } else if (typeof err === "string") {
         errorMessage = err;
       }
-      
+
       setOtpError(errorMessage);
       toast.error(errorMessage);
-      
-      if (errorMessage.toLowerCase().includes("invalid") || 
-          errorMessage.toLowerCase().includes("wrong")) {
+
+      if (
+        errorMessage.toLowerCase().includes("invalid") ||
+        errorMessage.toLowerCase().includes("wrong")
+      ) {
         clearOtpInputs();
       }
-      
+
       verificationInProgress.current = false;
     } finally {
       setOtpLoading(false);
@@ -356,7 +369,6 @@ const ResetOtp = () => {
 
   return (
     <div className="min-h-screen relative overflow-hidden">
-
       <div className="fixed inset-0 z-0">
         <img
           src="/signin.webp"
@@ -430,14 +442,18 @@ const ResetOtp = () => {
 
               {/* Error Message with Lock Info */}
               {otpError && (
-                <div className={`mb-6 p-4 rounded-lg ${
-                  isBlocked 
-                    ? 'bg-orange-50 border border-orange-200' 
-                    : 'bg-red-50 border border-red-200'
-                }`}>
-                  <p className={`text-sm text-center ${
-                    isBlocked ? 'text-orange-600' : 'text-red-600'
-                  }`}>
+                <div
+                  className={`mb-6 p-4 rounded-lg ${
+                    isBlocked
+                      ? "bg-orange-50 border border-orange-200"
+                      : "bg-red-50 border border-red-200"
+                  }`}
+                >
+                  <p
+                    className={`text-sm text-center ${
+                      isBlocked ? "text-orange-600" : "text-red-600"
+                    }`}
+                  >
                     {otpError}
                   </p>
                   {isBlocked && lockCountdown > 0 && (
@@ -458,11 +474,11 @@ const ResetOtp = () => {
               )}
 
               {/* OTP Input Boxes - FIXED with proper border colors */}
-              <form 
+              <form
                 onSubmit={(e) => {
                   e.preventDefault();
                   if (!isBlocked) {
-                    if (otp.every(digit => digit !== "")) {
+                    if (otp.every((digit) => digit !== "")) {
                       handleVerifyOtp(otp.join(""));
                     }
                   }
@@ -473,20 +489,28 @@ const ResetOtp = () => {
                   <div className="flex justify-center gap-3 mb-6">
                     {otp.map((digit, index) => {
                       // Determine border color based on state
-                      let borderColor = 'border-gray-300';
-                      let focusRingColor = 'focus:ring-[#27bb97] focus:border-[#27bb97]';
-                      
+                      let borderColor = "border-gray-300";
+                      let focusRingColor =
+                        "focus:ring-[#27bb97] focus:border-[#27bb97]";
+
                       if (isBlocked) {
-                        borderColor = 'border-gray-300';
-                        focusRingColor = 'focus:ring-gray-400 focus:border-gray-400';
-                      } else if (otpError && !digit && !otpError.includes("Too many")) {
-                        borderColor = 'border-red-300';
-                        focusRingColor = 'focus:ring-red-500 focus:border-red-500';
+                        borderColor = "border-gray-300";
+                        focusRingColor =
+                          "focus:ring-gray-400 focus:border-gray-400";
+                      } else if (
+                        otpError &&
+                        !digit &&
+                        !otpError.includes("Too many")
+                      ) {
+                        borderColor = "border-red-300";
+                        focusRingColor =
+                          "focus:ring-red-500 focus:border-red-500";
                       } else if (digit) {
-                        borderColor = 'border-[#27bb97] bg-[#27bb97]/5';
-                        focusRingColor = 'focus:ring-[#27bb97] focus:border-[#27bb97]';
+                        borderColor = "border-[#27bb97] bg-[#27bb97]/5";
+                        focusRingColor =
+                          "focus:ring-[#27bb97] focus:border-[#27bb97]";
                       }
-                      
+
                       return (
                         <input
                           key={index}
@@ -498,16 +522,23 @@ const ResetOtp = () => {
                           pattern="[0-9]*"
                           maxLength={6}
                           value={digit}
-                          onChange={(e) => !isBlocked && handleOtpChange(index, e.target.value)}
-                          onKeyDown={(e) => !isBlocked && handleKeyDown(index, e)}
+                          onChange={(e) =>
+                            !isBlocked && handleOtpChange(index, e.target.value)
+                          }
+                          onKeyDown={(e) =>
+                            !isBlocked && handleKeyDown(index, e)
+                          }
                           onPaste={!isBlocked ? handlePaste : undefined}
                           onFocus={(e) => handleOtpFocus(index, e)}
                           onBlur={!isBlocked ? handleOtpBlur : undefined}
                           onInput={(e) => {
-                            e.target.value = e.target.value.replace(/[^0-9]/g, '');
+                            e.target.value = e.target.value.replace(
+                              /[^0-9]/g,
+                              "",
+                            );
                           }}
                           className={`w-14 h-14 text-2xl text-center text-gray-900 font-bold bg-gray-50 border-2 rounded-xl focus:outline-none focus:ring-2 transition-all duration-200 ${borderColor} ${focusRingColor} ${
-                            isBlocked ? 'cursor-not-allowed opacity-60' : ''
+                            isBlocked ? "cursor-not-allowed opacity-60" : ""
                           }`}
                           autoComplete="one-time-code"
                           disabled={otpLoading || loading || isBlocked}
@@ -521,7 +552,7 @@ const ResetOtp = () => {
                   <p className="text-sm text-gray-500 mb-2">
                     Enter the 6-digit verification code
                   </p>
-                  {!isBlocked && otp.some(digit => digit !== "") && (
+                  {!isBlocked && otp.some((digit) => digit !== "") && (
                     <button
                       type="button"
                       onClick={clearOtpInputs}
@@ -535,11 +566,16 @@ const ResetOtp = () => {
 
                 <button
                   type="submit"
-                  disabled={otp.some((digit) => digit === "") || otpLoading || loading || isBlocked}
+                  disabled={
+                    otp.some((digit) => digit === "") ||
+                    otpLoading ||
+                    loading ||
+                    isBlocked
+                  }
                   className={`w-full py-3 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center mb-6 shadow-md hover:shadow-lg ${
-                    isBlocked 
-                      ? 'bg-gray-400 cursor-not-allowed' 
-                      : 'bg-[#27bb97] hover:bg-[#1fa987] text-white'
+                    isBlocked
+                      ? "bg-gray-400 cursor-not-allowed"
+                      : "bg-[#27bb97] hover:bg-[#1fa987] text-white"
                   }`}
                 >
                   {otpLoading ? (
@@ -582,11 +618,13 @@ const ResetOtp = () => {
                 <button
                   type="button"
                   onClick={handleResendOtp}
-                  disabled={resendLoading || loading || countdown > 0 || isBlocked}
+                  disabled={
+                    resendLoading || loading || countdown > 0 || isBlocked
+                  }
                   className={`font-medium ${
                     isBlocked
-                      ? 'text-gray-400 cursor-not-allowed'
-                      : 'text-[#27bb97] hover:underline'
+                      ? "text-gray-400 cursor-not-allowed"
+                      : "text-[#27bb97] hover:underline"
                   } disabled:opacity-50 disabled:cursor-not-allowed`}
                 >
                   {resendLoading

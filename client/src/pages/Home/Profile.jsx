@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { 
-  Bell, 
-  X, 
+import {
+  Bell,
+  X,
   Menu,
   FileText,
   Heart,
@@ -14,7 +14,14 @@ import {
 import toast from "react-hot-toast";
 
 // Import Redux actions
-import { fetchProfile, updateProfile, setProfilePicPreview, uploadProfileImage, fetchDevices, fetchLoginHistory } from "../../redux/slices/profileSlice";
+import {
+  fetchProfile,
+  updateProfile,
+  setProfilePicPreview,
+  uploadProfileImage,
+  fetchDevices,
+  fetchLoginHistory,
+} from "../../redux/slices/profileSlice";
 
 // Import components
 import Sidebar from "../../components/UserProfile/Sidebar";
@@ -34,10 +41,19 @@ export default function Profile() {
 
   // Redux state
   const { user: authUser } = useSelector((state) => state.auth);
-  const { profile, profilePicPreview, loading: profileLoading, imageUploading, devices, loginHistory } = useSelector((state) => state.profile);
+  const {
+    profile,
+    profilePicPreview,
+    loading: profileLoading,
+    imageUploading,
+    devices,
+    loginHistory,
+  } = useSelector((state) => state.profile);
 
   // Local state
-  const [activeSection, setActiveSection] = useState(location.state?.activeSection || "home");
+  const [activeSection, setActiveSection] = useState(
+    location.state?.activeSection || "home",
+  );
   const [isEditing, setIsEditing] = useState(false);
   const [editData, setEditData] = useState({
     name: "",
@@ -49,7 +65,7 @@ export default function Profile() {
     gender: "",
   });
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  
+
   // Mock data for now
   const [myPosts, setMyPosts] = useState([]);
   const [savedHouses, setSavedHouses] = useState([]);
@@ -105,7 +121,7 @@ export default function Profile() {
         dispatch(setProfilePicPreview(preview));
       };
       reader.readAsDataURL(file);
-      
+
       // Upload to server
       dispatch(uploadProfileImage(file));
     }
@@ -171,7 +187,8 @@ export default function Profile() {
         title: "Viewing with T. Morgan",
         time: "1:40-1:45",
         client: "T. Morgan",
-        avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=24&h=24&fit=crop&crop=face",
+        avatar:
+          "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=24&h=24&fit=crop&crop=face",
       },
     ],
     3: [
@@ -179,7 +196,8 @@ export default function Profile() {
         title: "Viewing with S. Green",
         time: "1:30-1:45",
         client: "S. Green",
-        avatar: "https://images.unsplash.com/photo-1524504388940-b8e918bb7c5c?w=24&h=24&fit=crop&crop=face",
+        avatar:
+          "https://images.unsplash.com/photo-1524504388940-b8e918bb7c5c?w=24&h=24&fit=crop&crop=face",
       },
     ],
   };
@@ -210,19 +228,23 @@ export default function Profile() {
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="lg:hidden w-10 h-10 rounded-xl border border-gray-300 flex items-center justify-center hover:bg-gray-50 transition-colors"
             >
-              {isMobileMenuOpen ? <X className="w-5 h-5 text-gray-600" /> : <Menu className="w-5 h-5 text-gray-600" />}
+              {isMobileMenuOpen ? (
+                <X className="w-5 h-5 text-gray-600" />
+              ) : (
+                <Menu className="w-5 h-5 text-gray-600" />
+              )}
             </button>
-            <h1 
+            <h1
               className="text-xl md:text-2xl font-bold text-emerald-700 cursor-pointer hover:text-emerald-800 transition-colors"
-              onClick={() => navigate('/')}
+              onClick={() => navigate("/")}
             >
               Listify
             </h1>
           </div>
 
           <div className="flex items-center gap-2 md:gap-4">
-            <button 
-              onClick={() => setActiveSection('alerts')}
+            <button
+              onClick={() => setActiveSection("alerts")}
               className="relative p-2 rounded-xl hover:bg-gray-50 transition-colors"
             >
               <Bell className="w-5 h-5 text-gray-600" />
@@ -232,21 +254,29 @@ export default function Profile() {
                 </span>
               )}
             </button>
-            
-            <div className="flex items-center gap-2 cursor-pointer" onClick={() => setActiveSection('personal')}>
-              <img 
-                src={getProfileImagePreview()} 
-                alt="Profile" 
-                className="w-8 h-8 md:w-10 md:h-10 rounded-xl object-cover border-2 border-white shadow-xs" 
+
+            <div
+              className="flex items-center gap-2 cursor-pointer"
+              onClick={() => setActiveSection("personal")}
+            >
+              <img
+                src={getProfileImagePreview()}
+                alt="Profile"
+                className="w-8 h-8 md:w-10 md:h-10 rounded-xl object-cover border-2 border-white shadow-xs"
                 onError={(e) => {
-                  e.target.src = "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop";
+                  e.target.src =
+                    "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop";
                 }}
               />
               <div className="hidden md:block">
-                <p className="text-sm font-medium text-gray-900">{profile?.name || authUser?.name || "User"}</p>
+                <p className="text-sm font-medium text-gray-900">
+                  {profile?.name || authUser?.name || "User"}
+                </p>
                 <p className="text-xs text-emerald-600 font-medium flex items-center gap-1">
                   <span className="w-2 h-2 bg-emerald-500 rounded-full"></span>
-                  {profile?.provider === "google" ? "Google Account" : "Available"}
+                  {profile?.provider === "google"
+                    ? "Google Account"
+                    : "Available"}
                 </p>
               </div>
             </div>
@@ -258,7 +288,7 @@ export default function Profile() {
         <div className="lg:flex gap-6">
           {/* Sidebar */}
           <div className="lg:w-64 xl:w-72 flex-shrink-0">
-            <Sidebar 
+            <Sidebar
               activeSection={activeSection}
               setActiveSection={setActiveSection}
               counts={counts}
@@ -266,7 +296,7 @@ export default function Profile() {
               setIsMobileMenuOpen={setIsMobileMenuOpen}
             />
           </div>
-          
+
           {/* Main Content Area */}
           <main className="flex-1 lg:mr-6 space-y-6 w-full min-w-0">
             {activeSection === "home" && (
@@ -311,13 +341,17 @@ export default function Profile() {
             {activeSection === "profile-overview" && (
               <div>
                 <div className="mb-6">
-                  <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Profile Overview</h2>
-                  <p className="text-gray-500 text-sm mt-1">Your complete profile statistics and performance metrics</p>
+                  <h2 className="text-2xl md:text-3xl font-bold text-gray-900">
+                    Profile Overview
+                  </h2>
+                  <p className="text-gray-500 text-sm mt-1">
+                    Your complete profile statistics and performance metrics
+                  </p>
                 </div>
                 <ProfileMain
-                  user={profile || authUser} 
-                  profilePic={getProfileImagePreview()} 
-                  myPosts={myPosts || []} 
+                  user={profile || authUser}
+                  profilePic={getProfileImagePreview()}
+                  myPosts={myPosts || []}
                 />
               </div>
             )}
@@ -325,18 +359,26 @@ export default function Profile() {
             {activeSection === "saved" && (
               <div>
                 <div className="mb-6">
-                  <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Saved Items</h2>
-                  <p className="text-gray-500 text-sm mt-1">{savedHouses?.length || 0} properties saved</p>
+                  <h2 className="text-2xl md:text-3xl font-bold text-gray-900">
+                    Saved Items
+                  </h2>
+                  <p className="text-gray-500 text-sm mt-1">
+                    {savedHouses?.length || 0} properties saved
+                  </p>
                 </div>
                 {!savedHouses || savedHouses.length === 0 ? (
                   <div className="bg-white rounded-2xl border border-gray-200 p-8 md:p-12 text-center">
                     <div className="w-20 h-20 md:w-24 md:h-24 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6">
                       <Heart className="w-10 h-10 md:w-12 md:h-12 text-emerald-500 fill-emerald-500" />
                     </div>
-                    <h3 className="text-xl md:text-2xl font-semibold text-gray-900 mb-3">No saved items yet</h3>
-                    <p className="text-gray-600 mb-8 max-w-md mx-auto">Start saving properties you love to view them later!</p>
-                    <button 
-                      onClick={() => navigate('/listings')}
+                    <h3 className="text-xl md:text-2xl font-semibold text-gray-900 mb-3">
+                      No saved items yet
+                    </h3>
+                    <p className="text-gray-600 mb-8 max-w-md mx-auto">
+                      Start saving properties you love to view them later!
+                    </p>
+                    <button
+                      onClick={() => navigate("/listings")}
                       className="px-6 py-3 bg-emerald-500 text-white rounded-xl hover:bg-emerald-600 transition-colors font-semibold"
                     >
                       Browse Properties
@@ -345,7 +387,7 @@ export default function Profile() {
                 ) : (
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
                     {savedHouses.map((house) => (
-                      <PropertyCard 
+                      <PropertyCard
                         key={house.id}
                         property={house}
                         onToggleSave={() => {}}
@@ -361,11 +403,15 @@ export default function Profile() {
               <div>
                 <div className="mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                   <div>
-                    <h2 className="text-2xl md:text-3xl font-bold text-gray-900">My Listings</h2>
-                    <p className="text-gray-500 text-sm mt-1">{myPosts?.length || 0} active listings</p>
+                    <h2 className="text-2xl md:text-3xl font-bold text-gray-900">
+                      My Listings
+                    </h2>
+                    <p className="text-gray-500 text-sm mt-1">
+                      {myPosts?.length || 0} active listings
+                    </p>
                   </div>
-                  <button 
-                    onClick={() => navigate('/create-listing')}
+                  <button
+                    onClick={() => navigate("/create-listing")}
                     className="w-full sm:w-auto px-6 py-3 bg-emerald-500 text-white rounded-xl hover:bg-emerald-600 transition-colors font-semibold flex items-center justify-center gap-2"
                   >
                     <FileText className="w-5 h-5" />
@@ -377,10 +423,14 @@ export default function Profile() {
                     <div className="w-20 h-20 md:w-24 md:h-24 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
                       <FileText className="w-10 h-10 md:w-12 md:h-12 text-blue-500" />
                     </div>
-                    <h3 className="text-xl md:text-2xl font-semibold text-gray-900 mb-3">No posts yet</h3>
-                    <p className="text-gray-600 mb-8 max-w-md mx-auto">Create your first listing to get started!</p>
-                    <button 
-                      onClick={() => navigate('/create-listing')}
+                    <h3 className="text-xl md:text-2xl font-semibold text-gray-900 mb-3">
+                      No posts yet
+                    </h3>
+                    <p className="text-gray-600 mb-8 max-w-md mx-auto">
+                      Create your first listing to get started!
+                    </p>
+                    <button
+                      onClick={() => navigate("/create-listing")}
                       className="px-6 py-3 bg-emerald-500 text-white rounded-xl hover:bg-emerald-600 transition-colors font-semibold"
                     >
                       Post New Ad
@@ -389,9 +439,9 @@ export default function Profile() {
                 ) : (
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
                     {myPosts.map((post) => (
-                      <PropertyCard 
-                        key={post.id} 
-                        property={post} 
+                      <PropertyCard
+                        key={post.id}
+                        property={post}
                         isMyPost={true}
                         onToggleSave={() => {}}
                       />
@@ -404,8 +454,12 @@ export default function Profile() {
             {activeSection === "settings" && (
               <div>
                 <div className="mb-6">
-                  <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Settings</h2>
-                  <p className="text-gray-500 text-sm mt-1">Manage your account preferences</p>
+                  <h2 className="text-2xl md:text-3xl font-bold text-gray-900">
+                    Settings
+                  </h2>
+                  <p className="text-gray-500 text-sm mt-1">
+                    Manage your account preferences
+                  </p>
                 </div>
                 <div className="bg-white rounded-2xl border border-gray-200 p-6 space-y-4">
                   {/* Settings content */}
@@ -416,8 +470,12 @@ export default function Profile() {
             {activeSection === "alerts" && (
               <div className="bg-white rounded-2xl border border-gray-200 p-8 md:p-12 text-center">
                 <Bell className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">No alerts yet</h3>
-                <p className="text-gray-600 mb-6">Set up alerts for new listings that match your criteria!</p>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                  No alerts yet
+                </h3>
+                <p className="text-gray-600 mb-6">
+                  Set up alerts for new listings that match your criteria!
+                </p>
                 <button className="px-6 py-3 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-colors font-medium">
                   Set Up Alert
                 </button>
@@ -427,8 +485,12 @@ export default function Profile() {
             {activeSection === "security" && (
               <div>
                 <div className="mb-6">
-                  <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Security</h2>
-                  <p className="text-gray-500 text-sm mt-1">Manage your account security settings</p>
+                  <h2 className="text-2xl md:text-3xl font-bold text-gray-900">
+                    Security
+                  </h2>
+                  <p className="text-gray-500 text-sm mt-1">
+                    Manage your account security settings
+                  </p>
                 </div>
                 <div className="bg-white rounded-2xl border border-gray-200 p-6 space-y-4">
                   {/* Security content */}
@@ -440,10 +502,10 @@ export default function Profile() {
           {/* Right Profile Section */}
           {activeSection === "profile-overview" && (
             <div className="hidden xl:block w-80 flex-shrink-0">
-              <ProfileOverview 
-                user={profile || authUser} 
-                profilePic={getProfileImagePreview()} 
-                myPosts={myPosts || []} 
+              <ProfileOverview
+                user={profile || authUser}
+                profilePic={getProfileImagePreview()}
+                myPosts={myPosts || []}
               />
             </div>
           )}
@@ -462,8 +524,8 @@ export default function Profile() {
               }}
               className={`flex flex-col items-center justify-center py-2 rounded-lg transition-colors ${
                 activeSection === item.id
-                  ? 'text-emerald-600 bg-emerald-50'
-                  : 'text-gray-600 hover:text-gray-900'
+                  ? "text-emerald-600 bg-emerald-50"
+                  : "text-gray-600 hover:text-gray-900"
               }`}
             >
               <item.icon className="w-5 h-5" />
@@ -472,8 +534,6 @@ export default function Profile() {
           ))}
         </div>
       </div>
-
-
     </div>
   );
 }

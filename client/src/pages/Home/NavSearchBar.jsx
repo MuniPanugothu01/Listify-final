@@ -1,23 +1,33 @@
 import React, { useState, useRef, useEffect } from "react";
-import { FaMapMarkerAlt, FaSearch, FaChevronDown, FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import {
+  FaMapMarkerAlt,
+  FaSearch,
+  FaChevronDown,
+  FaChevronLeft,
+  FaChevronRight,
+} from "react-icons/fa";
 import { TbCategory } from "react-icons/tb";
 import { IoLocationOutline } from "react-icons/io5";
 import { CiLocationArrow1 } from "react-icons/ci";
 
-const NavSearchBar = ({ selectedLocation, setSelectedLocation, isScrolled }) => {
+const NavSearchBar = ({
+  selectedLocation,
+  setSelectedLocation,
+  isScrolled,
+}) => {
   const [showLocationDropdown, setShowLocationDropdown] = useState(false);
   const [showSearchModal, setShowSearchModal] = useState(false);
   const [locationSearch, setLocationSearch] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCountry, setSelectedCountry] = useState("United States");
   const [showTopCities, setShowTopCities] = useState(false);
-  
+
   const locationDropdownRef = useRef(null);
   const searchModalRef = useRef(null);
 
   // Category items with React Icons
   const categoryItems = [
-    {name: "Electronics", count: "5", icon: TbCategory },
+    { name: "Electronics", count: "5", icon: TbCategory },
     { name: "Events", count: "12", icon: IoLocationOutline },
     { name: "Roommates", count: "15", icon: CiLocationArrow1 },
     { name: "Rentals", count: "23", icon: TbCategory },
@@ -131,17 +141,8 @@ const NavSearchBar = ({ selectedLocation, setSelectedLocation, isScrolled }) => 
 
   const searchSuggestions = {
     ROOMMATES: ["Roommates", "Service"],
-    Events: [
-      "Events",
-      "Rentals",
-      "Jobs",
-      "Local Services",
-    ],
-    Roommates: [
-      "Roommates",
-      "Care Services",
-      "Cars",
-    ],
+    Events: ["Events", "Rentals", "Jobs", "Local Services"],
+    Roommates: ["Roommates", "Care Services", "Cars"],
   };
 
   const filteredLocations = [
@@ -151,7 +152,7 @@ const NavSearchBar = ({ selectedLocation, setSelectedLocation, isScrolled }) => 
   ].filter(
     (location) =>
       location.name.toLowerCase().includes(locationSearch.toLowerCase()) ||
-      (location.zip && location.zip.includes(locationSearch))
+      (location.zip && location.zip.includes(locationSearch)),
   );
 
   const handleLocationClick = () => {
@@ -193,7 +194,7 @@ const NavSearchBar = ({ selectedLocation, setSelectedLocation, isScrolled }) => 
         (error) => {
           console.error("Error getting location:", error);
           alert("Unable to get your current location. Please search manually.");
-        }
+        },
       );
     } else {
       alert("Geolocation is not supported by this browser.");
@@ -246,7 +247,7 @@ const NavSearchBar = ({ selectedLocation, setSelectedLocation, isScrolled }) => 
     window.scrollTo({
       top: 0,
       left: 0,
-      behavior: 'smooth'
+      behavior: "smooth",
     });
   };
 
@@ -308,7 +309,7 @@ const NavSearchBar = ({ selectedLocation, setSelectedLocation, isScrolled }) => 
   return (
     <>
       <style>{searchBarStyles}</style>
-      
+
       {/* Desktop Search Bars */}
       <div className="hidden sm:flex flex-0 justify-center max-w-md sm:max-w-lg md:max-w-2xl mx-2 sm:mx-4 md:mx-8">
         <div className="flex space-x-1 sm:space-x-2 w-full">
@@ -318,8 +319,8 @@ const NavSearchBar = ({ selectedLocation, setSelectedLocation, isScrolled }) => 
               type="text"
               placeholder=""
               className={`w-full pl-7 sm:pl-8 md:pl-10 pr-2 sm:pr-3 md:pr-4 py-2 sm:py-2.5 md:py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#c89a5e] text-xs sm:text-sm cursor-pointer search-input ${
-                isScrolled 
-                  ? "bg-white/10 border-white/20 text-white placeholder-white/70" 
+                isScrolled
+                  ? "bg-white/10 border-white/20 text-white placeholder-white/70"
                   : "border-gray-300 text-gray-900"
               }`}
               onFocus={handleSearchClick}
@@ -327,9 +328,11 @@ const NavSearchBar = ({ selectedLocation, setSelectedLocation, isScrolled }) => 
               readOnly
             />
             <div className="absolute inset-y-0 left-0 pl-2 sm:pl-2.5 md:pl-3 flex items-center pointer-events-none">
-              <FaSearch className={`h-3 w-3 sm:h-4 sm:w-4 md:h-5 md:w-5 search-icon ${
-                isScrolled ? "text-white/70" : "text-gray-400"
-              }`} />
+              <FaSearch
+                className={`h-3 w-3 sm:h-4 sm:w-4 md:h-5 md:w-5 search-icon ${
+                  isScrolled ? "text-white/70" : "text-gray-400"
+                }`}
+              />
             </div>
           </div>
 
@@ -340,8 +343,8 @@ const NavSearchBar = ({ selectedLocation, setSelectedLocation, isScrolled }) => 
               placeholder="Location"
               value={selectedLocation}
               className={`w-full pl-7 sm:pl-8 md:pl-10 pr-7 sm:pr-8 md:pr-10 py-2 sm:py-2.5 md:py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-xs sm:text-sm cursor-pointer search-input ${
-                isScrolled 
-                  ? "bg-white/10 border-white/20 text-white placeholder-white/70" 
+                isScrolled
+                  ? "bg-white/10 border-white/20 text-white placeholder-white/70"
                   : "border-gray-300 text-gray-900"
               }`}
               onFocus={handleLocationClick}
@@ -349,19 +352,22 @@ const NavSearchBar = ({ selectedLocation, setSelectedLocation, isScrolled }) => 
               readOnly
             />
             <div className="absolute inset-y-0 left-0 pl-2 sm:pl-2.5 md:pl-3 flex items-center pointer-events-none">
-              <FaMapMarkerAlt className={`h-3 w-3 sm:h-4 sm:w-4 md:h-5 md:w-5 search-icon ${
-                isScrolled ? "text-white/70" : "text-gray-400"
-              }`} />
+              <FaMapMarkerAlt
+                className={`h-3 w-3 sm:h-4 sm:w-4 md:h-5 md:w-5 search-icon ${
+                  isScrolled ? "text-white/70" : "text-gray-400"
+                }`}
+              />
             </div>
             <div className="absolute inset-y-0 right-2 flex items-center pointer-events-none">
-              <FaChevronDown className={`h-3 w-3 sm:h-4 sm:w-4 md:h-5 md:w-5 search-icon ${
-                isScrolled ? "text-white/70" : "text-gray-400"
-              }`} />
+              <FaChevronDown
+                className={`h-3 w-3 sm:h-4 sm:w-4 md:h-5 md:w-5 search-icon ${
+                  isScrolled ? "text-white/70" : "text-gray-400"
+                }`}
+              />
             </div>
           </div>
         </div>
       </div>
-
 
       {/* Location Dropdown */}
       {showLocationDropdown && (
@@ -631,8 +637,6 @@ const NavSearchBar = ({ selectedLocation, setSelectedLocation, isScrolled }) => 
                       </div>
                     </div>
                   )}
-
-                
                 </>
               ) : (
                 /* Search Results */
@@ -712,7 +716,7 @@ const NavSearchBar = ({ selectedLocation, setSelectedLocation, isScrolled }) => 
                   <div className="flex flex-col h-auto sm:h-[85px] sm:flex-row items-stretch sm:items-center w-full bg-white rounded-lg sm:rounded-full border border-gray-200 shadow-sm overflow-hidden">
                     {/* Location Filter */}
                     <div className="w-full sm:w-[200px] md:w-[300px] border-b sm:border-b-0 sm:border-r border-gray-200">
-                      <button 
+                      <button
                         onClick={handleLocationClick}
                         className="flex items-center w-full justify-between px-3 sm:px-4 py-2 sm:py-3 transition-colors cursor-pointer hover:bg-gray-50"
                       >
@@ -731,7 +735,9 @@ const NavSearchBar = ({ selectedLocation, setSelectedLocation, isScrolled }) => 
                       <button className="flex items-center px-3 sm:px-4 py-2 sm:py-3 transition-colors cursor-pointer hover:bg-gray-50">
                         <div className="flex items-center space-x-1.5 sm:space-x-2">
                           <TbCategory className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
-                          <span className="text-gray-600 font-medium text-xs sm:text-sm md:text-base">ALL</span>
+                          <span className="text-gray-600 font-medium text-xs sm:text-sm md:text-base">
+                            ALL
+                          </span>
                         </div>
                         <FaChevronDown className="h-3 w-3 sm:h-4 sm:w-4 text-gray-400" />
                       </button>
@@ -751,7 +757,7 @@ const NavSearchBar = ({ selectedLocation, setSelectedLocation, isScrolled }) => 
                       </div>
 
                       {/* Search Button */}
-                      <button 
+                      <button
                         onClick={() => {
                           if (searchQuery.trim()) {
                             handleSearchSelect(searchQuery);
@@ -760,7 +766,9 @@ const NavSearchBar = ({ selectedLocation, setSelectedLocation, isScrolled }) => 
                         className="px-3 sm:px-4 md:px-6 py-2 sm:py-3 md:py-4 bg-[#3F929A] hover:bg-[#2f9ea8] text-white rounded-lg sm:rounded-2xl font-medium transition-colors cursor-pointer h-full flex items-center space-x-1 sm:space-x-2"
                       >
                         <FaSearch className="h-3 w-3 sm:h-4 sm:w-4" />
-                        <span className="text-xs sm:text-sm md:text-base">Search</span>
+                        <span className="text-xs sm:text-sm md:text-base">
+                          Search
+                        </span>
                       </button>
                     </div>
                   </div>
@@ -807,9 +815,7 @@ const NavSearchBar = ({ selectedLocation, setSelectedLocation, isScrolled }) => 
                       >
                         <div
                           className={`w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center cursor-pointer ${
-                            index === 0
-                              ? "bg-red-50"
-                              : "group-hover:bg-red-50"
+                            index === 0 ? "bg-red-50" : "group-hover:bg-red-50"
                           } transition-colors`}
                         >
                           <IconComponent
@@ -866,9 +872,10 @@ const NavSearchBar = ({ selectedLocation, setSelectedLocation, isScrolled }) => 
                             }}
                             className="w-full text-left px-3 sm:px-4 py-2 sm:py-3 rounded-lg hover:bg-gray-200 hover:shadow-sm transition-all duration-300 ease-in-out cursor-pointer"
                           >
-                            <span className="text-gray-800 text-sm sm:text-base truncate block">{event}</span>
+                            <span className="text-gray-800 text-sm sm:text-base truncate block">
+                              {event}
+                            </span>
                           </button>
-                       
                         </div>
                       ))}
                     </div>
@@ -887,7 +894,6 @@ const NavSearchBar = ({ selectedLocation, setSelectedLocation, isScrolled }) => 
                                     <h4 className="font-bold text-red-600 text-xs sm:text-sm uppercase tracking-wide truncate">
                                       TAKECARE
                                     </h4>
-                                    
                                   </div>
                                 </>
                               ) : (
@@ -895,7 +901,6 @@ const NavSearchBar = ({ selectedLocation, setSelectedLocation, isScrolled }) => 
                                   <h4 className="font-bold text-red-600 text-xs sm:text-sm uppercase tracking-wide truncate">
                                     {category}
                                   </h4>
-                                
                                 </div>
                               )}
                               <div className="flex flex-col sm:flex-wrap gap-1 sm:gap-2">
@@ -911,12 +916,11 @@ const NavSearchBar = ({ selectedLocation, setSelectedLocation, isScrolled }) => 
                                         {item}
                                       </span>
                                     </button>
-                                
                                   </div>
                                 ))}
                               </div>
                             </div>
-                          )
+                          ),
                         )}
                       </div>
                     </div>

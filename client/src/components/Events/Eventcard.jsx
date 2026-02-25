@@ -2,14 +2,31 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { 
-  FaCalendarAlt, FaMapMarkerAlt, FaUsers, FaHeart, 
-  FaChevronLeft, FaChevronRight, FaTicketAlt, 
-  FaSearch, FaFilter, FaStar, FaClock, FaMusic,
-  FaFutbol, FaUtensils, FaFilm, FaUsers as FaConference,
-  FaHeartbeat, FaGlassCheers, FaTimes,
-  FaCheck, FaShareAlt, FaArrowRight,
-  FaBars, FaTimesCircle
+import {
+  FaCalendarAlt,
+  FaMapMarkerAlt,
+  FaUsers,
+  FaHeart,
+  FaChevronLeft,
+  FaChevronRight,
+  FaTicketAlt,
+  FaSearch,
+  FaFilter,
+  FaStar,
+  FaClock,
+  FaMusic,
+  FaFutbol,
+  FaUtensils,
+  FaFilm,
+  FaUsers as FaConference,
+  FaHeartbeat,
+  FaGlassCheers,
+  FaTimes,
+  FaCheck,
+  FaShareAlt,
+  FaArrowRight,
+  FaBars,
+  FaTimesCircle,
 } from "react-icons/fa";
 
 // Events Data (same as before)
@@ -24,7 +41,8 @@ const eventsData = {
       price: 2999,
       displayPrice: "₹2,999 onwards",
       attendees: "15.8k",
-      image: "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=800&q=80",
+      image:
+        "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=800&q=80",
       tag: "Music Festival",
       category: "music",
       time: "18:00",
@@ -33,7 +51,7 @@ const eventsData = {
       artist: "Various Artists",
       duration: "4 Days",
       ageLimit: "18+",
-      organizer: "Sunburn Events"
+      organizer: "Sunburn Events",
     },
     {
       id: 2,
@@ -45,7 +63,8 @@ const eventsData = {
       displayPrice: "Free Entry",
       attendees: "9.2k",
       isFree: true,
-      image: "https://demo.dawnthemes.com/ticketbox/wp-content/uploads/2017/03/Holi-Festival.png",
+      image:
+        "https://demo.dawnthemes.com/ticketbox/wp-content/uploads/2017/03/Holi-Festival.png",
       tag: "Festival",
       category: "food",
       time: "17:00",
@@ -54,7 +73,7 @@ const eventsData = {
       artist: "Local Vendors",
       duration: "6 Hours",
       ageLimit: "All Ages",
-      organizer: "DLF Events"
+      organizer: "DLF Events",
     },
     {
       id: 3,
@@ -65,7 +84,8 @@ const eventsData = {
       price: 599,
       displayPrice: "₹599",
       attendees: "1.8k",
-      image: "https://demo.dawnthemes.com/ticketbox/wp-content/uploads/2017/03/ticketbox-unlike-dummy-1110x600.jpg",
+      image:
+        "https://demo.dawnthemes.com/ticketbox/wp-content/uploads/2017/03/ticketbox-unlike-dummy-1110x600.jpg",
       tag: "Comedy",
       category: "entertainment",
       time: "20:00",
@@ -74,7 +94,7 @@ const eventsData = {
       artist: "Comedy Collective",
       duration: "3 Hours",
       ageLimit: "16+",
-      organizer: "The Comedy Club"
+      organizer: "The Comedy Club",
     },
     {
       id: 4,
@@ -86,7 +106,8 @@ const eventsData = {
       displayPrice: "Free",
       attendees: "3.1k",
       isFree: true,
-      image: "https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=800&q=80",
+      image:
+        "https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=800&q=80",
       tag: "Wellness",
       category: "wellness",
       time: "06:00",
@@ -95,7 +116,7 @@ const eventsData = {
       artist: "Yoga Masters",
       duration: "2 Hours",
       ageLimit: "All Ages",
-      organizer: "Beach Wellness"
+      organizer: "Beach Wellness",
     },
     {
       id: 5,
@@ -106,7 +127,8 @@ const eventsData = {
       price: 4500,
       displayPrice: "₹4,500 onwards",
       attendees: "82.5k",
-      image: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&q=80",
+      image:
+        "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&q=80",
       tag: "Concert",
       category: "music",
       time: "19:00",
@@ -115,7 +137,7 @@ const eventsData = {
       artist: "Coldplay",
       duration: "3 Hours",
       ageLimit: "12+",
-      organizer: "Live Nation"
+      organizer: "Live Nation",
     },
     {
       id: 6,
@@ -126,7 +148,8 @@ const eventsData = {
       price: 1200,
       displayPrice: "₹1,200 onwards",
       attendees: "95.3k",
-      image: "https://images.unsplash.com/photo-1621430669951-5e9e3b98ed8b?w=800&q=80",
+      image:
+        "https://images.unsplash.com/photo-1621430669951-5e9e3b98ed8b?w=800&q=80",
       tag: "Sports",
       category: "sports",
       time: "19:30",
@@ -135,8 +158,8 @@ const eventsData = {
       artist: "Various Performers",
       duration: "4 Hours",
       ageLimit: "All Ages",
-      organizer: "BCCI"
-    }
+      organizer: "BCCI",
+    },
   ],
   upcoming: [
     {
@@ -148,7 +171,8 @@ const eventsData = {
       price: 2499,
       displayPrice: "₹2,499 onwards",
       attendees: "34.7k",
-      image: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&q=80",
+      image:
+        "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&q=80",
       tag: "Party",
       category: "entertainment",
       time: "21:00",
@@ -157,7 +181,7 @@ const eventsData = {
       artist: "Top DJs",
       duration: "8 Hours",
       ageLimit: "21+",
-      organizer: "Nightlife Events"
+      organizer: "Nightlife Events",
     },
     {
       id: 14,
@@ -168,7 +192,8 @@ const eventsData = {
       price: 3299,
       displayPrice: "₹3,299",
       attendees: "22.1k",
-      image: "https://demo.dawnthemes.com/ticketbox/wp-content/uploads/2016/12/78459379.jpg",
+      image:
+        "https://demo.dawnthemes.com/ticketbox/wp-content/uploads/2016/12/78459379.jpg",
       tag: "Music",
       category: "music",
       time: "16:00",
@@ -177,7 +202,7 @@ const eventsData = {
       artist: "Indie Artists",
       duration: "3 Days",
       ageLimit: "18+",
-      organizer: "Mountain Events"
+      organizer: "Mountain Events",
     },
     {
       id: 15,
@@ -188,7 +213,8 @@ const eventsData = {
       price: 1999,
       displayPrice: "₹1,999",
       attendees: "8.9k",
-      image: "https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800&q=80",
+      image:
+        "https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800&q=80",
       tag: "Business",
       category: "conference",
       time: "09:00",
@@ -197,7 +223,7 @@ const eventsData = {
       artist: "Industry Leaders",
       duration: "2 Days",
       ageLimit: "18+",
-      organizer: "Tech Summit India"
+      organizer: "Tech Summit India",
     },
     {
       id: 16,
@@ -209,7 +235,8 @@ const eventsData = {
       displayPrice: "Free",
       attendees: "120.5k",
       isFree: true,
-      image: "https://images.unsplash.com/photo-1605001011156-cbf0b0f67a51?w=800&q=80",
+      image:
+        "https://images.unsplash.com/photo-1605001011156-cbf0b0f67a51?w=800&q=80",
       tag: "Festival",
       category: "festival",
       time: "10:00",
@@ -218,18 +245,15 @@ const eventsData = {
       artist: "Cultural Performers",
       duration: "Full Day",
       ageLimit: "All Ages",
-      organizer: "Cultural Society"
-    }
-  ]
+      organizer: "Cultural Society",
+    },
+  ],
 };
 
 // Responsive EventCard Component
 const EventCard = ({ event, onEventClick }) => {
   return (
-    <div 
-      onClick={onEventClick} 
-      className="block cursor-pointer w-full"
-    >
+    <div onClick={onEventClick} className="block cursor-pointer w-full">
       <div className="bg-white rounded-xl sm:rounded-2xl overflow-hidden border border-gray-200 sm:border-gray-300 hover:border-[#27bb97] transition-all duration-300 hover:transform hover:-translate-y-1 sm:hover:-translate-y-2 group shadow-sm sm:shadow-lg hover:shadow-xl">
         {/* Image */}
         <div className="relative h-40 sm:h-48 md:h-56 overflow-hidden">
@@ -251,8 +275,10 @@ const EventCard = ({ event, onEventClick }) => {
           </button>
 
           {/* Price Badge */}
-          <span className={`absolute bottom-2 left-2 sm:bottom-3 sm:left-3 px-2 py-1 sm:px-3 sm:py-2 ${event.isFree ? 'bg-green-500' : 'bg-[#27bb97]'} text-white text-xs sm:text-sm font-bold rounded-full shadow-md sm:shadow-lg`}>
-            {event.isFree ? 'FREE' : `₹${event.price}`}
+          <span
+            className={`absolute bottom-2 left-2 sm:bottom-3 sm:left-3 px-2 py-1 sm:px-3 sm:py-2 ${event.isFree ? "bg-green-500" : "bg-[#27bb97]"} text-white text-xs sm:text-sm font-bold rounded-full shadow-md sm:shadow-lg`}
+          >
+            {event.isFree ? "FREE" : `₹${event.price}`}
           </span>
         </div>
 
@@ -282,15 +308,21 @@ const EventCard = ({ event, onEventClick }) => {
           <div className="flex items-center justify-between mb-3 sm:mb-4">
             <div className="flex items-center gap-1">
               <FaStar className="w-3 h-3 sm:w-4 sm:h-4 text-yellow-400 fill-current" />
-              <span className="text-xs sm:text-sm text-gray-600">{event.rating}</span>
+              <span className="text-xs sm:text-sm text-gray-600">
+                {event.rating}
+              </span>
             </div>
             <div className="flex items-center gap-1">
               <FaTicketAlt className="w-3 h-3 sm:w-4 sm:h-4 text-gray-500" />
-              <span className="text-xs sm:text-sm text-gray-600">{event.ticketsLeft} left</span>
+              <span className="text-xs sm:text-sm text-gray-600">
+                {event.ticketsLeft} left
+              </span>
             </div>
             <div className="flex items-center gap-1">
               <FaUsers className="w-3 h-3 sm:w-4 sm:h-4 text-gray-500" />
-              <span className="text-xs sm:text-sm text-gray-600">{event.attendees}</span>
+              <span className="text-xs sm:text-sm text-gray-600">
+                {event.attendees}
+              </span>
             </div>
           </div>
 
@@ -319,14 +351,14 @@ const DiscoverEventCard = ({ event, onEventClick }) => {
             loading="lazy"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black opacity-60"></div>
-          
+
           {/* Category Badge */}
           <div className="absolute top-2 left-2">
             <span className="px-2 py-1 bg-white text-gray-800 text-xs font-semibold rounded-full capitalize">
               {event.category}
             </span>
           </div>
-          
+
           {/* Favorite Button */}
           <button className="absolute top-2 right-2 p-1 bg-white bg-opacity-30 rounded-full hover:bg-opacity-40 transition backdrop-blur-sm">
             <FaHeart className="w-3 h-3 text-white hover:text-red-400 transition-colors" />
@@ -358,13 +390,17 @@ const DiscoverEventCard = ({ event, onEventClick }) => {
           {/* Price and Rating Row */}
           <div className="flex items-center justify-between mb-3 sm:mb-4">
             <div className="flex items-center gap-1.5">
-              <span className={`text-base sm:text-lg font-bold ${event.isFree ? 'text-green-600' : 'text-[#27bb97]'}`}>
-                {event.isFree ? 'FREE' : `₹${event.price}`}
+              <span
+                className={`text-base sm:text-lg font-bold ${event.isFree ? "text-green-600" : "text-[#27bb97]"}`}
+              >
+                {event.isFree ? "FREE" : `₹${event.price}`}
               </span>
             </div>
             <div className="flex items-center gap-1 bg-gray-100 px-2 py-1 rounded-full">
               <FaStar className="w-3 h-3 text-yellow-400 fill-current" />
-              <span className="text-xs sm:text-sm font-semibold text-gray-700">{event.rating}</span>
+              <span className="text-xs sm:text-sm font-semibold text-gray-700">
+                {event.rating}
+              </span>
             </div>
           </div>
 
@@ -396,7 +432,7 @@ const UpcomingEventsSection = ({ onEventClick }) => {
   const navigate = useNavigate();
 
   const handleViewMore = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: "smooth" });
     setTimeout(() => {
       navigate(`/events-list`);
     }, 100);
@@ -410,7 +446,8 @@ const UpcomingEventsSection = ({ onEventClick }) => {
         </h1>
         <div className="h-1 w-16 sm:w-20 bg-gradient-to-r from-[#27bb97] to-[#1fa582] mt-2 sm:mt-3 rounded-full mx-auto"></div>
         <p className="text-center text-gray-600 mt-2 sm:mt-3 text-sm sm:text-base md:text-lg max-w-2xl mx-auto px-4">
-          Discover exciting upcoming events featuring music, sports, entertainment, and more. Book your tickets early!
+          Discover exciting upcoming events featuring music, sports,
+          entertainment, and more. Book your tickets early!
         </p>
 
         {/* Events Cards Grid */}
@@ -445,13 +482,17 @@ const UpcomingEventsSection = ({ onEventClick }) => {
                         {event.title}
                       </h3>
                       <div className="text-[#27bb97] px-3 py-1 font-bold text-lg sm:text-xl">
-                        {event.isFree ? 'FREE' : `₹${event.price.toLocaleString()}`}
+                        {event.isFree
+                          ? "FREE"
+                          : `₹${event.price.toLocaleString()}`}
                       </div>
                     </div>
                     <div className="flex items-center gap-2 my-2 sm:my-3">
                       <div className="flex text-yellow-400">
                         {[...Array(5)].map((_, i) => (
-                          <span key={i} className="text-sm sm:text-base">★</span>
+                          <span key={i} className="text-sm sm:text-base">
+                            ★
+                          </span>
                         ))}
                       </div>
                       <span className="text-xs sm:text-sm text-gray-500">
@@ -497,7 +538,9 @@ const UpcomingEventsSection = ({ onEventClick }) => {
                     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                       <div className="flex items-center gap-1.5 text-xs sm:text-sm text-gray-500">
                         <FaMapMarkerAlt size={12} className="sm:w-4 sm:h-4" />
-                        <span className="line-clamp-2 sm:line-clamp-1">{event.location}</span>
+                        <span className="line-clamp-2 sm:line-clamp-1">
+                          {event.location}
+                        </span>
                       </div>
                       <button className="w-full sm:w-auto bg-[#27bb97] hover:bg-[#1fa582] text-white px-4 py-2 sm:px-5 sm:py-2 rounded-full text-xs sm:text-sm font-medium transition-colors text-center">
                         Book Now
@@ -512,7 +555,7 @@ const UpcomingEventsSection = ({ onEventClick }) => {
 
         {/* View More Events Button */}
         <div className="flex justify-center mt-8 sm:mt-10 lg:mt-12">
-          <button 
+          <button
             onClick={handleViewMore}
             className="bg-[#27bb97] hover:bg-[#1fa582] text-white px-6 py-3 sm:px-8 sm:py-4 rounded-lg sm:rounded-xl font-medium sm:font-semibold transition-all duration-300 transform hover:-translate-y-0.5 sm:hover:-translate-y-1 hover:shadow-lg flex items-center gap-2 sm:gap-3 group cursor-pointer text-sm sm:text-base"
           >
@@ -528,10 +571,10 @@ const UpcomingEventsSection = ({ onEventClick }) => {
 // Main Responsive EventsShowcase Component
 const EventsShowcase = () => {
   const scrollRef = useRef(null);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedDate, setSelectedDate] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('all');
-  const [priceRange, setPriceRange] = useState('all');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedDate, setSelectedDate] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [priceRange, setPriceRange] = useState("all");
   const [showFilters, setShowFilters] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const navigate = useNavigate();
@@ -541,49 +584,53 @@ const EventsShowcase = () => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768);
     };
-    
+
     checkMobile();
-    window.addEventListener('resize', checkMobile);
-    
-    return () => window.removeEventListener('resize', checkMobile);
+    window.addEventListener("resize", checkMobile);
+
+    return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
   // Combine all events for filtering
   const allEvents = [...eventsData.popular, ...eventsData.upcoming];
 
   // Filter events based on criteria
-  const filteredEvents = allEvents.filter(event => {
-    const matchesSearch = event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         event.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         event.artist.toLowerCase().includes(searchTerm.toLowerCase());
+  const filteredEvents = allEvents.filter((event) => {
+    const matchesSearch =
+      event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      event.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      event.artist.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesDate = !selectedDate || event.date === selectedDate;
-    const matchesCategory = selectedCategory === 'all' || event.category === selectedCategory;
-    const matchesPrice = 
-      priceRange === 'all' ||
-      (priceRange === 'free' && event.price === 0) ||
-      (priceRange === 'under1000' && event.price > 0 && event.price < 1000) ||
-      (priceRange === '1000to5000' && event.price >= 1000 && event.price <= 5000) ||
-      (priceRange === 'over5000' && event.price > 5000);
-    
+    const matchesCategory =
+      selectedCategory === "all" || event.category === selectedCategory;
+    const matchesPrice =
+      priceRange === "all" ||
+      (priceRange === "free" && event.price === 0) ||
+      (priceRange === "under1000" && event.price > 0 && event.price < 1000) ||
+      (priceRange === "1000to5000" &&
+        event.price >= 1000 &&
+        event.price <= 5000) ||
+      (priceRange === "over5000" && event.price > 5000);
+
     return matchesSearch && matchesDate && matchesCategory && matchesPrice;
   });
 
   const scrollLeft = () => {
     if (scrollRef.current) {
       const scrollAmount = isMobile ? 250 : 300;
-      scrollRef.current.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+      scrollRef.current.scrollBy({ left: -scrollAmount, behavior: "smooth" });
     }
   };
 
   const scrollRight = () => {
     if (scrollRef.current) {
       const scrollAmount = isMobile ? 250 : 300;
-      scrollRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+      scrollRef.current.scrollBy({ left: scrollAmount, behavior: "smooth" });
     }
   };
 
   const handleEventClick = (event) => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: "smooth" });
     setTimeout(() => {
       navigate(`/events/${event.id}`);
     }, 100);
@@ -591,7 +638,7 @@ const EventsShowcase = () => {
 
   const handleViewMorePopular = () => {
     if (eventsData.popular.length > 0) {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.scrollTo({ top: 0, behavior: "smooth" });
       setTimeout(() => {
         navigate(`/events-list`);
       }, 100);
@@ -599,9 +646,10 @@ const EventsShowcase = () => {
   };
 
   const handleViewMoreDiscover = () => {
-    const targetEvent = filteredEvents.length > 0 ? filteredEvents[0] : eventsData.popular[0];
+    const targetEvent =
+      filteredEvents.length > 0 ? filteredEvents[0] : eventsData.popular[0];
     if (targetEvent) {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.scrollTo({ top: 0, behavior: "smooth" });
       setTimeout(() => {
         navigate(`/events-list`);
       }, 100);
@@ -609,22 +657,22 @@ const EventsShowcase = () => {
   };
 
   const clearFilters = () => {
-    setSearchTerm('');
-    setSelectedDate('');
-    setSelectedCategory('all');
-    setPriceRange('all');
+    setSearchTerm("");
+    setSelectedDate("");
+    setSelectedCategory("all");
+    setPriceRange("all");
     setShowFilters(false);
   };
 
   const categories = [
-    { id: 'all', name: 'All', icon: FaStar },
-    { id: 'music', name: 'Music', icon: FaMusic },
-    { id: 'sports', name: 'Sports', icon: FaFutbol },
-    { id: 'food', name: 'Food', icon: FaUtensils },
-    { id: 'entertainment', name: 'Entertainment', icon: FaFilm },
-    { id: 'conference', name: 'Conference', icon: FaConference },
-    { id: 'wellness', name: 'Wellness', icon: FaHeartbeat },
-    { id: 'festival', name: 'Festival', icon: FaGlassCheers }
+    { id: "all", name: "All", icon: FaStar },
+    { id: "music", name: "Music", icon: FaMusic },
+    { id: "sports", name: "Sports", icon: FaFutbol },
+    { id: "food", name: "Food", icon: FaUtensils },
+    { id: "entertainment", name: "Entertainment", icon: FaFilm },
+    { id: "conference", name: "Conference", icon: FaConference },
+    { id: "wellness", name: "Wellness", icon: FaHeartbeat },
+    { id: "festival", name: "Festival", icon: FaGlassCheers },
   ];
 
   return (
@@ -640,14 +688,14 @@ const EventsShowcase = () => {
               </h2>
 
               <div className="flex gap-2">
-                <button 
+                <button
                   onClick={scrollLeft}
                   className="p-2 sm:p-3 rounded-full bg-white border border-gray-300 hover:border-[#27bb97] transition shadow-sm"
                   aria-label="Scroll left"
                 >
                   <FaChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600" />
                 </button>
-                <button 
+                <button
                   onClick={scrollRight}
                   className="p-2 sm:p-3 rounded-full bg-white border border-gray-300 hover:border-[#27bb97] transition shadow-sm"
                   aria-label="Scroll right"
@@ -656,22 +704,28 @@ const EventsShowcase = () => {
                 </button>
               </div>
             </div>
-            
-            <div 
+
+            <div
               ref={scrollRef}
               className="flex gap-4 sm:gap-6 overflow-x-auto scrollbar-hide pb-4 scroll-smooth px-1"
-              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+              style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
             >
               {eventsData.popular.map((event) => (
-                <div key={event.id} className="min-w-[280px] sm:min-w-[300px] md:min-w-[320px] flex-shrink-0">
-                  <EventCard event={event} onEventClick={() => handleEventClick(event)} />
+                <div
+                  key={event.id}
+                  className="min-w-[280px] sm:min-w-[300px] md:min-w-[320px] flex-shrink-0"
+                >
+                  <EventCard
+                    event={event}
+                    onEventClick={() => handleEventClick(event)}
+                  />
                 </div>
               ))}
             </div>
 
             {/* View More Button for Popular Events */}
             <div className="flex justify-center mt-6 sm:mt-8">
-              <button 
+              <button
                 onClick={handleViewMorePopular}
                 className="border border-[#27bb97] hover:bg-[#27bb97] text-[#27bb97] hover:text-white px-6 py-3 sm:px-8 sm:py-4 rounded-lg sm:rounded-xl font-medium sm:font-semibold transition-all duration-300 transform hover:-translate-y-0.5 sm:hover:-translate-y-1 hover:shadow-lg flex items-center gap-2 sm:gap-3 group cursor-pointer text-sm sm:text-base"
               >
@@ -686,12 +740,13 @@ const EventsShowcase = () => {
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-center mb-4 tracking-wide text-gray-800 px-4">
               DISCOVER EVENTS
             </h2>
-            
+
             {/* Gradient Divider */}
             <div className="h-1 w-16 sm:w-20 bg-gradient-to-r from-[#27bb97] to-[#1fa582] mt-2 sm:mt-3 rounded-full mx-auto mb-6 sm:mb-8"></div>
 
             <p className="text-center text-gray-600 mb-6 sm:mb-8 text-sm sm:text-base md:text-lg max-w-2xl mx-auto px-4">
-              Find your perfect event with our advanced filters and search options
+              Find your perfect event with our advanced filters and search
+              options
             </p>
 
             {/* Enhanced Filter Section */}
@@ -789,8 +844,8 @@ const EventsShowcase = () => {
                     onClick={() => setSelectedCategory(category.id)}
                     className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-3 rounded-lg sm:rounded-xl font-medium transition-all whitespace-nowrap text-sm sm:text-base ${
                       selectedCategory === category.id
-                        ? 'bg-[#27bb97] text-white shadow-md'
-                        : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-300'
+                        ? "bg-[#27bb97] text-white shadow-md"
+                        : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-300"
                     } shadow-sm`}
                   >
                     <IconComponent className="w-3 h-3 sm:w-4 sm:h-4" />
@@ -803,7 +858,11 @@ const EventsShowcase = () => {
             {/* Events Grid with responsive columns */}
             <div className="grid grid-cols-1 xs:grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-5 lg:gap-6">
               {filteredEvents.map((event) => (
-                <DiscoverEventCard key={event.id} event={event} onEventClick={() => handleEventClick(event)} />
+                <DiscoverEventCard
+                  key={event.id}
+                  event={event}
+                  onEventClick={() => handleEventClick(event)}
+                />
               ))}
             </div>
 
@@ -811,8 +870,12 @@ const EventsShowcase = () => {
             {filteredEvents.length === 0 && (
               <div className="text-center py-8 sm:py-12 bg-white rounded-xl sm:rounded-2xl border border-gray-200 sm:border-gray-300 shadow-md sm:shadow-lg mt-4">
                 <FaSearch className="w-12 h-12 sm:w-16 sm:h-16 text-gray-400 mx-auto mb-3 sm:mb-4" />
-                <h3 className="text-lg sm:text-xl font-semibold text-gray-600 mb-1 sm:mb-2">No events found</h3>
-                <p className="text-gray-500 mb-4 sm:mb-6 text-sm sm:text-base px-4">Try adjusting your search criteria or filters</p>
+                <h3 className="text-lg sm:text-xl font-semibold text-gray-600 mb-1 sm:mb-2">
+                  No events found
+                </h3>
+                <p className="text-gray-500 mb-4 sm:mb-6 text-sm sm:text-base px-4">
+                  Try adjusting your search criteria or filters
+                </p>
                 <button
                   onClick={clearFilters}
                   className="px-4 sm:px-6 py-2.5 sm:py-3 bg-[#27bb97] hover:bg-[#1fa582] text-white rounded-lg sm:rounded-xl transition-colors font-medium text-sm sm:text-base"
@@ -825,7 +888,7 @@ const EventsShowcase = () => {
             {/* View More Button for Discover Events */}
             {filteredEvents.length > 0 && (
               <div className="flex justify-center mt-6 sm:mt-8">
-                <button 
+                <button
                   onClick={handleViewMoreDiscover}
                   className="bg-[#27bb97] hover:bg-[#1fa582] text-white px-6 py-3 sm:px-8 sm:py-4 rounded-lg sm:rounded-xl font-medium sm:font-semibold transition-all duration-300 transform hover:-translate-y-0.5 sm:hover:-translate-y-1 hover:shadow-lg flex items-center gap-2 sm:gap-3 group cursor-pointer text-sm sm:text-base"
                 >

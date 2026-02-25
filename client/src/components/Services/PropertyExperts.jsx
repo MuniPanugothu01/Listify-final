@@ -143,7 +143,11 @@ const initialAgents = [
     verified: true,
     featured: true,
     bio: "Dedicated to helping first-time home buyers navigate the market with comprehensive education and patient guidance.",
-    specialties: ["First-Time Buyers", "Starter Homes", "Down Payment Assistance"],
+    specialties: [
+      "First-Time Buyers",
+      "Starter Homes",
+      "Down Payment Assistance",
+    ],
     languages: ["English"],
     certification: "First-Time Home Buyer Certified",
     website: "www.urbanlivingrealty.com",
@@ -236,7 +240,11 @@ const remainingAgents = [
     verified: true,
     featured: false,
     bio: "Expert in historic home preservation, renovation, and sales with deep knowledge of architectural history.",
-    specialties: ["Historic Homes", "Restoration", "Architectural Preservation"],
+    specialties: [
+      "Historic Homes",
+      "Restoration",
+      "Architectural Preservation",
+    ],
     languages: ["English"],
     certification: "Historic Property Specialist",
     website: "www.historichomesgroup.com",
@@ -326,7 +334,11 @@ const remainingAgents = [
     verified: true,
     featured: false,
     bio: "Helping seniors downsize and transition to retirement communities with compassion and comprehensive services.",
-    specialties: ["Senior Downsizing", "Retirement Communities", "Estate Sales"],
+    specialties: [
+      "Senior Downsizing",
+      "Retirement Communities",
+      "Estate Sales",
+    ],
     languages: ["English"],
     certification: "Senior Real Estate Specialist",
     website: "www.seniortransitions.com",
@@ -894,8 +906,8 @@ export default function PropertyExperts() {
                               i < Math.floor(agent.rating)
                                 ? "text-yellow-500"
                                 : i < agent.rating
-                                ? "text-yellow-300"
-                                : "text-gray-300"
+                                  ? "text-yellow-300"
+                                  : "text-gray-300"
                             }`}
                           />
                         ))}

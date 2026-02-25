@@ -19,7 +19,7 @@ export const fetchDevices = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || error.message);
     }
-  }
+  },
 );
 
 export const revokeDevice = createAsyncThunk(
@@ -31,7 +31,7 @@ export const revokeDevice = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || error.message);
     }
-  }
+  },
 );
 
 export const fetchLoginHistory = createAsyncThunk(
@@ -43,7 +43,7 @@ export const fetchLoginHistory = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || error.message);
     }
-  }
+  },
 );
 
 export const getSessions = createAsyncThunk(
@@ -55,7 +55,7 @@ export const getSessions = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || error.message);
     }
-  }
+  },
 );
 
 export const revokeSession = createAsyncThunk(
@@ -67,7 +67,7 @@ export const revokeSession = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || error.message);
     }
-  }
+  },
 );
 
 const devicesSlice = createSlice({
@@ -110,7 +110,9 @@ const devicesSlice = createSlice({
       .addCase(revokeDevice.fulfilled, (state, action) => {
         state.loading = false;
         state.success = true;
-        state.devices = state.devices.filter(d => d.deviceId !== action.payload.deviceId);
+        state.devices = state.devices.filter(
+          (d) => d.deviceId !== action.payload.deviceId,
+        );
       })
       .addCase(revokeDevice.rejected, (state, action) => {
         state.loading = false;
@@ -149,16 +151,15 @@ const devicesSlice = createSlice({
       .addCase(revokeSession.fulfilled, (state, action) => {
         state.success = true;
         if (state.sessions) {
-          state.sessions = state.sessions.filter(s => s.tokenId !== action.payload.tokenId);
+          state.sessions = state.sessions.filter(
+            (s) => s.tokenId !== action.payload.tokenId,
+          );
         }
       });
   },
 });
 
-export const {
-  clearDevicesError,
-  resetDevicesSuccess,
-  clearDevicesData,
-} = devicesSlice.actions;
+export const { clearDevicesError, resetDevicesSuccess, clearDevicesData } =
+  devicesSlice.actions;
 
 export default devicesSlice.reducer;

@@ -8,7 +8,6 @@ export default function HeroSectionJobs() {
       <div className="px-4 sm:px-6 md:px-8 relative py-8 sm:py-12 md:py-16 flex flex-col lg:flex-row lg:items-center lg:justify-between lg:gap-12">
         {/* Left Side Content */}
         <div className="space-y-6 sm:space-y-8 lg:space-y-10 pt-6 lg:pt-1 relative z-10">
-
           {/* Main Heading */}
           <div className="space-y-3 sm:space-y-4 -mt-4 sm:-mt-5">
             <h1 className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold leading-tight tracking-tight">
@@ -34,14 +33,25 @@ export default function HeroSectionJobs() {
               <div
                 className="absolute -inset-0.5 rounded-xl pointer-events-none"
                 style={{
-                  background: "conic-gradient(from var(--gradient-angle, 0deg), #27bb97, #2d7dd7, #27bb97, #2d7dd7, #27bb97)",
+                  background:
+                    "conic-gradient(from var(--gradient-angle, 0deg), #27bb97, #2d7dd7, #27bb97, #2d7dd7, #27bb97)",
                   animation: "border-rotate 3s linear infinite",
                 }}
               ></div>
               <div className="absolute inset-0.5 bg-gray-200 rounded-lg group-hover:bg-gray-300 transition-colors duration-300"></div>
               <span className="relative z-10 flex items-center justify-center gap-1 sm:gap-2 text-sm sm:text-base">
-                <svg className="w-4 sm:w-5 h-4 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                <svg
+                  className="w-4 sm:w-5 h-4 sm:h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                  />
                 </svg>
                 I Offer a Job
               </span>
@@ -52,14 +62,25 @@ export default function HeroSectionJobs() {
               <div
                 className="absolute -inset-0.5 rounded-xl pointer-events-none"
                 style={{
-                  background: "conic-gradient(from var(--gradient-angle, 0deg), #2d7dd7, #27bb97, #2d7dd7, #27bb97, #2d7dd7)",
+                  background:
+                    "conic-gradient(from var(--gradient-angle, 0deg), #2d7dd7, #27bb97, #2d7dd7, #27bb97, #2d7dd7)",
                   animation: "border-rotate 3s linear infinite",
                 }}
               ></div>
               <div className="absolute inset-0.5 bg-gray-200 rounded-lg group-hover:bg-gray-300 transition-colors duration-300"></div>
               <span className="relative z-10 flex items-center justify-center gap-1 sm:gap-2 text-sm sm:text-base">
-                <svg className="w-4 sm:w-5 h-4 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                <svg
+                  className="w-4 sm:w-5 h-4 sm:h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
                 </svg>
                 I Need a Job
               </span>
@@ -71,20 +92,21 @@ export default function HeroSectionJobs() {
               <div
                 className="absolute -inset-0.5 rounded-lg pointer-events-none"
                 style={{
-                  background: "conic-gradient(from var(--gradient-angle, 0deg), #27bb97, #2d7dd7, #27bb97, #2d7dd7, #27bb97)",
+                  background:
+                    "conic-gradient(from var(--gradient-angle, 0deg), #27bb97, #2d7dd7, #27bb97, #2d7dd7, #27bb97)",
                   animation: "border-rotate 3s linear infinite",
                 }}
               ></div>
-              
+
               <div className="absolute inset-0.5 bg-white/90 backdrop-blur-sm rounded-lg group-hover:bg-white transition-colors duration-300"></div>
-              
+
               <div className="relative z-10">
                 <p className="capitalize font-semibold gap-2 text-sm sm:text-base">
-                  Create <span className="text-blue-600 font-semibold">Free</span> resume
+                  Create{" "}
+                  <span className="text-blue-600 font-semibold">Free</span>{" "}
+                  resume
                 </p>
-                <button
-                  className="bg-white capitalize rounded-2xl w-16 sm:w-20 h-7 sm:h-8 text-center cursor-pointer mt-1 font-semibold transition-all duration-200 hover:bg-gray-200 border border-transparent hover:border-[#27bb97] text-sm sm:text-base"
-                >
+                <button className="bg-white capitalize rounded-2xl w-16 sm:w-20 h-7 sm:h-8 text-center cursor-pointer mt-1 font-semibold transition-all duration-200 hover:bg-gray-200 border border-transparent hover:border-[#27bb97] text-sm sm:text-base">
                   create
                 </button>
               </div>
@@ -286,11 +308,11 @@ export default function HeroSectionJobs() {
           }
         }
         @property --gradient-angle {
-          syntax: '<angle>';
+          syntax: "<angle>";
           initial-value: 0deg;
           inherits: false;
         }
-        
+
         /* Custom breakpoint for extra small screens (iPhone SE, etc.) */
         @media (min-width: 375px) and (max-width: 639px) {
           .xs\\:text-3xl {
@@ -302,7 +324,7 @@ export default function HeroSectionJobs() {
             line-height: 1.5rem;
           }
         }
-        
+
         /* For tablets - ensure buttons don't stretch too much */
         @media (min-width: 640px) and (max-width: 1023px) {
           .lg\\:hidden {
@@ -310,14 +332,14 @@ export default function HeroSectionJobs() {
             flex-wrap: wrap;
             gap: 0.75rem;
           }
-          
+
           .lg\\:hidden button,
           .lg\\:hidden .relative {
             min-width: 130px;
             flex: 0 1 auto;
           }
         }
-        
+
         /* iPhone specific optimizations */
         @media (max-width: 374px) {
           /* Very small phones */

@@ -23,7 +23,7 @@ import {
   setResetEmail,
   clearResetEmail,
   setGoogleClientId,
-} from '../slices/authSlice';
+} from "../slices/authSlice";
 
 // ==================== AUTH ACTION CREATORS ====================
 
@@ -99,7 +99,9 @@ export const authActions = {
 
   verifyForgotPasswordOTP: (email, otp) => async (dispatch) => {
     try {
-      const result = await dispatch(verifyForgotPasswordOTP({ email, otp })).unwrap();
+      const result = await dispatch(
+        verifyForgotPasswordOTP({ email, otp }),
+      ).unwrap();
       dispatch(setResetToken(result.resetToken));
       return { success: true, data: result };
     } catch (error) {
@@ -116,18 +118,24 @@ export const authActions = {
     }
   },
 
-  resetPasswordWithToken: (resetToken, email, password, confirmPassword) => async (dispatch) => {
-    try {
-      const result = await dispatch(
-        resetPasswordWithToken({ resetToken, email, password, confirmPassword })
-      ).unwrap();
-      dispatch(clearResetToken());
-      dispatch(clearResetEmail());
-      return { success: true, data: result };
-    } catch (error) {
-      return { success: false, error };
-    }
-  },
+  resetPasswordWithToken:
+    (resetToken, email, password, confirmPassword) => async (dispatch) => {
+      try {
+        const result = await dispatch(
+          resetPasswordWithToken({
+            resetToken,
+            email,
+            password,
+            confirmPassword,
+          }),
+        ).unwrap();
+        dispatch(clearResetToken());
+        dispatch(clearResetEmail());
+        return { success: true, data: result };
+      } catch (error) {
+        return { success: false, error };
+      }
+    },
 
   // Logout
   logout: () => async (dispatch) => {
@@ -152,7 +160,11 @@ export const authActions = {
   checkAuth: () => async (dispatch) => {
     try {
       const result = await dispatch(checkAuth()).unwrap();
-      return { success: true, isAuthenticated: result.isAuthenticated, user: result.user };
+      return {
+        success: true,
+        isAuthenticated: result.isAuthenticated,
+        user: result.user,
+      };
     } catch (error) {
       return { success: false, isAuthenticated: false };
     }

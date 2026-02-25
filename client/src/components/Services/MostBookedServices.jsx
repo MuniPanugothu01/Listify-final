@@ -1,8 +1,27 @@
-
 import React from "react";
-import { FaStar, FaCalendarCheck, FaCheckCircle, FaFire, FaArrowRight, FaCheck, FaTimes, FaClock } from "react-icons/fa";
-import { MdVerified, MdLocationOn, MdElectricBolt, MdLocalOffer, MdShield } from "react-icons/md";
-import { GiWaterDrop, GiBroom, GiPaintRoller, GiSpiderWeb } from "react-icons/gi";
+import {
+  FaStar,
+  FaCalendarCheck,
+  FaCheckCircle,
+  FaFire,
+  FaArrowRight,
+  FaCheck,
+  FaTimes,
+  FaClock,
+} from "react-icons/fa";
+import {
+  MdVerified,
+  MdLocationOn,
+  MdElectricBolt,
+  MdLocalOffer,
+  MdShield,
+} from "react-icons/md";
+import {
+  GiWaterDrop,
+  GiBroom,
+  GiPaintRoller,
+  GiSpiderWeb,
+} from "react-icons/gi";
 import { TbAirConditioning, TbTools } from "react-icons/tb";
 import { RiArrowRightSLine } from "react-icons/ri";
 
@@ -55,7 +74,6 @@ export default function MostBookedServices() {
   return (
     <section className="bg-gradient-to-b from-gray-50 to-white py-16 md:py-24">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-
         {/* SECTION HEADER */}
         <div className="text-center mb-16">
           <div className="inline-flex items-center gap-3 mb-4">
@@ -75,7 +93,8 @@ export default function MostBookedServices() {
           </h2>
 
           <p className="mt-6 text-lg text-gray-600 max-w-2xl mx-auto">
-            Trusted local services with transparent pricing and verified professionals
+            Trusted local services with transparent pricing and verified
+            professionals
           </p>
 
           <div className="mt-8 flex justify-center">
@@ -90,7 +109,6 @@ export default function MostBookedServices() {
               key={index}
               className="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100"
             >
-
               {/* IMAGE */}
               <div className="relative h-50 md:h-50 overflow-hidden">
                 <img
@@ -113,7 +131,6 @@ export default function MostBookedServices() {
 
               {/* CONTENT */}
               <div className="p-6 md:p-7">
-
                 {/* BADGES */}
                 <div className="flex flex-wrap gap-2 mb-4">
                   <span className="px-3 py-1 text-xs font-semibold rounded-full bg-[#27bb97]/10 text-[#27bb97] flex items-center gap-1">
@@ -185,7 +202,6 @@ export default function MostBookedServices() {
             <FaArrowRight className="w-5 h-5" />
           </button>
         </div>
-
       </div>
     </section>
   );

@@ -105,14 +105,16 @@ const Navbar = () => {
     if (profile) {
       // Reset image error when profile updates (new image may have been uploaded)
       setImageError(false);
-      dispatch(updateUser({
-        profileImage: profile.profileImage,
-        profileImageUrl: profile.profileImage || profile.profileImageUrl,
-        avatar: profile.avatar,
-        googleProfileImage: profile.googleProfileImage,
-        provider: profile.provider,
-        isGoogle: profile.isGoogle,
-      }));
+      dispatch(
+        updateUser({
+          profileImage: profile.profileImage,
+          profileImageUrl: profile.profileImage || profile.profileImageUrl,
+          avatar: profile.avatar,
+          googleProfileImage: profile.googleProfileImage,
+          provider: profile.provider,
+          isGoogle: profile.isGoogle,
+        }),
+      );
     }
   }, [profile, dispatch]);
 
@@ -230,11 +232,11 @@ const Navbar = () => {
   const handleLocationChange = (e) => {
     const value = e.target.value;
     setSelectedLocation(value);
-    
+
     // Filter location suggestions
     if (value.trim()) {
-      const filtered = POPULAR_CITIES.filter(city =>
-        city.toLowerCase().includes(value.toLowerCase())
+      const filtered = POPULAR_CITIES.filter((city) =>
+        city.toLowerCase().includes(value.toLowerCase()),
       ).slice(0, 5);
       setLocationSuggestions(filtered);
       setShowLocationSuggestions(true);
@@ -321,18 +323,14 @@ const Navbar = () => {
     const googleUser = isGoogleUser();
 
     // 1. Custom uploaded image has highest priority (profileImage is the S3 URL)
-    const customUploaded =
-      profile?.profileImage ||
-      user?.profileImage;
+    const customUploaded = profile?.profileImage || user?.profileImage;
 
     if (customUploaded && customUploaded !== STATIC_PROFILE_IMAGE) {
       return customUploaded;
     }
 
     // 2. profileImageUrl (computed field — could be custom or google)
-    const computedUrl =
-      profile?.profileImageUrl ||
-      user?.profileImageUrl;
+    const computedUrl = profile?.profileImageUrl || user?.profileImageUrl;
 
     if (computedUrl && computedUrl !== STATIC_PROFILE_IMAGE) {
       return computedUrl;
@@ -380,7 +378,7 @@ const Navbar = () => {
   };
 
   const handleKeyPress = (e) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       handleSearch(e);
     }
   };
@@ -884,7 +882,10 @@ const Navbar = () => {
               {/* Desktop Search Bar with Separate Location - Only visible on lg screens and above */}
               <div className="search-container">
                 {/* Location Input - Separate Div */}
-                <div className="location-input-container" ref={locationInputRef}>
+                <div
+                  className="location-input-container"
+                  ref={locationInputRef}
+                >
                   <div className="location-input-wrapper">
                     <FaMapMarkerAlt className="location-icon" size={14} />
                     <input
@@ -894,7 +895,9 @@ const Navbar = () => {
                       onChange={handleLocationChange}
                       onFocus={() => {
                         if (selectedLocation) {
-                          handleLocationChange({ target: { value: selectedLocation } });
+                          handleLocationChange({
+                            target: { value: selectedLocation },
+                          });
                         } else {
                           setLocationSuggestions(POPULAR_CITIES.slice(0, 5));
                           setShowLocationSuggestions(true);
@@ -904,7 +907,7 @@ const Navbar = () => {
                       className="location-input"
                     />
                   </div>
-                  
+
                   {/* Location Suggestions Dropdown */}
                   {showLocationSuggestions && (
                     <div className="location-suggestions">
@@ -915,20 +918,26 @@ const Navbar = () => {
                             onClick={() => handleLocationSelect(city)}
                             className="location-suggestion-item"
                           >
-                            <FaMapMarkerAlt className="suggestion-icon" size={12} />
+                            <FaMapMarkerAlt
+                              className="suggestion-icon"
+                              size={12}
+                            />
                             <span>{city}</span>
                           </div>
                         ))
                       ) : (
                         <div className="location-suggestion-item">
-                          <FaMapMarkerAlt className="suggestion-icon" size={12} />
+                          <FaMapMarkerAlt
+                            className="suggestion-icon"
+                            size={12}
+                          />
                           <span>No locations found</span>
                         </div>
                       )}
                     </div>
                   )}
                 </div>
-                
+
                 {/* Search Input - Separate Div with Icon Inside */}
                 <div className="search-input-container">
                   <div className="search-input-wrapper">
@@ -1022,7 +1031,9 @@ const Navbar = () => {
                     >
                       <FaBell size={18} />
                       {unreadCount > 0 && (
-                        <span className="notification-badge">{unreadCount}</span>
+                        <span className="notification-badge">
+                          {unreadCount}
+                        </span>
                       )}
                     </button>
 
@@ -1217,7 +1228,9 @@ const Navbar = () => {
                         {profileMenuItems.map((item, index) => (
                           <button
                             key={index}
-                            onClick={() => handleProfileMenuItemClick(item.path)}
+                            onClick={() =>
+                              handleProfileMenuItemClick(item.path)
+                            }
                             className="profile-dropdown-link w-full flex items-center justify-between gap-3 px-4 py-3 text-sm text-gray-700 hover:text-blue-600 font-medium"
                           >
                             <div className="flex items-center gap-3">
@@ -1271,7 +1284,9 @@ const Navbar = () => {
                     >
                       <FaBell size={18} />
                       {unreadCount > 0 && (
-                        <span className="notification-badge">{unreadCount}</span>
+                        <span className="notification-badge">
+                          {unreadCount}
+                        </span>
                       )}
                     </button>
                   </div>
@@ -1314,7 +1329,9 @@ const Navbar = () => {
                       onChange={handleLocationChange}
                       onFocus={() => {
                         if (selectedLocation) {
-                          handleLocationChange({ target: { value: selectedLocation } });
+                          handleLocationChange({
+                            target: { value: selectedLocation },
+                          });
                         } else {
                           setLocationSuggestions(POPULAR_CITIES.slice(0, 5));
                           setShowLocationSuggestions(true);
@@ -1323,7 +1340,7 @@ const Navbar = () => {
                       className="mobile-location-input"
                     />
                   </div>
-                  
+
                   {/* Mobile Location Suggestions */}
                   {showLocationSuggestions && (
                     <div className="mobile-location-suggestions">
@@ -1337,19 +1354,25 @@ const Navbar = () => {
                             }}
                             className="location-suggestion-item"
                           >
-                            <FaMapMarkerAlt className="suggestion-icon" size={12} />
+                            <FaMapMarkerAlt
+                              className="suggestion-icon"
+                              size={12}
+                            />
                             <span>{city}</span>
                           </div>
                         ))
                       ) : (
                         <div className="location-suggestion-item">
-                          <FaMapMarkerAlt className="suggestion-icon" size={12} />
+                          <FaMapMarkerAlt
+                            className="suggestion-icon"
+                            size={12}
+                          />
                           <span>No locations found</span>
                         </div>
                       )}
                     </div>
                   )}
-                  
+
                   {/* Search Field - Separate with Icon Inside */}
                   <div className="mobile-search-field">
                     <FaSearch className="search-icon" size={14} />
@@ -1362,7 +1385,7 @@ const Navbar = () => {
                       autoFocus
                     />
                   </div>
-                  
+
                   <div className="mobile-search-row">
                     <button type="submit" className="mobile-search-submit">
                       Search

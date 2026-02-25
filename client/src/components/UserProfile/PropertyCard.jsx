@@ -1,7 +1,12 @@
 import React from "react";
 import { Heart, MapPin, Bed, Bath, Square, Eye, Share2 } from "lucide-react";
 
-const PropertyCard = ({ property, onToggleSave, isMyPost = false, showSaveButton = true }) => (
+const PropertyCard = ({
+  property,
+  onToggleSave,
+  isMyPost = false,
+  showSaveButton = true,
+}) => (
   <div className="group bg-white rounded-xl md:rounded-2xl border border-gray-200 overflow-hidden hover:border-emerald-300 hover:shadow-lg transition-all duration-300 h-full flex flex-col">
     <div className="relative overflow-hidden flex-shrink-0">
       <img
@@ -10,14 +15,16 @@ const PropertyCard = ({ property, onToggleSave, isMyPost = false, showSaveButton
         className="w-full h-48 md:h-56 object-cover group-hover:scale-105 transition-transform duration-500"
       />
       <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
-      
+
       {/* Badges */}
       <div className="absolute top-3 left-3 flex gap-2">
-        <span className={`px-2 py-1 md:px-3 md:py-1.5 rounded-full text-xs font-semibold ${
-          property.type === "rent"
-            ? "bg-emerald-500 text-white"
-            : "bg-blue-500 text-white"
-        }`}>
+        <span
+          className={`px-2 py-1 md:px-3 md:py-1.5 rounded-full text-xs font-semibold ${
+            property.type === "rent"
+              ? "bg-emerald-500 text-white"
+              : "bg-blue-500 text-white"
+          }`}
+        >
           {property.type === "rent" ? "FOR RENT" : "FOR SALE"}
         </span>
         {property.featured && (
@@ -58,7 +65,7 @@ const PropertyCard = ({ property, onToggleSave, isMyPost = false, showSaveButton
         <p className="text-gray-600 text-xs md:text-sm line-clamp-2 mb-3">
           {property.description}
         </p>
-        
+
         <div className="flex items-center text-gray-500 text-xs md:text-sm mb-4">
           <MapPin className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2 text-emerald-500" />
           <span className="line-clamp-1">{property.location}</span>
@@ -92,14 +99,18 @@ const PropertyCard = ({ property, onToggleSave, isMyPost = false, showSaveButton
               : `$${property.price.toLocaleString()}`}
           </span>
           {property.type === "sale" && (
-            <div className="text-xs md:text-sm text-gray-500 mt-1">$2,450/month</div>
+            <div className="text-xs md:text-sm text-gray-500 mt-1">
+              $2,450/month
+            </div>
           )}
         </div>
-        <button className={`px-3 py-1.5 md:px-4 md:py-2.5 rounded-lg md:rounded-xl font-semibold text-xs md:text-sm transition-colors ${
-          isMyPost 
-            ? "bg-emerald-500 text-white hover:bg-emerald-600" 
-            : "bg-emerald-500 text-white hover:bg-emerald-600"
-        } shadow-sm hover:shadow whitespace-nowrap`}>
+        <button
+          className={`px-3 py-1.5 md:px-4 md:py-2.5 rounded-lg md:rounded-xl font-semibold text-xs md:text-sm transition-colors ${
+            isMyPost
+              ? "bg-emerald-500 text-white hover:bg-emerald-600"
+              : "bg-emerald-500 text-white hover:bg-emerald-600"
+          } shadow-sm hover:shadow whitespace-nowrap`}
+        >
           {isMyPost ? "Edit" : "View"}
         </button>
       </div>

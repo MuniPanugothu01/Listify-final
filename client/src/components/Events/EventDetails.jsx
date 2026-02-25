@@ -67,7 +67,8 @@ const eventsData = {
       price: 2999,
       displayPrice: "₹2,999 onwards",
       attendees: "15.8k",
-      image: "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=800&q=80",
+      image:
+        "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=800&q=80",
       tag: "Music Festival",
       category: "music",
       time: "18:00",
@@ -76,7 +77,7 @@ const eventsData = {
       artist: "Various Artists",
       duration: "4 Days",
       ageLimit: "18+",
-      organizer: "Sunburn Events"
+      organizer: "Sunburn Events",
     },
     {
       id: 2,
@@ -88,7 +89,8 @@ const eventsData = {
       displayPrice: "Free Entry",
       attendees: "9.2k",
       isFree: true,
-      image: "https://demo.dawnthemes.com/ticketbox/wp-content/uploads/2017/03/Holi-Festival.png",
+      image:
+        "https://demo.dawnthemes.com/ticketbox/wp-content/uploads/2017/03/Holi-Festival.png",
       tag: "Festival",
       category: "food",
       time: "17:00",
@@ -97,7 +99,7 @@ const eventsData = {
       artist: "Local Vendors",
       duration: "6 Hours",
       ageLimit: "All Ages",
-      organizer: "DLF Events"
+      organizer: "DLF Events",
     },
     {
       id: 3,
@@ -108,7 +110,8 @@ const eventsData = {
       price: 599,
       displayPrice: "₹599",
       attendees: "1.8k",
-      image: "https://demo.dawnthemes.com/ticketbox/wp-content/uploads/2017/03/ticketbox-unlike-dummy-1110x600.jpg",
+      image:
+        "https://demo.dawnthemes.com/ticketbox/wp-content/uploads/2017/03/ticketbox-unlike-dummy-1110x600.jpg",
       tag: "Comedy",
       category: "entertainment",
       time: "20:00",
@@ -117,7 +120,7 @@ const eventsData = {
       artist: "Comedy Collective",
       duration: "3 Hours",
       ageLimit: "16+",
-      organizer: "The Comedy Club"
+      organizer: "The Comedy Club",
     },
     {
       id: 4,
@@ -129,7 +132,8 @@ const eventsData = {
       displayPrice: "Free",
       attendees: "3.1k",
       isFree: true,
-      image: "https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=800&q=80",
+      image:
+        "https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=800&q=80",
       tag: "Wellness",
       category: "wellness",
       time: "06:00",
@@ -138,7 +142,7 @@ const eventsData = {
       artist: "Yoga Masters",
       duration: "2 Hours",
       ageLimit: "All Ages",
-      organizer: "Beach Wellness"
+      organizer: "Beach Wellness",
     },
     {
       id: 5,
@@ -149,7 +153,8 @@ const eventsData = {
       price: 4500,
       displayPrice: "₹4,500 onwards",
       attendees: "82.5k",
-      image: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&q=80",
+      image:
+        "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&q=80",
       tag: "Concert",
       category: "music",
       time: "19:00",
@@ -158,7 +163,7 @@ const eventsData = {
       artist: "Coldplay",
       duration: "3 Hours",
       ageLimit: "12+",
-      organizer: "Live Nation"
+      organizer: "Live Nation",
     },
     {
       id: 6,
@@ -169,7 +174,8 @@ const eventsData = {
       price: 1200,
       displayPrice: "₹1,200 onwards",
       attendees: "95.3k",
-      image: "https://images.unsplash.com/photo-1621430669951-5e9e3b98ed8b?w=800&q=80",
+      image:
+        "https://images.unsplash.com/photo-1621430669951-5e9e3b98ed8b?w=800&q=80",
       tag: "Sports",
       category: "sports",
       time: "19:30",
@@ -178,8 +184,8 @@ const eventsData = {
       artist: "Various Performers",
       duration: "4 Hours",
       ageLimit: "All Ages",
-      organizer: "BCCI"
-    }
+      organizer: "BCCI",
+    },
   ],
   upcoming: [
     {
@@ -191,7 +197,8 @@ const eventsData = {
       price: 2499,
       displayPrice: "₹2,499 onwards",
       attendees: "34.7k",
-      image: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&q=80",
+      image:
+        "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&q=80",
       tag: "Party",
       category: "entertainment",
       time: "21:00",
@@ -200,7 +207,7 @@ const eventsData = {
       artist: "Top DJs",
       duration: "8 Hours",
       ageLimit: "21+",
-      organizer: "Nightlife Events"
+      organizer: "Nightlife Events",
     },
     {
       id: 14,
@@ -211,7 +218,8 @@ const eventsData = {
       price: 3299,
       displayPrice: "₹3,299",
       attendees: "22.1k",
-      image: "https://demo.dawnthemes.com/ticketbox/wp-content/uploads/2016/12/78459379.jpg",
+      image:
+        "https://demo.dawnthemes.com/ticketbox/wp-content/uploads/2016/12/78459379.jpg",
       tag: "Music",
       category: "music",
       time: "16:00",
@@ -220,7 +228,7 @@ const eventsData = {
       artist: "Indie Artists",
       duration: "3 Days",
       ageLimit: "18+",
-      organizer: "Mountain Events"
+      organizer: "Mountain Events",
     },
     {
       id: 15,
@@ -231,7 +239,8 @@ const eventsData = {
       price: 1999,
       displayPrice: "₹1,999",
       attendees: "8.9k",
-      image: "https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800&q=80",
+      image:
+        "https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800&q=80",
       tag: "Business",
       category: "conference",
       time: "09:00",
@@ -240,7 +249,7 @@ const eventsData = {
       artist: "Industry Leaders",
       duration: "2 Days",
       ageLimit: "18+",
-      organizer: "Tech Summit India"
+      organizer: "Tech Summit India",
     },
     {
       id: 16,
@@ -252,7 +261,8 @@ const eventsData = {
       displayPrice: "Free",
       attendees: "120.5k",
       isFree: true,
-      image: "https://images.unsplash.com/photo-1605001011156-cbf0b0f67a51?w=800&q=80",
+      image:
+        "https://images.unsplash.com/photo-1605001011156-cbf0b0f67a51?w=800&q=80",
       tag: "Festival",
       category: "festival",
       time: "10:00",
@@ -261,9 +271,9 @@ const eventsData = {
       artist: "Cultural Performers",
       duration: "Full Day",
       ageLimit: "All Ages",
-      organizer: "Cultural Society"
-    }
-  ]
+      organizer: "Cultural Society",
+    },
+  ],
 };
 
 // Google Maps Component
@@ -271,7 +281,7 @@ const EventLocationMap = ({ location, fullLocation }) => {
   const encodedLocation = encodeURIComponent(fullLocation || location);
   const googleMapsUrl = `https://www.google.com/maps?q=${encodedLocation}&output=embed`;
   const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodedLocation}`;
-  
+
   return (
     <div className="bg-white rounded-3xl p-8 shadow-xl border border-gray-100">
       <div className="flex justify-between items-center mb-6">
@@ -309,17 +319,27 @@ const EventLocationMap = ({ location, fullLocation }) => {
               <FaMapMarkerAlt className="text-[#27bb97]" />
               Venue Address
             </h3>
-            <p className="text-gray-700 leading-relaxed">{fullLocation || location}</p>
+            <p className="text-gray-700 leading-relaxed">
+              {fullLocation || location}
+            </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="bg-green-50 border border-green-200 rounded-2xl p-4">
-              <h4 className="font-semibold text-green-800 mb-2">Parking Available</h4>
-              <p className="text-sm text-green-700">Free parking with validation</p>
+              <h4 className="font-semibold text-green-800 mb-2">
+                Parking Available
+              </h4>
+              <p className="text-sm text-green-700">
+                Free parking with validation
+              </p>
             </div>
             <div className="bg-blue-50 border border-blue-200 rounded-2xl p-4">
-              <h4 className="font-semibold text-blue-800 mb-2">Public Transport</h4>
-              <p className="text-sm text-blue-700">Easily accessible via metro/bus</p>
+              <h4 className="font-semibold text-blue-800 mb-2">
+                Public Transport
+              </h4>
+              <p className="text-sm text-blue-700">
+                Easily accessible via metro/bus
+              </p>
             </div>
           </div>
 
@@ -386,9 +406,7 @@ const RatingStars = ({ rating, reviews }) => (
         <FaRegStar
           key={star}
           className={
-            star <= rating
-              ? "text-yellow-400 fill-yellow-400"
-              : "text-gray-300"
+            star <= rating ? "text-yellow-400 fill-yellow-400" : "text-gray-300"
           }
         />
       ))}
@@ -420,7 +438,7 @@ const RelatedEventsSection = ({ events, onEventClick }) => {
       <h2 className="text-4xl font-extrabold text-center mb-12 bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
         More Events You'll Love
       </h2>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {events.map((event) => {
           const currentIndex = currentImageIndex[event.id] || 0;
@@ -480,10 +498,12 @@ const RelatedEventsSection = ({ events, onEventClick }) => {
                 </div>
 
                 {/* Price Badge */}
-                <span className={`absolute bottom-3 left-3 px-3 py-2 ${
-                  event.isFree ? 'bg-green-500' : 'bg-[#27bb97]'
-                } text-white text-sm font-bold rounded-full shadow-lg`}>
-                  {event.isFree ? 'FREE' : `₹${event.price}`}
+                <span
+                  className={`absolute bottom-3 left-3 px-3 py-2 ${
+                    event.isFree ? "bg-green-500" : "bg-[#27bb97]"
+                  } text-white text-sm font-bold rounded-full shadow-lg`}
+                >
+                  {event.isFree ? "FREE" : `₹${event.price}`}
                 </span>
 
                 {/* Views */}
@@ -519,11 +539,15 @@ const RelatedEventsSection = ({ events, onEventClick }) => {
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-1">
                     <FaStar className="w-4 h-4 text-yellow-400 fill-current" />
-                    <span className="text-sm text-gray-600">{event.rating}</span>
+                    <span className="text-sm text-gray-600">
+                      {event.rating}
+                    </span>
                   </div>
                   <div className="flex items-center gap-1">
                     <FaTicketAlt className="w-4 h-4 text-[#27bb97]" />
-                    <span className="text-sm text-gray-600">{event.ticketsLeft} left</span>
+                    <span className="text-sm text-gray-600">
+                      {event.ticketsLeft} left
+                    </span>
                   </div>
                 </div>
 
@@ -554,12 +578,12 @@ const EventDetails = () => {
 
   // Scroll to top on component mount
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }, [eventId]);
 
   // Enhanced navigation function
   const handleNavigate = (path) => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: "smooth" });
     setTimeout(() => {
       navigate(path);
     }, 100);
@@ -567,7 +591,7 @@ const EventDetails = () => {
 
   // Handle related event click
   const handleRelatedEventClick = (relatedEvent) => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: "smooth" });
     setTimeout(() => {
       navigate(`/events/${relatedEvent.id}`);
     }, 100);
@@ -582,13 +606,15 @@ const EventDetails = () => {
 
   const prevImage = () => {
     if (event && event.images) {
-      setCurrentImageIndex((prev) => (prev - 1 + event.images.length) % event.images.length);
+      setCurrentImageIndex(
+        (prev) => (prev - 1 + event.images.length) % event.images.length,
+      );
     }
   };
 
   useEffect(() => {
     const allEvents = [...eventsData.popular, ...eventsData.upcoming];
-    const foundEvent = allEvents.find(e => e.id === parseInt(eventId));
+    const foundEvent = allEvents.find((e) => e.id === parseInt(eventId));
     if (foundEvent) {
       const enhancedEvent = {
         ...foundEvent,
@@ -598,7 +624,8 @@ const EventDetails = () => {
           "https://images.unsplash.com/photo-1484154218962-a197022b5858?w=800&q=80",
           "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800&q=80",
         ],
-        fullLocation: "Community Center (The Hindu Temple), 143-09 Holly Ave, Flushing, NY 11355",
+        fullLocation:
+          "Community Center (The Hindu Temple), 143-09 Holly Ave, Flushing, NY 11355",
         startTime: "6:00 PM (EST)",
         doorsOpen: "5:00 PM (EST)",
         duration: "5 hours",
@@ -608,7 +635,7 @@ const EventDetails = () => {
         performers: [
           { name: "Aurthohin", events: 1, role: "Headliner" },
           { name: "Tanzir C Tuhin", events: 1, role: "Support Act" },
-          { name: "Rafi Alam", events: 1, role: "Opening Act" }
+          { name: "Rafi Alam", events: 1, role: "Opening Act" },
         ],
         categories: ["Live Concert", "Singing", "Music"],
         description: `🎶Aurthohin, Tanzir Tuhin (X-Sironamhin) & Rafi Alam Live in New York 🎶
@@ -620,23 +647,48 @@ Come join us for an electrifying evening with Aurthohin, Tanzir Tuhin (X-Sironam
           "Limited parking is available across the street from the Community Center",
           "Additional parking is available at Flushing Hospital Parking lot (Burlington Street)",
           "See security staff at the venue for seal on the hospital parking ticket to get $7 as parking fee for the event.",
-          "No parking of cars or other vehicles blocking the entrance to the nearby houses of residents."
+          "No parking of cars or other vehicles blocking the entrance to the nearby houses of residents.",
         ],
         amenities: [
-          "Wi-Fi", "AC", "Food Stalls", "Bar", "Merchandise", 
-          "VIP Lounge", "Photo Booth", "Charging Stations", "First Aid"
+          "Wi-Fi",
+          "AC",
+          "Food Stalls",
+          "Bar",
+          "Merchandise",
+          "VIP Lounge",
+          "Photo Booth",
+          "Charging Stations",
+          "First Aid",
         ],
         ticketTypes: [
-          { type: "General", price: 40, status: "Going fast", closes: "Dec 1", benefits: ["Basic entry"] },
-          { type: "Gold", price: 50, status: "Going fast", closes: "Dec 1", benefits: ["Priority entry"] },
-          { type: "Premium", price: 75, status: "Available", closes: "Dec 1", benefits: ["Premium seating"] },
-          { 
-            type: "VIP (Includes Meet & Greet and exclusive Aurthohin Merchandise)", 
-            price: 100, 
-            status: "Available", 
-            closes: "Dec 1", 
-            benefits: ["Meet & Greet", "Exclusive Merch", "VIP Lounge"] 
-          }
+          {
+            type: "General",
+            price: 40,
+            status: "Going fast",
+            closes: "Dec 1",
+            benefits: ["Basic entry"],
+          },
+          {
+            type: "Gold",
+            price: 50,
+            status: "Going fast",
+            closes: "Dec 1",
+            benefits: ["Priority entry"],
+          },
+          {
+            type: "Premium",
+            price: 75,
+            status: "Available",
+            closes: "Dec 1",
+            benefits: ["Premium seating"],
+          },
+          {
+            type: "VIP (Includes Meet & Greet and exclusive Aurthohin Merchandise)",
+            price: 100,
+            status: "Available",
+            closes: "Dec 1",
+            benefits: ["Meet & Greet", "Exclusive Merch", "VIP Lounge"],
+          },
         ],
         organizer: "Music Bangla Boston",
         contact: "+1 (555) 123-4567",
@@ -646,7 +698,7 @@ Come join us for an electrifying evening with Aurthohin, Tanzir Tuhin (X-Sironam
         saves: "2.3k",
         verified: true,
         immediate: true,
-        sellingFast: true
+        sellingFast: true,
       };
       setEvent(enhancedEvent);
     }
@@ -656,7 +708,9 @@ Come join us for an electrifying evening with Aurthohin, Tanzir Tuhin (X-Sironam
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
-        <div className="text-2xl font-semibold text-gray-700 animate-pulse">Loading event...</div>
+        <div className="text-2xl font-semibold text-gray-700 animate-pulse">
+          Loading event...
+        </div>
       </div>
     );
   }
@@ -665,9 +719,11 @@ Come join us for an electrifying evening with Aurthohin, Tanzir Tuhin (X-Sironam
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
         <div className="text-center p-10 bg-white rounded-3xl shadow-2xl">
-          <h2 className="text-3xl font-bold text-gray-800 mb-4">Event Not Found</h2>
-          <button 
-            onClick={() => handleNavigate('/events')} 
+          <h2 className="text-3xl font-bold text-gray-800 mb-4">
+            Event Not Found
+          </h2>
+          <button
+            onClick={() => handleNavigate("/events")}
             className="bg-[#27bb97] hover:bg-[#1fa582] text-white font-bold py-3 px-8 rounded-xl transition transform hover:-translate-y-1"
           >
             ← Back to Events
@@ -678,7 +734,9 @@ Come join us for an electrifying evening with Aurthohin, Tanzir Tuhin (X-Sironam
   }
 
   const totalPrice = selectedTicket ? selectedTicket.price * quantity : 0;
-  const relatedEvents = eventsData.popular.filter(e => e.id !== event.id).slice(0, 3);
+  const relatedEvents = eventsData.popular
+    .filter((e) => e.id !== event.id)
+    .slice(0, 3);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100">
@@ -686,15 +744,15 @@ Come join us for an electrifying evening with Aurthohin, Tanzir Tuhin (X-Sironam
       <div className="bg-white/90 backdrop-blur-lg border-b border-gray-200 sticky top-0 z-40 shadow-sm">
         <div className="container mx-auto px-6 py-4">
           <nav className="flex items-center gap-3 text-sm font-medium">
-            <button 
-              onClick={() => handleNavigate('/')} 
+            <button
+              onClick={() => handleNavigate("/")}
               className="flex items-center gap-2 hover:text-[#27bb97] transition transform hover:-translate-y-0.5"
             >
               <FaHome className="w-4 h-4" /> Home
             </button>
             <FaChevronRight className="w-4 h-4 text-gray-400" />
-            <button 
-              onClick={() => handleNavigate('/events')} 
+            <button
+              onClick={() => handleNavigate("/events")}
               className="hover:text-[#27bb97] transition transform hover:-translate-y-0.5"
             >
               Events
@@ -710,12 +768,12 @@ Come join us for an electrifying evening with Aurthohin, Tanzir Tuhin (X-Sironam
       {/* Hero Section with Enhanced Image Gallery */}
       <div className="relative h-96 md:h-[500px] overflow-hidden">
         {/* Main Image */}
-        <img 
-          src={event.images[currentImageIndex]} 
-          alt={event.title} 
-          className="absolute inset-0 w-full h-full object-cover brightness-75" 
+        <img
+          src={event.images[currentImageIndex]}
+          alt={event.title}
+          className="absolute inset-0 w-full h-full object-cover brightness-75"
         />
-        
+
         {/* Image Navigation */}
         {event.images.length > 1 && (
           <>
@@ -731,7 +789,7 @@ Come join us for an electrifying evening with Aurthohin, Tanzir Tuhin (X-Sironam
             >
               <FaChevronRight className="w-6 h-6" />
             </button>
-            
+
             {/* Image Counter */}
             <div className="absolute bottom-4 left-4 bg-black/70 text-white px-3 py-1 rounded-full text-sm">
               {currentImageIndex + 1} / {event.images.length}
@@ -744,7 +802,9 @@ Come join us for an electrifying evening with Aurthohin, Tanzir Tuhin (X-Sironam
                   key={index}
                   onClick={() => setCurrentImageIndex(index)}
                   className={`w-12 h-12 rounded border-2 overflow-hidden ${
-                    index === currentImageIndex ? 'border-white' : 'border-transparent'
+                    index === currentImageIndex
+                      ? "border-white"
+                      : "border-transparent"
                   }`}
                 >
                   <img
@@ -759,7 +819,7 @@ Come join us for an electrifying evening with Aurthohin, Tanzir Tuhin (X-Sironam
         )}
 
         <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent" />
-        
+
         <div className="absolute bottom-0 left-0 right-0 p-8 md:p-12 text-white">
           <div className="max-w-7xl mx-auto">
             {/* Badges */}
@@ -767,19 +827,17 @@ Come join us for an electrifying evening with Aurthohin, Tanzir Tuhin (X-Sironam
               {event.sellingFast && (
                 <Badge type="immediate">🔥 Selling Fast</Badge>
               )}
-              {event.verified && (
-                <Badge type="verified">Verified</Badge>
-              )}
+              {event.verified && <Badge type="verified">Verified</Badge>}
               <Badge type="featured">{event.tag}</Badge>
               <span className="px-5 py-2 bg-[#27bb97] rounded-full font-bold text-lg shadow-lg">
-                {event.isFree ? 'FREE EVENT' : event.displayPrice}
+                {event.isFree ? "FREE EVENT" : event.displayPrice}
               </span>
             </div>
 
             <h1 className="text-4xl md:text-6xl font-extrabold mb-4 leading-tight drop-shadow-2xl">
               {event.title}
             </h1>
-            
+
             <div className="flex flex-wrap items-center gap-6 text-lg">
               <div className="flex items-center gap-2 bg-black/30 px-3 py-1 rounded-full">
                 <FaCalendarAlt /> {event.displayDate} • {event.startTime}
@@ -796,12 +854,12 @@ Come join us for an electrifying evening with Aurthohin, Tanzir Tuhin (X-Sironam
 
         {/* FABs */}
         <div className="absolute top-8 right-8 flex flex-col gap-3">
-          <button 
-            onClick={() => setIsFavorite(!isFavorite)} 
+          <button
+            onClick={() => setIsFavorite(!isFavorite)}
             className="p-4 bg-white/20 backdrop-blur-lg rounded-full hover:bg-white/30 transition shadow-xl transform hover:-translate-y-1"
           >
             <FaRegHeart
-              className={`w-6 h-6 ${isFavorite ? 'text-red-500 fill-red-500' : 'text-white'}`}
+              className={`w-6 h-6 ${isFavorite ? "text-red-500 fill-red-500" : "text-white"}`}
             />
           </button>
           <button className="p-4 bg-white/20 backdrop-blur-lg rounded-full hover:bg-white/30 transition shadow-xl transform hover:-translate-y-1">
@@ -822,23 +880,29 @@ Come join us for an electrifying evening with Aurthohin, Tanzir Tuhin (X-Sironam
                   <FaClock className="w-6 h-6 text-white" />
                 </div>
                 <h3 className="font-bold text-gray-800">Duration</h3>
-                <p className="text-lg font-semibold text-[#27bb97]">{event.duration}</p>
+                <p className="text-lg font-semibold text-[#27bb97]">
+                  {event.duration}
+                </p>
               </div>
-              
+
               <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 text-center transform hover:-translate-y-1 transition">
                 <div className="w-12 h-12 bg-[#27bb97] rounded-full mx-auto mb-3 flex items-center justify-center">
                   <FaLanguage className="w-6 h-6 text-white" />
                 </div>
                 <h3 className="font-bold text-gray-800">Language</h3>
-                <p className="text-lg font-semibold text-[#27bb97]">{event.language}</p>
+                <p className="text-lg font-semibold text-[#27bb97]">
+                  {event.language}
+                </p>
               </div>
-              
+
               <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 text-center transform hover:-translate-y-1 transition">
                 <div className="w-12 h-12 bg-[#27bb97] rounded-full mx-auto mb-3 flex items-center justify-center">
                   <FaDoorOpen className="w-6 h-6 text-white" />
                 </div>
                 <h3 className="font-bold text-gray-800">Doors Open</h3>
-                <p className="text-lg font-semibold text-[#27bb97]">{event.doorsOpen}</p>
+                <p className="text-lg font-semibold text-[#27bb97]">
+                  {event.doorsOpen}
+                </p>
               </div>
             </div>
 
@@ -852,7 +916,9 @@ Come join us for an electrifying evening with Aurthohin, Tanzir Tuhin (X-Sironam
                 <div className="space-y-4">
                   <div>
                     <span className="text-sm text-gray-500">Category</span>
-                    <p className="font-semibold text-lg">{event.categories.join(', ')}</p>
+                    <p className="font-semibold text-lg">
+                      {event.categories.join(", ")}
+                    </p>
                   </div>
                   <div>
                     <span className="text-sm text-gray-500">Start Time</span>
@@ -881,9 +947,9 @@ Come join us for an electrifying evening with Aurthohin, Tanzir Tuhin (X-Sironam
             </div>
 
             {/* Location with Google Maps */}
-            <EventLocationMap 
-              location={event.location} 
-              fullLocation={event.fullLocation} 
+            <EventLocationMap
+              location={event.location}
+              fullLocation={event.fullLocation}
             />
 
             {/* Performers - Enhanced Card Layout */}
@@ -891,13 +957,24 @@ Come join us for an electrifying evening with Aurthohin, Tanzir Tuhin (X-Sironam
               <h2 className="text-3xl font-bold mb-6">Event Performers</h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {event.performers.map((performer, i) => (
-                  <div key={i} className="text-center p-6 border-2 border-gray-100 rounded-2xl hover:border-[#27bb97] transition group transform hover:-translate-y-1">
+                  <div
+                    key={i}
+                    className="text-center p-6 border-2 border-gray-100 rounded-2xl hover:border-[#27bb97] transition group transform hover:-translate-y-1"
+                  >
                     <div className="w-20 h-20 bg-gradient-to-br from-[#27bb97] to-[#1fa582] rounded-full mx-auto mb-4 flex items-center justify-center group-hover:scale-110 transition">
-                      <span className="text-2xl font-bold text-white">{performer.name.charAt(0)}</span>
+                      <span className="text-2xl font-bold text-white">
+                        {performer.name.charAt(0)}
+                      </span>
                     </div>
-                    <h4 className="font-bold text-lg mb-1 group-hover:text-[#27bb97] transition">{performer.name}</h4>
-                    <p className="text-sm text-gray-500 mb-2">{performer.role}</p>
-                    <p className="text-xs text-gray-400">{performer.events} Upcoming Event(s)</p>
+                    <h4 className="font-bold text-lg mb-1 group-hover:text-[#27bb97] transition">
+                      {performer.name}
+                    </h4>
+                    <p className="text-sm text-gray-500 mb-2">
+                      {performer.role}
+                    </p>
+                    <p className="text-xs text-gray-400">
+                      {performer.events} Upcoming Event(s)
+                    </p>
                   </div>
                 ))}
               </div>
@@ -908,7 +985,10 @@ Come join us for an electrifying evening with Aurthohin, Tanzir Tuhin (X-Sironam
               <h2 className="text-3xl font-bold mb-6">Event Amenities</h2>
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {event.amenities.map((amenity, index) => (
-                  <div key={index} className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl border border-gray-200">
+                  <div
+                    key={index}
+                    className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl border border-gray-200"
+                  >
                     <div className="w-8 h-8 bg-[#27bb97] rounded-full flex items-center justify-center">
                       <FaBolt className="w-4 h-4 text-white" />
                     </div>
@@ -924,21 +1004,24 @@ Come join us for an electrifying evening with Aurthohin, Tanzir Tuhin (X-Sironam
               <div className="prose max-w-none text-gray-700 leading-relaxed text-lg">
                 <p className="whitespace-pre-wrap">{event.description}</p>
               </div>
-              {event.parkingInstructions && event.parkingInstructions.length > 0 && (
-                <div className="mt-8 p-6 bg-yellow-50 border border-yellow-200 rounded-2xl">
-                  <h3 className="font-bold mb-4 flex items-center gap-2 text-yellow-800">
-                    <FaCar className="w-5 h-5" /> PARKING INSTRUCTIONS:
-                  </h3>
-                  <ul className="space-y-3 text-sm">
-                    {event.parkingInstructions.map((instr, i) => (
-                      <li key={i} className="flex items-start gap-3">
-                        <span className="text-yellow-600 font-bold bg-yellow-100 px-2 py-1 rounded-full text-xs">{i + 1}</span>
-                        <span className="flex-1">{instr}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
+              {event.parkingInstructions &&
+                event.parkingInstructions.length > 0 && (
+                  <div className="mt-8 p-6 bg-yellow-50 border border-yellow-200 rounded-2xl">
+                    <h3 className="font-bold mb-4 flex items-center gap-2 text-yellow-800">
+                      <FaCar className="w-5 h-5" /> PARKING INSTRUCTIONS:
+                    </h3>
+                    <ul className="space-y-3 text-sm">
+                      {event.parkingInstructions.map((instr, i) => (
+                        <li key={i} className="flex items-start gap-3">
+                          <span className="text-yellow-600 font-bold bg-yellow-100 px-2 py-1 rounded-full text-xs">
+                            {i + 1}
+                          </span>
+                          <span className="flex-1">{instr}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
             </div>
           </div>
 
@@ -946,7 +1029,7 @@ Come join us for an electrifying evening with Aurthohin, Tanzir Tuhin (X-Sironam
           <div className="lg:col-span-1">
             <div className="bg-white rounded-3xl shadow-2xl border border-gray-100 sticky top-24 p-8">
               <h3 className="text-2xl font-bold mb-6">Ticket Information</h3>
-              
+
               <div className="space-y-4 mb-6">
                 {event.ticketTypes.map((ticket) => (
                   <div
@@ -954,22 +1037,30 @@ Come join us for an electrifying evening with Aurthohin, Tanzir Tuhin (X-Sironam
                     onClick={() => setSelectedTicket(ticket)}
                     className={`p-5 rounded-2xl border-2 cursor-pointer transition-all relative transform hover:-translate-y-1 ${
                       selectedTicket?.type === ticket.type
-                        ? 'border-[#27bb97] bg-[#27bb97]/5 shadow-lg'
-                        : 'border-gray-200 hover:border-gray-300'
+                        ? "border-[#27bb97] bg-[#27bb97]/5 shadow-lg"
+                        : "border-gray-200 hover:border-gray-300"
                     }`}
                   >
-                    <span className={`absolute top-3 right-3 px-3 py-1 text-xs font-bold rounded-full ${
-                      ticket.status === 'Going fast' ? 'bg-red-500 text-white' : 'bg-green-500 text-white'
-                    }`}>
+                    <span
+                      className={`absolute top-3 right-3 px-3 py-1 text-xs font-bold rounded-full ${
+                        ticket.status === "Going fast"
+                          ? "bg-red-500 text-white"
+                          : "bg-green-500 text-white"
+                      }`}
+                    >
                       {ticket.status}
                     </span>
                     <div className="flex justify-between items-start">
                       <div>
-                        <h4 className="font-bold text-lg line-clamp-2 pr-8">{ticket.type}</h4>
+                        <h4 className="font-bold text-lg line-clamp-2 pr-8">
+                          {ticket.type}
+                        </h4>
                         <p className="text-2xl font-extrabold text-[#27bb97] mt-1">
                           ${ticket.price}.00
                         </p>
-                        <p className="text-xs text-gray-500 mt-1">Ticket close on {ticket.closes}</p>
+                        <p className="text-xs text-gray-500 mt-1">
+                          Ticket close on {ticket.closes}
+                        </p>
                         {ticket.benefits && (
                           <ul className="mt-2 space-y-1 text-xs text-gray-600">
                             {ticket.benefits.map((benefit, j) => (
@@ -980,7 +1071,9 @@ Come join us for an electrifying evening with Aurthohin, Tanzir Tuhin (X-Sironam
                           </ul>
                         )}
                       </div>
-                      {selectedTicket?.type === ticket.type && <FaCheck className="w-6 h-6 text-[#27bb97]" />}
+                      {selectedTicket?.type === ticket.type && (
+                        <FaCheck className="w-6 h-6 text-[#27bb97]" />
+                      )}
                     </div>
                   </div>
                 ))}
@@ -991,15 +1084,17 @@ Come join us for an electrifying evening with Aurthohin, Tanzir Tuhin (X-Sironam
                   <div className="mt-8">
                     <label className="block font-semibold mb-3">Quantity</label>
                     <div className="flex items-center justify-between bg-gray-50 rounded-xl p-4">
-                      <button 
-                        onClick={() => setQuantity(q => Math.max(1, q - 1))} 
+                      <button
+                        onClick={() => setQuantity((q) => Math.max(1, q - 1))}
                         className="w-12 h-12 rounded-full bg-white shadow hover:shadow-md text-xl transition hover:bg-gray-50"
                       >
                         -
                       </button>
-                      <span className="text-2xl font-bold w-20 text-center">{quantity}</span>
-                      <button 
-                        onClick={() => setQuantity(q => Math.min(999, q + 1))} 
+                      <span className="text-2xl font-bold w-20 text-center">
+                        {quantity}
+                      </span>
+                      <button
+                        onClick={() => setQuantity((q) => Math.min(999, q + 1))}
                         className="w-12 h-12 rounded-full bg-white shadow hover:shadow-md text-xl transition hover:bg-gray-50"
                       >
                         +
@@ -1010,12 +1105,18 @@ Come join us for an electrifying evening with Aurthohin, Tanzir Tuhin (X-Sironam
                   <div className="mt-8 p-6 bg-gradient-to-r from-[#27bb97]/10 to-[#27bb97]/5 rounded-2xl">
                     <div className="flex justify-between items-center">
                       <span className="text-xl font-bold">Total</span>
-                      <span className="text-3xl font-extrabold text-[#27bb97]">${totalPrice}.00</span>
+                      <span className="text-3xl font-extrabold text-[#27bb97]">
+                        ${totalPrice}.00
+                      </span>
                     </div>
                   </div>
 
                   <button
-                    onClick={() => alert(`Booking ${quantity} × ${selectedTicket.type} for $${totalPrice}`)}
+                    onClick={() =>
+                      alert(
+                        `Booking ${quantity} × ${selectedTicket.type} for $${totalPrice}`,
+                      )
+                    }
                     className="w-full mt-6 py-5 bg-[#27bb97] hover:bg-[#1fa582] text-white font-bold text-xl rounded-2xl shadow-xl hover:shadow-2xl transition transform hover:-translate-y-1 flex items-center justify-center gap-3"
                   >
                     <FaTicketAlt className="w-6 h-6" />
@@ -1032,7 +1133,9 @@ Come join us for an electrifying evening with Aurthohin, Tanzir Tuhin (X-Sironam
                       <FaUser className="w-6 h-6 text-white" />
                     </div>
                     <div>
-                      <h4 className="font-bold text-gray-800">{event.organizer}</h4>
+                      <h4 className="font-bold text-gray-800">
+                        {event.organizer}
+                      </h4>
                       <div className="flex items-center gap-2 text-sm text-gray-600">
                         <span>⚡ {event.responseRate} response</span>
                         <span>• {event.responseTime}</span>
@@ -1047,7 +1150,7 @@ Come join us for an electrifying evening with Aurthohin, Tanzir Tuhin (X-Sironam
                     className="flex-1 flex items-center gap-2 px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl transition-colors"
                   >
                     <FaPhone className="w-4 h-4" />
-                    {showContact ? event.contact : 'Show Contact'}
+                    {showContact ? event.contact : "Show Contact"}
                   </button>
                   <button className="flex-1 flex items-center gap-2 px-4 py-3 bg-[#27bb97] hover:bg-[#1fa582] text-white rounded-xl transition-colors">
                     <FaComments className="w-4 h-4" />
@@ -1060,8 +1163,8 @@ Come join us for an electrifying evening with Aurthohin, Tanzir Tuhin (X-Sironam
         </div>
 
         {/* Related Events Section */}
-        <RelatedEventsSection 
-          events={relatedEvents} 
+        <RelatedEventsSection
+          events={relatedEvents}
           onEventClick={handleRelatedEventClick}
         />
       </div>

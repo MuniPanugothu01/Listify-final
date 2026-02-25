@@ -128,7 +128,8 @@ export default function RoommateSubNav() {
   // Calculate dropdown position when active
   useEffect(() => {
     if (activeDropdown && buttonRefs.current[activeDropdown]) {
-      const buttonRect = buttonRefs.current[activeDropdown].getBoundingClientRect();
+      const buttonRect =
+        buttonRefs.current[activeDropdown].getBoundingClientRect();
       setDropdownPosition({
         top: buttonRect.bottom + window.scrollY,
         left: buttonRect.left,
@@ -139,7 +140,10 @@ export default function RoommateSubNav() {
   // Close dropdowns when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (!event.target.closest(".dropdown-container") && !event.target.closest(".dropdown-menu")) {
+      if (
+        !event.target.closest(".dropdown-container") &&
+        !event.target.closest(".dropdown-menu")
+      ) {
         setActiveDropdown(null);
       }
     };
@@ -241,7 +245,7 @@ export default function RoommateSubNav() {
 
           {/* Active Filters Display */}
           {Object.values(selectedFilters).some(
-            (filter) => filter !== "Any" && !filter.includes("Any")
+            (filter) => filter !== "Any" && !filter.includes("Any"),
           ) && (
             <div className="flex items-center gap-2 py-2 border-t border-gray-200">
               <span className="text-sm text-gray-600">Active filters:</span>
@@ -260,10 +264,10 @@ export default function RoommateSubNav() {
                             key === "price"
                               ? "Any Price"
                               : key === "gender"
-                              ? "Any Gender"
-                              : key === "availability"
-                              ? "Any Date"
-                              : "Any"
+                                ? "Any Gender"
+                                : key === "availability"
+                                  ? "Any Date"
+                                  : "Any",
                           )
                         }
                         className="hover:text-teal-900 ml-1"
@@ -282,13 +286,13 @@ export default function RoommateSubNav() {
 
       {/* Dropdown Menu - Rendered outside the navbar flow */}
       {activeDropdown && (
-        <div 
+        <div
           className="dropdown-menu fixed z-[9999] bg-white rounded-lg shadow-xl border border-gray-200 overflow-hidden"
           style={{
             top: `${dropdownPosition.top}px`,
             left: `${dropdownPosition.left}px`,
-            minWidth: '260px',
-            maxWidth: '280px',
+            minWidth: "260px",
+            maxWidth: "280px",
           }}
         >
           {/* Dropdown Header */}
@@ -302,17 +306,19 @@ export default function RoommateSubNav() {
           </div>
 
           {/* Scrollable Items Container - Fixed height (50vh) */}
-          <div 
-            className="overflow-y-auto" 
-            style={{ 
-              maxHeight: '50vh', // Half of viewport height
-              minHeight: '200px'
+          <div
+            className="overflow-y-auto"
+            style={{
+              maxHeight: "50vh", // Half of viewport height
+              minHeight: "200px",
             }}
           >
             {getDropdownItems().map((dropdownItem, idx) => (
               <button
                 key={idx}
-                onClick={() => handleDropdownItemClick(activeDropdown, dropdownItem)}
+                onClick={() =>
+                  handleDropdownItemClick(activeDropdown, dropdownItem)
+                }
                 className="flex items-center w-full px-4 py-3 text-sm text-gray-700 hover:bg-teal-50 hover:text-teal-500 transition-all cursor-pointer border-b border-gray-100 last:border-b-0"
               >
                 <span className="truncate">{dropdownItem}</span>
@@ -324,8 +330,18 @@ export default function RoommateSubNav() {
           <div className="px-4 py-3 bg-gray-50 border-t border-gray-200">
             <div className="flex items-center justify-between text-xs text-gray-500">
               <span className="flex items-center gap-1">
-                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                <svg
+                  className="w-3 h-3"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M19 9l-7 7-7-7"
+                  />
                 </svg>
                 Scroll for more
               </span>
@@ -333,12 +349,14 @@ export default function RoommateSubNav() {
                 {getDropdownItems().length} total items
               </span>
             </div>
-            
+
             {/* Progress indicator */}
             <div className="mt-2 w-full bg-gray-200 rounded-full h-1">
-              <div 
+              <div
                 className="bg-teal-500 h-1 rounded-full transition-all duration-300"
-                style={{ width: `${(getVisibleItemCount() / getDropdownItems().length) * 100}%` }}
+                style={{
+                  width: `${(getVisibleItemCount() / getDropdownItems().length) * 100}%`,
+                }}
               ></div>
             </div>
           </div>
@@ -347,7 +365,7 @@ export default function RoommateSubNav() {
 
       {/* Overlay when dropdown is open */}
       {activeDropdown && (
-        <div 
+        <div
           className="fixed inset-0 z-[9998] bg-black/5"
           onClick={() => setActiveDropdown(null)}
         />

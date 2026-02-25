@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { MessageCircle, Phone, ArrowLeft, Send, Search, MoreVertical } from "lucide-react";
+import {
+  MessageCircle,
+  Phone,
+  ArrowLeft,
+  Send,
+  Search,
+  MoreVertical,
+} from "lucide-react";
 
 const MessagesSection = ({ messages }) => {
   const [selectedChat, setSelectedChat] = useState(null);
@@ -10,24 +17,47 @@ const MessagesSection = ({ messages }) => {
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
     checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
   const sampleChatHistory = [
-    { text: "Hey John, interested in the downtown apartment! It looks amazing.", sender: "other", time: "10:30 AM" },
-    { text: "What up? When can we schedule a viewing?", sender: "other", time: "10:32 AM" },
-    { text: "Sounds good! How about tomorrow at 2 PM?", sender: "me", time: "10:35 AM" },
-    { text: "Perfect, I'll book it for you. Any specific questions?", sender: "me", time: "10:36 AM" },
-    { text: "Just the parking situation. Is there street parking available?", sender: "other", time: "10:38 AM" },
+    {
+      text: "Hey John, interested in the downtown apartment! It looks amazing.",
+      sender: "other",
+      time: "10:30 AM",
+    },
+    {
+      text: "What up? When can we schedule a viewing?",
+      sender: "other",
+      time: "10:32 AM",
+    },
+    {
+      text: "Sounds good! How about tomorrow at 2 PM?",
+      sender: "me",
+      time: "10:35 AM",
+    },
+    {
+      text: "Perfect, I'll book it for you. Any specific questions?",
+      sender: "me",
+      time: "10:36 AM",
+    },
+    {
+      text: "Just the parking situation. Is there street parking available?",
+      sender: "other",
+      time: "10:38 AM",
+    },
   ];
 
-  const filteredMessages = messages.filter(msg =>
-    msg.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    msg.preview.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredMessages = messages.filter(
+    (msg) =>
+      msg.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      msg.preview.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
-  const selectedConversation = messages.find((conv) => conv.name === selectedChat);
+  const selectedConversation = messages.find(
+    (conv) => conv.name === selectedChat,
+  );
 
   const handleChatSelect = (chatName) => {
     setSelectedChat(chatName);
@@ -64,8 +94,12 @@ const MessagesSection = ({ messages }) => {
                 <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full border border-white"></div>
               </div>
               <div className="flex-1 min-w-0">
-                <p className="font-semibold text-gray-900 truncate">{selectedChat}</p>
-                <p className="text-xs text-emerald-600 font-medium">Online now</p>
+                <p className="font-semibold text-gray-900 truncate">
+                  {selectedChat}
+                </p>
+                <p className="text-xs text-emerald-600 font-medium">
+                  Online now
+                </p>
               </div>
             </div>
             <button className="w-10 h-10 hover:bg-gray-100 rounded-xl flex items-center justify-center transition-colors">
@@ -90,7 +124,9 @@ const MessagesSection = ({ messages }) => {
                   }`}
                 >
                   <p className="text-sm">{msg.text}</p>
-                  <div className={`text-xs mt-2 ${msg.sender === "me" ? "text-emerald-100" : "text-gray-500"}`}>
+                  <div
+                    className={`text-xs mt-2 ${msg.sender === "me" ? "text-emerald-100" : "text-gray-500"}`}
+                  >
                     {msg.time}
                   </div>
                 </div>
@@ -124,8 +160,12 @@ const MessagesSection = ({ messages }) => {
       <div className="mb-6">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Messages</h2>
-            <p className="text-gray-600 text-sm mt-1">Stay connected with clients and partners</p>
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900">
+              Messages
+            </h2>
+            <p className="text-gray-600 text-sm mt-1">
+              Stay connected with clients and partners
+            </p>
           </div>
           <button className="w-full sm:w-auto px-4 py-3 bg-emerald-500 text-white rounded-xl hover:bg-emerald-600 transition-colors font-semibold flex items-center justify-center gap-2">
             <MessageCircle className="w-5 h-5" />
@@ -136,7 +176,9 @@ const MessagesSection = ({ messages }) => {
 
       <div className="flex flex-col md:flex-row h-[calc(100vh-200px)] bg-white rounded-2xl border border-gray-200 overflow-hidden">
         {/* Conversations Sidebar */}
-        <div className={`w-full md:w-96 border-r border-gray-100 flex flex-col h-full ${isMobile && isChatOpen ? "hidden" : "flex"}`}>
+        <div
+          className={`w-full md:w-96 border-r border-gray-100 flex flex-col h-full ${isMobile && isChatOpen ? "hidden" : "flex"}`}
+        >
           {/* Search */}
           <div className="p-4 border-b border-gray-100">
             <div className="relative">
@@ -158,7 +200,9 @@ const MessagesSection = ({ messages }) => {
                 key={conv.name}
                 onClick={() => handleChatSelect(conv.name)}
                 className={`p-4 border-b border-gray-100 cursor-pointer transition-all hover:bg-gray-50 ${
-                  conv.name === selectedChat ? "bg-emerald-50 border-l-4 border-l-emerald-500" : ""
+                  conv.name === selectedChat
+                    ? "bg-emerald-50 border-l-4 border-l-emerald-500"
+                    : ""
                 }`}
               >
                 <div className="flex items-center gap-3">
@@ -174,14 +218,20 @@ const MessagesSection = ({ messages }) => {
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between mb-1">
-                      <p className="font-semibold text-gray-900 truncate">{conv.name}</p>
+                      <p className="font-semibold text-gray-900 truncate">
+                        {conv.name}
+                      </p>
                       <span className="text-xs text-gray-500">{conv.time}</span>
                     </div>
-                    <p className="text-sm text-gray-600 truncate">{conv.preview}</p>
+                    <p className="text-sm text-gray-600 truncate">
+                      {conv.preview}
+                    </p>
                     {conv.unread && (
                       <div className="flex items-center gap-1 mt-1">
                         <span className="w-2 h-2 bg-emerald-500 rounded-full"></span>
-                        <span className="text-xs text-emerald-600 font-medium">New message</span>
+                        <span className="text-xs text-emerald-600 font-medium">
+                          New message
+                        </span>
                       </div>
                     )}
                   </div>
@@ -192,7 +242,9 @@ const MessagesSection = ({ messages }) => {
         </div>
 
         {/* Chat Panel - Desktop */}
-        <div className={`hidden md:flex flex-1 flex-col h-full ${selectedChat ? "flex" : "hidden md:flex"}`}>
+        <div
+          className={`hidden md:flex flex-1 flex-col h-full ${selectedChat ? "flex" : "hidden md:flex"}`}
+        >
           {selectedChat && selectedConversation ? (
             <>
               <div className="p-4 border-b border-gray-100 bg-white">
@@ -204,8 +256,12 @@ const MessagesSection = ({ messages }) => {
                       className="w-12 h-12 rounded-full object-cover border-2 border-white shadow-xs"
                     />
                     <div>
-                      <p className="font-semibold text-gray-900">{selectedChat}</p>
-                      <p className="text-sm text-emerald-600 font-medium">Online now</p>
+                      <p className="font-semibold text-gray-900">
+                        {selectedChat}
+                      </p>
+                      <p className="text-sm text-emerald-600 font-medium">
+                        Online now
+                      </p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
@@ -234,9 +290,13 @@ const MessagesSection = ({ messages }) => {
                         }`}
                       >
                         <p className="text-sm">{msg.text}</p>
-                        <div className={`text-xs mt-2 ${
-                          msg.sender === "me" ? "text-emerald-100" : "text-gray-500"
-                        }`}>
+                        <div
+                          className={`text-xs mt-2 ${
+                            msg.sender === "me"
+                              ? "text-emerald-100"
+                              : "text-gray-500"
+                          }`}
+                        >
                           {msg.time}
                         </div>
                       </div>
@@ -266,7 +326,9 @@ const MessagesSection = ({ messages }) => {
               <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mb-6">
                 <MessageCircle className="w-10 h-10 text-emerald-500" />
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">No conversation selected</h3>
+              <h3 className="text-xl font-bold text-gray-900 mb-3">
+                No conversation selected
+              </h3>
               <p className="text-gray-600 text-center max-w-md mb-8">
                 Choose a conversation from the list to start messaging
               </p>

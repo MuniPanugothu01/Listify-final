@@ -118,13 +118,24 @@ export default function PersonalDetailsSection() {
 
   // Sync profile image to auth when profile updates
   useEffect(() => {
-    if (profile?.profileImage || profile?.profileImageUrl || profile?.googleProfileImage || profile?.avatar) {
-      dispatch(updateUser({
-        profileImageUrl: profile.profileImage || profile.profileImageUrl || profile.googleProfileImage || profile.avatar,
-        profileImage: profile.profileImage,
-        googleProfileImage: profile.googleProfileImage,
-        avatar: profile.avatar,
-      }));
+    if (
+      profile?.profileImage ||
+      profile?.profileImageUrl ||
+      profile?.googleProfileImage ||
+      profile?.avatar
+    ) {
+      dispatch(
+        updateUser({
+          profileImageUrl:
+            profile.profileImage ||
+            profile.profileImageUrl ||
+            profile.googleProfileImage ||
+            profile.avatar,
+          profileImage: profile.profileImage,
+          googleProfileImage: profile.googleProfileImage,
+          avatar: profile.avatar,
+        }),
+      );
     }
   }, [profile, dispatch]);
 
@@ -194,41 +205,54 @@ export default function PersonalDetailsSection() {
   const handleImageChange = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    
+
     // Show local preview immediately
     const reader = new FileReader();
     reader.onloadend = () => {
       dispatch(setProfilePicPreview(reader.result));
     };
     reader.readAsDataURL(file);
-    
+
     // Upload to server
-    dispatch(uploadProfileImage(file)).then((result) => {
-      if (result.meta?.requestStatus === 'fulfilled' && result.payload?.imageUrl) {
-        // Update auth user with actual S3 URL
-        dispatch(updateUser({
-          profileImageUrl: result.payload.imageUrl,
-          profileImage: result.payload.imageUrl,
-        }));
-        
-        // Refetch full profile to sync all fields from server
-        dispatch(fetchProfile());
-        
-        toast.success("Profile image updated successfully!");
-      } else if (result.meta?.requestStatus === 'rejected') {
-        // Upload failed — clear preview
+    dispatch(uploadProfileImage(file))
+      .then((result) => {
+        if (
+          result.meta?.requestStatus === "fulfilled" &&
+          result.payload?.imageUrl
+        ) {
+          // Update auth user with actual S3 URL
+          dispatch(
+            updateUser({
+              profileImageUrl: result.payload.imageUrl,
+              profileImage: result.payload.imageUrl,
+            }),
+          );
+
+          // Refetch full profile to sync all fields from server
+          dispatch(fetchProfile());
+
+          toast.success("Profile image updated successfully!");
+        } else if (result.meta?.requestStatus === "rejected") {
+          // Upload failed — clear preview
+          dispatch(setProfilePicPreview(null));
+          toast.error(
+            result.payload || "Failed to upload image. Please try again.",
+          );
+        }
+      })
+      .catch((error) => {
         dispatch(setProfilePicPreview(null));
-        toast.error(result.payload || "Failed to upload image. Please try again.");
-      }
-    }).catch((error) => {
-      dispatch(setProfilePicPreview(null));
-      toast.error("Failed to upload image. Please try again.");
-      console.error("Image upload error:", error);
-    });
+        toast.error("Failed to upload image. Please try again.");
+        console.error("Image upload error:", error);
+      });
   };
 
   const handlePasswordSave = async () => {
-    if (!pwForm.currentPassword || !pwForm.newPassword || !pwForm.confirmPassword) {
+    if (
+      !pwForm.currentPassword ||
+      !pwForm.newPassword ||
+      !pwForm.confirmPassword
+    ) {
       toast.error("All password fields are required");
       return;
     }
@@ -278,7 +302,6 @@ export default function PersonalDetailsSection() {
   // ── Render ────────────────────────────────────────────────────────────────
   return (
     <div className="space-y-6 pb-10">
-
       {/* ── Page header + edit / save buttons ── */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -348,8 +371,10 @@ export default function PersonalDetailsSection() {
 
             {/* Upload progress overlay */}
             {imageUploading && (
-              <div className="absolute inset-0 bg-black/50 rounded-2xl flex
-                              flex-col items-center justify-center gap-1">
+              <div
+                className="absolute inset-0 bg-black/50 rounded-2xl flex
+                              flex-col items-center justify-center gap-1"
+              >
                 <Loader2 className="w-6 h-6 text-white animate-spin" />
                 <span className="text-white text-xs font-medium">
                   {imageUploadProgress}%
@@ -382,9 +407,11 @@ export default function PersonalDetailsSection() {
             <p className="font-semibold text-gray-900 text-lg">{displayName}</p>
             <p className="text-sm text-gray-500 mt-0.5">{displayEmail}</p>
             {isGoogleUser && (
-              <span className="inline-flex items-center gap-1 mt-2 px-2.5 py-1
+              <span
+                className="inline-flex items-center gap-1 mt-2 px-2.5 py-1
                                bg-blue-50 text-blue-700 text-xs rounded-full
-                               font-medium border border-blue-100">
+                               font-medium border border-blue-100"
+              >
                 Google Account
               </span>
             )}
@@ -402,7 +429,6 @@ export default function PersonalDetailsSection() {
         </h3>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-
           {/* Name */}
           <Field label="Full Name" icon={User}>
             <input
@@ -506,12 +532,14 @@ export default function PersonalDetailsSection() {
 
         {/* Editing mode notice */}
         {isEditing && (
-          <div className="mt-5 p-4 bg-amber-50 border border-amber-200
-                          rounded-xl flex items-start gap-2">
+          <div
+            className="mt-5 p-4 bg-amber-50 border border-amber-200
+                          rounded-xl flex items-start gap-2"
+          >
             <AlertCircle className="w-4 h-4 text-amber-500 mt-0.5 flex-shrink-0" />
             <p className="text-sm text-amber-700">
-              You are in editing mode. Click{" "}
-              <strong>Save Changes</strong> to persist your updates.
+              You are in editing mode. Click <strong>Save Changes</strong> to
+              persist your updates.
             </p>
           </div>
         )}

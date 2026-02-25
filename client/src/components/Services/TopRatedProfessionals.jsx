@@ -58,7 +58,8 @@ export default function TopRatedProfessionals() {
         <div className="mb-12">
           <div className="flex items-end justify-between mb-4">
             <h2 className="text-2xl md:text-3xl font-bold text-gray-900">
-              Top Rated Professionals in <span className="text-[#27bb97]">USA & Canada</span> !
+              Top Rated Professionals in{" "}
+              <span className="text-[#27bb97]">USA & Canada</span> !
             </h2>
             <button className="text-sm font-semibold text-[#27bb97] hover:text-[#1da183] transition-colors">
               View all →
@@ -86,8 +87,6 @@ export default function TopRatedProfessionals() {
                   className="w-full h-full object-cover group-hover:scale-105 
                            transition-transform duration-500"
                 />
-
-      
 
                 {/* STATUS BADGE */}
                 <div className="absolute top-4 right-4">
@@ -179,8 +178,6 @@ export default function TopRatedProfessionals() {
                   </div>
                 </div>
               </div>
-
-
             </div>
           ))}
         </div>

@@ -358,7 +358,10 @@ export const checkAuth = createAsyncThunk(
       // DON'T clear 5re on network/server errors (503, timeout,
       // MongoDB down, etc.). The session may still be perfectly valid —
       // the server just couldn't verify it right now.
-      console.warn("checkAuth network/server error — keeping session", error.message);
+      console.warn(
+        "checkAuth network/server error — keeping session",
+        error.message,
+      );
       return rejectWithValue(error.response?.data || error.message);
     }
   },

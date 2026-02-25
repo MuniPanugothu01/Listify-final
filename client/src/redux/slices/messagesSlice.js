@@ -21,7 +21,7 @@ export const fetchConversations = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || error.message);
     }
-  }
+  },
 );
 
 export const fetchMessages = createAsyncThunk(
@@ -33,7 +33,7 @@ export const fetchMessages = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || error.message);
     }
-  }
+  },
 );
 
 export const sendMessage = createAsyncThunk(
@@ -45,7 +45,7 @@ export const sendMessage = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || error.message);
     }
-  }
+  },
 );
 
 export const markAsRead = createAsyncThunk(
@@ -57,19 +57,22 @@ export const markAsRead = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || error.message);
     }
-  }
+  },
 );
 
 export const createConversation = createAsyncThunk(
   "messages/createConversation",
   async ({ recipientId, initialMessage }, { rejectWithValue }) => {
     try {
-      const response = await messagesAPI.createConversation(recipientId, initialMessage);
+      const response = await messagesAPI.createConversation(
+        recipientId,
+        initialMessage,
+      );
       return response.data.conversation;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || error.message);
     }
-  }
+  },
 );
 
 export const deleteConversation = createAsyncThunk(
@@ -81,7 +84,7 @@ export const deleteConversation = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || error.message);
     }
-  }
+  },
 );
 
 const messagesSlice = createSlice({
@@ -137,7 +140,7 @@ const messagesSlice = createSlice({
         state.messages = action.payload.messages || [];
         // Update conversation last message
         const conversation = state.conversations.find(
-          c => c.id === action.payload.conversationId
+          (c) => c.id === action.payload.conversationId,
         );
         if (conversation) {
           conversation.unread = false;
@@ -158,7 +161,7 @@ const messagesSlice = createSlice({
         state.messages.push(action.payload);
         // Update conversation last message
         const conversation = state.conversations.find(
-          c => c.id === action.payload.conversationId
+          (c) => c.id === action.payload.conversationId,
         );
         if (conversation) {
           conversation.lastMessage = action.payload;
@@ -174,7 +177,7 @@ const messagesSlice = createSlice({
       // Mark as Read
       .addCase(markAsRead.fulfilled, (state, action) => {
         const conversation = state.conversations.find(
-          c => c.id === action.payload
+          (c) => c.id === action.payload,
         );
         if (conversation) {
           conversation.unread = false;
@@ -191,7 +194,7 @@ const messagesSlice = createSlice({
       // Delete Conversation
       .addCase(deleteConversation.fulfilled, (state, action) => {
         state.conversations = state.conversations.filter(
-          c => c.id !== action.payload
+          (c) => c.id !== action.payload,
         );
         if (state.currentChat?.id === action.payload) {
           state.currentChat = null;

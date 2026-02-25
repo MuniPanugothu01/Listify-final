@@ -7,33 +7,32 @@ const carouselItems = [
     id: 1,
     image: "Event-hero-img.jpg",
     title: "Discover Events Near You",
-    subtitle: "Concerts, festivals, workshops, comedy shows — all in one place"
+    subtitle: "Concerts, festivals, workshops, comedy shows — all in one place",
   },
   {
     id: 2,
     image: "Event-hero-img1.jpg",
     title: "Live Music Concerts",
-    subtitle: "Experience the best live performances in your city"
+    subtitle: "Experience the best live performances in your city",
   },
   {
     id: 3,
     image: "Event-hero-img2.jpg",
     title: "Cultural Festivals",
-    subtitle: "Immerse yourself in diverse cultural experiences"
+    subtitle: "Immerse yourself in diverse cultural experiences",
   },
   {
     id: 4,
-    image: "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
+    image:
+      "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
     title: "Comedy & Entertainment",
-    subtitle: "Laugh your heart out with top comedians"
-  }
+    subtitle: "Laugh your heart out with top comedians",
+  },
 ];
 
 export default function EventsHero() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
-
-
 
   // Auto slide every 5 seconds
   useEffect(() => {
@@ -41,7 +40,7 @@ export default function EventsHero() {
       nextSlide();
     }, 5000);
     return () => clearInterval(interval);
-  },);
+  });
 
   const nextSlide = () => {
     if (isAnimating) return;
@@ -53,7 +52,9 @@ export default function EventsHero() {
   const prevSlide = () => {
     if (isAnimating) return;
     setIsAnimating(true);
-    setCurrentSlide((prev) => (prev - 1 + carouselItems.length) % carouselItems.length);
+    setCurrentSlide(
+      (prev) => (prev - 1 + carouselItems.length) % carouselItems.length,
+    );
     setTimeout(() => setIsAnimating(false), 800);
   };
 
@@ -70,27 +71,29 @@ export default function EventsHero() {
       <div className="">
         {carouselItems.map((item, index) => {
           const isActive = index === currentSlide;
-          const isPrevious = index === (currentSlide - 1 + carouselItems.length) % carouselItems.length;
+          const isPrevious =
+            index ===
+            (currentSlide - 1 + carouselItems.length) % carouselItems.length;
           const isNext = index === (currentSlide + 1) % carouselItems.length;
 
-          let transformClass = '';
+          let transformClass = "";
           if (isActive) {
-            transformClass = 'translate-y-0 opacity-100 scale-100 z-20';
+            transformClass = "translate-y-0 opacity-100 scale-100 z-20";
           } else if (isPrevious) {
-            transformClass = '-translate-y-full opacity-0 scale-95 z-10';
+            transformClass = "-translate-y-full opacity-0 scale-95 z-10";
           } else if (isNext) {
-            transformClass = 'translate-y-full opacity-0 scale-95 z-10';
+            transformClass = "translate-y-full opacity-0 scale-95 z-10";
           } else {
-            transformClass = 'translate-y-full opacity-0 scale-95 z-0';
+            transformClass = "translate-y-full opacity-0 scale-95 z-0";
           }
 
           return (
             <div
               key={item.id}
               className={`absolute inset-0 transition-all duration-800 ease-in-out transform ${transformClass}`}
-              style={{ 
-                transition: 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)',
-                transformStyle: 'preserve-3d'
+              style={{
+                transition: "all 0.8s cubic-bezier(0.4, 0, 0.2, 1)",
+                transformStyle: "preserve-3d",
               }}
             >
               {/* Background Image */}
@@ -101,7 +104,7 @@ export default function EventsHero() {
                 loading="lazy"
               />
               <div className="absolute inset-0 bg-black/40" />
-              
+
               {/* Content Overlay */}
               <div className="absolute inset-0 flex items-center px-4 xs:px-6 sm:px-8 lg:px-12">
                 <div className="container mx-auto">
@@ -129,7 +132,7 @@ export default function EventsHero() {
           >
             <ChevronUp className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-white group-hover:scale-110 transition-transform" />
           </button>
-          
+
           <button
             onClick={nextSlide}
             disabled={isAnimating}
@@ -159,12 +162,12 @@ export default function EventsHero() {
 
         {/* Progress Bar */}
         <div className="absolute bottom-2 sm:bottom-4 left-1/2 transform -translate-x-1/2 z-30 w-24 sm:w-32 h-0.5 sm:h-1 bg-white/30 rounded-full overflow-hidden">
-          <div 
+          <div
             className="h-full bg-white rounded-full transition-all duration-100 ease-linear"
-            style={{ 
-              width: '100%',
-              transform: `translateX(${isAnimating ? '0%' : '-100%'})`,
-              transition: isAnimating ? 'none' : 'transform 5s linear'
+            style={{
+              width: "100%",
+              transform: `translateX(${isAnimating ? "0%" : "-100%"})`,
+              transition: isAnimating ? "none" : "transform 5s linear",
             }}
           />
         </div>
@@ -179,7 +182,7 @@ export default function EventsHero() {
           >
             <ChevronUp className="w-5 h-5 text-white group-hover:scale-110 transition-transform rotate-90" />
           </button>
-          
+
           <button
             onClick={nextSlide}
             disabled={isAnimating}
@@ -237,7 +240,7 @@ export default function EventsHero() {
             min-height: 400px;
           }
         }
-        
+
         @media (min-width: 641px) and (max-width: 1024px) {
           .min-h-\\[500px\\] {
             min-height: 500px;

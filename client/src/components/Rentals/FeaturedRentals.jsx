@@ -1,11 +1,5 @@
 import React, { useState } from "react";
-import {
-  Home,
-  Bath,
-  Maximize2,
-  MapPin,
-  ChevronRight,
-} from "lucide-react";
+import { Home, Bath, Maximize2, MapPin, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const FeaturedRentals = () => {
@@ -33,8 +27,10 @@ const FeaturedRentals = () => {
         "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=600&h=400&fit=crop",
       ],
       immediate: property.available.toLowerCase().includes("immediately"),
-      petFriendly: property.amenities.some(amenity => 
-        amenity.toLowerCase().includes("pet") || amenity.toLowerCase().includes("pets")
+      petFriendly: property.amenities.some(
+        (amenity) =>
+          amenity.toLowerCase().includes("pet") ||
+          amenity.toLowerCase().includes("pets"),
       ),
       propertyType: property.type,
       bedrooms: property.beds,
@@ -63,9 +59,9 @@ const FeaturedRentals = () => {
         property: formattedProperty,
         searchParams: {
           location: property.location,
-          price: property.price
-        }
-      }
+          price: property.price,
+        },
+      },
     });
   };
 
@@ -86,7 +82,16 @@ const FeaturedRentals = () => {
       sqft: 1200,
       location: "Downtown Toronto",
       label: "For Rent",
-      amenities: ["Pool", "Gym", "Concierge", "Parking", "Wi-Fi", "AC", "Security", "Balcony"],
+      amenities: [
+        "Pool",
+        "Gym",
+        "Concierge",
+        "Parking",
+        "Wi-Fi",
+        "AC",
+        "Security",
+        "Balcony",
+      ],
       available: "Immediately",
       featured: true,
     },
@@ -105,7 +110,16 @@ const FeaturedRentals = () => {
       sqft: 2400,
       location: "North York",
       label: "For Rent",
-      amenities: ["Garage", "Garden", "Finished Basement", "Hardwood Floors", "Fireplace", "Updated Kitchen", "Central AC", "Security System"],
+      amenities: [
+        "Garage",
+        "Garden",
+        "Finished Basement",
+        "Hardwood Floors",
+        "Fireplace",
+        "Updated Kitchen",
+        "Central AC",
+        "Security System",
+      ],
       available: "Dec 1, 2024",
       featured: true,
     },
@@ -124,7 +138,16 @@ const FeaturedRentals = () => {
       sqft: 1800,
       location: "Harbourfront",
       label: "For Rent",
-      amenities: ["Water View", "Patio", "Modern Kitchen", "In-suite Laundry", "Parking", "Security", "Pet Friendly", "Balcony"],
+      amenities: [
+        "Water View",
+        "Patio",
+        "Modern Kitchen",
+        "In-suite Laundry",
+        "Parking",
+        "Security",
+        "Pet Friendly",
+        "Balcony",
+      ],
       available: "Immediately",
       featured: true,
     },
@@ -143,7 +166,16 @@ const FeaturedRentals = () => {
       sqft: 2200,
       location: "Yorkville",
       label: "For Rent",
-      amenities: ["Rooftop Terrace", "Wine Cellar", "Smart Home", "Valet", "Pool", "Gym", "Concierge", "Parking"],
+      amenities: [
+        "Rooftop Terrace",
+        "Wine Cellar",
+        "Smart Home",
+        "Valet",
+        "Pool",
+        "Gym",
+        "Concierge",
+        "Parking",
+      ],
       available: "Jan 15, 2025",
       featured: true,
     },
@@ -170,7 +202,7 @@ const FeaturedRentals = () => {
         "Central Heating",
         "Storage",
         "Pet Friendly",
-        "Garden"
+        "Garden",
       ],
       available: "Immediately",
       featured: false,
@@ -198,7 +230,7 @@ const FeaturedRentals = () => {
         "In-suite Laundry",
         "Modern Kitchen",
         "Security",
-        "Wi-Fi"
+        "Wi-Fi",
       ],
       available: "Immediately",
       featured: false,
@@ -216,7 +248,7 @@ const FeaturedRentals = () => {
 
   // Filtering logic - always show only 6 properties
   const filtered = rentalProperties.filter((p) =>
-    filter === "all" ? true : p.type.toLowerCase() === filter
+    filter === "all" ? true : p.type.toLowerCase() === filter,
   );
 
   // Always show only first 6 properties

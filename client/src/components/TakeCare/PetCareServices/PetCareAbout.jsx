@@ -1,44 +1,57 @@
-import React from 'react';
-import { Award, Shuffle, BadgeCheck, Users, Clock, PawPrint } from 'lucide-react';
+import React from "react";
+import {
+  Award,
+  Shuffle,
+  BadgeCheck,
+  Users,
+  Clock,
+  PawPrint,
+} from "lucide-react";
 
 const PetCareAbout = () => {
   const features = [
     {
-      id: '01',
+      id: "01",
       icon: <Award className="w-8 h-8 xs:w-10 xs:h-10 sm:w-10 sm:h-10" />,
-      title: 'We are the experts',
-      description: 'Thousands of pet owners already love, trust, and rely on Listify for professional pet care services.',
+      title: "We are the experts",
+      description:
+        "Thousands of pet owners already love, trust, and rely on Listify for professional pet care services.",
     },
     {
-      id: '02',
+      id: "02",
       icon: <Shuffle className="w-8 h-8 xs:w-10 xs:h-10 sm:w-10 sm:h-10" />,
-      title: 'Flexible Options',
-      description: 'Choose from pet sitting, dog walking, grooming, boarding, daycare, and specialized pet care services.',
+      title: "Flexible Options",
+      description:
+        "Choose from pet sitting, dog walking, grooming, boarding, daycare, and specialized pet care services.",
     },
     {
-      id: '03',
+      id: "03",
       icon: <BadgeCheck className="w-8 h-8 xs:w-10 xs:h-10 sm:w-10 sm:h-10" />,
-      title: 'Quality Assurance',
-      description: '98% satisfaction rate from pet owners, ensuring your pets receive loving and professional care.',
+      title: "Quality Assurance",
+      description:
+        "98% satisfaction rate from pet owners, ensuring your pets receive loving and professional care.",
     },
     {
-      id: '04',
+      id: "04",
       icon: <Users className="w-8 h-8 xs:w-10 xs:h-10 sm:w-10 sm:h-10" />,
-      title: 'Experienced Pet Sitters',
-      description: 'With thousands of successful engagements, our pet care professionals bring proven expertise and love for animals.',
+      title: "Experienced Pet Sitters",
+      description:
+        "With thousands of successful engagements, our pet care professionals bring proven expertise and love for animals.",
     },
     {
-      id: '05',
+      id: "05",
       icon: <Clock className="w-8 h-8 xs:w-10 xs:h-10 sm:w-10 sm:h-10" />,
-      title: 'Quick Matches',
-      description: 'Find the right pet sitter within hours, perfect for last-minute needs or regular care schedules.',
+      title: "Quick Matches",
+      description:
+        "Find the right pet sitter within hours, perfect for last-minute needs or regular care schedules.",
     },
     {
-      id: '06',
+      id: "06",
       icon: <PawPrint className="w-8 h-8 xs:w-10 xs:h-10 sm:w-10 sm:h-10" />,
-      title: 'Peace of Mind',
-      description: 'Ensure your pets receive loving care knowing their needs are in professional and caring hands.',
-    }
+      title: "Peace of Mind",
+      description:
+        "Ensure your pets receive loving care knowing their needs are in professional and caring hands.",
+    },
   ];
 
   return (
@@ -47,22 +60,25 @@ const PetCareAbout = () => {
         {/* Header */}
         <div className="text-center mb-8 sm:mb-10 lg:mb-16 px-2">
           <h2 className="text-2xl xs:text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-3 sm:mb-4 leading-tight">
-            ABOUT <span className='text-[#27BB97]'>US</span> 
+            ABOUT <span className="text-[#27BB97]">US</span>
           </h2>
           <p className="text-gray-600 text-sm xs:text-base sm:text-lg lg:text-lg">
-            Why Find <span className='text-[#27BB97] font-medium'>Pet Care with Listify</span>?
+            Why Find{" "}
+            <span className="text-[#27BB97] font-medium">
+              Pet Care with Listify
+            </span>
+            ?
           </p>
         </div>
 
         {/* Layout Strategy */}
         <div className="flex flex-col items-center">
-          
           {/* Mobile Layout - Single column for screens < 768px */}
           <div className="w-full md:hidden">
             <div className="grid grid-cols-1 gap-4 xs:gap-5 sm:gap-6">
               {features.map((feature) => (
-                <div 
-                  key={feature.id} 
+                <div
+                  key={feature.id}
                   className="bg-white rounded-xl sm:rounded-2xl p-4 xs:p-5 sm:p-6 shadow-sm hover:shadow-md transition-shadow relative"
                 >
                   <div className="absolute top-4 xs:top-5 right-4 xs:right-5 text-4xl xs:text-5xl sm:text-6xl font-bold text-gray-100">
@@ -88,8 +104,8 @@ const PetCareAbout = () => {
           <div className="hidden md:block lg:hidden w-full">
             <div className="grid grid-cols-2 gap-4 sm:gap-6">
               {features.map((feature) => (
-                <div 
-                  key={feature.id} 
+                <div
+                  key={feature.id}
                   className="bg-white rounded-2xl p-5 sm:p-6 shadow-sm hover:shadow-md transition-shadow relative"
                 >
                   <div className="absolute top-5 right-5 text-5xl sm:text-6xl font-bold text-gray-100">

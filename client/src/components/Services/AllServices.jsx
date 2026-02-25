@@ -3,50 +3,48 @@ import { useState } from "react";
 export default function AllServices() {
   const [expanded, setExpanded] = useState({});
 
-
-// categories data
-const categories = [
-  {
-    title: "Home Services",
-    icon: "🏠",
-    services: [
-      "Plumbing",
-      "Electrical",
-      "Carpentry",
-      "Painting",
-      "Cleaning",
-      "Pest Control",
-      "AC Service",
-      "Bathroom Repair",
-      "Water Leakage",
-      "Door Fixing",
-    ],
-  },
-  {
-    title: "Appliance Repair",
-    icon: "🔌",
-    services: [
-      "Washing Machine",
-      "Refrigerator",
-      "TV Repair",
-      "Microwave",
-      "Water Purifier",
-      "Dishwasher",
-    ],
-  },
-  {
-    title: "Cleaning & Maintenance",
-    icon: "🧼",
-    services: [
-      "House Cleaning",
-      "Bathroom Cleaning",
-      "Sofa Cleaning",
-      "Water Tank Cleaning",
-      "Kitchen Cleaning",
-    ],
-  },
-];
-
+  // categories data
+  const categories = [
+    {
+      title: "Home Services",
+      icon: "🏠",
+      services: [
+        "Plumbing",
+        "Electrical",
+        "Carpentry",
+        "Painting",
+        "Cleaning",
+        "Pest Control",
+        "AC Service",
+        "Bathroom Repair",
+        "Water Leakage",
+        "Door Fixing",
+      ],
+    },
+    {
+      title: "Appliance Repair",
+      icon: "🔌",
+      services: [
+        "Washing Machine",
+        "Refrigerator",
+        "TV Repair",
+        "Microwave",
+        "Water Purifier",
+        "Dishwasher",
+      ],
+    },
+    {
+      title: "Cleaning & Maintenance",
+      icon: "🧼",
+      services: [
+        "House Cleaning",
+        "Bathroom Cleaning",
+        "Sofa Cleaning",
+        "Water Tank Cleaning",
+        "Kitchen Cleaning",
+      ],
+    },
+  ];
 
   const toggleExpand = (index) => {
     setExpanded((prev) => ({
@@ -58,14 +56,14 @@ const categories = [
   return (
     <section className="bg-white py-20">
       <div className="max-w-7xl mx-auto px-6">
-
         {/* SECTION HEADER */}
         <div className="mb-14">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
             All Services
           </h2>
           <p className="mt-3 text-gray-600 max-w-2xl">
-            Explore our wide range of local services offered by verified professionals
+            Explore our wide range of local services offered by verified
+            professionals
           </p>
         </div>
 
@@ -79,7 +77,6 @@ const categories = [
 
             return (
               <div key={index} className="border-b pb-10">
-
                 {/* CATEGORY HEADER */}
                 <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center gap-3">
@@ -115,12 +112,10 @@ const categories = [
                     </div>
                   ))}
                 </div>
-
               </div>
             );
           })}
         </div>
-
       </div>
     </section>
   );

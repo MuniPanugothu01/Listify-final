@@ -1,61 +1,71 @@
-import React, { useState } from 'react';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import React, { useState } from "react";
+import { ChevronDown, ChevronUp } from "lucide-react";
 
 export default function PetCareFaq() {
-  const [activeTab, setActiveTab] = useState('owners');
+  const [activeTab, setActiveTab] = useState("owners");
   const [openQuestion, setOpenQuestion] = useState(null);
 
   const ownerFAQs = [
     {
       question: "How much does pet sitting typically cost?",
-      answer: "Pet sitting costs vary based on location, services, and pet requirements. On average, dog walking costs $15-25 per walk, pet sitting $20-40 per visit, and overnight stays $50-100 per night."
+      answer:
+        "Pet sitting costs vary based on location, services, and pet requirements. On average, dog walking costs $15-25 per walk, pet sitting $20-40 per visit, and overnight stays $50-100 per night.",
     },
     {
       question: "What should I look for in a pet sitter?",
-      answer: "Look for experience with your pet type, positive reviews, insurance/bonding, pet first aid certification, clear communication, and genuine love for animals."
+      answer:
+        "Look for experience with your pet type, positive reviews, insurance/bonding, pet first aid certification, clear communication, and genuine love for animals.",
     },
     {
       question: "How do I prepare my home for a pet sitter?",
-      answer: "Provide clear instructions, emergency contacts, veterinary information, pet supplies, home access details, and any special care requirements."
+      answer:
+        "Provide clear instructions, emergency contacts, veterinary information, pet supplies, home access details, and any special care requirements.",
     },
     {
       question: "What happens in case of a pet emergency?",
-      answer: "Professional pet sitters should have emergency procedures, contact you immediately, and know your vet's information. Many also have pet first aid training."
+      answer:
+        "Professional pet sitters should have emergency procedures, contact you immediately, and know your vet's information. Many also have pet first aid training.",
     },
     {
       question: "Can I meet the pet sitter before booking?",
-      answer: "Yes, we encourage meet-and-greet sessions. This allows you to assess compatibility, show your pet's routine, and discuss specific needs."
-    }
+      answer:
+        "Yes, we encourage meet-and-greet sessions. This allows you to assess compatibility, show your pet's routine, and discuss specific needs.",
+    },
   ];
 
   const sitterFAQs = [
     {
       question: "What qualifications do I need to become a pet sitter?",
-      answer: "While formal qualifications aren't always required, pet first aid certification, experience with animals, references, and insurance are highly valued by pet owners."
+      answer:
+        "While formal qualifications aren't always required, pet first aid certification, experience with animals, references, and insurance are highly valued by pet owners.",
     },
     {
       question: "How do I set my rates as a pet sitter?",
-      answer: "Consider your experience, services offered, local market rates, pet care costs, and time commitment. Research competitors in your area for guidance."
+      answer:
+        "Consider your experience, services offered, local market rates, pet care costs, and time commitment. Research competitors in your area for guidance.",
     },
     {
       question: "What insurance do pet sitters need?",
-      answer: "Pet care insurance, bonding, and liability insurance are recommended. This protects you and the pet owner in case of accidents or incidents."
+      answer:
+        "Pet care insurance, bonding, and liability insurance are recommended. This protects you and the pet owner in case of accidents or incidents.",
     },
     {
       question: "How do I handle pet emergencies?",
-      answer: "Always have the owner's emergency contact and vet information. Know basic pet first aid and have a plan for different types of emergencies."
+      answer:
+        "Always have the owner's emergency contact and vet information. Know basic pet first aid and have a plan for different types of emergencies.",
     },
     {
       question: "What makes a great pet sitter profile?",
-      answer: "Clear photos with pets, detailed experience descriptions, certifications, availability, rates, and genuine passion for animal care."
-    }
+      answer:
+        "Clear photos with pets, detailed experience descriptions, certifications, availability, rates, and genuine passion for animal care.",
+    },
   ];
 
   const toggleQuestion = (index) => {
     setOpenQuestion(openQuestion === index ? null : index);
   };
 
-  const currentFAQs = activeTab === 'owners' ? ownerFAQs : sitterFAQs;
+  const currentFAQs = activeTab === "owners" ? ownerFAQs : sitterFAQs;
 
   return (
     <div className="px-3 xs:px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
@@ -71,7 +81,8 @@ export default function PetCareFaq() {
                 The answers you're looking for
               </h1>
               <p className="text-gray-600 text-sm xs:text-base sm:text-lg leading-relaxed">
-                We've Answered Common Questions to Help You Find Loving Pet Care or Start Your Pet Sitting Business.
+                We've Answered Common Questions to Help You Find Loving Pet Care
+                or Start Your Pet Sitting Business.
               </p>
             </div>
           </div>
@@ -82,22 +93,22 @@ export default function PetCareFaq() {
             <div className="flex justify-start lg:justify-end mb-4 sm:mb-6">
               <div className="inline-flex bg-white rounded-full p-1 shadow-sm sm:shadow-md border border-gray-200 w-full lg:w-auto">
                 <button
-                  onClick={() => setActiveTab('owners')}
+                  onClick={() => setActiveTab("owners")}
                   className={`flex-1 lg:flex-none px-3 xs:px-4 sm:px-5 lg:px-6 py-2 xs:py-2.5 sm:py-2.5 rounded-full font-medium transition-all duration-200 text-xs xs:text-sm ${
-                    activeTab === 'owners'
-                      ? 'bg-gradient-to-r from-[#27BB97] to-[#1FA987] text-white shadow-sm'
-                      : 'bg-transparent text-gray-600 hover:text-gray-900'
+                    activeTab === "owners"
+                      ? "bg-gradient-to-r from-[#27BB97] to-[#1FA987] text-white shadow-sm"
+                      : "bg-transparent text-gray-600 hover:text-gray-900"
                   }`}
                   aria-label="View pet owner FAQs"
                 >
                   Pet Owners
                 </button>
                 <button
-                  onClick={() => setActiveTab('sitters')}
+                  onClick={() => setActiveTab("sitters")}
                   className={`flex-1 lg:flex-none px-3 xs:px-4 sm:px-5 lg:px-6 py-2 xs:py-2.5 sm:py-2.5 rounded-full font-medium transition-all duration-200 text-xs xs:text-sm ${
-                    activeTab === 'sitters'
-                      ? 'bg-gradient-to-r from-[#27BB97] to-[#1FA987] text-white shadow-sm'
-                      : 'bg-transparent text-gray-600 hover:text-gray-900'
+                    activeTab === "sitters"
+                      ? "bg-gradient-to-r from-[#27BB97] to-[#1FA987] text-white shadow-sm"
+                      : "bg-transparent text-gray-600 hover:text-gray-900"
                   }`}
                   aria-label="View pet sitter FAQs"
                 >
@@ -108,7 +119,7 @@ export default function PetCareFaq() {
 
             {/* Section Title */}
             <h2 className="text-lg xs:text-xl sm:text-2xl font-bold text-[#27BB97] mb-4 sm:mb-6">
-              {activeTab === 'owners' ? 'Pet Owners' : 'Pet Sitters'}
+              {activeTab === "owners" ? "Pet Owners" : "Pet Sitters"}
             </h2>
 
             {/* FAQ Accordion */}
@@ -135,9 +146,9 @@ export default function PetCareFaq() {
                       )}
                     </div>
                   </button>
-                  
+
                   {openQuestion === index && (
-                    <div 
+                    <div
                       id={`faq-answer-${index}`}
                       className="px-4 xs:px-5 sm:px-6 pb-4 xs:pb-5 pt-0 border-t border-gray-100"
                     >

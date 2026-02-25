@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 export default function JobSeekerResume() {
   const navigate = useNavigate();
-  
+
   const jobSeekers = [
     {
       id: 1,
@@ -45,7 +45,9 @@ export default function JobSeekerResume() {
         {/* Header Section */}
         <div className="text-center mb-14">
           <h1 className="text-4xl font-bold text-gray-900 mb-3 tracking-tight">
-            Job Seeker Resumes in The <span className="text-[#27bb97] ">USA</span> and <span className="text-[#27bb97] ">Canada</span>
+            Job Seeker Resumes in The{" "}
+            <span className="text-[#27bb97] ">USA</span> and{" "}
+            <span className="text-[#27bb97] ">Canada</span>
           </h1>
           <p className="text-gray-600 text-lg mb-4 max-w-2xl mx-auto">
             Discover talented professionals actively seeking new opportunities
@@ -72,21 +74,21 @@ export default function JobSeekerResume() {
                       className="w-16 h-16 rounded-full object-cover border-2 border-white shadow-md"
                       onError={(e) => {
                         // Fallback to default avatar if image fails to load
-                        e.target.style.display = 'none';
-                        e.target.nextElementSibling.style.display = 'flex';
+                        e.target.style.display = "none";
+                        e.target.nextElementSibling.style.display = "flex";
                       }}
                     />
                   ) : null}
-                  
+
                   {/* Fallback Avatar (shown if no image or image fails to load) */}
-                  <div 
+                  <div
                     className={`w-16 h-16 rounded-full bg-gradient-to-br from-orange-400 to-orange-500 flex items-center justify-center shadow-md ${
-                      seeker.profileImage ? 'hidden' : 'flex'
+                      seeker.profileImage ? "hidden" : "flex"
                     }`}
                   >
                     <User className="w-7 h-7 text-white" />
                   </div>
-                  
+
                   {/* Verified Badge (only shown if verified is true) */}
                   {seeker.verified && (
                     <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-teal-500 rounded-full border-2 border-white flex items-center justify-center">
@@ -177,7 +179,7 @@ export default function JobSeekerResume() {
 
         {/* View More Button */}
         <div className="text-center mt-16">
-          <button 
+          <button
             onClick={handleViewAllPositions}
             className="px-8 py-3 border-2 border-[#27bb97] text-[#27bb97] font-semibold rounded-lg hover:bg-[#27bb97] hover:text-white transition-all duration-300 hover:shadow-lg cursor-pointer"
           >

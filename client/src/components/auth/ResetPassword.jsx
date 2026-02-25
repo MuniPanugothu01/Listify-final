@@ -8,14 +8,14 @@ import toast from "react-hot-toast";
 const ResetPassword = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { 
-    resetPasswordRequest, 
-    loading, 
-    error, 
-    success, 
+  const {
+    resetPasswordRequest,
+    loading,
+    error,
+    success,
     clearAuthError,
     resetAuthSuccess,
-    clearResetTokenAction 
+    clearResetTokenAction,
   } = useAuth();
 
   // Get email and resetToken from location state
@@ -37,7 +37,7 @@ const ResetPassword = () => {
   useEffect(() => {
     if (error) {
       // Handle object errors
-      if (typeof error === 'object' && error !== null) {
+      if (typeof error === "object" && error !== null) {
         if (error.message) {
           toast.error(error.message);
           setSubmitError(error.message);
@@ -48,12 +48,12 @@ const ResetPassword = () => {
           toast.error("Password reset failed");
           setSubmitError("Password reset failed");
         }
-        
+
         // Handle validation errors
         if (error.errors) {
           setValidationErrors(error.errors);
         }
-      } else if (typeof error === 'string') {
+      } else if (typeof error === "string") {
         toast.error(error);
         setSubmitError(error);
       } else {
@@ -62,7 +62,7 @@ const ResetPassword = () => {
       }
       clearAuthError();
     }
-    
+
     if (success) {
       toast.success("Password reset successfully! You can now login.");
       resetAuthSuccess();
@@ -71,7 +71,14 @@ const ResetPassword = () => {
         navigate("/signin");
       }, 2000);
     }
-  }, [error, success, navigate, clearAuthError, resetAuthSuccess, clearResetTokenAction]);
+  }, [
+    error,
+    success,
+    navigate,
+    clearAuthError,
+    resetAuthSuccess,
+    clearResetTokenAction,
+  ]);
 
   // Check if we have required data
   useEffect(() => {
@@ -112,16 +119,21 @@ const ResetPassword = () => {
       const hasUpperCase = /[A-Z]/.test(formData.password);
       const hasLowerCase = /[a-z]/.test(formData.password);
       const hasNumbers = /[0-9]/.test(formData.password);
-      const hasSpecialChar = /[!@#$%^&*()_+\-=\[\]{}|;:,.<>?]/.test(formData.password);
-      
+      const hasSpecialChar = /[!@#$%^&*()_+\-=\[\]{}|;:,.<>?]/.test(
+        formData.password,
+      );
+
       if (!hasUpperCase) {
-        newErrors.password = "Password must contain at least one uppercase letter";
+        newErrors.password =
+          "Password must contain at least one uppercase letter";
       } else if (!hasLowerCase) {
-        newErrors.password = "Password must contain at least one lowercase letter";
+        newErrors.password =
+          "Password must contain at least one lowercase letter";
       } else if (!hasNumbers) {
         newErrors.password = "Password must contain at least one number";
       } else if (!hasSpecialChar) {
-        newErrors.password = "Password must contain at least one special character (!@#$%^&*()_+-=[]{}|;:,.<>?)";
+        newErrors.password =
+          "Password must contain at least one special character (!@#$%^&*()_+-=[]{}|;:,.<>?)";
       }
     }
 
@@ -154,11 +166,11 @@ const ResetPassword = () => {
       );
     } catch (err) {
       console.log("Reset password error:", err);
-      
+
       // Handle different error types
       let errorMessage = "Password reset failed";
-      
-      if (err && typeof err === 'object') {
+
+      if (err && typeof err === "object") {
         if (err instanceof Error) {
           errorMessage = err.message;
         } else if (err.message) {
@@ -168,7 +180,7 @@ const ResetPassword = () => {
         } else {
           errorMessage = "Password reset failed";
         }
-        
+
         if (err.errors) {
           setValidationErrors(err.errors);
           if (err.errors.password) {
@@ -177,10 +189,10 @@ const ResetPassword = () => {
             errorMessage = err.errors.confirmPassword;
           }
         }
-      } else if (typeof err === 'string') {
+      } else if (typeof err === "string") {
         errorMessage = err;
       }
-      
+
       setSubmitError(errorMessage);
       toast.error(errorMessage);
     }
@@ -209,7 +221,7 @@ const ResetPassword = () => {
 
     // Convert to 0-4 scale for display (max 4 bars)
     const displayStrength = Math.min(Math.floor(strength / 1.5), 4);
-    
+
     const strengths = [
       { text: "Very Weak", color: "bg-red-500", width: "25%" },
       { text: "Weak", color: "bg-orange-500", width: "50%" },
@@ -217,7 +229,13 @@ const ResetPassword = () => {
       { text: "Strong", color: "bg-green-500", width: "100%" },
     ];
 
-    return strengths[displayStrength - 1] || { text: "", color: "bg-gray-300", width: "0%" };
+    return (
+      strengths[displayStrength - 1] || {
+        text: "",
+        color: "bg-gray-300",
+        width: "0%",
+      }
+    );
   };
 
   const passwordStrength = getPasswordStrength();
@@ -226,25 +244,25 @@ const ResetPassword = () => {
   const getPasswordRequirements = () => {
     const password = formData.password;
     return [
-      { 
-        text: "At least 8 characters", 
-        met: password.length >= 8 
+      {
+        text: "At least 8 characters",
+        met: password.length >= 8,
       },
-      { 
-        text: "At least one uppercase letter", 
-        met: /[A-Z]/.test(password) 
+      {
+        text: "At least one uppercase letter",
+        met: /[A-Z]/.test(password),
       },
-      { 
-        text: "At least one lowercase letter", 
-        met: /[a-z]/.test(password) 
+      {
+        text: "At least one lowercase letter",
+        met: /[a-z]/.test(password),
       },
-      { 
-        text: "At least one number", 
-        met: /[0-9]/.test(password) 
+      {
+        text: "At least one number",
+        met: /[0-9]/.test(password),
       },
-      { 
-        text: "At least one special character (!@#$%^&*()_+-=[]{}|;:,.<>?)", 
-        met: /[!@#$%^&*()_+\-=\[\]{}|;:,.<>?]/.test(password) 
+      {
+        text: "At least one special character (!@#$%^&*()_+-=[]{}|;:,.<>?)",
+        met: /[!@#$%^&*()_+\-=\[\]{}|;:,.<>?]/.test(password),
       },
     ];
   };
@@ -253,7 +271,6 @@ const ResetPassword = () => {
 
   return (
     <div className="min-h-screen relative overflow-hidden">
-
       {/* Full Screen Background Image Layer */}
       <div className="fixed inset-0 z-0">
         <img
@@ -342,7 +359,9 @@ const ResetPassword = () => {
               {/* Error Message Display */}
               {submitError && (
                 <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-                  <p className="text-sm text-red-600 text-center">{submitError}</p>
+                  <p className="text-sm text-red-600 text-center">
+                    {submitError}
+                  </p>
                 </div>
               )}
 
@@ -428,7 +447,8 @@ const ResetPassword = () => {
                       value={formData.confirmPassword}
                       onChange={handleChange}
                       className={`w-full px-4 py-3 rounded-lg border focus:outline-none focus:ring-1 focus:border-transparent bg-white/80 pr-12 ${
-                        errors.confirmPassword || validationErrors.confirmPassword
+                        errors.confirmPassword ||
+                        validationErrors.confirmPassword
                           ? "border-red-300 focus:ring-red-500"
                           : "border-gray-300 focus:ring-[#27bb97]"
                       }`}
@@ -464,7 +484,7 @@ const ResetPassword = () => {
                   <ul className="text-xs text-blue-700 space-y-1">
                     {passwordRequirements.map((req, index) => (
                       <li key={index} className="flex items-center gap-2">
-                        <div 
+                        <div
                           className={`w-2 h-2 rounded-full ${
                             req.met ? "bg-green-500" : "bg-blue-500"
                           }`}

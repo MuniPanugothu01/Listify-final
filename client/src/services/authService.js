@@ -1,8 +1,8 @@
-import api from './api';
+import api from "./api";
 
 class AuthService {
   constructor() {
-    this.baseURL = '/auth';
+    this.baseURL = "/auth";
   }
 
   // ==================== LOGIN ====================
@@ -27,7 +27,9 @@ class AuthService {
 
   async googleLogin(googleToken) {
     try {
-      const response = await api.post(`${this.baseURL}/google/token`, { token: googleToken });
+      const response = await api.post(`${this.baseURL}/google/token`, {
+        token: googleToken,
+      });
       return response.data;
     } catch (error) {
       throw this.handleError(error);
@@ -37,7 +39,10 @@ class AuthService {
   // ==================== REGISTRATION ====================
   async initiateRegister(userData) {
     try {
-      const response = await api.post(`${this.baseURL}/register/initiate`, userData);
+      const response = await api.post(
+        `${this.baseURL}/register/initiate`,
+        userData,
+      );
       return response.data;
     } catch (error) {
       throw this.handleError(error);
@@ -46,7 +51,10 @@ class AuthService {
 
   async verifyOTP(email, otp) {
     try {
-      const response = await api.post(`${this.baseURL}/register/verify`, { email, otp });
+      const response = await api.post(`${this.baseURL}/register/verify`, {
+        email,
+        otp,
+      });
       return response.data;
     } catch (error) {
       throw this.handleError(error);
@@ -55,7 +63,9 @@ class AuthService {
 
   async resendOTP(email) {
     try {
-      const response = await api.post(`${this.baseURL}/register/resend-otp`, { email });
+      const response = await api.post(`${this.baseURL}/register/resend-otp`, {
+        email,
+      });
       return response.data;
     } catch (error) {
       throw this.handleError(error);
@@ -64,7 +74,9 @@ class AuthService {
 
   async checkRegistrationStatus(email) {
     try {
-      const response = await api.get(`${this.baseURL}/register/status/${email}`);
+      const response = await api.get(
+        `${this.baseURL}/register/status/${email}`,
+      );
       return response.data;
     } catch (error) {
       throw this.handleError(error);
@@ -74,7 +86,10 @@ class AuthService {
   // ==================== FORGOT PASSWORD ====================
   async initiateForgotPassword(email) {
     try {
-      const response = await api.post(`${this.baseURL}/forgot-password/initiate`, { email });
+      const response = await api.post(
+        `${this.baseURL}/forgot-password/initiate`,
+        { email },
+      );
       return response.data;
     } catch (error) {
       throw this.handleError(error);
@@ -83,7 +98,10 @@ class AuthService {
 
   async verifyForgotPasswordOTP(email, otp) {
     try {
-      const response = await api.post(`${this.baseURL}/forgot-password/verify-otp`, { email, otp });
+      const response = await api.post(
+        `${this.baseURL}/forgot-password/verify-otp`,
+        { email, otp },
+      );
       return response.data;
     } catch (error) {
       throw this.handleError(error);
@@ -92,7 +110,10 @@ class AuthService {
 
   async resendForgotPasswordOTP(email) {
     try {
-      const response = await api.post(`${this.baseURL}/forgot-password/resend-otp`, { email });
+      const response = await api.post(
+        `${this.baseURL}/forgot-password/resend-otp`,
+        { email },
+      );
       return response.data;
     } catch (error) {
       throw this.handleError(error);
@@ -101,11 +122,14 @@ class AuthService {
 
   async resetPasswordWithToken(resetToken, email, password, confirmPassword) {
     try {
-      const response = await api.put(`${this.baseURL}/reset-password/${resetToken}`, {
-        email,
-        password,
-        confirmPassword
-      });
+      const response = await api.put(
+        `${this.baseURL}/reset-password/${resetToken}`,
+        {
+          email,
+          password,
+          confirmPassword,
+        },
+      );
       return response.data;
     } catch (error) {
       throw this.handleError(error);
@@ -115,7 +139,9 @@ class AuthService {
   // ==================== LEGACY AUTH ====================
   async legacyForgotPassword(email) {
     try {
-      const response = await api.post(`${this.baseURL}/forgot-password`, { email });
+      const response = await api.post(`${this.baseURL}/forgot-password`, {
+        email,
+      });
       return response.data;
     } catch (error) {
       throw this.handleError(error);
@@ -124,7 +150,10 @@ class AuthService {
 
   async legacyResetPassword(resetToken, password) {
     try {
-      const response = await api.put(`${this.baseURL}/reset-password-legacy/${resetToken}`, { password });
+      const response = await api.put(
+        `${this.baseURL}/reset-password-legacy/${resetToken}`,
+        { password },
+      );
       return response.data;
     } catch (error) {
       throw this.handleError(error);
@@ -133,7 +162,10 @@ class AuthService {
 
   async legacyRegister(userData) {
     try {
-      const response = await api.post(`${this.baseURL}/register-legacy`, userData);
+      const response = await api.post(
+        `${this.baseURL}/register-legacy`,
+        userData,
+      );
       return response.data;
     } catch (error) {
       throw this.handleError(error);
@@ -200,16 +232,19 @@ class AuthService {
   handleError(error) {
     if (error.response) {
       // Server responded with error
-      const message = error.response.data?.message || 
-                     error.response.data?.error || 
-                     `Error: ${error.response.status}`;
+      const message =
+        error.response.data?.message ||
+        error.response.data?.error ||
+        `Error: ${error.response.status}`;
       return new Error(message);
     } else if (error.request) {
       // Request made but no response
-      return new Error('No response from server. Please check your connection.');
+      return new Error(
+        "No response from server. Please check your connection.",
+      );
     } else {
       // Something else happened
-      return new Error(error.message || 'An unexpected error occurred');
+      return new Error(error.message || "An unexpected error occurred");
     }
   }
 }

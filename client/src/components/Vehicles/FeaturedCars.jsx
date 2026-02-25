@@ -90,159 +90,159 @@ const FeaturedCars = () => {
       </div>
 
       {/* Main Content Grid */}
-    <Link to="/car-details">
-      <div className="flex flex-col lg:flex-row gap-6 w-full">
-        {/* Featured Car - Left 50% */}
-        <div className="lg:w-1/2 h-full">
-          <div className="relative h-full rounded-2xl overflow-hidden group cursor-pointer shadow-xl hover:shadow-2xl transition-all duration-300">
-            <div className="flex">
-              {/* Heart Icon */}
-              <button className="absolute top-4 left-4 z-20 w-10 h-10 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center hover:bg-white/20 transition-all hover:scale-110">
-                <CiStar className="w-5 h-5 text-white" />
-              </button>
+      <Link to="/car-details">
+        <div className="flex flex-col lg:flex-row gap-6 w-full">
+          {/* Featured Car - Left 50% */}
+          <div className="lg:w-1/2 h-full">
+            <div className="relative h-full rounded-2xl overflow-hidden group cursor-pointer shadow-xl hover:shadow-2xl transition-all duration-300">
+              <div className="flex">
+                {/* Heart Icon */}
+                <button className="absolute top-4 left-4 z-20 w-10 h-10 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center hover:bg-white/20 transition-all hover:scale-110">
+                  <CiStar className="w-5 h-5 text-white" />
+                </button>
 
-              {/* Image Count */}
-              <div className="absolute top-3 right-4 z-20 px-3 py-2 rounded-full bg-black/30 backdrop-blur-sm flex items-center gap-1">
-                <Image className="w-4 h-4 text-white" />
-                <span className="text-white text-sm font-medium">
-                  {cars[0].images} photos
-                </span>
-              </div>
-            </div>
-
-            {/* Main Image */}
-            <div className="relative h-[575px]">
-              <img
-                src={cars[0].image}
-                loading="lazy"
-                alt={cars[0].name}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
-            </div>
-
-            {/* Car Info - Overlay on Image */}
-            <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
-              <div className="mb-4">
-                <div className="flex items-center gap-2 mb-2">
-                  <h3 className="text-white text-xl md:text-2xl font-bold">
-                    {cars[0].name}
-                  </h3>
+                {/* Image Count */}
+                <div className="absolute top-3 right-4 z-20 px-3 py-2 rounded-full bg-black/30 backdrop-blur-sm flex items-center gap-1">
+                  <Image className="w-4 h-4 text-white" />
+                  <span className="text-white text-sm font-medium">
+                    {cars[0].images} photos
+                  </span>
                 </div>
               </div>
-              <div className="flex items-center justify-between pt-4 border-t border-white/20">
-                <div className="flex items-center gap-2">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <span className="px-3 py-1 bg-gradient-to-r from-[#27bb97] to-[#1fa987] text-white text-sm font-medium rounded">
-                      {cars[0].year}
-                    </span>
-                    <span className="text-white/80 text-sm bg-white/10 px-3 py-1 rounded">
-                      {cars[0].transmission}
-                    </span>
-                    <span className="text-white/80 text-sm bg-white/10 px-3 py-1 rounded">
-                      {cars[0].fuel}
-                    </span>
-                    <span className="text-white/80 text-sm bg-white/10 px-3 py-1 rounded">
-                      {cars[0].drive}
-                    </span>
+
+              {/* Main Image */}
+              <div className="relative h-[575px]">
+                <img
+                  src={cars[0].image}
+                  loading="lazy"
+                  alt={cars[0].name}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+              </div>
+
+              {/* Car Info - Overlay on Image */}
+              <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
+                <div className="mb-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <h3 className="text-white text-xl md:text-2xl font-bold">
+                      {cars[0].name}
+                    </h3>
                   </div>
-                  {/* <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div> */}
-                  {/* <span className="text-white/80 text-sm">Available Now</span> */}
                 </div>
-                <span className="text-white text-2xl md:text-3xl font-bold">
-                  {cars[0].price}
-                </span>
+                <div className="flex items-center justify-between pt-4 border-t border-white/20">
+                  <div className="flex items-center gap-2">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="px-3 py-1 bg-gradient-to-r from-[#27bb97] to-[#1fa987] text-white text-sm font-medium rounded">
+                        {cars[0].year}
+                      </span>
+                      <span className="text-white/80 text-sm bg-white/10 px-3 py-1 rounded">
+                        {cars[0].transmission}
+                      </span>
+                      <span className="text-white/80 text-sm bg-white/10 px-3 py-1 rounded">
+                        {cars[0].fuel}
+                      </span>
+                      <span className="text-white/80 text-sm bg-white/10 px-3 py-1 rounded">
+                        {cars[0].drive}
+                      </span>
+                    </div>
+                    {/* <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div> */}
+                    {/* <span className="text-white/80 text-sm">Available Now</span> */}
+                  </div>
+                  <span className="text-white text-2xl md:text-3xl font-bold">
+                    {cars[0].price}
+                  </span>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Right 50% - Grid of 4 Cars with Same Overlay Design */}
-        <div className="lg:w-1/2 h-full">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 h-full">
-            {cars.slice(1, 5).map((car) => (
-              <div
-                key={car.id}
-                className="relative rounded-xl overflow-hidden group cursor-pointer shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 min-h-[280px]"
-              >
-                {/* Background Image */}
-                <img
-                  src={car.image}
-                  loading="lazy"
-                  alt={car.name}
-                  className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
+          {/* Right 50% - Grid of 4 Cars with Same Overlay Design */}
+          <div className="lg:w-1/2 h-full">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 h-full">
+              {cars.slice(1, 5).map((car) => (
+                <div
+                  key={car.id}
+                  className="relative rounded-xl overflow-hidden group cursor-pointer shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 min-h-[280px]"
+                >
+                  {/* Background Image */}
+                  <img
+                    src={car.image}
+                    loading="lazy"
+                    alt={car.name}
+                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
 
-                {/* Gradient Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent" />
+                  {/* Gradient Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent" />
 
-                <div className="flex ">
-                  {/* Heart Icon */}
-                  <button className="absolute top-3 left-3 z-20 w-8 h-8 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center hover:bg-white/20 transition-all hover:scale-110">
-                    <CiStar className="w-4 h-4 text-white" />
-                  </button>
+                  <div className="flex ">
+                    {/* Heart Icon */}
+                    <button className="absolute top-3 left-3 z-20 w-8 h-8 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center hover:bg-white/20 transition-all hover:scale-110">
+                      <CiStar className="w-4 h-4 text-white" />
+                    </button>
 
-                  {/* Image Count */}
-                  <div className="absolute top-3 right-3 z-20 px-2 py-1 rounded-full bg-black/30 backdrop-blur-sm flex items-center gap-1">
-                    <Image className="w-3 h-3 text-white" />
-                    <span className="text-white text-xs">{car.images}</span>
+                    {/* Image Count */}
+                    <div className="absolute top-3 right-3 z-20 px-2 py-1 rounded-full bg-black/30 backdrop-blur-sm flex items-center gap-1">
+                      <Image className="w-3 h-3 text-white" />
+                      <span className="text-white text-xs">{car.images}</span>
+                    </div>
                   </div>
-                </div>
 
-                {/* Rating */}
-                {/* <div className="absolute top-3 left-3 z-20 flex items-center gap-1 px-2 py-1 bg-black/30 backdrop-blur-sm rounded">
+                  {/* Rating */}
+                  {/* <div className="absolute top-3 left-3 z-20 flex items-center gap-1 px-2 py-1 bg-black/30 backdrop-blur-sm rounded">
                   <Star className="w-3 h-3 text-yellow-400 fill-yellow-400" />
                   <span className="text-white text-xs font-medium">
                     {car.rating}
                   </span>
                 </div> */}
 
-                {/* Car Info - Overlay on Image */}
-                <div className="absolute bottom-0 left-0 right-0 p-4">
-                  {/* Car Name */}
-                  <h3 className="text-white font-semibold text-lg mb-3 line-clamp-1">
-                    {car.name}
-                  </h3>
+                  {/* Car Info - Overlay on Image */}
+                  <div className="absolute bottom-0 left-0 right-0 p-4">
+                    {/* Car Name */}
+                    <h3 className="text-white font-semibold text-lg mb-3 line-clamp-1">
+                      {car.name}
+                    </h3>
 
-                  {/* Car Specs */}
+                    {/* Car Specs */}
 
-                  {/* Price and Status */}
-                  <div className="flex items-center justify-between pt-3 border-t border-white/20">
-                    <div className="flex items-center gap-2">
-                      <div className="flex flex-wrap gap-2 mb-3">
-                        <span className="px-2 py-1 bg-gradient-to-r from-[#27bb97]/80 to-[#1fa987]/80 text-white text-xs font-medium rounded">
-                          {car.year}
-                        </span>
-                        <div className="flex items-center gap-1 px-2 py-1 bg-white/10 backdrop-blur-sm text-white text-xs font-medium rounded">
-                          <Settings className="w-3 h-3" />
-                          <span>{car.transmission}</span>
+                    {/* Price and Status */}
+                    <div className="flex items-center justify-between pt-3 border-t border-white/20">
+                      <div className="flex items-center gap-2">
+                        <div className="flex flex-wrap gap-2 mb-3">
+                          <span className="px-2 py-1 bg-gradient-to-r from-[#27bb97]/80 to-[#1fa987]/80 text-white text-xs font-medium rounded">
+                            {car.year}
+                          </span>
+                          <div className="flex items-center gap-1 px-2 py-1 bg-white/10 backdrop-blur-sm text-white text-xs font-medium rounded">
+                            <Settings className="w-3 h-3" />
+                            <span>{car.transmission}</span>
+                          </div>
+                          <div className="flex items-center gap-1 px-2 py-1 bg-white/10 backdrop-blur-sm text-white text-xs font-medium rounded">
+                            <Fuel className="w-3 h-3" />
+                            <span>{car.fuel}</span>
+                          </div>
                         </div>
-                        <div className="flex items-center gap-1 px-2 py-1 bg-white/10 backdrop-blur-sm text-white text-xs font-medium rounded">
-                          <Fuel className="w-3 h-3" />
-                          <span>{car.fuel}</span>
-                        </div>
+                        {/* <div className="w-2 h-2 bg-green-400 rounded-full"></div> */}
+                        {/* <span className="text-white/80 text-sm">In Stock</span> */}
                       </div>
-                      {/* <div className="w-2 h-2 bg-green-400 rounded-full"></div> */}
-                      {/* <span className="text-white/80 text-sm">In Stock</span> */}
+                      <span className="text-white text-xl font-bold">
+                        {car.price}
+                      </span>
                     </div>
-                    <span className="text-white text-xl font-bold">
-                      {car.price}
-                    </span>
+                  </div>
+
+                  {/* Hover View Button */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#27bb97]/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                    <button className="px-5 py-2 bg-gradient-to-r from-[#27bb97] to-[#1fa987] text-white font-medium text-sm rounded-full shadow-lg transform -translate-y-4 group-hover:translate-y-0 transition-all duration-300">
+                      View Details
+                    </button>
                   </div>
                 </div>
-
-                {/* Hover View Button */}
-                <div className="absolute inset-0 bg-gradient-to-t from-[#27bb97]/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                  <button className="px-5 py-2 bg-gradient-to-r from-[#27bb97] to-[#1fa987] text-white font-medium text-sm rounded-full shadow-lg transform -translate-y-4 group-hover:translate-y-0 transition-all duration-300">
-                    View Details
-                  </button>
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
-      </div>
-    </Link>
+      </Link>
 
       {/* View All Button */}
       <div className="text-center mt-16">
@@ -256,7 +256,6 @@ const FeaturedCars = () => {
           </button>
         </Link>
       </div>
-
     </div>
   );
 };

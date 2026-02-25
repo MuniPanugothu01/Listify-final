@@ -11,7 +11,7 @@ import {
   FaMapMarkerAlt,
   FaFilter,
   FaChevronDown,
-  FaEllipsisH
+  FaEllipsisH,
 } from "react-icons/fa";
 
 const navItems = [
@@ -114,11 +114,14 @@ export default function EventsSubNav() {
   const resetFilter = (filterType) => {
     setSelectedFilters((prev) => ({
       ...prev,
-      [filterType]: 
-        filterType === "city" ? "All Cities" :
-        filterType === "date" ? "All Dates" :
-        filterType === "category" ? "All Categories" :
-        "Any Language"
+      [filterType]:
+        filterType === "city"
+          ? "All Cities"
+          : filterType === "date"
+            ? "All Dates"
+            : filterType === "category"
+              ? "All Categories"
+              : "Any Language",
     }));
   };
 
@@ -141,9 +144,9 @@ export default function EventsSubNav() {
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
 
@@ -163,7 +166,7 @@ export default function EventsSubNav() {
     <>
       {/* Very light backdrop - only when dropdown is open */}
       {showMoreDropdown && (
-        <div 
+        <div
           className="fixed inset-0 bg-transparent z-40"
           onClick={() => setShowMoreDropdown(false)}
         />
@@ -188,13 +191,15 @@ export default function EventsSubNav() {
                     key={index}
                     onClick={() => handleCategoryClick(item)}
                     className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm transition-all whitespace-nowrap min-w-max cursor-pointer ${
-                      item.name === "Home" 
-                        ? "bg-teal-500 text-white hover:bg-teal-600" 
+                      item.name === "Home"
+                        ? "bg-teal-500 text-white hover:bg-teal-600"
                         : "text-gray-700 hover:bg-teal-50 hover:text-teal-500"
                     } ${item.iconOnly ? "px-3" : "px-4"}`}
                     title={item.name}
                   >
-                    <IconComponent className={`${item.iconOnly ? "w-5 h-5" : "w-4 h-4"}`} />
+                    <IconComponent
+                      className={`${item.iconOnly ? "w-5 h-5" : "w-4 h-4"}`}
+                    />
                     {!item.iconOnly && <span>{item.name}</span>}
                   </button>
                 );
@@ -209,7 +214,9 @@ export default function EventsSubNav() {
                 >
                   <FaEllipsisH className="w-4 h-4" />
                   <span>More</span>
-                  <FaChevronDown className={`w-3 h-3 transition-transform ${showMoreDropdown ? "rotate-180" : ""}`} />
+                  <FaChevronDown
+                    className={`w-3 h-3 transition-transform ${showMoreDropdown ? "rotate-180" : ""}`}
+                  />
                 </button>
               </div>
             </div>
@@ -222,7 +229,7 @@ export default function EventsSubNav() {
 
           {/* Active Filters Display */}
           {Object.values(selectedFilters).some(
-            (filter) => !filter.includes("All") && !filter.includes("Any")
+            (filter) => !filter.includes("All") && !filter.includes("Any"),
           ) && (
             <div className="flex items-center gap-2 py-2 border-t border-gray-200">
               <span className="text-sm text-gray-600">Active filters:</span>
@@ -252,12 +259,12 @@ export default function EventsSubNav() {
 
       {/* Fixed Position Dropdown */}
       {showMoreDropdown && (
-        <div 
+        <div
           ref={dropdownRef}
           className="fixed w-64 bg-white rounded-lg shadow-xl border border-gray-200 z-50 py-2"
           style={{
             top: `${dropdownPosition.top}px`,
-            left: `${dropdownPosition.left}px`
+            left: `${dropdownPosition.left}px`,
           }}
         >
           {moreItems.map((item, index) => {

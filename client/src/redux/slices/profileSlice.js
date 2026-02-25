@@ -165,11 +165,11 @@ const profileSlice = createSlice({
     },
     refreshProfileImage: (state) => {
       if (state.profile) {
-        state.profilePicPreview = 
-          state.profile.profileImageUrl || 
-          state.profile.profileImage || 
-          state.profile.googleProfileImage || 
-          state.profile.avatar || 
+        state.profilePicPreview =
+          state.profile.profileImageUrl ||
+          state.profile.profileImage ||
+          state.profile.googleProfileImage ||
+          state.profile.avatar ||
           null;
       }
     },
@@ -187,11 +187,16 @@ const profileSlice = createSlice({
       .addCase(fetchProfile.fulfilled, (state, action) => {
         state.loading = false;
         state.profile = action.payload;
-        if (action.payload?.profileImageUrl || action.payload?.profileImage || action.payload?.googleProfileImage || action.payload?.avatar) {
-          state.profilePicPreview = 
-            action.payload.profileImageUrl || 
-            action.payload.profileImage || 
-            action.payload.googleProfileImage || 
+        if (
+          action.payload?.profileImageUrl ||
+          action.payload?.profileImage ||
+          action.payload?.googleProfileImage ||
+          action.payload?.avatar
+        ) {
+          state.profilePicPreview =
+            action.payload.profileImageUrl ||
+            action.payload.profileImage ||
+            action.payload.googleProfileImage ||
             action.payload.avatar;
         }
       })
@@ -211,9 +216,8 @@ const profileSlice = createSlice({
         state.success = true;
         state.profile = action.payload;
         if (action.payload?.profileImageUrl || action.payload?.profileImage) {
-          state.profilePicPreview = 
-            action.payload.profileImageUrl || 
-            action.payload.profileImage;
+          state.profilePicPreview =
+            action.payload.profileImageUrl || action.payload.profileImage;
         }
         state.syncToAuth = true;
       })

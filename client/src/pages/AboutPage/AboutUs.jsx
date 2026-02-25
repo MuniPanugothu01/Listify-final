@@ -69,49 +69,61 @@ const AboutUs = () => {
     {
       year: "2019",
       title: "Concept Born",
-      description: "The idea to combine classifieds with community features was born",
-      image: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=800&q=90",
+      description:
+        "The idea to combine classifieds with community features was born",
+      image:
+        "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=800&q=90",
     },
     {
       year: "2020",
       title: "Listify Launched",
       description: "Beta launched in 5 major cities with free classifieds",
-      image: "https://images.unsplash.com/photo-1552664730-d307ca884978?w-800&q=90",
+      image:
+        "https://images.unsplash.com/photo-1552664730-d307ca884978?w-800&q=90",
     },
     {
       year: "2021",
       title: "Community Features Added",
       description: "Introduced events, forums, and local services marketplace",
-      image: "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=800&q=90",
+      image:
+        "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=800&q=90",
     },
     {
       year: "2022",
       title: "National Expansion",
       description: "Expanded to 50+ cities across the country",
-      image: "https://images.unsplash.com/photo-1542744095-fcf48d80b0fd?w=800&q=90",
+      image:
+        "https://images.unsplash.com/photo-1542744095-fcf48d80b0fd?w=800&q=90",
     },
     {
       year: "2023",
       title: "AI & Safety Launch",
       description: "Introduced AI-powered verification and safety features",
-      image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&q=90",
+      image:
+        "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&q=90",
     },
   ];
 
   // Achievements
   const achievements = [
     {
-      icon: <Award className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-[#27bb97]" />,
+      icon: (
+        <Award className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-[#27bb97]" />
+      ),
       title: "Best Local Marketplace 2023",
       description: "Community Choice Awards",
     },
     {
-      icon: <ShieldCheck className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-[#27bb97]" />,
+      icon: (
+        <ShieldCheck className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-[#27bb97]" />
+      ),
       title: "Trust & Safety Excellence",
       description: "Digital Safety Certified",
     },
     {
-      icon: <TrendingUp className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-[#27bb97]" />,
+      icon: (
+        <TrendingUp className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-[#27bb97]" />
+      ),
       title: "Fastest Growing Platform",
       description: "Local Commerce Report 2023",
     },
@@ -123,37 +135,43 @@ const AboutUs = () => {
       icon: <ShieldCheck />,
       title: "Trust First",
       description: "Verified users and secure transactions are our foundation",
-      image: "https://images.unsplash.com/photo-1559028012-481c04fa702d?w=400&q=90",
+      image:
+        "https://images.unsplash.com/photo-1559028012-481c04fa702d?w=400&q=90",
     },
     {
       icon: <UsersRound />,
       title: "Community Driven",
       description: "Built by the community, for the community",
-      image: "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=400&q=90",
+      image:
+        "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=400&q=90",
     },
     {
       icon: <Heart />,
       title: "Accessibility",
       description: "Free basic listings for everyone, always",
-      image: "https://images.unsplash.com/photo-1573164713988-8665fc963095?w=400&q=90",
+      image:
+        "https://images.unsplash.com/photo-1573164713988-8665fc963095?w=400&q=90",
     },
     {
       icon: <Zap />,
       title: "Simplicity",
       description: "Easy to use, no unnecessary complexity",
-      image: "https://images.unsplash.com/photo-1551650975-87deedd944c3?w=400&q=90",
+      image:
+        "https://images.unsplash.com/photo-1551650975-87deedd944c3?w=400&q=90",
     },
     {
       icon: <HeartHandshake />,
       title: "Local Focus",
       description: "Hyperlocal connections strengthen neighborhoods",
-      image: "https://images.unsplash.com/photo-1543269865-cbf427effbad?w=400&q=90",
+      image:
+        "https://images.unsplash.com/photo-1543269865-cbf427effbad?w=400&q=90",
     },
     {
       icon: <BarChart3 />,
       title: "Transparency",
       description: "Clear pricing and honest interactions",
-      image: "https://images.unsplash.com/photo-1552664730-d307ca884978?w=400&q=90",
+      image:
+        "https://images.unsplash.com/photo-1552664730-d307ca884978?w=400&q=90",
     },
   ];
 
@@ -162,23 +180,29 @@ const AboutUs = () => {
     {
       name: "Rajesh Kumar",
       role: "Small Business Owner",
-      content: "Listify helped me grow my tutoring business locally. I found 20+ students in my neighborhood within 2 months! The community features are amazing.",
+      content:
+        "Listify helped me grow my tutoring business locally. I found 20+ students in my neighborhood within 2 months! The community features are amazing.",
       rating: 5,
-      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=90",
+      image:
+        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=90",
     },
     {
       name: "Priya Sharma",
       role: "Community Event Organizer",
-      content: "From selling furniture to promoting our local Diwali celebration, Listify has everything. It's like Craigslist and a community bulletin board combined!",
+      content:
+        "From selling furniture to promoting our local Diwali celebration, Listify has everything. It's like Craigslist and a community bulletin board combined!",
       rating: 5,
-      image: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=400&q=90",
+      image:
+        "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=400&q=90",
     },
     {
       name: "Michael Chen",
       role: "Homeowner",
-      content: "Found a reliable plumber, sold my old bicycle, and joined a local hiking group—all on Listify. It's transformed how I connect with my community.",
+      content:
+        "Found a reliable plumber, sold my old bicycle, and joined a local hiking group—all on Listify. It's transformed how I connect with my community.",
       rating: 5,
-      image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&q=90",
+      image:
+        "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&q=90",
     },
   ];
 
@@ -231,22 +255,31 @@ const AboutUs = () => {
   // Services
   const services = [
     {
-      icon: <Tag className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-[#27bb97]" />,
+      icon: (
+        <Tag className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-[#27bb97]" />
+      ),
       title: "Local Classifieds",
       desc: "Post and browse items for sale, housing, jobs, and services with the simplicity and trust you expect from the best classified platforms.",
-      image: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=600&q=90",
+      image:
+        "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=600&q=90",
     },
     {
-      icon: <Calendar className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-[#27bb97]" />,
+      icon: (
+        <Calendar className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-[#27bb97]" />
+      ),
       title: "Community & Events",
       desc: "Discover and promote local events, join community forums, and connect with neighbors who share your interests and passions.",
-      image: "https://images.unsplash.com/photo-1542744094-3a31f272c490?w=600&q=90",
+      image:
+        "https://images.unsplash.com/photo-1542744094-3a31f272c490?w=600&q=90",
     },
     {
-      icon: <Home className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-[#27bb97]" />,
+      icon: (
+        <Home className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-[#27bb97]" />
+      ),
       title: "Service Marketplace",
       desc: "Find and book verified local professionals for home services, repairs, tutoring, wellness, and everything your household needs.",
-      image: "https://images.unsplash.com/photo-1582719508461-905c673771fd?w=600&q=90",
+      image:
+        "https://images.unsplash.com/photo-1582719508461-905c673771fd?w=600&q=90",
     },
   ];
 
@@ -254,27 +287,43 @@ const AboutUs = () => {
   const technology = [
     {
       title: "Smart Categorization",
-      description: "AI that intelligently sorts listings and matches users with relevant local services and events",
-      icon: <Lightbulb className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-[#27bb97]" />,
-      image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=600&q=90",
+      description:
+        "AI that intelligently sorts listings and matches users with relevant local services and events",
+      icon: (
+        <Lightbulb className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-[#27bb97]" />
+      ),
+      image:
+        "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=600&q=90",
     },
     {
       title: "Verified Profiles",
-      description: "Multi-layer verification system for users and service providers to ensure safety and trust",
-      icon: <ShieldCheck className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-[#27bb97]" />,
-      image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&q=90",
+      description:
+        "Multi-layer verification system for users and service providers to ensure safety and trust",
+      icon: (
+        <ShieldCheck className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-[#27bb97]" />
+      ),
+      image:
+        "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&q=90",
     },
     {
       title: "Community Moderation",
-      description: "Advanced tools and guidelines that foster positive, self-regulating local forums and discussions",
-      icon: <Users className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-[#27bb97]" />,
-      image: "https://images.unsplash.com/photo-1559028012-481c04fa702d?w=600&q=90",
+      description:
+        "Advanced tools and guidelines that foster positive, self-regulating local forums and discussions",
+      icon: (
+        <Users className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-[#27bb97]" />
+      ),
+      image:
+        "https://images.unsplash.com/photo-1559028012-481c04fa702d?w=600&q=90",
     },
     {
       title: "Real-Time Alerts",
-      description: "Instant notifications for new listings in your area, messages, and upcoming event reminders",
-      icon: <Zap className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-[#27bb97]" />,
-      image: "https://images.unsplash.com/photo-1551650975-87deedd944c3?w=600&q=90",
+      description:
+        "Instant notifications for new listings in your area, messages, and upcoming event reminders",
+      icon: (
+        <Zap className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-[#27bb97]" />
+      ),
+      image:
+        "https://images.unsplash.com/photo-1551650975-87deedd944c3?w=600&q=90",
     },
   ];
 
@@ -387,7 +436,7 @@ const AboutUs = () => {
           }
         });
       },
-      { threshold: 0.1 }
+      { threshold: 0.1 },
     );
 
     document.querySelectorAll(".scroll-animate").forEach((el) => {
@@ -426,8 +475,9 @@ const AboutUs = () => {
                 <div className="w-24 sm:w-32 h-1 bg-gradient-to-r from-[#27bb97] to-white transform transition-all duration-500 group-hover:w-32 sm:group-hover:w-48 mx-auto lg:mx-0"></div>
                 <div className="mt-4 sm:mt-6">
                   <span className="text-base sm:text-lg text-white/90 mobile-text-center lg:text-left block">
-                    Listify combines the best of classifieds with community features to
-                    create a trusted, local marketplace for everyone.
+                    Listify combines the best of classifieds with community
+                    features to create a trusted, local marketplace for
+                    everyone.
                   </span>
                 </div>
               </div>
@@ -441,7 +491,8 @@ const AboutUs = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8 sm:mb-12 lg:mb-16 scroll-animate">
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-3 sm:mb-4">
-              Everything Your <span className="gradient-text">Community</span> Needs
+              Everything Your <span className="gradient-text">Community</span>{" "}
+              Needs
             </h2>
             <p className="text-sm sm:text-base md:text-lg text-gray-600 max-w-2xl mx-auto px-2">
               A comprehensive platform designed to meet all your local needs
@@ -466,8 +517,12 @@ const AboutUs = () => {
                     </div>
                   </div>
                   <div className="p-4 sm:p-6">
-                    <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2 sm:mb-3">{service.title}</h3>
-                    <p className="text-gray-600 text-sm sm:text-base">{service.desc}</p>
+                    <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2 sm:mb-3">
+                      {service.title}
+                    </h3>
+                    <p className="text-gray-600 text-sm sm:text-base">
+                      {service.desc}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -503,14 +558,18 @@ const AboutUs = () => {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
                     <div className="absolute bottom-3 sm:bottom-4 left-3 sm:left-4 text-white">
-                      {React.cloneElement(value.icon, { className: "w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8" })}
+                      {React.cloneElement(value.icon, {
+                        className: "w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8",
+                      })}
                     </div>
                   </div>
                   <div className="p-4 sm:p-6">
                     <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-1 sm:mb-2 group-hover:text-[#27bb97] transition-colors">
                       {value.title}
                     </h3>
-                    <p className="text-gray-600 text-sm sm:text-base">{value.description}</p>
+                    <p className="text-gray-600 text-sm sm:text-base">
+                      {value.description}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -527,7 +586,8 @@ const AboutUs = () => {
               Powered by <span className="gradient-text">Innovation</span>
             </h2>
             <p className="text-sm sm:text-base md:text-lg text-gray-600 max-w-2xl mx-auto px-2">
-              Cutting-edge technology that ensures safety, relevance, and seamless connections
+              Cutting-edge technology that ensures safety, relevance, and
+              seamless connections
             </p>
           </div>
 
@@ -545,8 +605,12 @@ const AboutUs = () => {
                       </div>
                     </div>
                     <div className="flex-1">
-                      <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2 sm:mb-3">{tech.title}</h3>
-                      <p className="text-gray-600 text-sm sm:text-base mb-3 sm:mb-4">{tech.description}</p>
+                      <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2 sm:mb-3">
+                        {tech.title}
+                      </h3>
+                      <p className="text-gray-600 text-sm sm:text-base mb-3 sm:mb-4">
+                        {tech.description}
+                      </p>
                       <div className="relative h-24 sm:h-32 rounded-lg overflow-hidden">
                         <img
                           src={tech.image}
@@ -618,7 +682,8 @@ const AboutUs = () => {
               Meet Our <span className="gradient-text">Leaders</span>
             </h2>
             <p className="text-sm sm:text-base md:text-lg text-gray-600 max-w-2xl mx-auto px-2">
-              Passionate individuals dedicated to strengthening local connections
+              Passionate individuals dedicated to strengthening local
+              connections
             </p>
           </div>
 
@@ -640,8 +705,12 @@ const AboutUs = () => {
                     <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-1 sm:mb-2 group-hover:text-[#27bb97] transition-colors">
                       {member.name}
                     </h3>
-                    <p className="text-[#27bb97] font-medium mb-2 sm:mb-4 text-sm sm:text-base">{member.role}</p>
-                    <p className="text-gray-600 text-sm sm:text-base">{member.bio}</p>
+                    <p className="text-[#27bb97] font-medium mb-2 sm:mb-4 text-sm sm:text-base">
+                      {member.role}
+                    </p>
+                    <p className="text-gray-600 text-sm sm:text-base">
+                      {member.bio}
+                    </p>
                   </div>
                 </div>
               </div>

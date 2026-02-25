@@ -7,9 +7,6 @@ import TrendingWeek from "../../components/Roommates/TrendingWeek.jsx";
 import RoommateProfiles from "../../components/Roommates/RoommateProfiles.jsx";
 import PopularCities from "../../components/Roommates/PopularCities.jsx";
 
-
-
-
 export default function Roommates() {
   return (
     <div className="min-h-screen ">
@@ -19,11 +16,8 @@ export default function Roommates() {
       <RecentDataOne /> {/* Fixed component name */}
       <FeaturedData />
       <TrendingWeek />
-      <RoommateProfiles/>
-      <PopularCities/>
- 
-
-
+      <RoommateProfiles />
+      <PopularCities />
     </div>
   );
 }

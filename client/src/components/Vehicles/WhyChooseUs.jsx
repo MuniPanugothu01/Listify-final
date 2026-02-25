@@ -43,9 +43,7 @@ export default function WhyChooseUs() {
               className="flex flex-col items-start transition-all duration-300 ease-out
                          hover:-translate-y-1"
             >
-              <div className="text-[#27bb97] mb-4">
-                {feature.icon}
-              </div>
+              <div className="text-[#27bb97] mb-4">{feature.icon}</div>
 
               <h3 className="text-lg font-semibold text-gray-800 mb-3">
                 {feature.title}

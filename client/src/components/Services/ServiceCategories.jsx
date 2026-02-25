@@ -269,16 +269,16 @@ const ServiceCategories = () => {
     <div className="min-h-screen bg-white py-12 px-4">
       <div className="px-10">
         <h1 className="text-center mb-12">
-  <div className="text-5xl font-bold text-gray-900">
-    Top Local Service Categories
-  </div>
-  <div className="relative inline-block mt-6">
-    <div className="text-3xl font-semibold text-gray-700">
-      in Los Angeles Metro Area
-    </div>
-    <div className="h-1 w-full bg-gradient-to-r from-transparent via-[#27bb97] to-transparent mt-2"></div>
-  </div>
-</h1>
+          <div className="text-5xl font-bold text-gray-900">
+            Top Local Service Categories
+          </div>
+          <div className="relative inline-block mt-6">
+            <div className="text-3xl font-semibold text-gray-700">
+              in Los Angeles Metro Area
+            </div>
+            <div className="h-1 w-full bg-gradient-to-r from-transparent via-[#27bb97] to-transparent mt-2"></div>
+          </div>
+        </h1>
 
         {/* Show 3 rows (15 cards) */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">

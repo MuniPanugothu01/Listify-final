@@ -1,55 +1,61 @@
-import React from 'react';
+import React from "react";
 
 export default function ElectronicsTestimonials() {
   const testimonials = [
     {
-      name: 'Alex Chen',
-      role: 'Tech Reviewer',
-      image: 'https://randomuser.me/api/portraits/men/32.jpg',
+      name: "Alex Chen",
+      role: "Tech Reviewer",
+      image: "https://randomuser.me/api/portraits/men/32.jpg",
       rating: 5,
-      text: 'Got a flawless iPhone at 40% off retail price! Perfect condition.',
-      product: 'https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=300&h=200&fit=crop'
+      text: "Got a flawless iPhone at 40% off retail price! Perfect condition.",
+      product:
+        "https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=300&h=200&fit=crop",
     },
     {
-      name: 'Sarah Johnson',
-      role: 'Gaming Streamer',
-      image: 'https://randomuser.me/api/portraits/women/44.jpg',
+      name: "Sarah Johnson",
+      role: "Gaming Streamer",
+      image: "https://randomuser.me/api/portraits/women/44.jpg",
       rating: 5,
-      text: 'PS5 in mint condition. Saved $200 compared to new!',
-      product: 'https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?w=300&h=200&fit=crop'
+      text: "PS5 in mint condition. Saved $200 compared to new!",
+      product:
+        "https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?w=300&h=200&fit=crop",
     },
     {
-      name: 'Michael Rodriguez',
-      role: 'Photographer',
-      image: 'https://randomuser.me/api/portraits/men/22.jpg',
+      name: "Michael Rodriguez",
+      role: "Photographer",
+      image: "https://randomuser.me/api/portraits/men/22.jpg",
       rating: 5,
-      text: 'Professional camera gear at unbeatable prices!',
-      product: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=300&h=200&fit=crop'
+      text: "Professional camera gear at unbeatable prices!",
+      product:
+        "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=300&h=200&fit=crop",
     },
     {
-      name: 'Priya Sharma',
-      role: 'Student',
-      image: 'https://randomuser.me/api/portraits/women/68.jpg',
+      name: "Priya Sharma",
+      role: "Student",
+      image: "https://randomuser.me/api/portraits/women/68.jpg",
       rating: 5,
-      text: 'Perfect laptop for my budget! Great battery life.',
-      product: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=300&h=200&fit=crop'
+      text: "Perfect laptop for my budget! Great battery life.",
+      product:
+        "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=300&h=200&fit=crop",
     },
     {
-      name: 'David Kim',
-      role: 'Music Producer',
-      image: 'https://randomuser.me/api/portraits/men/52.jpg',
+      name: "David Kim",
+      role: "Music Producer",
+      image: "https://randomuser.me/api/portraits/men/52.jpg",
       rating: 5,
-      text: 'Premium headphones like new at half price!',
-      product: 'https://images.unsplash.com/photo-1583394838336-acd977736f90?w=300&h=200&fit=crop'
+      text: "Premium headphones like new at half price!",
+      product:
+        "https://images.unsplash.com/photo-1583394838336-acd977736f90?w=300&h=200&fit=crop",
     },
     {
-      name: 'Jessica Miller',
-      role: 'Smart Home Enthusiast',
-      image: 'https://randomuser.me/api/portraits/women/28.jpg',
+      name: "Jessica Miller",
+      role: "Smart Home Enthusiast",
+      image: "https://randomuser.me/api/portraits/women/28.jpg",
       rating: 5,
-      text: 'Smartwatch integration was seamless! Excellent support.',
-      product: 'https://images.unsplash.com/photo-1579586337278-3f576cfc5113?w=300&h=200&fit=crop'
-    }
+      text: "Smartwatch integration was seamless! Excellent support.",
+      product:
+        "https://images.unsplash.com/photo-1579586337278-3f576cfc5113?w=300&h=200&fit=crop",
+    },
   ];
 
   return (
@@ -76,20 +82,30 @@ export default function ElectronicsTestimonials() {
                       className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover"
                     />
                     <div>
-                      <h4 className="font-semibold text-gray-900 text-sm sm:text-base">{testimonial.name}</h4>
-                      <p className="text-xs sm:text-sm text-gray-500">{testimonial.role}</p>
+                      <h4 className="font-semibold text-gray-900 text-sm sm:text-base">
+                        {testimonial.name}
+                      </h4>
+                      <p className="text-xs sm:text-sm text-gray-500">
+                        {testimonial.role}
+                      </p>
                     </div>
                   </div>
-                  
+
                   <div className="flex gap-0.5 mb-2 sm:mb-3">
                     {[...Array(testimonial.rating)].map((_, i) => (
-                      <svg key={i} className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400 fill-current" viewBox="0 0 20 20">
+                      <svg
+                        key={i}
+                        className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400 fill-current"
+                        viewBox="0 0 20 20"
+                      >
                         <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
                       </svg>
                     ))}
                   </div>
-                  
-                  <p className="text-gray-600 text-sm sm:text-base mb-4">{testimonial.text}</p>
+
+                  <p className="text-gray-600 text-sm sm:text-base mb-4">
+                    {testimonial.text}
+                  </p>
                 </div>
 
                 <div className="h-32 sm:h-36 md:h-40 overflow-hidden">

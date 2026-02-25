@@ -14,7 +14,9 @@ import { fetchLoginHistory } from "../../redux/slices/profileSlice";
 
 const ActivitySection = ({ loginHistory: propLoginHistory }) => {
   const dispatch = useDispatch();
-  const { loginHistory: stateLoginHistory, loading } = useSelector((state) => state.profile);
+  const { loginHistory: stateLoginHistory, loading } = useSelector(
+    (state) => state.profile,
+  );
   const loginHistory = propLoginHistory || stateLoginHistory || [];
 
   useEffect(() => {
@@ -31,18 +33,18 @@ const ActivitySection = ({ loginHistory: propLoginHistory }) => {
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
     if (diffDays === 0) {
-      return `Today at ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+      return `Today at ${date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`;
     } else if (diffDays === 1) {
-      return `Yesterday at ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+      return `Yesterday at ${date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`;
     } else if (diffDays < 7) {
       return `${diffDays} days ago`;
     } else {
-      return date.toLocaleDateString('en-US', {
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
+      return date.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
       });
     }
   };
@@ -58,7 +60,9 @@ const ActivitySection = ({ loginHistory: propLoginHistory }) => {
   return (
     <div className="space-y-6">
       <div className="mb-6">
-        <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Account Activity</h2>
+        <h2 className="text-2xl md:text-3xl font-bold text-gray-900">
+          Account Activity
+        </h2>
         <p className="text-gray-500 text-sm mt-1">
           Review your recent account activity and login history
         </p>
@@ -68,7 +72,10 @@ const ActivitySection = ({ loginHistory: propLoginHistory }) => {
         {loginHistory.length > 0 ? (
           <div className="divide-y divide-gray-100">
             {loginHistory.map((activity, index) => (
-              <div key={index} className="p-6 hover:bg-gray-50 transition-colors">
+              <div
+                key={index}
+                className="p-6 hover:bg-gray-50 transition-colors"
+              >
                 <div className="flex items-start gap-4">
                   <div className="flex-shrink-0">
                     <div className="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center">
@@ -83,14 +90,18 @@ const ActivitySection = ({ loginHistory: propLoginHistory }) => {
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2">
                       <h3 className="font-semibold text-gray-900">
-                        {activity.success ? 'Logged in' : 'Failed login attempt'}
+                        {activity.success
+                          ? "Logged in"
+                          : "Failed login attempt"}
                       </h3>
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                        activity.success 
-                          ? 'bg-emerald-100 text-emerald-700' 
-                          : 'bg-red-100 text-red-700'
-                      }`}>
-                        {activity.loginType || 'email'}
+                      <span
+                        className={`px-2 py-1 rounded-full text-xs font-medium ${
+                          activity.success
+                            ? "bg-emerald-100 text-emerald-700"
+                            : "bg-red-100 text-red-700"
+                        }`}
+                      >
+                        {activity.loginType || "email"}
                       </span>
                     </div>
 
@@ -130,7 +141,9 @@ const ActivitySection = ({ loginHistory: propLoginHistory }) => {
             <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <History className="w-8 h-8 text-gray-400" />
             </div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">No activity found</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+              No activity found
+            </h3>
             <p className="text-gray-500">Your login history will appear here</p>
           </div>
         )}

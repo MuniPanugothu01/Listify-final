@@ -4,7 +4,7 @@ import { ArrowRight } from "lucide-react";
 const AllServices = ({ services, onServiceClick }) => {
   const handleItemClick = (e, item) => {
     e.stopPropagation();
-    onServiceClick(item.toLowerCase().replace(' ', '-'));
+    onServiceClick(item.toLowerCase().replace(" ", "-"));
   };
 
   return (
@@ -20,14 +20,14 @@ const AllServices = ({ services, onServiceClick }) => {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 xs:gap-5 sm:gap-6 lg:gap-8 px-3 xs:px-4 sm:px-6 lg:px-8">
         {services.map((service) => (
-          <div 
+          <div
             key={service.id}
             className={`${service.bgColor} rounded-xl sm:rounded-2xl border border-gray-200 hover:border-[#27BB97] hover:shadow-lg sm:hover:shadow-xl transition-all duration-300 overflow-hidden group cursor-pointer`}
             onClick={() => onServiceClick(service.id)}
             role="button"
             tabIndex={0}
             onKeyPress={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
+              if (e.key === "Enter" || e.key === " ") {
                 onServiceClick(service.id);
               }
             }}
@@ -68,7 +68,7 @@ const AllServices = ({ services, onServiceClick }) => {
                       role="button"
                       tabIndex={0}
                       onKeyPress={(e) => {
-                        if (e.key === 'Enter' || e.key === ' ') {
+                        if (e.key === "Enter" || e.key === " ") {
                           handleItemClick(e, item);
                         }
                       }}
@@ -81,7 +81,7 @@ const AllServices = ({ services, onServiceClick }) => {
               </div>
 
               {/* Explore Button */}
-              <button 
+              <button
                 className="w-full flex items-center justify-center gap-2 py-2.5 xs:py-3 sm:py-3 bg-white text-[#27BB97] font-semibold rounded-lg xs:rounded-lg sm:rounded-lg border border-[#27BB97] hover:bg-[#27BB97] hover:text-white transition-all group-hover:shadow-md text-xs xs:text-sm sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#27BB97] focus:ring-offset-2"
                 onClick={(e) => {
                   e.stopPropagation();

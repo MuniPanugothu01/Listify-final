@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Heart,
   MapPin,
@@ -10,7 +10,7 @@ import {
   Star,
   Package,
   Clock,
-} from 'lucide-react';
+} from "lucide-react";
 
 // Product data
 const electronicsData = [
@@ -493,19 +493,22 @@ const ElectronicsListing = () => {
 
   // Store all products in localStorage for similar items in detail page
   useEffect(() => {
-    localStorage.setItem('allElectronics', JSON.stringify(electronicsData));
+    localStorage.setItem("allElectronics", JSON.stringify(electronicsData));
   }, []);
 
   // Get unique categories and conditions
-  const categories = [...new Set(electronicsData.map(p => p.category))];
-  const conditions = [...new Set(electronicsData.map(p => p.condition))];
+  const categories = [...new Set(electronicsData.map((p) => p.category))];
+  const conditions = [...new Set(electronicsData.map((p) => p.condition))];
 
   const filteredProducts = electronicsData.filter((product) => {
     // Search filter
-    if (searchQuery && !product.title.toLowerCase().includes(searchQuery.toLowerCase())) {
+    if (
+      searchQuery &&
+      !product.title.toLowerCase().includes(searchQuery.toLowerCase())
+    ) {
       return false;
     }
-    
+
     // Price filter
     if (priceMin && product.price < parseFloat(priceMin)) {
       return false;
@@ -513,39 +516,45 @@ const ElectronicsListing = () => {
     if (priceMax && product.price > parseFloat(priceMax)) {
       return false;
     }
-    
+
     // Category filter
-    if (selectedCategories.length > 0 && !selectedCategories.includes(product.category)) {
+    if (
+      selectedCategories.length > 0 &&
+      !selectedCategories.includes(product.category)
+    ) {
       return false;
     }
-    
+
     // Condition filter
-    if (selectedConditions.length > 0 && !selectedConditions.includes(product.condition)) {
+    if (
+      selectedConditions.length > 0 &&
+      !selectedConditions.includes(product.condition)
+    ) {
       return false;
     }
-    
+
     return true;
   });
 
   const handleProductClick = (product) => {
     // Store the selected product in localStorage
-    localStorage.setItem('selectedElectronics', JSON.stringify(product));
+    localStorage.setItem("selectedElectronics", JSON.stringify(product));
     navigate(`/electronics/${product.id}`);
   };
 
   const handleCategoryChange = (category) => {
-    setSelectedCategories(prev => 
+    setSelectedCategories((prev) =>
       prev.includes(category)
-        ? prev.filter(c => c !== category)
-        : [...prev, category]
+        ? prev.filter((c) => c !== category)
+        : [...prev, category],
     );
   };
 
   const handleConditionChange = (condition) => {
-    setSelectedConditions(prev =>
+    setSelectedConditions((prev) =>
       prev.includes(condition)
-        ? prev.filter(c => c !== condition)
-        : [...prev, condition]
+        ? prev.filter((c) => c !== condition)
+        : [...prev, condition],
     );
   };
 
@@ -726,7 +735,8 @@ const ElectronicsListing = () => {
             </div>
 
             <div className="mt-8 text-center text-gray-600 hidden lg:block">
-              Showing {filteredProducts.length} of {electronicsData.length} items
+              Showing {filteredProducts.length} of {electronicsData.length}{" "}
+              items
             </div>
 
             {filteredProducts.length === 0 && (

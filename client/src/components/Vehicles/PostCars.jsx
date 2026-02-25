@@ -63,10 +63,7 @@ const PostCars = () => {
               get started <GoArrowUpRight />
             </button>
 
-            <TbCarGarage
-              size={56}
-              className="text-blue-400 hidden sm:block"
-            />
+            <TbCarGarage size={56} className="text-blue-400 hidden sm:block" />
           </div>
         </div>
 

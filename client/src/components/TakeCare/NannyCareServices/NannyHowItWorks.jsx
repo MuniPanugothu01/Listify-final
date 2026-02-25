@@ -1,28 +1,42 @@
-import React from 'react';
-import { UserPlus, Search, ClipboardCheck, LayoutDashboard, ArrowRight } from 'lucide-react';
+import React from "react";
+import {
+  UserPlus,
+  Search,
+  ClipboardCheck,
+  LayoutDashboard,
+  ArrowRight,
+} from "lucide-react";
 
 const NannyHowItWorks = () => {
   const steps = [
     {
       icon: <UserPlus className="w-8 h-8 xs:w-10 xs:h-10 sm:w-12 sm:h-12" />,
-      title: 'Sign Up',
-      description: 'Register on our website and provide your personal or professional details to set up your profile.'
+      title: "Sign Up",
+      description:
+        "Register on our website and provide your personal or professional details to set up your profile.",
     },
     {
       icon: <Search className="w-8 h-8 xs:w-10 xs:h-10 sm:w-12 sm:h-12" />,
-      title: 'Search & Connect',
-      description: 'Use our platform to find nanny or job listings that meet your needs and preferences.'
+      title: "Search & Connect",
+      description:
+        "Use our platform to find nanny or job listings that meet your needs and preferences.",
     },
     {
-      icon: <ClipboardCheck className="w-8 h-8 xs:w-10 xs:h-10 sm:w-12 sm:h-12" />,
-      title: 'Review & Hire',
-      description: 'Review profiles, conduct interviews, and hire or get hired.'
+      icon: (
+        <ClipboardCheck className="w-8 h-8 xs:w-10 xs:h-10 sm:w-12 sm:h-12" />
+      ),
+      title: "Review & Hire",
+      description:
+        "Review profiles, conduct interviews, and hire or get hired.",
     },
     {
-      icon: <LayoutDashboard className="w-8 h-8 xs:w-10 xs:h-10 sm:w-12 sm:h-12" />,
-      title: 'Dashboard & Support',
-      description: 'Utilize customer support and dashboards provided by our website for families and caregivers.'
-    }
+      icon: (
+        <LayoutDashboard className="w-8 h-8 xs:w-10 xs:h-10 sm:w-12 sm:h-12" />
+      ),
+      title: "Dashboard & Support",
+      description:
+        "Utilize customer support and dashboards provided by our website for families and caregivers.",
+    },
   ];
 
   return (
@@ -49,7 +63,7 @@ const NannyHowItWorks = () => {
               <div className="text-[#27BB97] mb-4 xs:mb-5 sm:mb-6">
                 {step.icon}
               </div>
-              
+
               {/* Content */}
               <h3 className="text-lg xs:text-xl sm:text-xl font-bold text-gray-900 text-center mb-3 xs:mb-4 line-clamp-1">
                 {step.title}
@@ -70,7 +84,8 @@ const NannyHowItWorks = () => {
                 Find a Job Today
               </h3>
               <p className="text-gray-600 mb-6 sm:mb-8 leading-relaxed text-sm xs:text-base sm:text-base">
-                Ready to be an exceptional nanny? Set up your profile and apply for nanny jobs to bring joy and care.
+                Ready to be an exceptional nanny? Set up your profile and apply
+                for nanny jobs to bring joy and care.
               </p>
             </div>
             <button className="w-full bg-gradient-to-r from-[#27BB97] to-[#1EA583] hover:from-[#1EA583] hover:to-[#168F6F] text-white font-semibold py-3 xs:py-3.5 sm:py-4 rounded-full transition-all duration-300 flex items-center justify-center gap-2 shadow-sm hover:shadow-lg text-sm xs:text-base sm:text-base focus:outline-none focus:ring-2 focus:ring-[#27BB97] focus:ring-offset-2">
@@ -86,7 +101,8 @@ const NannyHowItWorks = () => {
                 Hire a Nanny
               </h3>
               <p className="text-gray-600 mb-6 sm:mb-8 leading-relaxed text-sm xs:text-base sm:text-base">
-                Seeking trusted nanny? Create a profile and find nannies to bring joy and care to your children.
+                Seeking trusted nanny? Create a profile and find nannies to
+                bring joy and care to your children.
               </p>
             </div>
             <button className="w-full bg-gradient-to-r from-[#27BB97] to-[#1EA583] hover:from-[#1EA583] hover:to-[#168F6F] text-white font-semibold py-3 xs:py-3.5 sm:py-4 rounded-full transition-all duration-300 flex items-center justify-center gap-2 shadow-sm hover:shadow-lg text-sm xs:text-base sm:text-base focus:outline-none focus:ring-2 focus:ring-[#27BB97] focus:ring-offset-2">

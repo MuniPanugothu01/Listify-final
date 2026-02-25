@@ -7,16 +7,14 @@ import FeaturedServices from "../../components/TakeCare/FeaturedServices.jsx";
 import HowItWorks from "../../components/TakeCare/HowItWorks.jsx";
 import WhyChooseUs from "../../components/TakeCare/WhyChooseUs.jsx";
 
-
 import TakeCareHero from "../../components/TakeCare/TakeCareHero.jsx";
 import TakeCareListing from "../../components/TakeCare/TakeCareListing.jsx";
 
 const TakeCare = () => {
-
   return (
     <div className="">
       <TakeCareHero />
-      <TakeCareListing/>
+      <TakeCareListing />
       {/* <RecentCare/> */}
       {/* <CareServices/> */}
       {/* <main className="max-w-7xl mx-auto ">
@@ -34,9 +32,9 @@ const TakeCare = () => {
         
       
       </main> */}
-        {/* <HowItWorks /> */}
-        
-        {/* <WhyChooseUs /> */}
+      {/* <HowItWorks /> */}
+
+      {/* <WhyChooseUs /> */}
     </div>
   );
 };

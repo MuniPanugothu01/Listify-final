@@ -196,7 +196,6 @@ const HowItWorks = () => {
               or specialized skills, Listify makes it simple, secure, and
               efficient.
             </p>
-            
 
             <Link to="/signin">
               <button className="px-8 lg:px-10 py-4 border border-[#27BB97] text-[#27BB97] hover:bg-[#27BB97] hover:text-white font-semibold rounded-xl transition-all duration-300 hover-scale shadow-lg text-lg">

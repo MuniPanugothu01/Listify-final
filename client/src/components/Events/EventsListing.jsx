@@ -35,9 +35,15 @@ const eventsData = [
     organizerRating: 4.8,
     organizerReviews: 256,
     organizerJoined: "Jan 2020",
-    image: "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=800&q=80",
-    description: "Join us for the biggest summer music festival in Central Park! Featuring top artists across multiple stages, food trucks, and art installations.",
-    features: ["Multiple Music Stages", "Food & Drink Vendors", "Art Installations"],
+    image:
+      "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=800&q=80",
+    description:
+      "Join us for the biggest summer music festival in Central Park! Featuring top artists across multiple stages, food trucks, and art installations.",
+    features: [
+      "Multiple Music Stages",
+      "Food & Drink Vendors",
+      "Art Installations",
+    ],
     ticketsAvailable: 150,
     ageRestriction: "All Ages",
     dressCode: "Casual",
@@ -55,9 +61,15 @@ const eventsData = [
     organizerRating: 4.9,
     organizerReviews: 189,
     organizerJoined: "Mar 2019",
-    image: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&q=80",
-    description: "An exclusive evening of gourmet food and fine wine tasting featuring top chefs and sommeliers.",
-    features: ["Gourmet Food Stations", "Wine & Cocktail Tasting", "Live Cooking Demos"],
+    image:
+      "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&q=80",
+    description:
+      "An exclusive evening of gourmet food and fine wine tasting featuring top chefs and sommeliers.",
+    features: [
+      "Gourmet Food Stations",
+      "Wine & Cocktail Tasting",
+      "Live Cooking Demos",
+    ],
     ticketsAvailable: 80,
     ageRestriction: "21+",
     dressCode: "Smart Casual",
@@ -75,9 +87,15 @@ const eventsData = [
     organizerRating: 4.7,
     organizerReviews: 324,
     organizerJoined: "Aug 2018",
-    image: "https://images.unsplash.com/photo-1542744095-fcf48d80b0fd?w=800&q=80",
-    description: "Annual tech conference for startups and entrepreneurs. Network with investors and learn from industry leaders.",
-    features: ["Keynote Speakers", "Investor Networking", "Startup Pitch Competition"],
+    image:
+      "https://images.unsplash.com/photo-1542744095-fcf48d80b0fd?w=800&q=80",
+    description:
+      "Annual tech conference for startups and entrepreneurs. Network with investors and learn from industry leaders.",
+    features: [
+      "Keynote Speakers",
+      "Investor Networking",
+      "Startup Pitch Competition",
+    ],
     ticketsAvailable: 500,
     ageRestriction: "18+",
     dressCode: "Business Casual",
@@ -95,9 +113,15 @@ const eventsData = [
     organizerRating: 4.6,
     organizerReviews: 167,
     organizerJoined: "May 2020",
-    image: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=800&q=80",
-    description: "Weekly outdoor yoga sessions with experienced instructors. All levels welcome. Mats provided.",
-    features: ["All Levels Welcome", "Yoga Mats Provided", "Water & Snacks Included"],
+    image:
+      "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=800&q=80",
+    description:
+      "Weekly outdoor yoga sessions with experienced instructors. All levels welcome. Mats provided.",
+    features: [
+      "All Levels Welcome",
+      "Yoga Mats Provided",
+      "Water & Snacks Included",
+    ],
     ticketsAvailable: 20,
     ageRestriction: "16+",
     dressCode: "Athletic Wear",
@@ -115,8 +139,10 @@ const eventsData = [
     organizerRating: 4.5,
     organizerReviews: 213,
     organizerJoined: "Feb 2019",
-    image: "https://images.unsplash.com/photo-1489599809516-9827b6d1cf13?w=800&q=80",
-    description: "Opening night of the annual indie film festival with red carpet, film screening, and after-party.",
+    image:
+      "https://images.unsplash.com/photo-1489599809516-9827b6d1cf13?w=800&q=80",
+    description:
+      "Opening night of the annual indie film festival with red carpet, film screening, and after-party.",
     features: ["Red Carpet Access", "Film Screening", "Q&A with Directors"],
     ticketsAvailable: 120,
     ageRestriction: "18+",
@@ -135,8 +161,10 @@ const eventsData = [
     organizerRating: 4.4,
     organizerReviews: 145,
     organizerJoined: "Nov 2020",
-    image: "https://images.unsplash.com/photo-1549576490-b0b4831ef60a?w=800&q=80",
-    description: "Special comedy night featuring up-and-coming comedians and surprise special guests.",
+    image:
+      "https://images.unsplash.com/photo-1549576490-b0b4831ef60a?w=800&q=80",
+    description:
+      "Special comedy night featuring up-and-coming comedians and surprise special guests.",
     features: ["Featured Comedians", "Surprise Guests", "Two Drink Minimum"],
     ticketsAvailable: 60,
     ageRestriction: "21+",
@@ -155,8 +183,10 @@ const eventsData = [
     organizerRating: 4.8,
     organizerReviews: 278,
     organizerJoined: "Apr 2018",
-    image: "https://images.unsplash.com/photo-1563089145-599997674d42?w=800&q=80",
-    description: "Opening night of contemporary art exhibition featuring emerging artists.",
+    image:
+      "https://images.unsplash.com/photo-1563089145-599997674d42?w=800&q=80",
+    description:
+      "Opening night of contemporary art exhibition featuring emerging artists.",
     features: ["Meet the Artists", "Wine & Appetizers", "Live Music"],
     ticketsAvailable: 100,
     ageRestriction: "21+",
@@ -175,9 +205,15 @@ const eventsData = [
     organizerRating: 4.9,
     organizerReviews: 456,
     organizerJoined: "Jan 2010",
-    image: "https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=800&q=80",
-    description: "Evening of smooth jazz featuring Grammy-winning artists. Premium seating available.",
-    features: ["Grammy-winning Artists", "Premium Seating", "Signature Cocktails"],
+    image:
+      "https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=800&q=80",
+    description:
+      "Evening of smooth jazz featuring Grammy-winning artists. Premium seating available.",
+    features: [
+      "Grammy-winning Artists",
+      "Premium Seating",
+      "Signature Cocktails",
+    ],
     ticketsAvailable: 40,
     ageRestriction: "21+",
     dressCode: "Smart Casual",
@@ -195,8 +231,10 @@ const eventsData = [
     organizerRating: 4.7,
     organizerReviews: 189,
     organizerJoined: "Jun 2019",
-    image: "https://images.unsplash.com/photo-1552674605-db6ffd8facb5?w=800&q=80",
-    description: "Comprehensive marathon training workshop for beginners and intermediate runners.",
+    image:
+      "https://images.unsplash.com/photo-1552674605-db6ffd8facb5?w=800&q=80",
+    description:
+      "Comprehensive marathon training workshop for beginners and intermediate runners.",
     features: ["Expert Coaches", "Training Plan", "Nutrition Workshop"],
     ticketsAvailable: 50,
     ageRestriction: "18+",
@@ -215,9 +253,15 @@ const eventsData = [
     organizerRating: 4.8,
     organizerReviews: 234,
     organizerJoined: "Sep 2018",
-    image: "https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=800&q=80",
-    description: "Hands-on cooking class focusing on authentic Italian dishes. Learn from award-winning chef.",
-    features: ["Hands-on Cooking", "Professional Chef", "All Ingredients Provided"],
+    image:
+      "https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=800&q=80",
+    description:
+      "Hands-on cooking class focusing on authentic Italian dishes. Learn from award-winning chef.",
+    features: [
+      "Hands-on Cooking",
+      "Professional Chef",
+      "All Ingredients Provided",
+    ],
     ticketsAvailable: 15,
     ageRestriction: "18+",
     dressCode: "Casual (Aprons Provided)",
@@ -235,9 +279,15 @@ const eventsData = [
     organizerRating: 4.6,
     organizerReviews: 178,
     organizerJoined: "Mar 2020",
-    image: "https://images.unsplash.com/photo-1492684223066-e9e4aab4d25e?w=800&q=80",
-    description: "Exclusive behind-the-scenes tour of Broadway theaters. Meet crew members and learn theater secrets.",
-    features: ["Backstage Access", "Meet Crew Members", "Costume & Prop Viewing"],
+    image:
+      "https://images.unsplash.com/photo-1492684223066-e9e4aab4d25e?w=800&q=80",
+    description:
+      "Exclusive behind-the-scenes tour of Broadway theaters. Meet crew members and learn theater secrets.",
+    features: [
+      "Backstage Access",
+      "Meet Crew Members",
+      "Costume & Prop Viewing",
+    ],
     ticketsAvailable: 25,
     ageRestriction: "12+",
     dressCode: "Casual",
@@ -255,9 +305,15 @@ const eventsData = [
     organizerRating: 4.5,
     organizerReviews: 132,
     organizerJoined: "Oct 2020",
-    image: "https://images.unsplash.com/photo-1598974357801-cbca100e5d10?w=800&q=80",
-    description: "Unique yoga experience with silent disco headphones. Choose your music channel.",
-    features: ["Silent Disco Headphones", "Multiple Music Channels", "Sunset Views"],
+    image:
+      "https://images.unsplash.com/photo-1598974357801-cbca100e5d10?w=800&q=80",
+    description:
+      "Unique yoga experience with silent disco headphones. Choose your music channel.",
+    features: [
+      "Silent Disco Headphones",
+      "Multiple Music Channels",
+      "Sunset Views",
+    ],
     ticketsAvailable: 30,
     ageRestriction: "18+",
     dressCode: "Yoga Attire",
@@ -267,15 +323,15 @@ const eventsData = [
 // Event Card Component
 const EventCard = ({ event, onClick }) => {
   const categoryIcons = {
-    'Music': <Music className="w-4 h-4" />,
-    'Food & Drink': <Utensils className="w-4 h-4" />,
-    'Business': <Globe className="w-4 h-4" />,
-    'Health & Wellness': <BookOpen className="w-4 h-4" />,
-    'Film': <Film className="w-4 h-4" />,
-    'Comedy': <Coffee className="w-4 h-4" />,
-    'Art': <Camera className="w-4 h-4" />,
-    'Sports': <Users className="w-4 h-4" />,
-    'Theater': <Ticket className="w-4 h-4" />,
+    Music: <Music className="w-4 h-4" />,
+    "Food & Drink": <Utensils className="w-4 h-4" />,
+    Business: <Globe className="w-4 h-4" />,
+    "Health & Wellness": <BookOpen className="w-4 h-4" />,
+    Film: <Film className="w-4 h-4" />,
+    Comedy: <Coffee className="w-4 h-4" />,
+    Art: <Camera className="w-4 h-4" />,
+    Sports: <Users className="w-4 h-4" />,
+    Theater: <Ticket className="w-4 h-4" />,
   };
 
   return (
@@ -346,15 +402,18 @@ const EventsListing = () => {
   const [selectedDates, setSelectedDates] = useState([]);
 
   // Get unique categories and dates
-  const categories = [...new Set(eventsData.map(p => p.category))];
-  const dates = [...new Set(eventsData.map(p => p.date))];
+  const categories = [...new Set(eventsData.map((p) => p.category))];
+  const dates = [...new Set(eventsData.map((p) => p.date))];
 
   const filteredEvents = eventsData.filter((event) => {
     // Search filter
-    if (searchQuery && !event.title.toLowerCase().includes(searchQuery.toLowerCase())) {
+    if (
+      searchQuery &&
+      !event.title.toLowerCase().includes(searchQuery.toLowerCase())
+    ) {
       return false;
     }
-    
+
     // Price filter
     if (priceMin && event.price < parseFloat(priceMin)) {
       return false;
@@ -362,17 +421,20 @@ const EventsListing = () => {
     if (priceMax && event.price > parseFloat(priceMax)) {
       return false;
     }
-    
+
     // Category filter
-    if (selectedCategories.length > 0 && !selectedCategories.includes(event.category)) {
+    if (
+      selectedCategories.length > 0 &&
+      !selectedCategories.includes(event.category)
+    ) {
       return false;
     }
-    
+
     // Date filter
     if (selectedDates.length > 0 && !selectedDates.includes(event.date)) {
       return false;
     }
-    
+
     return true;
   });
 
@@ -381,18 +443,16 @@ const EventsListing = () => {
   };
 
   const handleCategoryChange = (category) => {
-    setSelectedCategories(prev => 
+    setSelectedCategories((prev) =>
       prev.includes(category)
-        ? prev.filter(c => c !== category)
-        : [...prev, category]
+        ? prev.filter((c) => c !== category)
+        : [...prev, category],
     );
   };
 
   const handleDateChange = (date) => {
-    setSelectedDates(prev =>
-      prev.includes(date)
-        ? prev.filter(d => d !== date)
-        : [...prev, date]
+    setSelectedDates((prev) =>
+      prev.includes(date) ? prev.filter((d) => d !== date) : [...prev, date],
     );
   };
 

@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { format, isToday, isTomorrow, isThisWeek, parseISO } from 'date-fns';
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { format, isToday, isTomorrow, isThisWeek, parseISO } from "date-fns";
 
 // Your full JSON data
 const eventsData = {
@@ -14,7 +14,8 @@ const eventsData = {
       price: 2999,
       displayPrice: "₹2,999 onwards",
       attendees: "15.8k",
-      image: "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=800&q=80",
+      image:
+        "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=800&q=80",
       tag: "Music Festival",
       category: "music",
       time: "18:00",
@@ -23,7 +24,7 @@ const eventsData = {
       artist: "Various Artists",
       duration: "4 Days",
       ageLimit: "18+",
-      organizer: "Sunburn Events"
+      organizer: "Sunburn Events",
     },
     {
       id: 2,
@@ -35,7 +36,8 @@ const eventsData = {
       displayPrice: "Free Entry",
       attendees: "9.2k",
       isFree: true,
-      image: "https://demo.dawnthemes.com/ticketbox/wp-content/uploads/2017/03/Holi-Festival.png",
+      image:
+        "https://demo.dawnthemes.com/ticketbox/wp-content/uploads/2017/03/Holi-Festival.png",
       tag: "Festival",
       category: "food",
       time: "17:00",
@@ -44,7 +46,7 @@ const eventsData = {
       artist: "Local Vendors",
       duration: "6 Hours",
       ageLimit: "All Ages",
-      organizer: "DLF Events"
+      organizer: "DLF Events",
     },
     {
       id: 3,
@@ -55,7 +57,8 @@ const eventsData = {
       price: 599,
       displayPrice: "₹599",
       attendees: "1.8k",
-      image: "https://demo.dawnthemes.com/ticketbox/wp-content/uploads/2017/03/ticketbox-unlike-dummy-1110x600.jpg",
+      image:
+        "https://demo.dawnthemes.com/ticketbox/wp-content/uploads/2017/03/ticketbox-unlike-dummy-1110x600.jpg",
       tag: "Comedy",
       category: "entertainment",
       time: "20:00",
@@ -64,7 +67,7 @@ const eventsData = {
       artist: "Comedy Collective",
       duration: "3 Hours",
       ageLimit: "16+",
-      organizer: "The Comedy Club"
+      organizer: "The Comedy Club",
     },
     {
       id: 4,
@@ -76,7 +79,8 @@ const eventsData = {
       displayPrice: "Free",
       attendees: "3.1k",
       isFree: true,
-      image: "https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=800&q=80",
+      image:
+        "https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=800&q=80",
       tag: "Wellness",
       category: "wellness",
       time: "06:00",
@@ -85,7 +89,7 @@ const eventsData = {
       artist: "Yoga Masters",
       duration: "2 Hours",
       ageLimit: "All Ages",
-      organizer: "Beach Wellness"
+      organizer: "Beach Wellness",
     },
     {
       id: 5,
@@ -96,7 +100,8 @@ const eventsData = {
       price: 4500,
       displayPrice: "₹4,500 onwards",
       attendees: "82.5k",
-      image: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&q=80",
+      image:
+        "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&q=80",
       tag: "Concert",
       category: "music",
       time: "19:00",
@@ -105,7 +110,7 @@ const eventsData = {
       artist: "Coldplay",
       duration: "3 Hours",
       ageLimit: "12+",
-      organizer: "Live Nation"
+      organizer: "Live Nation",
     },
     {
       id: 6,
@@ -116,7 +121,8 @@ const eventsData = {
       price: 1200,
       displayPrice: "₹1,200 onwards",
       attendees: "95.3k",
-      image: "https://images.unsplash.com/photo-1621430669951-5e9e3b98ed8b?w=800&q=80",
+      image:
+        "https://images.unsplash.com/photo-1621430669951-5e9e3b98ed8b?w=800&q=80",
       tag: "Sports",
       category: "sports",
       time: "19:30",
@@ -125,8 +131,8 @@ const eventsData = {
       artist: "Various Performers",
       duration: "4 Hours",
       ageLimit: "All Ages",
-      organizer: "BCCI"
-    }
+      organizer: "BCCI",
+    },
   ],
   upcoming: [
     {
@@ -138,7 +144,8 @@ const eventsData = {
       price: 2499,
       displayPrice: "₹2,499 onwards",
       attendees: "34.7k",
-      image: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&q=80",
+      image:
+        "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&q=80",
       tag: "Party",
       category: "entertainment",
       time: "21:00",
@@ -147,7 +154,7 @@ const eventsData = {
       artist: "Top DJs",
       duration: "8 Hours",
       ageLimit: "21+",
-      organizer: "Nightlife Events"
+      organizer: "Nightlife Events",
     },
     {
       id: 14,
@@ -158,7 +165,8 @@ const eventsData = {
       price: 3299,
       displayPrice: "₹3,299",
       attendees: "22.1k",
-      image: "https://demo.dawnthemes.com/ticketbox/wp-content/uploads/2016/12/78459379.jpg",
+      image:
+        "https://demo.dawnthemes.com/ticketbox/wp-content/uploads/2016/12/78459379.jpg",
       tag: "Music",
       category: "music",
       time: "16:00",
@@ -167,7 +175,7 @@ const eventsData = {
       artist: "Indie Artists",
       duration: "3 Days",
       ageLimit: "18+",
-      organizer: "Mountain Events"
+      organizer: "Mountain Events",
     },
     {
       id: 15,
@@ -178,7 +186,8 @@ const eventsData = {
       price: 1999,
       displayPrice: "₹1,999",
       attendees: "8.9k",
-      image: "https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800&q=80",
+      image:
+        "https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800&q=80",
       tag: "Business",
       category: "conference",
       time: "09:00",
@@ -187,7 +196,7 @@ const eventsData = {
       artist: "Industry Leaders",
       duration: "2 Days",
       ageLimit: "18+",
-      organizer: "Tech Summit India"
+      organizer: "Tech Summit India",
     },
     {
       id: 16,
@@ -199,7 +208,8 @@ const eventsData = {
       displayPrice: "Free",
       attendees: "120.5k",
       isFree: true,
-      image: "https://images.unsplash.com/photo-1605001011156-cbf0b0f67a51?w=800&q=80",
+      image:
+        "https://images.unsplash.com/photo-1605001011156-cbf0b0f67a51?w=800&q=80",
       tag: "Festival",
       category: "festival",
       time: "10:00",
@@ -208,9 +218,9 @@ const eventsData = {
       artist: "Cultural Performers",
       duration: "Full Day",
       ageLimit: "All Ages",
-      organizer: "Cultural Society"
-    }
-  ]
+      organizer: "Cultural Society",
+    },
+  ],
 };
 
 const EventsPopular = () => {
@@ -221,25 +231,37 @@ const EventsPopular = () => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768);
     };
-    
+
     checkMobile();
-    window.addEventListener('resize', checkMobile);
-    
-    return () => window.removeEventListener('resize', checkMobile);
+    window.addEventListener("resize", checkMobile);
+
+    return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
   const allEvents = [...eventsData.popular, ...eventsData.upcoming];
 
   // Group events by time
-  const todayEvents = allEvents.filter(event => isToday(parseISO(event.date)));
-  const tomorrowEvents = allEvents.filter(event => isTomorrow(parseISO(event.date)));
-  const thisWeekendEvents = allEvents.filter(event => {
+  const todayEvents = allEvents.filter((event) =>
+    isToday(parseISO(event.date)),
+  );
+  const tomorrowEvents = allEvents.filter((event) =>
+    isTomorrow(parseISO(event.date)),
+  );
+  const thisWeekendEvents = allEvents.filter((event) => {
     const eventDate = parseISO(event.date);
-    return isThisWeek(eventDate, { weekStartsOn: 1 }) && !isToday(eventDate) && !isTomorrow(eventDate);
+    return (
+      isThisWeek(eventDate, { weekStartsOn: 1 }) &&
+      !isToday(eventDate) &&
+      !isTomorrow(eventDate)
+    );
   });
-  const upcomingEvents = allEvents.filter(event => {
+  const upcomingEvents = allEvents.filter((event) => {
     const eventDate = parseISO(event.date);
-    return !isToday(eventDate) && !isTomorrow(eventDate) && !isThisWeek(eventDate, { weekStartsOn: 1 });
+    return (
+      !isToday(eventDate) &&
+      !isTomorrow(eventDate) &&
+      !isThisWeek(eventDate, { weekStartsOn: 1 })
+    );
   });
 
   const EventCard = ({ event }) => {
@@ -271,14 +293,16 @@ const EventsPopular = () => {
           )}
           {event.ticketsLeft < 50 && event.ticketsLeft > 0 && (
             <span className="absolute top-2 right-2 sm:top-3 sm:right-3 bg-red-600 text-white text-xs font-bold px-2 py-1 sm:px-3 sm:py-1 rounded-full">
-              {isMobile ? 'Low Stock' : 'Almost Sold Out'}
+              {isMobile ? "Low Stock" : "Almost Sold Out"}
             </span>
           )}
         </div>
 
         <div className="p-3 sm:p-4 md:p-5">
           <div className="flex items-center gap-1.5 text-xs sm:text-sm text-gray-600 mb-2">
-            <span>{format(parseISO(event.date), isMobile ? 'EEE' : 'EEE, MMM d')}</span>
+            <span>
+              {format(parseISO(event.date), isMobile ? "EEE" : "EEE, MMM d")}
+            </span>
             <span>•</span>
             <span>{event.time}</span>
           </div>
@@ -286,27 +310,33 @@ const EventsPopular = () => {
           <h3 className="text-base sm:text-lg font-bold text-gray-900 group-hover:text-[#27bb97] transition line-clamp-2">
             {event.title}
           </h3>
-          <p className="text-xs sm:text-sm text-gray-600 mt-1 line-clamp-1">{event.location}</p>
+          <p className="text-xs sm:text-sm text-gray-600 mt-1 line-clamp-1">
+            {event.location}
+          </p>
 
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-0 mt-3 sm:mt-4">
             <div>
-              <p className="text-lg sm:text-xl font-bold text-[#27bb97]">{event.displayPrice}</p>
+              <p className="text-lg sm:text-xl font-bold text-[#27bb97]">
+                {event.displayPrice}
+              </p>
               {event.attendees && (
                 <p className="text-xs text-gray-500 mt-0.5">
                   {event.attendees} interested
                 </p>
               )}
             </div>
-            <button 
+            <button
               onClick={handleButtonClick}
               className="bg-[#27bb97] hover:bg-[#1fa582] text-white font-medium text-xs sm:text-sm px-3 sm:px-4 py-2 rounded-md transition w-full sm:w-auto"
             >
-              {isMobile ? 'Info' : 'More Info'}
+              {isMobile ? "Info" : "More Info"}
             </button>
           </div>
 
           <div className="flex flex-wrap gap-1.5 mt-3 sm:mt-4">
-            <span className="text-xs bg-[#27bb97]/10 text-[#27bb97] px-2 py-1 rounded-full">#{event.tag}</span>
+            <span className="text-xs bg-[#27bb97]/10 text-[#27bb97] px-2 py-1 rounded-full">
+              #{event.tag}
+            </span>
             {event.category && (
               <span className="text-xs bg-[#27bb97]/10 text-[#27bb97] px-2 py-1 rounded-full">
                 #{event.category}
@@ -324,18 +354,22 @@ const EventsPopular = () => {
     return (
       <div className="mb-8 sm:mb-10 lg:mb-12">
         <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
-          <span className={`px-4 py-1.5 sm:px-5 sm:py-2 rounded-full text-white font-bold text-xs sm:text-sm ${badgeColor} w-fit`}>
+          <span
+            className={`px-4 py-1.5 sm:px-5 sm:py-2 rounded-full text-white font-bold text-xs sm:text-sm ${badgeColor} w-fit`}
+          >
             {title}
           </span>
           <h2 className="text-xl sm:text-2xl font-bold text-gray-800">
-            {title === "Today" ? "Today's Events" : 
-             title === "Tomorrow" ? "Tomorrow's Events" : 
-             title}
+            {title === "Today"
+              ? "Today's Events"
+              : title === "Tomorrow"
+                ? "Tomorrow's Events"
+                : title}
           </h2>
         </div>
 
         <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-5 lg:gap-6">
-          {events.map(event => (
+          {events.map((event) => (
             <EventCard key={event.id} event={event} />
           ))}
         </div>
@@ -355,14 +389,32 @@ const EventsPopular = () => {
           </p>
         </div>
 
-        <EventSection title="Today" events={todayEvents} badgeColor="bg-[#27bb97]" />
-        <EventSection title="Tomorrow" events={tomorrowEvents} badgeColor="bg-[#1fa582]" />
-        <EventSection title="This Weekend" events={thisWeekendEvents} badgeColor="bg-[#27bb97]/80" />
-        <EventSection title="Upcoming" events={upcomingEvents} badgeColor="bg-[#1fa582]/80" />
+        <EventSection
+          title="Today"
+          events={todayEvents}
+          badgeColor="bg-[#27bb97]"
+        />
+        <EventSection
+          title="Tomorrow"
+          events={tomorrowEvents}
+          badgeColor="bg-[#1fa582]"
+        />
+        <EventSection
+          title="This Weekend"
+          events={thisWeekendEvents}
+          badgeColor="bg-[#27bb97]/80"
+        />
+        <EventSection
+          title="Upcoming"
+          events={upcomingEvents}
+          badgeColor="bg-[#1fa582]/80"
+        />
 
         {allEvents.length === 0 && (
           <div className="text-center py-8 sm:py-10 lg:py-12">
-            <p className="text-gray-500 text-sm sm:text-base lg:text-lg">No events found. Check back later!</p>
+            <p className="text-gray-500 text-sm sm:text-base lg:text-lg">
+              No events found. Check back later!
+            </p>
           </div>
         )}
       </div>

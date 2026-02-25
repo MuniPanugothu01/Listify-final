@@ -36,12 +36,27 @@ const Sidebar = ({
   const { devices } = useSelector((state) => state.profile);
 
   const menuItems = [
-    { id: "home", label: "Dashboard", icon: Home, notification: counts.alerts > 0 ? counts.alerts : null },
+    {
+      id: "home",
+      label: "Dashboard",
+      icon: Home,
+      notification: counts.alerts > 0 ? counts.alerts : null,
+    },
     { id: "personal", label: "Profile", icon: User },
     { id: "posts", label: "My Listings", icon: FileText, count: counts.posts },
     { id: "saved", label: "Saved Items", icon: Heart, count: counts.saved },
-    { id: "messages", label: "Messages", icon: MessageCircle, count: counts.messages },
-    { id: "devices", label: "Devices", icon: Smartphone, count: devices?.length },
+    {
+      id: "messages",
+      label: "Messages",
+      icon: MessageCircle,
+      count: counts.messages,
+    },
+    {
+      id: "devices",
+      label: "Devices",
+      icon: Smartphone,
+      count: devices?.length,
+    },
     { id: "activity", label: "Activity", icon: History },
     { id: "profile-overview", label: "Profile Overview", icon: Calendar },
     { id: "alerts", label: "Alerts", icon: Bell, count: counts.alerts },
@@ -66,7 +81,7 @@ const Sidebar = ({
     if (!user?.name) return "U";
     return user.name
       .split(" ")
-      .map(n => n[0])
+      .map((n) => n[0])
       .join("")
       .toUpperCase()
       .slice(0, 2);
@@ -129,9 +144,13 @@ const Sidebar = ({
               </div>
             </div>
             <div className="flex-1 min-w-0">
-              <h3 className="font-bold text-gray-900 truncate">{user?.name || "User"}</h3>
+              <h3 className="font-bold text-gray-900 truncate">
+                {user?.name || "User"}
+              </h3>
               <p className="text-sm text-emerald-600 font-medium">
-                {user?.provider === "google" ? "Google Account" : "Premium Member"}
+                {user?.provider === "google"
+                  ? "Google Account"
+                  : "Premium Member"}
               </p>
             </div>
           </div>
@@ -145,7 +164,9 @@ const Sidebar = ({
               <p className="text-xs text-gray-500 mt-1">Saved</p>
             </div>
             <div className="text-center p-3 bg-gray-50 rounded-xl">
-              <p className="text-lg font-bold text-gray-900">{user?.rating || "4.8"}</p>
+              <p className="text-lg font-bold text-gray-900">
+                {user?.rating || "4.8"}
+              </p>
               <p className="text-xs text-gray-500 mt-1">Rating</p>
             </div>
           </div>
@@ -163,23 +184,28 @@ const Sidebar = ({
                 }}
                 className={`
                   w-full flex items-center justify-between px-4 py-3.5 rounded-xl transition-all
-                  ${activeSection === item.id
-                    ? "bg-emerald-50 text-emerald-700 border-l-4 border-l-emerald-500"
-                    : "text-gray-700 hover:bg-gray-50"
+                  ${
+                    activeSection === item.id
+                      ? "bg-emerald-50 text-emerald-700 border-l-4 border-l-emerald-500"
+                      : "text-gray-700 hover:bg-gray-50"
                   }
                 `}
               >
                 <div className="flex items-center gap-3">
-                  <item.icon className={`w-5 h-5 ${activeSection === item.id ? "text-emerald-500" : "text-gray-500"}`} />
+                  <item.icon
+                    className={`w-5 h-5 ${activeSection === item.id ? "text-emerald-500" : "text-gray-500"}`}
+                  />
                   <span className="font-medium">{item.label}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   {item.count !== undefined && item.count > 0 && (
-                    <span className={`px-2.5 py-1 rounded-lg text-xs font-semibold ${
-                      activeSection === item.id
-                        ? "bg-emerald-100 text-emerald-700"
-                        : "bg-gray-100 text-gray-600"
-                    }`}>
+                    <span
+                      className={`px-2.5 py-1 rounded-lg text-xs font-semibold ${
+                        activeSection === item.id
+                          ? "bg-emerald-100 text-emerald-700"
+                          : "bg-gray-100 text-gray-600"
+                      }`}
+                    >
                       {item.count}
                     </span>
                   )}

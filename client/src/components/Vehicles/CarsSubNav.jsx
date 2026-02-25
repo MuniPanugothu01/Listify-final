@@ -1,28 +1,26 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { RainbowButton } from "../../components/ui/rainbow-button"
-import { 
-  FaChevronDown, 
-  FaFilter, 
-  FaBed, 
-  FaUsers, 
-  FaUserLock, 
-  FaBuilding, 
-  FaHome, 
-  FaCity, 
-  FaHouseUser, 
+import { RainbowButton } from "../../components/ui/rainbow-button";
+import {
+  FaChevronDown,
+  FaFilter,
+  FaBed,
+  FaUsers,
+  FaUserLock,
+  FaBuilding,
+  FaHome,
+  FaCity,
+  FaHouseUser,
   FaMapMarkerAlt,
-  FaEllipsisH
+  FaEllipsisH,
 } from "react-icons/fa";
 
-// react icons 
+// react icons
 import { IoMdCar } from "react-icons/io";
 import { FaCarSide } from "react-icons/fa";
 import { AiFillCar } from "react-icons/ai";
 import { MdCarRental } from "react-icons/md";
 import { MdOutlineSchool } from "react-icons/md";
-
-
 
 const subNavItems = [
   { name: "Home", icon: FaHome, path: "/", iconOnly: true },
@@ -30,12 +28,10 @@ const subNavItems = [
   { name: "Sell Your Car", icon: FaCarSide },
   { name: "Rent Your Car", icon: AiFillCar },
   { name: "Search Car Rentals", icon: MdCarRental },
-  { name: "Driving School", icon: MdOutlineSchool  },
+  { name: "Driving School", icon: MdOutlineSchool },
   { name: "Cars Rentals", icon: MdCarRental },
   { name: "Near Me Cars", icon: FaMapMarkerAlt },
- 
 ];
-
 
 // const moreItems = [
 //   { name: "PG / Co-living", icon: FaBuilding },
@@ -86,10 +82,10 @@ export default function CarsSubNav() {
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
-    
+
     // Initial check
     handleScroll();
-    
+
     return () => window.removeEventListener("scroll", handleScroll);
   }, [lastScrollY]);
 
@@ -117,7 +113,10 @@ export default function CarsSubNav() {
       if (showFilters && !event.target.closest(".filter-container")) {
         setShowFilters(false);
       }
-      if (showMoreDropdown && !event.target.closest(".more-dropdown-container")) {
+      if (
+        showMoreDropdown &&
+        !event.target.closest(".more-dropdown-container")
+      ) {
         setShowMoreDropdown(false);
       }
     };
@@ -145,13 +144,15 @@ export default function CarsSubNav() {
                   key={index}
                   onClick={() => handleCategoryClick(item)}
                   className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm transition-all whitespace-nowrap min-w-max cursor-pointer ${
-                    item.name === "Home" 
-                      ? "bg-[#27bb97] text-white " 
+                    item.name === "Home"
+                      ? "bg-[#27bb97] text-white "
                       : "text-gray-700 hover:text-teal-500"
                   } ${item.iconOnly ? "px-3" : "px-4"}`}
                   title={item.name}
                 >
-                  <IconComponent className={`${item.iconOnly ? "w-5 h-5" : "w-4 h-4"}`} />
+                  <IconComponent
+                    className={`${item.iconOnly ? "w-5 h-5" : "w-4 h-4"}`}
+                  />
                   {!item.iconOnly && <span>{item.name}</span>}
                 </button>
               );
@@ -165,7 +166,9 @@ export default function CarsSubNav() {
               >
                 <FaEllipsisH className="w-4 h-4" />
                 <span>More</span>
-                <FaChevronDown className={`w-3 h-3 transition-transform ${showMoreDropdown ? "rotate-180" : ""}`} />
+                <FaChevronDown
+                  className={`w-3 h-3 transition-transform ${showMoreDropdown ? "rotate-180" : ""}`}
+                />
               </button>
 
               {/* Dropdown Menu */}
@@ -187,7 +190,7 @@ export default function CarsSubNav() {
                 </div>
               )} */}
             </div>
-            
+
             <RainbowButton className="bg-red">Post Your Car</RainbowButton>
             {/* <RainbowButton>Invite Someone in</RainbowButton> */}
           </div>
@@ -195,7 +198,7 @@ export default function CarsSubNav() {
 
         {/* Active Filters Display */}
         {Object.values(selectedFilters).some(
-          (filter) => filter !== "Any" && !filter.includes("Any")
+          (filter) => filter !== "Any" && !filter.includes("Any"),
         ) && (
           <div className="flex items-center gap-2 py-2 border-t border-gray-200">
             <span className="text-sm text-gray-600">Active filters:</span>
@@ -214,10 +217,10 @@ export default function CarsSubNav() {
                           key === "price"
                             ? "Any Price"
                             : key === "gender"
-                            ? "Any Gender"
-                            : key === "availability"
-                            ? "Any Date"
-                            : "Any"
+                              ? "Any Gender"
+                              : key === "availability"
+                                ? "Any Date"
+                                : "Any",
                         )
                       }
                       className="hover:text-teal-900 ml-1"

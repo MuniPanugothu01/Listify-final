@@ -10,21 +10,22 @@ const EasyServices = ({ services, onServiceClick }) => {
           IT'S EASY TO FIND WHAT YOU NEED!
         </h2>
         <p className="text-gray-600 max-w-2xl mx-auto text-sm sm:text-base px-4">
-          Are you seeking care services in your neighborhood? With us, it's easy!
+          Are you seeking care services in your neighborhood? With us, it's
+          easy!
         </p>
       </div>
 
       {/* Services Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 xs:gap-5 sm:gap-6 px-3 xs:px-4 sm:px-6 lg:px-8">
         {services.map((service) => (
-          <div 
+          <div
             key={service.id}
             className="bg-white rounded-xl sm:rounded-2xl border border-gray-200 hover:border-[#27BB97] hover:shadow-lg sm:hover:shadow-xl transition-all duration-300 overflow-hidden group cursor-pointer flex flex-col h-full"
             onClick={() => onServiceClick(service.id)}
             role="button"
             tabIndex={0}
             onKeyPress={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
+              if (e.key === "Enter" || e.key === " ") {
                 onServiceClick(service.id);
               }
             }}
@@ -40,7 +41,9 @@ const EasyServices = ({ services, onServiceClick }) => {
               <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
               {/* Popular Badge */}
               <div className="absolute top-3 left-3 sm:top-4 sm:left-4">
-                <div className={`px-2 xs:px-3 py-1 bg-gradient-to-r ${service.color} text-white text-xs font-bold rounded-full whitespace-nowrap`}>
+                <div
+                  className={`px-2 xs:px-3 py-1 bg-gradient-to-r ${service.color} text-white text-xs font-bold rounded-full whitespace-nowrap`}
+                >
                   Popular
                 </div>
               </div>
@@ -61,7 +64,7 @@ const EasyServices = ({ services, onServiceClick }) => {
               </div>
 
               {/* Action Button */}
-              <button 
+              <button
                 className="w-full flex items-center justify-center gap-2 py-2.5 xs:py-3 sm:py-3 text-[#27BB97] font-semibold rounded-lg border border-[#27BB97] hover:bg-[#27BB97] hover:text-white transition-all focus:outline-none focus:ring-2 focus:ring-[#27BB97] focus:ring-offset-2 group-hover:shadow-sm text-xs xs:text-sm sm:text-sm whitespace-nowrap"
                 onClick={(e) => {
                   e.stopPropagation();
@@ -82,9 +85,9 @@ const EasyServices = ({ services, onServiceClick }) => {
         <p className="text-sm text-gray-600 mb-3">
           Can't find what you're looking for?
         </p>
-        <button 
+        <button
           className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#27BB97] to-[#1FA987] text-white font-semibold rounded-lg hover:from-[#1FA987] hover:to-[#198F72] transition-all shadow-lg hover:shadow-xl"
-          onClick={() => console.log('Browse all services clicked')}
+          onClick={() => console.log("Browse all services clicked")}
         >
           Browse All Services
           <ArrowRight className="w-4 h-4" />

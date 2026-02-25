@@ -1,5 +1,5 @@
-import React from 'react';
-import { FaSearch } from 'react-icons/fa';
+import React from "react";
+import { FaSearch } from "react-icons/fa";
 
 const ForSaleHero = () => {
   return (
@@ -13,19 +13,20 @@ const ForSaleHero = () => {
         />
         <div className="absolute inset-0 bg-black/50"></div>
       </div>
-      
+
       {/* Content - Centered */}
       <div className="relative h-full flex flex-col items-center justify-center text-center px-4 sm:px-6">
-        <div className="max-w-5xl">   
+        <div className="max-w-5xl">
           {/* Main Heading */}
           <h1 className="text-white text-4xl sm:text-5xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6">
             Everything For Your <span className="text-[#27BB97]">Home</span>
           </h1>
-          
+
           {/* Subtitle */}
           <p className="text-white/90 text-lg sm:text-xl md:text-2xl mb-8 sm:mb-10 max-w-4xl mx-auto">
-            Buy & sell furniture, toys, household items, tools, games, and more in your local community
-          </p>   
+            Buy & sell furniture, toys, household items, tools, games, and more
+            in your local community
+          </p>
         </div>
       </div>
     </section>

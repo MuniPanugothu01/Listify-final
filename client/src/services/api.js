@@ -34,7 +34,7 @@ let isRefreshing = false;
 let failedQueue = [];
 
 const processQueue = (error, token = null) => {
-  failedQueue.forEach(prom => {
+  failedQueue.forEach((prom) => {
     if (error) {
       prom.reject(error);
     } else {
@@ -49,19 +49,19 @@ const processQueue = (error, token = null) => {
  * It ensures only ONE refresh request happens at a time; all other 401 callers
  * wait in a queue and retry once the single refresh completes.
  *
- * @param {AxiosError}    error           – the 401 error  
- * @param {AxiosInstance} axiosInstance    – the instance to retry with  
- * @returns {Promise}     retried response or rejection  
+ * @param {AxiosError}    error           – the 401 error
+ * @param {AxiosInstance} axiosInstance    – the instance to retry with
+ * @returns {Promise}     retried response or rejection
  */
 export const handle401 = async (error, axiosInstance) => {
   const originalRequest = error.config;
 
   // Don't refresh on auth endpoints themselves
   if (
-    originalRequest.url.includes('/login') ||
-    originalRequest.url.includes('/register') ||
-    originalRequest.url.includes('/google') ||
-    originalRequest.url.includes('/refresh')
+    originalRequest.url.includes("/login") ||
+    originalRequest.url.includes("/register") ||
+    originalRequest.url.includes("/google") ||
+    originalRequest.url.includes("/refresh")
   ) {
     return Promise.reject(error);
   }
@@ -70,8 +70,9 @@ export const handle401 = async (error, axiosInstance) => {
   if (isRefreshing) {
     return new Promise((resolve, reject) => {
       failedQueue.push({ resolve, reject });
-    }).then(() => axiosInstance(originalRequest))
-      .catch(err => Promise.reject(err));
+    })
+      .then(() => axiosInstance(originalRequest))
+      .catch((err) => Promise.reject(err));
   }
 
   originalRequest._retry = true;
@@ -89,18 +90,19 @@ export const handle401 = async (error, axiosInstance) => {
     // Only force-logout when the server explicitly says the refresh token
     // is gone (expired / revoked).  Network blips should NOT log the user out.
     const refreshStatus = refreshError.response?.status;
-    const refreshCode  = refreshError.response?.data?.code;
+    const refreshCode = refreshError.response?.data?.code;
 
     if (
       refreshStatus === 401 &&
-      (refreshCode === 'INVALID_REFRESH_TOKEN' || refreshCode === 'NO_REFRESH_TOKEN')
+      (refreshCode === "INVALID_REFRESH_TOKEN" ||
+        refreshCode === "NO_REFRESH_TOKEN")
     ) {
       const currentPath = window.location.pathname;
       if (
-        !currentPath.includes('/signin') &&
-        !currentPath.includes('/login') &&
-        !currentPath.includes('/signup') &&
-        !currentPath.includes('/forgot-password')
+        !currentPath.includes("/signin") &&
+        !currentPath.includes("/login") &&
+        !currentPath.includes("/signup") &&
+        !currentPath.includes("/forgot-password")
       ) {
         resetPersistedState();
         window.location.href = "/signin";
@@ -121,7 +123,7 @@ const _doRefreshRequest = () =>
   axios.post(
     `${API_URL}/refresh`,
     {},
-    { withCredentials: true, timeout: 10000 }
+    { withCredentials: true, timeout: 10000 },
   );
 
 /**
@@ -182,16 +184,16 @@ const createResponseInterceptor = (axiosInstance, label = "API") => {
 
       if (error.response?.data) {
         const d = error.response.data;
-        if (typeof d === 'string')      errorResponse.message = d;
-        else if (d.message)             errorResponse.message = d.message;
-        else if (d.error)               errorResponse.message = d.error;
-        if (d.errors)    errorResponse.errors   = d.errors;
-        if (d.strength)  errorResponse.strength = d.strength;
-        if (d.token)     errorResponse.token    = d.token;
+        if (typeof d === "string") errorResponse.message = d;
+        else if (d.message) errorResponse.message = d.message;
+        else if (d.error) errorResponse.message = d.error;
+        if (d.errors) errorResponse.errors = d.errors;
+        if (d.strength) errorResponse.strength = d.strength;
+        if (d.token) errorResponse.token = d.token;
       }
 
       return Promise.reject(errorResponse);
-    }
+    },
   );
 };
 
@@ -267,7 +269,7 @@ export const authAPI = {
       onUploadProgress: (progressEvent) => {
         if (onProgress && progressEvent.total) {
           const percentCompleted = Math.round(
-            (progressEvent.loaded * 100) / progressEvent.total
+            (progressEvent.loaded * 100) / progressEvent.total,
           );
           onProgress(percentCompleted);
         }
@@ -276,7 +278,11 @@ export const authAPI = {
   },
 
   generateUploadUrl: (fileType) => {
-    return api.post("/profile/generate-upload-url", { fileType }, { withCredentials: true });
+    return api.post(
+      "/profile/generate-upload-url",
+      { fileType },
+      { withCredentials: true },
+    );
   },
 
   // ==================== DEVICE & SESSION APIS ====================
@@ -354,7 +360,11 @@ export const authAPI = {
   },
 
   legacyResetPassword: (resetToken, password) => {
-    return api.put(`/reset-password-legacy/${resetToken}`, { password }, { withCredentials: true });
+    return api.put(
+      `/reset-password-legacy/${resetToken}`,
+      { password },
+      { withCredentials: true },
+    );
   },
 
   legacyRegister: (userData) => {
@@ -396,10 +406,12 @@ const listingsApi = axios.create({
 // Apply shared interceptors
 listingsApi.interceptors.request.use(
   (config) => {
-    console.log(`🚀 Listings Request: ${config.method.toUpperCase()} ${config.url}`);
+    console.log(
+      `🚀 Listings Request: ${config.method.toUpperCase()} ${config.url}`,
+    );
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => Promise.reject(error),
 );
 createResponseInterceptor(listingsApi, "Listings API");
 
@@ -413,7 +425,11 @@ export const listingsAPI = {
   },
 
   toggleSaveItem: (itemId) => {
-    return listingsApi.post(`/${itemId}/toggle-save`, {}, { withCredentials: true });
+    return listingsApi.post(
+      `/${itemId}/toggle-save`,
+      {},
+      { withCredentials: true },
+    );
   },
 
   getAlerts: () => {
@@ -433,7 +449,9 @@ export const listingsAPI = {
   },
 
   updateListing: (listingId, listingData) => {
-    return listingsApi.put(`/${listingId}`, listingData, { withCredentials: true });
+    return listingsApi.put(`/${listingId}`, listingData, {
+      withCredentials: true,
+    });
   },
 
   deleteListing: (listingId) => {
@@ -458,10 +476,12 @@ const messagesApi = axios.create({
 // Apply shared interceptors
 messagesApi.interceptors.request.use(
   (config) => {
-    console.log(`🚀 Messages Request: ${config.method.toUpperCase()} ${config.url}`);
+    console.log(
+      `🚀 Messages Request: ${config.method.toUpperCase()} ${config.url}`,
+    );
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => Promise.reject(error),
 );
 createResponseInterceptor(messagesApi, "Messages API");
 
@@ -475,15 +495,27 @@ export const messagesAPI = {
   },
 
   sendMessage: (conversationId, content) => {
-    return messagesApi.post(`/${conversationId}`, { content }, { withCredentials: true });
+    return messagesApi.post(
+      `/${conversationId}`,
+      { content },
+      { withCredentials: true },
+    );
   },
 
   markAsRead: (conversationId) => {
-    return messagesApi.put(`/${conversationId}/read`, {}, { withCredentials: true });
+    return messagesApi.put(
+      `/${conversationId}/read`,
+      {},
+      { withCredentials: true },
+    );
   },
 
   createConversation: (recipientId, initialMessage) => {
-    return messagesApi.post("/conversations", { recipientId, message: initialMessage }, { withCredentials: true });
+    return messagesApi.post(
+      "/conversations",
+      { recipientId, message: initialMessage },
+      { withCredentials: true },
+    );
   },
 
   deleteConversation: (conversationId) => {
@@ -491,7 +523,9 @@ export const messagesAPI = {
   },
 
   getConversationById: (conversationId) => {
-    return messagesApi.get(`/conversations/${conversationId}`, { withCredentials: true });
+    return messagesApi.get(`/conversations/${conversationId}`, {
+      withCredentials: true,
+    });
   },
 };
 

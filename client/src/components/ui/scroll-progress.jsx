@@ -4,7 +4,7 @@ import { forwardRef } from "react";
 
 export const ScrollProgress = forwardRef(function ScrollProgress(
   { className, ...props },
-  ref
+  ref,
 ) {
   const { scrollYProgress } = useScroll();
 
@@ -13,7 +13,7 @@ export const ScrollProgress = forwardRef(function ScrollProgress(
       ref={ref}
       className={cn(
         "fixed inset-x-0 top-14 md:top-16 sm:top-16 lg:top-16 z-10 h-[4px] p-1.5 md:p-1.5 origin-left bg-gradient-to-r from-[#90C67C] via-[#67AE6E] to-[#328E6E] ",
-        className
+        className,
       )}
       style={{ scaleX: scrollYProgress }}
       transition={{ ease: "easeOut", duration: 0.15 }}

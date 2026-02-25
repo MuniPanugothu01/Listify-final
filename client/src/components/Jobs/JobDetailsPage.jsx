@@ -1,11 +1,92 @@
 import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { FaArrowLeft, FaMapMarkerAlt, FaBriefcase, FaDollarSign, FaClock, FaCalendarAlt, FaUsers, FaGlobe, FaFileAlt, FaBookmark, FaShareAlt, FaCheckCircle, FaExternalLinkAlt, FaBuilding, FaEnvelope, FaPhone, FaLinkedin, FaFacebook, FaTwitter, FaInstagram, FaHeart, FaIndustry, FaUserTie, FaGraduationCap, FaLaptopCode, FaChartLine, FaHandshake, FaMedal, FaAward, FaCertificate, FaStar, FaRegBookmark } from "react-icons/fa";
-import { HiOutlineOfficeBuilding, HiOutlineLocationMarker, HiOutlineCurrencyDollar, HiOutlineCalendar, HiOutlineUserGroup, HiOutlineGlobe, HiOutlineDocumentText, HiOutlineShare, HiOutlineExternalLink } from "react-icons/hi";
-import { BsFillBookmarkFill, BsFillHeartFill, BsFillShareFill, BsFillTelephoneFill, BsGlobe } from "react-icons/bs";
-import { MdEmail, MdLocationOn, MdWork, MdAccessTime, MdAttachMoney, MdCalendarToday, MdPeople, MdPublic, MdDescription, MdShare, MdOpenInNew, MdBusiness, MdPhone, MdLink, MdCheckCircle } from "react-icons/md";
-import { RiShareBoxLine, RiLinkedinBoxFill, RiFacebookBoxFill, RiTwitterFill, RiInstagramFill } from "react-icons/ri";
-import { TbBuilding, TbMapPin, TbCurrencyDollar, TbCalendar, TbUsers, TbWorld, TbFileDescription, TbShare, TbExternalLink } from "react-icons/tb";
+import {
+  FaArrowLeft,
+  FaMapMarkerAlt,
+  FaBriefcase,
+  FaDollarSign,
+  FaClock,
+  FaCalendarAlt,
+  FaUsers,
+  FaGlobe,
+  FaFileAlt,
+  FaBookmark,
+  FaShareAlt,
+  FaCheckCircle,
+  FaExternalLinkAlt,
+  FaBuilding,
+  FaEnvelope,
+  FaPhone,
+  FaLinkedin,
+  FaFacebook,
+  FaTwitter,
+  FaInstagram,
+  FaHeart,
+  FaIndustry,
+  FaUserTie,
+  FaGraduationCap,
+  FaLaptopCode,
+  FaChartLine,
+  FaHandshake,
+  FaMedal,
+  FaAward,
+  FaCertificate,
+  FaStar,
+  FaRegBookmark,
+} from "react-icons/fa";
+import {
+  HiOutlineOfficeBuilding,
+  HiOutlineLocationMarker,
+  HiOutlineCurrencyDollar,
+  HiOutlineCalendar,
+  HiOutlineUserGroup,
+  HiOutlineGlobe,
+  HiOutlineDocumentText,
+  HiOutlineShare,
+  HiOutlineExternalLink,
+} from "react-icons/hi";
+import {
+  BsFillBookmarkFill,
+  BsFillHeartFill,
+  BsFillShareFill,
+  BsFillTelephoneFill,
+  BsGlobe,
+} from "react-icons/bs";
+import {
+  MdEmail,
+  MdLocationOn,
+  MdWork,
+  MdAccessTime,
+  MdAttachMoney,
+  MdCalendarToday,
+  MdPeople,
+  MdPublic,
+  MdDescription,
+  MdShare,
+  MdOpenInNew,
+  MdBusiness,
+  MdPhone,
+  MdLink,
+  MdCheckCircle,
+} from "react-icons/md";
+import {
+  RiShareBoxLine,
+  RiLinkedinBoxFill,
+  RiFacebookBoxFill,
+  RiTwitterFill,
+  RiInstagramFill,
+} from "react-icons/ri";
+import {
+  TbBuilding,
+  TbMapPin,
+  TbCurrencyDollar,
+  TbCalendar,
+  TbUsers,
+  TbWorld,
+  TbFileDescription,
+  TbShare,
+  TbExternalLink,
+} from "react-icons/tb";
 
 const JobDetailsPage = () => {
   const { id } = useParams();
@@ -28,7 +109,7 @@ const JobDetailsPage = () => {
     featured: true,
     remoteType: "Hybrid",
     description: `Lead UX design initiatives for consumer products used by billions. Expertise in user research and prototyping required. We're looking for a talented Senior UX Designer to join our team and help shape the future of our products.`,
-    
+
     fullDescription: `# About the Role
 
 As a Senior UX Designer at Google, you'll be responsible for leading design initiatives for our consumer products. You'll work on challenging problems and create solutions that are both beautiful and functional.
@@ -62,9 +143,9 @@ As a Senior UX Designer at Google, you'll be responsible for leading design init
 
 ## Location:
 This position is based in our San Francisco office with a hybrid work model (3 days in office, 2 days remote).`,
-    
+
     companyDescription: `Google is a global technology company that specializes in Internet-related services and products, which include online advertising technologies, search engine, cloud computing, software, and hardware. Founded in 1998, Google has grown to become one of the world's most valuable companies.`,
-    
+
     requirements: [
       "5+ years of UX design experience",
       "Bachelor's degree in Design or related field",
@@ -73,7 +154,7 @@ This position is based in our San Francisco office with a hybrid work model (3 d
       "Excellent communication skills",
       "Experience with user research",
     ],
-    
+
     benefits: [
       "Competitive salary & bonuses",
       "Comprehensive health insurance",
@@ -86,7 +167,7 @@ This position is based in our San Francisco office with a hybrid work model (3 d
       "Stock options",
       "Parental leave",
     ],
-    
+
     skills: [
       "UX/UI Design",
       "User Research",
@@ -98,9 +179,9 @@ This position is based in our San Francisco office with a hybrid work model (3 d
       "JavaScript",
       "Responsive Design",
     ],
-    
+
     applyLink: "https://careers.google.com/jobs",
-    
+
     similarJobs: [
       {
         id: 2,
@@ -110,7 +191,7 @@ This position is based in our San Francisco office with a hybrid work model (3 d
         salary: "$44k - $52k",
         type: "Full-Time",
         remoteType: "Hybrid",
-        logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSCFmOvdnTVlnU5kwoLvh9bOObbPi7qaSnChg&s"
+        logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSCFmOvdnTVlnU5kwoLvh9bOObbPi7qaSnChg&s",
       },
       {
         id: 5,
@@ -120,7 +201,7 @@ This position is based in our San Francisco office with a hybrid work model (3 d
         salary: "$95k - $115k",
         type: "Full-Time",
         remoteType: "Remote",
-        logo: "https://logos-world.net/wp-content/uploads/2020/09/Airbnb-Logo.png"
+        logo: "https://logos-world.net/wp-content/uploads/2020/09/Airbnb-Logo.png",
       },
       {
         id: 13,
@@ -130,16 +211,16 @@ This position is based in our San Francisco office with a hybrid work model (3 d
         salary: "$90k - $110k",
         type: "Full-Time",
         remoteType: "Hybrid",
-        logo: "https://logos-world.net/wp-content/uploads/2020/04/Nike-Logo.png"
+        logo: "https://logos-world.net/wp-content/uploads/2020/04/Nike-Logo.png",
       },
     ],
-    
+
     stats: {
       applications: 1245,
       views: 8756,
       daysLeft: 14,
-      successRate: 85
-    }
+      successRate: 85,
+    },
   };
 
   const handleSaveJob = () => {
@@ -157,16 +238,25 @@ This position is based in our San Francisco office with a hybrid work model (3 d
   const shareJob = (platform) => {
     const url = window.location.href;
     const text = `Check out this job: ${job.title} at ${job.company}`;
-    
-    switch(platform) {
-      case 'linkedin':
-        window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`, '_blank');
+
+    switch (platform) {
+      case "linkedin":
+        window.open(
+          `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
+          "_blank",
+        );
         break;
-      case 'twitter':
-        window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank');
+      case "twitter":
+        window.open(
+          `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`,
+          "_blank",
+        );
         break;
-      case 'facebook':
-        window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank');
+      case "facebook":
+        window.open(
+          `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
+          "_blank",
+        );
         break;
       default:
         navigator.clipboard.writeText(url);
@@ -183,7 +273,9 @@ This position is based in our San Francisco office with a hybrid work model (3 d
           : "text-gray-600 hover:text-[#27bb97] hover:bg-gray-50"
       }`}
     >
-      <Icon className={`w-5 h-5 mr-2 ${activeTab === tabName ? 'text-white' : 'text-gray-400'}`} />
+      <Icon
+        className={`w-5 h-5 mr-2 ${activeTab === tabName ? "text-white" : "text-gray-400"}`}
+      />
       {label}
     </button>
   );
@@ -201,7 +293,7 @@ This position is based in our San Francisco office with a hybrid work model (3 d
               <FaArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
               <span className="font-medium">Back to Jobs</span>
             </button>
-            
+
             <div className="flex items-center space-x-3">
               <button
                 onClick={handleSaveJob}
@@ -223,7 +315,7 @@ This position is based in our San Francisco office with a hybrid work model (3 d
                   </>
                 )}
               </button>
-              
+
               <button
                 onClick={() => shareJob()}
                 className="flex items-center px-5 py-2.5 bg-gray-50 text-gray-700 rounded-xl hover:bg-gray-100 transition-all duration-300 font-medium"
@@ -280,7 +372,9 @@ This position is based in our San Francisco office with a hybrid work model (3 d
                   <div className="flex flex-wrap items-center gap-6 mb-6">
                     <div className="flex items-center text-gray-700">
                       <TbBuilding className="w-5 h-5 text-gray-500 mr-2" />
-                      <span className="font-semibold text-lg">{job.company}</span>
+                      <span className="font-semibold text-lg">
+                        {job.company}
+                      </span>
                     </div>
                     <div className="flex items-center text-gray-600">
                       <TbMapPin className="w-5 h-5 text-gray-500 mr-2" />
@@ -298,32 +392,48 @@ This position is based in our San Francisco office with a hybrid work model (3 d
                       <div className="w-12 h-12 bg-gradient-to-br from-blue-100 to-blue-50 rounded-full flex items-center justify-center mx-auto mb-3">
                         <FaUserTie className="w-6 h-6 text-blue-600" />
                       </div>
-                      <p className="text-sm text-gray-500 font-medium mb-1">Experience</p>
-                      <p className="font-bold text-gray-900 text-lg">{job.experience}</p>
+                      <p className="text-sm text-gray-500 font-medium mb-1">
+                        Experience
+                      </p>
+                      <p className="font-bold text-gray-900 text-lg">
+                        {job.experience}
+                      </p>
                     </div>
-                    
+
                     <div className="text-center p-4 bg-gray-50 rounded-xl">
                       <div className="w-12 h-12 bg-gradient-to-br from-green-100 to-green-50 rounded-full flex items-center justify-center mx-auto mb-3">
                         <FaClock className="w-6 h-6 text-green-600" />
                       </div>
-                      <p className="text-sm text-gray-500 font-medium mb-1">Job Type</p>
-                      <p className="font-bold text-gray-900 text-lg">{job.jobType}</p>
+                      <p className="text-sm text-gray-500 font-medium mb-1">
+                        Job Type
+                      </p>
+                      <p className="font-bold text-gray-900 text-lg">
+                        {job.jobType}
+                      </p>
                     </div>
-                    
+
                     <div className="text-center p-4 bg-gray-50 rounded-xl">
                       <div className="w-12 h-12 bg-gradient-to-br from-purple-100 to-purple-50 rounded-full flex items-center justify-center mx-auto mb-3">
                         <FaDollarSign className="w-6 h-6 text-purple-600" />
                       </div>
-                      <p className="text-sm text-gray-500 font-medium mb-1">Salary</p>
-                      <p className="font-bold text-gray-900 text-lg">{job.salary}</p>
+                      <p className="text-sm text-gray-500 font-medium mb-1">
+                        Salary
+                      </p>
+                      <p className="font-bold text-gray-900 text-lg">
+                        {job.salary}
+                      </p>
                     </div>
-                    
+
                     <div className="text-center p-4 bg-gray-50 rounded-xl">
                       <div className="w-12 h-12 bg-gradient-to-br from-orange-100 to-orange-50 rounded-full flex items-center justify-center mx-auto mb-3">
                         <FaCalendarAlt className="w-6 h-6 text-orange-600" />
                       </div>
-                      <p className="text-sm text-gray-500 font-medium mb-1">Posted</p>
-                      <p className="font-bold text-gray-900 text-lg">{job.postedDays} days ago</p>
+                      <p className="text-sm text-gray-500 font-medium mb-1">
+                        Posted
+                      </p>
+                      <p className="font-bold text-gray-900 text-lg">
+                        {job.postedDays} days ago
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -333,10 +443,22 @@ This position is based in our San Francisco office with a hybrid work model (3 d
             {/* Tabs Navigation */}
             <div className="bg-white rounded-2xl shadow-xl p-6 border border-gray-100">
               <div className="flex flex-wrap gap-3 mb-8">
-                <TabButton label="Description" icon={FaFileAlt} tabName="description" />
-                <TabButton label="Requirements" icon={FaCheckCircle} tabName="requirements" />
+                <TabButton
+                  label="Description"
+                  icon={FaFileAlt}
+                  tabName="description"
+                />
+                <TabButton
+                  label="Requirements"
+                  icon={FaCheckCircle}
+                  tabName="requirements"
+                />
                 <TabButton label="Benefits" icon={FaMedal} tabName="benefits" />
-                <TabButton label="Company" icon={FaBuilding} tabName="company" />
+                <TabButton
+                  label="Company"
+                  icon={FaBuilding}
+                  tabName="company"
+                />
               </div>
 
               {/* Tab Content */}
@@ -345,12 +467,16 @@ This position is based in our San Francisco office with a hybrid work model (3 d
                   <div className="space-y-6">
                     <div className="prose max-w-none">
                       <div className="text-gray-700 leading-relaxed space-y-4">
-                        {job.fullDescription.split('\n\n').map((paragraph, idx) => (
-                          <p key={idx} className="text-lg">{paragraph}</p>
-                        ))}
+                        {job.fullDescription
+                          .split("\n\n")
+                          .map((paragraph, idx) => (
+                            <p key={idx} className="text-lg">
+                              {paragraph}
+                            </p>
+                          ))}
                       </div>
                     </div>
-                    
+
                     {/* Skills Section */}
                     <div className="mt-8 pt-8 border-t border-gray-100">
                       <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center">
@@ -387,9 +513,14 @@ This position is based in our San Francisco office with a hybrid work model (3 d
                 {activeTab === "benefits" && (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {job.benefits.map((benefit, index) => (
-                      <div key={index} className="flex items-center p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border border-green-100">
+                      <div
+                        key={index}
+                        className="flex items-center p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border border-green-100"
+                      >
                         <FaAward className="w-6 h-6 text-green-600 mr-4" />
-                        <span className="text-gray-800 font-medium">{benefit}</span>
+                        <span className="text-gray-800 font-medium">
+                          {benefit}
+                        </span>
                       </div>
                     ))}
                   </div>
@@ -400,29 +531,41 @@ This position is based in our San Francisco office with a hybrid work model (3 d
                     <p className="text-gray-700 text-lg leading-relaxed">
                       {job.companyDescription}
                     </p>
-                    
+
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-8">
                       <div className="text-center p-4 bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-2xl">
                         <FaUsers className="w-8 h-8 text-indigo-600 mx-auto mb-3" />
-                        <p className="text-sm text-gray-600 font-medium">Team Size</p>
+                        <p className="text-sm text-gray-600 font-medium">
+                          Team Size
+                        </p>
                         <p className="text-2xl font-bold text-gray-900">500+</p>
                       </div>
-                      
+
                       <div className="text-center p-4 bg-gradient-to-br from-teal-50 to-teal-100 rounded-2xl">
                         <FaGlobe className="w-8 h-8 text-teal-600 mx-auto mb-3" />
-                        <p className="text-sm text-gray-600 font-medium">Location</p>
-                        <p className="text-2xl font-bold text-gray-900">Global</p>
+                        <p className="text-sm text-gray-600 font-medium">
+                          Location
+                        </p>
+                        <p className="text-2xl font-bold text-gray-900">
+                          Global
+                        </p>
                       </div>
-                      
+
                       <div className="text-center p-4 bg-gradient-to-br from-amber-50 to-amber-100 rounded-2xl">
                         <FaIndustry className="w-8 h-8 text-amber-600 mx-auto mb-3" />
-                        <p className="text-sm text-gray-600 font-medium">Industry</p>
-                        <p className="text-2xl font-bold text-gray-900">Technology</p>
+                        <p className="text-sm text-gray-600 font-medium">
+                          Industry
+                        </p>
+                        <p className="text-2xl font-bold text-gray-900">
+                          Technology
+                        </p>
                       </div>
-                      
+
                       <div className="text-center p-4 bg-gradient-to-br from-rose-50 to-rose-100 rounded-2xl">
                         <FaCalendarAlt className="w-8 h-8 text-rose-600 mx-auto mb-3" />
-                        <p className="text-sm text-gray-600 font-medium">Founded</p>
+                        <p className="text-sm text-gray-600 font-medium">
+                          Founded
+                        </p>
                         <p className="text-2xl font-bold text-gray-900">1998</p>
                       </div>
                     </div>
@@ -438,13 +581,17 @@ This position is based in our San Francisco office with a hybrid work model (3 d
             <div className="bg-gradient-to-br from-[#27bb97] via-[#1fa987] to-[#189e7d] rounded-2xl shadow-2xl p-8 text-white overflow-hidden relative">
               <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-16 translate-x-16"></div>
               <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full -translate-x-12 translate-y-12"></div>
-              
+
               <div className="relative z-10">
                 <h3 className="text-2xl font-bold mb-4">Ready to Apply?</h3>
                 <p className="mb-6 text-white/90">
-                  This position has {job.postedDays === 1 ? "just been posted" : `been posted ${job.postedDays} days ago`}. Don't miss this opportunity!
+                  This position has{" "}
+                  {job.postedDays === 1
+                    ? "just been posted"
+                    : `been posted ${job.postedDays} days ago`}
+                  . Don't miss this opportunity!
                 </p>
-                
+
                 <div className="space-y-4">
                   <button
                     onClick={handleApplyNow}
@@ -453,7 +600,7 @@ This position is based in our San Francisco office with a hybrid work model (3 d
                     <FaExternalLinkAlt className="w-5 h-5 mr-3 group-hover:scale-110 transition-transform" />
                     Apply on Company Website
                   </button>
-                  
+
                   <button
                     onClick={handleQuickApply}
                     className="w-full bg-transparent border-2 border-white/30 text-white font-semibold py-4 rounded-xl hover:bg-white/10 transition-all duration-300 hover:border-white/60"
@@ -461,24 +608,24 @@ This position is based in our San Francisco office with a hybrid work model (3 d
                     Quick Apply
                   </button>
                 </div>
-                
+
                 <div className="mt-8 pt-8 border-t border-white/20">
                   <p className="text-sm opacity-90 mb-4">Share this job:</p>
                   <div className="flex space-x-3">
                     <button
-                      onClick={() => shareJob('linkedin')}
+                      onClick={() => shareJob("linkedin")}
                       className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center hover:bg-white/30 transition-all duration-300 hover:scale-110"
                     >
                       <FaLinkedin className="w-5 h-5" />
                     </button>
                     <button
-                      onClick={() => shareJob('twitter')}
+                      onClick={() => shareJob("twitter")}
                       className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center hover:bg-white/30 transition-all duration-300 hover:scale-110"
                     >
                       <FaTwitter className="w-5 h-5" />
                     </button>
                     <button
-                      onClick={() => shareJob('facebook')}
+                      onClick={() => shareJob("facebook")}
                       className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center hover:bg-white/30 transition-all duration-300 hover:scale-110"
                     >
                       <FaFacebook className="w-5 h-5" />
@@ -507,22 +654,27 @@ This position is based in our San Francisco office with a hybrid work model (3 d
                   </div>
                   <div>
                     <p className="text-sm text-gray-500 font-medium">Email</p>
-                    <a href="mailto:careers@google.com" className="font-semibold text-gray-900 hover:text-[#27bb97] transition-colors">
+                    <a
+                      href="mailto:careers@google.com"
+                      className="font-semibold text-gray-900 hover:text-[#27bb97] transition-colors"
+                    >
                       careers@google.com
                     </a>
                   </div>
                 </div>
-                
+
                 <div className="flex items-center p-3 bg-green-50 rounded-xl">
                   <div className="w-10 h-10 bg-gradient-to-br from-green-100 to-green-50 rounded-lg flex items-center justify-center mr-4">
                     <MdPhone className="w-5 h-5 text-green-600" />
                   </div>
                   <div>
                     <p className="text-sm text-gray-500 font-medium">Phone</p>
-                    <p className="font-semibold text-gray-900">+1 (650) 253-0000</p>
+                    <p className="font-semibold text-gray-900">
+                      +1 (650) 253-0000
+                    </p>
                   </div>
                 </div>
-                
+
                 <div className="flex items-center p-3 bg-purple-50 rounded-xl">
                   <div className="w-10 h-10 bg-gradient-to-br from-purple-100 to-purple-50 rounded-lg flex items-center justify-center mr-4">
                     <FaGlobe className="w-5 h-5 text-purple-600" />
@@ -558,7 +710,11 @@ This position is based in our San Francisco office with a hybrid work model (3 d
                   >
                     <div className="flex items-start gap-3">
                       <div className="w-12 h-12 bg-gray-50 rounded-lg p-2 flex-shrink-0">
-                        <img src={similarJob.logo} alt={similarJob.company} className="w-full h-full object-contain" />
+                        <img
+                          src={similarJob.logo}
+                          alt={similarJob.company}
+                          className="w-full h-full object-contain"
+                        />
                       </div>
                       <div className="flex-1">
                         <div className="flex justify-between items-start mb-2">
@@ -566,7 +722,9 @@ This position is based in our San Francisco office with a hybrid work model (3 d
                             <h4 className="font-bold text-gray-900 group-hover:text-[#27bb97] transition-colors">
                               {similarJob.title}
                             </h4>
-                            <p className="text-sm text-gray-600">{similarJob.company}</p>
+                            <p className="text-sm text-gray-600">
+                              {similarJob.company}
+                            </p>
                           </div>
                           <span className="text-xs font-bold px-2 py-1 bg-blue-50 text-blue-600 rounded">
                             {similarJob.remoteType}
@@ -602,29 +760,39 @@ This position is based in our San Francisco office with a hybrid work model (3 d
               <div className="space-y-5">
                 <div className="flex justify-between items-center">
                   <span className="text-gray-300">Applications</span>
-                  <span className="font-bold text-lg">{job.stats.applications.toLocaleString()}</span>
+                  <span className="font-bold text-lg">
+                    {job.stats.applications.toLocaleString()}
+                  </span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-gray-300">Views</span>
-                  <span className="font-bold text-lg">{job.stats.views.toLocaleString()}</span>
+                  <span className="font-bold text-lg">
+                    {job.stats.views.toLocaleString()}
+                  </span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-gray-300">Days Left</span>
-                  <span className="font-bold text-lg">{job.stats.daysLeft}</span>
+                  <span className="font-bold text-lg">
+                    {job.stats.daysLeft}
+                  </span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-gray-300">Success Rate</span>
-                  <span className="font-bold text-lg text-green-400">{job.stats.successRate}%</span>
+                  <span className="font-bold text-lg text-green-400">
+                    {job.stats.successRate}%
+                  </span>
                 </div>
               </div>
-              
+
               <div className="mt-6 pt-6 border-t border-gray-700">
                 <div className="flex items-center justify-center">
                   <div className="text-center">
                     <div className="w-16 h-16 bg-gradient-to-br from-[#27bb97]/20 to-[#1fa987]/20 rounded-full flex items-center justify-center mx-auto mb-3 border border-[#27bb97]/30">
                       <FaHandshake className="w-8 h-8 text-[#27bb97]" />
                     </div>
-                    <p className="text-sm text-gray-300">High Demand Position</p>
+                    <p className="text-sm text-gray-300">
+                      High Demand Position
+                    </p>
                   </div>
                 </div>
               </div>
@@ -645,7 +813,8 @@ This position is based in our San Francisco office with a hybrid work model (3 d
               © {new Date().getFullYear()} Job Portal. All rights reserved.
             </p>
             <p className="text-gray-400 text-sm mt-2">
-              This is a professional job details page. Apply directly through the company's website for best results.
+              This is a professional job details page. Apply directly through
+              the company's website for best results.
             </p>
           </div>
         </div>

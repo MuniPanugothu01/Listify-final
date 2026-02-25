@@ -24,7 +24,7 @@ import {
   FaTwitter,
   FaLinkedin,
   FaWhatsapp,
-  FaInstagram
+  FaInstagram,
 } from "react-icons/fa";
 import { BsCheckCircleFill } from "react-icons/bs";
 import { TbBuildingSkyscraper } from "react-icons/tb";
@@ -326,7 +326,11 @@ const remainingAgents = [
     verified: true,
     featured: false,
     bio: "Helping clients make smart property investment decisions with market analysis and strategic planning.",
-    specialties: ["Property Investment", "Market Analysis", "Portfolio Management"],
+    specialties: [
+      "Property Investment",
+      "Market Analysis",
+      "Portfolio Management",
+    ],
     languages: ["English", "Hindi", "Kannada"],
     certification: "Certified Investment Property Advisor (CIPA)",
     website: "www.metrorealty.in",
@@ -356,7 +360,11 @@ const remainingAgents = [
     verified: true,
     featured: false,
     bio: "Specializing in eco-friendly and sustainable housing solutions with focus on energy efficiency.",
-    specialties: ["Green Buildings", "Sustainable Homes", "Energy Efficient Properties"],
+    specialties: [
+      "Green Buildings",
+      "Sustainable Homes",
+      "Energy Efficient Properties",
+    ],
     languages: ["English", "Hindi", "Tamil"],
     certification: "Green Building Specialist (GBS)",
     website: "www.greenlivingproperties.in",
@@ -435,7 +443,7 @@ const AgentDetailsModal = ({ agent, isOpen, onClose }) => {
                 <div className="absolute top-0 right-0 w-32 h-32 bg-white rounded-full -translate-y-16 translate-x-16"></div>
                 <div className="absolute bottom-0 left-0 w-40 h-40 bg-white rounded-full translate-y-20 -translate-x-20"></div>
               </div>
-              
+
               <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-6 relative z-10">
                 {/* Agent Image */}
                 <div className="relative mx-auto sm:mx-0 group">
@@ -480,8 +488,12 @@ const AgentDetailsModal = ({ agent, isOpen, onClose }) => {
                       <div className="relative">
                         <AiFillStar className="text-yellow-500 text-base sm:text-lg md:text-xl" />
                       </div>
-                      <span className="text-base sm:text-lg md:text-xl font-bold">{agent.rating}</span>
-                      <span className="text-gray-500 text-sm sm:text-base">/5.0</span>
+                      <span className="text-base sm:text-lg md:text-xl font-bold">
+                        {agent.rating}
+                      </span>
+                      <span className="text-gray-500 text-sm sm:text-base">
+                        /5.0
+                      </span>
                     </div>
                   </div>
 
@@ -495,11 +507,13 @@ const AgentDetailsModal = ({ agent, isOpen, onClose }) => {
                         </span>
                       </div>
                     )}
-                    
+
                     {/* Role Badge */}
                     <div className="inline-flex items-center gap-1 sm:gap-2 bg-white/20 backdrop-blur-sm text-white/95 px-3 py-1 sm:px-4 sm:py-2 rounded-full text-sm sm:text-base border border-white/30">
                       <FaBriefcase className="text-sm" />
-                      <span className="font-medium whitespace-nowrap">{agent.role}</span>
+                      <span className="font-medium whitespace-nowrap">
+                        {agent.role}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -555,21 +569,27 @@ const AgentDetailsModal = ({ agent, isOpen, onClose }) => {
                       <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-1">
                         {agent.stats?.satisfaction}
                       </div>
-                      <div className="text-xs sm:text-sm text-gray-600">Client Satisfaction</div>
+                      <div className="text-xs sm:text-sm text-gray-600">
+                        Client Satisfaction
+                      </div>
                       <div className="w-16 h-1 bg-green-500 rounded-full mx-auto mt-2 sm:mt-3"></div>
                     </div>
                     <div className="bg-gradient-to-br from-white to-gray-50 rounded-xl sm:rounded-2xl p-4 sm:p-5 text-center border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 group cursor-default">
                       <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-1">
                         {agent.stats?.responseTime}
                       </div>
-                      <div className="text-xs sm:text-sm text-gray-600">Avg. Response Time</div>
+                      <div className="text-xs sm:text-sm text-gray-600">
+                        Avg. Response Time
+                      </div>
                       <div className="w-16 h-1 bg-blue-500 rounded-full mx-auto mt-2 sm:mt-3"></div>
                     </div>
                     <div className="bg-gradient-to-br from-white to-gray-50 rounded-xl sm:rounded-2xl p-4 sm:p-5 text-center border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 group cursor-default col-span-2 md:col-span-1">
                       <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-1">
                         {agent.stats?.repeatClients}
                       </div>
-                      <div className="text-xs sm:text-sm text-gray-600">Repeat Clients</div>
+                      <div className="text-xs sm:text-sm text-gray-600">
+                        Repeat Clients
+                      </div>
                       <div className="w-16 h-1 bg-purple-500 rounded-full mx-auto mt-2 sm:mt-3"></div>
                     </div>
                   </div>
@@ -595,7 +615,9 @@ const AgentDetailsModal = ({ agent, isOpen, onClose }) => {
                           <MdOutlinePhoneInTalk className="text-[#27bb97] text-base sm:text-xl" />
                         </div>
                         <div className="min-w-0 flex-1">
-                          <div className="text-xs sm:text-sm text-gray-500 font-medium">Phone</div>
+                          <div className="text-xs sm:text-sm text-gray-500 font-medium">
+                            Phone
+                          </div>
                           <div className="font-semibold text-gray-900 text-sm sm:text-base truncate hover:text-clip">
                             {agent.phone}
                           </div>
@@ -608,7 +630,9 @@ const AgentDetailsModal = ({ agent, isOpen, onClose }) => {
                           <AiOutlineMail className="text-blue-600 text-base sm:text-xl" />
                         </div>
                         <div className="min-w-0 flex-1">
-                          <div className="text-xs sm:text-sm text-gray-500 font-medium">Email</div>
+                          <div className="text-xs sm:text-sm text-gray-500 font-medium">
+                            Email
+                          </div>
                           <div className="font-semibold text-gray-900 text-sm sm:text-base truncate hover:text-clip">
                             {agent.email}
                           </div>
@@ -621,7 +645,9 @@ const AgentDetailsModal = ({ agent, isOpen, onClose }) => {
                           <MdLanguage className="text-purple-600 text-base sm:text-xl" />
                         </div>
                         <div className="min-w-0 flex-1">
-                          <div className="text-xs sm:text-sm text-gray-500 font-medium">Website</div>
+                          <div className="text-xs sm:text-sm text-gray-500 font-medium">
+                            Website
+                          </div>
                           <div className="font-semibold text-gray-900 text-sm sm:text-base truncate hover:text-clip">
                             {agent.website}
                           </div>
@@ -641,18 +667,45 @@ const AgentDetailsModal = ({ agent, isOpen, onClose }) => {
                       </div>
                       <div className="flex gap-2 sm:gap-3">
                         {[
-                          { icon: FaFacebook, color: "bg-blue-100", hover: "hover:bg-blue-200", text: "text-blue-600" },
-                          { icon: FaTwitter, color: "bg-sky-100", hover: "hover:bg-sky-200", text: "text-sky-600" },
-                          { icon: FaLinkedin, color: "bg-blue-50", hover: "hover:bg-blue-100", text: "text-blue-700" },
-                          { icon: FaWhatsapp, color: "bg-green-100", hover: "hover:bg-green-200", text: "text-green-600" },
-                          { icon: FaInstagram, color: "bg-pink-100", hover: "hover:bg-pink-200", text: "text-pink-600" }
+                          {
+                            icon: FaFacebook,
+                            color: "bg-blue-100",
+                            hover: "hover:bg-blue-200",
+                            text: "text-blue-600",
+                          },
+                          {
+                            icon: FaTwitter,
+                            color: "bg-sky-100",
+                            hover: "hover:bg-sky-200",
+                            text: "text-sky-600",
+                          },
+                          {
+                            icon: FaLinkedin,
+                            color: "bg-blue-50",
+                            hover: "hover:bg-blue-100",
+                            text: "text-blue-700",
+                          },
+                          {
+                            icon: FaWhatsapp,
+                            color: "bg-green-100",
+                            hover: "hover:bg-green-200",
+                            text: "text-green-600",
+                          },
+                          {
+                            icon: FaInstagram,
+                            color: "bg-pink-100",
+                            hover: "hover:bg-pink-200",
+                            text: "text-pink-600",
+                          },
                         ].map((social, index) => (
                           <a
                             key={index}
                             href="#"
                             className={`w-9 h-9 sm:w-10 sm:h-10 ${social.color} rounded-full flex items-center justify-center ${social.hover} transition-all duration-300 hover:scale-110 shadow-sm cursor-pointer`}
                           >
-                            <social.icon className={`${social.text} text-sm sm:text-base`} />
+                            <social.icon
+                              className={`${social.text} text-sm sm:text-base`}
+                            />
                           </a>
                         ))}
                       </div>
@@ -671,16 +724,33 @@ const AgentDetailsModal = ({ agent, isOpen, onClose }) => {
                     </div>
                     <div className="space-y-3 sm:space-y-4">
                       {[
-                        { icon: AiOutlineCalendar, label: "Experience", value: agent.experience },
-                        { icon: TbBuildingSkyscraper, label: "Properties Closed", value: agent.deals },
-                        { icon: AiOutlineCheckCircle, label: "Certification", value: agent.certification }
+                        {
+                          icon: AiOutlineCalendar,
+                          label: "Experience",
+                          value: agent.experience,
+                        },
+                        {
+                          icon: TbBuildingSkyscraper,
+                          label: "Properties Closed",
+                          value: agent.deals,
+                        },
+                        {
+                          icon: AiOutlineCheckCircle,
+                          label: "Certification",
+                          value: agent.certification,
+                        },
                       ].map((item, index) => (
-                        <div key={index} className="flex items-center justify-between p-2 sm:p-3 rounded-lg hover:bg-white/50 transition-colors duration-200">
+                        <div
+                          key={index}
+                          className="flex items-center justify-between p-2 sm:p-3 rounded-lg hover:bg-white/50 transition-colors duration-200"
+                        >
                           <div className="flex items-center gap-2 sm:gap-3">
                             <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white rounded-lg flex items-center justify-center shadow-sm">
                               <item.icon className="text-[#27bb97] text-base sm:text-lg" />
                             </div>
-                            <span className="text-gray-700 text-sm sm:text-base font-medium">{item.label}</span>
+                            <span className="text-gray-700 text-sm sm:text-base font-medium">
+                              {item.label}
+                            </span>
                           </div>
                           <span className="font-bold text-gray-900 text-sm sm:text-base text-right">
                             {item.value}
@@ -832,8 +902,8 @@ export default function PropertyAgents() {
                               i < Math.floor(agent.rating)
                                 ? "text-yellow-500"
                                 : i < agent.rating
-                                ? "text-yellow-300"
-                                : "text-gray-300"
+                                  ? "text-yellow-300"
+                                  : "text-gray-300"
                             }`}
                           />
                         ))}
@@ -921,8 +991,6 @@ export default function PropertyAgents() {
         {/* Bottom CTA */}
         {remainingAgents.length > 0 && (
           <div className="mt-16 text-center">
-         
-
             <button
               onClick={handleViewAllAgents}
               className="px-8 py-3.5 border-2 border-[#27bb97] text-[#27bb97] rounded-xl hover:bg-[#27bb97] hover:text-white transition-all duration-300 font-semibold cursor-pointer flex items-center justify-center gap-3 mx-auto group"

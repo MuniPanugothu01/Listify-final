@@ -9,15 +9,16 @@ import {
   Star,
   Smartphone,
   MapPin,
-  Clock
+  Clock,
 } from "lucide-react";
 
 const ProfileOverview = ({ user, profilePic, myPosts, devices }) => {
   // Get current device
-  const currentDevice = devices?.find(d => d.isCurrentDevice);
+  const currentDevice = devices?.find((d) => d.isCurrentDevice);
 
   // Calculate statistics
-  const totalViews = myPosts?.reduce((sum, post) => sum + (post.views || 0), 0) || 0;
+  const totalViews =
+    myPosts?.reduce((sum, post) => sum + (post.views || 0), 0) || 0;
 
   return (
     <div className="space-y-6">
@@ -55,7 +56,9 @@ const ProfileOverview = ({ user, profilePic, myPosts, devices }) => {
         {/* Quick Stats */}
         <div className="grid grid-cols-2 gap-4 py-6">
           <div className="text-center p-3 bg-gray-50 rounded-xl">
-            <p className="text-2xl font-bold text-gray-900">{myPosts?.length || 0}</p>
+            <p className="text-2xl font-bold text-gray-900">
+              {myPosts?.length || 0}
+            </p>
             <p className="text-xs text-gray-500 mt-1">Active Listings</p>
           </div>
           <div className="text-center p-3 bg-gray-50 rounded-xl">
@@ -75,7 +78,9 @@ const ProfileOverview = ({ user, profilePic, myPosts, devices }) => {
         {/* Badges */}
         <div className="pt-6 border-t border-gray-100">
           <div className="flex items-center justify-between mb-4">
-            <h4 className="text-sm font-semibold text-gray-900">Achievements</h4>
+            <h4 className="text-sm font-semibold text-gray-900">
+              Achievements
+            </h4>
             <Award className="w-5 h-5 text-amber-500" />
           </div>
           <div className="flex flex-wrap gap-2">
@@ -104,12 +109,16 @@ const ProfileOverview = ({ user, profilePic, myPosts, devices }) => {
               <Smartphone className="w-5 h-5 text-emerald-600" />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="font-medium text-gray-900 truncate">{currentDevice.deviceName}</p>
+              <p className="font-medium text-gray-900 truncate">
+                {currentDevice.deviceName}
+              </p>
               <div className="flex items-center gap-2 text-xs text-gray-500 mt-1">
                 <MapPin className="w-3 h-3 flex-shrink-0" />
                 <span className="truncate">{currentDevice.location}</span>
               </div>
-              <p className="text-xs text-gray-400 mt-1">{currentDevice.lastActiveText}</p>
+              <p className="text-xs text-gray-400 mt-1">
+                {currentDevice.lastActiveText}
+              </p>
             </div>
           </div>
         </div>

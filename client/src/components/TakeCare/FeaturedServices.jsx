@@ -58,8 +58,12 @@ const FeaturedServices = ({ providers }) => {
                 </div>
                 <div className="flex items-center gap-1.5 bg-gray-50 px-2 xs:px-3 py-1 rounded-full self-start xs:self-center">
                   <Star className="w-3 h-3 xs:w-4 xs:h-4 text-yellow-400 fill-current" />
-                  <span className="font-bold text-gray-800 text-xs xs:text-sm">{provider.rating}</span>
-                  <span className="text-gray-500 text-xs">({provider.reviews})</span>
+                  <span className="font-bold text-gray-800 text-xs xs:text-sm">
+                    {provider.rating}
+                  </span>
+                  <span className="text-gray-500 text-xs">
+                    ({provider.reviews})
+                  </span>
                 </div>
               </div>
 
@@ -85,7 +89,10 @@ const FeaturedServices = ({ providers }) => {
               <div className="flex flex-col xs:flex-row xs:justify-between xs:items-center gap-2 xs:gap-0 mt-auto pt-3 xs:pt-4 border-t border-gray-100">
                 <div className="flex items-center gap-1.5 xs:gap-2 text-gray-600">
                   <MapPin className="w-3 h-3 xs:w-4 xs:h-4 text-gray-400 flex-shrink-0" />
-                  <span className="text-xs xs:text-sm line-clamp-1" title={provider.location}>
+                  <span
+                    className="text-xs xs:text-sm line-clamp-1"
+                    title={provider.location}
+                  >
                     {provider.location}
                   </span>
                 </div>
@@ -95,7 +102,7 @@ const FeaturedServices = ({ providers }) => {
               </div>
 
               {/* View Details Button */}
-              <button 
+              <button
                 className="w-full mt-4 xs:mt-5 sm:mt-6 py-2.5 xs:py-3 sm:py-3 text-[#27BB97] font-semibold rounded-lg sm:rounded-xl border border-[#27BB97] hover:text-white hover:bg-[#27BB97] transition-all shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-[#27BB97] focus:ring-offset-2 text-xs xs:text-sm sm:text-base"
                 aria-label={`View details for ${provider.name}`}
               >
@@ -108,7 +115,7 @@ const FeaturedServices = ({ providers }) => {
 
       {/* View More Button - Responsive */}
       <div className="mt-8 sm:mt-10 lg:mt-12 text-center px-2">
-        <button 
+        <button
           className="inline-flex items-center justify-center gap-2 xs:gap-3 px-5 xs:px-6 sm:px-8 py-3 xs:py-3.5 sm:py-4 bg-white border-2 border-[#27BB97] text-[#27BB97] font-semibold rounded-lg sm:rounded-xl hover:bg-[#27BB97] hover:text-white transition-all duration-300 shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-[#27BB97] focus:ring-offset-2 text-sm xs:text-base sm:text-lg"
           aria-label="View more providers"
         >

@@ -7,13 +7,13 @@ import toast from "react-hot-toast";
 
 const ForgotPassword = () => {
   const navigate = useNavigate();
-  const { 
-    forgotPasswordRequest, 
-    loading, 
-    error, 
-    success, 
+  const {
+    forgotPasswordRequest,
+    loading,
+    error,
+    success,
     clearAuthError,
-    resetAuthSuccess 
+    resetAuthSuccess,
   } = useAuth();
 
   const [formData, setFormData] = useState({
@@ -28,8 +28,8 @@ const ForgotPassword = () => {
     if (error) {
       // Handle different error formats
       let errorMessage = "An error occurred";
-      
-      if (typeof error === 'string') {
+
+      if (typeof error === "string") {
         errorMessage = error;
       } else if (error?.message) {
         errorMessage = error.message;
@@ -38,17 +38,17 @@ const ForgotPassword = () => {
       } else if (error?.errors) {
         if (error.errors.email) {
           errorMessage = error.errors.email;
-        } else if (typeof error.errors === 'object') {
+        } else if (typeof error.errors === "object") {
           errorMessage = Object.values(error.errors).join(", ");
         } else {
           errorMessage = String(error.errors);
         }
       }
-      
+
       toast.error(errorMessage);
       clearAuthError();
     }
-    
+
     if (success) {
       toast.success("OTP sent to your email!");
       resetAuthSuccess();
@@ -59,7 +59,14 @@ const ForgotPassword = () => {
         },
       });
     }
-  }, [error, success, formData.email, navigate, clearAuthError, resetAuthSuccess]);
+  }, [
+    error,
+    success,
+    formData.email,
+    navigate,
+    clearAuthError,
+    resetAuthSuccess,
+  ]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -116,7 +123,6 @@ const ForgotPassword = () => {
 
   return (
     <div className="min-h-screen relative overflow-hidden">
-
       <div className="fixed inset-0 z-0">
         <img
           src="/signin.webp"
