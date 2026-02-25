@@ -1085,7 +1085,11 @@ const Navbar = () => {
                         {/* View All Link */}
                         <div className="border-t border-gray-100 px-4 py-2">
                           <Link
-                            to="/notifications"
+                            to="/dashboard/alerts"
+                            onClick={() => {
+                              setShowNotificationDropdown(false);
+                              scrollToTop();
+                            }}
                             className="text-sm text-blue-600 hover:underline"
                           >
                             View all notifications
