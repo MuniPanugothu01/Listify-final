@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
+import { useSelector } from "react-redux";
+import { electronicsAPI } from "../../services/api";
 
 
 const CATEGORIES = [
@@ -63,6 +65,7 @@ const Field = ({ label, error, children }) => (
 
 const PostAdPage = () => {
   const navigate = useNavigate();
+  const { user } = useSelector((state) => state.auth);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedSubcategory, setSelectedSubcategory] = useState(null);
   const [mobileView, setMobileView] = useState("categories"); // 'categories' or 'subcategories'
@@ -71,6 +74,7 @@ const PostAdPage = () => {
     title: "",
     description: "",
     price: "",
+    condition: "Good",
     location: "",
     phone: "",
     images: [],
@@ -143,7 +147,7 @@ const PostAdPage = () => {
     localStorage.setItem("localProducts", JSON.stringify(existing));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validate()) {
       window.scrollTo({ top: 0, behavior: "smooth" });
@@ -152,31 +156,82 @@ const PostAdPage = () => {
 
     setLoading(true);
 
-    const newProduct = {
-      id: `local-${Date.now()}`,
-      title: form.title,
-      price: Number(form.price),
-      category: selectedCategory,
-      subcategory: selectedSubcategory,
-      description: form.description,
-      location: form.location,
-      seller: { name: MOCK_USER.name, rating: 5.0, since: "2026" },
-      images:
-        form.images.length > 0
-          ? form.images.map((img) => URL.createObjectURL(img))
-          : [
+    try {
+      // If category is Electronics, submit to the backend API
+      if (selectedCategory === "Electronics") {
+        // Step 1: Upload images if any
+        let imageUrls = [];
+        if (form.images.length > 0) {
+          try {
+            const formData = new FormData();
+            form.images.forEach((img) => formData.append("images", img));
+            const uploadRes = await electronicsAPI.uploadImages(formData);
+            imageUrls = uploadRes.data.imageUrls;
+          } catch (uploadErr) {
+            console.warn("Image upload failed, using placeholders:", uploadErr);
+            imageUrls = [
               "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&q=80",
-            ],
-      postedAt: new Date().toISOString().split("T")[0],
-      featured: false,
-    };
+            ];
+          }
+        }
 
-    setTimeout(() => {
-      saveLocalProduct(newProduct);
+        // Step 2: Create the listing via API
+        const listingData = {
+          title: form.title,
+          price: Number(form.price),
+          description: form.description,
+          category: selectedCategory,
+          subcategory: selectedSubcategory,
+          condition: form.condition || "Good",
+          location: form.location,
+          phone: form.phone,
+          images:
+            imageUrls.length > 0
+              ? imageUrls
+              : [
+                  "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&q=80",
+                ],
+        };
+
+        await electronicsAPI.create(listingData);
+        setLoading(false);
+        setSubmitted(true);
+        toast.success("Electronics listing posted successfully!");
+      } else {
+        // For other categories, save locally (same as before)
+        const newProduct = {
+          id: `local-${Date.now()}`,
+          title: form.title,
+          price: Number(form.price),
+          category: selectedCategory,
+          subcategory: selectedSubcategory,
+          description: form.description,
+          location: form.location,
+          seller: { name: user?.firstName || "User", rating: 5.0, since: "2026" },
+          images:
+            form.images.length > 0
+              ? form.images.map((img) => URL.createObjectURL(img))
+              : [
+                  "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&q=80",
+                ],
+          postedAt: new Date().toISOString().split("T")[0],
+          featured: false,
+        };
+
+        saveLocalProduct(newProduct);
+        setLoading(false);
+        setSubmitted(true);
+        toast.success("Listing posted successfully!");
+      }
+    } catch (error) {
       setLoading(false);
-      setSubmitted(true);
-      toast.success("Listing posted successfully!");
-    }, 1500);
+      console.error("Post ad error:", error);
+      toast.error(
+        error.response?.data?.message ||
+          error.message ||
+          "Failed to post listing. Please try again."
+      );
+    }
   };
 
   const resetForm = () => {
@@ -185,6 +240,7 @@ const PostAdPage = () => {
       title: "",
       description: "",
       price: "",
+      condition: "Good",
       location: "",
       phone: "",
       images: [],
@@ -488,6 +544,22 @@ const PostAdPage = () => {
                 />
               </div>
             </Field>
+
+            {selectedCategory === "Electronics" && (
+              <Field label="Condition *">
+                <select
+                  value={form.condition}
+                  onChange={setField("condition")}
+                  className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:border-[#27BB97] focus:ring-2 focus:ring-[#27BB97]/20 outline-none transition bg-white"
+                >
+                  <option value="New">New</option>
+                  <option value="Like New">Like New</option>
+                  <option value="Good">Good</option>
+                  <option value="Fair">Fair</option>
+                  <option value="Used">Used</option>
+                </select>
+              </Field>
+            )}
 
             <Field label="Description *" error={errors.description}>
               <textarea

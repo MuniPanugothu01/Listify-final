@@ -445,6 +445,82 @@ export const listingsAPI = {
   },
 };
 
+// ==================== ELECTRONICS API (separate base URL) ====================
+const electronicsApi = axios.create({
+  baseURL: `${BASE_API_URL}/electronics`,
+  headers: {
+    "Content-Type": "application/json",
+  },
+  timeout: 30000,
+  withCredentials: true,
+});
+
+// Apply shared interceptors
+electronicsApi.interceptors.request.use(
+  (config) => {
+    console.log(`🚀 Electronics Request: ${config.method.toUpperCase()} ${config.url}`);
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+createResponseInterceptor(electronicsApi, "Electronics API");
+
+export const electronicsAPI = {
+  // Public: Get all electronics with optional filters
+  getAll: (params = {}) => {
+    return electronicsApi.get("/", { params });
+  },
+
+  // Public: Get single listing by ID
+  getById: (id) => {
+    return electronicsApi.get(`/${id}`);
+  },
+
+  // Private: Create new listing (requires auth)
+  create: (listingData) => {
+    return electronicsApi.post("/", listingData, { withCredentials: true });
+  },
+
+  // Private: Update listing
+  update: (id, listingData) => {
+    return electronicsApi.put(`/${id}`, listingData, { withCredentials: true });
+  },
+
+  // Private: Delete listing
+  delete: (id) => {
+    return electronicsApi.delete(`/${id}`, { withCredentials: true });
+  },
+
+  // Private: Get my listings
+  getMyListings: () => {
+    return electronicsApi.get("/my-listings", { withCredentials: true });
+  },
+
+  // Private: Upload images
+  uploadImages: (formData, onProgress) => {
+    return electronicsApi.post("/upload-images", formData, {
+      withCredentials: true,
+      headers: { "Content-Type": "multipart/form-data" },
+      onUploadProgress: (progressEvent) => {
+        if (onProgress && progressEvent.total) {
+          const pct = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+          onProgress(pct);
+        }
+      },
+    });
+  },
+
+  // Private: Toggle save
+  toggleSave: (id) => {
+    return electronicsApi.post(`/${id}/toggle-save`, {}, { withCredentials: true });
+  },
+
+  // Private: Get saved electronics
+  getSaved: () => {
+    return electronicsApi.get("/saved", { withCredentials: true });
+  },
+};
+
 // ==================== MESSAGES API ====================
 const messagesApi = axios.create({
   baseURL: `${BASE_API_URL}/messages`,

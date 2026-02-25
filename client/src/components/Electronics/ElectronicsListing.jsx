@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   Heart,
   MapPin,
@@ -10,437 +11,23 @@ import {
   Star,
   Package,
   Clock,
+  Loader2,
 } from 'lucide-react';
-
-// Product data
-const electronicsData = [
-  {
-    id: 1,
-    title: "Brand new Smart Watch for Men Women, 2026 Smartwatch (Metal body)",
-    price: 17,
-    location: "Queens, NY",
-    postedTime: "2 hours ago",
-    seller: "Michelle",
-    sellerRating: 4.5,
-    sellerReviews: 399,
-    sellerJoined: "Sep 2020",
-    image:
-      "https://images.unsplash.com/photo-1579586337278-3befd40fd17a?w=500&q=80",
-    description:
-      'Brand new Smart Watch for Men Women, 2026 Smartwatch (Metal body), 1.93" New Fitness Watch with Answer/Make Call/120+ Sport Modes/Pedometer/IP68 Waterproof. Fitness Tracker Fits for Android/iPhone. Pink Whitestone/Flushing, Queens or Downtown Manhattan pickup Cash only',
-    features: [
-      "120+ Sport Modes",
-      "IP68 Waterproof",
-      "Answer/Make Calls",
-      "Heart Rate Monitor",
-      "Sleep Tracking",
-    ],
-    category: "Wearables",
-  },
-  {
-    id: 2,
-    title: "KLHIIII Audio System with Subwoofer",
-    price: 60,
-    location: "Bergenfield, NJ",
-    postedTime: "5 hours ago",
-    seller: "John",
-    sellerRating: 4.2,
-    sellerReviews: 156,
-    sellerJoined: "Jan 2021",
-    image:
-      "https://images.unsplash.com/photo-1545454675-3531b543be5d?w=500&q=80",
-    description:
-      "High-quality audio system with powerful subwoofer. Great condition, perfect for home entertainment setup.",
-    features: [
-      "Powerful Bass",
-      "Multiple Inputs",
-      "Remote Control",
-      "Bluetooth Connectivity",
-    ],
-    category: "Audio & Speakers",
-  },
-  {
-    id: 3,
-    title: "15 Pro Max",
-    price: 650,
-    location: "Bronx, NY",
-    postedTime: "1 day ago",
-    seller: "Sarah",
-    sellerRating: 4.8,
-    sellerReviews: 523,
-    sellerJoined: "Mar 2019",
-    image:
-      "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=500&q=80",
-    description:
-      "Brand new iPhone 15 Pro Max, unlocked, all colors available. Comes with original packaging and accessories.",
-    features: ["A17 Pro Chip", "Titanium Design", "48MP Camera", "USB-C Port"],
-    category: "Cell phones & Accessories",
-  },
-  {
-    id: 4,
-    title: "PS4 Video Games (44 Games Collection)",
-    price: 210,
-    location: "Hoboken, NJ",
-    postedTime: "3 hours ago",
-    seller: "Mike",
-    sellerRating: 4.6,
-    sellerReviews: 234,
-    sellerJoined: "Aug 2020",
-    image:
-      "https://images.unsplash.com/photo-1486401899868-0e435ed85128?w=500&q=80",
-    description:
-      "Collection of 44 PS4 games including popular titles. All games in good condition with cases.",
-    features: [
-      "44 Games",
-      "Various Genres",
-      "All with Cases",
-      "Popular Titles",
-    ],
-    category: "Video games & Consoles",
-  },
-  {
-    id: 5,
-    title: "(Open Box) HyperX SoloCast USB Microphone",
-    price: 40,
-    location: "Hoboken, NJ",
-    postedTime: "6 hours ago",
-    seller: "Alex",
-    sellerRating: 4.4,
-    sellerReviews: 178,
-    sellerJoined: "Nov 2020",
-    image:
-      "https://images.unsplash.com/photo-1590602847861-f357a9332bbc?w=500&q=80",
-    description:
-      "Open box HyperX SoloCast USB microphone, perfect for streaming and podcasting. Tested and works perfectly.",
-    features: [
-      "USB Connectivity",
-      "Tap-to-Mute",
-      "LED Status Indicator",
-      "Plug and Play",
-    ],
-    category: "Audio & Speakers",
-  },
-  {
-    id: 6,
-    title: "WH-1000XM3 Premium Noise Cancelling Headphones",
-    price: 250,
-    location: "Port Chester, NY",
-    postedTime: "12 hours ago",
-    seller: "Emma",
-    sellerRating: 4.7,
-    sellerReviews: 312,
-    sellerJoined: "Jun 2019",
-    image:
-      "https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=500&q=80",
-    description:
-      "Sony WH-1000XM3 wireless noise cancelling headphones. Excellent condition with carrying case.",
-    features: [
-      "Active Noise Cancellation",
-      "30-Hour Battery",
-      "Touch Controls",
-      "Foldable Design",
-    ],
-    category: "Headphones",
-  },
-  {
-    id: 7,
-    title: "Gaming PC Rtx 4060 + Full Setup",
-    price: 750,
-    location: "White Plains, NY",
-    postedTime: "1 day ago",
-    seller: "Ryan",
-    sellerRating: 4.5,
-    sellerReviews: 267,
-    sellerJoined: "Feb 2021",
-    image:
-      "https://images.unsplash.com/photo-1587202372634-32705e3bf49c?w=500&q=80",
-    description:
-      "Complete gaming PC with RTX 4060, RGB lighting, and full setup ready to game.",
-    features: [
-      "RTX 4060 GPU",
-      "16GB RAM",
-      "1TB SSD",
-      "RGB Lighting",
-      "Gaming Keyboard & Mouse",
-    ],
-    category: "Video games & Consoles",
-  },
-  {
-    id: 8,
-    title: "Fitbit Sense Smartwatch",
-    price: 80,
-    location: "Queens, NY",
-    postedTime: "4 hours ago",
-    seller: "Lisa",
-    sellerRating: 4.3,
-    sellerReviews: 145,
-    sellerJoined: "Oct 2020",
-    image:
-      "https://images.unsplash.com/photo-1575311373937-040b8e1fd5b6?w=500&q=80",
-    description:
-      "Fitbit Sense advanced health smartwatch with stress management and heart health tools.",
-    features: [
-      "ECG App",
-      "Stress Management",
-      "6+ Days Battery",
-      "Built-in GPS",
-    ],
-    category: "Wearables",
-  },
-  {
-    id: 9,
-    title: "AirPod Pro Gen 2",
-    price: 85,
-    location: "The Bronx, NY",
-    postedTime: "8 hours ago",
-    seller: "David",
-    sellerRating: 4.6,
-    sellerReviews: 289,
-    sellerJoined: "May 2020",
-    image:
-      "https://images.unsplash.com/photo-1606841837239-c5a1a4a07af7?w=500&q=80",
-    description:
-      "Apple AirPods Pro 2nd Generation with active noise cancellation and spatial audio.",
-    features: [
-      "Active Noise Cancellation",
-      "Spatial Audio",
-      "MagSafe Charging",
-      "Sweat & Water Resistant",
-    ],
-    category: "Headphones",
-  },
-  {
-    id: 10,
-    title: "Call Of Duty: Infinite Warfare - Xbox One",
-    price: 13,
-    location: "Garfield, NJ",
-    postedTime: "2 days ago",
-    seller: "Chris",
-    sellerRating: 4.1,
-    sellerReviews: 98,
-    sellerJoined: "Dec 2021",
-    image:
-      "https://images.unsplash.com/photo-1552820728-8b83bb6b773f?w=500&q=80",
-    description:
-      "Call of Duty: Infinite Warfare for Xbox One. Good condition with case.",
-    features: ["Complete Game", "With Case", "Xbox One Compatible"],
-    category: "Video games & Consoles",
-  },
-  {
-    id: 11,
-    title: "DJI RS3 With Arm Attachment",
-    price: 475,
-    location: "New York, NY",
-    postedTime: "10 hours ago",
-    seller: "Tom",
-    sellerRating: 4.8,
-    sellerReviews: 412,
-    sellerJoined: "Apr 2019",
-    image:
-      "https://images.unsplash.com/photo-1502920917128-1aa500764cbd?w=500&q=80",
-    description:
-      "DJI RS3 gimbal stabilizer with arm attachment. Perfect for professional videography.",
-    features: [
-      "3-Axis Stabilization",
-      "Automated Features",
-      "Long Battery Life",
-      "Professional Grade",
-    ],
-    category: "Cameras & Photography",
-  },
-  {
-    id: 12,
-    title: 'iPad Pro 13" + Keyboard Case',
-    price: 900,
-    location: "New York, NY",
-    postedTime: "5 hours ago",
-    seller: "Jennifer",
-    sellerRating: 4.9,
-    sellerReviews: 567,
-    sellerJoined: "Jan 2019",
-    image:
-      "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=500&q=80",
-    description:
-      "iPad Pro 13 inch with Magic Keyboard case. Excellent condition, barely used.",
-    features: [
-      "M2 Chip",
-      "Liquid Retina Display",
-      "Apple Pencil Support",
-      "Magic Keyboard Included",
-    ],
-    category: "Electronics & Media",
-  },
-  {
-    id: 13,
-    title: "NEW Gaming Microphone with Stand",
-    price: 25,
-    location: "Queens, NY",
-    postedTime: "7 hours ago",
-    seller: "Kevin",
-    sellerRating: 4.2,
-    sellerReviews: 134,
-    sellerJoined: "Sep 2021",
-    image:
-      "https://images.unsplash.com/photo-1589492477829-5e65395b66cc?w=500&q=80",
-    description:
-      "Brand new gaming microphone with adjustable stand. Perfect for streaming and gaming.",
-    features: [
-      "Adjustable Stand",
-      "USB Connection",
-      "Noise Cancelling",
-      "RGB Lighting",
-    ],
-    category: "Audio & Speakers",
-  },
-  {
-    id: 14,
-    title: "Town of Light (Microsoft Xbox One)",
-    price: 15,
-    location: "Clifton, NJ",
-    postedTime: "1 day ago",
-    seller: "Amanda",
-    sellerRating: 4.0,
-    sellerReviews: 76,
-    sellerJoined: "Mar 2022",
-    image:
-      "https://images.unsplash.com/photo-1578303512597-81e6cc155b3e?w=500&q=80",
-    description:
-      "Town of Light game for Xbox One. Complete with case and manual.",
-    features: ["Complete Game", "Original Case", "Xbox One"],
-    category: "Video games & Consoles",
-  },
-  {
-    id: 15,
-    title: "NEW Pink Unicorn Kids Instant Camera",
-    price: 15,
-    location: "Queens, NY",
-    postedTime: "9 hours ago",
-    seller: "Maria",
-    sellerRating: 4.5,
-    sellerReviews: 201,
-    sellerJoined: "Jul 2020",
-    image:
-      "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=500&q=80",
-    description:
-      "Brand new pink unicorn themed instant camera for kids. Makes photography fun!",
-    features: [
-      "Instant Print",
-      "Kid-Friendly Design",
-      "Built-in Flash",
-      "Fun Stickers Included",
-    ],
-    category: "Cameras & Photography",
-  },
-  {
-    id: 16,
-    title: "NEW Magnetic Car iPhone Mount",
-    price: 5,
-    location: "Queens, NY",
-    postedTime: "3 hours ago",
-    condition: "New",
-    sellerRating: 4.3,
-    sellerReviews: 167,
-    sellerJoined: "Nov 2021",
-    image:
-      "https://images.unsplash.com/photo-1519558260268-cde7e03a0152?w=500&q=80",
-    description:
-      "Brand new magnetic car mount for iPhone. Strong magnets, 360-degree rotation.",
-    features: [
-      "Strong Magnet",
-      "360° Rotation",
-      "Easy Installation",
-      "Universal Fit",
-    ],
-    category: "Cell phones & Accessories",
-  },
-  {
-    id: 17,
-    title: "NEW Drone with Camera 4K",
-    price: 30,
-    location: "Queens, NY",
-    postedTime: "6 hours ago",
-    seller: "Daniel",
-    sellerRating: 4.7,
-    sellerReviews: 345,
-    sellerJoined: "Apr 2020",
-    image:
-      "https://images.unsplash.com/photo-1473968512647-3e447244af8f?w=500&q=80",
-    description:
-      "Brand new drone with 4K camera. Perfect for beginners and aerial photography enthusiasts.",
-    features: ["4K Camera", "GPS", "Return to Home", "30 Min Flight Time"],
-    category: "Cameras & Photography",
-  },
-  {
-    id: 18,
-    title: "Apple MacBook Air M1 Chip",
-    price: 800,
-    location: "The Bronx, NY",
-    postedTime: "12 hours ago",
-    seller: "Sophia",
-    sellerRating: 4.9,
-    sellerReviews: 678,
-    sellerJoined: "Feb 2019",
-    image:
-      "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=500&q=80",
-    description:
-      "Apple MacBook Air with M1 chip. Excellent condition, includes charger and original box.",
-    features: [
-      "M1 Chip",
-      "8GB RAM",
-      "256GB SSD",
-      "Retina Display",
-      "All-Day Battery",
-    ],
-    category: "Electronics & Media",
-  },
-  {
-    id: 19,
-    title: "JBL Bluetooth Speaker Portable",
-    price: 45,
-    location: "Newark, NJ",
-    postedTime: "4 hours ago",
-    seller: "James",
-    sellerRating: 4.4,
-    sellerReviews: 189,
-    sellerJoined: "Aug 2021",
-    image:
-      "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=500&q=80",
-    description:
-      "JBL portable Bluetooth speaker. Waterproof, great sound quality, long battery life.",
-    features: [
-      "Waterproof IPX7",
-      "12 Hours Playtime",
-      "Wireless Bluetooth",
-      "Deep Bass",
-    ],
-    category: "Audio & Speakers",
-  },
-  {
-    id: 20,
-    title: "Canon EOS Rebel T7 DSLR Camera Bundle",
-    price: 420,
-    location: "Brooklyn, NY",
-    postedTime: "1 day ago",
-    seller: "Olivia",
-    sellerRating: 4.8,
-    sellerReviews: 445,
-    sellerJoined: "May 2019",
-    image:
-      "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=500&q=80",
-    description:
-      "Canon EOS Rebel T7 DSLR camera with two lenses, bag, and accessories. Perfect for beginners.",
-    features: [
-      "24.1MP Sensor",
-      "WiFi Connectivity",
-      "Full HD Video",
-      "Two Lenses Included",
-    ],
-    category: "Cameras & Photography",
-  },
-];
+import {
+  fetchAllElectronics,
+  toggleSaveElectronics,
+} from '../../redux/slices/electronicsSlice';
 
 // Product Card Component
-const ProductCard = ({ product, onClick }) => {
+const ProductCard = ({ product, onClick, onToggleSave, isSaved, isLoggedIn }) => {
+  // Support both API data (product.images[]) and legacy data (product.image)
+  const image = product.images?.[0] || product.image || 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&q=80';
+  const displayPrice = product.price;
+  const location = product.location || 'Unknown';
+  const postedTime = product.postedTime || product.createdAt
+    ? new Date(product.createdAt).toLocaleDateString()
+    : '';
+
   return (
     <div
       onClick={onClick}
@@ -448,15 +35,27 @@ const ProductCard = ({ product, onClick }) => {
     >
       <div className="relative h-40 sm:h-48 overflow-hidden bg-gray-100">
         <img
-          src={product.image}
+          src={image}
           alt={product.title}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
         />
+        {product.condition && (
+          <span className="absolute top-2 left-2 bg-white/90 backdrop-blur-sm text-xs font-medium px-2 py-1 rounded-full text-gray-700">
+            {product.condition}
+          </span>
+        )}
         <button
-          onClick={(e) => e.stopPropagation()}
+          onClick={(e) => {
+            e.stopPropagation();
+            if (onToggleSave) onToggleSave(product._id || product.id);
+          }}
           className="absolute top-2 right-2 p-1.5 bg-white rounded-full shadow-sm hover:bg-red-50 transition-colors"
         >
-          <Heart className="w-4 h-4 text-gray-600 hover:text-red-500" />
+          <Heart
+            className={`w-4 h-4 transition-colors ${
+              isSaved ? 'text-red-500 fill-red-500' : 'text-gray-600 hover:text-red-500'
+            }`}
+          />
         </button>
       </div>
 
@@ -467,16 +66,16 @@ const ProductCard = ({ product, onClick }) => {
 
         <div className="flex items-center justify-between mb-2">
           <span className="text-base sm:text-lg font-bold text-gray-900">
-            ${product.price}
+            ${displayPrice}
           </span>
         </div>
 
         <div className="flex items-center text-xs text-gray-600 mt-1">
           <MapPin className="w-3 h-3 mr-1 flex-shrink-0" />
-          <span className="truncate">{product.location}</span>
+          <span className="truncate">{location}</span>
         </div>
 
-        <div className="text-xs text-gray-400 mt-1">{product.postedTime}</div>
+        <div className="text-xs text-gray-400 mt-1">{postedTime}</div>
       </div>
     </div>
   );
@@ -484,57 +83,62 @@ const ProductCard = ({ product, onClick }) => {
 
 const ElectronicsListing = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { listings, loading, error } = useSelector((state) => state.electronics);
+  const { user } = useSelector((state) => state.auth);
+  
   const [searchQuery, setSearchQuery] = useState("");
   const [priceMin, setPriceMin] = useState("");
   const [priceMax, setPriceMax] = useState("");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [selectedConditions, setSelectedConditions] = useState([]);
+  const [sortBy, setSortBy] = useState("recent");
 
-  // Store all products in localStorage for similar items in detail page
+  // Fetch electronics from API on mount
   useEffect(() => {
-    localStorage.setItem('allElectronics', JSON.stringify(electronicsData));
-  }, []);
+    dispatch(fetchAllElectronics());
+  }, [dispatch]);
 
-  // Get unique categories and conditions
-  const categories = [...new Set(electronicsData.map(p => p.category))];
-  const conditions = [...new Set(electronicsData.map(p => p.condition))];
+  // Get unique subcategories and conditions from API data
+  const categories = [...new Set(listings.map(p => p.subcategory).filter(Boolean))];
+  const conditions = [...new Set(listings.map(p => p.condition).filter(Boolean))];
 
-  const filteredProducts = electronicsData.filter((product) => {
-    // Search filter
+  // Client-side filtering for real-time search/filter experience
+  const filteredProducts = listings.filter((product) => {
     if (searchQuery && !product.title.toLowerCase().includes(searchQuery.toLowerCase())) {
       return false;
     }
-    
-    // Price filter
     if (priceMin && product.price < parseFloat(priceMin)) {
       return false;
     }
     if (priceMax && product.price > parseFloat(priceMax)) {
       return false;
     }
-    
-    // Category filter
-    if (selectedCategories.length > 0 && !selectedCategories.includes(product.category)) {
+    if (selectedCategories.length > 0 && !selectedCategories.includes(product.subcategory)) {
       return false;
     }
-    
-    // Condition filter
     if (selectedConditions.length > 0 && !selectedConditions.includes(product.condition)) {
       return false;
     }
-    
     return true;
   });
 
+  // Sort
+  const sortedProducts = [...filteredProducts].sort((a, b) => {
+    if (sortBy === "price_asc") return a.price - b.price;
+    if (sortBy === "price_desc") return b.price - a.price;
+    // default: newest first
+    return new Date(b.createdAt) - new Date(a.createdAt);
+  });
+
   const handleProductClick = (product) => {
-    // Store the selected product in localStorage
-    localStorage.setItem('selectedElectronics', JSON.stringify(product));
-    navigate(`/electronics/${product.id}`);
+    // Navigate using the API id (_id)
+    navigate(`/electronics/${product._id || product.id}`);
   };
 
   const handleCategoryChange = (category) => {
-    setSelectedCategories(prev => 
+    setSelectedCategories(prev =>
       prev.includes(category)
         ? prev.filter(c => c !== category)
         : [...prev, category]
@@ -547,6 +151,14 @@ const ElectronicsListing = () => {
         ? prev.filter(c => c !== condition)
         : [...prev, condition]
     );
+  };
+
+  const handleToggleSave = (id) => {
+    if (!user) {
+      navigate('/login');
+      return;
+    }
+    dispatch(toggleSaveElectronics(id));
   };
 
   return (
@@ -622,45 +234,49 @@ const ElectronicsListing = () => {
               </div>
             </div>
 
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-3">
-                Condition
-              </label>
-              <div className="grid grid-cols-2 sm:grid-cols-1 gap-2">
-                {conditions.map((condition) => (
-                  <label key={condition} className="flex items-center">
-                    <input
-                      type="checkbox"
-                      checked={selectedConditions.includes(condition)}
-                      onChange={() => handleConditionChange(condition)}
-                      className="w-4 h-4 text-[#27bb97] border-gray-300 rounded focus:ring-[#27bb97]"
-                    />
-                    <span className="ml-2 text-sm text-gray-700">
-                      {condition}
-                    </span>
-                  </label>
-                ))}
+            {conditions.length > 0 && (
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-700 mb-3">
+                  Condition
+                </label>
+                <div className="grid grid-cols-2 sm:grid-cols-1 gap-2">
+                  {conditions.map((condition) => (
+                    <label key={condition} className="flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={selectedConditions.includes(condition)}
+                        onChange={() => handleConditionChange(condition)}
+                        className="w-4 h-4 text-[#27bb97] border-gray-300 rounded focus:ring-[#27bb97]"
+                      />
+                      <span className="ml-2 text-sm text-gray-700">
+                        {condition}
+                      </span>
+                    </label>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-3">
-                Categories
-              </label>
-              <div className="grid grid-cols-2 sm:grid-cols-1 gap-2">
-                {categories.map((cat) => (
-                  <label key={cat} className="flex items-center">
-                    <input
-                      type="checkbox"
-                      checked={selectedCategories.includes(cat)}
-                      onChange={() => handleCategoryChange(cat)}
-                      className="w-4 h-4 text-[#27bb97] border-gray-300 rounded focus:ring-[#27bb97]"
-                    />
-                    <span className="ml-2 text-sm text-gray-700">{cat}</span>
-                  </label>
-                ))}
+            {categories.length > 0 && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-3">
+                  Subcategories
+                </label>
+                <div className="grid grid-cols-2 sm:grid-cols-1 gap-2">
+                  {categories.map((cat) => (
+                    <label key={cat} className="flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={selectedCategories.includes(cat)}
+                        onChange={() => handleCategoryChange(cat)}
+                        className="w-4 h-4 text-[#27bb97] border-gray-300 rounded focus:ring-[#27bb97]"
+                      />
+                      <span className="ml-2 text-sm text-gray-700">{cat}</span>
+                    </label>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
             <button
               onClick={() => {
@@ -700,11 +316,14 @@ const ElectronicsListing = () => {
                     <span className="text-xs sm:text-sm text-gray-600 whitespace-nowrap hidden xs:inline">
                       Sort by:
                     </span>
-                    <select className="px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#27bb97] focus:border-transparent w-full xs:w-auto min-w-[120px] sm:min-w-[180px]">
-                      <option>Recent first</option>
-                      <option>Price: Low to High</option>
-                      <option>Price: High to Low</option>
-                      <option>Distance</option>
+                    <select
+                      value={sortBy}
+                      onChange={(e) => setSortBy(e.target.value)}
+                      className="px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#27bb97] focus:border-transparent w-full xs:w-auto min-w-[120px] sm:min-w-[180px]"
+                    >
+                      <option value="recent">Recent first</option>
+                      <option value="price_asc">Price: Low to High</option>
+                      <option value="price_desc">Price: High to Low</option>
                     </select>
                   </div>
                 </div>
@@ -712,39 +331,88 @@ const ElectronicsListing = () => {
             </div>
 
             <div className="text-sm text-gray-600 mb-4 lg:hidden">
-              {filteredProducts.length} items found
+              {sortedProducts.length} items found
             </div>
 
-            <div className="grid grid-cols-2 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
-              {filteredProducts.map((product) => (
-                <ProductCard
-                  key={product.id}
-                  product={product}
-                  onClick={() => handleProductClick(product)}
-                />
-              ))}
-            </div>
+            {/* Loading State */}
+            {loading && (
+              <div className="flex flex-col items-center justify-center py-20">
+                <Loader2 className="w-10 h-10 text-[#27bb97] animate-spin mb-4" />
+                <p className="text-gray-500">Loading electronics...</p>
+              </div>
+            )}
 
-            <div className="mt-8 text-center text-gray-600 hidden lg:block">
-              Showing {filteredProducts.length} of {electronicsData.length} items
-            </div>
-
-            {filteredProducts.length === 0 && (
+            {/* Error State */}
+            {error && !loading && (
               <div className="text-center py-12">
-                <div className="text-gray-400 mb-2">No items found</div>
+                <div className="text-red-500 mb-2">Failed to load electronics</div>
+                <p className="text-gray-500 text-sm mb-4">{error}</p>
                 <button
-                  onClick={() => {
-                    setSearchQuery("");
-                    setPriceMin("");
-                    setPriceMax("");
-                    setSelectedCategories([]);
-                    setSelectedConditions([]);
-                  }}
+                  onClick={() => dispatch(fetchAllElectronics())}
                   className="text-[#27bb97] hover:text-[#1fa987] font-medium"
                 >
-                  Clear all filters
+                  Try again
                 </button>
               </div>
+            )}
+
+            {/* Products Grid */}
+            {!loading && !error && (
+              <>
+                <div className="grid grid-cols-2 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
+                  {sortedProducts.map((product) => (
+                    <ProductCard
+                      key={product._id || product.id}
+                      product={product}
+                      onClick={() => handleProductClick(product)}
+                      onToggleSave={handleToggleSave}
+                      isSaved={
+                        product._saved ||
+                        (user && product.savedBy?.includes(user._id || user.id))
+                      }
+                      isLoggedIn={!!user}
+                    />
+                  ))}
+                </div>
+
+                <div className="mt-8 text-center text-gray-600 hidden lg:block">
+                  Showing {sortedProducts.length} of {listings.length} items
+                </div>
+
+                {sortedProducts.length === 0 && listings.length > 0 && (
+                  <div className="text-center py-12">
+                    <div className="text-gray-400 mb-2">No items match your filters</div>
+                    <button
+                      onClick={() => {
+                        setSearchQuery("");
+                        setPriceMin("");
+                        setPriceMax("");
+                        setSelectedCategories([]);
+                        setSelectedConditions([]);
+                      }}
+                      className="text-[#27bb97] hover:text-[#1fa987] font-medium"
+                    >
+                      Clear all filters
+                    </button>
+                  </div>
+                )}
+
+                {sortedProducts.length === 0 && listings.length === 0 && !loading && (
+                  <div className="text-center py-16">
+                    <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <Package className="w-10 h-10 text-gray-400" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-gray-700 mb-2">No electronics listed yet</h3>
+                    <p className="text-gray-500 mb-6">Be the first to post an electronics listing!</p>
+                    <button
+                      onClick={() => navigate("/post-add")}
+                      className="px-6 py-3 bg-[#27bb97] text-white rounded-lg hover:bg-[#1fa987] transition-colors font-medium"
+                    >
+                      Post Electronics Ad
+                    </button>
+                  </div>
+                )}
+              </>
             )}
           </main>
         </div>

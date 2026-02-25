@@ -100,7 +100,9 @@ connectDB().catch(console.error);
 
 // Routes
 const authRoutes = require("./routes/authRoutes");
+const electronicsRoutes = require("./routes/electronicsRoutes");
 app.use("/api/auth", authRoutes);
+app.use("/api/electronics", electronicsRoutes);
 
 // Health check
 app.get("/health", (req, res) => {

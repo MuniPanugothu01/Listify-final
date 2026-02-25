@@ -224,6 +224,61 @@ class S3Service {
   }
 
   /**
+   * Upload listing image to S3 (electronics, forsale, etc.)
+   * @param {Buffer} fileBuffer - Image buffer
+   * @param {string} userId - User ID
+   * @param {string} mimeType - MIME type
+   * @returns {Promise<Object>} Upload result
+   */
+  async uploadListingImage(fileBuffer, userId, mimeType) {
+    try {
+      // Optimize: larger max size for listing images
+      const optimized = await sharp(fileBuffer)
+        .resize(1200, 1200, {
+          fit: 'inside',
+          withoutEnlargement: true,
+        })
+        .jpeg({ quality: 85 })
+        .toBuffer();
+
+      const fileName = `listings/${userId}/${uuidv4()}.jpeg`;
+
+      const command = new PutObjectCommand({
+        Bucket: this.bucketName,
+        Key: fileName,
+        Body: optimized,
+        ContentType: 'image/jpeg',
+        CacheControl: 'max-age=31536000',
+        Metadata: {
+          userId: userId,
+          uploadedAt: new Date().toISOString(),
+          type: 'listing',
+        },
+      });
+
+      await s3Client.send(command);
+
+      const imageUrl = this.getImageUrl(fileName);
+
+      logger.info('✅ Listing image uploaded to S3', {
+        userId,
+        fileName,
+        size: optimized.length,
+      });
+
+      return {
+        success: true,
+        imageUrl,
+        fileName,
+        key: fileName,
+      };
+    } catch (error) {
+      logger.error('❌ Failed to upload listing image to S3:', error);
+      throw new Error(`Listing image upload failed: ${error.message}`);
+    }
+  }
+
+  /**
    * Validate image file
    * @param {Object} file - File object
    * @returns {Object} Validation result
