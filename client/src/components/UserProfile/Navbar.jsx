@@ -185,21 +185,21 @@ const Navbar = () => {
 
   const profileMenuItems = [
     { name: "Dashboard", path: "/dashboard", icon: CgProfile, count: null },
-    { name: "My Profile", path: "/profile", icon: FaUserFriends, count: null },
-    { name: "Saved Items", path: "/saved", icon: FaRegHeart, count: null },
+    { name: "My Profile", path: "/dashboard/profile", icon: FaUserFriends, count: null },
+    { name: "Saved Items", path: "/dashboard/saved", icon: FaRegHeart, count: null },
     {
       name: "My Listings",
-      path: "/my-listings",
+      path: "/dashboard/listings",
       icon: FaBuilding,
       count: null,
     },
     {
       name: "Messages",
-      path: "/messages",
+      path: "/dashboard/messages",
       icon: FaBriefcase,
       count: messagesUnread,
     },
-    { name: "Settings", path: "/settings", icon: FaTools, count: null },
+    { name: "Settings", path: "/dashboard/settings", icon: FaTools, count: null },
     { name: "Sign Out", path: "/logout", icon: FaChevronRight, count: null },
   ];
 
