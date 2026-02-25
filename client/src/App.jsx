@@ -134,7 +134,7 @@ const AppContent = () => {
 
     return () => clearTimeout(timer);
   }, []);
-
+  
   // Check if current route should hide navbar and footer
   const hideNavbarFooterPaths = [
     "/signup",
