@@ -10,13 +10,14 @@ import {
   FaBuilding,
   FaPlus,
   FaRegHeart,
-  FaBell,
+  FaRegBell,
   FaUserCircle,
   FaChevronRight,
   FaTools,
   FaSearch,
   FaMapMarkerAlt,
 } from "react-icons/fa";
+
 import NavSearchBar from "../../pages/Home/NavSearchBar.jsx";
 import { CgProfile } from "react-icons/cg";
 import { ScrollProgress } from "../../components/ui/scroll-progress";
@@ -1020,7 +1021,7 @@ const Navbar = () => {
                           : "text-gray-600 hover:bg-gray-100"
                       }`}
                     >
-                      <FaBell size={18} />
+                      <FaRegBell size={18} />
                       {unreadCount > 0 && (
                         <span className="notification-badge">{unreadCount}</span>
                       )}
@@ -1269,7 +1270,7 @@ const Navbar = () => {
                         isScrolled ? "text-white" : "text-gray-600"
                       }`}
                     >
-                      <FaBell size={18} />
+                      <FaRegBell size={18} />
                       {unreadCount > 0 && (
                         <span className="notification-badge">{unreadCount}</span>
                       )}
@@ -1493,7 +1494,7 @@ const Navbar = () => {
                     }}
                     className="nav-link px-3 py-3 text-base font-semibold text-gray-700 hover:bg-gray-100 rounded flex items-center gap-3"
                   >
-                    <FaBell size={16} />
+                    <FaRegBell size={16} />
                     Notifications {unreadCount > 0 && `(${unreadCount})`}
                   </Link>
                 )}
