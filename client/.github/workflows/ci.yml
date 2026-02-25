@@ -1,0 +1,114 @@
+name: CI/CD – React Vite Production Pipeline
+
+on:
+  pull_request:
+    branches: [feature/venkatesh]
+  push:
+    branches: [feature/venkatesh]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: react-vite-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: 20
+
+jobs:
+  # ===========================================================
+  #  STAGE 1: CONTINUOUS INTEGRATION (QUALITY GATE)
+  # ===========================================================
+  ci:
+    name: CI – Production Quality Gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - name: Install Dependencies (Deterministic)
+        run: |
+          set -e
+          test -f package-lock.json
+          npm ci
+      - name: Security Audit (Fail on High & Critical)
+        run: npm audit --audit-level=high
+
+      - name: Lint (Fail on Warnings)
+        run: npm run lint -- --max-warnings=0
+
+      - name: Test + Coverage (Single Run)
+        run: npm run test -- --coverage
+
+      - name: Coverage Gate (≥90%)
+        run: |
+          node -e "
+            const c = require('./coverage/coverage-summary.json').total;
+            if (c.lines.pct < 90) {
+              console.error(' Coverage below 90%');
+              process.exit(1);
+            }
+          "
+
+      - name: Format Check
+        run: npm run format:check
+
+      - name: Build (Production)
+        run: |
+          NODE_ENV=production npm run build
+          test -f dist/index.html
+
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: react-build-dist
+          path: dist/
+
+  # ===========================================================
+  #  STAGE 2: CONTINUOUS DEPLOYMENT (NETLIFY)
+  # ===========================================================
+  deploy:
+    name: CD – Deploy to Netlify
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    needs: ci
+    if: github.ref == 'refs/heads/main' && needs.ci.result == 'success'
+
+    steps:
+      - name: Download Build Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: react-build-dist
+          path: dist
+
+      - name: Verify Build Output
+        run: |
+          ls -la dist
+          test -f dist/index.html
+
+      - name: Install Netlify CLI
+        run: npm install -g netlify-cli
+
+      - name: Deploy to Netlify (Production)
+        env:
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+        run: |
+          netlify deploy \
+            --dir=dist \
+            --site=$NETLIFY_SITE_ID \
+            --auth=$NETLIFY_AUTH_TOKEN \
+            --prod \
+            --message "Production deploy from GitHub Actions"
