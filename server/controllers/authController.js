@@ -1191,110 +1191,98 @@ exports.checkAuth = async (req, res) => {
       });
     }
 
+    // --- Step 1: verify the JWT (pure crypto, no DB) ---
+    let decoded;
     try {
-      const decoded = jwt.verify(
+      decoded = jwt.verify(
         accessToken,
         process.env.JWT_ACCESS_SECRET || process.env.JWT_SECRET,
       );
-
-      if (decoded.type !== "access") {
+    } catch (jwtError) {
+      if (jwtError.name === "TokenExpiredError") {
+        // Access token expired — DON'T try to refresh here.
+        // Let the client-side interceptor call /api/auth/refresh
+        // (which uses the SETNX-locked tokenUtils.refreshTokens).
+        // Returning isAuthenticated:false with code so the client
+        // knows it can retry after refreshing.
         return res.status(200).json({
           success: true,
           isAuthenticated: false,
+          code: "ACCESS_TOKEN_EXPIRED",
         });
       }
-
-      const user = await User.findById(decoded.id);
-
-      if (!user) {
-        return res.status(200).json({
-          success: true,
-          isAuthenticated: false,
-        });
-      }
-
-      const passwordExpiration = user.passwordNeedsChange
-        ? user.passwordNeedsChange()
-        : null;
-      
-      const profileImageUrl = user.getProfileImage ? user.getProfileImage() : 
-                             (user.profileImage || user.googleProfileImage || user.avatar || null);
-
-      return res.status(200).json({
-        success: true,
-        isAuthenticated: true,
-        user: {
-          id: user._id,
-          name: user.name,
-          email: user.email,
-          role: user.role,
-          provider: user.provider,
-          avatar: user.avatar,
-          profileImage: user.profileImage,
-          profileImageKey: user.profileImageKey,
-          googleProfileImage: user.googleProfileImage,
-          isVerified: user.isVerified,
-          profileImageUrl: profileImageUrl,
-          passwordExpiration,
-        },
-      });
-    } catch (error) {
-      if (error.name === "TokenExpiredError") {
-        const { refreshToken } = req.cookies;
-        if (refreshToken) {
-          const tokens = await refreshTokens(refreshToken);
-          if (tokens) {
-            setTokenCookies(res, tokens.accessToken, tokens.refreshToken);
-
-            const decoded = jwt.verify(
-              tokens.accessToken,
-              process.env.JWT_ACCESS_SECRET || process.env.JWT_SECRET,
-            );
-
-            const user = await User.findById(decoded.id);
-
-            if (user) {
-              const passwordExpiration = user.passwordNeedsChange
-                ? user.passwordNeedsChange()
-                : null;
-              
-              const profileImageUrl = user.getProfileImage ? user.getProfileImage() : 
-                                     (user.profileImage || user.googleProfileImage || user.avatar || null);
-
-              return res.status(200).json({
-                success: true,
-                isAuthenticated: true,
-                tokenRefreshed: true,
-                user: {
-                  id: user._id,
-                  name: user.name,
-                  email: user.email,
-                  role: user.role,
-                  provider: user.provider,
-                  avatar: user.avatar,
-                  profileImage: user.profileImage,
-                  profileImageKey: user.profileImageKey,
-                  googleProfileImage: user.googleProfileImage,
-                  isVerified: user.isVerified,
-                  profileImageUrl: profileImageUrl,
-                  passwordExpiration,
-                },
-              });
-            }
-          }
-        }
-      }
-
+      // Invalid / malformed token
       return res.status(200).json({
         success: true,
         isAuthenticated: false,
       });
     }
+
+    if (decoded.type !== "access") {
+      return res.status(200).json({
+        success: true,
+        isAuthenticated: false,
+      });
+    }
+
+    // --- Step 2: fetch user from DB ---
+    let user;
+    try {
+      user = await User.findById(decoded.id);
+    } catch (dbError) {
+      // MongoDB is temporarily down — return 503 so the client
+      // does NOT clear the session.  The user stays logged in
+      // and simply retries on the next check.
+      logger.warn("checkAuth: MongoDB unreachable, keeping session", {
+        error: dbError.message,
+      });
+      return res.status(503).json({
+        success: false,
+        message: "Database temporarily unavailable",
+        code: "DB_UNAVAILABLE",
+      });
+    }
+
+    if (!user) {
+      return res.status(200).json({
+        success: true,
+        isAuthenticated: false,
+      });
+    }
+
+    const passwordExpiration = user.passwordNeedsChange
+      ? user.passwordNeedsChange()
+      : null;
+
+    const profileImageUrl = user.getProfileImage
+      ? user.getProfileImage()
+      : user.profileImage || user.googleProfileImage || user.avatar || null;
+
+    return res.status(200).json({
+      success: true,
+      isAuthenticated: true,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        provider: user.provider,
+        avatar: user.avatar,
+        profileImage: user.profileImage,
+        profileImageKey: user.profileImageKey,
+        googleProfileImage: user.googleProfileImage,
+        isVerified: user.isVerified,
+        profileImageUrl: profileImageUrl,
+        passwordExpiration,
+      },
+    });
   } catch (error) {
     logger.error("Check auth error:", error);
-    res.status(500).json({
+    // Return 503 (not 500) so the client keeps the session alive
+    res.status(503).json({
       success: false,
       message: "Server error",
+      code: "SERVER_ERROR",
     });
   }
 };

@@ -21,7 +21,7 @@ import NavSearchBar from "../../pages/Home/NavSearchBar.jsx";
 import { CgProfile } from "react-icons/cg";
 import { ScrollProgress } from "../../components/ui/scroll-progress";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks/useRedux";
-import { refreshUserData } from "../../redux/slices/authSlice";
+import { updateUser } from "../../redux/slices/authSlice";
 import { fetchProfile } from "../../redux/slices/profileSlice";
 import toast from "react-hot-toast";
 
@@ -93,13 +93,6 @@ const Navbar = () => {
     (state) => state.messages || { unreadCount: 0 },
   );
 
-  // Refresh user data on mount and when authentication changes
-  useEffect(() => {
-    if (isAuthenticated) {
-      dispatch(refreshUserData());
-    }
-  }, [isAuthenticated, dispatch]);
-
   // Fetch profile data if not available
   useEffect(() => {
     if (isAuthenticated && !profile && !profileLoading) {
@@ -107,24 +100,21 @@ const Navbar = () => {
     }
   }, [isAuthenticated, profile, profileLoading, dispatch]);
 
-  // Sync profile data when it changes
+  // Sync profile data into auth user state when profile changes
   useEffect(() => {
-    if (profile && user) {
-      // Update localStorage with combined data
-      const combinedUser = {
-        ...user,
-        ...profile,
-        profileImage: profile.profileImage || user?.profileImage,
-        profileImageUrl: profile.profileImageUrl || user?.profileImageUrl,
-        avatar: profile.avatar || user?.avatar,
-        googleProfileImage:
-          profile.googleProfileImage || user?.googleProfileImage,
-        provider: profile.provider || user?.provider,
-        isGoogle: profile.isGoogle || user?.isGoogle,
-      };
-      localStorage.setItem("user", JSON.stringify(combinedUser));
+    if (profile) {
+      // Reset image error when profile updates (new image may have been uploaded)
+      setImageError(false);
+      dispatch(updateUser({
+        profileImage: profile.profileImage,
+        profileImageUrl: profile.profileImage || profile.profileImageUrl,
+        avatar: profile.avatar,
+        googleProfileImage: profile.googleProfileImage,
+        provider: profile.provider,
+        isGoogle: profile.isGoogle,
+      }));
     }
-  }, [profile, user]);
+  }, [profile, dispatch]);
 
   // Fetch notifications
   useEffect(() => {
@@ -330,20 +320,25 @@ const Navbar = () => {
 
     const googleUser = isGoogleUser();
 
-    // Check for custom uploaded image first (applies to both Google and email users)
+    // 1. Custom uploaded image has highest priority (profileImage is the S3 URL)
     const customUploaded =
-      profile?.profileImageUrl ||
       profile?.profileImage ||
-      profile?.avatar ||
-      user?.profileImageUrl ||
-      user?.profileImage ||
-      user?.avatar;
+      user?.profileImage;
 
     if (customUploaded && customUploaded !== STATIC_PROFILE_IMAGE) {
       return customUploaded;
     }
 
-    // For Google users, try Google's photo
+    // 2. profileImageUrl (computed field — could be custom or google)
+    const computedUrl =
+      profile?.profileImageUrl ||
+      user?.profileImageUrl;
+
+    if (computedUrl && computedUrl !== STATIC_PROFILE_IMAGE) {
+      return computedUrl;
+    }
+
+    // 3. For Google users, try Google's photo
     if (googleUser) {
       const googlePhoto =
         profile?.googleProfileImage ||
@@ -353,6 +348,12 @@ const Navbar = () => {
       if (googlePhoto && googlePhoto !== STATIC_PROFILE_IMAGE) {
         return googlePhoto;
       }
+    }
+
+    // 4. Avatar fallback
+    const avatar = profile?.avatar || user?.avatar;
+    if (avatar && avatar !== STATIC_PROFILE_IMAGE) {
+      return avatar;
     }
 
     // No image found

@@ -42,7 +42,7 @@ class S3Service {
     this._validateFile(file);
 
     const formData = new FormData();
-    formData.append("profileImage", file);
+    formData.append("image", file);
 
     try {
       const response = await axios.post(
@@ -132,7 +132,7 @@ class S3Service {
    * Validate file before upload
    */
   _validateFile(file) {
-    const MAX_SIZE_MB = 5;
+    const MAX_SIZE_MB = 50;
     const ALLOWED_TYPES = [
       "image/jpeg",
       "image/jpg",

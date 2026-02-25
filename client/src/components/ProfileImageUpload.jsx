@@ -4,7 +4,7 @@
 
 import React, { useState, useRef, useCallback } from 'react';
 import { useAppDispatch, useAppSelector } from '../redux/hooks/useRedux';
-import { updateProfile } from '../redux/slices/authSlice';
+import { updateProfile, updateUser } from '../redux/slices/authSlice';
 import { fetchProfile } from '../redux/slices/profileSlice';
 import s3Service from '../services/s3Service';
 import toast from 'react-hot-toast';
@@ -40,12 +40,12 @@ const ProfileImageUpload = ({ size = 96, className = '' }) => {
     !!user?.googleId;
 
   const currentImage = (() => {
-    // Prefer custom uploaded image
+    // Prefer custom uploaded image (profileImage is the actual S3 URL)
     const custom =
-      profile?.profileImageUrl ||
       profile?.profileImage ||
-      user?.profileImageUrl ||
-      user?.profileImage;
+      profile?.profileImageUrl ||
+      user?.profileImage ||
+      user?.profileImageUrl;
 
     if (custom && custom !== STATIC_PROFILE_IMAGE) return custom;
 
@@ -104,13 +104,8 @@ const ProfileImageUpload = ({ size = 96, className = '' }) => {
       // Refresh profile slice so Navbar updates
       await dispatch(fetchProfile());
 
-      // Update localStorage so Navbar gets it on next refreshUserData
-      const userStr = localStorage.getItem('user');
-      if (userStr) {
-        const storedUser = JSON.parse(userStr);
-        const updatedUser = { ...storedUser, profileImageUrl: imageUrl, profileImage: imageUrl };
-        localStorage.setItem('user', JSON.stringify(updatedUser));
-      }
+      // Update auth user state directly via Redux
+      dispatch(updateUser({ profileImageUrl: imageUrl, profileImage: imageUrl }));
 
       toast.success('Profile photo updated!');
       setPreviewUrl(null); // Clear preview — actual image now in Redux

@@ -28,7 +28,7 @@ import {
   resetProfileSuccess,
   changeUserPassword,
 } from "../../redux/slices/profileSlice";
-import { refreshUserData } from "../../redux/slices/authSlice";
+import { updateUser } from "../../redux/slices/authSlice";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Constants
@@ -118,22 +118,13 @@ export default function PersonalDetailsSection() {
 
   // Sync profile image to auth when profile updates
   useEffect(() => {
-    if (profile?.profileImageUrl || profile?.profileImage || profile?.googleProfileImage || profile?.avatar) {
-      // Get current user from auth
-      const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
-      const updatedUser = {
-        ...currentUser,
-        profileImageUrl: profile.profileImageUrl || profile.profileImage || profile.googleProfileImage || profile.avatar,
+    if (profile?.profileImage || profile?.profileImageUrl || profile?.googleProfileImage || profile?.avatar) {
+      dispatch(updateUser({
+        profileImageUrl: profile.profileImage || profile.profileImageUrl || profile.googleProfileImage || profile.avatar,
         profileImage: profile.profileImage,
         googleProfileImage: profile.googleProfileImage,
         avatar: profile.avatar,
-      };
-      localStorage.setItem('user', JSON.stringify(updatedUser));
-      
-      // Dispatch action to refresh auth user data if available
-      if (refreshUserData) {
-        dispatch(refreshUserData());
-      }
+      }));
     }
   }, [profile, dispatch]);
 
@@ -208,30 +199,29 @@ export default function PersonalDetailsSection() {
     const reader = new FileReader();
     reader.onloadend = () => {
       dispatch(setProfilePicPreview(reader.result));
-      // Also update localStorage preview temporarily
-      const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
-      currentUser.profileImageUrl = reader.result;
-      localStorage.setItem('user', JSON.stringify(currentUser));
     };
     reader.readAsDataURL(file);
     
     // Upload to server
     dispatch(uploadProfileImage(file)).then((result) => {
-      if (result.payload?.imageUrl) {
-        // Update localStorage with the actual URL
-        const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
-        currentUser.profileImageUrl = result.payload.imageUrl;
-        currentUser.profileImage = result.payload.imageUrl;
-        localStorage.setItem('user', JSON.stringify(currentUser));
+      if (result.meta?.requestStatus === 'fulfilled' && result.payload?.imageUrl) {
+        // Update auth user with actual S3 URL
+        dispatch(updateUser({
+          profileImageUrl: result.payload.imageUrl,
+          profileImage: result.payload.imageUrl,
+        }));
         
-        // Refresh auth user data
-        if (refreshUserData) {
-          dispatch(refreshUserData());
-        }
+        // Refetch full profile to sync all fields from server
+        dispatch(fetchProfile());
         
         toast.success("Profile image updated successfully!");
+      } else if (result.meta?.requestStatus === 'rejected') {
+        // Upload failed — clear preview
+        dispatch(setProfilePicPreview(null));
+        toast.error(result.payload || "Failed to upload image. Please try again.");
       }
     }).catch((error) => {
+      dispatch(setProfilePicPreview(null));
       toast.error("Failed to upload image. Please try again.");
       console.error("Image upload error:", error);
     });
@@ -399,7 +389,7 @@ export default function PersonalDetailsSection() {
               </span>
             )}
             <p className="text-xs text-gray-400 mt-2">
-              JPG, PNG or WebP — max 5 MB
+              JPG, PNG or WebP — max 50 MB
             </p>
           </div>
         </div>

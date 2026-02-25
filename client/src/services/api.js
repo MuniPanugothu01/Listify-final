@@ -1,4 +1,5 @@
 import axios from "axios";
+import { resetPersistedState } from "../redux/store";
 
 // Use absolute URL to avoid issues
 const API_URL = "http://localhost:5000/api/auth";
@@ -101,8 +102,7 @@ export const handle401 = async (error, axiosInstance) => {
         !currentPath.includes('/signup') &&
         !currentPath.includes('/forgot-password')
       ) {
-        localStorage.removeItem("user");
-        localStorage.removeItem("persist:root");
+        resetPersistedState();
         window.location.href = "/signin";
       }
     }
