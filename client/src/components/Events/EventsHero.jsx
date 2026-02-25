@@ -30,42 +30,10 @@ const carouselItems = [
 ];
 
 export default function EventsHero() {
-  const [searchType, setSearchType] = useState("All Events");
-  const [city, setCity] = useState("");
-  const [date, setDate] = useState("All Dates");
-  const [category, setCategory] = useState("All Categories");
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
 
-  const searchTypes = [
-    "All Events",
-    "Music & Concerts",
-    "Comedy",
-    "Garba/Dandiya",
-    "Bollywood",
-    "Spiritual",
-    "Free Events",
-  ];
 
-  const dates = [
-    "All Dates",
-    "Today",
-    "Tomorrow",
-    "This Weekend",
-    "Next Week",
-    "This Month",
-  ];
-
-  const categories = [
-    "All Categories",
-    "Music",
-    "Dance",
-    "Comedy",
-    "Food",
-    "Cultural",
-    "Workshop",
-    "Free",
-  ];
 
   // Auto slide every 5 seconds
   useEffect(() => {
@@ -73,7 +41,7 @@ export default function EventsHero() {
       nextSlide();
     }, 5000);
     return () => clearInterval(interval);
-  }, [currentSlide]);
+  },);
 
   const nextSlide = () => {
     if (isAnimating) return;
@@ -97,7 +65,7 @@ export default function EventsHero() {
   };
 
   return (
-    <div className="relative h-[300px] sm:h-[300px] md:h-[300px] lg:h-[300px] overflow-hidden">
+    <div className="relative h-[300px] sm:h-[300px] md:h-[300px] lg:h-[300px] overflow-hidden mt-16 md:mt-16 lg:mt-18">
       {/* Carousel Container */}
       <div className="">
         {carouselItems.map((item, index) => {
@@ -222,102 +190,6 @@ export default function EventsHero() {
           </button>
         </div>
       </div>
-
-      {/* 🌟 Floating Search Bar - Responsive positioning */}
-      {/* <div className="absolute left-1/2 -bottom-15 transform -translate-x-1/2 w-full px-3 xs:px-4 sm:px-6 lg:px-8 z-30" 
-          >
-        <div className="rounded-lg sm:rounded-xl lg:rounded-2xl shadow-lg p-4 sm:p-5 lg:p-6 mx-auto bg-white/95 backdrop-blur-sm border border-gray-200">
-          <div className="grid grid-cols-5 sm:grid-cols-5 md:grid-cols-5 lg:grid-cols-5 gap-3 sm:gap-4">
-            
-            <div className="lg:col-span-1">
-              <label className="block text-xs font-medium text-gray-600 mb-1">
-                Event Type
-              </label>
-              <select
-                className="w-full px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-300 rounded-lg text-gray-800 
-                           focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent text-sm sm:text-base"
-                value={searchType}
-                onChange={(e) => setSearchType(e.target.value)}
-              >
-                {searchTypes.map((type) => (
-                  <option key={type} value={type}>
-                    {type}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="lg:col-span-1">
-              <label className="block text-xs font-medium text-gray-600 mb-1">
-                Location
-              </label>
-              <div className="relative">
-                <MapPin className="absolute left-3 top-3 sm:top-3.5 w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="City or area"
-                  className="w-full pl-9 sm:pl-10 pr-3 sm:pr-4 py-2.5 sm:py-3 border border-gray-300 rounded-lg text-gray-800 
-                             focus:outline-none focus:ring-2 focus:ring-gray-400 text-sm sm:text-base"
-                  value={city}
-                  onChange={(e) => setCity(e.target.value)}
-                />
-              </div>
-            </div>
-
-            <div className="lg:col-span-1">
-              <label className="block text-xs font-medium text-gray-600 mb-1">
-                When
-              </label>
-              <select
-                className="w-full px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-300 rounded-lg text-gray-800 
-                           focus:outline-none focus:ring-2 focus:ring-gray-400 text-sm sm:text-base"
-                value={date}
-                onChange={(e) => setDate(e.target.value)}
-              >
-                {dates.map((d) => (
-                  <option key={d} value={d}>
-                    {d}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="lg:col-span-1">
-              <label className="block text-xs font-medium text-gray-600 mb-1">
-                Category
-              </label>
-              <select
-                className="w-full px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-300 rounded-lg text-gray-800 
-                           focus:outline-none focus:ring-2 focus:ring-gray-400 text-sm sm:text-base"
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-              >
-                {categories.map((cat) => (
-                  <option key={cat} value={cat}>
-                    {cat}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="xs:col-span-2 lg:col-span-1 flex items-end mt-1">
-              <button className="w-full bg-[#27bb97] text-white font-medium px-4 sm:px-6 lg:px-8 py-2.5 sm:py-3 lg:py-3.5 rounded-lg hover:bg-[#1fa987] transition flex items-center justify-center gap-2 text-sm sm:text-base">
-                <Search className="w-4 h-4 sm:w-5 sm:h-5" />
-                <span className="whitespace-nowrap">Search</span>
-              </button>
-            </div>
-
-          </div>
-
-          <style jsx>{`
-            @media (max-width: 475px) {
-              .xs\\:grid-cols-2 {
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-              }
-            }
-          `}</style>
-        </div>
-      </div> */}
 
       {/* Custom CSS for upward wheel animation only */}
       <style jsx>{`

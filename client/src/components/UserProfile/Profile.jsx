@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { updateUser } from "../../redux/slices/authSlice";
 import { 
   Bell, 
   X, 
@@ -15,8 +17,7 @@ import {
   Settings,
   Calendar
 } from "lucide-react";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import toast from "react-hot-toast";
 
 // Import components
 import Sidebar from "../../components/UserProfile/Sidebar";
@@ -30,22 +31,27 @@ import ProfileMain from "./ProfileMin";
 export default function Profile() {
   const navigate = useNavigate();
   const location = useLocation();
+  const dispatch = useDispatch();
+  const authUser = useSelector((state) => state.auth.user);
   
   const [activeSection, setActiveSection] = useState(
     location.state?.activeSection || "home"
   );
-  const [user, setUser] = useState({
-    name: "John Doe",
-    email: "john.doe@example.com",
-    phone: "+1 (555) 123-4567",
-    address: "123 Main St, San Francisco, CA",
-    isLoggedIn: true,
+
+  // Merge Redux auth user with sensible defaults
+  const user = {
+    name: authUser?.name || "User",
+    email: authUser?.email || "",
+    phone: authUser?.phone || "",
+    address: authUser?.address || "",
+    isLoggedIn: !!authUser,
     status: "Available",
-    memberSince: "2023",
-    verified: true,
-    rating: 4.8,
-    bio: "Professional real estate agent with 8+ years experience"
-  });
+    memberSince: authUser?.createdAt ? new Date(authUser.createdAt).getFullYear().toString() : "2024",
+    verified: authUser?.isVerified || false,
+    rating: authUser?.rating || 4.8,
+    bio: authUser?.bio || "",
+    profilePic: authUser?.profileImage || authUser?.profileImageUrl || authUser?.googleProfileImage || authUser?.avatar,
+  };
   const [savedHouses, setSavedHouses] = useState([]);
   const [myPosts, setMyPosts] = useState([
     { 
@@ -89,25 +95,11 @@ export default function Profile() {
   ]);
   const [isEditing, setIsEditing] = useState(false);
   const [editData, setEditData] = useState({});
-  const [profilePicPreview, setProfilePicPreview] = useState("https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop");
+  const [profilePicPreview, setProfilePicPreview] = useState(
+    authUser?.profileImage || authUser?.profileImageUrl || authUser?.googleProfileImage || authUser?.avatar || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop"
+  );
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchVisible, setIsSearchVisible] = useState(false);
-
-  // Load user details
-  useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      try {
-        const parsedUser = JSON.parse(storedUser);
-        setUser(parsedUser);
-        if (parsedUser.profilePic) {
-          setProfilePicPreview(parsedUser.profilePic);
-        }
-      } catch (error) {
-        console.error('Error parsing stored user data:', error);
-      }
-    }
-  }, []);
 
   // Load saved items
   useEffect(() => {
@@ -151,18 +143,14 @@ export default function Profile() {
         const newPreview = reader.result;
         setProfilePicPreview(newPreview);
         setEditData({ ...editData, profilePic: newPreview });
-        const updatedUser = { ...user, profilePic: newPreview };
-        localStorage.setItem('user', JSON.stringify(updatedUser));
-        setUser(updatedUser);
+        dispatch(updateUser({ profileImageUrl: newPreview }));
       };
       reader.readAsDataURL(file);
     }
   };
 
   const handleSave = () => {
-    const updatedUser = { ...user, ...editData };
-    setUser(updatedUser);
-    localStorage.setItem('user', JSON.stringify(updatedUser));
+    dispatch(updateUser(editData));
     setIsEditing(false);
     toast.success("Profile updated successfully!");
   };
@@ -605,18 +593,7 @@ export default function Profile() {
         </div>
       </div>
 
-      <ToastContainer
-        position="top-right"
-        autoClose={2000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
-      />
+
     </div>
   );
 }

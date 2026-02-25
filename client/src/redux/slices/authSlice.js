@@ -1,33 +1,13 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { authAPI } from "../../services/api";
 
-// Helper function to get initial user state from localStorage
-// We ONLY store user data, NEVER tokens
-const getInitialUserState = () => {
-  try {
-    const userStr = localStorage.getItem("user");
-    if (userStr) {
-      const user = JSON.parse(userStr);
-      // Ensure user has profileImageUrl
-      if (!user.profileImageUrl) {
-        user.profileImageUrl =
-          user.avatar ||
-          user.profileImage ||
-          user.googleProfileImage ||
-          "https://cdn-icons-png.flaticon.com/512/149/149071.png";
-      }
-      return user;
-    }
-  } catch (error) {
-    console.error("Error parsing user from localStorage:", error);
-  }
-  return null;
-};
+// redux-persist (configured in store.js) handles rehydrating auth state
+// across page reloads — no manual localStorage needed.
 
 const initialState = {
   // ⚠️ NO TOKEN IN STATE - Token is in HTTP-only cookie
   token: null, // Always null - we don't store tokens anymore
-  user: getInitialUserState(),
+  user: null, // Rehydrated by redux-persist
   loading: false,
   error: null,
   success: false,
@@ -69,10 +49,6 @@ export const googleLogin = createAsyncThunk(
       // Check if we got a successful response with user data
       if (response.data) {
         if (response.data.success && response.data.user) {
-          // ⚠️ NO TOKEN STORAGE - Token is in HTTP-only cookie
-          // Only store user data
-          localStorage.setItem("user", JSON.stringify(response.data.user));
-
           return response.data;
         } else {
           return rejectWithValue(
@@ -118,10 +94,6 @@ export const loginUser = createAsyncThunk(
       }
 
       if (response.data && response.data.success === true) {
-        if (response.data.user) {
-          // ⚠️ NO TOKEN STORAGE - Token is in HTTP-only cookie
-          localStorage.setItem("user", JSON.stringify(response.data.user));
-        }
         return response.data;
       } else {
         return rejectWithValue("Invalid server response");
@@ -174,11 +146,6 @@ export const verifyOTP = createAsyncThunk(
   async ({ email, otp }, { rejectWithValue }) => {
     try {
       const response = await authAPI.verifyOTP({ email, otp });
-
-      if (response.data.success && response.data.user) {
-        // ⚠️ NO TOKEN STORAGE - Token is in HTTP-only cookie
-        localStorage.setItem("user", JSON.stringify(response.data.user));
-      }
 
       return response.data;
     } catch (error) {
@@ -322,10 +289,6 @@ export const getUserProfile = createAsyncThunk(
     try {
       const response = await authAPI.getProfile();
 
-      if (response.data.success) {
-        localStorage.setItem("user", JSON.stringify(response.data.user));
-      }
-
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
@@ -338,16 +301,6 @@ export const updateProfile = createAsyncThunk(
   async (userData, { rejectWithValue }) => {
     try {
       const response = await authAPI.updateProfile(userData);
-
-      if (response.data.success) {
-        const currentUserStr = localStorage.getItem("user");
-        if (currentUserStr) {
-          const currentUser = JSON.parse(currentUserStr);
-          const updatedUser = { ...currentUser, ...response.data.user };
-          localStorage.setItem("user", JSON.stringify(updatedUser));
-        }
-      }
-
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
@@ -373,11 +326,9 @@ export const logoutUser = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await authAPI.logout();
-      localStorage.removeItem("user");
       return response.data;
     } catch (error) {
       console.error("Logout error:", error);
-      localStorage.removeItem("user");
       return rejectWithValue(error.response?.data || error.message);
     }
   },
@@ -388,11 +339,9 @@ export const logoutAll = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await authAPI.logoutAll();
-      localStorage.removeItem("user");
       return response.data;
     } catch (error) {
       console.error("Logout all error:", error);
-      localStorage.removeItem("user");
       return rejectWithValue(error.response?.data || error.message);
     }
   },
@@ -404,16 +353,12 @@ export const checkAuth = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await authAPI.checkAuth();
-
-      if (response.data.isAuthenticated && response.data.user) {
-        localStorage.setItem("user", JSON.stringify(response.data.user));
-      } else if (!response.data.isAuthenticated) {
-        localStorage.removeItem("user");
-      }
-
       return response.data;
     } catch (error) {
-      localStorage.removeItem("user");
+      // DON'T clear 5re on network/server errors (503, timeout,
+      // MongoDB down, etc.). The session may still be perfectly valid —
+      // the server just couldn't verify it right now.
+      console.warn("checkAuth network/server error — keeping session", error.message);
       return rejectWithValue(error.response?.data || error.message);
     }
   },
@@ -464,7 +409,6 @@ const authSlice = createSlice({
   reducers: {
     // Manual logout action (for when API call fails)
     manualLogout: (state) => {
-      localStorage.removeItem("user");
       state.token = null;
       state.user = null;
       state.success = false;
@@ -500,23 +444,10 @@ const authSlice = createSlice({
     setGoogleClientId: (state, action) => {
       state.googleClientId = action.payload;
     },
-    refreshUserData: (state) => {
-      const userStr = localStorage.getItem("user");
-      if (userStr) {
-        try {
-          const user = JSON.parse(userStr);
-          if (!user.profileImageUrl) {
-            user.profileImageUrl =
-              user.avatar ||
-              user.profileImage ||
-              user.googleProfileImage ||
-              "https://cdn-icons-png.flaticon.com/512/149/149071.png";
-          }
-          state.user = user;
-        } catch (error) {
-          console.error("Error parsing user from localStorage:", error);
-          state.user = null;
-        }
+    // Update user data in Redux state directly (e.g. after profile image change)
+    updateUser: (state, action) => {
+      if (state.user && action.payload) {
+        state.user = { ...state.user, ...action.payload };
       }
     },
   },
@@ -788,22 +719,28 @@ const authSlice = createSlice({
 
       // ==================== NEW: Check Auth ====================
       .addCase(checkAuth.pending, (state) => {
-        state.loading = true;
+        // Don't set loading=true — this runs in background
         state.error = null;
       })
       .addCase(checkAuth.fulfilled, (state, action) => {
-        state.loading = false;
         if (action.payload.isAuthenticated) {
           state.user = action.payload.user;
-        } else {
+        }
+        // ACCESS_TOKEN_EXPIRED: the token just needs a refresh — keep user.
+        // The interceptor / useTokenRefresh will refresh it.
+        if (
+          !action.payload.isAuthenticated &&
+          action.payload.code !== "ACCESS_TOKEN_EXPIRED" &&
+          !state.user
+        ) {
           state.user = null;
         }
         state.token = null; // Always null
       })
       .addCase(checkAuth.rejected, (state) => {
-        state.loading = false;
-        state.user = null;
-        state.token = null;
+        // DON'T clear user on network errors — only clear if we're sure
+        // the session is truly invalid. Network hiccups shouldn't log out.
+        console.warn("checkAuth failed — keeping current user state");
       })
 
       // ==================== NEW: Get Sessions ====================
@@ -837,19 +774,18 @@ const authSlice = createSlice({
 
       // ==================== NEW: Refresh Token ====================
       .addCase(refreshToken.pending, (state) => {
-        state.loading = true;
+        // Don't set loading=true for background refresh — it causes UI flicker
         state.error = null;
       })
       .addCase(refreshToken.fulfilled, (state) => {
-        state.loading = false;
         // Token refreshed successfully - no state change needed
         // New token is in HTTP-only cookie
       })
       .addCase(refreshToken.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
-        // If refresh fails, user might need to login again
-        state.user = null;
+        // DON'T clear user here — the refresh might have failed due to a
+        // transient network error. Only clear user if we know for sure the
+        // refresh token is invalid (the API interceptor handles redirect).
+        console.warn("Token refresh rejected:", action.payload);
       });
   },
 });
@@ -866,7 +802,7 @@ export const {
   setResetEmail,
   clearResetEmail,
   setGoogleClientId,
-  refreshUserData, // Add this
+  updateUser,
 } = authSlice.actions;
 
 export default authSlice.reducer;

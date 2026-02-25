@@ -65,21 +65,21 @@ class RedisService {
     }
   }
 
-  // Store OTP with email
-  static async storeOTP(email, otp) {
-    try {
-      const key = `otp:${email}`;
-      // FIX: Always store as string to ensure consistent type
-      const otpString = String(otp).trim();
-      console.log(`[Redis] Storing OTP for ${email}: ${otpString} (as string)`);
+// ============== FIXED: Store OTP with email (ensure string type) ==============
+static async storeOTP(email, otp) {
+  try {
+    const key = `otp:${email}`;
+    // FIX: Always store as string to ensure consistent type
+    const otpString = String(otp).trim();
+    console.log(`[Redis] Storing OTP for ${email}: ${otpString} (as string)`);
 
-      await redis.setex(key, 300, otpString);
-      return true;
-    } catch (error) {
-      console.error("Error storing OTP:", error);
-      return false;
-    }
+    await redis.setex(key, 300, otpString);
+    return true;
+  } catch (error) {
+    console.error("Error storing OTP:", error);
+    return false;
   }
+}
 
   // ============== FIXED: Increment OTP attempts and check lock (BLOCK AFTER 3 ATTEMPTS) ==============
   static async incrementOTPAttempts(email) {
@@ -347,56 +347,74 @@ class RedisService {
     }
   }
 
-  // Store pending password reset
-  static async storePendingPasswordReset(email, resetData) {
-    try {
-      const key = `pending_password_reset:${email}`;
-      const dataString = JSON.stringify(resetData);
-      console.log(`[Redis] Storing pending password reset for ${email}`);
-
-      await redis.setex(key, 600, dataString);
-      return true;
-    } catch (error) {
-      console.error("Error storing pending password reset:", error);
+// ============== FIXED: Store pending password reset with consistent structure ==============
+static async storePendingPasswordReset(email, resetData) {
+  try {
+    const key = `pending_password_reset:${email}`;
+    
+    // FIX: Ensure data has required fields
+    if (!resetData.userId) {
+      console.error(`[Redis] Missing userId in reset data for ${email}`);
       return false;
     }
+    
+    if (!resetData.email) {
+      console.error(`[Redis] Missing email in reset data for ${email}`);
+      resetData.email = email; // Add email if missing
+    }
+    
+    const dataString = JSON.stringify(resetData);
+    console.log(`[Redis] Storing pending password reset for ${email} with userId: ${resetData.userId}`);
+
+    await redis.setex(key, 600, dataString);
+    return true;
+  } catch (error) {
+    console.error("Error storing pending password reset:", error);
+    return false;
   }
+}
 
-  // Get pending password reset data
-  static async getPendingPasswordReset(email) {
-    try {
-      const key = `pending_password_reset:${email}`;
-      const data = await redis.get(key);
+// ============== FIXED: Get pending password reset data with better error handling ==============
+static async getPendingPasswordReset(email) {
+  try {
+    const key = `pending_password_reset:${email}`;
+    const data = await redis.get(key);
 
-      if (!data) {
-        console.log(`[Redis] No pending password reset found for ${email}`);
-        return null;
-      }
-
-      console.log(`[Redis] Found pending password reset for ${email}`);
-
-      let parsedData;
-      try {
-        if (typeof data === "string") {
-          parsedData = JSON.parse(data);
-        } else if (typeof data === "object") {
-          parsedData = data;
-        } else {
-          console.log(`[Redis] Unexpected data type: ${typeof data}`);
-          return null;
-        }
-      } catch (parseError) {
-        console.error(`[Redis] JSON parse error:`, parseError);
-        console.log(`[Redis] Raw data:`, data);
-        return null;
-      }
-
-      return parsedData;
-    } catch (error) {
-      console.error("Error getting pending password reset:", error);
+    if (!data) {
+      console.log(`[Redis] No pending password reset found for ${email}`);
       return null;
     }
+
+    console.log(`[Redis] Found pending password reset for ${email}`);
+
+    let parsedData;
+    try {
+      if (typeof data === "string") {
+        parsedData = JSON.parse(data);
+      } else if (typeof data === "object") {
+        parsedData = data;
+      } else {
+        console.log(`[Redis] Unexpected data type: ${typeof data}`);
+        return null;
+      }
+      
+      // FIX: Ensure we have required fields
+      if (!parsedData.userId) {
+        console.log(`[Redis] Missing userId in pending reset data`);
+        return null;
+      }
+      
+      return parsedData;
+    } catch (parseError) {
+      console.error(`[Redis] JSON parse error:`, parseError);
+      console.log(`[Redis] Raw data:`, data);
+      return null;
+    }
+  } catch (error) {
+    console.error("Error getting pending password reset:", error);
+    return null;
   }
+}
 
   // Delete pending password reset
   static async deletePendingPasswordReset(email) {

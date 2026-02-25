@@ -18,7 +18,7 @@ import {
   Lock,
   FileText,
 } from "lucide-react";
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
 import {
   fetchProfile,
   updateProfile,
@@ -28,7 +28,7 @@ import {
   resetProfileSuccess,
   changeUserPassword,
 } from "../../redux/slices/profileSlice";
-import { refreshUserData } from "../../redux/slices/authSlice";
+import { updateUser } from "../../redux/slices/authSlice";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Constants
@@ -36,9 +36,6 @@ import { refreshUserData } from "../../redux/slices/authSlice";
 const FALLBACK_AVATAR =
   "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop";
 
-// Values match the MongoDB enum exactly: "male"|"female"|"other"|"prefer-not-to-say"
-// This is the FIX for the gender mismatch — old code sent "Male"/"Female" but DB
-// only accepts lowercase values with the enum above.
 const GENDER_OPTIONS = [
   { label: "Select gender", value: "" },
   { label: "Male", value: "male" },
@@ -121,22 +118,13 @@ export default function PersonalDetailsSection() {
 
   // Sync profile image to auth when profile updates
   useEffect(() => {
-    if (profile?.profileImageUrl || profile?.profileImage || profile?.googleProfileImage || profile?.avatar) {
-      // Get current user from auth
-      const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
-      const updatedUser = {
-        ...currentUser,
-        profileImageUrl: profile.profileImageUrl || profile.profileImage || profile.googleProfileImage || profile.avatar,
+    if (profile?.profileImage || profile?.profileImageUrl || profile?.googleProfileImage || profile?.avatar) {
+      dispatch(updateUser({
+        profileImageUrl: profile.profileImage || profile.profileImageUrl || profile.googleProfileImage || profile.avatar,
         profileImage: profile.profileImage,
         googleProfileImage: profile.googleProfileImage,
         avatar: profile.avatar,
-      };
-      localStorage.setItem('user', JSON.stringify(updatedUser));
-      
-      // Dispatch action to refresh auth user data if available
-      if (refreshUserData) {
-        dispatch(refreshUserData());
-      }
+      }));
     }
   }, [profile, dispatch]);
 
@@ -148,11 +136,9 @@ export default function PersonalDetailsSection() {
       phone: profile.phone || "",
       address: profile.address || "",
       bio: profile.bio || "",
-      // dateOfBirth may arrive as "2000-01-15T00:00:00.000Z" — strip time part
       dateOfBirth: profile.dateOfBirth
         ? String(profile.dateOfBirth).split("T")[0]
         : "",
-      // profile.gender is already the DB enum value ("male", "female", etc.)
       gender: profile.gender || "",
     });
   }, [profile]);
@@ -202,20 +188,43 @@ export default function PersonalDetailsSection() {
       toast.error("Name is required");
       return;
     }
-    // form.gender is already the correct DB enum value ("male", "female", etc.)
-    // because GENDER_OPTIONS.value matches the DB enum directly.
     dispatch(updateProfile(form));
   };
 
   const handleImageChange = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    
     // Show local preview immediately
     const reader = new FileReader();
-    reader.onloadend = () => dispatch(setProfilePicPreview(reader.result));
+    reader.onloadend = () => {
+      dispatch(setProfilePicPreview(reader.result));
+    };
     reader.readAsDataURL(file);
+    
     // Upload to server
-    dispatch(uploadProfileImage(file));
+    dispatch(uploadProfileImage(file)).then((result) => {
+      if (result.meta?.requestStatus === 'fulfilled' && result.payload?.imageUrl) {
+        // Update auth user with actual S3 URL
+        dispatch(updateUser({
+          profileImageUrl: result.payload.imageUrl,
+          profileImage: result.payload.imageUrl,
+        }));
+        
+        // Refetch full profile to sync all fields from server
+        dispatch(fetchProfile());
+        
+        toast.success("Profile image updated successfully!");
+      } else if (result.meta?.requestStatus === 'rejected') {
+        // Upload failed — clear preview
+        dispatch(setProfilePicPreview(null));
+        toast.error(result.payload || "Failed to upload image. Please try again.");
+      }
+    }).catch((error) => {
+      dispatch(setProfilePicPreview(null));
+      toast.error("Failed to upload image. Please try again.");
+      console.error("Image upload error:", error);
+    });
   };
 
   const handlePasswordSave = async () => {
@@ -380,7 +389,7 @@ export default function PersonalDetailsSection() {
               </span>
             )}
             <p className="text-xs text-gray-400 mt-2">
-              JPG, PNG or WebP — max 5 MB
+              JPG, PNG or WebP — max 50 MB
             </p>
           </div>
         </div>

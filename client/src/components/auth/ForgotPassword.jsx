@@ -3,7 +3,7 @@ import { ArrowLeft } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { HiDotsHorizontal } from "react-icons/hi";
 import { useAuth } from "../../hooks/useAuth";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 
 const ForgotPassword = () => {
   const navigate = useNavigate();
@@ -111,21 +111,11 @@ const ForgotPassword = () => {
   };
 
   const handleBackToLogin = () => {
-    navigate("/login");
+    navigate("/signin");
   };
 
   return (
     <div className="min-h-screen relative overflow-hidden">
-      <Toaster
-        position="top-right"
-        toastOptions={{
-          duration: 4000,
-          style: {
-            background: "#363636",
-            color: "#fff",
-          },
-        }}
-      />
 
       <div className="fixed inset-0 z-0">
         <img
@@ -265,7 +255,7 @@ const ForgotPassword = () => {
 
               <p className="text-xs mt-6 text-gray-600">
                 Remember your password?{" "}
-                <Link to="/login">
+                <Link to="/signin">
                   <span className="text-[#27bb97] underline cursor-pointer hover:text-[#1fa987] transition-colors duration-200">
                     Login
                   </span>

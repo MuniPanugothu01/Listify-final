@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
   Heart,
@@ -107,8 +108,8 @@ const MakeOfferModal = ({ isOpen, onClose, product, onSubmit }) => {
       });
       setIsSubmitting(false);
       onClose();
-      // Show success message (you can implement a toast notification here)
-      alert(`Offer of $${offerAmount} sent successfully!`);
+      // Show success message with toast
+      toast.success(`Offer of $${offerAmount} sent successfully!`);
     }, 1000);
   };
 
@@ -408,7 +409,7 @@ const ForSaleDetail = () => {
     } else {
       // Fallback - copy to clipboard
       navigator.clipboard.writeText(window.location.href);
-      alert('Link copied to clipboard!');
+      toast('Link copied to clipboard!');
     }
   };
 

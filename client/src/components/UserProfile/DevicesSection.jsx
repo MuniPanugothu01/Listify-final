@@ -13,7 +13,7 @@ import {
   AlertCircle
 } from "lucide-react";
 import { fetchDevices, revokeDevice } from "../../redux/slices/profileSlice";
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
 
 const DevicesSection = ({ devices: propDevices }) => {
   const dispatch = useDispatch();

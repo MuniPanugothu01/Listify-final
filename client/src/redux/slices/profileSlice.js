@@ -232,6 +232,7 @@ const profileSlice = createSlice({
         state.loading = false;
         if (state.profile) {
           state.profile.profileImage = action.payload.imageUrl;
+          state.profile.profileImageUrl = action.payload.imageUrl;
           state.profile.profileImageKey = action.payload.imageKey;
           state.profilePicPreview = action.payload.imageUrl;
         }
