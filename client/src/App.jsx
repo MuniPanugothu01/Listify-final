@@ -343,8 +343,9 @@ const AppContent = () => {
           <Route path="/car-listings" element={<CarListing />} />
           <Route path="/car-details" element={<CarDetails />} />
 
-          {/* Profile */}
+          {/* Profile / Dashboard */}
           <Route path="/dashboard" element={<Profile />} />
+          <Route path="/dashboard/:section" element={<Profile />} />
 
           {/* Placeholder Pages */}
           <Route path="/marketplace" element={<div>Marketplace Page</div>} />
