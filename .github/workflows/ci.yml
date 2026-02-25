@@ -3,9 +3,12 @@ name: CI/CD – React Vite Production Pipeline
 on:
   pull_request:
     branches: [feature/venkatesh]
+    paths:
+      - 'client/**' 
   push:
-    branches:
-      - '**'
+    branches: [feature/venkatesh]
+    paths:
+      - 'client/**'
 
 permissions:
   contents: read
@@ -25,6 +28,9 @@ jobs:
     name: CI – Production Quality Gate
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: client
 
     steps:
       - name: Checkout Repository
