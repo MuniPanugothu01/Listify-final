@@ -118,7 +118,7 @@ const verifyRefreshToken = async (refreshToken) => {
       return null;
     }
 
-    const session = JSON.parse(tokenData);
+    const session = typeof tokenData === 'string' ? JSON.parse(tokenData) : tokenData;
     
     // Verify token matches stored token
     if (session.refreshToken !== refreshToken) {
@@ -171,7 +171,7 @@ const revokeRefreshToken = async (refreshToken) => {
     const tokenData = await redis.get(`refresh_token:${decoded.jti}`);
     
     if (tokenData) {
-      const session = JSON.parse(tokenData);
+      const session = typeof tokenData === 'string' ? JSON.parse(tokenData) : tokenData;
       
       // Remove from user sessions set in Redis
       await redis.srem(`user_sessions:${session.userId}`, decoded.jti);
@@ -281,7 +281,7 @@ const getUserSessions = async (userId) => {
     for (const tokenId of tokenIds) {
       const tokenData = await redis.get(`refresh_token:${tokenId}`);
       if (tokenData) {
-        const session = JSON.parse(tokenData);
+        const session = typeof tokenData === 'string' ? JSON.parse(tokenData) : tokenData;
         sessions.push({
           tokenId: session.tokenId,
           createdAt: session.createdAt,
@@ -313,14 +313,14 @@ const setRefreshTokenCookie = (res, refreshToken) => {
     secure: isProduction,  // HTTPS only in production
     sameSite: isProduction ? 'strict' : 'lax',
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-    path: '/api/auth/refresh', // Only sent to refresh endpoint
+    path: '/api/auth', // Sent to all auth endpoints (refresh, check, logout)
     domain: isProduction ? process.env.COOKIE_DOMAIN : undefined
   });
 
   logger.debug('🍪 Refresh token cookie set', {
     secure: isProduction,
     sameSite: isProduction ? 'strict' : 'lax',
-    path: '/api/auth/refresh'
+    path: '/api/auth'
   });
 };
 
@@ -333,7 +333,7 @@ const clearRefreshTokenCookie = (res) => {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
-    path: '/api/auth/refresh'
+    path: '/api/auth'
   });
 
   logger.debug('🍪 Refresh token cookie cleared');
@@ -341,11 +341,48 @@ const clearRefreshTokenCookie = (res) => {
 
 /**
  * Refresh access token using refresh token (Token Rotation)
+ * Uses a Redis lock (SETNX) to prevent concurrent refreshes
+ * from racing and creating orphaned tokens.
  * @param {string} refreshToken - JWT refresh token
  * @returns {Promise<Object|null>} New tokens or null if failed
  */
 const refreshTokens = async (refreshToken) => {
+  let lockKey = null;
   try {
+    // Decode to get jti for the lock key
+    const decodedJwt = jwt.decode(refreshToken);
+    if (!decodedJwt?.jti) return null;
+
+    lockKey = `refresh_lock:${decodedJwt.jti}`;
+
+    // Acquire a short-lived lock so only the first request proceeds.
+    // SETNX returns 1 if the key was set (lock acquired), 0 if it already existed.
+    const lockAcquired = await redis.set(lockKey, '1', { ex: 10, nx: true });
+
+    if (!lockAcquired) {
+      // Another request is already refreshing this exact token.
+      // Wait briefly and return the new tokens that the winner stored.
+      logger.info('🔒 Refresh lock exists — waiting for first request to finish', {
+        jti: decodedJwt.jti,
+      });
+
+      // Wait up to 5 seconds for the first request to complete
+      for (let i = 0; i < 10; i++) {
+        await new Promise((r) => setTimeout(r, 500));
+        const lockStillExists = await redis.get(lockKey);
+        if (!lockStillExists) break;
+      }
+
+      // The first request already rotated the token and the browser now has
+      // new cookies from that winning response. We can't return the new tokens
+      // here (the new refresh token is only in the cookie set by the first response),
+      // so return null. The client's shared queue ensures only one request actually
+      // triggers the refresh and all others just retry with the new access token.
+      return null;
+    }
+
+    // --- Lock acquired: proceed with rotation ---
+
     // Verify refresh token in Redis
     const session = await verifyRefreshToken(refreshToken);
     if (!session) {
@@ -364,7 +401,7 @@ const refreshTokens = async (refreshToken) => {
 
     logger.info('🔄 Token rotation complete', { 
       userId: session.userId,
-      oldToken: jwt.decode(refreshToken).jti,
+      oldToken: decodedJwt.jti,
       newToken: jwt.decode(newRefreshToken).jti
     });
 
@@ -375,6 +412,11 @@ const refreshTokens = async (refreshToken) => {
   } catch (error) {
     logger.error('❌ Error refreshing tokens:', error);
     return null;
+  } finally {
+    // Release the lock
+    if (lockKey) {
+      await redis.del(lockKey).catch(() => {});
+    }
   }
 };
 

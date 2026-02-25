@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { HiDotsHorizontal } from "react-icons/hi";
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser, clearError } from "../../redux/slices/authSlice";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import SocialAuth from "./SocialAuth";
 
 const Login = () => {
@@ -13,8 +13,6 @@ const Login = () => {
 
   // Get auth state from Redux
   const auth = useSelector((state) => state.auth);
-  // FIX: removed `token` from destructure — token is ALWAYS null (stored in HTTP-only cookie)
-  // The old code checked `success && token && user` which NEVER passed because token === null
   const { loading, error, success, user } = auth;
 
   const [showPassword, setShowPassword] = useState(false);
@@ -29,6 +27,8 @@ const Login = () => {
   const toastShownRef = useRef(false);
   // Track login method to show correct toast
   const loginMethodRef = useRef(null);
+  // Track if navigation has been performed
+  const navigationPerformedRef = useRef(false);
 
   // ============== ADD GLOBAL CSS ANIMATIONS ==============
   useEffect(() => {
@@ -55,7 +55,7 @@ const Login = () => {
 
   // Handle errors from Redux
   useEffect(() => {
-    console.log("Current auth state:", { loading, error, success, user });
+    console.log("Current auth state:", { loading, error, success, user: !!user });
 
     if (error && !toastShownRef.current) {
       console.log("Redux error detected:", error);
@@ -64,7 +64,7 @@ const Login = () => {
       toast.error(
         typeof error === "string"
           ? error
-          : "Login failed. Please check your credentials.",
+          : error?.message || "Login failed. Please check your credentials.",
         {
           duration: 5000,
           className: "toast-animation",
@@ -84,50 +84,70 @@ const Login = () => {
       success,
       user: !!user,
       loginMethod: loginMethodRef.current,
+      navigationPerformed: navigationPerformedRef.current,
     });
 
-    // FIX: removed `&& token` check — token is always null in Redux (it lives in HTTP-only cookie)
-    // Now correctly checks: success && user (user object is set after login)
-    if (
-      success &&
-      user &&
-      !toastShownRef.current &&
-      loginMethodRef.current === "email"
-    ) {
-      console.log("Email login successful, showing toast and navigating");
-      toastShownRef.current = true;
+    // FIX: Prevent multiple navigations
+    if (success && user && !navigationPerformedRef.current) {
+      console.log("Login successful, preparing navigation");
+      
+      if (loginMethodRef.current === "email" && !toastShownRef.current) {
+        console.log("Email login successful, showing toast");
+        toastShownRef.current = true;
 
-      toast.success("Login successful!", {
-        duration: 4000,
-        className: "toast-animation",
-      });
+        toast.success("Login successful!", {
+          duration: 2000,
+          className: "toast-animation",
+        });
 
-      if (rememberMe) {
-        localStorage.setItem("rememberMe", "true");
+        if (rememberMe) {
+          localStorage.setItem("rememberMe", "true");
+        }
+
+        // Set navigation flag
+        navigationPerformedRef.current = true;
+
+        const timer = setTimeout(() => {
+          console.log("Navigating to home page");
+          navigate("/");
+          loginMethodRef.current = null;
+          toastShownRef.current = false;
+          // Reset navigation flag after navigation
+          setTimeout(() => {
+            navigationPerformedRef.current = false;
+          }, 1000);
+        }, 1500);
+
+        return () => clearTimeout(timer);
       }
 
-      const timer = setTimeout(() => {
-        navigate("/");
-        loginMethodRef.current = null;
-        toastShownRef.current = false;
-      }, 2000);
+      if (loginMethodRef.current === "google" && !navigationPerformedRef.current) {
+        console.log("Google login successful - navigating");
+        
+        // Set navigation flag
+        navigationPerformedRef.current = true;
+        
+        const timer = setTimeout(() => {
+          console.log("Navigating to home page (Google)");
+          navigate("/");
+          loginMethodRef.current = null;
+          // Reset navigation flag after navigation
+          setTimeout(() => {
+            navigationPerformedRef.current = false;
+          }, 1000);
+        }, 500);
 
-      return () => clearTimeout(timer);
-    }
-
-    // FIX: removed `&& token` check for Google login path too
-    if (success && user && loginMethodRef.current === "google") {
-      console.log(
-        "Google login successful - navigating without duplicate toast",
-      );
-      const timer = setTimeout(() => {
-        navigate("/");
-        loginMethodRef.current = null;
-      }, 100);
-
-      return () => clearTimeout(timer);
+        return () => clearTimeout(timer);
+      }
     }
   }, [success, user, navigate, rememberMe]);
+
+  // Reset navigation flag when component unmounts
+  useEffect(() => {
+    return () => {
+      navigationPerformedRef.current = false;
+    };
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -166,8 +186,10 @@ const Login = () => {
 
     console.log("Form submitted with:", formData);
 
+    // Reset flags
     toastShownRef.current = false;
     loginMethodRef.current = "email";
+    navigationPerformedRef.current = false;
 
     if (!validateForm()) {
       toast.error("Please fix the errors in the form", {
@@ -198,6 +220,7 @@ const Login = () => {
           result.error || result.payload,
         );
         loginMethodRef.current = null;
+        navigationPerformedRef.current = false;
       }
     } catch (err) {
       console.error("Unexpected login error:", err);
@@ -206,25 +229,17 @@ const Login = () => {
         className: "toast-animation",
       });
       loginMethodRef.current = null;
+      navigationPerformedRef.current = false;
     }
   };
 
   const handleGoogleLoginStart = () => {
     loginMethodRef.current = "google";
+    navigationPerformedRef.current = false;
   };
 
   return (
     <div className="min-h-screen relative overflow-hidden">
-      <Toaster
-        position="top-right"
-        toastOptions={{
-          duration: 4000,
-          style: {
-            background: "#363636",
-            color: "#fff",
-          },
-        }}
-      />
 
       {/* Background Image Layer */}
       <div className="fixed inset-0 z-0">

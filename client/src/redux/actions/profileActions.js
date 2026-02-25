@@ -68,6 +68,7 @@ export const profileActions = {
 
       return { success: true, data: result, imageUrl: uploadResult.imageUrl };
     } catch (error) {
+      console.error("Profile image upload error:", error);
       dispatch(setImageUploading(false));
       dispatch(setImageUploadProgress(0));
       return { success: false, error: error.message };

@@ -17,6 +17,7 @@ const SocialAuth = ({ onSuccess, isSignUp = false, onLoginStart }) => {
   const [googleButtonReady, setGoogleButtonReady] = useState(false);
   const loginInProgress = useRef(false);
   const toastShown = useRef(false);
+  const navigationPerformed = useRef(false);
 
   // ============== ADD ANIMATION STYLES ==============
   useEffect(() => {
@@ -66,26 +67,36 @@ const SocialAuth = ({ onSuccess, isSignUp = false, onLoginStart }) => {
     return () => clearTimeout(timer);
   }, []);
 
+  // Reset navigation flag on unmount
+  useEffect(() => {
+    return () => {
+      navigationPerformed.current = false;
+    };
+  }, []);
+
   const handleGoogleSuccess = async (credentialResponse) => {
     try {
+      // Prevent multiple login attempts
+      if (loginInProgress.current || navigationPerformed.current) {
+        console.log("Login already in progress or navigation performed, skipping");
+        return;
+      }
+
       // Notify parent that Google login started
       if (onLoginStart) {
         onLoginStart();
       }
 
+      loginInProgress.current = true;
       toastShown.current = false;
+      navigationPerformed.current = false;
 
       if (onSuccess) {
         // Use custom success handler if provided (for SignUp)
+        loginInProgress.current = false;
         return onSuccess(credentialResponse);
       }
 
-      if (loginInProgress.current) {
-        console.log("Login already in progress, skipping");
-        return;
-      }
-
-      loginInProgress.current = true;
       setError("");
 
       const idToken = credentialResponse.credential;
@@ -100,24 +111,32 @@ const SocialAuth = ({ onSuccess, isSignUp = false, onLoginStart }) => {
 
       console.log("Google login result:", result);
 
-      // FIXED: Check for successful login correctly
-      // Backend now returns success: true and user object (no token in body)
+      // Check for successful login correctly
       if (result?.payload?.success === true && result?.payload?.user) {
         console.log("✅ Google login successful!");
 
-        // ============== ONLY ADD duration AND animation CLASS ==============
+        // Set navigation flag to prevent multiple navigations
+        navigationPerformed.current = true;
+
+        // Show success toast only once
         if (!toastShown.current) {
           toast.success("Google login successful!", {
-            duration: 4000,
+            duration: 2000,
             className: "toast-animation",
           });
           toastShown.current = true;
         }
 
-        // Short delay before navigation
+        // Navigate after a short delay
         setTimeout(() => {
+          console.log("Navigating to home page from Google login");
           navigate("/");
-        }, 2000);
+          loginInProgress.current = false;
+          // Reset navigation flag after navigation
+          setTimeout(() => {
+            navigationPerformed.current = false;
+          }, 1000);
+        }, 1500);
       } else {
         // Try to get error message from various places
         const errorMsg =
@@ -130,28 +149,30 @@ const SocialAuth = ({ onSuccess, isSignUp = false, onLoginStart }) => {
         setError(errorMsg);
 
         if (!toastShown.current) {
-          // ============== ONLY ADD duration AND animation CLASS ==============
           toast.error(errorMsg, {
             duration: 5000,
             className: "toast-animation",
           });
           toastShown.current = true;
         }
+        
+        loginInProgress.current = false;
+        navigationPerformed.current = false;
       }
     } catch (error) {
       console.error("Google Login Error:", error);
       setError(error.message || "Google login failed");
 
       if (!toastShown.current) {
-        // ============== ONLY ADD duration AND animation CLASS ==============
         toast.error("Google login failed. Please try again.", {
           duration: 5000,
           className: "toast-animation",
         });
         toastShown.current = true;
       }
-    } finally {
+      
       loginInProgress.current = false;
+      navigationPerformed.current = false;
     }
   };
 
@@ -160,7 +181,6 @@ const SocialAuth = ({ onSuccess, isSignUp = false, onLoginStart }) => {
     setError("Google authentication failed");
 
     if (!toastShown.current) {
-      // ============== ONLY ADD duration AND animation CLASS ==============
       toast.error(
         "Google authentication failed. Please check your Google Client ID configuration.",
         {
@@ -170,12 +190,17 @@ const SocialAuth = ({ onSuccess, isSignUp = false, onLoginStart }) => {
       );
       toastShown.current = true;
     }
+    
+    loginInProgress.current = false;
+    navigationPerformed.current = false;
   };
 
   // Custom Google button component (fallback)
   const CustomGoogleButton = () => (
     <button
       onClick={() => {
+        if (loginInProgress.current || navigationPerformed.current) return;
+        
         if (!googleButtonReady) {
           getGoogleClientIdAction();
         }
@@ -184,6 +209,7 @@ const SocialAuth = ({ onSuccess, isSignUp = false, onLoginStart }) => {
         }
       }}
       className="w-full flex items-center justify-center gap-3 bg-white border border-gray-300 hover:bg-gray-50 py-2.5 rounded-lg font-medium transition-colors shadow-sm"
+      disabled={loginInProgress.current}
     >
       <svg
         width="20"

@@ -316,7 +316,7 @@ export default function Hero() {
   };
 
   return (
-    <div className="lg:min-h-[600px] overflow-x-hidden relative">
+    <div className="lg:min-h-[600px] overflow-x-hidden relative mt-20">
       {/* Dark Overlay when search is active */}
       <div
         className={`fixed inset-0 bg-black z-40 transition-all duration-500 ease-in-out ${

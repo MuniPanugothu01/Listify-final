@@ -5,6 +5,7 @@ const { logger } = require('./logger');
 /**
  * Password strength requirements
  * - Minimum 8 characters
+ * - Maximum 128 characters
  * - At least 1 uppercase letter
  * - At least 1 lowercase letter
  * - At least 1 number
@@ -69,14 +70,17 @@ const checkPasswordStrength = (password) => {
   // Calculate password strength score (0-100)
   let strength = 0;
   
+  // Length contribution (max 30 points)
   if (password.length >= 8) strength += 10;
-  if (password.length >= 10) strength += 5;
-  if (password.length >= 12) strength += 5;
+  if (password.length >= 10) strength += 10;
+  if (password.length >= 12) strength += 10;
   
+  // Character type contributions
   if (/[A-Z]/.test(password)) strength += 15;
   if (/[a-z]/.test(password)) strength += 15;
-  if (/[0-9]/.test(password)) strength += 20;
+  if (/[0-9]/.test(password)) strength += 15;
   
+  // Special character contribution
   const specialCharCount = (password.match(new RegExp(`[${PASSWORD_REQUIREMENTS.specialChars.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')}]`, 'g')) || []).length;
   if (specialCharCount >= 1) strength += 15;
   if (specialCharCount >= 2) strength += 10;

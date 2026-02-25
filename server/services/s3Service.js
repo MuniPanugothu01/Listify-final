@@ -13,8 +13,23 @@ const sharp = require('sharp'); // For image optimization (install: npm install 
 class S3Service {
   constructor() {
     this.bucketName = process.env.AWS_S3_BUCKET_NAME;
-    this.bucketUrl = process.env.AWS_S3_BUCKET_URL;
-    this.cloudfrontUrl = process.env.AWS_CLOUDFRONT_URL;
+    const region = process.env.AWS_REGION || 'us-east-1';
+
+    // Build the canonical S3 URL from bucket name + region (always reliable)
+    const canonicalUrl = `https://${this.bucketName}.s3.${region}.amazonaws.com`;
+
+    // Only use env-provided URLs if they look like real URLs (not placeholders)
+    const envBucketUrl = process.env.AWS_S3_BUCKET_URL;
+    this.bucketUrl = (envBucketUrl && !envBucketUrl.includes('your-') && !envBucketUrl.includes('optional'))
+      ? envBucketUrl
+      : canonicalUrl;
+
+    const envCloudfrontUrl = process.env.AWS_CLOUDFRONT_URL;
+    this.cloudfrontUrl = (envCloudfrontUrl && !envCloudfrontUrl.includes('your-') && !envCloudfrontUrl.includes('optional'))
+      ? envCloudfrontUrl
+      : null;
+
+    logger.info(`📦 S3 Image URL base: ${this.cloudfrontUrl || this.bucketUrl}`);
   }
 
   /**
@@ -26,19 +41,18 @@ class S3Service {
    */
   async uploadProfileImage(fileBuffer, userId, mimeType) {
     try {
-      // Optimize image
-      const optimizedImage = await this.optimizeImage(fileBuffer);
+      // Optimize image (always outputs JPEG)
+      const { buffer: optimizedImage, contentType: optimizedType, extension: optimizedExt } = await this.optimizeImage(fileBuffer, mimeType);
       
-      // Generate unique filename
-      const fileExtension = mimeType.split('/')[1];
-      const fileName = `profiles/${userId}/${uuidv4()}.${fileExtension}`;
+      // Use the optimized format for filename and content type
+      const fileName = `profiles/${userId}/${uuidv4()}.${optimizedExt}`;
       
       // Upload to S3
       const command = new PutObjectCommand({
         Bucket: this.bucketName,
         Key: fileName,
         Body: optimizedImage,
-        ContentType: mimeType,
+        ContentType: optimizedType,
         CacheControl: 'max-age=31536000', // 1 year cache
         Metadata: {
           userId: userId,
@@ -74,18 +88,21 @@ class S3Service {
    * @param {Buffer} buffer - Image buffer
    * @returns {Promise<Buffer>} Optimized image buffer
    */
-  async optimizeImage(buffer) {
+  async optimizeImage(buffer, originalMimeType = 'image/jpeg') {
     try {
-      return await sharp(buffer)
+      const optimized = await sharp(buffer)
         .resize(500, 500, { // Resize to 500x500 max
           fit: 'cover',
           withoutEnlargement: true,
         })
         .jpeg({ quality: 80 }) // Convert to JPEG with 80% quality
         .toBuffer();
+      return { buffer: optimized, contentType: 'image/jpeg', extension: 'jpeg' };
     } catch (error) {
       logger.warn('Image optimization failed, using original:', error);
-      return buffer; // Return original if optimization fails
+      // Return original with its actual mime type
+      const ext = originalMimeType.split('/')[1] || 'jpeg';
+      return { buffer, contentType: originalMimeType, extension: ext };
     }
   }
 
@@ -213,7 +230,7 @@ class S3Service {
    */
   validateImage(file) {
     const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-    const maxSize = 5 * 1024 * 1024; // 5MB
+    const maxSize = 50 * 1024 * 1024; // 50MB
 
     if (!allowedTypes.includes(file.mimetype)) {
       return {
@@ -225,7 +242,7 @@ class S3Service {
     if (file.size > maxSize) {
       return {
         valid: false,
-        error: 'File too large. Maximum size is 5MB.',
+        error: 'File too large. Maximum size is 50MB.',
       };
     }
 

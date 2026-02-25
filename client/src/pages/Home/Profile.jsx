@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { 
   Bell, 
@@ -11,8 +11,7 @@ import {
   MessageCircle,
   Calendar,
 } from "lucide-react";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import toast from "react-hot-toast";
 
 // Import Redux actions
 import { fetchProfile, updateProfile, setProfilePicPreview, uploadProfileImage, fetchDevices, fetchLoginHistory } from "../../redux/slices/profileSlice";
@@ -31,14 +30,46 @@ import ActivitySection from "../../components/UserProfile/ActivitySection";
 export default function Profile() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { section: urlSection } = useParams();
   const dispatch = useDispatch();
+
+  // Map URL segments to internal section IDs
+  const sectionFromUrl = {
+    undefined: "home",
+    "profile": "personal",
+    "listings": "posts",
+    "saved": "saved",
+    "messages": "messages",
+    "devices": "devices",
+    "activity": "activity",
+    "overview": "profile-overview",
+    "alerts": "alerts",
+    "settings": "settings",
+    "security": "security",
+  };
+
+  // Reverse map: section ID -> URL segment
+  const sectionToUrl = {
+    "home": "",
+    "personal": "profile",
+    "posts": "listings",
+    "saved": "saved",
+    "messages": "messages",
+    "devices": "devices",
+    "activity": "activity",
+    "profile-overview": "overview",
+    "alerts": "alerts",
+    "settings": "settings",
+    "security": "security",
+  };
 
   // Redux state
   const { user: authUser } = useSelector((state) => state.auth);
   const { profile, profilePicPreview, loading: profileLoading, imageUploading, devices, loginHistory } = useSelector((state) => state.profile);
 
-  // Local state
-  const [activeSection, setActiveSection] = useState(location.state?.activeSection || "home");
+  // Derive initial active section from URL param
+  const initialSection = sectionFromUrl[urlSection] || location.state?.activeSection || "home";
+  const [activeSection, setActiveSection] = useState(initialSection);
   const [isEditing, setIsEditing] = useState(false);
   const [editData, setEditData] = useState({
     name: "",
@@ -78,13 +109,29 @@ export default function Profile() {
     }
   }, [profile]);
 
-  // Update active section from location state
+  // Sync active section from URL param changes
+  useEffect(() => {
+    const mapped = sectionFromUrl[urlSection];
+    if (mapped && mapped !== activeSection) {
+      setActiveSection(mapped);
+    }
+  }, [urlSection]);
+
+  // Update active section from location state (legacy support)
   useEffect(() => {
     if (location.state?.activeSection) {
       setActiveSection(location.state.activeSection);
       navigate(location.pathname, { replace: true, state: {} });
     }
   }, [location.state, navigate, location.pathname]);
+
+  // When activeSection changes, update the URL to match
+  const handleSetActiveSection = (sectionId) => {
+    setActiveSection(sectionId);
+    const urlSegment = sectionToUrl[sectionId];
+    const newPath = urlSegment ? `/dashboard/${urlSegment}` : "/dashboard";
+    navigate(newPath, { replace: true });
+  };
 
   const loadUserData = async () => {
     try {
@@ -205,7 +252,7 @@ export default function Profile() {
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-white shadow-sm border-b border-gray-200 px-4 md:px-6 py-3 md:py-4">
-        <div className="flex items-center justify-between max-w-7xl mx-auto">
+        <div className="flex items-center justify-between px-4">
           <div className="flex items-center gap-3 md:gap-4">
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -223,7 +270,7 @@ export default function Profile() {
 
           <div className="flex items-center gap-2 md:gap-4">
             <button 
-              onClick={() => setActiveSection('alerts')}
+              onClick={() => handleSetActiveSection('alerts')}
               className="relative p-2 rounded-xl hover:bg-gray-50 transition-colors"
             >
               <Bell className="w-5 h-5 text-gray-600" />
@@ -234,7 +281,7 @@ export default function Profile() {
               )}
             </button>
             
-            <div className="flex items-center gap-2 cursor-pointer" onClick={() => setActiveSection('personal')}>
+            <div className="flex items-center gap-2 cursor-pointer" onClick={() => handleSetActiveSection('personal')}>
               <img 
                 src={getProfileImagePreview()} 
                 alt="Profile" 
@@ -261,7 +308,7 @@ export default function Profile() {
           <div className="lg:w-64 xl:w-72 flex-shrink-0">
             <Sidebar 
               activeSection={activeSection}
-              setActiveSection={setActiveSection}
+              setActiveSection={handleSetActiveSection}
               counts={counts}
               isMobileMenuOpen={isMobileMenuOpen}
               setIsMobileMenuOpen={setIsMobileMenuOpen}
@@ -277,7 +324,7 @@ export default function Profile() {
                 myAlerts={myAlerts || []}
                 messages={conversations || []}
                 agendaEvents={agendaEvents}
-                onViewAll={setActiveSection}
+                onViewAll={handleSetActiveSection}
                 user={profile || authUser}
               />
             )}
@@ -458,7 +505,7 @@ export default function Profile() {
             <button
               key={item.id}
               onClick={() => {
-                setActiveSection(item.id);
+                handleSetActiveSection(item.id);
                 setIsMobileMenuOpen(false);
               }}
               className={`flex flex-col items-center justify-center py-2 rounded-lg transition-colors ${
@@ -474,18 +521,7 @@ export default function Profile() {
         </div>
       </div>
 
-      <ToastContainer
-        position="top-right"
-        autoClose={2000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
-      />
+
     </div>
   );
 }

@@ -14,24 +14,33 @@ const {
   validatePasswordSecurity,
   getPasswordRequirements,
 } = require("../middleware/validationMiddleware");
-const { protect, refreshToken, logout, logoutAll } = require("../middleware/authMiddleware");
+const {
+  protect,
+  refreshToken,
+  logout,
+  logoutAll,
+} = require("../middleware/authMiddleware");
 
 // ==================== PASSWORD SECURITY ENDPOINTS ====================
 router.get("/password-requirements", getPasswordRequirements);
-router.get("/password-expiration", protect, authController.checkPasswordExpiration);
+router.get(
+  "/password-expiration",
+  protect,
+  authController.checkPasswordExpiration,
+);
 
 // ==================== PROFILE IMAGE UPLOAD ROUTES ====================
 router.post(
   "/profile/upload-image",
   protect,
-  upload.single('image'),
-  authController.uploadProfileImage
+  upload.single("image"),
+  authController.uploadProfileImage,
 );
 
 router.post(
   "/profile/generate-upload-url",
   protect,
-  authController.generateUploadUrl
+  authController.generateUploadUrl,
 );
 
 // ==================== DEVICE & SESSION ROUTES ====================
@@ -80,7 +89,7 @@ router.put(
 router.post(
   "/setup-password",
   validatePasswordSecurity,
-  authController.setupPassword
+  authController.setupPassword,
 );
 
 // ==================== Legacy routes (keep for compatibility) ====================
@@ -102,7 +111,12 @@ router.post("/google/token", authController.googleTokenAuth);
 
 // ==================== Existing routes ====================
 router.post("/login", validateLogin, authController.login);
-router.post("/register-legacy", validateRegister, validatePasswordSecurity, authController.register);
+router.post(
+  "/register-legacy",
+  validateRegister,
+  validatePasswordSecurity,
+  authController.register,
+);
 
 // ==================== Refresh token & logout routes ====================
 router.post("/refresh", refreshToken);
@@ -112,8 +126,16 @@ router.get("/sessions", protect, tokenController.getUserSessions);
 router.delete("/sessions/:tokenId", protect, tokenController.revokeSession);
 
 // ==================== Admin routes ====================
-router.get("/admin/sessions/:userId", protect, tokenController.adminGetUserSessions);
-router.post("/admin/cleanup-tokens", protect, tokenController.adminCleanupTokens);
+router.get(
+  "/admin/sessions/:userId",
+  protect,
+  tokenController.adminGetUserSessions,
+);
+router.post(
+  "/admin/cleanup-tokens",
+  protect,
+  tokenController.adminCleanupTokens,
+);
 
 // ==================== Check authentication status ====================
 router.get("/check", authController.checkAuth);
@@ -134,5 +156,58 @@ router.post(
   validatePasswordSecurity,
   authController.changePassword,
 );
+
+// DEBUG: Check what's stored in Redis for a token
+router.get("/debug/check-token/:token", async (req, res) => {
+  try {
+    const redis = require("../config/redis");
+    const { token } = req.params;
+
+    console.log("🔍 Debug: Checking token:", token);
+
+    // Check all possible keys
+    const resetKey = `reset:${token}`;
+    const resetEmailKey = `reset_email:${token}`;
+
+    const resetData = await redis.get(resetKey);
+    const resetEmail = await redis.get(resetEmailKey);
+
+    console.log("📦 Reset key:", resetKey);
+    console.log("📦 Reset data type:", typeof resetData);
+    console.log("📦 Reset data:", resetData);
+    console.log("📦 Reset email:", resetEmail);
+
+    let parsedData = null;
+    let parseError = null;
+
+    if (resetData) {
+      try {
+        if (typeof resetData === "string") {
+          parsedData = JSON.parse(resetData);
+        } else {
+          parsedData = resetData;
+        }
+      } catch (e) {
+        parseError = e.message;
+        console.log("❌ Failed to parse resetData:", e.message);
+      }
+    }
+
+    res.json({
+      success: true,
+      token,
+      resetKey,
+      resetEmailKey,
+      resetDataType: typeof resetData,
+      resetData,
+      resetEmail,
+      parsedData,
+      parseError,
+    });
+  } catch (error) {
+    console.error("Debug error:", error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
 
 module.exports = router;

@@ -1,4 +1,5 @@
 import axios from "axios";
+import { resetPersistedState } from "../redux/store";
 
 // Use absolute URL to avoid issues
 const API_URL = "http://localhost:5000/api/auth";
@@ -15,7 +16,6 @@ const api = axios.create({
 });
 
 // Request interceptor - NO MANUAL TOKEN ADDITION
-// Tokens are automatically sent via cookies
 api.interceptors.request.use(
   (config) => {
     console.log(`🚀 Request: ${config.method.toUpperCase()} ${config.url}`);
@@ -27,60 +27,176 @@ api.interceptors.request.use(
   },
 );
 
-// Response interceptor - Handle token refresh automatically
-api.interceptors.response.use(
-  (response) => {
-    return response;
-  },
-  async (error) => {
-    const originalRequest = error.config;
+// ==================== SHARED TOKEN REFRESH LOGIC ====================
+// Single refresh queue shared across ALL axios instances to prevent
+// concurrent refresh calls that would invalidate each other via token rotation.
+let isRefreshing = false;
+let failedQueue = [];
 
-    // If error is 401 (Unauthorized) and not already retrying
-    if (error.response?.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true;
+const processQueue = (error, token = null) => {
+  failedQueue.forEach(prom => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve(token);
+    }
+  });
+  failedQueue = [];
+};
 
-      try {
-        // Try to refresh the token
-        // This calls the refresh endpoint which sets new cookies
-        await axios.post(
-          `${API_URL}/refresh`,
-          {},
-          {
-            withCredentials: true,
-          },
-        );
+/**
+ * Shared 401 handler — call this from ANY axios instance's response interceptor.
+ * It ensures only ONE refresh request happens at a time; all other 401 callers
+ * wait in a queue and retry once the single refresh completes.
+ *
+ * @param {AxiosError}    error           – the 401 error  
+ * @param {AxiosInstance} axiosInstance    – the instance to retry with  
+ * @returns {Promise}     retried response or rejection  
+ */
+export const handle401 = async (error, axiosInstance) => {
+  const originalRequest = error.config;
 
-        // Retry the original request
-        return api(originalRequest);
-      } catch (refreshError) {
-        // Refresh failed - redirect to login
-        console.error("Token refresh failed:", refreshError);
+  // Don't refresh on auth endpoints themselves
+  if (
+    originalRequest.url.includes('/login') ||
+    originalRequest.url.includes('/register') ||
+    originalRequest.url.includes('/google') ||
+    originalRequest.url.includes('/refresh')
+  ) {
+    return Promise.reject(error);
+  }
 
-        // Clear any stored user data
-        localStorage.removeItem("user");
-        localStorage.removeItem("persist:root");
+  // If already refreshing, queue this request
+  if (isRefreshing) {
+    return new Promise((resolve, reject) => {
+      failedQueue.push({ resolve, reject });
+    }).then(() => axiosInstance(originalRequest))
+      .catch(err => Promise.reject(err));
+  }
 
-        // Redirect to login page
-        if (!window.location.pathname.includes("/signin") && 
-            !window.location.pathname.includes("/login") &&
-            !window.location.pathname.includes("/signup")) {
-          window.location.href = "/signin";
-        }
+  originalRequest._retry = true;
+  isRefreshing = true;
 
-        return Promise.reject(refreshError);
+  try {
+    await _doRefreshRequest();
+    console.log("✅ Token refreshed successfully, retrying queued requests");
+    processQueue(null);
+    return axiosInstance(originalRequest);
+  } catch (refreshError) {
+    console.error("❌ Token refresh failed:", refreshError.message);
+    processQueue(refreshError);
+
+    // Only force-logout when the server explicitly says the refresh token
+    // is gone (expired / revoked).  Network blips should NOT log the user out.
+    const refreshStatus = refreshError.response?.status;
+    const refreshCode  = refreshError.response?.data?.code;
+
+    if (
+      refreshStatus === 401 &&
+      (refreshCode === 'INVALID_REFRESH_TOKEN' || refreshCode === 'NO_REFRESH_TOKEN')
+    ) {
+      const currentPath = window.location.pathname;
+      if (
+        !currentPath.includes('/signin') &&
+        !currentPath.includes('/login') &&
+        !currentPath.includes('/signup') &&
+        !currentPath.includes('/forgot-password')
+      ) {
+        resetPersistedState();
+        window.location.href = "/signin";
       }
     }
 
-    // Handle other errors
-    console.error("API Error:", {
-      status: error.response?.status,
-      data: error.response?.data,
-      message: error.message,
-    });
+    return Promise.reject(refreshError);
+  } finally {
+    isRefreshing = false;
+  }
+};
 
-    return Promise.reject(error);
-  },
-);
+/**
+ * Internal helper — makes the actual refresh POST request.
+ * Shared between handle401 and doRefresh so there's only one code-path.
+ */
+const _doRefreshRequest = () =>
+  axios.post(
+    `${API_URL}/refresh`,
+    {},
+    { withCredentials: true, timeout: 10000 }
+  );
+
+/**
+ * Proactive refresh — call from useTokenRefresh or anywhere else.
+ * Uses the same isRefreshing / failedQueue as handle401 so that
+ * a background refresh never races with a 401-triggered refresh.
+ */
+export const doRefresh = () => {
+  if (isRefreshing) {
+    // A refresh is already in flight — just wait for it
+    return new Promise((resolve, reject) => {
+      failedQueue.push({ resolve, reject });
+    });
+  }
+
+  isRefreshing = true;
+
+  return _doRefreshRequest()
+    .then((res) => {
+      processQueue(null);
+      return res;
+    })
+    .catch((err) => {
+      processQueue(err);
+      throw err;
+    })
+    .finally(() => {
+      isRefreshing = false;
+    });
+};
+
+/**
+ * Helper: build a standard error-transform interceptor for any axios instance.
+ */
+const createResponseInterceptor = (axiosInstance, label = "API") => {
+  axiosInstance.interceptors.response.use(
+    (response) => response,
+    async (error) => {
+      const originalRequest = error.config;
+
+      console.error(`${label} Error:`, {
+        status: error.response?.status,
+        data: error.response?.data,
+        url: originalRequest?.url,
+      });
+
+      // 401 → delegate to the shared refresh handler
+      if (error.response?.status === 401 && !originalRequest._retry) {
+        return handle401(error, axiosInstance);
+      }
+
+      // Transform non-401 errors into a consistent shape
+      let errorResponse = {
+        success: false,
+        message: "An error occurred",
+        status: error.response?.status || 500,
+      };
+
+      if (error.response?.data) {
+        const d = error.response.data;
+        if (typeof d === 'string')      errorResponse.message = d;
+        else if (d.message)             errorResponse.message = d.message;
+        else if (d.error)               errorResponse.message = d.error;
+        if (d.errors)    errorResponse.errors   = d.errors;
+        if (d.strength)  errorResponse.strength = d.strength;
+        if (d.token)     errorResponse.token    = d.token;
+      }
+
+      return Promise.reject(errorResponse);
+    }
+  );
+};
+
+// Apply the shared interceptor to the main api instance
+createResponseInterceptor(api, "Auth API");
 
 // Auth API methods - NO TOKEN HANDLING, just make requests
 export const authAPI = {
@@ -120,7 +236,6 @@ export const authAPI = {
   },
 
   // OTP Registration - Resend OTP
-  // FIX: receives email string directly, wraps into { email } here
   resendOTP: (email) => {
     return api.post(
       "/register/resend-otp",
@@ -135,17 +250,14 @@ export const authAPI = {
   },
 
   // ==================== PROFILE APIS ====================
-  // Get user profile
   getProfile: () => {
     return api.get("/profile", { withCredentials: true });
   },
 
-  // Update profile
   updateProfile: (userData) => {
     return api.put("/update-profile", userData, { withCredentials: true });
   },
 
-  // Upload profile image (multipart/form-data) with progress tracking
   uploadProfileImage: (formData, onProgress) => {
     return api.post("/profile/upload-image", formData, {
       withCredentials: true,
@@ -163,57 +275,47 @@ export const authAPI = {
     });
   },
 
-  // Generate upload URL for direct S3 upload
   generateUploadUrl: (fileType) => {
     return api.post("/profile/generate-upload-url", { fileType }, { withCredentials: true });
   },
 
   // ==================== DEVICE & SESSION APIS ====================
-  // Get user devices
   getDevices: () => {
     return api.get("/devices", { withCredentials: true });
   },
 
-  // Revoke device
   revokeDevice: (deviceId) => {
     return api.delete(`/devices/${deviceId}`, { withCredentials: true });
   },
 
-  // Get login history
   getLoginHistory: () => {
     return api.get("/login-history", { withCredentials: true });
   },
 
-  // Get active sessions
   getSessions: () => {
     return api.get("/sessions", { withCredentials: true });
   },
 
-  // Revoke specific session
   revokeSession: (tokenId) => {
     return api.delete(`/sessions/${tokenId}`, { withCredentials: true });
   },
 
   // ==================== PASSWORD MANAGEMENT APIS ====================
-  // Change password
   changePassword: (passwordData) => {
     return api.post("/change-password", passwordData, {
       withCredentials: true,
     });
   },
 
-  // Get password requirements
   getPasswordRequirements: () => {
     return api.get("/password-requirements", { withCredentials: true });
   },
 
-  // Check password expiration
   checkPasswordExpiration: () => {
     return api.get("/password-expiration", { withCredentials: true });
   },
 
   // ==================== FORGOT PASSWORD APIS ====================
-  // FIX: receives email string directly, wraps into { email } here
   initiateForgotPassword: (email) => {
     return api.post(
       "/forgot-password/initiate",
@@ -222,14 +324,12 @@ export const authAPI = {
     );
   },
 
-  // Verify forgot password OTP
   verifyForgotPasswordOTP: (otpData) => {
     return api.post("/forgot-password/verify-otp", otpData, {
       withCredentials: true,
     });
   },
 
-  // FIX: receives email string directly, wraps into { email } here
   resendForgotPasswordOTP: (email) => {
     return api.post(
       "/forgot-password/resend-otp",
@@ -238,55 +338,46 @@ export const authAPI = {
     );
   },
 
-  // FIX: increased timeout to 60s — bcrypt hashing + Redis + MongoDB calls can be slow
   resetPasswordWithToken: (resetToken, email, password, confirmPassword) => {
     return api.put(
       `/reset-password/${resetToken}`,
       { email, password, confirmPassword },
       {
         withCredentials: true,
-        timeout: 60000, // 60 seconds for this call
+        timeout: 60000,
       },
     );
   },
 
-  // Legacy forgot password
   legacyForgotPassword: (email) => {
     return api.post("/forgot-password", { email }, { withCredentials: true });
   },
 
-  // Legacy reset password
   legacyResetPassword: (resetToken, password) => {
     return api.put(`/reset-password-legacy/${resetToken}`, { password }, { withCredentials: true });
   },
 
-  // Legacy register
   legacyRegister: (userData) => {
     return api.post("/register-legacy", userData, { withCredentials: true });
   },
 
-  // Setup password (for users without password)
   setupPassword: (passwordData) => {
     return api.post("/setup-password", passwordData, { withCredentials: true });
   },
 
   // ==================== SESSION MANAGEMENT APIS ====================
-  // Logout from current device
   logout: () => {
     return api.post("/logout", {}, { withCredentials: true });
   },
 
-  // Logout from all devices
   logoutAll: () => {
     return api.post("/logout-all", {}, { withCredentials: true });
   },
 
-  // Refresh token manually (usually handled automatically)
   refreshToken: () => {
     return api.post("/refresh", {}, { withCredentials: true });
   },
 
-  // Check authentication status
   checkAuth: () => {
     return api.get("/check", { withCredentials: true });
   },
@@ -302,7 +393,7 @@ const listingsApi = axios.create({
   withCredentials: true,
 });
 
-// Apply same interceptors
+// Apply shared interceptors
 listingsApi.interceptors.request.use(
   (config) => {
     console.log(`🚀 Listings Request: ${config.method.toUpperCase()} ${config.url}`);
@@ -310,70 +401,45 @@ listingsApi.interceptors.request.use(
   },
   (error) => Promise.reject(error)
 );
-
-listingsApi.interceptors.response.use(
-  (response) => response,
-  async (error) => {
-    if (error.response?.status === 401 && !error.config._retry) {
-      error.config._retry = true;
-      try {
-        await axios.post(`${API_URL}/refresh`, {}, { withCredentials: true });
-        return listingsApi(error.config);
-      } catch (refreshError) {
-        return Promise.reject(refreshError);
-      }
-    }
-    return Promise.reject(error);
-  }
-);
+createResponseInterceptor(listingsApi, "Listings API");
 
 export const listingsAPI = {
-  // Get my listings
   getMyListings: () => {
     return listingsApi.get("/my-posts", { withCredentials: true });
   },
 
-  // Get saved items
   getSavedItems: () => {
     return listingsApi.get("/saved", { withCredentials: true });
   },
 
-  // Toggle save item
   toggleSaveItem: (itemId) => {
     return listingsApi.post(`/${itemId}/toggle-save`, {}, { withCredentials: true });
   },
 
-  // Get alerts
   getAlerts: () => {
     return listingsApi.get("/alerts", { withCredentials: true });
   },
 
-  // Create alert
   createAlert: (alertData) => {
     return listingsApi.post("/alerts", alertData, { withCredentials: true });
   },
 
-  // Delete alert
   deleteAlert: (alertId) => {
     return listingsApi.delete(`/alerts/${alertId}`, { withCredentials: true });
   },
 
-  // Create new listing
   createListing: (listingData) => {
     return listingsApi.post("/", listingData, { withCredentials: true });
   },
 
-  // Update listing
   updateListing: (listingId, listingData) => {
     return listingsApi.put(`/${listingId}`, listingData, { withCredentials: true });
   },
 
-  // Delete listing
   deleteListing: (listingId) => {
     return listingsApi.delete(`/${listingId}`, { withCredentials: true });
   },
 
-  // Get listing by ID
   getListingById: (listingId) => {
     return listingsApi.get(`/${listingId}`, { withCredentials: true });
   },
@@ -389,7 +455,7 @@ const messagesApi = axios.create({
   withCredentials: true,
 });
 
-// Apply same interceptors
+// Apply shared interceptors
 messagesApi.interceptors.request.use(
   (config) => {
     console.log(`🚀 Messages Request: ${config.method.toUpperCase()} ${config.url}`);
@@ -397,55 +463,33 @@ messagesApi.interceptors.request.use(
   },
   (error) => Promise.reject(error)
 );
-
-messagesApi.interceptors.response.use(
-  (response) => response,
-  async (error) => {
-    if (error.response?.status === 401 && !error.config._retry) {
-      error.config._retry = true;
-      try {
-        await axios.post(`${API_URL}/refresh`, {}, { withCredentials: true });
-        return messagesApi(error.config);
-      } catch (refreshError) {
-        return Promise.reject(refreshError);
-      }
-    }
-    return Promise.reject(error);
-  }
-);
+createResponseInterceptor(messagesApi, "Messages API");
 
 export const messagesAPI = {
-  // Get conversations
   getConversations: () => {
     return messagesApi.get("/conversations", { withCredentials: true });
   },
 
-  // Get messages for a conversation
   getMessages: (conversationId) => {
     return messagesApi.get(`/${conversationId}`, { withCredentials: true });
   },
 
-  // Send message
   sendMessage: (conversationId, content) => {
     return messagesApi.post(`/${conversationId}`, { content }, { withCredentials: true });
   },
 
-  // Mark conversation as read
   markAsRead: (conversationId) => {
     return messagesApi.put(`/${conversationId}/read`, {}, { withCredentials: true });
   },
 
-  // Create new conversation
   createConversation: (recipientId, initialMessage) => {
     return messagesApi.post("/conversations", { recipientId, message: initialMessage }, { withCredentials: true });
   },
 
-  // Delete conversation
   deleteConversation: (conversationId) => {
     return messagesApi.delete(`/${conversationId}`, { withCredentials: true });
   },
 
-  // Get conversation by ID
   getConversationById: (conversationId) => {
     return messagesApi.get(`/conversations/${conversationId}`, { withCredentials: true });
   },
@@ -453,12 +497,10 @@ export const messagesAPI = {
 
 // ==================== ADMIN APIS ====================
 export const adminAPI = {
-  // Get user sessions (admin)
   getUserSessions: (userId) => {
     return api.get(`/admin/sessions/${userId}`, { withCredentials: true });
   },
 
-  // Cleanup expired tokens (admin)
   cleanupTokens: () => {
     return api.post("/admin/cleanup-tokens", {}, { withCredentials: true });
   },

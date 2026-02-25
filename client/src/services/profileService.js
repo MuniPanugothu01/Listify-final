@@ -1,4 +1,5 @@
 import axios from "axios";
+import { handle401 } from "./api";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // FIX: Do NOT import from "./api" — its default export is:
@@ -26,42 +27,15 @@ profileApi.interceptors.request.use(
 );
 
 // ── Response interceptor ──────────────────────────────────────────────────────
-// On 401: attempt ONE silent token refresh, then retry the original request.
-// Only redirect to /signin if the refresh itself also fails.
+// Uses the SHARED refresh queue from api.js so that concurrent 401s across
+// different axios instances don't each try to rotate the refresh token.
 profileApi.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
 
     if (error.response?.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true;
-
-      try {
-        // POST /refresh sets new accessToken + refreshToken cookies server-side.
-        // Because withCredentials:true, the browser sends + receives cookies
-        // automatically — no manual header injection needed.
-        await axios.post(`${API_URL}/refresh`, {}, { withCredentials: true });
-
-        // Retry original request — new cookie is now attached automatically
-        return profileApi(originalRequest);
-      } catch (refreshError) {
-        // Refresh also failed → user must log in again
-        console.error("Profile API: token refresh failed");
-        localStorage.removeItem("user");
-        localStorage.removeItem("persist:root");
-
-        const { pathname } = window.location;
-        const onAuthPage =
-          pathname.includes("/signin") ||
-          pathname.includes("/login") ||
-          pathname.includes("/signup");
-
-        if (!onAuthPage) {
-          window.location.href = "/signin";
-        }
-
-        return Promise.reject(refreshError);
-      }
+      return handle401(error, profileApi);
     }
 
     console.error("Profile API Error:", {
@@ -121,8 +95,24 @@ export const profileAPI = {
   getLoginHistory: () => profileApi.get("/login-history"),
 
   /** POST /api/auth/change-password → { success, message } */
-  changePassword: (passwordData) =>
-    profileApi.post("/change-password", passwordData),
+  changePassword: (passwordData) => {
+    console.log("🔑 Sending change password request with data:", {
+      currentPassword: passwordData.currentPassword ? "****" : "missing",
+      newPassword: passwordData.newPassword ? "****" : "missing",
+      confirmNewPassword: passwordData.confirmPassword || passwordData.confirmNewPassword ? "****" : "missing"
+    });
+    
+    // FIX: Transform the data to match backend expectations
+    // Backend expects: currentPassword, newPassword, confirmNewPassword
+    // Frontend sends: currentPassword, newPassword, confirmPassword
+    const transformedData = {
+      currentPassword: passwordData.currentPassword,
+      newPassword: passwordData.newPassword,
+      confirmNewPassword: passwordData.confirmPassword || passwordData.confirmNewPassword
+    };
+    
+    return profileApi.post("/change-password", transformedData);
+  },
 
   /** GET /api/auth/password-requirements → { success, requirements } */
   getPasswordRequirements: () => profileApi.get("/password-requirements"),

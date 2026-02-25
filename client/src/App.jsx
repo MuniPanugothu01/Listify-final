@@ -6,11 +6,12 @@ import {
   useLocation,
 } from "react-router-dom";
 import { GoogleOAuthProvider } from "@react-oauth/google";
+import { useTokenRefresh } from "./hooks/useTokenRefresh";
 
 // Import Loading Spinner Component
 import LoadingSpinner from "./components/LoadingSpinner.jsx"; // Make sure path is correct
 
-import Navbar from "./pages/Home/Navbar.jsx";
+import Navbar from "./components/UserProfile/Navbar.jsx";
 import Hero from "./pages/Home/Hero.jsx";
 import Heading from "./pages/Home/Heading.jsx";
 import Category from "./pages/Home/Category.jsx";
@@ -84,7 +85,7 @@ import Profile from "./pages/Home/Profile.jsx";
 // ChatBot
 import ChatBot from "./components/ChatBot.jsx";
 import { ScrollProgress } from "./components/ui/scroll-progress.jsx";
-import { Toaster } from "react-hot-toast";
+import { Toaster, ToastBar } from "react-hot-toast";
 
 // Get Google Client ID from environment
 const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
@@ -108,6 +109,10 @@ const AppContent = () => {
   const [isLoading, setIsLoading] = useState(true);
   const location = useLocation();
 
+  // Proactive background token refresh — keeps the user logged in
+  // as long as the refresh token (7 days) is valid
+  useTokenRefresh();
+
   // Initial app loading
   useEffect(() => {
     // Simulate initial app loading (you can remove this and set isLoading to false if not needed)
@@ -117,7 +122,7 @@ const AppContent = () => {
 
     return () => clearTimeout(timer);
   }, []);
-
+  
   // Check if current route should hide navbar and footer
   const hideNavbarFooterPaths = [
     "/signup",
@@ -175,7 +180,58 @@ const AppContent = () => {
 
       {/* Main Content */}
       <main className="flex-grow">
-        <Toaster position="top-right" />
+        <Toaster
+          position="top-center"
+          reverseOrder={false}
+          gutter={12}
+          toastOptions={{
+            duration: 4000,
+            style: {
+              background: "#fefefa",
+              color: "#1a1a1a",
+              padding: "14px 20px",
+              borderRadius: "12px",
+              fontSize: "14px",
+              fontWeight: "500",
+              boxShadow: "0 8px 30px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04)",
+              border: "1px solid rgba(0, 0, 0, 0.06)",
+              maxWidth: "420px",
+              lineHeight: "1.5",
+            },
+            success: {
+              duration: 3000,
+              iconTheme: {
+                primary: "#16a34a",
+                secondary: "#ffffff",
+              },
+              style: {
+                borderLeft: "4px solid #16a34a",
+              },
+            },
+            error: {
+              duration: 4500,
+              iconTheme: {
+                primary: "#dc2626",
+                secondary: "#ffffff",
+              },
+              style: {
+                borderLeft: "4px solid #dc2626",
+              },
+            },
+          }}
+        >
+          {(t) => (
+            <div
+              style={{
+                animation: t.visible
+                  ? "toastEnter 0.8s cubic-bezier(0.16, 1, 0.3, 1)"
+                  : "toastExit 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards",
+              }}
+            >
+              <ToastBar toast={t} />
+            </div>
+          )}
+        </Toaster>
         <Routes>
           {/* Home */}
           <Route
@@ -254,8 +310,9 @@ const AppContent = () => {
           <Route path="/vehicles/:id" element={<VehicleDetail />} />
           
 
-          {/* Profile */}
+          {/* Profile / Dashboard */}
           <Route path="/dashboard" element={<Profile />} />
+          <Route path="/dashboard/:section" element={<Profile />} />
 
           {/* Placeholder Pages */}
           <Route path="/marketplace" element={<div>Marketplace Page</div>} />
