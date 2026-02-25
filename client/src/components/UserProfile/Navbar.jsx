@@ -255,8 +255,8 @@ const Navbar = () => {
     if (path === "/logout") {
       try {
         closeProfileDropdown();
-        const { logout } = await import("../../redux/actions/authActions");
-        await dispatch(logout());
+        const { authActions } = await import("../../redux/actions/authActions");
+        await dispatch(authActions.logout());
         toast.success("Logged out successfully");
         navigate("/");
       } catch (error) {
@@ -1206,7 +1206,7 @@ const Navbar = () => {
                             {userEmail}
                           </p>
                           {googleUser && (
-                            <span className="text-xs text-blue-500 font-medium">
+                            <span className="text-xs text-[#27BB97] font-medium">
                               (Google)
                             </span>
                           )}
@@ -1219,7 +1219,7 @@ const Navbar = () => {
                           <button
                             key={index}
                             onClick={() => handleProfileMenuItemClick(item.path)}
-                            className="profile-dropdown-link w-full flex items-center justify-between gap-3 px-4 py-3 text-sm text-gray-700 hover:text-blue-600 font-medium"
+                            className="profile-dropdown-link w-full flex items-center justify-between gap-3 px-4 py-3 text-sm text-gray-700 hover:text-[#27BB97] font-medium"
                           >
                             <div className="flex items-center gap-3">
                               <item.icon size={16} />
