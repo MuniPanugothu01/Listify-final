@@ -203,16 +203,20 @@ const shutdown = async (signal) => {
 process.on("SIGTERM", () => shutdown("SIGTERM"));
 process.on("SIGINT", () => shutdown("SIGINT"));
 
-// Handle uncaught exceptions
+// Handle uncaught exceptions — these indicate a truly broken state,
+// so we do shut down (and let PM2 / Docker restart the process).
 process.on("uncaughtException", (err) => {
   console.error("❌ Uncaught Exception:", err);
   shutdown("UNCAUGHT_EXCEPTION");
 });
 
-// Handle unhandled rejections
-process.on("unhandledRejection", (err) => {
-  console.error("❌ Unhandled Rejection:", err);
-  shutdown("UNHANDLED_REJECTION");
+// Handle unhandled rejections — these are often transient (e.g. MongoDB
+// connection blip, Redis timeout).  DON'T crash — just log and continue.
+// Crashing here kills the whole server and logs out every user.
+process.on("unhandledRejection", (reason, promise) => {
+  console.error("⚠️ Unhandled Rejection (non-fatal, server continues):", reason);
+  // In production we keep running.  In development you may want to
+  // investigate, but we still don't crash.
 });
 
 module.exports = app;
