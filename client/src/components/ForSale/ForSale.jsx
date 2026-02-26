@@ -1,6 +1,6 @@
 import React from 'react';
 import ForSaleHero from './ForSaleHero';
-import ForSaleSubNavbar from './ForSaleSubNavbar.jsx';
+import SubNavbar from './ForSaleSubNavbar.jsx';
 import ForSaleListing from './ForSaleListing.jsx'; 
 
 export default function ForSale() {
@@ -11,6 +11,7 @@ export default function ForSale() {
       <ForSaleSubNavbar/>
       <ForSaleHero />
       <ForSaleListing/>
+   
     </div>
   );
 }
