@@ -115,14 +115,45 @@ export const handle401 = async (error, axiosInstance) => {
 
 /**
  * Internal helper — makes the actual refresh POST request.
- * Shared between handle401 and doRefresh so there's only one code-path.
+ * Retries once on 503 (transient server error) after a short delay.
  */
-const _doRefreshRequest = () =>
-  axios.post(
-    `${API_URL}/refresh`,
-    {},
-    { withCredentials: true, timeout: 10000 }
-  );
+const _doRefreshRequest = async () => {
+  try {
+    return await axios.post(
+      `${API_URL}/refresh`,
+      {},
+      { withCredentials: true, timeout: 10000 }
+    );
+  } catch (error) {
+    const status = error.response?.status;
+    const code = error.response?.data?.code;
+
+    // 503 = server says "temporarily unavailable, retry" — wait 2s and try once more
+    // 500 with SERVER_ERROR = transient crash — also retry once
+    if (status === 503 || (status === 500 && code === 'SERVER_ERROR')) {
+      console.warn("🔄 Refresh got transient error, retrying in 2s...");
+      await new Promise(r => setTimeout(r, 2000));
+      return axios.post(
+        `${API_URL}/refresh`,
+        {},
+        { withCredentials: true, timeout: 10000 }
+      );
+    }
+
+    // Network error (server completely down) — retry once after 3s
+    if (!error.response) {
+      console.warn("🔄 Refresh got network error, retrying in 3s...");
+      await new Promise(r => setTimeout(r, 3000));
+      return axios.post(
+        `${API_URL}/refresh`,
+        {},
+        { withCredentials: true, timeout: 10000 }
+      );
+    }
+
+    throw error;
+  }
+};
 
 /**
  * Proactive refresh — call from useTokenRefresh or anywhere else.
