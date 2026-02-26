@@ -36,7 +36,11 @@ const generateSecureSecret = () => {
 };
 
 // ============== MongoDB Session Store - FIXED ==============
-let store;
+// We use a proxy so that when the underlying store is swapped at runtime
+// (e.g. MongoDB error → MemoryStore), the session middleware automatically
+// delegates to the new store without needing to restart the server.
+const MemoryStore = require("express-session").MemoryStore;
+let _actualStore;
 
 try {
   const storeOptions = {
@@ -44,7 +48,6 @@ try {
     collection: "sessions",
     expires: 1000 * 60 * 60 * 24 * 7, // 7 days
     connectionOptions: {
-      // REMOVED deprecated options
       ssl: true,
       tls: true,
       maxPoolSize: 5,
@@ -53,27 +56,36 @@ try {
     },
   };
 
-  store = new MongoDBStore(storeOptions);
+  _actualStore = new MongoDBStore(storeOptions);
 
-  store.on("error", function (error) {
+  _actualStore.on("error", function (error) {
     console.error("❌ MongoDB Session Store Error:", error.message);
     console.log("⚠️ Falling back to MemoryStore for sessions");
-    
-    // Fallback to MemoryStore
-    const MemoryStore = require("express-session").MemoryStore;
-    store = new MemoryStore();
+    _actualStore = new MemoryStore();
   });
 
-  store.on("connected", () => {
+  _actualStore.on("connected", () => {
     console.log("✅ MongoDB Session Store connected");
   });
 
 } catch (error) {
   console.error("❌ Failed to create MongoDB session store:", error.message);
   console.log("⚠️ Using MemoryStore as fallback");
-  const MemoryStore = require("express-session").MemoryStore;
-  store = new MemoryStore();
+  _actualStore = new MemoryStore();
 }
+
+// Proxy delegates every property/method access to _actualStore so
+// that hot-swapping the underlying store works transparently.
+const store = new Proxy({}, {
+  get(_, prop) {
+    const val = _actualStore[prop];
+    return typeof val === 'function' ? val.bind(_actualStore) : val;
+  },
+  set(_, prop, value) {
+    _actualStore[prop] = value;
+    return true;
+  },
+});
 
 // Session configuration
 const sessionConfig = {
@@ -116,7 +128,7 @@ app.get("/health", (req, res) => {
     environment: process.env.NODE_ENV,
     database: dbStatus,
     redis: "connected",
-    sessionStore: store.constructor.name === "MongoDBStore" ? "MongoDB" : "MemoryStore"
+    sessionStore: _actualStore.constructor.name === "MongoDBStore" ? "MongoDB" : "MemoryStore"
   });
 });
 
@@ -170,7 +182,7 @@ const server = app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
   console.log(`🌐 Environment: ${process.env.NODE_ENV}`);
   console.log(`🍪 Cookie parser enabled`);
-  console.log(`📝 Session store: ${store.constructor.name === 'MongoDBStore' ? 'MongoDB' : 'MemoryStore'}`);
+  console.log(`📝 Session store: ${_actualStore.constructor.name === 'MongoDBStore' ? 'MongoDB' : 'MemoryStore'}`);
 });
 
 // ============== PRODUCTION GRACEFUL SHUTDOWN ==============

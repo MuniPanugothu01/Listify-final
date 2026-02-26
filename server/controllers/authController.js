@@ -1245,9 +1245,14 @@ exports.checkAuth = async (req, res) => {
     const { accessToken } = req.cookies;
 
     if (!accessToken) {
+      // The access token cookie may have expired (15 min maxAge) while
+      // the refresh token (7 days, path=/api/auth) is still valid.
+      // Return ACCESS_TOKEN_EXPIRED so the client keeps the persisted
+      // user state and triggers a refresh instead of logging out.
       return res.status(200).json({
         success: true,
         isAuthenticated: false,
+        code: 'ACCESS_TOKEN_EXPIRED',
       });
     }
 
