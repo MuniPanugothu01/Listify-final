@@ -1,13 +1,9 @@
 const path = require("path");
 require("dotenv").config({ path: path.join(__dirname, ".env") });
 const express = require("express");
-const session = require("express-session");
-const MongoDBStore = require("connect-mongodb-session")(session);
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
-const crypto = require("crypto");
 const connectDB = require("./config/database");
-const passport = require("./config/passport");
 const mongoose = require("mongoose");
 const redis = require("./config/redis");
 
@@ -30,83 +26,6 @@ app.use(express.urlencoded({ extended: true }));
 // Cookie parser
 app.use(cookieParser());
 
-// Generate secure session secret
-const generateSecureSecret = () => {
-  return process.env.SESSION_SECRET || crypto.randomBytes(64).toString("hex");
-};
-
-// ============== MongoDB Session Store - FIXED ==============
-// We use a proxy so that when the underlying store is swapped at runtime
-// (e.g. MongoDB error → MemoryStore), the session middleware automatically
-// delegates to the new store without needing to restart the server.
-const MemoryStore = require("express-session").MemoryStore;
-let _actualStore;
-
-try {
-  const storeOptions = {
-    uri: process.env.MONGODB_URI,
-    collection: "sessions",
-    expires: 1000 * 60 * 60 * 24 * 7, // 7 days
-    connectionOptions: {
-      ssl: true,
-      tls: true,
-      maxPoolSize: 5,
-      serverSelectionTimeoutMS: 5000,
-      socketTimeoutMS: 45000,
-    },
-  };
-
-  _actualStore = new MongoDBStore(storeOptions);
-
-  _actualStore.on("error", function (error) {
-    console.error("❌ MongoDB Session Store Error:", error.message);
-    console.log("⚠️ Falling back to MemoryStore for sessions");
-    _actualStore = new MemoryStore();
-  });
-
-  _actualStore.on("connected", () => {
-    console.log("✅ MongoDB Session Store connected");
-  });
-
-} catch (error) {
-  console.error("❌ Failed to create MongoDB session store:", error.message);
-  console.log("⚠️ Using MemoryStore as fallback");
-  _actualStore = new MemoryStore();
-}
-
-// Proxy delegates every property/method access to _actualStore so
-// that hot-swapping the underlying store works transparently.
-const store = new Proxy({}, {
-  get(_, prop) {
-    const val = _actualStore[prop];
-    return typeof val === 'function' ? val.bind(_actualStore) : val;
-  },
-  set(_, prop, value) {
-    _actualStore[prop] = value;
-    return true;
-  },
-});
-
-// Session configuration
-const sessionConfig = {
-  secret: generateSecureSecret(),
-  resave: false,
-  saveUninitialized: false,
-  store: store,
-  name: "listify.sid",
-  cookie: {
-    secure: process.env.NODE_ENV === "production",
-    httpOnly: true,
-    sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
-    maxAge: 1000 * 60 * 60 * 24, // 24 hours
-  },
-  rolling: true,
-};
-
-app.use(session(sessionConfig));
-app.use(passport.initialize());
-app.use(passport.session());
-
 // Connect to database
 connectDB().catch(console.error);
 
@@ -128,7 +47,6 @@ app.get("/health", (req, res) => {
     environment: process.env.NODE_ENV,
     database: dbStatus,
     redis: "connected",
-    sessionStore: _actualStore.constructor.name === "MongoDBStore" ? "MongoDB" : "MemoryStore"
   });
 });
 
@@ -142,7 +60,6 @@ app.get('/api/test', (req, res) => {
     timestamp: new Date().toISOString(),
     environment: process.env.NODE_ENV,
     database: dbStatus,
-    session: req.sessionID ? 'Active' : 'No session'
   });
 });
 
@@ -182,7 +99,6 @@ const server = app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
   console.log(`🌐 Environment: ${process.env.NODE_ENV}`);
   console.log(`🍪 Cookie parser enabled`);
-  console.log(`📝 Session store: ${_actualStore.constructor.name === 'MongoDBStore' ? 'MongoDB' : 'MemoryStore'}`);
 });
 
 // ============== PRODUCTION GRACEFUL SHUTDOWN ==============
