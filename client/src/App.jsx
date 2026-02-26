@@ -30,26 +30,17 @@ import ResetOtp from "./components/auth/ResetOtp.jsx";
 
 import ContactUs from "./pages/ContactPage/ContactUS.jsx";
 import AboutUs from "./pages/AboutPage/AboutUs.jsx";
-import OurServicesPage from "./pages/OurServices/OurServicesPage.jsx";
+import OurServices from "./pages/OurServices/OurServices.jsx";
 
-import PostaddPage from "./pages/PostaddPage/Postadd.jsx";
+import Postadd from "./pages/PostAdd/Postadd.jsx";
 
 
 import TakeCare from "./pages/TakeCare/TakeCare.jsx";
 import TakeCareDetail from "./components/TakeCare/TakeCareDetail.jsx";
 
-import NannyService from "./components/TakeCare/NannyCareServices/NannyService.jsx";
-import BabysitterService from "./components/TakeCare/BabysitterCareServices/BabysitterService.jsx";
-import CookServices from "./components/TakeCare/CookServices/CookServices.jsx";
-import HousekeeperServices from "./components/TakeCare/HousekeeperServices/HousekeeperServices.jsx";
-import TutorServices from "./components/TakeCare/TutorServices/TutorServices.jsx";
-import ElderCareServices from "./components/TakeCare/ElderCareServices/ElderCareServices.jsx";
-import PetCareService from "./components/TakeCare/PetCareServices/PetCareServices.jsx";
-import CareCenterServices from "./components/TakeCare/CareCenterServices/CareCenterServices.jsx";
-
 
 // Electronics
-import Electronics from "./components/Electronics/Electronics.jsx";
+import Electronics from "./pages/Electronics/Electronics.jsx";
 import ElectronicsDetail from "./components/Electronics/ElectronicsDetail.jsx";
 
 
@@ -66,16 +57,14 @@ import DetailsPage from "./components/Roommates/DetailsPage.jsx";
 import Events from "./pages/Events/Events.jsx";
 import EventsDetail from "./components/Events/EventsDetail.jsx";
 
-import EventDetailPage from "./components/Events/EventDetailPage.jsx";
-import EventList from "./components/Events/EventList.jsx";
 
 // Rentals
-import Rentals from "./pages/Rentalspage/Rentals";
+import Rentals from "./pages/Rentals/Rentals.jsx";
 import RentalsListings from "./components/Rentals/RentalsListings.jsx";
 import RentalDetailsPage from "./components/Rentals/RentalDetailsPage.jsx";
 
 // Jobs
-import JobsPage from "./pages/JobsPage/JobsPage.jsx";
+import Jobs from "./pages/Jobs/Jobs.jsx";
 import JobSearchPortal from "./components/Jobs/JobSearchPortal.jsx";
 import JobDetailsPage from "./components/Jobs/JobDetailsPage.jsx";
 import JobSeekerInterface from "./components/Jobs/JobSeekerInterface.jsx";
@@ -83,13 +72,12 @@ import JobSeekerResume from "./components/Jobs/JobSeekerResume.jsx";
 import JobSeekerResumesDetail from "./components/Jobs/JobSeekerResumesDetail.jsx";
 
 // Services
-import ServicesPage from "./pages/Services/ServicesPage.jsx";
+import Services from "./pages/Services/Services.jsx";
 
 // Cars categories
-import VehiclePage from "./pages/VehiclePage/VehiclePage.jsx";
-import VehicleDetail from "./components/Cars/VehicleDetail.jsx";
-import CarListing from "./components/Cars/CarListing.jsx";
-import CarDetails from "./components/Cars/CarDetails.jsx";
+import Vehicles from "./pages/Vehicles/Vehicles.jsx";
+import VehicleDetail from "./components/Vehicles/VehicleDetail.jsx";
+
 
 // Profile
 import Profile from "./pages/Home/Profile.jsx";
@@ -272,29 +260,13 @@ const AppContent = () => {
           {/* Contact & About Pages */}
           <Route path="/contact-us" element={<ContactUs />} />
           <Route path="/about-us" element={<AboutUs />} />
-          <Route path="/our-services" element={<OurServicesPage />} />
-          <Route path="/post-add" element={<PostaddPage />} />
+          <Route path="/our-services" element={<OurServices />} />
+          <Route path="/post-add" element={<Postadd />} />
           <Route path="/reviews" element={<Reviews />} />
 
           {/* TakeCare */}
           <Route path="/takecare" element={<TakeCare />} />
           <Route path="/takecare/:id" element={<TakeCareDetail />} />
-
-          <Route path="/takecare/:serviceId" element={<NannyService />} />
-          <Route path="/takecare/babysitter" element={<BabysitterService />} />
-          <Route path="/takecare/cook" element={<CookServices />} />
-
-
-
-          <Route
-            path="/takecare/housekeeper"
-            element={<HousekeeperServices />}
-          />
-          <Route path="/takecare/tutor" element={<TutorServices />} />
-          <Route path="/takecare/eldercare" element={<ElderCareServices />} />
-          <Route path="/takecare/petcare" element={<PetCareService />} />
-          <Route path="/takecare/carecenter" element={<CareCenterServices />} />
-
           {/* For Sale */}
           <Route path="/forsale" element={<ForSale />} />
           <Route path="/forsale/:id" element={<ForSaleDetail />} />
@@ -315,7 +287,7 @@ const AppContent = () => {
           <Route path="/rental-details" element={<RentalDetailsPage />} />
 
           {/* Jobs */}
-          <Route path="/jobs" element={<JobsPage />} />
+          <Route path="/jobs" element={<Jobs />} />
           <Route path="/job-search" element={<JobSearchPortal />} />
           <Route path="/job-details/:id" element={<JobDetailsPage />} />
           <Route path="/job-seekers" element={<JobSeekerInterface />} />
@@ -329,19 +301,14 @@ const AppContent = () => {
           <Route path="/events" element={<Events />} />
           <Route path="/events/:id" element={<EventsDetail />} />
 
-          <Route path="/events/:eventId" element={<EventDetailPage />} />
-          <Route path="/events-list" element={<EventList />} />
-
 
           {/* Services Category */}
-          <Route path="/services" element={<ServicesPage />} />
+          <Route path="/services" element={<Services />} />
 
           {/* Cars categories */}
-          <Route path="/vehicles" element={<VehiclePage />} />
+          <Route path="/vehicles" element={<Vehicles />} />
           <Route path="/vehicles/:id" element={<VehicleDetail />} />
           
-          <Route path="/car-listings" element={<CarListing />} />
-          <Route path="/car-details" element={<CarDetails />} />
 
           {/* Profile / Dashboard */}
           <Route path="/dashboard" element={<Profile />} />

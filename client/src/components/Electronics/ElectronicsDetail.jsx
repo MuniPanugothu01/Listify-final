@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   Heart,
   Share2,
@@ -24,8 +25,15 @@ import {
   Watch,
   Gamepad,
   Laptop,
+  Loader2,
 } from 'lucide-react';
 import { FaMinus, FaPlus } from 'react-icons/fa';
+import {
+  fetchElectronicsById,
+  fetchAllElectronics,
+  clearCurrentListing,
+  toggleSaveElectronics,
+} from '../../redux/slices/electronicsSlice';
 
 // Location Map Component
 const LocationMap = ({ location }) => {
@@ -87,38 +95,45 @@ const LocationMap = ({ location }) => {
 const ElectronicsDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [product, setProduct] = useState(null);
-  const [allProducts, setAllProducts] = useState([]);
+  const dispatch = useDispatch();
+  const { currentListing: product, detailLoading, listings, error } = useSelector(
+    (state) => state.electronics
+  );
+  const { user } = useSelector((state) => state.auth);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
 
-  useEffect(() => {
-    // Get product data from localStorage (passed from listing page)
-    const storedProduct = localStorage.getItem('selectedElectronics');
-    const storedProducts = localStorage.getItem('allElectronics');
-    
-    if (storedProduct) {
-      const parsedProduct = JSON.parse(storedProduct);
-      // Verify that the ID matches
-      if (parsedProduct.id === parseInt(id)) {
-        setProduct(parsedProduct);
-      }
-    }
-    
-    // Get all products for similar items
-    if (storedProducts) {
-      setAllProducts(JSON.parse(storedProducts));
-    }
-  }, [id]);
+  const isSaved =
+    product?._saved ||
+    (user && product?.savedBy?.includes(user._id || user.id));
 
-  const productImages = [
-    product?.image,
-    'https://images.unsplash.com/photo-1579586337278-3f576cfc5113?w=500&q=80',
-    'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=500&q=80',
-    'https://images.unsplash.com/photo-1546054451-aa224c0e8c23?w=500&q=80',
-    'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=500&q=80',
-    'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=500&q=80',
-  ].filter(Boolean);
+  const handleToggleSave = () => {
+    if (!user) {
+      navigate('/login');
+      return;
+    }
+    if (product?._id) {
+      dispatch(toggleSaveElectronics(product._id));
+    }
+  };
+
+  useEffect(() => {
+    // Fetch the product from API
+    dispatch(fetchElectronicsById(id));
+    // Also fetch all listings for similar items section
+    if (listings.length === 0) {
+      dispatch(fetchAllElectronics());
+    }
+    return () => {
+      dispatch(clearCurrentListing());
+    };
+  }, [id, dispatch]);
+
+  const productImages = product?.images?.length > 0
+    ? product.images
+    : [
+        product?.image || 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&q=80',
+      ];
 
   const handleThumbnailClick = (index) => setSelectedImageIndex(index);
   const handlePrevImage = () =>
@@ -126,10 +141,22 @@ const ElectronicsDetail = () => {
   const handleNextImage = () =>
     setSelectedImageIndex((prev) => (prev === productImages.length - 1 ? 0 : prev + 1));
 
-  // Get similar products (excluding current product)
-  const similarProducts = allProducts
-    .filter(p => p.id !== product?.id)
+  // Get similar products from Redux store (excluding current product)
+  const similarProducts = listings
+    .filter(p => (p._id || p.id) !== (product?._id || product?.id))
     .slice(0, 4);
+
+  // Loading state
+  if (detailLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <Loader2 className="w-12 h-12 text-[#27bb97] animate-spin mx-auto mb-4" />
+          <p className="text-gray-500">Loading product details...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!product) {
     return (
@@ -261,8 +288,15 @@ const ElectronicsDetail = () => {
                 </div>
 
                 <div className="absolute top-4 right-4 flex gap-2 z-10">
-                  <button className="p-2.5 bg-white/90 backdrop-blur-sm rounded-lg shadow-sm hover:shadow-md transition-shadow">
-                    <Heart className="w-5 h-5 text-gray-600 hover:text-red-500" />
+                  <button
+                    onClick={handleToggleSave}
+                    className="p-2.5 bg-white/90 backdrop-blur-sm rounded-lg shadow-sm hover:shadow-md transition-shadow"
+                  >
+                    <Heart
+                      className={`w-5 h-5 transition-colors ${
+                        isSaved ? 'text-red-500 fill-red-500' : 'text-gray-600 hover:text-red-500'
+                      }`}
+                    />
                   </button>
                   <button className="p-2.5 bg-white/90 backdrop-blur-sm rounded-lg shadow-sm hover:shadow-md transition-shadow">
                     <Share2 className="w-5 h-5 text-gray-600" />
@@ -365,25 +399,25 @@ const ElectronicsDetail = () => {
                 
                 <div className="flex items-center gap-4">
                   <div className="w-16 h-16 bg-gradient-to-br from-[#27bb97] to-[#1E9E7E] rounded-full flex items-center justify-center text-white text-2xl font-bold">
-                    {product.seller[0]}
+                    {(product.sellerName || product.seller?.firstName || 'U')[0]}
                   </div>
                   <div>
                     <h4 className="font-bold text-gray-900 flex items-center">
-                      {product.seller}
+                      {product.sellerName || product.seller?.firstName || 'User'}
                       <Shield className="w-4 h-4 text-blue-500 ml-2" />
                     </h4>
                     <div className="flex items-center mt-1">
                       {[...Array(5)].map((_, i) => (
                         <Star
                           key={i}
-                          className={`w-4 h-4 ${i < Math.floor(product.sellerRating) ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
+                          className={`w-4 h-4 ${i < Math.floor(product.sellerRating || 5) ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
                         />
                       ))}
-                      <span className="ml-2 text-sm text-gray-600">({product.sellerReviews})</span>
+                      <span className="ml-2 text-sm text-gray-600">({product.sellerReviews || 0})</span>
                     </div>
                     <div className="flex items-center text-gray-500 text-sm mt-1">
                       <Clock className="w-4 h-4 mr-1" />
-                      <span>Joined {product.sellerJoined}</span>
+                      <span>Joined {product.sellerJoined || 'Recently'}</span>
                     </div>
                   </div>
                 </div>
@@ -400,8 +434,15 @@ const ElectronicsDetail = () => {
                     <button className="py-3 bg-white border-2 border-gray-200 text-gray-700 rounded-lg font-medium hover:border-gray-300 transition-colors">
                       Make Offer
                     </button>
-                    <button className="py-3 bg-white border-2 border-[#27bb97] text-[#27bb97] rounded-lg font-medium hover:bg-[#27bb97]/5 transition-colors">
-                      Save Item
+                    <button
+                      onClick={handleToggleSave}
+                      className={`py-3 rounded-lg font-medium transition-colors border-2 ${
+                        isSaved
+                          ? 'bg-[#27bb97]/10 border-[#27bb97] text-[#27bb97]'
+                          : 'bg-white border-[#27bb97] text-[#27bb97] hover:bg-[#27bb97]/5'
+                      }`}
+                    >
+                      {isSaved ? '✓ Saved' : 'Save Item'}
                     </button>
                   </div>
                 </div>
@@ -427,16 +468,15 @@ const ElectronicsDetail = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {similarProducts.map((item) => (
                 <div
-                  key={item.id}
+                  key={item._id || item.id}
                   onClick={() => {
-                    localStorage.setItem('selectedElectronics', JSON.stringify(item));
-                    navigate(`/electronics/${item.id}`);
+                    navigate(`/electronics/${item._id || item.id}`);
                   }}
                   className="group bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer border border-gray-100 overflow-hidden"
                 >
                   <div className="aspect-[4/3] bg-gray-100 overflow-hidden">
                     <img
-                      src={item.image}
+                      src={item.images?.[0] || item.image || 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&q=80'}
                       alt={item.title}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />
@@ -452,9 +492,11 @@ const ElectronicsDetail = () => {
                       <span className="text-2xl font-bold text-[#27bb97]">
                         ${item.price}
                       </span>
-                      <span className="text-xs font-medium text-gray-500 px-3 py-1.5 bg-gray-100 rounded-full">
-                        {item.condition}
-                      </span>
+                      {item.condition && (
+                        <span className="text-xs font-medium text-gray-500 px-3 py-1.5 bg-gray-100 rounded-full">
+                          {item.condition}
+                        </span>
+                      )}
                     </div>
                   </div>
                 </div>

@@ -18,6 +18,7 @@ import listingsReducer from "./slices/listingsSlice";
 import messagesReducer from "./slices/messagesSlice";
 import devicesReducer from "./slices/devicesSlice";
 import activityReducer from "./slices/activitySlice";
+import electronicsReducer from "./slices/electronicsSlice";
 
 // Combine all reducers
 const rootReducer = combineReducers({
@@ -27,6 +28,7 @@ const rootReducer = combineReducers({
   messages: messagesReducer,
   devices: devicesReducer,
   activity: activityReducer,
+  electronics: electronicsReducer,
 });
 
 // Persist config — cache auth + profile for production-level image persistence

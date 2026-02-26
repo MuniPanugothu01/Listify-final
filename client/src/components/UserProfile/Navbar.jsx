@@ -1003,7 +1003,7 @@ const Navbar = () => {
               {/* Right side actions - Visible on lg and above */}
               <div className="hidden lg:flex items-center gap-2">
                 {/* Heart Icon (Saved Items) */}
-                <Link to="/saved" onClick={scrollToTop}>
+                <Link to="/dashboard/saved" onClick={scrollToTop}>
                   <button
                     className={`p-2 rounded-full transition-colors ${
                       isScrolled
@@ -1260,7 +1260,7 @@ const Navbar = () => {
                 </button>
 
                 {/* Mobile Heart Icon */}
-                <Link to="/saved" onClick={scrollToTop}>
+                <Link to="/dashboard/saved" onClick={scrollToTop}>
                   <button
                     className={`p-2 rounded-full ${
                       isScrolled ? "text-white" : "text-gray-600"
@@ -1481,7 +1481,7 @@ const Navbar = () => {
                 {/* Mobile Saved Items Link */}
                 <div className="border-t border-gray-100 pt-2 mt-2">
                   <Link
-                    to="/saved"
+                    to="/dashboard/saved"
                     onClick={() => {
                       setIsMobileMenuOpen(false);
                       scrollToTop();

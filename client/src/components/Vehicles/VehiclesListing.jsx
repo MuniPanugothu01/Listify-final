@@ -467,7 +467,7 @@ const VehiclesListing = () => {
   });
 
   const handleVehicleClick = (vehicleId) => {
-    navigate(`/vehicle/${vehicleId}`);
+    navigate(`/vehicles/${vehicleId}`);
   };
 
   const handleCategoryChange = (category) => {

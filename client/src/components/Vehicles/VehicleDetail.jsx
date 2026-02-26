@@ -417,7 +417,7 @@ const VehicleDetail = () => {
               {similarVehicles.map((item) => (
                 <div
                   key={item.id}
-                  onClick={() => navigate(`/vehicle/${item.id}`)}
+                  onClick={() => navigate(`/vehicles/${item.id}`)}
                   className="group bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer border border-gray-100 overflow-hidden"
                 >
                   <div className="aspect-[4/3] bg-gray-100 overflow-hidden relative">
