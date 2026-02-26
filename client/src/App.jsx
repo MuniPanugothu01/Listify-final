@@ -55,7 +55,7 @@ import ElectronicsDetail from "./components/Electronics/ElectronicsDetail.jsx";
 
 // For Sale
 import ForSale from "./components/ForSale/ForSale.jsx";
-import ForSaleDetail from "./components/ForSale/ForsaleDetail.jsx";
+import ForSaleDetail from "./components/ForSale/ForSaleDetail.jsx";
 
 // Roommates
 import Roommates from "./pages/Roommates/Roommates.jsx";
