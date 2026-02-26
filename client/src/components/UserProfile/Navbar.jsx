@@ -85,7 +85,7 @@ const Navbar = () => {
   const profileState = useAppSelector((state) => state.profile);
 
   const { user } = authState;
-  const { profile, loading: profileLoading } = profileState;
+  const { profile, loading: profileLoading, serverCachedImage } = profileState;
 
   // ✅ Compute isAuthenticated from user object
   const isAuthenticated = !!user;
@@ -357,9 +357,14 @@ const Navbar = () => {
       return avatar;
     }
 
+    // 5. Server-side Redis cache fallback (survives logout — instant on re-login)
+    if (serverCachedImage?.url) {
+      return serverCachedImage.url;
+    }
+
     // No image found
     return null;
-  }, [profile, user, imageError, isGoogleUser]);
+  }, [profile, user, imageError, isGoogleUser, serverCachedImage]);
 
   const handleImageError = useCallback(() => {
     setImageError(true);
