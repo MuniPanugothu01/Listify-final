@@ -361,7 +361,7 @@ const refreshTokens = async (refreshToken) => {
 
     if (!lockAcquired) {
       // Another request is already refreshing this exact token.
-      // Wait briefly and return the new tokens that the winner stored.
+      // Wait briefly for the winner to finish.
       logger.info('🔒 Refresh lock exists — waiting for first request to finish', {
         jti: decodedJwt.jti,
       });
@@ -373,12 +373,11 @@ const refreshTokens = async (refreshToken) => {
         if (!lockStillExists) break;
       }
 
-      // The first request already rotated the token and the browser now has
-      // new cookies from that winning response. We can't return the new tokens
-      // here (the new refresh token is only in the cookie set by the first response),
-      // so return null. The client's shared queue ensures only one request actually
-      // triggers the refresh and all others just retry with the new access token.
-      return null;
+      // Return a special marker so the caller can distinguish
+      // "concurrent refresh (not an error)" from "truly invalid token".
+      // This prevents the middleware from sending INVALID_REFRESH_TOKEN
+      // which would force-logout the user.
+      return { concurrentRefresh: true };
     }
 
     // --- Lock acquired: proceed with rotation ---

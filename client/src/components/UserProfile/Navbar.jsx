@@ -107,6 +107,8 @@ const Navbar = () => {
       // Reset image error when profile updates (new image may have been uploaded)
       setImageError(false);
       dispatch(updateUser({
+        name: profile.name,
+        email: profile.email,
         profileImage: profile.profileImage,
         profileImageUrl: profile.profileImage || profile.profileImageUrl,
         avatar: profile.avatar,

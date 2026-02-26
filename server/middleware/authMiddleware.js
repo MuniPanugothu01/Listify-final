@@ -52,9 +52,26 @@ exports.protect = async (req, res, next) => {
         });
       }
 
-      req.user = await User.findById(decoded.id).select('-password');
+      // Wrap the DB call in its own try/catch so that MongoDB
+      // connection errors return 503 (transient) instead of 401.
+      // This prevents the client from logging the user out when
+      // MongoDB briefly disconnects and reconnects.
+      let user;
+      try {
+        user = await User.findById(decoded.id).select('-password');
+      } catch (dbError) {
+        logger.warn('protect: MongoDB temporarily unavailable', {
+          error: dbError.message,
+          userId: decoded.id,
+        });
+        return res.status(503).json({
+          success: false,
+          message: 'Database temporarily unavailable. Please retry.',
+          code: 'DB_UNAVAILABLE',
+        });
+      }
 
-      if (!req.user) {
+      if (!user) {
         return res.status(401).json({
           success: false,
           message: 'User no longer exists.',
@@ -62,14 +79,15 @@ exports.protect = async (req, res, next) => {
         });
       }
 
-      if (req.user.status !== 'active') {
+      if (user.status !== 'active') {
         return res.status(403).json({
           success: false,
-          message: `Your account is ${req.user.status}. Please contact support.`,
+          message: `Your account is ${user.status}. Please contact support.`,
           code: 'ACCOUNT_INACTIVE',
         });
       }
 
+      req.user = user;
       next();
     } catch (error) {
       if (error.name === 'JsonWebTokenError') {
@@ -114,6 +132,17 @@ exports.refreshToken = async (req, res) => {
     }
 
     const tokens = await refreshTokens(refreshToken);
+
+    // refreshTokens returns { concurrentRefresh: true } when another
+    // request already rotated this token.  The winner set cookies in
+    // its response; tell this caller to simply retry.
+    if (tokens && tokens.concurrentRefresh) {
+      return res.status(200).json({
+        success: true,
+        message: 'Token refresh handled by concurrent request. Retry.',
+        code: 'CONCURRENT_REFRESH',
+      });
+    }
 
     if (!tokens) {
       clearRefreshTokenCookie(res);
