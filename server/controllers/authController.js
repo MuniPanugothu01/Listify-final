@@ -452,6 +452,15 @@ exports.login = async (req, res) => {
         : null,
     };
 
+    // Check Redis image cache — if user logged out earlier, their image is here
+    let cachedImage = null;
+    try {
+      const cached = await RedisService.getCachedProfileImage(email);
+      if (cached?.url) {
+        cachedImage = cached;
+      }
+    } catch (_) { /* non-critical */ }
+
     logger.info(`✅ Login successful for: ${email}`, {
       device: deviceSession.deviceName,
       location: deviceSession.location,
@@ -461,6 +470,7 @@ exports.login = async (req, res) => {
       success: true,
       message: "Login successful",
       user: userResponse,
+      cachedImage, // { url, name, cachedAt } or null
     });
   } catch (error) {
     logger.error("❌ Login error:", error);
@@ -535,6 +545,15 @@ exports.googleTokenAuth = async (req, res) => {
       currentDevice: deviceService.formatDeviceForDisplay(deviceSession),
     };
 
+    // Check Redis image cache — if user logged out earlier, their image is here
+    let cachedImage = null;
+    try {
+      const cached = await RedisService.getCachedProfileImage(user.email);
+      if (cached?.url) {
+        cachedImage = cached;
+      }
+    } catch (_) { /* non-critical */ }
+
     logger.info(`✅ Google login successful for: ${user.email}`, {
       device: deviceSession.deviceName,
       location: deviceSession.location,
@@ -545,6 +564,7 @@ exports.googleTokenAuth = async (req, res) => {
       success: true,
       message,
       user: userResponse,
+      cachedImage, // { url, name, cachedAt } or null
     });
   } catch (error) {
     logger.error("❌ Google Token Auth Error:", error);
@@ -555,7 +575,7 @@ exports.googleTokenAuth = async (req, res) => {
   }
 };
 
-// ==================== UPDATED: LOGOUT WITH DEVICE CLEANUP ====================
+// ==================== UPDATED: LOGOUT WITH DEVICE CLEANUP + IMAGE CACHING ====================
 exports.logout = async (req, res) => {
   try {
     const { refreshToken } = req.cookies;
@@ -563,11 +583,22 @@ exports.logout = async (req, res) => {
     if (refreshToken) {
       const decoded = jwt.decode(refreshToken);
 
-      // Deactivate session in user document
+      // Deactivate session & cache profile image before clearing
       if (decoded?.id) {
         const user = await User.findById(decoded.id);
         if (user) {
           await user.deactivateSession(decoded.jti);
+
+          // Cache the user's current profile image in Redis (survives logout)
+          const imageUrl = user.getProfileImage
+            ? user.getProfileImage()
+            : user.profileImage || user.googleProfileImage || user.avatar || null;
+          if (imageUrl && user.email) {
+            await RedisService.cacheProfileImage(user.email, {
+              url: imageUrl,
+              name: user.name,
+            });
+          }
         }
       }
 
@@ -681,6 +712,14 @@ exports.uploadProfileImage = async (req, res) => {
 
     const profileImageUrl = user.getProfileImage ? user.getProfileImage() : 
                            (user.profileImage || user.googleProfileImage || user.avatar || null);
+
+    // Update Redis image cache with the new S3 URL
+    try {
+      await RedisService.cacheProfileImage(user.email, {
+        url: uploadResult.imageUrl,
+        name: user.name,
+      });
+    } catch (_) { /* non-critical */ }
 
     res.status(200).json({
       success: true,

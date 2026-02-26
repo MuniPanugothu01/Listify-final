@@ -29,11 +29,11 @@ const rootReducer = combineReducers({
   activity: activityReducer,
 });
 
-// Persist config
+// Persist config — cache auth + profile for production-level image persistence
 const persistConfig = {
   key: "root",
   storage,
-  whitelist: ["auth"], // Only persist auth, other states are temporary
+  whitelist: ["auth", "profile"], // Persist both for image caching across reloads
 };
 
 // Create persisted reducer
