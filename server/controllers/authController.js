@@ -257,12 +257,15 @@ const revokeAllUserTokens = async (userId) => {
 
 /**
  * Refresh tokens - token rotation
+ * Returns { tokens } on success, { error: 'invalid' } for bad tokens,
+ * or { error: 'transient' } for temporary failures (Redis/network).
  */
 const refreshTokens = async (refreshToken) => {
   try {
     const session = await verifyRefreshToken(refreshToken);
     if (!session) {
-      return null;
+      // Token is genuinely invalid / expired / revoked
+      return { error: 'invalid' };
     }
 
     const newAccessToken = generateAccessToken(session.userId);
@@ -276,12 +279,15 @@ const refreshTokens = async (refreshToken) => {
     });
 
     return {
-      accessToken: newAccessToken,
-      refreshToken: newRefreshToken,
+      tokens: {
+        accessToken: newAccessToken,
+        refreshToken: newRefreshToken,
+      },
     };
   } catch (error) {
-    logger.error("❌ Error refreshing tokens:", error);
-    return null;
+    logger.error("❌ Error refreshing tokens (transient):", error);
+    // Transient error (Redis timeout, network blip) — don't treat as invalid
+    return { error: 'transient' };
   }
 };
 
@@ -1190,20 +1196,33 @@ exports.refreshToken = async (req, res) => {
       return res.status(401).json({
         success: false,
         message: "No refresh token provided",
+        code: "NO_REFRESH_TOKEN",
       });
     }
 
-    const tokens = await refreshTokens(refreshToken);
+    const result = await refreshTokens(refreshToken);
 
-    if (!tokens) {
+    // Token is genuinely invalid / expired → clear cookies
+    if (result.error === 'invalid') {
       clearTokenCookies(res);
       return res.status(401).json({
         success: false,
         message: "Invalid or expired refresh token",
+        code: "INVALID_REFRESH_TOKEN",
       });
     }
 
-    setTokenCookies(res, tokens.accessToken, tokens.refreshToken);
+    // Transient failure (Redis/network blip) → DON'T clear cookies!
+    // The token is probably still valid. Let the client retry.
+    if (result.error === 'transient') {
+      return res.status(503).json({
+        success: false,
+        message: "Token service temporarily unavailable. Please retry.",
+        code: "SERVICE_UNAVAILABLE",
+      });
+    }
+
+    setTokenCookies(res, result.tokens.accessToken, result.tokens.refreshToken);
 
     res.status(200).json({
       success: true,
@@ -1211,9 +1230,11 @@ exports.refreshToken = async (req, res) => {
     });
   } catch (error) {
     logger.error("Refresh token error:", error);
+    // DON'T clear cookies on server errors — the session may still be valid
     res.status(500).json({
       success: false,
       message: "Server error during token refresh",
+      code: "SERVER_ERROR",
     });
   }
 };
