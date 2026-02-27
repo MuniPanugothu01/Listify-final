@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import toast from 'react-hot-toast';
 import {
   Heart,
   Share2,
@@ -26,6 +27,13 @@ import {
   Gamepad,
   Laptop,
   Loader2,
+  X,
+  Mail,
+  Phone,
+  Calendar,
+  DollarSign,
+  Send,
+  User as UserIcon,
 } from 'lucide-react';
 import { FaMinus, FaPlus } from 'react-icons/fa';
 import {
@@ -37,6 +45,10 @@ import {
 
 // Location Map Component
 const LocationMap = ({ location }) => {
+  const encodedLocation = encodeURIComponent(location || 'India');
+  const mapsEmbedUrl = `https://www.google.com/maps?q=${encodedLocation}&output=embed`;
+  const mapsDirectionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodedLocation}`;
+
   return (
     <div className="bg-white rounded-lg shadow-sm overflow-hidden mt-8">
       <div className="p-4 border-b border-gray-100">
@@ -48,33 +60,14 @@ const LocationMap = ({ location }) => {
       </div>
       
       <div className="relative h-64 sm:h-72 md:h-80 bg-gray-100">
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-gray-50">
-          <div className="absolute inset-0" style={{
-            backgroundImage: `
-              linear-gradient(to right, #cbd5e1 1px, transparent 1px),
-              linear-gradient(to bottom, #cbd5e1 1px, transparent 1px)
-            `,
-            backgroundSize: '40px 40px'
-          }}></div>
-          
-          <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
-            <div className="relative">
-              <MapPin className="w-12 h-12 text-red-500 animate-pulse" />
-              <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-red-500 rounded-full"></div>
-            </div>
-          </div>
-          
-          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
-            <div className="bg-white px-4 py-2 rounded-lg shadow-lg text-center">
-              <p className="font-medium text-gray-800">{location}</p>
-              <p className="text-xs text-gray-500 mt-1">Approximate location</p>
-            </div>
-          </div>
-        </div>
-        
-        <div className="absolute top-4 right-4 bg-white p-2 rounded-lg shadow-sm">
-          <Navigation className="w-4 h-4 text-gray-600" />
-        </div>
+        <iframe
+          title="Listing Location"
+          src={mapsEmbedUrl}
+          className="absolute inset-0 w-full h-full border-0"
+          allowFullScreen
+          loading="lazy"
+          referrerPolicy="no-referrer-when-downgrade"
+        />
       </div>
       
       <div className="p-4 border-t border-gray-100 bg-gray-50">
@@ -83,9 +76,14 @@ const LocationMap = ({ location }) => {
             <Globe className="w-4 h-4 mr-2" />
             <span>Local pickup available</span>
           </div>
-          <button className="text-sm text-[#27bb97] hover:text-[#1fa987] font-medium">
+          <a
+            href={mapsDirectionsUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm text-[#27bb97] hover:text-[#1fa987] font-medium"
+          >
             Get directions →
-          </button>
+          </a>
         </div>
       </div>
     </div>
@@ -102,6 +100,9 @@ const ElectronicsDetail = () => {
   const { user } = useSelector((state) => state.auth);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
+  const [showSellerProfile, setShowSellerProfile] = useState(false);
+  const [showOfferModal, setShowOfferModal] = useState(false);
+  const [offerAmount, setOfferAmount] = useState('');
 
   const isSaved =
     product?._saved ||
@@ -392,15 +393,26 @@ const ElectronicsDetail = () => {
               <div className="bg-white rounded-lg shadow-sm p-6">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-lg font-bold text-gray-700">SELLER INFORMATION</h3>
-                  <button className="text-[#27bb97] text-sm font-medium hover:text-[#1fa987]">
-                    View Profile →
+                  <button
+                    onClick={() => setShowSellerProfile(!showSellerProfile)}
+                    className="text-[#27bb97] text-sm font-medium hover:text-[#1fa987] transition-colors"
+                  >
+                    {showSellerProfile ? 'Hide Profile ↑' : 'View Profile →'}
                   </button>
                 </div>
                 
                 <div className="flex items-center gap-4">
-                  <div className="w-16 h-16 bg-gradient-to-br from-[#27bb97] to-[#1E9E7E] rounded-full flex items-center justify-center text-white text-2xl font-bold">
-                    {(product.sellerName || product.seller?.firstName || 'U')[0]}
-                  </div>
+                  {product.seller?.profileImage ? (
+                    <img
+                      src={product.seller.profileImage}
+                      alt={product.sellerName || 'Seller'}
+                      className="w-16 h-16 rounded-full object-cover border-2 border-[#27bb97]/20"
+                    />
+                  ) : (
+                    <div className="w-16 h-16 bg-gradient-to-br from-[#27bb97] to-[#1E9E7E] rounded-full flex items-center justify-center text-white text-2xl font-bold">
+                      {(product.sellerName || product.seller?.firstName || 'U')[0]}
+                    </div>
+                  )}
                   <div>
                     <h4 className="font-bold text-gray-900 flex items-center">
                       {product.sellerName || product.seller?.firstName || 'User'}
@@ -421,17 +433,72 @@ const ElectronicsDetail = () => {
                     </div>
                   </div>
                 </div>
+
+                {/* Expanded Seller Profile */}
+                {showSellerProfile && (
+                  <div className="mt-4 pt-4 border-t border-gray-100 space-y-3 animate-in slide-in-from-top-2">
+                    <div className="flex items-center gap-3 text-sm text-gray-600">
+                      <UserIcon className="w-4 h-4 text-[#27bb97]" />
+                      <span className="font-medium">Full Name:</span>
+                      <span>
+                        {product.seller?.firstName && product.seller?.lastName
+                          ? `${product.seller.firstName} ${product.seller.lastName}`
+                          : product.sellerName || 'Not provided'}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-3 text-sm text-gray-600">
+                      <Mail className="w-4 h-4 text-[#27bb97]" />
+                      <span className="font-medium">Email:</span>
+                      <span>{product.seller?.email || 'Not provided'}</span>
+                    </div>
+                    {product.phone && (
+                      <div className="flex items-center gap-3 text-sm text-gray-600">
+                        <Phone className="w-4 h-4 text-[#27bb97]" />
+                        <span className="font-medium">Phone:</span>
+                        <span>+91 {product.phone}</span>
+                      </div>
+                    )}
+                    <div className="flex items-center gap-3 text-sm text-gray-600">
+                      <Calendar className="w-4 h-4 text-[#27bb97]" />
+                      <span className="font-medium">Member since:</span>
+                      <span>
+                        {product.seller?.createdAt
+                          ? new Date(product.seller.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
+                          : product.sellerJoined || 'Recently'}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-3 text-sm text-gray-600">
+                      <MapPin className="w-4 h-4 text-[#27bb97]" />
+                      <span className="font-medium">Location:</span>
+                      <span>{product.location || 'Not specified'}</span>
+                    </div>
+                  </div>
+                )}
               </div>
 
                 {/* Action Buttons */}
                 <div className="space-y-3 mt-2">
-                  <button className="w-full py-4 bg-[#27bb97] hover:bg-[#1fa987] text-white rounded-lg font-semibold transition-all shadow-md hover:shadow-lg text-base uppercase">
+                  <button
+                    onClick={() => navigate('/dashboard/messages')}
+                    className="w-full py-4 bg-[#27bb97] hover:bg-[#1fa987] text-white rounded-lg font-semibold transition-all shadow-md hover:shadow-lg text-base uppercase"
+                  >
                     <MessageCircle className="w-5 h-5 inline mr-2" />
                     Contact Seller
                   </button>
                   
                   <div className="grid grid-cols-2 gap-3">
-                    <button className="py-3 bg-white border-2 border-gray-200 text-gray-700 rounded-lg font-medium hover:border-gray-300 transition-colors">
+                    <button
+                      onClick={() => {
+                        if (!user) {
+                          toast.error('Please login to make an offer');
+                          navigate('/signin');
+                          return;
+                        }
+                        setOfferAmount('');
+                        setShowOfferModal(true);
+                      }}
+                      className="py-3 bg-white border-2 border-gray-200 text-gray-700 rounded-lg font-medium hover:border-gray-300 transition-colors"
+                    >
                       Make Offer
                     </button>
                     <button
@@ -505,6 +572,89 @@ const ElectronicsDetail = () => {
           </div>
         )}
       </div>
+
+      {/* Make Offer Modal */}
+      {showOfferModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+            onClick={() => setShowOfferModal(false)}
+          />
+          {/* Modal */}
+          <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 animate-in zoom-in-95">
+            <button
+              onClick={() => setShowOfferModal(false)}
+              className="absolute top-4 right-4 p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
+            >
+              <X className="w-5 h-5 text-gray-500" />
+            </button>
+
+            <div className="text-center mb-6">
+              <div className="w-14 h-14 bg-[#27bb97]/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                <DollarSign className="w-7 h-7 text-[#27bb97]" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900">Make an Offer</h3>
+              <p className="text-sm text-gray-500 mt-1">
+                Listing price: <span className="font-semibold text-[#27bb97]">${product.price}</span>
+              </p>
+            </div>
+
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Your Offer Amount (₹)
+              </label>
+              <div className="relative">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-medium text-lg">₹</span>
+                <input
+                  type="number"
+                  value={offerAmount}
+                  onChange={(e) => setOfferAmount(e.target.value)}
+                  placeholder="Enter your offer"
+                  min="1"
+                  autoFocus
+                  className="w-full pl-10 pr-4 py-3.5 border-2 border-gray-200 rounded-xl text-lg font-medium focus:border-[#27bb97] focus:ring-2 focus:ring-[#27bb97]/20 outline-none transition-all"
+                />
+              </div>
+              {offerAmount && Number(offerAmount) > 0 && (
+                <p className="text-xs text-gray-500 mt-2">
+                  {Number(offerAmount) < product.price
+                    ? `${Math.round(((product.price - Number(offerAmount)) / product.price) * 100)}% below asking price`
+                    : Number(offerAmount) === product.price
+                    ? 'Matches asking price'
+                    : `${Math.round(((Number(offerAmount) - product.price) / product.price) * 100)}% above asking price`}
+                </p>
+              )}
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowOfferModal(false)}
+                className="flex-1 py-3 border-2 border-gray-200 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  if (!offerAmount || Number(offerAmount) <= 0) {
+                    toast.error('Please enter a valid offer amount');
+                    return;
+                  }
+                  setShowOfferModal(false);
+                  toast.success(
+                    `Offer of ₹${Number(offerAmount).toLocaleString()} sent to ${product.sellerName || 'seller'} successfully!`,
+                    { duration: 4000 }
+                  );
+                }}
+                className="flex-[1.5] py-3 bg-[#27bb97] hover:bg-[#1fa987] text-white rounded-xl font-semibold transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2"
+              >
+                <Send className="w-4 h-4" />
+                Send Offer
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
