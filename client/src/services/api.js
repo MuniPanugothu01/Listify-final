@@ -581,6 +581,82 @@ export const electronicsAPI = {
   },
 };
 
+// ==================== VEHICLES API (separate base URL) ====================
+const vehiclesApi = axios.create({
+  baseURL: `${BASE_API_URL}/vehicles`,
+  headers: {
+    "Content-Type": "application/json",
+  },
+  timeout: 30000,
+  withCredentials: true,
+});
+
+// Apply shared interceptors
+vehiclesApi.interceptors.request.use(
+  (config) => {
+    console.log(`🚀 Vehicles Request: ${config.method.toUpperCase()} ${config.url}`);
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+createResponseInterceptor(vehiclesApi, "Vehicles API");
+
+export const vehiclesAPI = {
+  // Public: Get all vehicles with optional filters
+  getAll: (params = {}) => {
+    return vehiclesApi.get("/", { params });
+  },
+
+  // Public: Get single listing by ID
+  getById: (id) => {
+    return vehiclesApi.get(`/${id}`);
+  },
+
+  // Private: Create new listing (requires auth)
+  create: (listingData) => {
+    return vehiclesApi.post("/", listingData, { withCredentials: true });
+  },
+
+  // Private: Update listing
+  update: (id, listingData) => {
+    return vehiclesApi.put(`/${id}`, listingData, { withCredentials: true });
+  },
+
+  // Private: Delete listing
+  delete: (id) => {
+    return vehiclesApi.delete(`/${id}`, { withCredentials: true });
+  },
+
+  // Private: Get my listings
+  getMyListings: () => {
+    return vehiclesApi.get("/my-listings", { withCredentials: true });
+  },
+
+  // Private: Upload images
+  uploadImages: (formData, onProgress) => {
+    return vehiclesApi.post("/upload-images", formData, {
+      withCredentials: true,
+      headers: { "Content-Type": "multipart/form-data" },
+      onUploadProgress: (progressEvent) => {
+        if (onProgress && progressEvent.total) {
+          const pct = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+          onProgress(pct);
+        }
+      },
+    });
+  },
+
+  // Private: Toggle save
+  toggleSave: (id) => {
+    return vehiclesApi.post(`/${id}/toggle-save`, {}, { withCredentials: true });
+  },
+
+  // Private: Get saved vehicles
+  getSaved: () => {
+    return vehiclesApi.get("/saved", { withCredentials: true });
+  },
+};
+
 // ==================== MESSAGES API ====================
 const messagesApi = axios.create({
   baseURL: `${BASE_API_URL}/messages`,

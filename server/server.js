@@ -43,8 +43,10 @@ connectDB().catch(console.error);
 // Routes
 const authRoutes = require("./routes/authRoutes");
 const electronicsRoutes = require("./routes/electronicsRoutes");
+const vehiclesRoutes = require("./routes/vehiclesRoutes");
 app.use("/api/auth", authRoutes);
 app.use("/api/electronics", electronicsRoutes);
+app.use("/api/vehicles", vehiclesRoutes);
 
 // Health check
 app.get("/health", (req, res) => {
