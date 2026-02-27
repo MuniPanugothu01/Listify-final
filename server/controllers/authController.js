@@ -94,7 +94,7 @@ const setTokenCookies = (res, accessToken, refreshToken) => {
   res.cookie("accessToken", accessToken, {
     httpOnly: true,
     secure: isProduction,
-    sameSite: isProduction ? "strict" : "lax",
+    sameSite: isProduction ? "none" : "lax",
     maxAge: 15 * 60 * 1000,
     path: "/",
     domain: isProduction ? process.env.COOKIE_DOMAIN : undefined,
@@ -103,7 +103,7 @@ const setTokenCookies = (res, accessToken, refreshToken) => {
   res.cookie("refreshToken", refreshToken, {
     httpOnly: true,
     secure: isProduction,
-    sameSite: isProduction ? "strict" : "lax",
+    sameSite: isProduction ? "none" : "lax",
     maxAge: 7 * 24 * 60 * 60 * 1000,
     path: "/api/auth",
     domain: isProduction ? process.env.COOKIE_DOMAIN : undefined,
@@ -113,7 +113,7 @@ const setTokenCookies = (res, accessToken, refreshToken) => {
   res.cookie("tokenExists", "true", {
     httpOnly: false,
     secure: isProduction,
-    sameSite: isProduction ? "strict" : "lax",
+    sameSite: isProduction ? "none" : "lax",
     maxAge: 15 * 60 * 1000,
     path: "/",
   });
@@ -128,21 +128,21 @@ const clearTokenCookies = (res) => {
   res.clearCookie("accessToken", {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     path: "/",
   });
 
   res.clearCookie("refreshToken", {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     path: "/api/auth",
   });
 
   res.clearCookie("tokenExists", {
     httpOnly: false,
     secure: process.env.NODE_ENV === "production",
-    sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     path: "/",
   });
 
@@ -1245,9 +1245,14 @@ exports.checkAuth = async (req, res) => {
     const { accessToken } = req.cookies;
 
     if (!accessToken) {
+      // The access token cookie may have expired (15 min maxAge) while
+      // the refresh token (7 days, path=/api/auth) is still valid.
+      // Return ACCESS_TOKEN_EXPIRED so the client keeps the persisted
+      // user state and triggers a refresh instead of logging out.
       return res.status(200).json({
         success: true,
         isAuthenticated: false,
+        code: 'ACCESS_TOKEN_EXPIRED',
       });
     }
 

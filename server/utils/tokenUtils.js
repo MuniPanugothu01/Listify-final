@@ -311,7 +311,7 @@ const setRefreshTokenCookie = (res, refreshToken) => {
   res.cookie('refreshToken', refreshToken, {
     httpOnly: true,        // Prevents XSS attacks
     secure: isProduction,  // HTTPS only in production
-    sameSite: isProduction ? 'strict' : 'lax',
+    sameSite: isProduction ? 'none' : 'lax',
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     path: '/api/auth', // Sent to all auth endpoints (refresh, check, logout)
     domain: isProduction ? process.env.COOKIE_DOMAIN : undefined
@@ -319,7 +319,7 @@ const setRefreshTokenCookie = (res, refreshToken) => {
 
   logger.debug('🍪 Refresh token cookie set', {
     secure: isProduction,
-    sameSite: isProduction ? 'strict' : 'lax',
+    sameSite: isProduction ? 'none' : 'lax',
     path: '/api/auth'
   });
 };
@@ -332,7 +332,7 @@ const clearRefreshTokenCookie = (res) => {
   res.clearCookie('refreshToken', {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
-    sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
     path: '/api/auth'
   });
 
@@ -351,7 +351,7 @@ const refreshTokens = async (refreshToken) => {
   try {
     // Decode to get jti for the lock key
     const decodedJwt = jwt.decode(refreshToken);
-    if (!decodedJwt?.jti) return null;
+    if (!decodedJwt?.jti) return { error: 'invalid' };
 
     lockKey = `refresh_lock:${decodedJwt.jti}`;
 
@@ -361,7 +361,7 @@ const refreshTokens = async (refreshToken) => {
 
     if (!lockAcquired) {
       // Another request is already refreshing this exact token.
-      // Wait briefly and return the new tokens that the winner stored.
+      // Wait briefly for the winner to finish.
       logger.info('🔒 Refresh lock exists — waiting for first request to finish', {
         jti: decodedJwt.jti,
       });
@@ -373,12 +373,11 @@ const refreshTokens = async (refreshToken) => {
         if (!lockStillExists) break;
       }
 
-      // The first request already rotated the token and the browser now has
-      // new cookies from that winning response. We can't return the new tokens
-      // here (the new refresh token is only in the cookie set by the first response),
-      // so return null. The client's shared queue ensures only one request actually
-      // triggers the refresh and all others just retry with the new access token.
-      return null;
+      // Return a special marker so the caller can distinguish
+      // "concurrent refresh (not an error)" from "truly invalid token".
+      // This prevents the middleware from sending INVALID_REFRESH_TOKEN
+      // which would force-logout the user.
+      return { concurrentRefresh: true };
     }
 
     // --- Lock acquired: proceed with rotation ---
@@ -386,7 +385,8 @@ const refreshTokens = async (refreshToken) => {
     // Verify refresh token in Redis
     const session = await verifyRefreshToken(refreshToken);
     if (!session) {
-      return null;
+      // Token is genuinely invalid / expired / revoked in Redis
+      return { error: 'invalid' };
     }
 
     // Generate new tokens (ROTATION)
@@ -406,12 +406,16 @@ const refreshTokens = async (refreshToken) => {
     });
 
     return {
-      accessToken: newAccessToken,
-      refreshToken: newRefreshToken
+      tokens: {
+        accessToken: newAccessToken,
+        refreshToken: newRefreshToken
+      }
     };
   } catch (error) {
-    logger.error('❌ Error refreshing tokens:', error);
-    return null;
+    logger.error('❌ Error refreshing tokens (transient):', error);
+    // Transient error (Redis timeout, network blip) — don't treat as invalid.
+    // The caller must NOT clear the cookie for transient failures.
+    return { error: 'transient' };
   } finally {
     // Release the lock
     if (lockKey) {

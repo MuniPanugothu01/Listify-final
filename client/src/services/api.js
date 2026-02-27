@@ -1,9 +1,10 @@
 import axios from "axios";
 import { resetPersistedState } from "../redux/store";
 
-// Use absolute URL to avoid issues
-const API_URL = "http://localhost:5000/api/auth";
-const BASE_API_URL = "http://localhost:5000/api";
+// Use absolute URL in production, empty string (relative) in dev for Vite proxy
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "";
+const API_URL = `${BACKEND_URL}/api/auth`;
+const BASE_API_URL = `${BACKEND_URL}/api`;
 
 // Create axios instance
 const api = axios.create({
@@ -66,6 +67,14 @@ export const handle401 = async (error, axiosInstance) => {
     return Promise.reject(error);
   }
 
+  // If the server returned DB_UNAVAILABLE (503 mapped to 401 shouldn't
+  // happen after the server fix, but guard defensively), don't treat
+  // it as an auth failure — just reject so the UI can show a retry.
+  const errCode = error.response?.data?.code;
+  if (errCode === 'DB_UNAVAILABLE') {
+    return Promise.reject(error);
+  }
+
   // If already refreshing, queue this request
   if (isRefreshing) {
     return new Promise((resolve, reject) => {
@@ -87,7 +96,8 @@ export const handle401 = async (error, axiosInstance) => {
     processQueue(refreshError);
 
     // Only force-logout when the server explicitly says the refresh token
-    // is gone (expired / revoked).  Network blips should NOT log the user out.
+    // is gone (expired / revoked).  Network blips, 500s, 503s should
+    // NOT log the user out.
     const refreshStatus = refreshError.response?.status;
     const refreshCode  = refreshError.response?.data?.code;
 
@@ -115,43 +125,45 @@ export const handle401 = async (error, axiosInstance) => {
 
 /**
  * Internal helper — makes the actual refresh POST request.
- * Retries once on 503 (transient server error) after a short delay.
+ * Retries on transient errors (503, 500, network) with back-off.
  */
 const _doRefreshRequest = async () => {
-  try {
-    return await axios.post(
-      `${API_URL}/refresh`,
-      {},
-      { withCredentials: true, timeout: 10000 }
-    );
-  } catch (error) {
-    const status = error.response?.status;
-    const code = error.response?.data?.code;
+  const MAX_RETRIES = 2;
 
-    // 503 = server says "temporarily unavailable, retry" — wait 2s and try once more
-    // 500 with SERVER_ERROR = transient crash — also retry once
-    if (status === 503 || (status === 500 && code === 'SERVER_ERROR')) {
-      console.warn("🔄 Refresh got transient error, retrying in 2s...");
-      await new Promise(r => setTimeout(r, 2000));
-      return axios.post(
+  for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      return await axios.post(
         `${API_URL}/refresh`,
         {},
         { withCredentials: true, timeout: 10000 }
       );
-    }
+    } catch (error) {
+      const status = error.response?.status;
+      const isLast = attempt === MAX_RETRIES;
 
-    // Network error (server completely down) — retry once after 3s
-    if (!error.response) {
-      console.warn("🔄 Refresh got network error, retrying in 3s...");
-      await new Promise(r => setTimeout(r, 3000));
-      return axios.post(
-        `${API_URL}/refresh`,
-        {},
-        { withCredentials: true, timeout: 10000 }
-      );
-    }
+      // 401 = genuinely invalid refresh token — don't retry
+      if (status === 401) throw error;
 
-    throw error;
+      // Transient server errors — retry
+      if (status === 503 || status === 500) {
+        if (isLast) throw error;
+        const delay = 2000 * (attempt + 1);
+        console.warn(`🔄 Refresh got ${status}, retrying in ${delay / 1000}s...`);
+        await new Promise(r => setTimeout(r, delay));
+        continue;
+      }
+
+      // Network error (server completely down) — retry
+      if (!error.response) {
+        if (isLast) throw error;
+        const delay = 3000 * (attempt + 1);
+        console.warn(`🔄 Refresh network error, retrying in ${delay / 1000}s...`);
+        await new Promise(r => setTimeout(r, delay));
+        continue;
+      }
+
+      throw error;
+    }
   }
 };
 
@@ -198,6 +210,19 @@ const createResponseInterceptor = (axiosInstance, label = "API") => {
         data: error.response?.data,
         url: originalRequest?.url,
       });
+
+      // 503 (DB_UNAVAILABLE / server temporarily down) — retry once
+      // after a short delay instead of surfacing the error immediately.
+      // This keeps the user logged in during brief MongoDB reconnects.
+      if (
+        error.response?.status === 503 &&
+        !originalRequest._503retry
+      ) {
+        originalRequest._503retry = true;
+        console.warn(`${label}: 503 — retrying in 3s...`);
+        await new Promise(r => setTimeout(r, 3000));
+        return axiosInstance(originalRequest);
+      }
 
       // 401 → delegate to the shared refresh handler
       if (error.response?.status === 401 && !originalRequest._retry) {

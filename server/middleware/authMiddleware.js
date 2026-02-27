@@ -52,9 +52,26 @@ exports.protect = async (req, res, next) => {
         });
       }
 
-      req.user = await User.findById(decoded.id).select('-password');
+      // Wrap the DB call in its own try/catch so that MongoDB
+      // connection errors return 503 (transient) instead of 401.
+      // This prevents the client from logging the user out when
+      // MongoDB briefly disconnects and reconnects.
+      let user;
+      try {
+        user = await User.findById(decoded.id).select('-password');
+      } catch (dbError) {
+        logger.warn('protect: MongoDB temporarily unavailable', {
+          error: dbError.message,
+          userId: decoded.id,
+        });
+        return res.status(503).json({
+          success: false,
+          message: 'Database temporarily unavailable. Please retry.',
+          code: 'DB_UNAVAILABLE',
+        });
+      }
 
-      if (!req.user) {
+      if (!user) {
         return res.status(401).json({
           success: false,
           message: 'User no longer exists.',
@@ -62,14 +79,15 @@ exports.protect = async (req, res, next) => {
         });
       }
 
-      if (req.user.status !== 'active') {
+      if (user.status !== 'active') {
         return res.status(403).json({
           success: false,
-          message: `Your account is ${req.user.status}. Please contact support.`,
+          message: `Your account is ${user.status}. Please contact support.`,
           code: 'ACCOUNT_INACTIVE',
         });
       }
 
+      req.user = user;
       next();
     } catch (error) {
       if (error.name === 'JsonWebTokenError') {
@@ -113,9 +131,33 @@ exports.refreshToken = async (req, res) => {
       });
     }
 
-    const tokens = await refreshTokens(refreshToken);
+    const result = await refreshTokens(refreshToken);
 
-    if (!tokens) {
+    // refreshTokens returns { concurrentRefresh: true } when another
+    // request already rotated this token.  The winner set cookies in
+    // its response; tell this caller to simply retry.
+    if (result && result.concurrentRefresh) {
+      return res.status(200).json({
+        success: true,
+        message: 'Token refresh handled by concurrent request. Retry.',
+        code: 'CONCURRENT_REFRESH',
+      });
+    }
+
+    // Transient error (Redis timeout, network blip) — do NOT clear the
+    // cookie.  The token may still be perfectly valid; the server just
+    // couldn't verify it right now.  Return 503 so the client retries.
+    if (result?.error === 'transient') {
+      logger.warn('Refresh token: transient error — keeping cookie, returning 503');
+      return res.status(503).json({
+        success: false,
+        message: 'Temporary server error. Please retry.',
+        code: 'REFRESH_TRANSIENT_ERROR',
+      });
+    }
+
+    // Genuinely invalid / expired / revoked token — clear the cookie.
+    if (result?.error === 'invalid' || !result?.tokens) {
       clearRefreshTokenCookie(res);
       return res.status(401).json({
         success: false,
@@ -127,13 +169,13 @@ exports.refreshToken = async (req, res) => {
     const { setRefreshTokenCookie } = require('../utils/tokenUtils');
 
     // Set new refresh token cookie
-    setRefreshTokenCookie(res, tokens.refreshToken);
+    setRefreshTokenCookie(res, result.tokens.refreshToken);
 
     // Set new access token cookie
-    res.cookie('accessToken', tokens.accessToken, {
+    res.cookie('accessToken', result.tokens.accessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
       maxAge: 15 * 60 * 1000, // 15 minutes
       path: '/',
     });
@@ -142,7 +184,7 @@ exports.refreshToken = async (req, res) => {
     res.cookie('tokenExists', 'true', {
       httpOnly: false,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
       maxAge: 15 * 60 * 1000,
       path: '/',
     });
@@ -150,7 +192,7 @@ exports.refreshToken = async (req, res) => {
     return res.status(200).json({
       success: true,
       message: 'Token refreshed successfully.',
-      token: tokens.accessToken,
+      token: result.tokens.accessToken,
     });
   } catch (error) {
     logger.error('Refresh token error:', error);
@@ -179,7 +221,7 @@ exports.logout = async (req, res) => {
     res.clearCookie('accessToken', {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
       path: '/',
     });
 
@@ -187,7 +229,7 @@ exports.logout = async (req, res) => {
     res.clearCookie('tokenExists', {
       httpOnly: false,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
       path: '/',
     });
 
@@ -216,14 +258,14 @@ exports.logoutAll = async (req, res) => {
     res.clearCookie('accessToken', {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
       path: '/',
     });
     
     res.clearCookie('tokenExists', {
       httpOnly: false,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
       path: '/',
     });
 
