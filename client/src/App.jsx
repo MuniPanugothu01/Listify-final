@@ -33,6 +33,7 @@ import AboutUs from "./pages/AboutPage/AboutUs.jsx";
 import OurServices from "./pages/OurServices/OurServices.jsx";
 
 import Postadd from "./pages/Postadd/Postadd.jsx";
+import EditListing from "./pages/Postadd/EditListing.jsx";
 
 
 import TakeCare from "./pages/TakeCare/TakeCare.jsx";
