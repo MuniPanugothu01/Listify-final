@@ -537,10 +537,39 @@ export default function Profile() {
                               View
                             </button>
                             <button
+                              onClick={() => navigate(`/edit-listing/${item._id}`)}
+                              className="flex-1 py-2 text-xs font-medium bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors"
+                            >
+                              Edit
+                            </button>
+                            <button
                               onClick={() => {
-                                if (window.confirm('Are you sure you want to delete this listing?')) {
-                                  dispatch(deleteElectronicsListing(item._id));
-                                }
+                                toast((t) => (
+                                  <div className="flex flex-col gap-2">
+                                    <p className="text-sm font-medium text-gray-900">Delete this listing?</p>
+                                    <p className="text-xs text-gray-500">This action cannot be undone.</p>
+                                    <div className="flex gap-2 mt-1">
+                                      <button
+                                        onClick={() => {
+                                          toast.dismiss(t.id);
+                                          dispatch(deleteElectronicsListing(item._id))
+                                            .unwrap()
+                                            .then(() => toast.success('Listing deleted successfully'))
+                                            .catch((err) => toast.error(err || 'Failed to delete listing'));
+                                        }}
+                                        className="px-3 py-1.5 text-xs font-medium bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+                                      >
+                                        Yes, Delete
+                                      </button>
+                                      <button
+                                        onClick={() => toast.dismiss(t.id)}
+                                        className="px-3 py-1.5 text-xs font-medium bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+                                      >
+                                        Cancel
+                                      </button>
+                                    </div>
+                                  </div>
+                                ), { duration: 10000 });
                               }}
                               className="flex-1 py-2 text-xs font-medium bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors"
                             >
