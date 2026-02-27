@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { useSelector } from "react-redux";
-import { electronicsAPI } from "../../services/api";
+import { electronicsAPI, vehiclesAPI } from "../../services/api";
 
 
 const CATEGORIES = [
@@ -78,6 +78,15 @@ const PostAdPage = () => {
     location: "",
     phone: "",
     images: [],
+    // Vehicle-specific fields
+    brand: "",
+    model: "",
+    variant: "",
+    year: "",
+    kmDriven: "",
+    fuelType: "",
+    transmission: "",
+    ownership: "",
   });
 
   const [errors, setErrors] = useState({});
@@ -147,6 +156,16 @@ const PostAdPage = () => {
     if (!form.images || form.images.length === 0)
       errs.images = "At least one image is required";
 
+    // Vehicle-specific validation
+    if (selectedCategory === "Vehicles") {
+      if (!form.brand) errs.brand = "Brand is required";
+      if (!form.model) errs.model = "Model is required";
+      if (!form.year) errs.year = "Year of manufacture is required";
+      if (!form.fuelType) errs.fuelType = "Fuel type is required";
+      if (!form.transmission) errs.transmission = "Transmission is required";
+      if (!form.ownership) errs.ownership = "Ownership is required";
+    }
+
     setForm((f) => ({ ...f, ...trimmed }));
     setErrors(errs);
     return Object.keys(errs).length === 0;
@@ -208,6 +227,53 @@ const PostAdPage = () => {
         setLoading(false);
         setSubmitted(true);
         toast.success("Electronics listing posted successfully!");
+      } else if (selectedCategory === "Vehicles") {
+        // Step 1: Upload images
+        let imageUrls = [];
+        if (form.images.length > 0) {
+          try {
+            const formData = new FormData();
+            form.images.forEach((img) => formData.append("images", img));
+            const uploadRes = await vehiclesAPI.uploadImages(formData);
+            imageUrls = uploadRes.data.imageUrls;
+          } catch (uploadErr) {
+            console.warn("Image upload failed, using placeholders:", uploadErr);
+            imageUrls = [
+              "https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=800&q=80",
+            ];
+          }
+        }
+
+        // Step 2: Create the vehicle listing via API
+        const listingData = {
+          title: form.title,
+          price: Number(form.price),
+          description: form.description,
+          category: selectedCategory,
+          subcategory: selectedSubcategory,
+          condition: form.condition || "Good",
+          location: form.location,
+          phone: form.phone,
+          brand: form.brand,
+          model: form.model,
+          variant: form.variant,
+          year: form.year,
+          kmDriven: form.kmDriven,
+          fuelType: form.fuelType,
+          transmission: form.transmission,
+          ownership: form.ownership,
+          images:
+            imageUrls.length > 0
+              ? imageUrls
+              : [
+                  "https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=800&q=80",
+                ],
+        };
+
+        await vehiclesAPI.create(listingData);
+        setLoading(false);
+        setSubmitted(true);
+        toast.success("Vehicle listing posted successfully!");
       } else {
         // For other categories, save locally (same as before)
         const newProduct = {
@@ -255,6 +321,14 @@ const PostAdPage = () => {
       location: "",
       phone: "",
       images: [],
+      brand: "",
+      model: "",
+      variant: "",
+      year: "",
+      kmDriven: "",
+      fuelType: "",
+      transmission: "",
+      ownership: "",
     });
     setSelectedCategory(null);
     setSelectedSubcategory(null);
@@ -530,17 +604,145 @@ const PostAdPage = () => {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">
-            <Field label="Ad Title *" error={errors.title}>
+            <Field label={selectedCategory === "Vehicles" ? "Car Title *" : "Ad Title *"} error={errors.title}>
               <input
                 type="text"
                 value={form.title}
                 onChange={setField("title")}
-                placeholder="e.g., iPhone 14 Pro Max 256GB"
+                placeholder={selectedCategory === "Vehicles" ? 'e.g., 2019 Hyundai i20 Sportz – Excellent Condition' : "e.g., iPhone 14 Pro Max 256GB"}
                 className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:border-[#27BB97] focus:ring-2 focus:ring-[#27BB97]/20 outline-none transition"
               />
             </Field>
 
-            <Field label="Price (₹) *" error={errors.price}>
+            {/* Vehicle-specific fields */}
+            {selectedCategory === "Vehicles" && (
+              <>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <Field label="Brand *" error={errors.brand}>
+                    <select
+                      value={form.brand}
+                      onChange={setField("brand")}
+                      className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:border-[#27BB97] focus:ring-2 focus:ring-[#27BB97]/20 outline-none transition bg-white"
+                    >
+                      <option value="">Select Brand</option>
+                      <option value="Maruti Suzuki">Maruti Suzuki</option>
+                      <option value="Hyundai">Hyundai</option>
+                      <option value="Tata">Tata</option>
+                      <option value="Honda">Honda</option>
+                      <option value="Toyota">Toyota</option>
+                      <option value="Mahindra">Mahindra</option>
+                      <option value="Kia">Kia</option>
+                      <option value="MG">MG</option>
+                      <option value="Volkswagen">Volkswagen</option>
+                      <option value="Skoda">Skoda</option>
+                      <option value="Renault">Renault</option>
+                      <option value="Nissan">Nissan</option>
+                      <option value="Ford">Ford</option>
+                      <option value="Chevrolet">Chevrolet</option>
+                      <option value="BMW">BMW</option>
+                      <option value="Mercedes-Benz">Mercedes-Benz</option>
+                      <option value="Audi">Audi</option>
+                      <option value="Jeep">Jeep</option>
+                      <option value="Citroën">Citroën</option>
+                      <option value="Other">Other</option>
+                    </select>
+                  </Field>
+
+                  <Field label="Model *" error={errors.model}>
+                    <input
+                      type="text"
+                      value={form.model}
+                      onChange={setField("model")}
+                      placeholder="e.g., i20, Swift, Nexon"
+                      className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:border-[#27BB97] focus:ring-2 focus:ring-[#27BB97]/20 outline-none transition"
+                    />
+                  </Field>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <Field label="Variant">
+                    <input
+                      type="text"
+                      value={form.variant}
+                      onChange={setField("variant")}
+                      placeholder="e.g., Sportz, VXi, XZ+"
+                      className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:border-[#27BB97] focus:ring-2 focus:ring-[#27BB97]/20 outline-none transition"
+                    />
+                  </Field>
+
+                  <Field label="Year of Manufacture *" error={errors.year}>
+                    <select
+                      value={form.year}
+                      onChange={setField("year")}
+                      className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:border-[#27BB97] focus:ring-2 focus:ring-[#27BB97]/20 outline-none transition bg-white"
+                    >
+                      <option value="">Select Year</option>
+                      {Array.from({ length: 30 }, (_, i) => new Date().getFullYear() - i).map((yr) => (
+                        <option key={yr} value={yr}>{yr}</option>
+                      ))}
+                    </select>
+                  </Field>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <Field label="Kilometers Driven">
+                    <input
+                      type="text"
+                      value={form.kmDriven}
+                      onChange={setField("kmDriven")}
+                      placeholder="e.g., 25,000"
+                      className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:border-[#27BB97] focus:ring-2 focus:ring-[#27BB97]/20 outline-none transition"
+                    />
+                  </Field>
+
+                  <Field label="Fuel Type *" error={errors.fuelType}>
+                    <select
+                      value={form.fuelType}
+                      onChange={setField("fuelType")}
+                      className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:border-[#27BB97] focus:ring-2 focus:ring-[#27BB97]/20 outline-none transition bg-white"
+                    >
+                      <option value="">Select Fuel Type</option>
+                      <option value="Petrol">Petrol</option>
+                      <option value="Diesel">Diesel</option>
+                      <option value="CNG">CNG</option>
+                      <option value="Electric">Electric</option>
+                      <option value="Hybrid">Hybrid</option>
+                      <option value="LPG">LPG</option>
+                    </select>
+                  </Field>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <Field label="Transmission *" error={errors.transmission}>
+                    <select
+                      value={form.transmission}
+                      onChange={setField("transmission")}
+                      className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:border-[#27BB97] focus:ring-2 focus:ring-[#27BB97]/20 outline-none transition bg-white"
+                    >
+                      <option value="">Select Transmission</option>
+                      <option value="Manual">Manual</option>
+                      <option value="Automatic">Automatic</option>
+                    </select>
+                  </Field>
+
+                  <Field label="Ownership *" error={errors.ownership}>
+                    <select
+                      value={form.ownership}
+                      onChange={setField("ownership")}
+                      className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:border-[#27BB97] focus:ring-2 focus:ring-[#27BB97]/20 outline-none transition bg-white"
+                    >
+                      <option value="">Select Ownership</option>
+                      <option value="1st Owner">1st Owner</option>
+                      <option value="2nd Owner">2nd Owner</option>
+                      <option value="3rd Owner">3rd Owner</option>
+                      <option value="4th+ Owner">4th+ Owner</option>
+                    </select>
+                  </Field>
+                </div>
+              </>
+            )}
+
+            <Field label={selectedCategory === "Vehicles" ? "Expected Price (₹) *" : "Price (₹) *"} error={errors.price}>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-medium">
                   ₹

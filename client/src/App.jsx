@@ -319,7 +319,6 @@ const AppContent = () => {
 
           {/* Placeholder Pages */}
           <Route path="/marketplace" element={<div>Marketplace Page</div>} />
-          <Route path="/vehicles" element={<div>Vehicles Page</div>} />
           <Route path="/takecare" element={<div>TakeCare Page</div>} />
           <Route path="/cares" element={<div>Cares Page</div>} />
           <Route path="/blogs" element={<div>Blogs Page</div>} />
