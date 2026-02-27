@@ -2,8 +2,9 @@ import axios from "axios";
 import { resetPersistedState } from "../redux/store";
 
 // Use absolute URL to avoid issues
-const API_URL = "http://localhost:5000/api/auth";
-const BASE_API_URL = "http://localhost:5000/api";
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+const API_URL = `${BACKEND_URL}/api/auth`;
+const BASE_API_URL = `${BACKEND_URL}/api`;
 
 // Create axios instance
 const api = axios.create({
