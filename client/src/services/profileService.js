@@ -8,7 +8,7 @@ import { handle401 } from "./api";
 // We create a dedicated axios instance here instead, identical config to the
 // other instances in api.js (listingsApi, messagesApi, etc.)
 // ─────────────────────────────────────────────────────────────────────────────
-const API_URL = "http://localhost:5000/api/auth";
+const API_URL = `${import.meta.env.VITE_BACKEND_URL || ""}/api/auth`;
 
 const profileApi = axios.create({
   baseURL: API_URL,

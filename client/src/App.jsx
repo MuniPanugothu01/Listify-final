@@ -32,8 +32,7 @@ import ContactUs from "./pages/ContactPage/ContactUS.jsx";
 import AboutUs from "./pages/AboutPage/AboutUs.jsx";
 import OurServices from "./pages/OurServices/OurServices.jsx";
 
-import Postadd from "./pages/PostAdd/Postadd.jsx";
-import EditListing from "./pages/Postadd/EditListing.jsx";
+import Postadd from "./pages/Postadd/Postadd.jsx";
 
 
 import TakeCare from "./pages/TakeCare/TakeCare.jsx";

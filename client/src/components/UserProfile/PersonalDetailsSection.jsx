@@ -116,10 +116,12 @@ export default function PersonalDetailsSection() {
     if (!profile) dispatch(fetchProfile());
   }, [dispatch, profile]);
 
-  // Sync profile image to auth when profile updates
+  // Sync profile data to auth when profile updates
   useEffect(() => {
-    if (profile?.profileImage || profile?.profileImageUrl || profile?.googleProfileImage || profile?.avatar) {
+    if (profile) {
       dispatch(updateUser({
+        name: profile.name,
+        email: profile.email,
         profileImageUrl: profile.profileImage || profile.profileImageUrl || profile.googleProfileImage || profile.avatar,
         profileImage: profile.profileImage,
         googleProfileImage: profile.googleProfileImage,

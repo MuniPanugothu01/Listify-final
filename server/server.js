@@ -1,13 +1,9 @@
 const path = require("path");
 require("dotenv").config({ path: path.join(__dirname, ".env") });
 const express = require("express");
-const session = require("express-session");
-const MongoDBStore = require("connect-mongodb-session")(session);
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
-const crypto = require("crypto");
 const connectDB = require("./config/database");
-const passport = require("./config/passport");
 const mongoose = require("mongoose");
 const redis = require("./config/redis");
 
@@ -15,8 +11,19 @@ const redis = require("./config/redis");
 const app = express();
 
 // ============== CORS Configuration ==============
+const allowedOrigins = (process.env.CLIENT_URL || "http://localhost:5173")
+  .split(",")
+  .map((o) => o.trim());
+
 const corsOptions = {
-  origin: process.env.CLIENT_URL || "http://localhost:5173",
+  origin: function (origin, callback) {
+    // Allow requests with no origin (mobile apps, curl, etc.)
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
   credentials: true,
   optionsSuccessStatus: 200,
 };
@@ -29,71 +36,6 @@ app.use(express.urlencoded({ extended: true }));
 
 // Cookie parser
 app.use(cookieParser());
-
-// Generate secure session secret
-const generateSecureSecret = () => {
-  return process.env.SESSION_SECRET || crypto.randomBytes(64).toString("hex");
-};
-
-// ============== MongoDB Session Store - FIXED ==============
-let store;
-
-try {
-  const storeOptions = {
-    uri: process.env.MONGODB_URI,
-    collection: "sessions",
-    expires: 1000 * 60 * 60 * 24 * 7, // 7 days
-    connectionOptions: {
-      // REMOVED deprecated options
-      ssl: true,
-      tls: true,
-      maxPoolSize: 5,
-      serverSelectionTimeoutMS: 5000,
-      socketTimeoutMS: 45000,
-    },
-  };
-
-  store = new MongoDBStore(storeOptions);
-
-  store.on("error", function (error) {
-    console.error("❌ MongoDB Session Store Error:", error.message);
-    console.log("⚠️ Falling back to MemoryStore for sessions");
-    
-    // Fallback to MemoryStore
-    const MemoryStore = require("express-session").MemoryStore;
-    store = new MemoryStore();
-  });
-
-  store.on("connected", () => {
-    console.log("✅ MongoDB Session Store connected");
-  });
-
-} catch (error) {
-  console.error("❌ Failed to create MongoDB session store:", error.message);
-  console.log("⚠️ Using MemoryStore as fallback");
-  const MemoryStore = require("express-session").MemoryStore;
-  store = new MemoryStore();
-}
-
-// Session configuration
-const sessionConfig = {
-  secret: generateSecureSecret(),
-  resave: false,
-  saveUninitialized: false,
-  store: store,
-  name: "listify.sid",
-  cookie: {
-    secure: process.env.NODE_ENV === "production",
-    httpOnly: true,
-    sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
-    maxAge: 1000 * 60 * 60 * 24, // 24 hours
-  },
-  rolling: true,
-};
-
-app.use(session(sessionConfig));
-app.use(passport.initialize());
-app.use(passport.session());
 
 // Connect to database
 connectDB().catch(console.error);
@@ -116,7 +58,6 @@ app.get("/health", (req, res) => {
     environment: process.env.NODE_ENV,
     database: dbStatus,
     redis: "connected",
-    sessionStore: store.constructor.name === "MongoDBStore" ? "MongoDB" : "MemoryStore"
   });
 });
 
@@ -130,7 +71,6 @@ app.get('/api/test', (req, res) => {
     timestamp: new Date().toISOString(),
     environment: process.env.NODE_ENV,
     database: dbStatus,
-    session: req.sessionID ? 'Active' : 'No session'
   });
 });
 
@@ -170,7 +110,6 @@ const server = app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
   console.log(`🌐 Environment: ${process.env.NODE_ENV}`);
   console.log(`🍪 Cookie parser enabled`);
-  console.log(`📝 Session store: ${store.constructor.name === 'MongoDBStore' ? 'MongoDB' : 'MemoryStore'}`);
 });
 
 // ============== PRODUCTION GRACEFUL SHUTDOWN ==============

@@ -33,7 +33,10 @@ const Sidebar = ({
 }) => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
-  const { devices } = useSelector((state) => state.profile);
+  const { devices, profile } = useSelector((state) => state.profile);
+
+  // Use the profile name (most up-to-date after edits) with auth user as fallback
+  const displayName = profile?.name || user?.name || "User";
 
   const menuItems = [
     { id: "home", label: "Dashboard", icon: Home, notification: counts.alerts > 0 ? counts.alerts : null },
@@ -63,8 +66,8 @@ const Sidebar = ({
 
   // Get user initials for avatar
   const getUserInitials = () => {
-    if (!user?.name) return "U";
-    return user.name
+    if (!displayName || displayName === "User") return "U";
+    return displayName
       .split(" ")
       .map(n => n[0])
       .join("")
@@ -72,9 +75,9 @@ const Sidebar = ({
       .slice(0, 2);
   };
 
-  // Get profile image URL
+  // Get profile image URL — prefer profile state (most recent after edits)
   const getProfileImage = () => {
-    return user?.profileImageUrl || user?.avatar || null;
+    return profile?.profileImage || profile?.profileImageUrl || user?.profileImageUrl || user?.avatar || null;
   };
 
   return (
@@ -116,7 +119,7 @@ const Sidebar = ({
               {getProfileImage() ? (
                 <img
                   src={getProfileImage()}
-                  alt={user?.name}
+                  alt={displayName}
                   className="w-14 h-14 rounded-2xl object-cover border-2 border-white shadow-lg"
                 />
               ) : (
@@ -129,7 +132,7 @@ const Sidebar = ({
               </div>
             </div>
             <div className="flex-1 min-w-0">
-              <h3 className="font-bold text-gray-900 truncate">{user?.name || "User"}</h3>
+              <h3 className="font-bold text-gray-900 truncate">{displayName}</h3>
               <p className="text-sm text-emerald-600 font-medium">
                 {user?.provider === "google" ? "Google Account" : "Premium Member"}
               </p>
