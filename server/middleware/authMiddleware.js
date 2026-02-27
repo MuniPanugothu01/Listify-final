@@ -131,12 +131,12 @@ exports.refreshToken = async (req, res) => {
       });
     }
 
-    const tokens = await refreshTokens(refreshToken);
+    const result = await refreshTokens(refreshToken);
 
     // refreshTokens returns { concurrentRefresh: true } when another
     // request already rotated this token.  The winner set cookies in
     // its response; tell this caller to simply retry.
-    if (tokens && tokens.concurrentRefresh) {
+    if (result && result.concurrentRefresh) {
       return res.status(200).json({
         success: true,
         message: 'Token refresh handled by concurrent request. Retry.',
@@ -144,7 +144,20 @@ exports.refreshToken = async (req, res) => {
       });
     }
 
-    if (!tokens) {
+    // Transient error (Redis timeout, network blip) — do NOT clear the
+    // cookie.  The token may still be perfectly valid; the server just
+    // couldn't verify it right now.  Return 503 so the client retries.
+    if (result?.error === 'transient') {
+      logger.warn('Refresh token: transient error — keeping cookie, returning 503');
+      return res.status(503).json({
+        success: false,
+        message: 'Temporary server error. Please retry.',
+        code: 'REFRESH_TRANSIENT_ERROR',
+      });
+    }
+
+    // Genuinely invalid / expired / revoked token — clear the cookie.
+    if (result?.error === 'invalid' || !result?.tokens) {
       clearRefreshTokenCookie(res);
       return res.status(401).json({
         success: false,
@@ -156,10 +169,10 @@ exports.refreshToken = async (req, res) => {
     const { setRefreshTokenCookie } = require('../utils/tokenUtils');
 
     // Set new refresh token cookie
-    setRefreshTokenCookie(res, tokens.refreshToken);
+    setRefreshTokenCookie(res, result.tokens.refreshToken);
 
     // Set new access token cookie
-    res.cookie('accessToken', tokens.accessToken, {
+    res.cookie('accessToken', result.tokens.accessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
@@ -179,7 +192,7 @@ exports.refreshToken = async (req, res) => {
     return res.status(200).json({
       success: true,
       message: 'Token refreshed successfully.',
-      token: tokens.accessToken,
+      token: result.tokens.accessToken,
     });
   } catch (error) {
     logger.error('Refresh token error:', error);

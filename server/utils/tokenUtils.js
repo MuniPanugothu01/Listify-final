@@ -351,7 +351,7 @@ const refreshTokens = async (refreshToken) => {
   try {
     // Decode to get jti for the lock key
     const decodedJwt = jwt.decode(refreshToken);
-    if (!decodedJwt?.jti) return null;
+    if (!decodedJwt?.jti) return { error: 'invalid' };
 
     lockKey = `refresh_lock:${decodedJwt.jti}`;
 
@@ -385,7 +385,8 @@ const refreshTokens = async (refreshToken) => {
     // Verify refresh token in Redis
     const session = await verifyRefreshToken(refreshToken);
     if (!session) {
-      return null;
+      // Token is genuinely invalid / expired / revoked in Redis
+      return { error: 'invalid' };
     }
 
     // Generate new tokens (ROTATION)
@@ -405,12 +406,16 @@ const refreshTokens = async (refreshToken) => {
     });
 
     return {
-      accessToken: newAccessToken,
-      refreshToken: newRefreshToken
+      tokens: {
+        accessToken: newAccessToken,
+        refreshToken: newRefreshToken
+      }
     };
   } catch (error) {
-    logger.error('❌ Error refreshing tokens:', error);
-    return null;
+    logger.error('❌ Error refreshing tokens (transient):', error);
+    // Transient error (Redis timeout, network blip) — don't treat as invalid.
+    // The caller must NOT clear the cookie for transient failures.
+    return { error: 'transient' };
   } finally {
     // Release the lock
     if (lockKey) {

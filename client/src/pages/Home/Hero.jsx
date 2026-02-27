@@ -553,7 +553,7 @@ export default function Hero() {
       </section>
 
       {/* Add custom animations */}
-      <style jsx>{`
+      <style>{`
         @keyframes fadeInUp {
           from {
             opacity: 0;
