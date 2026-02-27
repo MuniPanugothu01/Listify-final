@@ -509,4 +509,5 @@ const ElectronicsDetail = () => {
   );
 };
 
+
 export default ElectronicsDetail;
