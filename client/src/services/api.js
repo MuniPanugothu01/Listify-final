@@ -236,7 +236,11 @@ const createResponseInterceptor = (axiosInstance, label = "API") => {
         status: error.response?.status || 500,
       };
 
-      if (error.response?.data) {
+      // Network error — no response received at all
+      if (!error.response) {
+        errorResponse.message = "Network error. Please check if the server is running and try again.";
+        errorResponse.isNetworkError = true;
+      } else if (error.response?.data) {
         const d = error.response.data;
         if (typeof d === 'string')      errorResponse.message = d;
         else if (d.message)             errorResponse.message = d.message;

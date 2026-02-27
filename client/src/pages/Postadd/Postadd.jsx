@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { useSelector } from "react-redux";
@@ -84,6 +84,15 @@ const PostAdPage = () => {
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
+  useEffect(() => {
+    if (!user) {
+      toast.error("Please login first");
+      navigate("/signin", { replace: true });
+    }
+  }, [user, navigate]);
+
+  if (!user) return null;
+
   const setField = (field) => (e) =>
     setForm((f) => ({ ...f, [field]: e.target.value }));
 
@@ -135,6 +144,8 @@ const PostAdPage = () => {
     if (!trimmed.location) errs.location = "Location is required";
     if (!trimmed.phone || !/^\d{10}$/.test(trimmed.phone))
       errs.phone = "Enter a valid 10-digit phone number";
+    if (!form.images || form.images.length === 0)
+      errs.images = "At least one image is required";
 
     setForm((f) => ({ ...f, ...trimmed }));
     setErrors(errs);
@@ -227,8 +238,8 @@ const PostAdPage = () => {
       setLoading(false);
       console.error("Post ad error:", error);
       toast.error(
-        error.response?.data?.message ||
-          error.message ||
+        error.message ||
+          error.response?.data?.message ||
           "Failed to post listing. Please try again."
       );
     }
@@ -600,7 +611,7 @@ const PostAdPage = () => {
               </div>
             </Field>
 
-            <Field label="Photos (Optional - Max 6 Images)">
+            <Field label="Photos * (Min 1 - Max 6 Images)" error={errors.images}>
               <div className="space-y-4">
                 {form.images.length > 0 && (
                   <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
