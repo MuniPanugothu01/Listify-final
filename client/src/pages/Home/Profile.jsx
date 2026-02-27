@@ -17,6 +17,7 @@ import toast from "react-hot-toast";
 // Import Redux actions
 import { fetchProfile, updateProfile, setProfilePicPreview, uploadProfileImage, fetchDevices, fetchLoginHistory } from "../../redux/slices/profileSlice";
 import { fetchSavedElectronics, toggleSaveElectronics, fetchMyElectronics, deleteElectronicsListing } from "../../redux/slices/electronicsSlice";
+import { fetchSavedVehicles, toggleSaveVehicle, fetchMyVehicles, deleteVehicleListing } from "../../redux/slices/vehiclesSlice";
 
 // Import components
 import Sidebar from "../../components/UserProfile/Sidebar";
@@ -69,6 +70,21 @@ export default function Profile() {
   const { user: authUser } = useSelector((state) => state.auth);
   const { profile, profilePicPreview, loading: profileLoading, imageUploading, devices, loginHistory } = useSelector((state) => state.profile);
   const { savedItems: savedElectronics, savedLoading, myListings, myListingsLoading } = useSelector((state) => state.electronics);
+  const { savedItems: savedVehicles, savedLoading: savedVehiclesLoading, myListings: myVehicleListings, myListingsLoading: myVehiclesLoading } = useSelector((state) => state.vehicles);
+
+  // Combine electronics + vehicles
+  const allMyListings = [
+    ...(myListings || []).map(item => ({ ...item, _listingType: 'electronics' })),
+    ...(myVehicleListings || []).map(item => ({ ...item, _listingType: 'vehicles' })),
+  ].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+  const allSavedItems = [
+    ...(savedElectronics || []).map(item => ({ ...item, _listingType: 'electronics' })),
+    ...(savedVehicles || []).map(item => ({ ...item, _listingType: 'vehicles' })),
+  ].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+  const allMyListingsLoading = myListingsLoading || myVehiclesLoading;
+  const allSavedLoading = savedLoading || savedVehiclesLoading;
 
   // Derive initial active section from URL param
   const initialSection = sectionFromUrl[urlSection] || location.state?.activeSection || "home";
@@ -95,17 +111,19 @@ export default function Profile() {
     loadUserData();
   }, []);
 
-  // Fetch saved electronics when saved tab is active
+  // Fetch saved electronics + vehicles when saved tab is active
   useEffect(() => {
     if (activeSection === "saved" || activeSection === "home") {
       dispatch(fetchSavedElectronics());
+      dispatch(fetchSavedVehicles());
     }
   }, [activeSection, dispatch]);
 
-  // Fetch my listings when posts tab is active
+  // Fetch my listings (electronics + vehicles) when posts tab is active
   useEffect(() => {
     if (activeSection === "posts" || activeSection === "home") {
       dispatch(fetchMyElectronics());
+      dispatch(fetchMyVehicles());
     }
   }, [activeSection, dispatch]);
 
@@ -198,8 +216,8 @@ export default function Profile() {
   };
 
   const counts = {
-    posts: myListings?.length || 0,
-    saved: savedElectronics?.length || 0,
+    posts: allMyListings?.length || 0,
+    saved: allSavedItems?.length || 0,
     alerts: myAlerts?.length || 0,
     messages: unreadCount || 0,
     devices: devices?.length || 0,
@@ -334,8 +352,8 @@ export default function Profile() {
           <main className="flex-1 lg:mr-6 space-y-6 w-full min-w-0">
             {activeSection === "home" && (
               <HomeSection
-                savedHouses={savedElectronics || []}
-                myPosts={myListings || []}
+                savedHouses={allSavedItems || []}
+                myPosts={allMyListings || []}
                 myAlerts={myAlerts || []}
                 messages={conversations || []}
                 agendaEvents={agendaEvents}
@@ -380,7 +398,7 @@ export default function Profile() {
                 <ProfileMain
                   user={profile || authUser} 
                   profilePic={getProfileImagePreview()} 
-                  myPosts={myListings || []} 
+                  myPosts={allMyListings || []} 
                 />
               </div>
             )}
@@ -389,33 +407,33 @@ export default function Profile() {
               <div>
                 <div className="mb-6">
                   <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Saved Items</h2>
-                  <p className="text-gray-500 text-sm mt-1">{savedElectronics?.length || 0} items saved</p>
+                  <p className="text-gray-500 text-sm mt-1">{allSavedItems?.length || 0} items saved</p>
                 </div>
-                {savedLoading ? (
+                {allSavedLoading ? (
                   <div className="flex items-center justify-center py-16">
                     <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-emerald-500"></div>
                   </div>
-                ) : !savedElectronics || savedElectronics.length === 0 ? (
+                ) : !allSavedItems || allSavedItems.length === 0 ? (
                   <div className="bg-white rounded-2xl border border-gray-200 p-8 md:p-12 text-center">
                     <div className="w-20 h-20 md:w-24 md:h-24 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6">
                       <Heart className="w-10 h-10 md:w-12 md:h-12 text-emerald-500 fill-emerald-500" />
                     </div>
                     <h3 className="text-xl md:text-2xl font-semibold text-gray-900 mb-3">No saved items yet</h3>
-                    <p className="text-gray-600 mb-8 max-w-md mx-auto">Start saving electronics you like to view them later!</p>
+                    <p className="text-gray-600 mb-8 max-w-md mx-auto">Start saving listings you like to view them later!</p>
                     <button 
                       onClick={() => navigate('/electronics')}
                       className="px-6 py-3 bg-emerald-500 text-white rounded-xl hover:bg-emerald-600 transition-colors font-semibold"
                     >
-                      Browse Electronics
+                      Browse Listings
                     </button>
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-                    {savedElectronics.map((item) => (
+                    {allSavedItems.map((item) => (
                       <div
-                        key={item._id}
+                        key={`${item._listingType}-${item._id}`}
                         className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition-all duration-300 cursor-pointer group"
-                        onClick={() => navigate(`/electronics/${item._id}`)}
+                        onClick={() => navigate(`/${item._listingType}/${item._id}`)}
                       >
                         <div className="relative h-44 sm:h-48 overflow-hidden bg-gray-100">
                           <img
@@ -428,10 +446,14 @@ export default function Profile() {
                               {item.condition}
                             </span>
                           )}
+                          <span className="absolute bottom-2 left-2 bg-black/60 text-white text-[10px] font-medium px-2 py-0.5 rounded-full capitalize">
+                            {item._listingType}
+                          </span>
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
-                              dispatch(toggleSaveElectronics(item._id));
+                              if (item._listingType === 'vehicles') dispatch(toggleSaveVehicle(item._id));
+                              else dispatch(toggleSaveElectronics(item._id));
                             }}
                             className="absolute top-2 right-2 p-1.5 bg-white rounded-full shadow-sm hover:bg-red-50 transition-colors"
                           >
@@ -462,7 +484,7 @@ export default function Profile() {
                 <div className="mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                   <div>
                     <h2 className="text-2xl md:text-3xl font-bold text-gray-900">My Listings</h2>
-                    <p className="text-gray-500 text-sm mt-1">{myListings?.length || 0} active listings</p>
+                    <p className="text-gray-500 text-sm mt-1">{allMyListings?.length || 0} active listings</p>
                   </div>
                   <button 
                     onClick={() => navigate('/post-add')}
@@ -472,11 +494,11 @@ export default function Profile() {
                     Post New Ad
                   </button>
                 </div>
-                {myListingsLoading ? (
+                {allMyListingsLoading ? (
                   <div className="flex items-center justify-center py-16">
                     <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-emerald-500"></div>
                   </div>
-                ) : !myListings || myListings.length === 0 ? (
+                ) : !allMyListings || allMyListings.length === 0 ? (
                   <div className="bg-white rounded-2xl border border-gray-200 p-8 md:p-12 text-center">
                     <div className="w-20 h-20 md:w-24 md:h-24 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
                       <FileText className="w-10 h-10 md:w-12 md:h-12 text-blue-500" />
@@ -492,11 +514,11 @@ export default function Profile() {
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-                    {myListings.map((item) => (
+                    {allMyListings.map((item) => (
                       <div
-                        key={item._id}
+                        key={`${item._listingType}-${item._id}`}
                         className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition-all duration-300 cursor-pointer group"
-                        onClick={() => navigate(`/electronics/${item._id}`)}
+                        onClick={() => navigate(`/${item._listingType}/${item._id}`)}
                       >
                         <div className="relative h-44 sm:h-48 overflow-hidden bg-gray-100">
                           <img
@@ -516,6 +538,9 @@ export default function Profile() {
                           }`}>
                             {item.status?.charAt(0).toUpperCase() + item.status?.slice(1) || 'Active'}
                           </span>
+                          <span className="absolute bottom-2 left-2 bg-black/60 text-white text-[10px] font-medium px-2 py-0.5 rounded-full capitalize">
+                            {item._listingType}
+                          </span>
                         </div>
                         <div className="p-4">
                           <h3 className="font-semibold text-gray-900 text-sm mb-2 line-clamp-2 leading-tight">
@@ -531,7 +556,7 @@ export default function Profile() {
                           </div>
                           <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
                             <button
-                              onClick={() => navigate(`/electronics/${item._id}`)}
+                              onClick={() => navigate(`/${item._listingType}/${item._id}`)}
                               className="flex-1 py-2 text-xs font-medium bg-emerald-50 text-emerald-700 rounded-lg hover:bg-emerald-100 transition-colors"
                             >
                               View
@@ -552,7 +577,8 @@ export default function Profile() {
                                       <button
                                         onClick={() => {
                                           toast.dismiss(t.id);
-                                          dispatch(deleteElectronicsListing(item._id))
+                                          const deleteAction = item._listingType === 'vehicles' ? deleteVehicleListing : deleteElectronicsListing;
+                                          dispatch(deleteAction(item._id))
                                             .unwrap()
                                             .then(() => toast.success('Listing deleted successfully'))
                                             .catch((err) => toast.error(err || 'Failed to delete listing'));
