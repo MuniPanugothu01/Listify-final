@@ -126,7 +126,7 @@ export default function SignUp() {
 
     try {
       const response = await axios.get(
-        `${import.meta.env.VITE_BACKEND_URL}/api/auth/register/status/${encodeURIComponent(email)}`,
+        `${import.meta.env.VITE_BACKEND_URL || ""}/api/auth/register/status/${encodeURIComponent(email)}`,
       );
 
       if (response.data.success && response.data.data) {

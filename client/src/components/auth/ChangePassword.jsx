@@ -41,7 +41,7 @@ const ChangePassword = ({ onSuccess }) => {
   useEffect(() => {
     const fetchRequirements = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/auth/password-requirements`);
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL || ""}/api/auth/password-requirements`);
         if (response.data.success) {
           setPasswordRequirements(response.data.requirements);
         }
