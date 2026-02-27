@@ -33,6 +33,7 @@ import AboutUs from "./pages/AboutPage/AboutUs.jsx";
 import OurServices from "./pages/OurServices/OurServices.jsx";
 
 import Postadd from "./pages/PostAdd/Postadd.jsx";
+import EditListing from "./pages/Postadd/EditListing.jsx";
 
 
 import TakeCare from "./pages/TakeCare/TakeCare.jsx";
@@ -130,6 +131,7 @@ const AppContent = () => {
     "/forgot-password",
     "/reset-password",
     "/post-add",
+    "/edit-listing",
     "/dashboard",
   ];
 
@@ -262,6 +264,7 @@ const AppContent = () => {
           <Route path="/about-us" element={<AboutUs />} />
           <Route path="/our-services" element={<OurServices />} />
           <Route path="/post-add" element={<Postadd />} />
+          <Route path="/edit-listing/:id" element={<EditListing />} />
           <Route path="/reviews" element={<Reviews />} />
 
           {/* TakeCare */}
