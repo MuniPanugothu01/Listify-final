@@ -341,6 +341,7 @@ export default function Profile() {
                 messages={messages}
                 agendaEvents={agendaEvents}
                 onViewAll={setActiveSection}
+                user={user}
               />
             )}
 
