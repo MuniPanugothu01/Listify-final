@@ -393,8 +393,20 @@ const refreshTokens = async (refreshToken) => {
     const newAccessToken = generateAccessToken(session.userId);
     const newRefreshToken = generateRefreshToken(session.userId);
 
-    // Revoke old refresh token from Redis
-    await revokeRefreshToken(refreshToken);
+    // Grace period: keep the old token alive for 30 seconds instead of
+    // deleting it immediately. This covers the window where the server
+    // rotated the token but the new cookie didn't reach the client
+    // (e.g., network blip, MongoDB reconnection, browser didn't process
+    // the Set-Cookie from the response). After 30s it auto-expires.
+    const oldDecoded = jwt.decode(refreshToken);
+    if (oldDecoded?.jti) {
+      await redis.setex(
+        `refresh_token:${oldDecoded.jti}`,
+        30, // 30 second grace period
+        JSON.stringify({ ...session, gracePeriod: true })
+      );
+      logger.info('⏳ Old refresh token kept with 30s grace period', { jti: oldDecoded.jti });
+    }
     
     // Store new refresh token in Redis
     await storeRefreshToken(session.userId, newRefreshToken);
