@@ -387,19 +387,57 @@ exports.login = async (req, res) => {
 
     const isPasswordMatch = await bcrypt.compare(password, user.password);
 
-    if (!isPasswordMatch) {
-      return res.status(401).json({
-        success: false,
-        message: "Invalid email or password",
-      });
-    }
-
+    // Check account lockout BEFORE processing result
     if (user.isLocked && user.isLocked()) {
+      // Log failed attempt even for locked accounts
+      if (user.addLoginHistory) {
+        await user.addLoginHistory({
+          ipAddress: req.ip,
+          userAgent: req.get("user-agent"),
+          loginType: "email",
+          success: false,
+          failureReason: "account_locked",
+        });
+      }
       return res.status(423).json({
         success: false,
         message:
-          "Account is temporarily locked. Please try again later or reset your password.",
+          "Account is temporarily locked due to too many failed attempts. Please try again after 1 hour or reset your password.",
         locked: true,
+        code: 'ACCOUNT_LOCKED',
+      });
+    }
+
+    if (!isPasswordMatch) {
+      // Increment failed login attempts (locks after 5 failures)
+      if (user.incrementLoginAttempts) {
+        await user.incrementLoginAttempts();
+      }
+
+      // Log failed login attempt
+      if (user.addLoginHistory) {
+        await user.addLoginHistory({
+          ipAddress: req.ip,
+          userAgent: req.get("user-agent"),
+          loginType: "email",
+          success: false,
+          failureReason: "invalid_password",
+        });
+      }
+
+      // Log security event
+      if (user.addSecurityLog) {
+        await user.addSecurityLog(
+          "failed_login",
+          req.ip,
+          req.get("user-agent"),
+          { reason: "invalid_password", attempt: (user.loginAttempts || 0) + 1 }
+        );
+      }
+
+      return res.status(401).json({
+        success: false,
+        message: "Invalid email or password",
       });
     }
 
@@ -1316,42 +1354,37 @@ exports.checkAuth = async (req, res) => {
     }
 
     // --- Step 3: verify active session exists in Upstash Redis ---
+    // NOTE: This is a soft check — JWT + MongoDB already verified the user.
+    // If Redis session data is stale or missing (e.g. after MongoDB reconnect,
+    // token rotation edge case), we still trust the valid access token.
+    // The session info is added to the response for client-side awareness.
+    let redisSessionValid = true;
     try {
       const redis = require("../config/redis");
       const sessionTokenIds = await redis.smembers(`user_sessions:${decoded.id}`);
 
       if (!sessionTokenIds || sessionTokenIds.length === 0) {
-        logger.info("checkAuth: No active sessions in Redis for user", { userId: decoded.id });
-        return res.status(200).json({
-          success: true,
-          isAuthenticated: false,
-          code: "NO_ACTIVE_SESSION",
-        });
-      }
-
-      // Verify at least one session still has a valid refresh token in Redis
-      let hasValidSession = false;
-      for (const tokenId of sessionTokenIds) {
-        const tokenData = await redis.get(`refresh_token:${tokenId}`);
-        if (tokenData) {
-          hasValidSession = true;
-          break;
+        logger.info("checkAuth: No active sessions in Redis for user (soft check)", { userId: decoded.id });
+        redisSessionValid = false;
+      } else {
+        // Verify at least one session still has a valid refresh token in Redis
+        let hasValidSession = false;
+        for (const tokenId of sessionTokenIds) {
+          const tokenData = await redis.get(`refresh_token:${tokenId}`);
+          if (tokenData) {
+            hasValidSession = true;
+            break;
+          }
         }
-      }
 
-      if (!hasValidSession) {
-        // Clean up stale session set
-        await redis.del(`user_sessions:${decoded.id}`);
-        logger.info("checkAuth: All Redis sessions expired for user", { userId: decoded.id });
-        return res.status(200).json({
-          success: true,
-          isAuthenticated: false,
-          code: "SESSION_EXPIRED",
-        });
+        if (!hasValidSession) {
+          // Clean up stale session set entries (don't delete the whole set)
+          logger.info("checkAuth: All Redis sessions expired for user (soft check)", { userId: decoded.id });
+          redisSessionValid = false;
+        }
       }
     } catch (redisError) {
       // Redis temporarily down — don't block authentication.
-      // JWT + MongoDB already verified the user, so allow through.
       logger.warn("checkAuth: Redis check failed, proceeding with JWT+DB only", {
         error: redisError.message,
         userId: decoded.id,
@@ -1369,6 +1402,7 @@ exports.checkAuth = async (req, res) => {
     return res.status(200).json({
       success: true,
       isAuthenticated: true,
+      redisSessionValid,
       user: {
         id: user._id,
         name: user.name,

@@ -3,12 +3,37 @@ require("dotenv").config({ path: path.join(__dirname, ".env") });
 const express = require("express");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
+const helmet = require("helmet");
+const rateLimit = require("express-rate-limit");
+const mongoSanitize = require("express-mongo-sanitize");
+const hpp = require("hpp");
+const compression = require("compression");
 const connectDB = require("./config/database");
 const mongoose = require("mongoose");
 const redis = require("./config/redis");
+const securityMiddleware = require("./middleware/security");
 
 // Initialize Express app
 const app = express();
+
+// ============== SECURITY MIDDLEWARE ==============
+
+// Helmet — sets secure HTTP headers (HSTS, CSP hints, hide X-Powered-By, etc.)
+app.use(helmet({
+  contentSecurityPolicy: false, // Let frontend handle CSP
+  crossOriginEmbedderPolicy: false, // Allow cross-origin images (S3, Google)
+  hsts: {
+    maxAge: 31536000, // 1 year
+    includeSubDomains: true,
+    preload: true,
+  },
+}));
+
+// Custom security headers (X-Frame-Options, X-XSS-Protection, Referrer-Policy, etc.)
+app.use(securityMiddleware);
+
+// Compression — gzip responses for performance
+app.use(compression());
 
 // ============== CORS Configuration ==============
 const allowedOrigins = (process.env.CLIENT_URL || "http://localhost:5173")
@@ -31,11 +56,68 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 // Body parser
-app.use(express.json({ limit: "50mb" }));
+app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
 
 // Cookie parser
 app.use(cookieParser());
+
+// Sanitize data — prevent NoSQL injection ($gt, $ne, etc.)
+app.use(mongoSanitize({
+  replaceWith: '_',
+  onSanitize: ({ req, key }) => {
+    console.warn(`⚠️ Sanitized NoSQL injection attempt in ${key}`);
+  },
+}));
+
+// Prevent HTTP Parameter Pollution
+app.use(hpp());
+
+// ============== RATE LIMITING ==============
+
+// Global rate limiter — 200 requests per 15 min per IP
+const globalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 200,
+  message: {
+    success: false,
+    message: 'Too many requests from this IP, please try again after 15 minutes.',
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+  skip: (req) => req.path === '/health',
+});
+app.use(globalLimiter);
+
+// Strict auth rate limiter — 10 attempts per 15 min (login, register, forgot-password)
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  message: {
+    success: false,
+    message: 'Too many authentication attempts. Please try again after 15 minutes.',
+    code: 'RATE_LIMITED',
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: (req) => {
+    // Rate limit by IP + email combo to prevent distributed attacks
+    return `${req.ip}-${req.body?.email || 'unknown'}`;
+  },
+});
+
+// OTP rate limiter — 5 attempts per 5 min
+const otpLimiter = rateLimit({
+  windowMs: 5 * 60 * 1000,
+  max: 5,
+  message: {
+    success: false,
+    message: 'Too many OTP attempts. Please try again after 5 minutes.',
+    code: 'RATE_LIMITED',
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
 
 // Connect to database
 connectDB().catch(console.error);
@@ -44,6 +126,16 @@ connectDB().catch(console.error);
 const authRoutes = require("./routes/authRoutes");
 const electronicsRoutes = require("./routes/electronicsRoutes");
 const vehiclesRoutes = require("./routes/vehiclesRoutes");
+
+// Apply strict rate limiter to auth routes
+app.use("/api/auth/login", authLimiter);
+app.use("/api/auth/register", authLimiter);
+app.use("/api/auth/forgot-password", authLimiter);
+app.use("/api/auth/register/verify", otpLimiter);
+app.use("/api/auth/register/resend-otp", otpLimiter);
+app.use("/api/auth/forgot-password/verify-otp", otpLimiter);
+app.use("/api/auth/forgot-password/resend-otp", otpLimiter);
+
 app.use("/api/auth", authRoutes);
 app.use("/api/electronics", electronicsRoutes);
 app.use("/api/vehicles", vehiclesRoutes);
