@@ -22,7 +22,7 @@ import NavSearchBar from "../../pages/Home/NavSearchBar.jsx";
 import { CgProfile } from "react-icons/cg";
 import { ScrollProgress } from "../../components/ui/scroll-progress";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks/useRedux";
-import { updateUser } from "../../redux/slices/authSlice";
+import { updateUser, checkAuth } from "../../redux/slices/authSlice";
 import { fetchProfile } from "../../redux/slices/profileSlice";
 import toast from "react-hot-toast";
 
@@ -73,6 +73,8 @@ const Navbar = () => {
   const [notificationsLoading, setNotificationsLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [showMobileSearch, setShowMobileSearch] = useState(false);
+  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
+  const [sellLoading, setSellLoading] = useState(false);
 
   const profileDropdownRef = useRef(null);
   const notificationDropdownRef = useRef(null);
@@ -391,6 +393,45 @@ const Navbar = () => {
     if (e.key === 'Enter') {
       handleSearch(e);
     }
+  };
+
+  const handleSellClick = async (e) => {
+    e.preventDefault();
+
+    // Quick client-side check first
+    if (!isAuthenticated) {
+      setShowLoginPrompt(true);
+      return;
+    }
+
+    // Verify session against server (Upstash Redis + MongoDB) via Redux thunk
+    setSellLoading(true);
+    try {
+      const result = await dispatch(checkAuth()).unwrap();
+
+      if (result.success && result.isAuthenticated) {
+        navigate('/post-add');
+      } else {
+        // Session invalid on server (expired in Redis/MongoDB)
+        setShowLoginPrompt(true);
+      }
+    } catch (error) {
+      // checkAuth thunk rejects on network/server errors (503, timeout, etc.)
+      // Since client-side auth already passed, allow through on transient errors
+      console.warn('checkAuth failed, allowing through:', error);
+      navigate('/post-add');
+    } finally {
+      setSellLoading(false);
+    }
+  };
+
+  const handleLoginRedirect = () => {
+    setShowLoginPrompt(false);
+    navigate('/signin', { state: { from: '/post-add' } });
+  };
+
+  const closeLoginPrompt = () => {
+    setShowLoginPrompt(false);
   };
 
   // Close dropdown when clicking outside
@@ -866,6 +907,51 @@ const Navbar = () => {
       <style>{navbarStyles}</style>
       <ScrollProgress />
 
+      {/* Login Required Modal */}
+      {showLoginPrompt && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm"
+          onClick={closeLoginPrompt}
+        >
+          <div
+            className="bg-white rounded-2xl shadow-2xl w-[90%] max-w-md mx-4 overflow-hidden animate-[slideDown_0.3s_ease]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="bg-gradient-to-r from-[#1FA987] to-[#27bb97] px-6 py-5 text-white text-center">
+              <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-3">
+                <FaUserCircle size={36} />
+              </div>
+              <h3 className="text-xl font-bold">Login Required</h3>
+              <p className="text-sm text-white/80 mt-1">Please sign in to post your listing</p>
+            </div>
+
+            {/* Body */}
+            <div className="px-6 py-5">
+              <p className="text-gray-600 text-center text-sm leading-relaxed">
+                You need to be logged in to create a listing. Sign in to your account or create a new one to get started.
+              </p>
+            </div>
+
+            {/* Actions */}
+            <div className="px-6 pb-6 flex gap-3">
+              <button
+                onClick={closeLoginPrompt}
+                className="flex-1 px-4 py-2.5 border border-gray-200 text-gray-600 rounded-xl font-semibold text-sm hover:bg-gray-50 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleLoginRedirect}
+                className="flex-1 px-4 py-2.5 bg-[#1FA987] text-white rounded-xl font-semibold text-sm hover:bg-[#1a9277] transition-colors"
+              >
+                Sign In
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <nav
         className={`fixed top-0 left-0 right-0 z-50 navbar-transition ${
           isScrolled ? "navbar-scrolled" : "bg-white shadow-sm"
@@ -1108,12 +1194,23 @@ const Navbar = () => {
                 )}
 
                 {/* Create Listing Button */}
-                <Link to="/post-add">
-                  <button className="flex items-center gap-2 px-4 py-2 bg-[#1FA987] text-white rounded-lg text-sm font-semibold hover:bg-[#1a9277] transition-colors">
+                <button
+                  onClick={handleSellClick}
+                  disabled={sellLoading}
+                  className={`flex items-center gap-2 px-4 py-2 bg-[#1FA987] text-white rounded-lg text-sm font-semibold hover:bg-[#1a9277] transition-colors ${
+                    sellLoading ? 'opacity-70 cursor-not-allowed' : ''
+                  }`}
+                >
+                  {sellLoading ? (
+                    <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                    </svg>
+                  ) : (
                     <FaPlus size={12} />
-                    Sell
-                  </button>
-                </Link>
+                  )}
+                  Sell
+                </button>
 
                 {/* Profile/Login Button */}
                 <div className="relative">
@@ -1290,11 +1387,23 @@ const Navbar = () => {
                 )}
 
                 {/* Mobile Create Listing Button */}
-                <Link to="/post-add">
-                  <button className="flex items-center gap-1 px-3 py-1.5 bg-[#1FA987] text-white rounded-lg text-sm font-semibold">
-                    <FaPlus size={10} /> Post
-                  </button>
-                </Link>
+                <button
+                  onClick={handleSellClick}
+                  disabled={sellLoading}
+                  className={`flex items-center gap-1 px-3 py-1.5 bg-[#1FA987] text-white rounded-lg text-sm font-semibold ${
+                    sellLoading ? 'opacity-70 cursor-not-allowed' : ''
+                  }`}
+                >
+                  {sellLoading ? (
+                    <svg className="animate-spin h-3 w-3" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                    </svg>
+                  ) : (
+                    <FaPlus size={10} />
+                  )}
+                  Post
+                </button>
 
                 {/* Mobile Menu Toggle */}
                 <button

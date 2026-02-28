@@ -1315,6 +1315,49 @@ exports.checkAuth = async (req, res) => {
       });
     }
 
+    // --- Step 3: verify active session exists in Upstash Redis ---
+    try {
+      const redis = require("../config/redis");
+      const sessionTokenIds = await redis.smembers(`user_sessions:${decoded.id}`);
+
+      if (!sessionTokenIds || sessionTokenIds.length === 0) {
+        logger.info("checkAuth: No active sessions in Redis for user", { userId: decoded.id });
+        return res.status(200).json({
+          success: true,
+          isAuthenticated: false,
+          code: "NO_ACTIVE_SESSION",
+        });
+      }
+
+      // Verify at least one session still has a valid refresh token in Redis
+      let hasValidSession = false;
+      for (const tokenId of sessionTokenIds) {
+        const tokenData = await redis.get(`refresh_token:${tokenId}`);
+        if (tokenData) {
+          hasValidSession = true;
+          break;
+        }
+      }
+
+      if (!hasValidSession) {
+        // Clean up stale session set
+        await redis.del(`user_sessions:${decoded.id}`);
+        logger.info("checkAuth: All Redis sessions expired for user", { userId: decoded.id });
+        return res.status(200).json({
+          success: true,
+          isAuthenticated: false,
+          code: "SESSION_EXPIRED",
+        });
+      }
+    } catch (redisError) {
+      // Redis temporarily down — don't block authentication.
+      // JWT + MongoDB already verified the user, so allow through.
+      logger.warn("checkAuth: Redis check failed, proceeding with JWT+DB only", {
+        error: redisError.message,
+        userId: decoded.id,
+      });
+    }
+
     const passwordExpiration = user.passwordNeedsChange
       ? user.passwordNeedsChange()
       : null;
