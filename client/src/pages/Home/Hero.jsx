@@ -73,7 +73,7 @@ export default function Hero() {
   const handleIconClick = (categoryName) => {
     // Convert category name to route path
     const routeMap = {
-      "Cars": "/cars",
+      "Vehicles": "/vehicles",
       "Rentals": "/rentals",
       "Home Care": "/home-care",
       "Services": "/services",
@@ -100,8 +100,8 @@ export default function Hero() {
   const categories = [
     {
       id: 1,
-      name: "Cars",
-      route: "/cars",
+      name: "Vehicles",
+      route: "/vehicles",
       position: "top",
       color: "text-orange-500",
       bgColor: "bg-orange-50",
