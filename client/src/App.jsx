@@ -10,6 +10,7 @@ import { useTokenRefresh } from "./hooks/useTokenRefresh";
 
 // Import Loading Spinner Component
 import LoadingSpinner from "./components/LoadingSpinner.jsx"; // Make sure path is correct
+import PageTransitionLoader from "./components/common/PageTransitionLoader.jsx";
 
 import Navbar from "./components/UserProfile/Navbar.jsx";
 import Hero from "./pages/Home/Hero.jsx";
@@ -234,6 +235,7 @@ const AppContent = () => {
             </div>
           )}
         </Toaster>
+        <PageTransitionLoader>
         <Routes>
           {/* Home */}
           <Route
@@ -332,6 +334,7 @@ const AppContent = () => {
           />
           <Route path="/settings" element={<div>Settings Page</div>} />
         </Routes>
+        </PageTransitionLoader>
       </main>
 
       {/* Footer - Conditionally rendered */}

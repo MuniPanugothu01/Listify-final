@@ -17,9 +17,13 @@ import {
   fetchAllElectronics,
   toggleSaveElectronics,
 } from '../../redux/slices/electronicsSlice';
+import { ProductGridSkeleton, ButtonSpinner } from '../common/Skeleton';
 
 // Product Card Component
 const ProductCard = ({ product, onClick, onToggleSave, isSaved, isLoggedIn }) => {
+  const [imgLoaded, setImgLoaded] = React.useState(false);
+  const [saving, setSaving] = React.useState(false);
+
   // Support both API data (product.images[]) and legacy data (product.image)
   const image = product.images?.[0] || product.image || 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&q=80';
   const displayPrice = product.price;
@@ -28,16 +32,27 @@ const ProductCard = ({ product, onClick, onToggleSave, isSaved, isLoggedIn }) =>
     ? new Date(product.createdAt).toLocaleDateString()
     : '';
 
+  const handleSave = async (e) => {
+    e.stopPropagation();
+    setSaving(true);
+    if (onToggleSave) await onToggleSave(product._id || product.id);
+    setTimeout(() => setSaving(false), 400);
+  };
+
   return (
     <div
       onClick={onClick}
-      className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer group border border-gray-200"
+      className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer group border border-gray-200 animate-fade-in-up"
     >
       <div className="relative h-40 sm:h-48 overflow-hidden bg-gray-100">
+        {!imgLoaded && (
+          <div className="absolute inset-0 bg-gray-200 skeleton-shimmer" />
+        )}
         <img
           src={image}
           alt={product.title}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 ${!imgLoaded ? 'opacity-0' : 'opacity-100'} transition-opacity`}
+          onLoad={() => setImgLoaded(true)}
         />
         {product.condition && (
           <span className="absolute top-2 left-2 bg-white/90 backdrop-blur-sm text-xs font-medium px-2 py-1 rounded-full text-gray-700">
@@ -45,17 +60,19 @@ const ProductCard = ({ product, onClick, onToggleSave, isSaved, isLoggedIn }) =>
           </span>
         )}
         <button
-          onClick={(e) => {
-            e.stopPropagation();
-            if (onToggleSave) onToggleSave(product._id || product.id);
-          }}
-          className="absolute top-2 right-2 p-1.5 bg-white rounded-full shadow-sm hover:bg-red-50 transition-colors"
+          onClick={handleSave}
+          disabled={saving}
+          className="absolute top-2 right-2 p-1.5 bg-white rounded-full shadow-sm hover:bg-red-50 transition-colors disabled:opacity-70"
         >
-          <Heart
-            className={`w-4 h-4 transition-colors ${
-              isSaved ? 'text-red-500 fill-red-500' : 'text-gray-600 hover:text-red-500'
-            }`}
-          />
+          {saving ? (
+            <ButtonSpinner size="xs" className="text-gray-500" />
+          ) : (
+            <Heart
+              className={`w-4 h-4 transition-colors ${
+                isSaved ? 'text-red-500 fill-red-500' : 'text-gray-600 hover:text-red-500'
+              }`}
+            />
+          )}
         </button>
       </div>
 
@@ -334,13 +351,8 @@ const ElectronicsListing = () => {
               {sortedProducts.length} items found
             </div>
 
-            {/* Loading State */}
-            {loading && (
-              <div className="flex flex-col items-center justify-center py-20">
-                <Loader2 className="w-10 h-10 text-[#27bb97] animate-spin mb-4" />
-                <p className="text-gray-500">Loading electronics...</p>
-              </div>
-            )}
+            {/* Loading State - Skeleton */}
+            {loading && <ProductGridSkeleton count={8} />}
 
             {/* Error State */}
             {error && !loading && (

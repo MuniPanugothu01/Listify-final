@@ -3,8 +3,10 @@ const { logger } = require('../utils/logger');
 
 // Validate AWS credentials
 if (!process.env.AWS_ACCESS_KEY_ID || !process.env.AWS_SECRET_ACCESS_KEY || !process.env.AWS_REGION) {
-  console.error('❌ AWS credentials not configured');
-  process.exit(1);
+  // SECURITY FIX: Don't crash entire process — throw so caller can handle.
+  // process.exit(1) in a require'd module kills the server before any
+  // error-handling middleware can respond, and prevents clean shutdown.
+  throw new Error('AWS credentials not configured. Set AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, and AWS_REGION.');
 }
 
 // Create S3 client

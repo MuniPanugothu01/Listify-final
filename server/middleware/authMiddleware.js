@@ -40,7 +40,7 @@ exports.protect = async (req, res, next) => {
     try {
       const decoded = jwt.verify(
         token,
-        process.env.JWT_ACCESS_SECRET || process.env.JWT_SECRET
+        process.env.JWT_ACCESS_SECRET
       );
 
       // Reject refresh tokens used as access tokens
@@ -50,6 +50,27 @@ exports.protect = async (req, res, next) => {
           message: 'Invalid token type. Please use access token.',
           code: 'INVALID_TOKEN_TYPE',
         });
+      }
+
+      // Validate token fingerprint — if the token was bound to a
+      // User-Agent at creation time, reject it when used from a
+      // different browser/device.  This mitigates stolen-token replay.
+      if (decoded.fgp) {
+        const crypto = require('crypto');
+        const ua = req.get('user-agent') || '';
+        const currentFgp = crypto.createHash('sha256').update(ua).digest('hex').substring(0, 16);
+        if (decoded.fgp !== currentFgp) {
+          logger.warn('protect: token fingerprint mismatch — possible stolen token', {
+            userId: decoded.id,
+            expectedFgp: decoded.fgp,
+            actualFgp: currentFgp,
+          });
+          return res.status(401).json({
+            success: false,
+            message: 'Token binding mismatch. Please login again.',
+            code: 'TOKEN_FINGERPRINT_MISMATCH',
+          });
+        }
       }
 
       // Wrap the DB call in its own try/catch so that MongoDB
@@ -131,7 +152,7 @@ exports.refreshToken = async (req, res) => {
       });
     }
 
-    const result = await refreshTokens(refreshToken);
+    const result = await refreshTokens(refreshToken, req);
 
     // refreshTokens returns { concurrentRefresh: true } when another
     // request already rotated this token.  The winner set cookies in
@@ -314,7 +335,7 @@ exports.optionalAuth = async (req, res, next) => {
       try {
         const decoded = jwt.verify(
           token,
-          process.env.JWT_ACCESS_SECRET || process.env.JWT_SECRET
+          process.env.JWT_ACCESS_SECRET
         );
         if (!decoded.type || decoded.type === 'access') {
           req.user = await User.findById(decoded.id).select('-password');

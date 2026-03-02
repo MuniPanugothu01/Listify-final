@@ -19,6 +19,7 @@ const {
   refreshToken,
   logout,
   logoutAll,
+  authorize,
 } = require("../middleware/authMiddleware");
 
 // ==================== PASSWORD SECURITY ENDPOINTS ====================
@@ -86,8 +87,11 @@ router.put(
 );
 
 // ==================== Password setup for users without passwords ====================
+// SECURITY: Must be authenticated — without `protect` anyone could set
+// a password on any user's account by providing their email.
 router.post(
   "/setup-password",
+  protect,
   validatePasswordSecurity,
   authController.setupPassword,
 );
@@ -125,15 +129,17 @@ router.post("/logout-all", protect, logoutAll);
 router.get("/sessions", protect, tokenController.getUserSessions);
 router.delete("/sessions/:tokenId", protect, tokenController.revokeSession);
 
-// ==================== Admin routes ====================
+// ==================== Admin routes (role-gated) ====================
 router.get(
   "/admin/sessions/:userId",
   protect,
+  authorize('admin'),
   tokenController.adminGetUserSessions,
 );
 router.post(
   "/admin/cleanup-tokens",
   protect,
+  authorize('admin'),
   tokenController.adminCleanupTokens,
 );
 
@@ -156,58 +162,5 @@ router.post(
   validatePasswordSecurity,
   authController.changePassword,
 );
-
-// DEBUG: Check what's stored in Redis for a token
-router.get("/debug/check-token/:token", async (req, res) => {
-  try {
-    const redis = require("../config/redis");
-    const { token } = req.params;
-
-    console.log("🔍 Debug: Checking token:", token);
-
-    // Check all possible keys
-    const resetKey = `reset:${token}`;
-    const resetEmailKey = `reset_email:${token}`;
-
-    const resetData = await redis.get(resetKey);
-    const resetEmail = await redis.get(resetEmailKey);
-
-    console.log("📦 Reset key:", resetKey);
-    console.log("📦 Reset data type:", typeof resetData);
-    console.log("📦 Reset data:", resetData);
-    console.log("📦 Reset email:", resetEmail);
-
-    let parsedData = null;
-    let parseError = null;
-
-    if (resetData) {
-      try {
-        if (typeof resetData === "string") {
-          parsedData = JSON.parse(resetData);
-        } else {
-          parsedData = resetData;
-        }
-      } catch (e) {
-        parseError = e.message;
-        console.log("❌ Failed to parse resetData:", e.message);
-      }
-    }
-
-    res.json({
-      success: true,
-      token,
-      resetKey,
-      resetEmailKey,
-      resetDataType: typeof resetData,
-      resetData,
-      resetEmail,
-      parsedData,
-      parseError,
-    });
-  } catch (error) {
-    console.error("Debug error:", error);
-    res.status(500).json({ success: false, error: error.message });
-  }
-});
 
 module.exports = router;
