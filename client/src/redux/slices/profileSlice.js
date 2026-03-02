@@ -47,7 +47,6 @@ export const updateProfile = createAsyncThunk(
       const response = await profileAPI.updateProfile(profileData);
       return response.data.user;
     } catch (error) {
-      console.error("Update profile error:", error);
       return rejectWithValue(error.response?.data?.message || error.message);
     }
   },

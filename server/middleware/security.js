@@ -39,23 +39,52 @@ const securityMiddleware = (req, res, next) => {
     });
   }
   
-  // 10. Validate request origin (production only)
-  if (process.env.NODE_ENV === 'production') {
-    const allowedOrigins = process.env.ALLOWED_ORIGINS ? 
-      process.env.ALLOWED_ORIGINS.split(',') : [];
-    
+  // 10. CSRF origin validation for state-changing requests
+  // Ensures POST/PUT/PATCH/DELETE requests come from the expected
+  // origin, preventing cross-site request forgery even if cookies
+  // are sent (sameSite=none in cross-origin production setups).
+  if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method)) {
+    const allowedOrigins = (process.env.CLIENT_URL || 'http://localhost:5173')
+      .split(',')
+      .map((o) => o.trim());
+
     const origin = req.headers.origin;
-    if (origin && !allowedOrigins.includes(origin) && req.path !== '/health') {
-      logger.warn('Blocked request from unauthorized origin', {
-        origin,
-        ip: req.ip,
-        path: req.path,
-      });
-      return res.status(403).json({
-        success: false,
-        message: 'Origin not allowed',
-      });
+    const referer = req.headers.referer;
+
+    // Skip for server-to-server (no origin at all — e.g. curl, Postman, mobile SDKs).
+    // Browsers ALWAYS send Origin on cross-origin and same-origin POST, so
+    // if Origin is present it MUST match. If absent, check Referer.
+    if (origin) {
+      if (!allowedOrigins.includes(origin)) {
+        logger.warn('CSRF: blocked mutation from unexpected origin', {
+          origin,
+          ip: req.ip,
+          path: req.path,
+        });
+        return res.status(403).json({
+          success: false,
+          message: 'Origin not allowed',
+        });
+      }
+    } else if (referer) {
+      try {
+        const refererOrigin = new URL(referer).origin;
+        if (!allowedOrigins.includes(refererOrigin)) {
+          logger.warn('CSRF: blocked mutation from unexpected referer', {
+            refererOrigin,
+            ip: req.ip,
+            path: req.path,
+          });
+          return res.status(403).json({
+            success: false,
+            message: 'Origin not allowed',
+          });
+        }
+      } catch (_) {
+        // Malformed referer — allow (could be a proxy stripping it)
+      }
     }
+    // No Origin, no Referer: server-to-server or privacy extension — allow.
   }
   
   next();
