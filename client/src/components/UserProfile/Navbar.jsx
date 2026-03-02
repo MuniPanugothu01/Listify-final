@@ -229,11 +229,10 @@ const Navbar = () => {
   const handleProfileMenuItemClick = async (path) => {
     if (path === "/logout") {
       try {
-        closeProfileDropdown();
         await dispatch(logoutUser()).unwrap();
         toast.success("Logged out successfully");
         navigate("/");
-      } catch (error) {
+      } catch {
         toast.error("Logout failed. Please try again.");
       }
     } else {
@@ -647,7 +646,7 @@ const Navbar = () => {
               </div>
 
               {/* Right side actions - Visible on md and above */}
-              <div className="hidden md:flex items-center gap-2">
+              <div className="hidden md:flex items-center gap-1 lg:gap-2">
                 {/* Location Icon Button - visible on md, hidden on lg+ (where inline search shows) */}
                 <button
                   onClick={() => setShowMobileSearch(!showMobileSearch)}
@@ -777,7 +776,7 @@ const Navbar = () => {
                 <button
                   onClick={handleSellClick}
                   disabled={sellLoading}
-                  className={`flex items-center gap-2 px-4 py-2 bg-[#1FA987] text-white rounded-lg text-sm font-semibold hover:bg-[#1a9277] transition-colors ${
+                  className={`flex items-center gap-1 lg:gap-2 px-2.5 lg:px-4 py-2 bg-[#1FA987] text-white rounded-lg text-sm font-semibold hover:bg-[#1a9277] transition-colors ${
                     sellLoading ? 'opacity-70 cursor-not-allowed' : ''
                   }`}
                 >
@@ -789,14 +788,14 @@ const Navbar = () => {
                   ) : (
                     <FaPlus size={12} />
                   )}
-                  Sell
+                  <span className="hidden lg:inline">Sell</span>
                 </button>
 
                 {/* Profile/Login Button */}
                 <div className="relative">
                   <button
                     onClick={handleProfileClick}
-                    className={`profile-button flex items-center gap-2 px-3 py-2 rounded-lg border transition-colors ${
+                    className={`profile-button flex items-center gap-1 lg:gap-2 px-2 lg:px-3 py-2 rounded-lg border transition-colors ${
                       isScrolled
                         ? "border-white/30 text-white hover:bg-white/10"
                         : "border-gray-200 text-gray-700 hover:bg-gray-50"
@@ -834,14 +833,14 @@ const Navbar = () => {
                           </div>
                         )}
                         {/* First name SECOND */}
-                        <span className="hidden sm:inline max-w-[100px] truncate text-sm font-semibold">
+                        <span className="hidden lg:inline max-w-[100px] truncate text-sm font-semibold">
                           {userFirstName}
                         </span>
                       </>
                     ) : (
                       <>
                         <FaUserCircle size={18} />
-                        <span className="hidden sm:inline text-sm font-semibold">
+                        <span className="hidden lg:inline text-sm font-semibold">
                           Sign In
                         </span>
                       </>
