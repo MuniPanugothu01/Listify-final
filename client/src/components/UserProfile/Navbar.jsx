@@ -61,7 +61,6 @@ const POPULAR_CITIES = [
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   const [showMoreDropdown, setShowMoreDropdown] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState("");
   const [showLocationSuggestions, setShowLocationSuggestions] = useState(false);
@@ -76,7 +75,6 @@ const Navbar = () => {
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
   const [sellLoading, setSellLoading] = useState(false);
 
-  const profileDropdownRef = useRef(null);
   const notificationDropdownRef = useRef(null);
   const locationInputRef = useRef(null);
   const navigate = useNavigate();
@@ -91,10 +89,6 @@ const Navbar = () => {
 
   // ✅ Compute isAuthenticated from user object
   const isAuthenticated = !!user;
-
-  const { unreadCount: messagesUnread } = useAppSelector(
-    (state) => state.messages || { unreadCount: 0 },
-  );
 
   // Fetch profile data if not available
   useEffect(() => {
@@ -187,26 +181,6 @@ const Navbar = () => {
     { name: "Jobs", path: "/jobs" },
   ];
 
-  const profileMenuItems = [
-    { name: "Dashboard", path: "/dashboard", icon: CgProfile, count: null },
-    { name: "My Profile", path: "/dashboard/profile", icon: FaUserFriends, count: null },
-    { name: "Saved Items", path: "/dashboard/saved", icon: FaRegHeart, count: null },
-    {
-      name: "My Listings",
-      path: "/dashboard/listings",
-      icon: FaBuilding,
-      count: null,
-    },
-    {
-      name: "Messages",
-      path: "/dashboard/messages",
-      icon: FaBriefcase,
-      count: messagesUnread,
-    },
-    { name: "Settings", path: "/dashboard/settings", icon: FaTools, count: null },
-    { name: "Sign Out", path: "/logout", icon: FaChevronRight, count: null },
-  ];
-
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
     if (showMobileSearch) setShowMobileSearch(false);
@@ -214,7 +188,8 @@ const Navbar = () => {
 
   const handleProfileClick = () => {
     if (isAuthenticated) {
-      setShowProfileDropdown(!showProfileDropdown);
+      navigate("/dashboard");
+      scrollToTop();
     } else {
       navigate("/signin");
     }
@@ -222,10 +197,6 @@ const Navbar = () => {
 
   const handleNotificationClick = () => {
     setShowNotificationDropdown(!showNotificationDropdown);
-  };
-
-  const closeProfileDropdown = () => {
-    setShowProfileDropdown(false);
   };
 
   const closeNotificationDropdown = () => {
@@ -258,7 +229,6 @@ const Navbar = () => {
   const handleProfileMenuItemClick = async (path) => {
     if (path === "/logout") {
       try {
-        closeProfileDropdown();
         const { authActions } = await import("../../redux/actions/authActions");
         await dispatch(authActions.logout());
         toast.success("Logged out successfully");
@@ -271,7 +241,6 @@ const Navbar = () => {
       navigate(path);
     }
     scrollToTop();
-    closeProfileDropdown();
   };
 
   const markNotificationAsRead = (id) => {
@@ -438,13 +407,6 @@ const Navbar = () => {
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
-        profileDropdownRef.current &&
-        !profileDropdownRef.current.contains(event.target) &&
-        !event.target.closest(".profile-button")
-      ) {
-        closeProfileDropdown();
-      }
-      if (
         notificationDropdownRef.current &&
         !notificationDropdownRef.current.contains(event.target) &&
         !event.target.closest(".notification-button")
@@ -460,7 +422,6 @@ const Navbar = () => {
     };
     const handleEscapeKey = (event) => {
       if (event.key === "Escape") {
-        closeProfileDropdown();
         closeNotificationDropdown();
         setShowMobileSearch(false);
         setShowLocationSuggestions(false);
@@ -887,82 +848,6 @@ const Navbar = () => {
                       </>
                     )}
                   </button>
-
-                  {/* Profile Dropdown Menu */}
-                  {showProfileDropdown && isAuthenticated && (
-                    <div
-                      ref={profileDropdownRef}
-                      className="absolute right-0 top-full mt-2 w-64 bg-white rounded-xl shadow-xl border border-gray-100 z-50 overflow-hidden animate-[slideDown_0.3s_cubic-bezier(0.25,0.46,0.45,0.94)]"
-                    >
-                      {/* User Info Header */}
-                      <div className="flex items-center gap-3 px-4 py-4 bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-100">
-                        {/* Profile image FIRST */}
-                        {profileImage && !imageError ? (
-                          <img
-                            src={profileImage}
-                            alt={userFullName}
-                            width={48}
-                            height={48}
-                            onError={handleImageError}
-                            className="rounded-full object-cover border-2 border-white shadow-sm flex-shrink-0"
-                            style={{ width: 48, height: 48 }}
-                          />
-                        ) : !googleUser ? (
-                          <img
-                            src={STATIC_PROFILE_IMAGE}
-                            alt={userFullName}
-                            width={48}
-                            height={48}
-                            className="rounded-full object-cover border-2 border-white shadow-sm flex-shrink-0"
-                            style={{ width: 48, height: 48 }}
-                          />
-                        ) : (
-                          <div
-                            className="bg-gradient-to-br from-[#27bb97] to-[#1fa987] text-white rounded-full flex items-center justify-center flex-shrink-0"
-                            style={{ width: 48, height: 48 }}
-                          >
-                            <FaUserCircle size={30} />
-                          </div>
-                        )}
-
-                        {/* User details SECOND */}
-                        <div className="flex-1 min-w-0">
-                          <p className="font-semibold text-gray-900 text-base truncate">
-                            {userFullName}
-                          </p>
-                          <p className="text-sm text-gray-500 truncate">
-                            {userEmail}
-                          </p>
-                          {googleUser && (
-                            <span className="text-xs text-[#27BB97] font-medium">
-                              (Google)
-                            </span>
-                          )}
-                        </div>
-                      </div>
-
-                      {/* Menu Items */}
-                      <div className="py-1">
-                        {profileMenuItems.map((item, index) => (
-                          <button
-                            key={index}
-                            onClick={() => handleProfileMenuItemClick(item.path)}
-                            className="w-full flex items-center justify-between gap-3 px-4 py-3 text-sm text-gray-700 hover:text-[#27BB97] font-medium transition-all duration-200 hover:translate-x-1 hover:bg-gray-50"
-                          >
-                            <div className="flex items-center gap-3">
-                              <item.icon size={16} />
-                              <span>{item.name}</span>
-                            </div>
-                            {item.count > 0 && (
-                              <span className="bg-red-500 text-white rounded-full px-2 py-0.5 text-[11px] font-semibold ml-1.5">
-                                {item.count}
-                              </span>
-                            )}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  )}
                 </div>
               </div>
 
@@ -1268,7 +1153,7 @@ const Navbar = () => {
                       </Link>
 
                       <Link
-                        to="/profile"
+                        to="/dashboard/profile"
                         onClick={() => {
                           setIsMobileMenuOpen(false);
                           scrollToTop();
