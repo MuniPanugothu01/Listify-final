@@ -533,6 +533,7 @@ export default function Hero() {
                   src="/Services/HomeServices/hero-1.png"
                   alt="Hero-image"
                   className="w-full h-full object-cover"
+                  loading="lazy"
                 />
               </div>
             </div>

@@ -33,8 +33,8 @@ const Category = () => {
     },
     {
       id: 3,
-      title: "Cars",
-      path: "/cars",
+      title: "Vehicles",
+      path: "/vehicles",
       image: "https://www.huntermoss.com/images/best-cars-for-road-trips/a-img.webp",
       icon: Briefcase,
       subcategories: [

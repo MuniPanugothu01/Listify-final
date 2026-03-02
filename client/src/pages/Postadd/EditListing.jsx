@@ -1,9 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { useSelector, useDispatch } from "react-redux";
-import { electronicsAPI } from "../../services/api";
-import { fetchElectronicsById, updateElectronicsListing } from "../../redux/slices/electronicsSlice";
+import { electronicsAPI, vehiclesAPI } from "../../services/api";
+import {
+  fetchElectronicsById,
+  updateElectronicsListing,
+} from "../../redux/slices/electronicsSlice";
+import {
+  fetchVehicleById,
+  updateVehicleListing,
+} from "../../redux/slices/vehiclesSlice";
 
 const CATEGORIES = [
   "Electronics",
@@ -64,11 +71,19 @@ const Field = ({ label, error, children }) => (
 );
 
 const EditListing = () => {
-  const { id } = useParams();
+  const { id, type } = useParams();
+  const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
-  const { detailLoading } = useSelector((state) => state.electronics);
+  const { detailLoading: electronicsDetailLoading } = useSelector(
+    (state) => state.electronics,
+  );
+  const { detailLoading: vehiclesDetailLoading } = useSelector(
+    (state) => state.vehicles,
+  );
+
+  const [listingType, setListingType] = useState(null);
 
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedSubcategory, setSelectedSubcategory] = useState(null);
@@ -92,6 +107,16 @@ const EditListing = () => {
   const [loading, setLoading] = useState(false);
   const [fetchLoading, setFetchLoading] = useState(true);
 
+  const normalizedRouteType = (() => {
+    const routeType = (type || location.state?.listingType || "")
+      .toLowerCase()
+      .trim();
+
+    if (routeType === "vehicles" || routeType === "vehicle") return "vehicles";
+    if (routeType === "electronics" || routeType === "electronic") return "electronics";
+    return null;
+  })();
+
   // Auth guard
   useEffect(() => {
     if (!user) {
@@ -102,30 +127,69 @@ const EditListing = () => {
 
   // Fetch listing data
   useEffect(() => {
-    if (id && user) {
-      dispatch(fetchElectronicsById(id))
-        .unwrap()
-        .then((listing) => {
-          setForm({
-            title: listing.title || "",
-            description: listing.description || "",
-            price: listing.price?.toString() || "",
-            condition: listing.condition || "Good",
-            location: listing.location || "",
-            phone: listing.phone || "",
-            images: [],
-          });
-          setSelectedCategory(listing.category || "Electronics");
-          setSelectedSubcategory(listing.subcategory || null);
-          setExistingImages(listing.images || []);
-          setFetchLoading(false);
-        })
-        .catch((err) => {
-          toast.error(err || "Failed to load listing");
-          navigate("/dashboard/listings", { replace: true });
-        });
-    }
-  }, [id, user, dispatch, navigate]);
+    if (!id || !user) return;
+
+    let mounted = true;
+
+    const applyListing = (listing, detectedType) => {
+      if (!mounted) return;
+
+      setListingType(detectedType);
+      setForm({
+        title: listing.title || "",
+        description: listing.description || "",
+        price: listing.price?.toString() || "",
+        condition: listing.condition || "Good",
+        location: listing.location || "",
+        phone: listing.phone || "",
+        images: [],
+      });
+      setSelectedCategory(
+        listing.category || (detectedType === "vehicles" ? "Vehicles" : "Electronics"),
+      );
+      setSelectedSubcategory(listing.subcategory || null);
+      setExistingImages(listing.images || []);
+      setFetchLoading(false);
+    };
+
+    const fetchByType = async (targetType) => {
+      const action =
+        targetType === "vehicles" ? fetchVehicleById(id) : fetchElectronicsById(id);
+      const listing = await dispatch(action).unwrap();
+      return { listing, targetType };
+    };
+
+    const fetchListing = async () => {
+      setFetchLoading(true);
+
+      try {
+        if (normalizedRouteType) {
+          const { listing, targetType } = await fetchByType(normalizedRouteType);
+          applyListing(listing, targetType);
+          return;
+        }
+
+        try {
+          const { listing, targetType } = await fetchByType("vehicles");
+          applyListing(listing, targetType);
+          return;
+        } catch {
+          const { listing, targetType } = await fetchByType("electronics");
+          applyListing(listing, targetType);
+        }
+      } catch (err) {
+        if (!mounted) return;
+        toast.error(err || "Failed to load listing");
+        navigate("/dashboard/listings", { replace: true });
+      }
+    };
+
+    fetchListing();
+
+    return () => {
+      mounted = false;
+    };
+  }, [id, user, dispatch, navigate, normalizedRouteType]);
 
   if (!user) return null;
 
@@ -192,7 +256,8 @@ const EditListing = () => {
         try {
           const formData = new FormData();
           newImageFiles.forEach((img) => formData.append("images", img));
-          const uploadRes = await electronicsAPI.uploadImages(formData);
+          const uploadAPI = listingType === "vehicles" ? vehiclesAPI : electronicsAPI;
+          const uploadRes = await uploadAPI.uploadImages(formData);
           newImageUrls = uploadRes.data.imageUrls;
         } catch (uploadErr) {
           console.warn("Image upload failed:", uploadErr);
@@ -220,7 +285,12 @@ const EditListing = () => {
               ],
       };
 
-      await dispatch(updateElectronicsListing({ id, listingData })).unwrap();
+      const updateAction =
+        listingType === "vehicles"
+          ? updateVehicleListing({ id, listingData })
+          : updateElectronicsListing({ id, listingData });
+
+      await dispatch(updateAction).unwrap();
       setLoading(false);
       toast.success("Listing updated successfully!");
       navigate("/dashboard/listings", { replace: true });
@@ -233,7 +303,7 @@ const EditListing = () => {
     }
   };
 
-  if (fetchLoading || detailLoading) {
+  if (fetchLoading || electronicsDetailLoading || vehiclesDetailLoading) {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center">
         <div className="text-center">
