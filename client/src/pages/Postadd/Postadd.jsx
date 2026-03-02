@@ -4,6 +4,9 @@ import { toast } from "react-hot-toast";
 import { useSelector } from "react-redux";
 import { electronicsAPI, vehiclesAPI } from "../../services/api";
 
+/* ─────────────────────────────────────────────
+   Constants
+   ───────────────────────────────────────────── */
 
 const CATEGORIES = [
   "Electronics",
@@ -53,6 +56,156 @@ const SUBCATEGORIES = {
   ],
 };
 
+const INPUT_CLS =
+  "w-full px-4 py-3 border border-slate-200 rounded-lg focus:border-[#27BB97] focus:ring-2 focus:ring-[#27BB97]/20 outline-none transition";
+const SELECT_CLS = `${INPUT_CLS} bg-white`;
+
+const VEHICLE_BRANDS = [
+  "Maruti Suzuki", "Hyundai", "Tata", "Honda", "Toyota", "Mahindra", "Kia",
+  "MG", "Volkswagen", "Skoda", "Renault", "Nissan", "Ford", "Chevrolet",
+  "BMW", "Mercedes-Benz", "Audi", "Jeep", "Citroën", "Other",
+];
+
+const FUEL_TYPES = ["Petrol", "Diesel", "CNG", "Electric", "Hybrid", "LPG"];
+const TRANSMISSIONS = ["Manual", "Automatic"];
+const OWNERSHIPS = ["1st Owner", "2nd Owner", "3rd Owner", "4th+ Owner"];
+const CONDITIONS = ["New", "Like New", "Good", "Fair", "Used"];
+
+const YEAR_OPTIONS = Array.from(
+  { length: 30 },
+  (_, i) => new Date().getFullYear() - i
+);
+
+const DEFAULT_FORM = {
+  title: "",
+  description: "",
+  price: "",
+  condition: "Good",
+  location: "",
+  phone: "",
+  images: [],
+  // Vehicle-specific
+  brand: "",
+  model: "",
+  variant: "",
+  year: "",
+  kmDriven: "",
+  fuelType: "",
+  transmission: "",
+  ownership: "",
+};
+
+/* ─────────────────────────────────────────────
+   Per-category configuration
+   ───────────────────────────────────────────── */
+
+/** Extra form fields to add per category (merged into initial form state). */
+const CATEGORY_EXTRA_FIELDS = {
+  Vehicles: {
+    brand: "", model: "", variant: "", year: "",
+    kmDriven: "", fuelType: "", transmission: "", ownership: "",
+  },
+};
+
+/** Per-category validation — returns an errors object fragment. */
+const CATEGORY_VALIDATORS = {
+  Vehicles: (form) => {
+    const errs = {};
+    if (!form.brand) errs.brand = "Brand is required";
+    if (!form.model) errs.model = "Model is required";
+    if (!form.year) errs.year = "Year of manufacture is required";
+    if (!form.fuelType) errs.fuelType = "Fuel type is required";
+    if (!form.transmission) errs.transmission = "Transmission is required";
+    if (!form.ownership) errs.ownership = "Ownership is required";
+    return errs;
+  },
+};
+
+/** Per-category form overrides (title label, title placeholder, price label). */
+const CATEGORY_FORM_CONFIG = {
+  Vehicles: {
+    titleLabel: "Car Title *",
+    titlePlaceholder: "e.g., 2019 Hyundai i20 Sportz – Excellent Condition",
+    priceLabel: "Expected Price (₹) *",
+  },
+};
+
+/**
+ * Per-category submit handler.
+ * Each returns { imageUrls, listingData, api, successMsg }.
+ */
+const CATEGORY_SUBMIT_HANDLERS = {
+  Electronics: async (form, selectedCategory, selectedSubcategory) => {
+    let imageUrls = [];
+    if (form.images.length > 0) {
+      try {
+        const fd = new FormData();
+        form.images.forEach((img) => fd.append("images", img));
+        const res = await electronicsAPI.uploadImages(fd);
+        imageUrls = res.data.imageUrls;
+      } catch {
+        imageUrls = ["https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&q=80"];
+      }
+    }
+    const listingData = {
+      title: form.title,
+      price: Number(form.price),
+      description: form.description,
+      category: selectedCategory,
+      subcategory: selectedSubcategory,
+      condition: form.condition || "Good",
+      location: form.location,
+      phone: form.phone,
+      images: imageUrls.length > 0
+        ? imageUrls
+        : ["https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&q=80"],
+    };
+    await electronicsAPI.create(listingData);
+    return "Electronics listing posted successfully!";
+  },
+
+  Vehicles: async (form, selectedCategory, selectedSubcategory) => {
+    let imageUrls = [];
+    if (form.images.length > 0) {
+      try {
+        const fd = new FormData();
+        form.images.forEach((img) => fd.append("images", img));
+        const res = await vehiclesAPI.uploadImages(fd);
+        imageUrls = res.data.imageUrls;
+      } catch {
+        imageUrls = ["https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=800&q=80"];
+      }
+    }
+    const listingData = {
+      title: form.title,
+      price: Number(form.price),
+      description: form.description,
+      category: selectedCategory,
+      subcategory: selectedSubcategory,
+      condition: form.condition || "Good",
+      location: form.location,
+      phone: form.phone,
+      brand: form.brand,
+      model: form.model,
+      variant: form.variant,
+      year: form.year,
+      kmDriven: form.kmDriven,
+      fuelType: form.fuelType,
+      transmission: form.transmission,
+      ownership: form.ownership,
+      images: imageUrls.length > 0
+        ? imageUrls
+        : ["https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=800&q=80"],
+    };
+    await vehiclesAPI.create(listingData);
+    return "Vehicle listing posted successfully!";
+  },
+};
+
+/* ─────────────────────────────────────────────
+   Shared tiny components
+   ───────────────────────────────────────────── */
+
 const Field = ({ label, error, children }) => (
   <div>
     <label className="block text-sm font-medium text-slate-700 mb-1.5">
@@ -63,32 +216,298 @@ const Field = ({ label, error, children }) => (
   </div>
 );
 
+const SelectField = ({ label, error, value, onChange, placeholder, options }) => (
+  <Field label={label} error={error}>
+    <select value={value} onChange={onChange} className={SELECT_CLS}>
+      <option value="">{placeholder}</option>
+      {options.map((opt) => (
+        <option key={opt} value={opt}>{opt}</option>
+      ))}
+    </select>
+  </Field>
+);
+
+const PageHeader = ({ navigate }) => (
+  <div className="bg-white/80 backdrop-blur-md border-b border-slate-100 sticky top-0 z-50">
+    <div className="max-w-7xl mx-auto px-4">
+      <div className="flex items-center justify-between h-16">
+        <Link to="/" className="flex items-center gap-2">
+          <div className="w-8 h-8 bg-gradient-to-br from-[#27BB97] to-[#1fa987] rounded-xl flex items-center justify-center shadow-lg shadow-[#27BB97]/20">
+            <span className="text-white font-bold text-lg">L</span>
+          </div>
+          <span className="text-xl font-bold bg-gradient-to-r from-[#27BB97] to-[#1fa987] bg-clip-text text-transparent">
+            Listify
+          </span>
+        </Link>
+        <div className="flex items-center gap-2">
+          <span className="text-sm text-slate-500 mr-2">Back</span>
+          <button
+            onClick={() => navigate(-1)}
+            className="w-9 h-9 flex items-center justify-center bg-slate-100 hover:bg-slate-200 rounded-xl transition-colors"
+          >
+            <svg className="w-5 h-5 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
+const BackArrow = ({ onClick }) => (
+  <button
+    onClick={onClick}
+    className="p-2 -ml-2 hover:bg-slate-100 rounded-lg transition"
+    aria-label="Back to categories"
+  >
+    <svg className="w-6 h-6 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+    </svg>
+  </button>
+);
+
+/* ─────────────────────────────────────────────
+   Category-specific field components
+   ───────────────────────────────────────────── */
+
+const VehicleFields = ({ form, setField, errors }) => (
+  <>
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <SelectField
+        label="Brand *"
+        error={errors.brand}
+        value={form.brand}
+        onChange={setField("brand")}
+        placeholder="Select Brand"
+        options={VEHICLE_BRANDS}
+      />
+      <Field label="Model *" error={errors.model}>
+        <input
+          type="text"
+          value={form.model}
+          onChange={setField("model")}
+          placeholder="e.g., i20, Swift, Nexon"
+          className={INPUT_CLS}
+        />
+      </Field>
+    </div>
+
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <Field label="Variant">
+        <input
+          type="text"
+          value={form.variant}
+          onChange={setField("variant")}
+          placeholder="e.g., Sportz, VXi, XZ+"
+          className={INPUT_CLS}
+        />
+      </Field>
+      <SelectField
+        label="Year of Manufacture *"
+        error={errors.year}
+        value={form.year}
+        onChange={setField("year")}
+        placeholder="Select Year"
+        options={YEAR_OPTIONS}
+      />
+    </div>
+
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <Field label="Kilometers Driven">
+        <input
+          type="text"
+          value={form.kmDriven}
+          onChange={setField("kmDriven")}
+          placeholder="e.g., 25,000"
+          className={INPUT_CLS}
+        />
+      </Field>
+      <SelectField
+        label="Fuel Type *"
+        error={errors.fuelType}
+        value={form.fuelType}
+        onChange={setField("fuelType")}
+        placeholder="Select Fuel Type"
+        options={FUEL_TYPES}
+      />
+    </div>
+
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <SelectField
+        label="Transmission *"
+        error={errors.transmission}
+        value={form.transmission}
+        onChange={setField("transmission")}
+        placeholder="Select Transmission"
+        options={TRANSMISSIONS}
+      />
+      <SelectField
+        label="Ownership *"
+        error={errors.ownership}
+        value={form.ownership}
+        onChange={setField("ownership")}
+        placeholder="Select Ownership"
+        options={OWNERSHIPS}
+      />
+    </div>
+  </>
+);
+
+const ElectronicsFields = ({ form, setField }) => (
+  <SelectField
+    label="Condition *"
+    value={form.condition}
+    onChange={setField("condition")}
+    placeholder="Select Condition"
+    options={CONDITIONS}
+  />
+);
+
+/* ─────────────────────────────────────────────
+   Dynamic category → component mapping
+   ───────────────────────────────────────────── */
+
+const CATEGORY_COMPONENTS = {
+  Vehicles: VehicleFields,
+  Electronics: ElectronicsFields,
+};
+
+/* ─────────────────────────────────────────────
+   Success screen
+   ───────────────────────────────────────────── */
+
+const SuccessScreen = ({ onReset, onGoHome }) => (
+  <div className="min-h-[60vh] flex flex-col items-center justify-center gap-6 text-center px-4 page-enter">
+    <div className="w-20 h-20 rounded-full bg-emerald-100 flex items-center justify-center text-4xl">
+      🎉
+    </div>
+    <h2 className="text-2xl font-bold text-slate-900">Ad Posted Successfully!</h2>
+    <p className="text-slate-500 max-w-sm">Your listing is now live.</p>
+    <div className="flex gap-3">
+      <button
+        onClick={onReset}
+        className="px-6 py-3 border border-slate-200 text-slate-700 font-semibold rounded-xl hover:bg-slate-50 transition-all"
+      >
+        Post Another
+      </button>
+      <button
+        onClick={onGoHome}
+        className="px-6 py-3 bg-gradient-to-r from-[#27BB97] to-[#1fa987] text-white font-semibold rounded-xl hover:shadow-lg hover:shadow-[#27BB97]/20 transition-all"
+      >
+        Go to Home
+      </button>
+    </div>
+  </div>
+);
+
+/* ─────────────────────────────────────────────
+   Category selection screen
+   ───────────────────────────────────────────── */
+
+const CategorySelectionScreen = ({
+  navigate,
+  selectedCategory,
+  selectedSubcategory,
+  mobileView,
+  onCategorySelect,
+  onSubcategorySelect,
+  onBack,
+}) => (
+  <div className="page-enter min-h-screen bg-slate-50">
+    <PageHeader navigate={navigate} />
+
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div className="bg-white rounded-2xl border border-slate-100 shadow-card p-6 sm:p-8">
+        {/* Header with back arrow */}
+        <div className="flex items-center gap-4 mb-6">
+          {(mobileView === "subcategories" || window.innerWidth >= 1024) &&
+            selectedCategory && <BackArrow onClick={onBack} />}
+          <div>
+            <h1 className="text-3xl font-black text-slate-900">Post Your Ad</h1>
+            <p className="text-slate-500 mt-1">
+              {selectedCategory
+                ? `Choose a subcategory for ${selectedCategory}`
+                : "Choose a category to continue"}
+            </p>
+          </div>
+        </div>
+
+        {/* Desktop Headers */}
+        <div className="hidden lg:grid lg:grid-cols-2 gap-6">
+          <h2 className="text-lg font-semibold text-slate-800">SELECT CATEGORY</h2>
+          <h2 className="text-lg font-semibold text-slate-800">
+            {selectedCategory ? "SELECT SUBCATEGORY" : "SUBCATEGORIES"}
+          </h2>
+        </div>
+
+        {/* Mobile Header */}
+        <div className="lg:hidden mb-4">
+          <h2 className="text-lg font-semibold text-slate-800">
+            {mobileView === "categories" ? "SELECT CATEGORY" : "SELECT SUBCATEGORY"}
+          </h2>
+        </div>
+
+        {/* Categories and Subcategories Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-4">
+          <div className={mobileView === "categories" ? "block" : "hidden lg:block"}>
+            <div className="space-y-1 max-h-[480px] overflow-y-auto pr-2">
+              {CATEGORIES.map((cat) => (
+                <button
+                  key={cat}
+                  type="button"
+                  onClick={() => onCategorySelect(cat)}
+                  className={`w-full flex items-center justify-between px-4 py-3.5 border-b border-slate-200 hover:bg-slate-50 transition text-left
+                    ${selectedCategory === cat ? "bg-[#27BB97]/10 font-medium text-[#27BB97]" : ""}`}
+                >
+                  <span>{cat}</span>
+                  <span className="text-slate-400 text-xl lg:hidden">›</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div
+            className={`${mobileView === "subcategories" ? "block" : "hidden lg:block"} lg:border-l border-slate-200 lg:pl-6`}
+          >
+            {selectedCategory ? (
+              <div className="space-y-1 max-h-[480px] overflow-y-auto">
+                {SUBCATEGORIES[selectedCategory]?.map((sub) => (
+                  <button
+                    key={sub}
+                    type="button"
+                    onClick={() => onSubcategorySelect(sub)}
+                    className={`w-full px-4 py-3.5 border-b border-slate-200 hover:bg-slate-50 transition text-left
+                      ${selectedSubcategory === sub ? "bg-[#27BB97]/10 font-medium text-[#27BB97]" : ""}`}
+                  >
+                    {sub}
+                  </button>
+                ))}
+              </div>
+            ) : (
+              <div className="h-full flex items-center justify-center text-slate-400 text-sm py-10">
+                Select a category to view subcategories
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
+/* ─────────────────────────────────────────────
+   Main component
+   ───────────────────────────────────────────── */
+
 const PostAdPage = () => {
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
+
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedSubcategory, setSelectedSubcategory] = useState(null);
-  const [mobileView, setMobileView] = useState("categories"); // 'categories' or 'subcategories'
-
-  const [form, setForm] = useState({
-    title: "",
-    description: "",
-    price: "",
-    condition: "Good",
-    location: "",
-    phone: "",
-    images: [],
-    // Vehicle-specific fields
-    brand: "",
-    model: "",
-    variant: "",
-    year: "",
-    kmDriven: "",
-    fuelType: "",
-    transmission: "",
-    ownership: "",
-  });
-
+  const [mobileView, setMobileView] = useState("categories");
+  const [form, setForm] = useState({ ...DEFAULT_FORM });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -101,6 +520,8 @@ const PostAdPage = () => {
   }, [user, navigate]);
 
   if (!user) return null;
+
+  /* ── helpers ── */
 
   const setField = (field) => (e) =>
     setForm((f) => ({ ...f, [field]: e.target.value }));
@@ -117,7 +538,6 @@ const PostAdPage = () => {
   const handleCategorySelect = (category) => {
     setSelectedCategory(category);
     setSelectedSubcategory(null);
-    // On mobile, switch to subcategories view
     if (window.innerWidth < 1024) {
       setMobileView("subcategories");
       window.scrollTo({ top: 0, behavior: "smooth" });
@@ -132,6 +552,8 @@ const PostAdPage = () => {
   const handleSubcategorySelect = (subcategory) => {
     setSelectedSubcategory(subcategory);
   };
+
+  /* ── validation ── */
 
   const validate = () => {
     const errs = {};
@@ -156,20 +578,18 @@ const PostAdPage = () => {
     if (!form.images || form.images.length === 0)
       errs.images = "At least one image is required";
 
-    // Vehicle-specific validation
-    if (selectedCategory === "Vehicles") {
-      if (!form.brand) errs.brand = "Brand is required";
-      if (!form.model) errs.model = "Model is required";
-      if (!form.year) errs.year = "Year of manufacture is required";
-      if (!form.fuelType) errs.fuelType = "Fuel type is required";
-      if (!form.transmission) errs.transmission = "Transmission is required";
-      if (!form.ownership) errs.ownership = "Ownership is required";
+    // Category-specific validation (dynamic)
+    const categoryValidator = CATEGORY_VALIDATORS[selectedCategory];
+    if (categoryValidator) {
+      Object.assign(errs, categoryValidator(form));
     }
 
     setForm((f) => ({ ...f, ...trimmed }));
     setErrors(errs);
     return Object.keys(errs).length === 0;
   };
+
+  /* ── submission ── */
 
   const saveLocalProduct = (product) => {
     const existing = JSON.parse(localStorage.getItem("localProducts") || "[]");
@@ -187,95 +607,16 @@ const PostAdPage = () => {
     setLoading(true);
 
     try {
-      // If category is Electronics, submit to the backend API
-      if (selectedCategory === "Electronics") {
-        // Step 1: Upload images if any
-        let imageUrls = [];
-        if (form.images.length > 0) {
-          try {
-            const formData = new FormData();
-            form.images.forEach((img) => formData.append("images", img));
-            const uploadRes = await electronicsAPI.uploadImages(formData);
-            imageUrls = uploadRes.data.imageUrls;
-          } catch (uploadErr) {
-            console.warn("Image upload failed, using placeholders:", uploadErr);
-            imageUrls = [
-              "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&q=80",
-            ];
-          }
-        }
+      const categoryHandler = CATEGORY_SUBMIT_HANDLERS[selectedCategory];
 
-        // Step 2: Create the listing via API
-        const listingData = {
-          title: form.title,
-          price: Number(form.price),
-          description: form.description,
-          category: selectedCategory,
-          subcategory: selectedSubcategory,
-          condition: form.condition || "Good",
-          location: form.location,
-          phone: form.phone,
-          images:
-            imageUrls.length > 0
-              ? imageUrls
-              : [
-                  "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&q=80",
-                ],
-        };
-
-        await electronicsAPI.create(listingData);
+      if (categoryHandler) {
+        // Use the registered per-category handler
+        const successMsg = await categoryHandler(form, selectedCategory, selectedSubcategory);
         setLoading(false);
         setSubmitted(true);
-        toast.success("Electronics listing posted successfully!");
-      } else if (selectedCategory === "Vehicles") {
-        // Step 1: Upload images
-        let imageUrls = [];
-        if (form.images.length > 0) {
-          try {
-            const formData = new FormData();
-            form.images.forEach((img) => formData.append("images", img));
-            const uploadRes = await vehiclesAPI.uploadImages(formData);
-            imageUrls = uploadRes.data.imageUrls;
-          } catch (uploadErr) {
-            console.warn("Image upload failed, using placeholders:", uploadErr);
-            imageUrls = [
-              "https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=800&q=80",
-            ];
-          }
-        }
-
-        // Step 2: Create the vehicle listing via API
-        const listingData = {
-          title: form.title,
-          price: Number(form.price),
-          description: form.description,
-          category: selectedCategory,
-          subcategory: selectedSubcategory,
-          condition: form.condition || "Good",
-          location: form.location,
-          phone: form.phone,
-          brand: form.brand,
-          model: form.model,
-          variant: form.variant,
-          year: form.year,
-          kmDriven: form.kmDriven,
-          fuelType: form.fuelType,
-          transmission: form.transmission,
-          ownership: form.ownership,
-          images:
-            imageUrls.length > 0
-              ? imageUrls
-              : [
-                  "https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=800&q=80",
-                ],
-        };
-
-        await vehiclesAPI.create(listingData);
-        setLoading(false);
-        setSubmitted(true);
-        toast.success("Vehicle listing posted successfully!");
+        toast.success(successMsg);
       } else {
-        // For other categories, save locally (same as before)
+        // Fallback: save locally for categories without a backend API
         const newProduct = {
           id: `local-${Date.now()}`,
           title: form.title,
@@ -288,13 +629,10 @@ const PostAdPage = () => {
           images:
             form.images.length > 0
               ? form.images.map((img) => URL.createObjectURL(img))
-              : [
-                  "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&q=80",
-                ],
+              : ["https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&q=80"],
           postedAt: new Date().toISOString().split("T")[0],
           featured: false,
         };
-
         saveLocalProduct(newProduct);
         setLoading(false);
         setSubmitted(true);
@@ -311,285 +649,65 @@ const PostAdPage = () => {
     }
   };
 
+  /* ── reset ── */
+
   const resetForm = () => {
     setSubmitted(false);
-    setForm({
-      title: "",
-      description: "",
-      price: "",
-      condition: "Good",
-      location: "",
-      phone: "",
-      images: [],
-      brand: "",
-      model: "",
-      variant: "",
-      year: "",
-      kmDriven: "",
-      fuelType: "",
-      transmission: "",
-      ownership: "",
-    });
+    setForm({ ...DEFAULT_FORM });
     setSelectedCategory(null);
     setSelectedSubcategory(null);
     setMobileView("categories");
   };
 
+  /* ── render: success ── */
+
   if (submitted) {
-    return (
-      <div className="min-h-[60vh] flex flex-col items-center justify-center gap-6 text-center px-4 page-enter">
-        <div className="w-20 h-20 rounded-full bg-emerald-100 flex items-center justify-center text-4xl">
-          🎉
-        </div>
-        <h2 className="text-2xl font-bold text-slate-900">
-          Ad Posted Successfully!
-        </h2>
-        <p className="text-slate-500 max-w-sm">Your listing is now live.</p>
-        <div className="flex gap-3">
-          <button
-            onClick={resetForm}
-            className="px-6 py-3 border border-slate-200 text-slate-700 font-semibold rounded-xl hover:bg-slate-50 transition-all"
-          >
-            Post Another
-          </button>
-          <button
-            onClick={() => navigate("/")}
-            className="px-6 py-3 bg-gradient-to-r from-[#27BB97] to-[#1fa987] text-white font-semibold rounded-xl hover:shadow-lg hover:shadow-[#27BB97]/20 transition-all"
-          >
-            Go to Home
-          </button>
-        </div>
-      </div>
-    );
+    return <SuccessScreen onReset={resetForm} onGoHome={() => navigate("/")} />;
   }
 
-  // If no category and subcategory selected yet
+  /* ── render: category / subcategory picker ── */
+
   if (!selectedCategory || !selectedSubcategory) {
     return (
-      <div className="page-enter min-h-screen bg-slate-50">
-        {/* Header */}
-        <div className="bg-white/80 backdrop-blur-md border-b border-slate-100 sticky top-0 z-50">
-          <div className="max-w-7xl mx-auto px-4">
-            <div className="flex items-center justify-between h-16">
-              <Link to="/" className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-gradient-to-br from-[#27BB97] to-[#1fa987] rounded-xl flex items-center justify-center shadow-lg shadow-[#27BB97]/20">
-                  <span className="text-white font-bold text-lg">L</span>
-                </div>
-                <span className="text-xl font-bold bg-gradient-to-r from-[#27BB97] to-[#1fa987] bg-clip-text text-transparent">
-                  Listify
-                </span>
-              </Link>
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-slate-500 mr-2">Back</span>
-                <button
-                  onClick={() => navigate(-1)}
-                  className="w-9 h-9 flex items-center justify-center bg-slate-100 hover:bg-slate-200 rounded-xl transition-colors"
-                >
-                  <svg
-                    className="w-5 h-5 text-slate-600"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  </svg>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-          <div className="bg-white rounded-2xl border border-slate-100 shadow-card p-6 sm:p-8">
-            {/* Header with back arrow */}
-            <div className="flex items-center gap-4 mb-6">
-              {/* Back arrow - visible on mobile when in subcategories, on desktop always visible */}
-              {(mobileView === "subcategories" || window.innerWidth >= 1024) &&
-                selectedCategory && (
-                  <button
-                    onClick={handleBackToCategories}
-                    className="p-2 -ml-2 hover:bg-slate-100 rounded-lg transition lg:block"
-                    aria-label="Back to categories"
-                  >
-                    <svg
-                      className="w-6 h-6 text-slate-600"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M15 19l-7-7 7-7"
-                      />
-                    </svg>
-                  </button>
-                )}
-              <div>
-                <h1 className="text-3xl font-black text-slate-900">
-                  Post Your Ad
-                </h1>
-                <p className="text-slate-500 mt-1">
-                  {selectedCategory
-                    ? `Choose a subcategory for ${selectedCategory}`
-                    : "Choose a category to continue"}
-                </p>
-              </div>
-            </div>
-
-            {/* Desktop Headers */}
-            <div className="hidden lg:grid lg:grid-cols-2 gap-6">
-              <h2 className="text-lg font-semibold text-slate-800">
-                SELECT CATEGORY
-              </h2>
-              <h2 className="text-lg font-semibold text-slate-800">
-                {selectedCategory ? "SELECT SUBCATEGORY" : "SUBCATEGORIES"}
-              </h2>
-            </div>
-
-            {/* Mobile Header */}
-            <div className="lg:hidden mb-4">
-              <h2 className="text-lg font-semibold text-slate-800">
-                {mobileView === "categories"
-                  ? "SELECT CATEGORY"
-                  : `SELECT SUBCATEGORY`}
-              </h2>
-            </div>
-
-            {/* Categories and Subcategories Grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-4">
-              {/* Categories - Always visible on desktop, conditionally on mobile */}
-              <div
-                className={`${mobileView === "categories" ? "block" : "hidden lg:block"}`}
-              >
-                <div className="space-y-1 max-h-[480px] overflow-y-auto pr-2">
-                  {CATEGORIES.map((cat) => (
-                    <button
-                      key={cat}
-                      type="button"
-                      onClick={() => handleCategorySelect(cat)}
-                      className={`w-full flex items-center justify-between px-4 py-3.5 border-b border-slate-200 hover:bg-slate-50 transition text-left
-                        ${selectedCategory === cat ? "bg-[#27BB97]/10 font-medium text-[#27BB97]" : ""}`}
-                    >
-                      <span>{cat}</span>
-                      <span className="text-slate-400 text-xl lg:hidden">
-                        ›
-                      </span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Subcategories - Always visible on desktop, conditionally on mobile */}
-              <div
-                className={`${mobileView === "subcategories" ? "block" : "hidden lg:block"} lg:border-l border-slate-200 lg:pl-6`}
-              >
-                {selectedCategory ? (
-                  <div className="space-y-1 max-h-[480px] overflow-y-auto">
-                    {SUBCATEGORIES[selectedCategory]?.map((sub) => (
-                      <button
-                        key={sub}
-                        type="button"
-                        onClick={() => handleSubcategorySelect(sub)}
-                        className={`w-full px-4 py-3.5 border-b border-slate-200 hover:bg-slate-50 transition text-left
-                          ${selectedSubcategory === sub ? "bg-[#27BB97]/10 font-medium text-[#27BB97]" : ""}`}
-                      >
-                        {sub}
-                      </button>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="h-full flex items-center justify-center text-slate-400 text-sm py-10">
-                    Select a category to view subcategories
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <CategorySelectionScreen
+        navigate={navigate}
+        selectedCategory={selectedCategory}
+        selectedSubcategory={selectedSubcategory}
+        mobileView={mobileView}
+        onCategorySelect={handleCategorySelect}
+        onSubcategorySelect={handleSubcategorySelect}
+        onBack={handleBackToCategories}
+      />
     );
   }
 
-  // Form view (category and subcategory selected)
+  /* ── render: ad form ── */
+
+  const categoryConfig = CATEGORY_FORM_CONFIG[selectedCategory] || {};
+  const titleLabel = categoryConfig.titleLabel || "Ad Title *";
+  const titlePlaceholder = categoryConfig.titlePlaceholder || "e.g., iPhone 14 Pro Max 256GB";
+  const priceLabel = categoryConfig.priceLabel || "Price (₹) *";
+
+  const CategoryFields = CATEGORY_COMPONENTS[selectedCategory];
+
   return (
     <div className="page-enter min-h-screen bg-slate-50">
-      {/* Header */}
-      <div className="bg-white/80 backdrop-blur-md border-b border-slate-100 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex items-center justify-between h-16">
-            <Link to="/" className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-gradient-to-br from-[#27BB97] to-[#1fa987] rounded-xl flex items-center justify-center shadow-lg shadow-[#27BB97]/20">
-                <span className="text-white font-bold text-lg">L</span>
-              </div>
-              <span className="text-xl font-bold bg-gradient-to-r from-[#27BB97] to-[#1fa987] bg-clip-text text-transparent">
-                Listify
-              </span>
-            </Link>
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-slate-500 mr-2">Back</span>
-              <button
-                onClick={() => navigate(-1)}
-                className="w-9 h-9 flex items-center justify-center bg-slate-100 hover:bg-slate-200 rounded-xl transition-colors"
-              >
-                <svg
-                  className="w-5 h-5 text-slate-600"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
+      <PageHeader navigate={navigate} />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="bg-white rounded-2xl border border-slate-100 shadow-card p-6 sm:p-8">
-          {/* Category breadcrumb and edit option */}
+          {/* Category breadcrumb */}
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-4">
-              {/* Back arrow to go back to category selection */}
-              <button
+              <BackArrow
                 onClick={() => {
                   setSelectedCategory(null);
                   setSelectedSubcategory(null);
                   setMobileView("categories");
                 }}
-                className="p-2 -ml-2 hover:bg-slate-100 rounded-lg transition"
-                aria-label="Back to categories"
-              >
-                <svg
-                  className="w-6 h-6 text-slate-600"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M15 19l-7-7 7-7"
-                  />
-                </svg>
-              </button>
+              />
               <div>
-                <h1 className="text-3xl font-black text-slate-900">
-                  Post Your Ad
-                </h1>
+                <h1 className="text-3xl font-black text-slate-900">Post Your Ad</h1>
                 <div className="flex items-center gap-2 mt-2">
                   <span className="text-sm bg-slate-100 px-3 py-1.5 rounded-lg text-slate-700">
                     {selectedCategory}
@@ -604,149 +722,26 @@ const PostAdPage = () => {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">
-            <Field label={selectedCategory === "Vehicles" ? "Car Title *" : "Ad Title *"} error={errors.title}>
+            {/* Title */}
+            <Field label={titleLabel} error={errors.title}>
               <input
                 type="text"
                 value={form.title}
                 onChange={setField("title")}
-                placeholder={selectedCategory === "Vehicles" ? 'e.g., 2019 Hyundai i20 Sportz – Excellent Condition' : "e.g., iPhone 14 Pro Max 256GB"}
-                className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:border-[#27BB97] focus:ring-2 focus:ring-[#27BB97]/20 outline-none transition"
+                placeholder={titlePlaceholder}
+                className={INPUT_CLS}
               />
             </Field>
 
-            {/* Vehicle-specific fields */}
-            {selectedCategory === "Vehicles" && (
-              <>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <Field label="Brand *" error={errors.brand}>
-                    <select
-                      value={form.brand}
-                      onChange={setField("brand")}
-                      className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:border-[#27BB97] focus:ring-2 focus:ring-[#27BB97]/20 outline-none transition bg-white"
-                    >
-                      <option value="">Select Brand</option>
-                      <option value="Maruti Suzuki">Maruti Suzuki</option>
-                      <option value="Hyundai">Hyundai</option>
-                      <option value="Tata">Tata</option>
-                      <option value="Honda">Honda</option>
-                      <option value="Toyota">Toyota</option>
-                      <option value="Mahindra">Mahindra</option>
-                      <option value="Kia">Kia</option>
-                      <option value="MG">MG</option>
-                      <option value="Volkswagen">Volkswagen</option>
-                      <option value="Skoda">Skoda</option>
-                      <option value="Renault">Renault</option>
-                      <option value="Nissan">Nissan</option>
-                      <option value="Ford">Ford</option>
-                      <option value="Chevrolet">Chevrolet</option>
-                      <option value="BMW">BMW</option>
-                      <option value="Mercedes-Benz">Mercedes-Benz</option>
-                      <option value="Audi">Audi</option>
-                      <option value="Jeep">Jeep</option>
-                      <option value="Citroën">Citroën</option>
-                      <option value="Other">Other</option>
-                    </select>
-                  </Field>
-
-                  <Field label="Model *" error={errors.model}>
-                    <input
-                      type="text"
-                      value={form.model}
-                      onChange={setField("model")}
-                      placeholder="e.g., i20, Swift, Nexon"
-                      className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:border-[#27BB97] focus:ring-2 focus:ring-[#27BB97]/20 outline-none transition"
-                    />
-                  </Field>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <Field label="Variant">
-                    <input
-                      type="text"
-                      value={form.variant}
-                      onChange={setField("variant")}
-                      placeholder="e.g., Sportz, VXi, XZ+"
-                      className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:border-[#27BB97] focus:ring-2 focus:ring-[#27BB97]/20 outline-none transition"
-                    />
-                  </Field>
-
-                  <Field label="Year of Manufacture *" error={errors.year}>
-                    <select
-                      value={form.year}
-                      onChange={setField("year")}
-                      className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:border-[#27BB97] focus:ring-2 focus:ring-[#27BB97]/20 outline-none transition bg-white"
-                    >
-                      <option value="">Select Year</option>
-                      {Array.from({ length: 30 }, (_, i) => new Date().getFullYear() - i).map((yr) => (
-                        <option key={yr} value={yr}>{yr}</option>
-                      ))}
-                    </select>
-                  </Field>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <Field label="Kilometers Driven">
-                    <input
-                      type="text"
-                      value={form.kmDriven}
-                      onChange={setField("kmDriven")}
-                      placeholder="e.g., 25,000"
-                      className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:border-[#27BB97] focus:ring-2 focus:ring-[#27BB97]/20 outline-none transition"
-                    />
-                  </Field>
-
-                  <Field label="Fuel Type *" error={errors.fuelType}>
-                    <select
-                      value={form.fuelType}
-                      onChange={setField("fuelType")}
-                      className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:border-[#27BB97] focus:ring-2 focus:ring-[#27BB97]/20 outline-none transition bg-white"
-                    >
-                      <option value="">Select Fuel Type</option>
-                      <option value="Petrol">Petrol</option>
-                      <option value="Diesel">Diesel</option>
-                      <option value="CNG">CNG</option>
-                      <option value="Electric">Electric</option>
-                      <option value="Hybrid">Hybrid</option>
-                      <option value="LPG">LPG</option>
-                    </select>
-                  </Field>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <Field label="Transmission *" error={errors.transmission}>
-                    <select
-                      value={form.transmission}
-                      onChange={setField("transmission")}
-                      className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:border-[#27BB97] focus:ring-2 focus:ring-[#27BB97]/20 outline-none transition bg-white"
-                    >
-                      <option value="">Select Transmission</option>
-                      <option value="Manual">Manual</option>
-                      <option value="Automatic">Automatic</option>
-                    </select>
-                  </Field>
-
-                  <Field label="Ownership *" error={errors.ownership}>
-                    <select
-                      value={form.ownership}
-                      onChange={setField("ownership")}
-                      className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:border-[#27BB97] focus:ring-2 focus:ring-[#27BB97]/20 outline-none transition bg-white"
-                    >
-                      <option value="">Select Ownership</option>
-                      <option value="1st Owner">1st Owner</option>
-                      <option value="2nd Owner">2nd Owner</option>
-                      <option value="3rd Owner">3rd Owner</option>
-                      <option value="4th+ Owner">4th+ Owner</option>
-                    </select>
-                  </Field>
-                </div>
-              </>
+            {/* Category-specific fields (dynamic) */}
+            {CategoryFields && (
+              <CategoryFields form={form} setField={setField} errors={errors} />
             )}
 
-            <Field label={selectedCategory === "Vehicles" ? "Expected Price (₹) *" : "Price (₹) *"} error={errors.price}>
+            {/* Price */}
+            <Field label={priceLabel} error={errors.price}>
               <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-medium">
-                  ₹
-                </span>
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-medium">₹</span>
                 <input
                   type="number"
                   value={form.price}
@@ -758,22 +753,7 @@ const PostAdPage = () => {
               </div>
             </Field>
 
-            {selectedCategory === "Electronics" && (
-              <Field label="Condition *">
-                <select
-                  value={form.condition}
-                  onChange={setField("condition")}
-                  className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:border-[#27BB97] focus:ring-2 focus:ring-[#27BB97]/20 outline-none transition bg-white"
-                >
-                  <option value="New">New</option>
-                  <option value="Like New">Like New</option>
-                  <option value="Good">Good</option>
-                  <option value="Fair">Fair</option>
-                  <option value="Used">Used</option>
-                </select>
-              </Field>
-            )}
-
+            {/* Description */}
             <Field label="Description *" error={errors.description}>
               <textarea
                 value={form.description}
@@ -787,21 +767,21 @@ const PostAdPage = () => {
               </p>
             </Field>
 
+            {/* Location */}
             <Field label="Location *" error={errors.location}>
               <input
                 type="text"
                 value={form.location}
                 onChange={setField("location")}
                 placeholder="e.g., Kukatpally, Hyderabad"
-                className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:border-[#27BB97] focus:ring-2 focus:ring-[#27BB97]/20 outline-none transition"
+                className={INPUT_CLS}
               />
             </Field>
 
+            {/* Phone */}
             <Field label="Phone Number *" error={errors.phone}>
               <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium">
-                  +91
-                </span>
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium">+91</span>
                 <input
                   type="tel"
                   value={form.phone}
@@ -813,6 +793,7 @@ const PostAdPage = () => {
               </div>
             </Field>
 
+            {/* Images */}
             <Field label="Photos * (Min 1 - Max 6 Images)" error={errors.images}>
               <div className="space-y-4">
                 {form.images.length > 0 && (
@@ -853,12 +834,12 @@ const PostAdPage = () => {
                 )}
 
                 <p className="text-xs text-slate-400">
-                  You can upload up to 6 images. First image will be the cover
-                  photo.
+                  You can upload up to 6 images. First image will be the cover photo.
                 </p>
               </div>
             </Field>
 
+            {/* Submit */}
             <button
               type="submit"
               disabled={loading}
@@ -866,24 +847,9 @@ const PostAdPage = () => {
             >
               {loading ? (
                 <span className="flex items-center justify-center gap-2">
-                  <svg
-                    className="animate-spin h-5 w-5 text-white"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    />
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    />
+                  <svg className="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                   </svg>
                   Processing listing…
                 </span>
