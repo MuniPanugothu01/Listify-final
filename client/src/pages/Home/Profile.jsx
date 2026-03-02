@@ -562,7 +562,9 @@ export default function Profile() {
                               View
                             </button>
                             <button
-                              onClick={() => navigate(`/edit-listing/${item._id}`)}
+                              onClick={() =>
+                                navigate(`/edit-listing/${item._listingType}/${item._id}`)
+                              }
                               className="flex-1 py-2 text-xs font-medium bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors"
                             >
                               Edit
