@@ -22,7 +22,7 @@ import NavSearchBar from "../../pages/Home/NavSearchBar.jsx";
 import { CgProfile } from "react-icons/cg";
 import { ScrollProgress } from "../../components/ui/scroll-progress";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks/useRedux";
-import { updateUser, checkAuth } from "../../redux/slices/authSlice";
+import { updateUser, checkAuth, logoutUser } from "../../redux/slices/authSlice";
 import { fetchProfile } from "../../redux/slices/profileSlice";
 import toast from "react-hot-toast";
 
@@ -259,12 +259,10 @@ const Navbar = () => {
     if (path === "/logout") {
       try {
         closeProfileDropdown();
-        const { authActions } = await import("../../redux/actions/authActions");
-        await dispatch(authActions.logout());
+        await dispatch(logoutUser()).unwrap();
         toast.success("Logged out successfully");
         navigate("/");
       } catch (error) {
-        console.error("Logout error:", error);
         toast.error("Logout failed. Please try again.");
       }
     } else {

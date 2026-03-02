@@ -6,19 +6,31 @@ const { logger } = require('./logger');
 /**
  * Generate access token (short-lived)
  * @param {string} userId - User ID
+ * @param {Object} req - Express request (optional, for fingerprint)
  * @returns {string} JWT access token
  */
-const generateAccessToken = (userId) => {
+const generateAccessToken = (userId, req = null) => {
+  if (!process.env.JWT_ACCESS_SECRET) {
+    throw new Error('JWT_ACCESS_SECRET is required. Never share keys between access and refresh tokens.');
+  }
+  
+  const payload = { 
+    id: userId,
+    type: 'access',
+    jti: crypto.randomBytes(16).toString('hex'),
+  };
+
+  // Token fingerprint: bind the token to the client's User-Agent.
+  // If someone steals the token, it won't work from a different browser/device.
+  if (req) {
+    const ua = req.get('user-agent') || '';
+    payload.fgp = crypto.createHash('sha256').update(ua).digest('hex').substring(0, 16);
+  }
+
   return jwt.sign(
-    { 
-      id: userId,
-      type: 'access',
-      jti: crypto.randomBytes(16).toString('hex') // Unique token ID
-    },
-    process.env.JWT_ACCESS_SECRET || process.env.JWT_SECRET,
-    { 
-      expiresIn: process.env.JWT_ACCESS_EXPIRE || '15m' // 15 minutes
-    }
+    payload,
+    process.env.JWT_ACCESS_SECRET,
+    { expiresIn: process.env.JWT_ACCESS_EXPIRE || '15m' }
   );
 };
 
@@ -28,15 +40,18 @@ const generateAccessToken = (userId) => {
  * @returns {string} JWT refresh token
  */
 const generateRefreshToken = (userId) => {
+  if (!process.env.JWT_REFRESH_SECRET) {
+    throw new Error('JWT_REFRESH_SECRET is required. Never share keys between access and refresh tokens.');
+  }
   return jwt.sign(
     { 
       id: userId,
       type: 'refresh',
       jti: crypto.randomBytes(16).toString('hex')
     },
-    process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET + 'refresh',
+    process.env.JWT_REFRESH_SECRET,
     { 
-      expiresIn: process.env.JWT_REFRESH_EXPIRE || '7d' // 7 days
+      expiresIn: process.env.JWT_REFRESH_EXPIRE || '7d'
     }
   );
 };
@@ -100,7 +115,7 @@ const verifyRefreshToken = async (refreshToken) => {
     // Verify JWT signature first
     const decoded = jwt.verify(
       refreshToken,
-      process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET + 'refresh'
+      process.env.JWT_REFRESH_SECRET
     );
 
     if (decoded.type !== 'refresh') {
@@ -346,7 +361,7 @@ const clearRefreshTokenCookie = (res) => {
  * @param {string} refreshToken - JWT refresh token
  * @returns {Promise<Object|null>} New tokens or null if failed
  */
-const refreshTokens = async (refreshToken) => {
+const refreshTokens = async (refreshToken, req = null) => {
   let lockKey = null;
   try {
     // Decode to get jti for the lock key
@@ -390,7 +405,7 @@ const refreshTokens = async (refreshToken) => {
     }
 
     // Generate new tokens (ROTATION)
-    const newAccessToken = generateAccessToken(session.userId);
+    const newAccessToken = generateAccessToken(session.userId, req);
     const newRefreshToken = generateRefreshToken(session.userId);
 
     // Grace period: keep the old token alive for 30 seconds instead of

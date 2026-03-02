@@ -18,9 +18,12 @@ import {
   Loader2,
 } from "lucide-react";
 import { fetchAllVehicles, toggleSaveVehicle } from "../../redux/slices/vehiclesSlice";
+import { VehicleGridSkeleton, ButtonSpinner } from '../common/Skeleton';
 
 // Vehicle Card Component
 const VehicleCard = ({ vehicle, onClick, onToggleSave, isSaved, user }) => {
+  const [imgLoaded, setImgLoaded] = React.useState(false);
+  const [saving, setSaving] = React.useState(false);
   const categoryIcons = {
     'Sedan': <Car className="w-4 h-4" />,
     'SUV': <Users className="w-4 h-4" />,
@@ -39,22 +42,33 @@ const VehicleCard = ({ vehicle, onClick, onToggleSave, isSaved, user }) => {
   return (
     <div
       onClick={onClick}
-      className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer group border border-gray-200"
+      className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer group border border-gray-200 animate-fade-in-up"
     >
       <div className="relative pt-[75%] sm:pt-[75%] overflow-hidden bg-gray-100">
+        {!imgLoaded && (
+          <div className="absolute inset-0 bg-gray-200 skeleton-shimmer" />
+        )}
         <img
           src={vehicle.images?.[0] || 'https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=800&q=80'}
           alt={vehicle.title}
-          className="absolute top-0 left-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          className={`absolute top-0 left-0 w-full h-full object-cover group-hover:scale-105 transition-all duration-300 ${!imgLoaded ? 'opacity-0' : 'opacity-100'}`}
+          onLoad={() => setImgLoaded(true)}
         />
         <button
           onClick={(e) => {
             e.stopPropagation();
+            setSaving(true);
             if (onToggleSave) onToggleSave(vehicle._id);
+            setTimeout(() => setSaving(false), 400);
           }}
-          className="absolute top-2 right-2 p-1.5 bg-white rounded-full shadow-sm hover:bg-red-50 transition-colors z-10"
+          disabled={saving}
+          className="absolute top-2 right-2 p-1.5 bg-white rounded-full shadow-sm hover:bg-red-50 transition-colors z-10 disabled:opacity-70"
         >
-          <Heart className={`w-4 h-4 ${isSaved ? 'text-red-500 fill-red-500' : 'text-gray-600 hover:text-red-500'}`} />
+          {saving ? (
+            <ButtonSpinner size="xs" className="text-gray-500" />
+          ) : (
+            <Heart className={`w-4 h-4 ${isSaved ? 'text-red-500 fill-red-500' : 'text-gray-600 hover:text-red-500'}`} />
+          )}
         </button>
         <div className="absolute top-2 left-2 px-2 py-1 bg-black/70 text-white text-xs rounded-full flex items-center z-10">
           {categoryIcons[vehicle.subcategory] || categoryIcons[vehicle.category] || <Car className="w-3 h-3 mr-1" />}
@@ -377,12 +391,8 @@ const VehiclesListing = () => {
               {sortedVehicles.length} vehicles found
             </div>
 
-            {/* Loading */}
-            {loading && (
-              <div className="flex items-center justify-center py-16">
-                <Loader2 className="w-10 h-10 text-[#27bb97] animate-spin" />
-              </div>
-            )}
+            {/* Loading - Skeleton */}
+            {loading && <VehicleGridSkeleton count={8} />}
 
             {/* Error */}
             {error && !loading && (
