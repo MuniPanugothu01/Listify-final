@@ -1,0 +1,129 @@
+# ═══════════════════════════════════════════════════════════════════
+# Listify — Docker Compose (Production)
+#
+# ONE-COMMAND DEPLOY:
+#   docker compose up -d --build
+#
+# All env vars live in the ROOT .env file (auto-loaded by Compose).
+# No separate server/.env or client/.env needed inside Docker.
+#
+# Services:
+#   api     → Express API server (Node 22 Alpine)
+#   client  → Vite-built React SPA served by Nginx (reverse-proxies /api → api:5000)
+#
+# External managed services (not containerised):
+#   - MongoDB Atlas   (MONGODB_URI)
+#   - Upstash Redis   (UPSTASH_REDIS_REST_URL / TOKEN)
+#   - AWS S3          (AWS_* vars)
+# ═══════════════════════════════════════════════════════════════════
+
+services:
+  # ────────────────────────────────────────────────────────────────
+  # API Server (Express + Node.js)
+  # ────────────────────────────────────────────────────────────────
+  api:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: listify-api
+    restart: unless-stopped
+    environment:
+      # ── Core ──
+      - NODE_ENV=${NODE_ENV:-production}
+      - PORT=${PORT:-5000}
+      - CLIENT_URL=${CLIENT_URL:-http://localhost}
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+
+      # ── Database ──
+      - MONGODB_URI=${MONGODB_URI}
+
+      # ── JWT ──
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_EXPIRE=${JWT_EXPIRE:-7d}
+      - JWT_ACCESS_SECRET=${JWT_ACCESS_SECRET}
+      - JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET}
+      - JWT_ACCESS_EXPIRE=${JWT_ACCESS_EXPIRE:-15m}
+      - JWT_REFRESH_EXPIRE=${JWT_REFRESH_EXPIRE:-7d}
+
+      # ── Upstash Redis ──
+      - UPSTASH_REDIS_REST_URL=${UPSTASH_REDIS_REST_URL}
+      - UPSTASH_REDIS_REST_TOKEN=${UPSTASH_REDIS_REST_TOKEN}
+
+      # ── Email ──
+      - EMAIL_SERVICE=${EMAIL_SERVICE:-gmail}
+      - EMAIL_USER=${EMAIL_USER}
+      - EMAIL_PASSWORD=${EMAIL_PASSWORD}
+      - EMAIL_FROM=${EMAIL_FROM}
+
+      # ── Google OAuth ──
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      - GOOGLE_CALLBACK_URL=${GOOGLE_CALLBACK_URL}
+
+      # ── AWS S3 ──
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_REGION=${AWS_REGION:-us-east-1}
+      - AWS_S3_BUCKET_NAME=${AWS_S3_BUCKET_NAME}
+      - AWS_S3_BUCKET_URL=${AWS_S3_BUCKET_URL}
+
+      # ── Security ──
+      - BLOCKED_COUNTRIES=${BLOCKED_COUNTRIES:-}
+      - GEOBLOCKING_STRICT=${GEOBLOCKING_STRICT:-false}
+      - TARPITTING_ENABLED=${TARPITTING_ENABLED:-true}
+      - ADMIN_API_KEY=${ADMIN_API_KEY:-}
+      - IP_WHITELIST=${IP_WHITELIST:-127.0.0.1,::1}
+
+      # ── Password Policy ──
+      - PASSWORD_HISTORY_LIMIT=${PASSWORD_HISTORY_LIMIT:-5}
+      - PASSWORD_EXPIRATION_DAYS=${PASSWORD_EXPIRATION_DAYS:-90}
+    volumes:
+      - api-logs:/app/logs
+    networks:
+      - listify-net
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 512M
+        reservations:
+          cpus: "0.25"
+          memory: 128M
+
+  # ────────────────────────────────────────────────────────────────
+  # Client (React SPA via Nginx)
+  # ────────────────────────────────────────────────────────────────
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+      args:
+        # Vite bakes VITE_* into the JS bundle at build time
+        VITE_GOOGLE_CLIENT_ID: ${VITE_GOOGLE_CLIENT_ID}
+    container_name: listify-client
+    restart: unless-stopped
+    ports:
+      - "${CLIENT_PORT:-80}:80"
+    depends_on:
+      api:
+        condition: service_healthy
+    networks:
+      - listify-net
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 128M
+        reservations:
+          cpus: "0.1"
+          memory: 32M
+
+# ── Shared network ────────────────────────────────────────────────
+networks:
+  listify-net:
+    driver: bridge
+
+# ── Named volumes ─────────────────────────────────────────────────
+volumes:
+  api-logs:
+    driver: local
