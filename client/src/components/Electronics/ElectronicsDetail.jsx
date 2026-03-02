@@ -42,6 +42,7 @@ import {
   clearCurrentListing,
   toggleSaveElectronics,
 } from '../../redux/slices/electronicsSlice';
+import { DetailPageSkeleton, ButtonSpinner } from '../common/Skeleton';
 
 // Location Map Component
 const LocationMap = ({ location }) => {
@@ -103,18 +104,23 @@ const ElectronicsDetail = () => {
   const [showSellerProfile, setShowSellerProfile] = useState(false);
   const [showOfferModal, setShowOfferModal] = useState(false);
   const [offerAmount, setOfferAmount] = useState('');
+  const [savingItem, setSavingItem] = useState(false);
+  const [contactingLoading, setContactingLoading] = useState(false);
+  const [mainImgLoaded, setMainImgLoaded] = useState(false);
 
   const isSaved =
     product?._saved ||
     (user && product?.savedBy?.includes(user._id || user.id));
 
-  const handleToggleSave = () => {
+  const handleToggleSave = async () => {
     if (!user) {
       navigate('/login');
       return;
     }
     if (product?._id) {
-      dispatch(toggleSaveElectronics(product._id));
+      setSavingItem(true);
+      await dispatch(toggleSaveElectronics(product._id));
+      setTimeout(() => setSavingItem(false), 400);
     }
   };
 
@@ -136,27 +142,24 @@ const ElectronicsDetail = () => {
         product?.image || 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&q=80',
       ];
 
-  const handleThumbnailClick = (index) => setSelectedImageIndex(index);
-  const handlePrevImage = () =>
+  const handleThumbnailClick = (index) => { setMainImgLoaded(false); setSelectedImageIndex(index); };
+  const handlePrevImage = () => {
+    setMainImgLoaded(false);
     setSelectedImageIndex((prev) => (prev === 0 ? productImages.length - 1 : prev - 1));
-  const handleNextImage = () =>
+  };
+  const handleNextImage = () => {
+    setMainImgLoaded(false);
     setSelectedImageIndex((prev) => (prev === productImages.length - 1 ? 0 : prev + 1));
+  };
 
   // Get similar products from Redux store (excluding current product)
   const similarProducts = listings
     .filter(p => (p._id || p.id) !== (product?._id || product?.id))
     .slice(0, 4);
 
-  // Loading state
+  // Loading state — skeleton
   if (detailLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-center">
-          <Loader2 className="w-12 h-12 text-[#27bb97] animate-spin mx-auto mb-4" />
-          <p className="text-gray-500">Loading product details...</p>
-        </div>
-      </div>
-    );
+    return <DetailPageSkeleton />;
   }
 
   if (!product) {
@@ -237,7 +240,7 @@ const ElectronicsDetail = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 animate-fade-in-up">
       {/* Sticky Navigation */}
       <div className="bg-white shadow-sm top-0 z-50">
         <div className="px-4 sm:px-6 lg:px-8">
@@ -264,10 +267,14 @@ const ElectronicsDetail = () => {
             {/* Main Image with Scroll Buttons */}
             <div className="rounded-md mb-6 shadow-sm overflow-hidden bg-white">
               <div className="relative">
+                {!mainImgLoaded && (
+                  <div className="w-full h-[400px] lg:h-[500px] bg-gray-200 skeleton-shimmer rounded-md" />
+                )}
                 <img
                   src={productImages[selectedImageIndex]}
                   alt={product.title}
-                  className="w-full h-auto max-h-[500px] rounded-md object-cover bg-gray-50"
+                  className={`w-full h-auto max-h-[500px] rounded-md object-cover bg-gray-50 transition-opacity duration-300 ${!mainImgLoaded ? 'opacity-0 absolute inset-0' : 'opacity-100'}`}
+                  onLoad={() => setMainImgLoaded(true)}
                 />
                 
                 <button
@@ -291,13 +298,18 @@ const ElectronicsDetail = () => {
                 <div className="absolute top-4 right-4 flex gap-2 z-10">
                   <button
                     onClick={handleToggleSave}
-                    className="p-2.5 bg-white/90 backdrop-blur-sm rounded-lg shadow-sm hover:shadow-md transition-shadow"
+                    disabled={savingItem}
+                    className="p-2.5 bg-white/90 backdrop-blur-sm rounded-lg shadow-sm hover:shadow-md transition-shadow disabled:opacity-70"
                   >
-                    <Heart
-                      className={`w-5 h-5 transition-colors ${
-                        isSaved ? 'text-red-500 fill-red-500' : 'text-gray-600 hover:text-red-500'
-                      }`}
-                    />
+                    {savingItem ? (
+                      <ButtonSpinner size="sm" className="text-gray-500" />
+                    ) : (
+                      <Heart
+                        className={`w-5 h-5 transition-colors ${
+                          isSaved ? 'text-red-500 fill-red-500' : 'text-gray-600 hover:text-red-500'
+                        }`}
+                      />
+                    )}
                   </button>
                   <button className="p-2.5 bg-white/90 backdrop-blur-sm rounded-lg shadow-sm hover:shadow-md transition-shadow">
                     <Share2 className="w-5 h-5 text-gray-600" />
@@ -479,11 +491,26 @@ const ElectronicsDetail = () => {
                 {/* Action Buttons */}
                 <div className="space-y-3 mt-2">
                   <button
-                    onClick={() => navigate('/dashboard/messages')}
-                    className="w-full py-4 bg-[#27bb97] hover:bg-[#1fa987] text-white rounded-lg font-semibold transition-all shadow-md hover:shadow-lg text-base uppercase"
+                    onClick={() => {
+                      setContactingLoading(true);
+                      setTimeout(() => {
+                        navigate('/dashboard/messages');
+                      }, 600);
+                    }}
+                    disabled={contactingLoading}
+                    className="w-full py-4 bg-[#27bb97] hover:bg-[#1fa987] text-white rounded-lg font-semibold transition-all shadow-md hover:shadow-lg text-base uppercase disabled:opacity-90 disabled:cursor-not-allowed"
                   >
-                    <MessageCircle className="w-5 h-5 inline mr-2" />
-                    Contact Seller
+                    {contactingLoading ? (
+                      <>
+                        <ButtonSpinner size="sm" className="inline mr-2 text-white" />
+                        Connecting...
+                      </>
+                    ) : (
+                      <>
+                        <MessageCircle className="w-5 h-5 inline mr-2" />
+                        Contact Seller
+                      </>
+                    )}
                   </button>
                   
                   <div className="grid grid-cols-2 gap-3">
@@ -503,13 +530,18 @@ const ElectronicsDetail = () => {
                     </button>
                     <button
                       onClick={handleToggleSave}
-                      className={`py-3 rounded-lg font-medium transition-colors border-2 ${
+                      disabled={savingItem}
+                      className={`py-3 rounded-lg font-medium transition-colors border-2 disabled:opacity-70 disabled:cursor-not-allowed ${
                         isSaved
                           ? 'bg-[#27bb97]/10 border-[#27bb97] text-[#27bb97]'
                           : 'bg-white border-[#27bb97] text-[#27bb97] hover:bg-[#27bb97]/5'
                       }`}
                     >
-                      {isSaved ? '✓ Saved' : 'Save Item'}
+                      {savingItem ? (
+                        <><ButtonSpinner size="xs" className="inline mr-1.5 text-[#27bb97]" />Saving...</>
+                      ) : (
+                        isSaved ? '✓ Saved' : 'Save Item'
+                      )}
                     </button>
                   </div>
                 </div>

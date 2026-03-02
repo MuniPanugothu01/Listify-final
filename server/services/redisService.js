@@ -65,15 +65,16 @@ class RedisService {
     }
   }
 
-// ============== FIXED: Store OTP with email (ensure string type) ==============
+// ============== SECURE: Store OTP as SHA-256 hash ==============
 static async storeOTP(email, otp) {
   try {
     const key = `otp:${email}`;
-    // FIX: Always store as string to ensure consistent type
-    const otpString = String(otp).trim();
-    console.log(`[Redis] Storing OTP for ${email}: ${otpString} (as string)`);
+    // SECURITY: Hash the OTP before storing — even if Redis is
+    // compromised, the attacker cannot recover the plaintext OTP.
+    const crypto = require('crypto');
+    const otpHash = crypto.createHash('sha256').update(String(otp).trim()).digest('hex');
 
-    await redis.setex(key, 300, otpString);
+    await redis.setex(key, 300, otpHash);
     return true;
   } catch (error) {
     console.error("Error storing OTP:", error);
@@ -211,34 +212,32 @@ static async storeOTP(email, otp) {
     }
   }
 
-  // ============== FIXED: Verify OTP with type conversion ==============
+  // ============== SECURE: Verify OTP by comparing SHA-256 hashes ==============
   static async verifyOTP(email, otp) {
     try {
       const key = `otp:${email}`;
-      const storedOTP = await redis.get(key);
+      const storedHash = await redis.get(key);
 
-      console.log(
-        `[Redis] Verifying OTP for ${email}: received=${otp} (type: ${typeof otp}), stored=${storedOTP} (type: ${typeof storedOTP})`,
-      );
-
-      if (!storedOTP) {
+      if (!storedHash) {
         return { valid: false, reason: "OTP expired or not found" };
       }
 
-      // FIX: Convert both to strings and trim for comparison
-      // This handles cases where Redis returns number but we stored as string
-      const receivedOTP = String(otp).trim();
-      const storedOTPStr = String(storedOTP).trim();
+      // SECURITY: Hash the incoming OTP and compare to stored hash.
+      // Never log the actual OTP value.
+      const crypto = require('crypto');
+      const receivedHash = crypto.createHash('sha256').update(String(otp).trim()).digest('hex');
+      const storedHashStr = String(storedHash).trim();
 
-      console.log(`[Redis] Comparing: "${receivedOTP}" === "${storedOTPStr}"`);
+      // Use timing-safe comparison to prevent timing attacks
+      const hashesMatch = storedHashStr.length === receivedHash.length &&
+        crypto.timingSafeEqual(Buffer.from(storedHashStr), Buffer.from(receivedHash));
 
-      if (receivedOTP !== storedOTPStr) {
+      if (!hashesMatch) {
         return { valid: false, reason: "Invalid OTP" };
       }
 
       // Delete OTP after successful verification
       await redis.del(key);
-      console.log(`[Redis] OTP verified successfully for ${email}`);
       return { valid: true };
     } catch (error) {
       console.error("Error verifying OTP:", error);

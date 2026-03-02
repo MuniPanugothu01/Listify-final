@@ -1,9 +1,14 @@
 const crypto = require('crypto');
 
 class OTPGenerator {
-  // Generate 6-digit OTP
+  /**
+   * Generate cryptographically secure 6-digit OTP.
+   * Uses crypto.randomInt() instead of Math.random() which is
+   * predictable and NOT suitable for security-sensitive values.
+   */
   static generateOTP() {
-    return Math.floor(100000 + Math.random() * 900000).toString();
+    // crypto.randomInt is CSPRNG-backed — safe for OTPs
+    return crypto.randomInt(100000, 999999).toString();
   }
 
   // Generate alphanumeric OTP
@@ -24,9 +29,12 @@ class OTPGenerator {
     return crypto.randomBytes(32).toString('hex');
   }
 
-  // Hash OTP for storage (if needed)
+  /**
+   * Hash OTP before storing in Redis.
+   * Even if Redis is breached, the attacker cannot recover the OTP.
+   */
   static hashOTP(otp) {
-    return crypto.createHash('sha256').update(otp).digest('hex');
+    return crypto.createHash('sha256').update(String(otp)).digest('hex');
   }
 }
 

@@ -16,11 +16,30 @@ const securityMiddleware = require("./middleware/security");
 // Initialize Express app
 const app = express();
 
+// Trust first proxy (Vercel, Nginx, AWS ALB, etc.)
+// Without this, req.ip is always the proxy IP and rate limiting
+// applies globally instead of per-user. Also needed for secure cookies.
+app.set('trust proxy', 1);
+
 // ============== SECURITY MIDDLEWARE ==============
 
-// Helmet — sets secure HTTP headers (HSTS, CSP hints, hide X-Powered-By, etc.)
+// Helmet — sets secure HTTP headers (HSTS, CSP, hide X-Powered-By, etc.)
 app.use(helmet({
-  contentSecurityPolicy: false, // Let frontend handle CSP
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'"],
+      styleSrc: ["'self'", "'unsafe-inline'"], // inline styles needed for some UI
+      imgSrc: ["'self'", "data:", "blob:", "*.amazonaws.com", "*.googleusercontent.com"],
+      connectSrc: ["'self'", process.env.CLIENT_URL || "http://localhost:5173"],
+      fontSrc: ["'self'"],
+      objectSrc: ["'none'"],
+      frameSrc: ["'none'"],
+      baseUri: ["'self'"],
+      formAction: ["'self'"],
+      frameAncestors: ["'none'"],
+    },
+  },
   crossOriginEmbedderPolicy: false, // Allow cross-origin images (S3, Google)
   hsts: {
     maxAge: 31536000, // 1 year
@@ -55,9 +74,9 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
-// Body parser
-app.use(express.json({ limit: "10mb" }));
-app.use(express.urlencoded({ extended: true }));
+// Body parser — limit payload sizes to prevent DoS
+app.use(express.json({ limit: '1mb' }));
+app.use(express.urlencoded({ extended: true, limit: '1mb' }));
 
 // Cookie parser
 app.use(cookieParser());
@@ -100,10 +119,6 @@ const authLimiter = rateLimit({
   },
   standardHeaders: true,
   legacyHeaders: false,
-  keyGenerator: (req) => {
-    // Rate limit by IP + email combo to prevent distributed attacks
-    return `${req.ip}-${req.body?.email || 'unknown'}`;
-  },
 });
 
 // OTP rate limiter — 5 attempts per 5 min
@@ -188,13 +203,20 @@ app.use("*", (req, res) => {
 
 // Error handler
 app.use((err, req, res, next) => {
-  console.error("❌ Error:", err.message);
-  console.error(err.stack);
+  // Log internally but never expose internals to clients
+  const { logger } = require('./utils/logger');
+  logger.error('Unhandled error:', { message: err.message, stack: err.stack, path: req.originalUrl });
 
-  res.status(err.statusCode || 500).json({
+  const statusCode = err.statusCode || 500;
+  const isProduction = process.env.NODE_ENV === 'production';
+
+  res.status(statusCode).json({
     success: false,
-    message: err.message || "An error occurred",
-    ...(process.env.NODE_ENV === "development" && { stack: err.stack }),
+    // In production, use a generic message to avoid leaking internals
+    message: isProduction && statusCode === 500
+      ? 'An internal server error occurred'
+      : (err.message || 'An error occurred'),
+    ...(! isProduction && { stack: err.stack }),
   });
 });
 
