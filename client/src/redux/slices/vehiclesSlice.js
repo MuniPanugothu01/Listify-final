@@ -204,6 +204,8 @@ const vehiclesSlice = createSlice({
         state.createLoading = false;
         state.createSuccess = true;
         state.listings.unshift(action.payload);
+        // Also add to myListings so it shows up in Profile immediately
+        state.myListings.unshift(action.payload);
       })
       .addCase(createVehicleListing.rejected, (state, action) => {
         state.createLoading = false;
@@ -216,6 +218,11 @@ const vehiclesSlice = createSlice({
           (l) => l._id === action.payload._id
         );
         if (index !== -1) state.listings[index] = action.payload;
+        // Also update in myListings
+        const myIndex = state.myListings.findIndex(
+          (l) => l._id === action.payload._id
+        );
+        if (myIndex !== -1) state.myListings[myIndex] = action.payload;
         if (state.currentListing?._id === action.payload._id) {
           state.currentListing = action.payload;
         }

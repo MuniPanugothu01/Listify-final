@@ -85,34 +85,37 @@ const cacheResponse = (entity, ttlSeconds = 120, type = 'list') => {
 // ══════════════════════════════════════════════════════════
 
 /**
- * Invalidates all list caches for an entity.
- * Called after create / update / delete.
+ * Invalidates response caches for an entity after a write operation.
+ *
+ * Strategy:
+ *  - If `id` is provided, delete that specific detail cache.
+ *  - Always clear list/search response caches so fresh data is served.
+ *  - Do NOT delete other listings' detail caches — they are still valid.
+ *  - Activity-log keys (posted:, edited:, etc.) are never touched.
  */
 const invalidateEntityCache = async (entity, id = null) => {
   try {
-    // Delete the specific detail cache if id provided
+    // 1. Delete the specific detail response cache if id provided
     if (id) {
       await redis.del(buildDetailKey(entity, id));
     }
 
-    // Scan and delete all list caches for this entity
-    // Using Upstash REST pattern: we track cache keys in a set
+    // 2. Only clear LIST response caches, keep other detail caches alive
     const indexKey = `cache:${entity}:index`;
     const keys = await redis.smembers(indexKey);
 
     if (keys && keys.length > 0) {
-      // Delete each cached key
-      for (const key of keys) {
+      const listKeys = keys.filter(k => k.includes(':list:'));
+      for (const key of listKeys) {
         await redis.del(key);
+        await redis.srem(indexKey, key);
       }
-      // Clear the index
-      await redis.del(indexKey);
     }
 
-    // Also delete the common "all" key
+    // 3. Also clear the common "all" key
     await redis.del(`cache:${entity}:list:all`);
 
-    logger.info(`Cache invalidated for entity: ${entity}${id ? `, id: ${id}` : ''}`);
+    logger.info(`[Cache] Response cache invalidated for ${entity}${id ? `:${id}` : ''} (list caches cleared)`);
   } catch (error) {
     logger.error('Cache invalidation error:', error.message);
   }

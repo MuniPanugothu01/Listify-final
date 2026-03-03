@@ -106,6 +106,7 @@ const EditListing = () => {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [fetchLoading, setFetchLoading] = useState(true);
+  const [fetchError, setFetchError] = useState(null);
 
   const normalizedRouteType = (() => {
     const routeType = (type || location.state?.listingType || "")
@@ -161,26 +162,36 @@ const EditListing = () => {
 
     const fetchListing = async () => {
       setFetchLoading(true);
+      setFetchError(null);
+
+      // Helper: try one type, then fall back to the other
+      const tryBothTypes = async (primaryType) => {
+        const otherType = primaryType === "vehicles" ? "electronics" : "vehicles";
+        try {
+          return await fetchByType(primaryType);
+        } catch {
+          // The listing may live in the other collection (stale _listingType)
+          return await fetchByType(otherType);
+        }
+      };
 
       try {
         if (normalizedRouteType) {
-          const { listing, targetType } = await fetchByType(normalizedRouteType);
+          // Type specified in URL — try it first, then fall back to the other
+          const { listing, targetType } = await tryBothTypes(normalizedRouteType);
           applyListing(listing, targetType);
           return;
         }
 
-        try {
-          const { listing, targetType } = await fetchByType("vehicles");
-          applyListing(listing, targetType);
-          return;
-        } catch {
-          const { listing, targetType } = await fetchByType("electronics");
-          applyListing(listing, targetType);
-        }
+        // No type in URL — try vehicles first, then electronics
+        const { listing, targetType } = await tryBothTypes("vehicles");
+        applyListing(listing, targetType);
       } catch (err) {
         if (!mounted) return;
-        toast.error(err || "Failed to load listing");
-        navigate("/dashboard/listings", { replace: true });
+        const errorMsg = typeof err === 'string' ? err : err?.message || "Failed to load listing";
+        setFetchError(errorMsg);
+        setFetchLoading(false);
+        toast.error(errorMsg);
       }
     };
 
@@ -309,6 +320,36 @@ const EditListing = () => {
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-500 mx-auto mb-4"></div>
           <p className="text-slate-500">Loading listing...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (fetchError) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+        <div className="text-center max-w-md mx-auto px-4">
+          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg className="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+            </svg>
+          </div>
+          <h2 className="text-xl font-bold text-slate-900 mb-2">Unable to load listing</h2>
+          <p className="text-slate-500 mb-6">{fetchError}</p>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <button
+              onClick={() => window.location.reload()}
+              className="px-6 py-2.5 bg-emerald-500 text-white rounded-xl hover:bg-emerald-600 transition-colors font-semibold"
+            >
+              Try Again
+            </button>
+            <button
+              onClick={() => navigate("/dashboard/posts")}
+              className="px-6 py-2.5 bg-slate-100 text-slate-700 rounded-xl hover:bg-slate-200 transition-colors font-semibold"
+            >
+              Back to My Listings
+            </button>
+          </div>
         </div>
       </div>
     );

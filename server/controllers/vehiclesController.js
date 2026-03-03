@@ -1,4 +1,5 @@
 const Vehicle = require("../models/Vehicle");
+const mongoose = require("mongoose");
 const { logger } = require("../utils/logger");
 const redis = require("../config/redis");
 const ListingCache = require("../services/listingCacheService");
@@ -63,10 +64,14 @@ exports.createVehicle = async (req, res) => {
     );
 
     // Cache the new listing in Redis (visible in Upstash dashboard)
-    await ListingCache.cacheListing('vehicles', populated.toObject ? populated.toObject() : populated);
-    await ListingCache.invalidateListingCache('vehicles');
+    const listingObj = populated.toObject ? populated.toObject() : populated;
+    await ListingCache.cacheListing('vehicles', listingObj);
+    // Log activity — visible in Upstash as: posted:vehicles:{product-title}
+    await ListingCache.logProductPosted('vehicles', listingObj);
+    // Only invalidate list caches (keeps individual listing cache alive)
+    await ListingCache.invalidateListCaches('vehicles');
     // Index in Elasticsearch
-    await SearchService.indexListing('vehicles', populated.toObject ? populated.toObject() : populated);
+    await SearchService.indexListing('vehicles', listingObj);
 
     res.status(201).json({
       success: true,
@@ -203,6 +208,14 @@ exports.getVehicleById = async (req, res) => {
   try {
     const listingId = req.params.id;
 
+    // Validate ObjectId format
+    if (!mongoose.Types.ObjectId.isValid(listingId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid listing ID format",
+      });
+    }
+
     // Check listing cache first
     const cached = await ListingCache.getCachedListing('vehicles', listingId);
     if (cached) {
@@ -272,6 +285,14 @@ exports.getVehicleById = async (req, res) => {
 // @access  Private (owner only)
 exports.updateVehicle = async (req, res) => {
   try {
+    // Validate ObjectId format
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid listing ID format",
+      });
+    }
+
     const listing = await Vehicle.findById(req.params.id);
 
     if (!listing) {
@@ -288,6 +309,9 @@ exports.updateVehicle = async (req, res) => {
         message: "Not authorized to update this listing",
       });
     }
+
+    // Capture old listing before applying updates (for edit tracking)
+    const oldListingObj = listing.toObject ? listing.toObject() : { ...listing._doc };
 
     const allowedUpdates = [
       "title",
@@ -328,7 +352,10 @@ exports.updateVehicle = async (req, res) => {
     // Update cache with new data
     const updatedObj = updated.toObject ? updated.toObject() : updated;
     await ListingCache.cacheListing('vehicles', updatedObj);
-    await ListingCache.invalidateListingCache('vehicles');
+    // Log activity — visible in Upstash as: edited:vehicles:{product-title}
+    await ListingCache.logProductEdited('vehicles', oldListingObj, updatedObj);
+    // Only invalidate list caches (keeps individual listing cache alive)
+    await ListingCache.invalidateListCaches('vehicles');
     // Re-index in Elasticsearch
     await SearchService.indexListing('vehicles', updatedObj);
 
@@ -367,6 +394,9 @@ exports.deleteVehicle = async (req, res) => {
         message: "Not authorized to delete this listing",
       });
     }
+
+    // Log activity before deletion — visible in Upstash as: deleted:vehicles:{product-title}
+    await ListingCache.logProductDeleted('vehicles', listing);
 
     await Vehicle.findByIdAndDelete(req.params.id);
 
@@ -583,6 +613,8 @@ exports.toggleSave = async (req, res) => {
       // Also update the listing cache with the new savedBy array
       const listingObj = listing.toObject ? listing.toObject() : listing;
       await ListingCache.cacheListing('vehicles', listingObj);
+      // Log save/unsave activity — visible in Upstash as: saved/unsaved:vehicles:{title}
+      await ListingCache.logProductSaved('vehicles', listingObj, userId, !isSaved);
 
       logger.info(`[Cache] Updated saved vehicles for user ${userId} (${savedListings.length} items)`);
     } catch (cacheErr) {
