@@ -9,7 +9,6 @@ import {
   Heart,
   Home,
   MessageCircle,
-  Calendar,
   MapPin,
 } from "lucide-react";
 import toast from "react-hot-toast";
@@ -21,7 +20,6 @@ import { fetchSavedVehicles, toggleSaveVehicle, fetchMyVehicles, deleteVehicleLi
 
 // Import components
 import Sidebar from "../../components/UserProfile/Sidebar";
-import ProfileOverview from "../../components/UserProfile/ProfileOverview";
 import HomeSection from "../../components/UserProfile/HomeSection";
 import MessagesSection from "../../components/UserProfile/MessagesSection";
 import PersonalDetailsSection from "../../components/UserProfile/PersonalDetailsSection";
@@ -44,7 +42,6 @@ export default function Profile() {
     "messages": "messages",
     "devices": "devices",
     "activity": "activity",
-    "overview": "profile-overview",
     "alerts": "alerts",
     "settings": "settings",
     "security": "security",
@@ -59,7 +56,6 @@ export default function Profile() {
     "messages": "messages",
     "devices": "devices",
     "activity": "activity",
-    "profile-overview": "overview",
     "alerts": "alerts",
     "settings": "settings",
     "security": "security",
@@ -104,9 +100,6 @@ export default function Profile() {
   const [myAlerts, setMyAlerts] = useState([]);
   const [conversations, setConversations] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
-
-  const shouldShowRightProfileOverview =
-    location.pathname !== "/dashboard" && activeSection !== "profile-overview";
 
   // Load user data on mount
   useEffect(() => {
@@ -272,7 +265,6 @@ export default function Profile() {
     { id: "posts", label: "Listings", icon: FileText },
     { id: "saved", label: "Saved", icon: Heart },
     { id: "messages", label: "Messages", icon: MessageCircle },
-    { id: "profile-overview", label: "Overview", icon: Calendar },
   ];
 
   if (profileLoading && !profile) {
@@ -389,19 +381,6 @@ export default function Profile() {
 
             {activeSection === "activity" && (
               <ActivitySection loginHistory={loginHistory} />
-            )}
-
-            {activeSection === "profile-overview" && (
-              <div>
-                <div className="mb-6">
-                  <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Profile Overview</h2>
-                  <p className="text-gray-500 text-sm mt-1">Your profile details</p>
-                </div>
-                <ProfileOverview
-                  user={profile || authUser} 
-                  profilePic={getProfileImagePreview()} 
-                />
-              </div>
             )}
 
             {activeSection === "saved" && (
@@ -650,14 +629,6 @@ export default function Profile() {
           </main>
 
           {/* Right Profile Section */}
-          {shouldShowRightProfileOverview && (
-            <div className="hidden xl:block w-80 flex-shrink-0">
-              <ProfileOverview 
-                user={profile || authUser} 
-                profilePic={getProfileImagePreview()} 
-              />
-            </div>
-          )}
         </div>
       </div>
 
