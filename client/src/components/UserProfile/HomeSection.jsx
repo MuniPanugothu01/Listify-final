@@ -5,14 +5,9 @@ import {
   Heart,
   FileText,
   Bell,
-  DollarSign,
   Plus,
   Search,
-  Eye,
-  ArrowUpRight,
   Sparkles,
-  Activity,
-  Clock,
   MessageCircle,
 } from "lucide-react";
 
@@ -36,14 +31,6 @@ const HomeSection = ({ savedHouses, myPosts, myAlerts, messages, onViewAll, user
     { label: "Browse Listings", icon: Search, color: "bg-blue-500 hover:bg-blue-600 text-white", onClick: () => {} },
     { label: "View Saved", icon: Heart, color: "bg-pink-500 hover:bg-pink-600 text-white", onClick: () => onViewAll("saved") },
     { label: "Messages", icon: MessageCircle, color: "bg-amber-500 hover:bg-amber-600 text-white", onClick: () => onViewAll("messages") },
-  ];
-
-  // Recent activity items
-  const recentActivity = [
-    { action: "New listing view", detail: "Someone viewed your listing", time: "Just now", icon: Eye, color: "text-blue-600 bg-blue-50" },
-    { action: "Property saved", detail: "You saved a new property", time: "2h ago", icon: Heart, color: "text-pink-600 bg-pink-50" },
-    { action: "Price alert", detail: "A saved property dropped in price", time: "5h ago", icon: Bell, color: "text-amber-600 bg-amber-50" },
-    { action: "New message", detail: "Alice sent you a message", time: "1d ago", icon: MessageCircle, color: "text-emerald-600 bg-emerald-50" },
   ];
 
   return (
@@ -88,7 +75,7 @@ const HomeSection = ({ savedHouses, myPosts, myAlerts, messages, onViewAll, user
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-5">
         <StatsCard
           title="Saved Properties"
           value={savedHouses?.length || 0}
@@ -110,13 +97,6 @@ const HomeSection = ({ savedHouses, myPosts, myAlerts, messages, onViewAll, user
           trend="+3"
           color="amber"
         />
-        <StatsCard
-          title="Total Revenue"
-          value="$42.5K"
-          icon={DollarSign}
-          trend="+18%"
-          color="purple"
-        />
       </div>
 
       {/* Quick Actions */}
@@ -136,62 +116,7 @@ const HomeSection = ({ savedHouses, myPosts, myAlerts, messages, onViewAll, user
         </div>
       </div>
 
-      {/* Main Content Grid: Messages + Activity */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Recent Messages — takes 2/3 */}
-        <div className="lg:col-span-2">
-          <RecentMessages messages={messages || []} />
-        </div>
-
-        {/* Recent Activity — takes 1/3 */}
-        <div className="bg-white rounded-2xl border border-gray-200 p-4 md:p-6">
-          <div className="flex items-center justify-between mb-4 md:mb-6">
-            <div className="flex items-center gap-2">
-              <Activity className="w-5 h-5 text-emerald-600" />
-              <h3 className="text-lg font-semibold text-gray-900">Activity</h3>
-            </div>
-            <button
-              onClick={() => onViewAll("activity")}
-              className="text-xs md:text-sm text-emerald-600 hover:text-emerald-700 font-medium flex items-center gap-1"
-            >
-              View all
-              <ArrowUpRight className="w-3.5 h-3.5" />
-            </button>
-          </div>
-
-          <div className="space-y-3">
-            {recentActivity.map((item, idx) => (
-              <div
-                key={idx}
-                className="flex items-start gap-3 p-3 rounded-xl hover:bg-gray-50 transition-colors cursor-pointer"
-              >
-                <div className={`w-9 h-9 md:w-10 md:h-10 rounded-lg flex items-center justify-center shrink-0 ${item.color}`}>
-                  <item.icon className="w-4 h-4 md:w-5 md:h-5" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-900 truncate">{item.action}</p>
-                  <p className="text-xs text-gray-500 truncate">{item.detail}</p>
-                </div>
-                <div className="flex items-center gap-1 text-xs text-gray-400 shrink-0">
-                  <Clock className="w-3 h-3" />
-                  {item.time}
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Activity summary */}
-          <div className="mt-5 pt-4 border-t border-gray-100">
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-gray-500">This week</span>
-              <span className="font-semibold text-gray-900">12 activities</span>
-            </div>
-            <div className="mt-2 w-full bg-gray-100 rounded-full h-2">
-              <div className="bg-linear-to-r from-emerald-500 to-teal-400 h-2 rounded-full w-3/4 transition-all duration-500"></div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <RecentMessages messages={messages || []} />
     </div>
   );
 };
