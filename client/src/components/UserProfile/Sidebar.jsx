@@ -8,15 +8,11 @@ import {
   LogOut,
   FileText,
   MessageCircle,
-  Activity,
   Menu,
   X,
   Bell,
   ChevronRight,
   Star,
-  TrendingUp,
-  Calendar,
-  DollarSign,
   Smartphone,
   History,
 } from "lucide-react";
@@ -133,11 +129,11 @@ const Sidebar = ({
             <div className="flex-1 min-w-0">
               <h3 className="font-bold text-gray-900 truncate">{displayName}</h3>
               <p className="text-sm text-emerald-600 font-medium">
-                {user?.provider === "google" ? "Google Account" : "Premium Member"}
+                {user?.provider === "google" ? "Google Account" : "Member"}
               </p>
             </div>
           </div>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-2 gap-3">
             <div className="text-center p-3 bg-gray-50 rounded-xl">
               <p className="text-lg font-bold text-gray-900">{counts.posts}</p>
               <p className="text-xs text-gray-500 mt-1">Listings</p>
@@ -145,10 +141,6 @@ const Sidebar = ({
             <div className="text-center p-3 bg-gray-50 rounded-xl">
               <p className="text-lg font-bold text-gray-900">{counts.saved}</p>
               <p className="text-xs text-gray-500 mt-1">Saved</p>
-            </div>
-            <div className="text-center p-3 bg-gray-50 rounded-xl">
-              <p className="text-lg font-bold text-gray-900">{user?.rating || "4.8"}</p>
-              <p className="text-xs text-gray-500 mt-1">Rating</p>
             </div>
           </div>
         </div>

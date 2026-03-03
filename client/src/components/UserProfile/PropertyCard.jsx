@@ -91,9 +91,6 @@ const PropertyCard = ({ property, onToggleSave, isMyPost = false, showSaveButton
               ? `$${property.price.toLocaleString()}/mo`
               : `$${property.price.toLocaleString()}`}
           </span>
-          {property.type === "sale" && (
-            <div className="text-xs md:text-sm text-gray-500 mt-1">$2,450/month</div>
-          )}
         </div>
         <button className={`px-3 py-1.5 md:px-4 md:py-2.5 rounded-lg md:rounded-xl font-semibold text-xs md:text-sm transition-colors ${
           isMyPost 
