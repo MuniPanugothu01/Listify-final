@@ -1,6 +1,6 @@
 import React from "react";
 
-const StatsCard = ({ title, value, color = "emerald", icon: Icon, trend }) => {
+const StatsCard = ({ title, value, color = "emerald", icon: Icon, trend, onClick }) => {
   const colorClasses = {
     emerald: "bg-emerald-50 border-emerald-200",
     blue: "bg-blue-50 border-blue-200",
@@ -16,7 +16,10 @@ const StatsCard = ({ title, value, color = "emerald", icon: Icon, trend }) => {
   };
 
   return (
-    <div className={`${colorClasses[color]} rounded-2xl border p-4 md:p-6`}>
+    <div
+      className={`${colorClasses[color]} rounded-2xl border p-4 md:p-6 ${onClick ? "cursor-pointer hover:shadow-md transition-shadow" : ""}`}
+      onClick={onClick}
+    >
       <div className="flex items-start justify-between mb-3 md:mb-4">
         <div>
           <p className="text-xs md:text-sm font-medium text-gray-700 mb-1 md:mb-2">{title}</p>

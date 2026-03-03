@@ -86,8 +86,8 @@ const Sidebar = ({
 
       <div
         className={`
-        fixed lg:static top-0 left-0 w-64 md:w-72 h-screen bg-white border-r border-gray-200
-        transition-transform duration-300 ease-in-out z-50 lg:z-0 overflow-y-auto
+        fixed lg:static top-0 left-0 w-64 md:w-72 h-screen lg:h-auto lg:max-h-[calc(100vh-7rem)] bg-white border-r lg:border-r-0 border-gray-200
+        transition-transform duration-300 ease-in-out z-50 lg:z-0 overflow-y-auto lg:rounded-2xl lg:border
         ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
         `}
       >
@@ -131,6 +131,11 @@ const Sidebar = ({
               <p className="text-sm text-emerald-600 font-medium">
                 {user?.provider === "google" ? "Google Account" : "Member"}
               </p>
+              <p className="text-xs text-gray-500 mt-1">
+                <span className="font-semibold text-gray-700">{profile?.followersCount || 0}</span> Followers
+                {" · "}
+                <span className="font-semibold text-gray-700">{profile?.followingCount || 0}</span> Following
+              </p>
             </div>
           </div>
           <div className="grid grid-cols-2 gap-3">
@@ -141,14 +146,6 @@ const Sidebar = ({
             <div className="text-center p-3 bg-gray-50 rounded-xl">
               <p className="text-lg font-bold text-gray-900">{counts.saved}</p>
               <p className="text-xs text-gray-500 mt-1">Saved</p>
-            </div>
-            <div className="text-center p-3 bg-gray-50 rounded-xl">
-              <p className="text-lg font-bold text-gray-900">{profile?.followersCount || 0}</p>
-              <p className="text-xs text-gray-500 mt-1">Followers</p>
-            </div>
-            <div className="text-center p-3 bg-gray-50 rounded-xl">
-              <p className="text-lg font-bold text-gray-900">{profile?.followingCount || 0}</p>
-              <p className="text-xs text-gray-500 mt-1">Following</p>
             </div>
           </div>
         </div>
