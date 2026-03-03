@@ -96,10 +96,10 @@ export default function Profile() {
   });
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   
-  // Mock data for now
-  const [myAlerts, setMyAlerts] = useState([]);
-  const [conversations, setConversations] = useState([]);
-  const [unreadCount, setUnreadCount] = useState(0);
+  // Placeholder state (connect to real API when available)
+  const [myAlerts] = useState([]);
+  const [conversations] = useState([]);
+  const [unreadCount] = useState(0);
 
   // Load user data on mount
   useEffect(() => {
@@ -227,37 +227,7 @@ export default function Profile() {
     if (profile?.avatar) return profile.avatar;
     if (authUser?.profileImageUrl) return authUser.profileImageUrl;
     if (authUser?.avatar) return authUser.avatar;
-    return "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop";
-  };
-
-  // Mock data for home section
-  const agendaEvents = {
-    2: [
-      {
-        title: "Group Viewing Tour",
-        time: "12:30-1:30",
-        group: true,
-        avatars: [
-          "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=20&h=20",
-          "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=20&h=20",
-          "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=20&h=20",
-        ],
-      },
-      {
-        title: "Viewing with T. Morgan",
-        time: "1:40-1:45",
-        client: "T. Morgan",
-        avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=24&h=24&fit=crop&crop=face",
-      },
-    ],
-    3: [
-      {
-        title: "Viewing with S. Green",
-        time: "1:30-1:45",
-        client: "S. Green",
-        avatar: "https://images.unsplash.com/photo-1524504388940-b8e918bb7c5c?w=24&h=24&fit=crop&crop=face",
-      },
-    ],
+    return null;
   };
 
   const mobileNavItems = [
@@ -276,7 +246,7 @@ export default function Profile() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 pb-20 lg:pb-0">
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-white shadow-sm border-b border-gray-200 px-4 md:px-6 py-3 md:py-4">
         <div className="flex items-center justify-between px-4">
@@ -309,19 +279,23 @@ export default function Profile() {
             </button>
             
             <div className="flex items-center gap-2 cursor-pointer" onClick={() => handleSetActiveSection('personal')}>
-              <img 
-                src={getProfileImagePreview()} 
-                alt="Profile" 
-                className="w-8 h-8 md:w-10 md:h-10 rounded-xl object-cover border-2 border-white shadow-xs" 
-                onError={(e) => {
-                  e.target.src = "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop";
-                }}
-              />
+              {getProfileImagePreview() ? (
+                <img 
+                  src={getProfileImagePreview()} 
+                  alt="Profile" 
+                  className="w-8 h-8 md:w-10 md:h-10 rounded-xl object-cover border-2 border-white shadow-xs" 
+                  onError={(e) => { e.target.style.display = 'none'; }}
+                />
+              ) : (
+                <div className="w-8 h-8 md:w-10 md:h-10 rounded-xl bg-emerald-500 flex items-center justify-center text-white font-bold text-sm border-2 border-white shadow-xs">
+                  {(profile?.name || authUser?.name || "U").charAt(0).toUpperCase()}
+                </div>
+              )}
               <div className="hidden md:block">
                 <p className="text-sm font-medium text-gray-900">{profile?.name || authUser?.name || "User"}</p>
                 <p className="text-xs text-emerald-600 font-medium flex items-center gap-1">
                   <span className="w-2 h-2 bg-emerald-500 rounded-full"></span>
-                  {profile?.provider === "google" ? "Google Account" : "Available"}
+                  {profile?.provider === "google" ? "Google Account" : "Online"}
                 </p>
               </div>
             </div>
@@ -350,7 +324,6 @@ export default function Profile() {
                 myPosts={allMyListings || []}
                 myAlerts={myAlerts || []}
                 messages={conversations || []}
-                agendaEvents={agendaEvents}
                 onViewAll={handleSetActiveSection}
                 user={profile || authUser}
               />
@@ -417,9 +390,10 @@ export default function Profile() {
                       >
                         <div className="relative h-44 sm:h-48 overflow-hidden bg-gray-100">
                           <img
-                            src={item.images?.[0] || 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&q=80'}
+                            src={item.images?.[0] || '/placeholder-listing.svg'}
                             alt={item.title}
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            onError={(e) => { e.target.style.display = 'none'; }}
                           />
                           {item.condition && (
                             <span className="absolute top-2 left-2 bg-white/90 backdrop-blur-sm text-xs font-medium px-2 py-1 rounded-full text-gray-700">
@@ -502,9 +476,10 @@ export default function Profile() {
                       >
                         <div className="relative h-44 sm:h-48 overflow-hidden bg-gray-100">
                           <img
-                            src={item.images?.[0] || 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&q=80'}
+                            src={item.images?.[0] || '/placeholder-listing.svg'}
                             alt={item.title}
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            onError={(e) => { e.target.style.display = 'none'; }}
                           />
                           {item.condition && (
                             <span className="absolute top-2 left-2 bg-white/90 backdrop-blur-sm text-xs font-medium px-2 py-1 rounded-full text-gray-700">
@@ -598,8 +573,54 @@ export default function Profile() {
                   <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Settings</h2>
                   <p className="text-gray-500 text-sm mt-1">Manage your account preferences</p>
                 </div>
-                <div className="bg-white rounded-2xl border border-gray-200 p-6 space-y-4">
-                  {/* Settings content */}
+                <div className="space-y-4">
+                  {/* Notification Preferences */}
+                  <div className="bg-white rounded-2xl border border-gray-200 p-6">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Notification Preferences</h3>
+                    <div className="space-y-4">
+                      {[
+                        { label: "Email Notifications", desc: "Receive updates about your listings via email" },
+                        { label: "Push Notifications", desc: "Get notified about messages and alerts" },
+                        { label: "Marketing Emails", desc: "Receive tips and promotional content" },
+                      ].map((item, idx) => (
+                        <div key={idx} className="flex items-center justify-between py-3 border-b border-gray-100 last:border-0">
+                          <div>
+                            <p className="text-sm font-medium text-gray-900">{item.label}</p>
+                            <p className="text-xs text-gray-500 mt-0.5">{item.desc}</p>
+                          </div>
+                          <label className="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" defaultChecked={idx < 2} className="sr-only peer" />
+                            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-emerald-300 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500"></div>
+                          </label>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  {/* Display Preferences */}
+                  <div className="bg-white rounded-2xl border border-gray-200 p-6">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Display Preferences</h3>
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between py-3">
+                        <div>
+                          <p className="text-sm font-medium text-gray-900">Language</p>
+                          <p className="text-xs text-gray-500 mt-0.5">Choose your preferred language</p>
+                        </div>
+                        <select className="px-3 py-2 rounded-lg border border-gray-200 text-sm bg-white focus:ring-2 focus:ring-emerald-300">
+                          <option>English</option>
+                          <option>Hindi</option>
+                          <option>Telugu</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  {/* Danger Zone */}
+                  <div className="bg-white rounded-2xl border border-red-200 p-6">
+                    <h3 className="text-lg font-semibold text-red-600 mb-2">Danger Zone</h3>
+                    <p className="text-sm text-gray-500 mb-4">Irreversible actions for your account</p>
+                    <button className="px-4 py-2.5 text-sm font-medium text-red-600 border border-red-300 rounded-xl hover:bg-red-50 transition-colors">
+                      Delete Account
+                    </button>
+                  </div>
                 </div>
               </div>
             )}
@@ -621,8 +642,69 @@ export default function Profile() {
                   <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Security</h2>
                   <p className="text-gray-500 text-sm mt-1">Manage your account security settings</p>
                 </div>
-                <div className="bg-white rounded-2xl border border-gray-200 p-6 space-y-4">
-                  {/* Security content */}
+                <div className="space-y-4">
+                  {/* Login Activity Summary */}
+                  <div className="bg-white rounded-2xl border border-gray-200 p-6">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Login Activity</h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                      <div className="p-4 bg-emerald-50 rounded-xl text-center">
+                        <p className="text-2xl font-bold text-emerald-700">{devices?.length || 0}</p>
+                        <p className="text-xs text-emerald-600 mt-1">Active Devices</p>
+                      </div>
+                      <div className="p-4 bg-blue-50 rounded-xl text-center">
+                        <p className="text-2xl font-bold text-blue-700">{loginHistory?.length || 0}</p>
+                        <p className="text-xs text-blue-600 mt-1">Login Events</p>
+                      </div>
+                      <div className="p-4 bg-amber-50 rounded-xl text-center">
+                        <p className="text-2xl font-bold text-amber-700">
+                          {profile?.isVerified ? "Verified" : "Unverified"}
+                        </p>
+                        <p className="text-xs text-amber-600 mt-1">Account Status</p>
+                      </div>
+                    </div>
+                  </div>
+                  {/* Security Options */}
+                  <div className="bg-white rounded-2xl border border-gray-200 p-6">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Security Options</h3>
+                    <div className="space-y-4">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between py-3 gap-3 border-b border-gray-100">
+                        <div>
+                          <p className="text-sm font-medium text-gray-900">Change Password</p>
+                          <p className="text-xs text-gray-500 mt-0.5">Update your account password regularly for security</p>
+                        </div>
+                        <button 
+                          onClick={() => handleSetActiveSection('personal')}
+                          className="px-4 py-2 text-sm font-medium text-emerald-600 border border-emerald-300 rounded-xl hover:bg-emerald-50 transition-colors whitespace-nowrap"
+                        >
+                          Update Password
+                        </button>
+                      </div>
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between py-3 gap-3 border-b border-gray-100">
+                        <div>
+                          <p className="text-sm font-medium text-gray-900">Active Sessions</p>
+                          <p className="text-xs text-gray-500 mt-0.5">View and manage your logged-in devices</p>
+                        </div>
+                        <button 
+                          onClick={() => handleSetActiveSection('devices')}
+                          className="px-4 py-2 text-sm font-medium text-blue-600 border border-blue-300 rounded-xl hover:bg-blue-50 transition-colors whitespace-nowrap"
+                        >
+                          Manage Devices
+                        </button>
+                      </div>
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between py-3 gap-3">
+                        <div>
+                          <p className="text-sm font-medium text-gray-900">Login History</p>
+                          <p className="text-xs text-gray-500 mt-0.5">Review your recent account activity</p>
+                        </div>
+                        <button 
+                          onClick={() => handleSetActiveSection('activity')}
+                          className="px-4 py-2 text-sm font-medium text-purple-600 border border-purple-300 rounded-xl hover:bg-purple-50 transition-colors whitespace-nowrap"
+                        >
+                          View Activity
+                        </button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
@@ -634,7 +716,7 @@ export default function Profile() {
 
       {/* Mobile Bottom Navigation */}
       <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-40 p-2 shadow-lg">
-        <div className="grid grid-cols-5 gap-1">
+        <div className="grid grid-cols-4 gap-1">
           {mobileNavItems.map((item) => (
             <button
               key={item.id}
