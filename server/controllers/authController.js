@@ -2731,6 +2731,43 @@ exports.toggleFollow = async (req, res) => {
   }
 };
 
+// ==================== GET MY FOLLOWERS / FOLLOWING LIST ====================
+exports.getMyFollowers = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const type = req.query.type || "followers"; // "followers" or "following"
+
+    const user = await User.findById(userId).select("followers following");
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    const ids = type === "following" ? user.following : user.followers;
+
+    const users = await User.find({ _id: { $in: ids } }).select(
+      "name profileImage googleProfileImage avatar provider createdAt"
+    );
+
+    const list = users.map((u) => {
+      const profileImageUrl = u.getProfileImage
+        ? u.getProfileImage()
+        : u.profileImage || u.googleProfileImage || u.avatar || null;
+      return {
+        id: u._id,
+        name: u.name,
+        profileImageUrl,
+        provider: u.provider,
+        createdAt: u.createdAt,
+      };
+    });
+
+    res.status(200).json({ success: true, type, users: list });
+  } catch (error) {
+    logger.error("Get my followers error:", error);
+    res.status(500).json({ success: false, message: "Failed to fetch followers" });
+  }
+};
+
 // ==================== PUBLIC SELLER PROFILE ====================
 exports.getSellerProfile = async (req, res) => {
   try {
