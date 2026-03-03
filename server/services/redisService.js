@@ -65,15 +65,16 @@ class RedisService {
     }
   }
 
-// ============== FIXED: Store OTP with email (ensure string type) ==============
+// ============== SECURE: Store OTP as SHA-256 hash ==============
 static async storeOTP(email, otp) {
   try {
     const key = `otp:${email}`;
-    // FIX: Always store as string to ensure consistent type
-    const otpString = String(otp).trim();
-    console.log(`[Redis] Storing OTP for ${email}: ${otpString} (as string)`);
+    // SECURITY: Hash the OTP before storing — even if Redis is
+    // compromised, the attacker cannot recover the plaintext OTP.
+    const crypto = require('crypto');
+    const otpHash = crypto.createHash('sha256').update(String(otp).trim()).digest('hex');
 
-    await redis.setex(key, 300, otpString);
+    await redis.setex(key, 300, otpHash);
     return true;
   } catch (error) {
     console.error("Error storing OTP:", error);
@@ -211,34 +212,32 @@ static async storeOTP(email, otp) {
     }
   }
 
-  // ============== FIXED: Verify OTP with type conversion ==============
+  // ============== SECURE: Verify OTP by comparing SHA-256 hashes ==============
   static async verifyOTP(email, otp) {
     try {
       const key = `otp:${email}`;
-      const storedOTP = await redis.get(key);
+      const storedHash = await redis.get(key);
 
-      console.log(
-        `[Redis] Verifying OTP for ${email}: received=${otp} (type: ${typeof otp}), stored=${storedOTP} (type: ${typeof storedOTP})`,
-      );
-
-      if (!storedOTP) {
+      if (!storedHash) {
         return { valid: false, reason: "OTP expired or not found" };
       }
 
-      // FIX: Convert both to strings and trim for comparison
-      // This handles cases where Redis returns number but we stored as string
-      const receivedOTP = String(otp).trim();
-      const storedOTPStr = String(storedOTP).trim();
+      // SECURITY: Hash the incoming OTP and compare to stored hash.
+      // Never log the actual OTP value.
+      const crypto = require('crypto');
+      const receivedHash = crypto.createHash('sha256').update(String(otp).trim()).digest('hex');
+      const storedHashStr = String(storedHash).trim();
 
-      console.log(`[Redis] Comparing: "${receivedOTP}" === "${storedOTPStr}"`);
+      // Use timing-safe comparison to prevent timing attacks
+      const hashesMatch = storedHashStr.length === receivedHash.length &&
+        crypto.timingSafeEqual(Buffer.from(storedHashStr), Buffer.from(receivedHash));
 
-      if (receivedOTP !== storedOTPStr) {
+      if (!hashesMatch) {
         return { valid: false, reason: "Invalid OTP" };
       }
 
       // Delete OTP after successful verification
       await redis.del(key);
-      console.log(`[Redis] OTP verified successfully for ${email}`);
       return { valid: true };
     } catch (error) {
       console.error("Error verifying OTP:", error);
@@ -482,6 +481,89 @@ static async getPendingPasswordReset(email) {
       return true;
     } catch (error) {
       console.error("Error deleting OTP:", error);
+      return false;
+    }
+  }
+
+  // ==================== PROFILE IMAGE CACHE ====================
+  // Stores the most recent profile image URL per user (keyed by email).
+  // Max 5 users cached, 30-day TTL.
+  // This cache survives logout so the image loads instantly on re-login.
+
+  static IMAGE_CACHE_PREFIX = "profile_image_cache";
+  static IMAGE_CACHE_INDEX = "profile_image_cache:index"; // sorted set: email → timestamp
+  static IMAGE_CACHE_TTL = 30 * 24 * 60 * 60; // 30 days in seconds
+  static IMAGE_CACHE_MAX = 5;
+
+  /**
+   * Cache a user's profile image URL in Redis.
+   * Evicts the oldest entry when the cache exceeds 5 users.
+   */
+  static async cacheProfileImage(email, { url, name = null }) {
+    if (!email || !url) return false;
+    try {
+      const key = `${this.IMAGE_CACHE_PREFIX}:${email.toLowerCase()}`;
+      const data = JSON.stringify({ url, name, cachedAt: Date.now() });
+
+      // Store the image data with TTL
+      await redis.setex(key, this.IMAGE_CACHE_TTL, data);
+
+      // Track in sorted set (score = timestamp) for LRU eviction
+      await redis.zadd(this.IMAGE_CACHE_INDEX, { score: Date.now(), member: email.toLowerCase() });
+
+      // Evict oldest if more than 5 entries
+      const count = await redis.zcard(this.IMAGE_CACHE_INDEX);
+      if (count > this.IMAGE_CACHE_MAX) {
+        // Get the oldest entries beyond the limit
+        const toRemove = await redis.zrange(this.IMAGE_CACHE_INDEX, 0, count - this.IMAGE_CACHE_MAX - 1);
+        for (const oldEmail of toRemove) {
+          await redis.del(`${this.IMAGE_CACHE_PREFIX}:${oldEmail}`);
+          await redis.zrem(this.IMAGE_CACHE_INDEX, oldEmail);
+        }
+        console.log(`[Redis] Evicted ${toRemove.length} old image cache entries`);
+      }
+
+      console.log(`[Redis] Cached profile image for ${email}`);
+      return true;
+    } catch (error) {
+      console.error("[Redis] Error caching profile image:", error);
+      return false;
+    }
+  }
+
+  /**
+   * Retrieve a cached profile image URL for a user.
+   * Returns { url, name, cachedAt } or null.
+   */
+  static async getCachedProfileImage(email) {
+    if (!email) return null;
+    try {
+      const key = `${this.IMAGE_CACHE_PREFIX}:${email.toLowerCase()}`;
+      const data = await redis.get(key);
+      if (!data) return null;
+
+      const parsed = typeof data === "string" ? JSON.parse(data) : data;
+      console.log(`[Redis] Cache hit for profile image: ${email}`);
+      return parsed;
+    } catch (error) {
+      console.error("[Redis] Error getting cached profile image:", error);
+      return null;
+    }
+  }
+
+  /**
+   * Remove a specific user's cached image (e.g. account deletion).
+   */
+  static async removeCachedProfileImage(email) {
+    if (!email) return false;
+    try {
+      const lowerEmail = email.toLowerCase();
+      await redis.del(`${this.IMAGE_CACHE_PREFIX}:${lowerEmail}`);
+      await redis.zrem(this.IMAGE_CACHE_INDEX, lowerEmail);
+      console.log(`[Redis] Removed cached profile image for ${email}`);
+      return true;
+    } catch (error) {
+      console.error("[Redis] Error removing cached profile image:", error);
       return false;
     }
   }

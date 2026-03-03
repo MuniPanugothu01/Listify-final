@@ -1,5 +1,14 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { profileAPI } from "../../services/profileService";
+import { googleLogin, loginUser, checkAuth, logoutUser, logoutAll } from "./authSlice";
+
+// Helper: pick the best image URL from a user object
+const pickBestImage = (user) =>
+  user?.profileImage ||
+  user?.profileImageUrl ||
+  user?.googleProfileImage ||
+  user?.avatar ||
+  null;
 
 const initialState = {
   profile: null,
@@ -14,6 +23,8 @@ const initialState = {
   passwordExpiration: null,
   profilePicPreview: null,
   syncToAuth: false,
+  // Server-cached image from Redis (set on login if available)
+  serverCachedImage: null, // { url, name, cachedAt } | null
 };
 
 // ==================== PROFILE THUNKS ====================
@@ -36,7 +47,6 @@ export const updateProfile = createAsyncThunk(
       const response = await profileAPI.updateProfile(profileData);
       return response.data.user;
     } catch (error) {
-      console.error("Update profile error:", error);
       return rejectWithValue(error.response?.data?.message || error.message);
     }
   },
@@ -165,11 +175,20 @@ const profileSlice = createSlice({
     },
     refreshProfileImage: (state) => {
       if (state.profile) {
+<<<<<<< HEAD
         state.profilePicPreview =
           state.profile.profileImageUrl ||
           state.profile.profileImage ||
           state.profile.googleProfileImage ||
           state.profile.avatar ||
+=======
+        // S3 uploaded image takes priority over everything
+        state.profilePicPreview = 
+          state.profile.profileImage || 
+          state.profile.profileImageUrl || 
+          state.profile.googleProfileImage || 
+          state.profile.avatar || 
+>>>>>>> a61f37d73347f6712df2cc0da6eae19b122ddf19
           null;
       }
     },
@@ -187,6 +206,7 @@ const profileSlice = createSlice({
       .addCase(fetchProfile.fulfilled, (state, action) => {
         state.loading = false;
         state.profile = action.payload;
+<<<<<<< HEAD
         if (
           action.payload?.profileImageUrl ||
           action.payload?.profileImage ||
@@ -198,7 +218,15 @@ const profileSlice = createSlice({
             action.payload.profileImage ||
             action.payload.googleProfileImage ||
             action.payload.avatar;
+=======
+        // Cache the best available image — S3 upload > Google > avatar
+        const bestImage = pickBestImage(action.payload);
+        if (bestImage) {
+          state.profilePicPreview = bestImage;
+>>>>>>> a61f37d73347f6712df2cc0da6eae19b122ddf19
         }
+        // Clear server cache flag once real profile is loaded
+        state.serverCachedImage = null;
       })
       .addCase(fetchProfile.rejected, (state, action) => {
         state.loading = false;
@@ -215,9 +243,16 @@ const profileSlice = createSlice({
         state.loading = false;
         state.success = true;
         state.profile = action.payload;
+<<<<<<< HEAD
         if (action.payload?.profileImageUrl || action.payload?.profileImage) {
           state.profilePicPreview =
             action.payload.profileImageUrl || action.payload.profileImage;
+=======
+        // S3 uploaded image (profileImage) takes priority over computed URL
+        const bestImage = pickBestImage(action.payload);
+        if (bestImage) {
+          state.profilePicPreview = bestImage;
+>>>>>>> a61f37d73347f6712df2cc0da6eae19b122ddf19
         }
         state.syncToAuth = true;
       })
@@ -234,12 +269,19 @@ const profileSlice = createSlice({
       })
       .addCase(uploadProfileImage.fulfilled, (state, action) => {
         state.loading = false;
-        if (state.profile) {
-          state.profile.profileImage = action.payload.imageUrl;
-          state.profile.profileImageUrl = action.payload.imageUrl;
-          state.profile.profileImageKey = action.payload.imageKey;
-          state.profilePicPreview = action.payload.imageUrl;
+        const newUrl = action.payload.imageUrl;
+        const newKey = action.payload.imageKey;
+        if (state.profile && newUrl) {
+          // Update all image fields to the new S3 URL
+          state.profile.profileImage = newUrl;
+          state.profile.profileImageUrl = newUrl;
+          state.profile.profileImageKey = newKey;
+          state.profilePicPreview = newUrl;
+        } else if (newUrl) {
+          // Profile not yet loaded — still cache the preview
+          state.profilePicPreview = newUrl;
         }
+        // Server-side Redis cache is updated by the upload API automatically
         state.syncToAuth = true;
       })
       .addCase(uploadProfileImage.rejected, (state, action) => {
@@ -307,7 +349,69 @@ const profileSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
         state.success = false;
-      });
+      })
+
+      // ==================== CROSS-SLICE: Seed profile cache from auth ====================
+      // Google login — cache image immediately so it persists via redux-persist
+      .addCase(googleLogin.fulfilled, (state, action) => {
+        const user = action.payload?.user;
+        const cachedImage = action.payload?.cachedImage; // from Redis
+        if (user) {
+          // Seed profile fields from auth response (fetchProfile will overwrite with full data)
+          if (!state.profile) {
+            state.profile = user;
+          } else {
+            // Merge new image fields into existing profile
+            state.profile.googleProfileImage = user.googleProfileImage || state.profile.googleProfileImage;
+            state.profile.avatar = user.avatar || state.profile.avatar;
+            if (!state.profile.profileImage) {
+              state.profile.profileImage = user.profileImage;
+            }
+          }
+          const best = pickBestImage(user);
+          // Use server image first; fall back to Redis cached image for instant display
+          state.profilePicPreview = best || cachedImage?.url || null;
+          if (cachedImage) state.serverCachedImage = cachedImage;
+        }
+      })
+      // Regular login — use Redis cached image from server for instant display
+      .addCase(loginUser.fulfilled, (state, action) => {
+        const user = action.payload?.user;
+        const cachedImage = action.payload?.cachedImage; // from Redis
+        if (user) {
+          if (!state.profile) {
+            state.profile = user;
+          }
+          const best = pickBestImage(user);
+          // If the server response has a good image, use it
+          // Otherwise fall back to Redis cached image (from previous session)
+          state.profilePicPreview = best || cachedImage?.url || null;
+          if (cachedImage) state.serverCachedImage = cachedImage;
+        }
+      })
+      // checkAuth — refresh cached image from latest DB state
+      .addCase(checkAuth.fulfilled, (state, action) => {
+        const user = action.payload?.user;
+        if (user && action.payload?.isAuthenticated) {
+          const best = pickBestImage(user);
+          if (best) {
+            state.profilePicPreview = best;
+          }
+          // Keep profile fields up-to-date
+          if (state.profile) {
+            state.profile.profileImage = user.profileImage ?? state.profile.profileImage;
+            state.profile.profileImageUrl = user.profileImageUrl ?? state.profile.profileImageUrl;
+            state.profile.googleProfileImage = user.googleProfileImage ?? state.profile.googleProfileImage;
+            state.profile.avatar = user.avatar ?? state.profile.avatar;
+          }
+        }
+      })
+
+      // ==================== CROSS-SLICE: Clear session on logout (Redis keeps image) ====================
+      .addCase(logoutUser.fulfilled, () => initialState)
+      .addCase(logoutUser.rejected, () => initialState)
+      .addCase(logoutAll.fulfilled, () => initialState)
+      .addCase(logoutAll.rejected, () => initialState);
   },
 });
 

@@ -6,19 +6,31 @@ const { logger } = require('./logger');
 /**
  * Generate access token (short-lived)
  * @param {string} userId - User ID
+ * @param {Object} req - Express request (optional, for fingerprint)
  * @returns {string} JWT access token
  */
-const generateAccessToken = (userId) => {
+const generateAccessToken = (userId, req = null) => {
+  if (!process.env.JWT_ACCESS_SECRET) {
+    throw new Error('JWT_ACCESS_SECRET is required. Never share keys between access and refresh tokens.');
+  }
+  
+  const payload = { 
+    id: userId,
+    type: 'access',
+    jti: crypto.randomBytes(16).toString('hex'),
+  };
+
+  // Token fingerprint: bind the token to the client's User-Agent.
+  // If someone steals the token, it won't work from a different browser/device.
+  if (req) {
+    const ua = req.get('user-agent') || '';
+    payload.fgp = crypto.createHash('sha256').update(ua).digest('hex').substring(0, 16);
+  }
+
   return jwt.sign(
-    { 
-      id: userId,
-      type: 'access',
-      jti: crypto.randomBytes(16).toString('hex') // Unique token ID
-    },
-    process.env.JWT_ACCESS_SECRET || process.env.JWT_SECRET,
-    { 
-      expiresIn: process.env.JWT_ACCESS_EXPIRE || '15m' // 15 minutes
-    }
+    payload,
+    process.env.JWT_ACCESS_SECRET,
+    { expiresIn: process.env.JWT_ACCESS_EXPIRE || '15m' }
   );
 };
 
@@ -28,15 +40,18 @@ const generateAccessToken = (userId) => {
  * @returns {string} JWT refresh token
  */
 const generateRefreshToken = (userId) => {
+  if (!process.env.JWT_REFRESH_SECRET) {
+    throw new Error('JWT_REFRESH_SECRET is required. Never share keys between access and refresh tokens.');
+  }
   return jwt.sign(
     { 
       id: userId,
       type: 'refresh',
       jti: crypto.randomBytes(16).toString('hex')
     },
-    process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET + 'refresh',
+    process.env.JWT_REFRESH_SECRET,
     { 
-      expiresIn: process.env.JWT_REFRESH_EXPIRE || '7d' // 7 days
+      expiresIn: process.env.JWT_REFRESH_EXPIRE || '7d'
     }
   );
 };
@@ -100,7 +115,7 @@ const verifyRefreshToken = async (refreshToken) => {
     // Verify JWT signature first
     const decoded = jwt.verify(
       refreshToken,
-      process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET + 'refresh'
+      process.env.JWT_REFRESH_SECRET
     );
 
     if (decoded.type !== 'refresh') {
@@ -311,7 +326,7 @@ const setRefreshTokenCookie = (res, refreshToken) => {
   res.cookie('refreshToken', refreshToken, {
     httpOnly: true,        // Prevents XSS attacks
     secure: isProduction,  // HTTPS only in production
-    sameSite: isProduction ? 'strict' : 'lax',
+    sameSite: isProduction ? 'none' : 'lax',
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     path: '/api/auth', // Sent to all auth endpoints (refresh, check, logout)
     domain: isProduction ? process.env.COOKIE_DOMAIN : undefined
@@ -319,7 +334,7 @@ const setRefreshTokenCookie = (res, refreshToken) => {
 
   logger.debug('🍪 Refresh token cookie set', {
     secure: isProduction,
-    sameSite: isProduction ? 'strict' : 'lax',
+    sameSite: isProduction ? 'none' : 'lax',
     path: '/api/auth'
   });
 };
@@ -332,7 +347,7 @@ const clearRefreshTokenCookie = (res) => {
   res.clearCookie('refreshToken', {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
-    sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
     path: '/api/auth'
   });
 
@@ -346,12 +361,12 @@ const clearRefreshTokenCookie = (res) => {
  * @param {string} refreshToken - JWT refresh token
  * @returns {Promise<Object|null>} New tokens or null if failed
  */
-const refreshTokens = async (refreshToken) => {
+const refreshTokens = async (refreshToken, req = null) => {
   let lockKey = null;
   try {
     // Decode to get jti for the lock key
     const decodedJwt = jwt.decode(refreshToken);
-    if (!decodedJwt?.jti) return null;
+    if (!decodedJwt?.jti) return { error: 'invalid' };
 
     lockKey = `refresh_lock:${decodedJwt.jti}`;
 
@@ -361,7 +376,7 @@ const refreshTokens = async (refreshToken) => {
 
     if (!lockAcquired) {
       // Another request is already refreshing this exact token.
-      // Wait briefly and return the new tokens that the winner stored.
+      // Wait briefly for the winner to finish.
       logger.info('🔒 Refresh lock exists — waiting for first request to finish', {
         jti: decodedJwt.jti,
       });
@@ -373,12 +388,11 @@ const refreshTokens = async (refreshToken) => {
         if (!lockStillExists) break;
       }
 
-      // The first request already rotated the token and the browser now has
-      // new cookies from that winning response. We can't return the new tokens
-      // here (the new refresh token is only in the cookie set by the first response),
-      // so return null. The client's shared queue ensures only one request actually
-      // triggers the refresh and all others just retry with the new access token.
-      return null;
+      // Return a special marker so the caller can distinguish
+      // "concurrent refresh (not an error)" from "truly invalid token".
+      // This prevents the middleware from sending INVALID_REFRESH_TOKEN
+      // which would force-logout the user.
+      return { concurrentRefresh: true };
     }
 
     // --- Lock acquired: proceed with rotation ---
@@ -386,15 +400,28 @@ const refreshTokens = async (refreshToken) => {
     // Verify refresh token in Redis
     const session = await verifyRefreshToken(refreshToken);
     if (!session) {
-      return null;
+      // Token is genuinely invalid / expired / revoked in Redis
+      return { error: 'invalid' };
     }
 
     // Generate new tokens (ROTATION)
-    const newAccessToken = generateAccessToken(session.userId);
+    const newAccessToken = generateAccessToken(session.userId, req);
     const newRefreshToken = generateRefreshToken(session.userId);
 
-    // Revoke old refresh token from Redis
-    await revokeRefreshToken(refreshToken);
+    // Grace period: keep the old token alive for 30 seconds instead of
+    // deleting it immediately. This covers the window where the server
+    // rotated the token but the new cookie didn't reach the client
+    // (e.g., network blip, MongoDB reconnection, browser didn't process
+    // the Set-Cookie from the response). After 30s it auto-expires.
+    const oldDecoded = jwt.decode(refreshToken);
+    if (oldDecoded?.jti) {
+      await redis.setex(
+        `refresh_token:${oldDecoded.jti}`,
+        30, // 30 second grace period
+        JSON.stringify({ ...session, gracePeriod: true })
+      );
+      logger.info('⏳ Old refresh token kept with 30s grace period', { jti: oldDecoded.jti });
+    }
     
     // Store new refresh token in Redis
     await storeRefreshToken(session.userId, newRefreshToken);
@@ -406,12 +433,16 @@ const refreshTokens = async (refreshToken) => {
     });
 
     return {
-      accessToken: newAccessToken,
-      refreshToken: newRefreshToken
+      tokens: {
+        accessToken: newAccessToken,
+        refreshToken: newRefreshToken
+      }
     };
   } catch (error) {
-    logger.error('❌ Error refreshing tokens:', error);
-    return null;
+    logger.error('❌ Error refreshing tokens (transient):', error);
+    // Transient error (Redis timeout, network blip) — don't treat as invalid.
+    // The caller must NOT clear the cookie for transient failures.
+    return { error: 'transient' };
   } finally {
     // Release the lock
     if (lockKey) {

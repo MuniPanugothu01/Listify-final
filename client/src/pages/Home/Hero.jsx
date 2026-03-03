@@ -73,8 +73,13 @@ export default function Hero() {
   const handleIconClick = (categoryName) => {
     // Convert category name to route path
     const routeMap = {
+<<<<<<< HEAD
       Cars: "/cars",
       Rentals: "/rentals",
+=======
+      "Vehicles": "/vehicles",
+      "Rentals": "/rentals",
+>>>>>>> a61f37d73347f6712df2cc0da6eae19b122ddf19
       "Home Care": "/home-care",
       Services: "/services",
       Automobiles: "/automobiles",
@@ -106,8 +111,8 @@ export default function Hero() {
   const categories = [
     {
       id: 1,
-      name: "Cars",
-      route: "/cars",
+      name: "Vehicles",
+      route: "/vehicles",
       position: "top",
       color: "text-orange-500",
       bgColor: "bg-orange-50",
@@ -557,6 +562,7 @@ export default function Hero() {
                   src="/Services/HomeServices/hero-1.png"
                   alt="Hero-image"
                   className="w-full h-full object-cover"
+                  loading="lazy"
                 />
               </div>
             </div>
@@ -578,7 +584,7 @@ export default function Hero() {
       </section>
 
       {/* Add custom animations */}
-      <style jsx>{`
+      <style>{`
         @keyframes fadeInUp {
           from {
             opacity: 0;

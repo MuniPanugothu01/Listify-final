@@ -1,9 +1,21 @@
+<<<<<<< HEAD
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const ForSaleListing = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
+=======
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { setSelectedProduct, setAllProducts } from '../../redux/slices/forSaleSlice';
+
+const ForSaleListing = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const [searchQuery, setSearchQuery] = useState('');
+>>>>>>> a61f37d73347f6712df2cc0da6eae19b122ddf19
 
   // ... (your existing products array here - keeping it as is)
 
@@ -1102,8 +1114,16 @@ const ForSaleListing = () => {
     },
   ];
 
+<<<<<<< HEAD
   // Store all products in localStorage for similar items
   localStorage.setItem("allProducts", JSON.stringify(products));
+=======
+  // Store all products in Redux for similar items (ForSaleDetail reads from here)
+  useEffect(() => {
+    dispatch(setAllProducts(products));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch]);
+>>>>>>> a61f37d73347f6712df2cc0da6eae19b122ddf19
 
   // Filter products based on search query
   const filteredProducts = products.filter(
@@ -1124,9 +1144,15 @@ const ForSaleListing = () => {
     product,
   }) => {
     const handleCardClick = () => {
+<<<<<<< HEAD
       // Store the product data in localStorage
       localStorage.setItem("selectedProduct", JSON.stringify(product));
 
+=======
+      // Store the product data in Redux
+      dispatch(setSelectedProduct(product));
+      
+>>>>>>> a61f37d73347f6712df2cc0da6eae19b122ddf19
       // Navigate to the forsale details page with id
       navigate(`/forsale/${product.id}`);
     };

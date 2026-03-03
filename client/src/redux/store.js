@@ -11,35 +11,43 @@ import {
 } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 
-// Import reducers
+// Reducers
 import authReducer from "./slices/authSlice";
 import profileReducer from "./slices/profileSlice";
 import listingsReducer from "./slices/listingsSlice";
 import messagesReducer from "./slices/messagesSlice";
-import devicesReducer from "./slices/devicesSlice";
-import activityReducer from "./slices/activitySlice";
+import electronicsReducer from "./slices/electronicsSlice";
+import vehiclesReducer from "./slices/vehiclesSlice";
+import draftListingsReducer from "./slices/draftListingsSlice";
+import forSaleReducer from "./slices/forSaleSlice";
 
-// Combine all reducers
+// Middleware
+import { errorMiddleware, actionLoggerMiddleware } from "./middleware";
+
+// ── Root reducer ──────────────────────────────────────────────────
+// Devices & activity data lives in profileSlice (single source of truth).
+// devicesSlice and activitySlice were removed to eliminate duplication.
 const rootReducer = combineReducers({
   auth: authReducer,
   profile: profileReducer,
   listings: listingsReducer,
   messages: messagesReducer,
-  devices: devicesReducer,
-  activity: activityReducer,
+  electronics: electronicsReducer,
+  vehicles: vehiclesReducer,
+  draftListings: draftListingsReducer,
+  forSale: forSaleReducer,
 });
 
-// Persist config
+// ── Persist config ─────────────────────────────────────────────────
 const persistConfig = {
   key: "root",
   storage,
-  whitelist: ["auth"], // Only persist auth, other states are temporary
+  whitelist: ["auth", "profile", "draftListings", "forSale"],
 };
 
-// Create persisted reducer
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
-// Configure store
+// ── Store ──────────────────────────────────────────────────────────
 const store = configureStore({
   reducer: persistedReducer,
   middleware: (getDefaultMiddleware) =>
@@ -47,11 +55,14 @@ const store = configureStore({
       serializableCheck: {
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
-    }),
+    }).concat(
+      errorMiddleware,
+      // Only add action logger in development
+      ...(import.meta.env.MODE !== "production" ? [actionLoggerMiddleware] : []),
+    ),
   devTools: import.meta.env.MODE !== "production",
 });
 
-// Create persistor
 const persistor = persistStore(store);
 
 export const resetPersistedState = () => {

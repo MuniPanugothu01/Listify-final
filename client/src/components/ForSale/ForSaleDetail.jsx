@@ -1,6 +1,14 @@
+<<<<<<< HEAD
 import React, { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import { useParams, useNavigate } from "react-router-dom";
+=======
+import React, { useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
+import { useParams, useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { setSelectedProduct, addOffer } from '../../redux/slices/forSaleSlice';
+>>>>>>> a61f37d73347f6712df2cc0da6eae19b122ddf19
 import {
   Heart,
   Share2,
@@ -355,6 +363,12 @@ const ViewProfileModal = ({ isOpen, onClose, seller }) => {
 const ForSaleDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  // Read product data from Redux store (set by ForSaleListing on click)
+  const storedProduct = useSelector((state) => state.forSale.selectedProduct);
+  const allReduxProducts = useSelector((state) => state.forSale.allProducts);
+
   const [product, setProduct] = useState(null);
   const [allProducts, setAllProducts] = useState([]);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
@@ -365,23 +379,26 @@ const ForSaleDetail = () => {
   const [isLiked, setIsLiked] = useState(false);
 
   useEffect(() => {
+<<<<<<< HEAD
     // Get product data from localStorage (passed from listing page)
     const storedProduct = localStorage.getItem("selectedProduct");
     const storedProducts = localStorage.getItem("allProducts");
 
+=======
+    // Get product data from Redux store (passed from listing page)
+>>>>>>> a61f37d73347f6712df2cc0da6eae19b122ddf19
     if (storedProduct) {
-      const parsedProduct = JSON.parse(storedProduct);
       // Verify that the ID matches (in case user navigates directly to a different URL)
-      if (parsedProduct.id === parseInt(id)) {
-        setProduct(parsedProduct);
+      if (storedProduct.id === parseInt(id)) {
+        setProduct(storedProduct);
       }
     }
 
     // Get all products for similar items
-    if (storedProducts) {
-      setAllProducts(JSON.parse(storedProducts));
+    if (allReduxProducts && allReduxProducts.length > 0) {
+      setAllProducts(allReduxProducts);
     }
-  }, [id]);
+  }, [id, storedProduct, allReduxProducts]);
 
   const productImages = [
     product?.image,
@@ -403,6 +420,7 @@ const ForSaleDetail = () => {
     );
 
   const handleMakeOffer = (offerData) => {
+<<<<<<< HEAD
     // Here you would typically send this to your backend
     console.log("Offer submitted:", offerData);
     // You can store in localStorage for demo purposes
@@ -413,6 +431,11 @@ const ForSaleDetail = () => {
       "userOffers",
       JSON.stringify([...existingOffers, offerData]),
     );
+=======
+    // Store offer in Redux (no localStorage)
+    dispatch(addOffer(offerData));
+    console.log('Offer submitted:', offerData);
+>>>>>>> a61f37d73347f6712df2cc0da6eae19b122ddf19
   };
 
   const handleContactSeller = () => {
@@ -976,10 +999,14 @@ const ForSaleDetail = () => {
                 <div
                   key={item.id}
                   onClick={() => {
+<<<<<<< HEAD
                     localStorage.setItem(
                       "selectedProduct",
                       JSON.stringify(item),
                     );
+=======
+                    dispatch(setSelectedProduct(item));
+>>>>>>> a61f37d73347f6712df2cc0da6eae19b122ddf19
                     navigate(`/forsale/${item.id}`);
                   }}
                   className="group bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer border border-gray-100 overflow-hidden"

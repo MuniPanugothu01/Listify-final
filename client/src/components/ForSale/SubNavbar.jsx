@@ -176,6 +176,7 @@ const SubNavbar = () => {
     }
   };
 
+  
   // Handle navigation
   const handleNavigation = (category) => {
     setHoveredCategory(null);
@@ -199,9 +200,9 @@ const SubNavbar = () => {
     <>
       <nav
         ref={navRef}
-        className="bg-white shadow-sm border-b top-0 z-40 mt-16 md:mt-16 lg:mt-18 sticky"
+        className="bg-white shadow-sm border-b top-0 z-40"
       >
-        <div className="relative px-2">
+        <div className="relative px-8">
           {/* Left Scroll Arrow */}
           {showLeftArrow && (
             <button

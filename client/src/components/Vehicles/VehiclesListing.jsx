@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import {
   Heart,
   MapPin,
@@ -13,9 +14,10 @@ import {
   Calendar,
   Users,
   Cog,
-  Navigation,
   Shield,
+  Loader2,
 } from "lucide-react";
+<<<<<<< HEAD
 
 // Vehicles data
 const vehiclesData = [
@@ -484,10 +486,17 @@ const vehiclesData = [
     color: "Blue",
   },
 ];
+=======
+import { fetchAllVehicles, toggleSaveVehicle } from "../../redux/slices/vehiclesSlice";
+import { VehicleGridSkeleton, ButtonSpinner } from '../common/Skeleton';
+>>>>>>> a61f37d73347f6712df2cc0da6eae19b122ddf19
 
 // Vehicle Card Component
-const VehicleCard = ({ vehicle, onClick }) => {
+const VehicleCard = ({ vehicle, onClick, onToggleSave, isSaved, user }) => {
+  const [imgLoaded, setImgLoaded] = React.useState(false);
+  const [saving, setSaving] = React.useState(false);
   const categoryIcons = {
+<<<<<<< HEAD
     Sedan: <Car className="w-4 h-4" />,
     SUV: <Users className="w-4 h-4" />,
     Electric: <Car className="w-4 h-4" />,
@@ -495,39 +504,87 @@ const VehicleCard = ({ vehicle, onClick }) => {
     Luxury: <Shield className="w-4 h-4" />,
     Wagon: <Car className="w-4 h-4" />,
     Hybrid: <Fuel className="w-4 h-4" />,
+=======
+    'Sedan': <Car className="w-4 h-4" />,
+    'SUV': <Users className="w-4 h-4" />,
+    'Electric': <Car className="w-4 h-4" />,
+    'Truck': <Car className="w-4 h-4" />,
+    'Luxury': <Shield className="w-4 h-4" />,
+    'Wagon': <Car className="w-4 h-4" />,
+    'Hybrid': <Fuel className="w-4 h-4" />,
+    'Cars': <Car className="w-4 h-4" />,
+    'Motorcycles': <Car className="w-4 h-4" />,
+    'Scooters': <Car className="w-4 h-4" />,
+    'Bicycles': <Car className="w-4 h-4" />,
+    'Spare Parts': <Cog className="w-4 h-4" />,
+>>>>>>> a61f37d73347f6712df2cc0da6eae19b122ddf19
   };
 
   return (
     <div
       onClick={onClick}
-      className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer group border border-gray-200"
+      className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer group border border-gray-200 animate-fade-in-up"
     >
       <div className="relative pt-[75%] sm:pt-[75%] overflow-hidden bg-gray-100">
+<<<<<<< HEAD
+=======
+        {!imgLoaded && (
+          <div className="absolute inset-0 bg-gray-200 skeleton-shimmer" />
+        )}
+>>>>>>> a61f37d73347f6712df2cc0da6eae19b122ddf19
         <img
-          src={vehicle.image}
+          src={vehicle.images?.[0] || 'https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=800&q=80'}
           alt={vehicle.title}
-          className="absolute top-0 left-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          className={`absolute top-0 left-0 w-full h-full object-cover group-hover:scale-105 transition-all duration-300 ${!imgLoaded ? 'opacity-0' : 'opacity-100'}`}
+          onLoad={() => setImgLoaded(true)}
         />
         <button
-          onClick={(e) => e.stopPropagation()}
-          className="absolute top-2 right-2 p-1.5 bg-white rounded-full shadow-sm hover:bg-red-50 transition-colors z-10"
+          onClick={(e) => {
+            e.stopPropagation();
+            setSaving(true);
+            if (onToggleSave) onToggleSave(vehicle._id);
+            setTimeout(() => setSaving(false), 400);
+          }}
+          disabled={saving}
+          className="absolute top-2 right-2 p-1.5 bg-white rounded-full shadow-sm hover:bg-red-50 transition-colors z-10 disabled:opacity-70"
         >
-          <Heart className="w-4 h-4 text-gray-600 hover:text-red-500" />
+          {saving ? (
+            <ButtonSpinner size="xs" className="text-gray-500" />
+          ) : (
+            <Heart className={`w-4 h-4 ${isSaved ? 'text-red-500 fill-red-500' : 'text-gray-600 hover:text-red-500'}`} />
+          )}
         </button>
         <div className="absolute top-2 left-2 px-2 py-1 bg-black/70 text-white text-xs rounded-full flex items-center z-10">
-          {categoryIcons[vehicle.category] || <Car className="w-3 h-3 mr-1" />}
-          <span className="ml-1">{vehicle.category}</span>
+          {categoryIcons[vehicle.subcategory] || categoryIcons[vehicle.category] || <Car className="w-3 h-3 mr-1" />}
+          <span className="ml-1">{vehicle.subcategory || vehicle.category}</span>
         </div>
       </div>
 
       <div className="p-3">
-        <div className="flex items-center text-xs text-gray-500 mb-2">
-          <Calendar className="w-3 h-3 mr-1" />
-          <span>{vehicle.year}</span>
-          <span className="mx-1">•</span>
-          <Gauge className="w-3 h-3 mr-1" />
-          <span>{vehicle.mileage} mi</span>
-        </div>
+        {(vehicle.year || vehicle.kmDriven || vehicle.fuelType) && (
+          <div className="flex items-center flex-wrap gap-x-1 text-xs text-gray-500 mb-2">
+            {vehicle.year && (
+              <>
+                <Calendar className="w-3 h-3 mr-0.5" />
+                <span>{vehicle.year}</span>
+              </>
+            )}
+            {vehicle.year && vehicle.kmDriven && <span className="mx-0.5">•</span>}
+            {vehicle.kmDriven && (
+              <>
+                <Gauge className="w-3 h-3 mr-0.5" />
+                <span>{vehicle.kmDriven} km</span>
+              </>
+            )}
+            {(vehicle.year || vehicle.kmDriven) && vehicle.fuelType && <span className="mx-0.5">•</span>}
+            {vehicle.fuelType && (
+              <>
+                <Fuel className="w-3 h-3 mr-0.5" />
+                <span>{vehicle.fuelType}</span>
+              </>
+            )}
+          </div>
+        )}
 
         <h3 className="font-medium text-gray-900 text-sm mb-2 line-clamp-2 min-h-[36px] leading-tight">
           {vehicle.title}
@@ -535,10 +592,10 @@ const VehicleCard = ({ vehicle, onClick }) => {
 
         <div className="flex items-center justify-between mb-2">
           <span className="text-base sm:text-lg font-bold text-gray-900">
-            ${vehicle.price.toLocaleString()}
+            ₹{typeof vehicle.price === 'number' ? vehicle.price.toLocaleString('en-IN') : vehicle.price}
           </span>
           <span className="text-xs text-gray-500 px-2 py-1 bg-gray-100 rounded-full">
-            {vehicle.condition}
+            {vehicle.ownership || vehicle.condition}
           </span>
         </div>
 
@@ -547,7 +604,7 @@ const VehicleCard = ({ vehicle, onClick }) => {
           <span className="truncate">{vehicle.location}</span>
         </div>
 
-        <div className="text-xs text-gray-400 mt-1">{vehicle.postedTime}</div>
+        <div className="text-xs text-gray-400 mt-1">{vehicle.postedTime || ''}</div>
       </div>
     </div>
   );
@@ -556,13 +613,19 @@ const VehicleCard = ({ vehicle, onClick }) => {
 // Main Vehicles Listing Component
 const VehiclesListing = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { listings, loading, error } = useSelector((state) => state.vehicles);
+  const { user } = useSelector((state) => state.auth);
+
   const [searchQuery, setSearchQuery] = useState("");
   const [priceMin, setPriceMin] = useState("");
   const [priceMax, setPriceMax] = useState("");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [selectedYears, setSelectedYears] = useState([]);
+  const [sortOption, setSortOption] = useState("newest");
 
+<<<<<<< HEAD
   // Get unique categories and years
   const categories = [...new Set(vehiclesData.map((p) => p.category))];
   const years = [...new Set(vehiclesData.map((p) => p.year))].sort(
@@ -579,12 +642,28 @@ const VehiclesListing = () => {
     }
 
     // Price filter
+=======
+  // Fetch vehicles from API on mount
+  useEffect(() => {
+    dispatch(fetchAllVehicles());
+  }, [dispatch]);
+
+  // Get unique categories and years from fetched data
+  const categories = [...new Set(listings.map(p => p.subcategory || p.category).filter(Boolean))];
+  const years = [...new Set(listings.map(p => p.year).filter(Boolean))].sort((a, b) => b - a);
+
+  const filteredVehicles = listings.filter((vehicle) => {
+    if (searchQuery && !vehicle.title.toLowerCase().includes(searchQuery.toLowerCase())) {
+      return false;
+    }
+>>>>>>> a61f37d73347f6712df2cc0da6eae19b122ddf19
     if (priceMin && vehicle.price < parseFloat(priceMin)) {
       return false;
     }
     if (priceMax && vehicle.price > parseFloat(priceMax)) {
       return false;
     }
+<<<<<<< HEAD
 
     // Category filter
     if (
@@ -599,11 +678,37 @@ const VehiclesListing = () => {
       return false;
     }
 
+=======
+    if (selectedCategories.length > 0 && !selectedCategories.includes(vehicle.subcategory || vehicle.category)) {
+      return false;
+    }
+    if (selectedYears.length > 0 && !selectedYears.includes(vehicle.year)) {
+      return false;
+    }
+>>>>>>> a61f37d73347f6712df2cc0da6eae19b122ddf19
     return true;
   });
 
+  // Sort
+  const sortedVehicles = [...filteredVehicles].sort((a, b) => {
+    switch (sortOption) {
+      case 'price_asc': return a.price - b.price;
+      case 'price_desc': return b.price - a.price;
+      case 'oldest': return new Date(a.createdAt) - new Date(b.createdAt);
+      default: return new Date(b.createdAt) - new Date(a.createdAt);
+    }
+  });
+
   const handleVehicleClick = (vehicleId) => {
-    navigate(`/vehicle/${vehicleId}`);
+    navigate(`/vehicles/${vehicleId}`);
+  };
+
+  const handleToggleSave = (id) => {
+    if (!user) {
+      navigate('/signin');
+      return;
+    }
+    dispatch(toggleSaveVehicle(id));
   };
 
   const handleCategoryChange = (category) => {
@@ -697,46 +802,50 @@ const VehiclesListing = () => {
             </div>
 
             {/* Categories */}
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-3">
-                Vehicle Type
-              </label>
-              <div className="grid grid-cols-2 sm:grid-cols-1 gap-2">
-                {categories.map((category) => (
-                  <label key={category} className="flex items-center">
-                    <input
-                      type="checkbox"
-                      checked={selectedCategories.includes(category)}
-                      onChange={() => handleCategoryChange(category)}
-                      className="w-4 h-4 text-[#27bb97] border-gray-300 rounded focus:ring-[#27bb97]"
-                    />
-                    <span className="ml-2 text-sm text-gray-700">
-                      {category}
-                    </span>
-                  </label>
-                ))}
+            {categories.length > 0 && (
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-700 mb-3">
+                  Vehicle Type
+                </label>
+                <div className="grid grid-cols-2 sm:grid-cols-1 gap-2">
+                  {categories.map((category) => (
+                    <label key={category} className="flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={selectedCategories.includes(category)}
+                        onChange={() => handleCategoryChange(category)}
+                        className="w-4 h-4 text-[#27bb97] border-gray-300 rounded focus:ring-[#27bb97]"
+                      />
+                      <span className="ml-2 text-sm text-gray-700">
+                        {category}
+                      </span>
+                    </label>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Years */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-3">
-                Year
-              </label>
-              <div className="grid grid-cols-2 sm:grid-cols-1 gap-2">
-                {years.slice(0, 6).map((year) => (
-                  <label key={year} className="flex items-center">
-                    <input
-                      type="checkbox"
-                      checked={selectedYears.includes(year)}
-                      onChange={() => handleYearChange(year)}
-                      className="w-4 h-4 text-[#27bb97] border-gray-300 rounded focus:ring-[#27bb97]"
-                    />
-                    <span className="ml-2 text-sm text-gray-700">{year}</span>
-                  </label>
-                ))}
+            {years.length > 0 && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-3">
+                  Year
+                </label>
+                <div className="grid grid-cols-2 sm:grid-cols-1 gap-2">
+                  {years.slice(0, 6).map((year) => (
+                    <label key={year} className="flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={selectedYears.includes(year)}
+                        onChange={() => handleYearChange(year)}
+                        className="w-4 h-4 text-[#27bb97] border-gray-300 rounded focus:ring-[#27bb97]"
+                      />
+                      <span className="ml-2 text-sm text-gray-700">{year}</span>
+                    </label>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Clear Filters */}
             <button
@@ -780,12 +889,15 @@ const VehiclesListing = () => {
                     <span className="text-xs sm:text-sm text-gray-600 whitespace-nowrap hidden xs:inline">
                       Sort by:
                     </span>
-                    <select className="px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#27bb97] focus:border-transparent w-full xs:w-auto min-w-[120px] sm:min-w-[180px]">
-                      <option>Price: Low to High</option>
-                      <option>Price: High to Low</option>
-                      <option>Year: Newest</option>
-                      <option>Year: Oldest</option>
-                      <option>Mileage: Low to High</option>
+                    <select
+                      value={sortOption}
+                      onChange={(e) => setSortOption(e.target.value)}
+                      className="px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#27bb97] focus:border-transparent w-full xs:w-auto min-w-[120px] sm:min-w-[180px]"
+                    >
+                      <option value="newest">Newest First</option>
+                      <option value="price_asc">Price: Low to High</option>
+                      <option value="price_desc">Price: High to Low</option>
+                      <option value="oldest">Oldest First</option>
                     </select>
                   </div>
                 </div>
@@ -794,28 +906,57 @@ const VehiclesListing = () => {
 
             {/* Mobile Results Count */}
             <div className="text-sm text-gray-600 mb-4 lg:hidden">
-              {filteredVehicles.length} vehicles found
+              {sortedVehicles.length} vehicles found
             </div>
+
+            {/* Loading - Skeleton */}
+            {loading && <VehicleGridSkeleton count={8} />}
+
+            {/* Error */}
+            {error && !loading && (
+              <div className="text-center py-12">
+                <div className="text-red-500 mb-2">Failed to load vehicles</div>
+                <button
+                  onClick={() => dispatch(fetchAllVehicles())}
+                  className="text-[#27bb97] hover:text-[#1fa987] font-medium"
+                >
+                  Try again
+                </button>
+              </div>
+            )}
 
             {/* Vehicles Grid */}
-            <div className="grid grid-cols-2 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
-              {filteredVehicles.map((vehicle) => (
-                <VehicleCard
-                  key={vehicle.id}
-                  vehicle={vehicle}
-                  onClick={() => handleVehicleClick(vehicle.id)}
-                />
-              ))}
-            </div>
+            {!loading && !error && (
+              <div className="grid grid-cols-2 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
+                {sortedVehicles.map((vehicle) => (
+                  <VehicleCard
+                    key={vehicle._id || vehicle.id}
+                    vehicle={vehicle}
+                    user={user}
+                    isSaved={vehicle._saved || (user && vehicle.savedBy?.includes(user._id || user.id))}
+                    onToggleSave={handleToggleSave}
+                    onClick={() => handleVehicleClick(vehicle._id || vehicle.id)}
+                  />
+                ))}
+              </div>
+            )}
 
             {/* Desktop Results Count */}
+<<<<<<< HEAD
             <div className="mt-8 text-center text-gray-600 hidden lg:block">
               Showing {filteredVehicles.length} of {vehiclesData.length}{" "}
               vehicles
             </div>
+=======
+            {!loading && !error && (
+              <div className="mt-8 text-center text-gray-600 hidden lg:block">
+                Showing {sortedVehicles.length} of {listings.length} vehicles
+              </div>
+            )}
+>>>>>>> a61f37d73347f6712df2cc0da6eae19b122ddf19
 
             {/* No Results */}
-            {filteredVehicles.length === 0 && (
+            {!loading && !error && sortedVehicles.length === 0 && (
               <div className="text-center py-12">
                 <div className="text-gray-400 mb-2">No vehicles found</div>
                 <button
@@ -840,4 +981,7 @@ const VehiclesListing = () => {
 };
 
 export default VehiclesListing;
+<<<<<<< HEAD
 export { vehiclesData };
+=======
+>>>>>>> a61f37d73347f6712df2cc0da6eae19b122ddf19

@@ -3,8 +3,19 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { updateUser } from "../../redux/slices/authSlice";
 import {
+<<<<<<< HEAD
   Bell,
   X,
+=======
+  selectAllSavedItems,
+} from "../../redux/selectors/forSaleSelectors";
+import {
+  unsaveItem,
+} from "../../redux/slices/forSaleSlice";
+import { 
+  Bell, 
+  X, 
+>>>>>>> a61f37d73347f6712df2cc0da6eae19b122ddf19
   Menu,
   FileText,
   Heart,
@@ -58,7 +69,7 @@ export default function Profile() {
       authUser?.googleProfileImage ||
       authUser?.avatar,
   };
-  const [savedHouses, setSavedHouses] = useState([]);
+  const savedHouses = useSelector(selectAllSavedItems);
   const [myPosts, setMyPosts] = useState([
     {
       id: 1,
@@ -138,6 +149,7 @@ export default function Profile() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchVisible, setIsSearchVisible] = useState(false);
 
+<<<<<<< HEAD
   // Load saved items
   useEffect(() => {
     const loadSavedItems = () => {
@@ -157,6 +169,9 @@ export default function Profile() {
     return () =>
       window.removeEventListener("savedItemsChanged", loadSavedItems);
   }, []);
+=======
+  // Saved items are now read from Redux (forSale slice, persisted via redux-persist)
+>>>>>>> a61f37d73347f6712df2cc0da6eae19b122ddf19
 
   useEffect(() => {
     setEditData({
@@ -209,10 +224,14 @@ export default function Profile() {
   };
 
   const toggleSave = (house) => {
+<<<<<<< HEAD
     const updatedSavedHouses = savedHouses.filter((h) => h.id !== house.id);
     setSavedHouses(updatedSavedHouses);
     localStorage.setItem("savedItems", JSON.stringify(updatedSavedHouses));
     window.dispatchEvent(new CustomEvent("savedItemsChanged"));
+=======
+    dispatch(unsaveItem(house.id));
+>>>>>>> a61f37d73347f6712df2cc0da6eae19b122ddf19
   };
 
   const counts = {
@@ -418,6 +437,7 @@ export default function Profile() {
                 messages={messages}
                 agendaEvents={agendaEvents}
                 onViewAll={setActiveSection}
+                user={user}
               />
             )}
 

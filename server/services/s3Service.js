@@ -224,6 +224,75 @@ class S3Service {
   }
 
   /**
+   * Upload listing image to S3 organised by category folder
+   *
+   * S3 folder structure:
+   *   electronics/{userId}/{uuid}.webp
+   *   vehicles/{userId}/{uuid}.webp
+   *   listings/{userId}/{uuid}.webp   (fallback when no category given)
+   *
+   * @param {Buffer}  fileBuffer - Image buffer
+   * @param {string}  userId     - User ID
+   * @param {string}  mimeType   - MIME type
+   * @param {string}  category   - Category folder name (e.g. 'electronics', 'vehicles')
+   * @returns {Promise<Object>} Upload result
+   */
+  async uploadListingImage(fileBuffer, userId, mimeType, category = 'listings') {
+    try {
+      // Sanitise category to a safe folder name
+      const folder = category
+        .toLowerCase()
+        .replace(/[^a-z0-9_-]/g, '')
+        || 'listings';
+
+      // Optimize: larger max size for listing images, output WebP for smaller size
+      const optimized = await sharp(fileBuffer)
+        .resize(1200, 1200, {
+          fit: 'inside',
+          withoutEnlargement: true,
+        })
+        .webp({ quality: 82 })
+        .toBuffer();
+
+      const fileName = `${folder}/${userId}/${uuidv4()}.webp`;
+
+      const command = new PutObjectCommand({
+        Bucket: this.bucketName,
+        Key: fileName,
+        Body: optimized,
+        ContentType: 'image/webp',
+        CacheControl: 'max-age=31536000, public',
+        Metadata: {
+          userId: userId,
+          category: folder,
+          uploadedAt: new Date().toISOString(),
+          type: 'listing',
+        },
+      });
+
+      await s3Client.send(command);
+
+      const imageUrl = this.getImageUrl(fileName);
+
+      logger.info('✅ Listing image uploaded to S3', {
+        userId,
+        fileName,
+        size: optimized.length,
+      });
+
+      return {
+        success: true,
+        imageUrl,
+        fileName,
+        key: fileName,
+      };
+    } catch (error) {
+      logger.error('❌ Failed to upload listing image to S3:', error);
+      throw new Error(`Listing image upload failed: ${error.message}`);
+    }
+  }
+
+  /**
    * Validate image file
    * @param {Object} file - File object
    * @returns {Object} Validation result

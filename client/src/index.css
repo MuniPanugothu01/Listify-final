@@ -316,6 +316,77 @@ html {
   animation: bounce 0.6s infinite;
 }
 
+
+
+
+
+
+
+/* Skeleton shimmer animation */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.skeleton-shimmer {
+  background: linear-gradient(
+    90deg,
+    #e5e7eb 0%,
+    #f3f4f6 40%,
+    #e5e7eb 80%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.8s ease-in-out infinite;
+}
+
+/* Page transition fade-in */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.4s ease-out;
+}
+
+/* ─── Page transition progress bar ────────────────────────────────────── */
+@keyframes progressBar {
+  0% {
+    width: 0%;
+  }
+  20% {
+    width: 35%;
+  }
+  50% {
+    width: 65%;
+  }
+  80% {
+    width: 88%;
+  }
+  100% {
+    width: 100%;
+  }
+}
+
+.animate-progress-bar {
+  animation: progressBar 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* Page transition skeleton container */
+.page-transition-skeleton {
+  animation: fadeInUp 0.15s ease-out;
+}
+
 /* toast animation — slow slide from top, slow exit */
 
 @keyframes toastEnter {

@@ -26,10 +26,16 @@ const Category = () => {
     },
     {
       id: 3,
+<<<<<<< HEAD
       title: "Cars",
       path: "/cars",
       image:
         "https://www.huntermoss.com/images/best-cars-for-road-trips/a-img.webp",
+=======
+      title: "Vehicles",
+      path: "/vehicles",
+      image: "https://www.huntermoss.com/images/best-cars-for-road-trips/a-img.webp",
+>>>>>>> a61f37d73347f6712df2cc0da6eae19b122ddf19
       icon: Briefcase,
       subcategories: ["Used Cars", "New Cars", "SUVs & Trucks"],
     },

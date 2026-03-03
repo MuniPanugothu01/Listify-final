@@ -2,13 +2,11 @@ const { Redis } = require('@upstash/redis');
 
 // Validate environment variables
 if (!process.env.UPSTASH_REDIS_REST_URL) {
-  console.error('❌ UPSTASH_REDIS_REST_URL is not defined in environment variables');
-  process.exit(1);
+  throw new Error('UPSTASH_REDIS_REST_URL is not defined in environment variables');
 }
 
 if (!process.env.UPSTASH_REDIS_REST_TOKEN) {
-  console.error('❌ UPSTASH_REDIS_REST_TOKEN is not defined in environment variables');
-  process.exit(1);
+  throw new Error('UPSTASH_REDIS_REST_TOKEN is not defined in environment variables');
 }
 
 // Create Redis client with production settings
@@ -48,11 +46,7 @@ const redis = new Redis({
     console.error('3. Your Upstash Redis instance is active');
     
     // Don't exit in production, but log error
-    if (process.env.NODE_ENV === 'production') {
-      console.log('⚠️ Continuing without Redis - token management will be limited');
-    } else {
-      process.exit(1);
-    }
+    console.warn('⚠️ Redis connection failed — continuing without Redis. Token management will be limited.');
   }
 })();
 

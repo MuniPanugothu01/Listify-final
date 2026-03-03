@@ -17,17 +17,24 @@ const crypto = require("crypto");
 /**
  * Generate access token (short-lived)
  */
-const generateAccessToken = (userId) => {
+const generateAccessToken = (userId, req = null) => {
+  if (!process.env.JWT_ACCESS_SECRET) {
+    throw new Error('JWT_ACCESS_SECRET is required');
+  }
+  const payload = {
+    id: userId,
+    type: "access",
+    jti: crypto.randomBytes(16).toString("hex"),
+  };
+  // Token fingerprint: bind to User-Agent
+  if (req) {
+    const ua = req.get('user-agent') || '';
+    payload.fgp = crypto.createHash('sha256').update(ua).digest('hex').substring(0, 16);
+  }
   return jwt.sign(
-    {
-      id: userId,
-      type: "access",
-      jti: crypto.randomBytes(16).toString("hex"),
-    },
-    process.env.JWT_ACCESS_SECRET || process.env.JWT_SECRET,
-    {
-      expiresIn: process.env.JWT_ACCESS_EXPIRE || "15m",
-    },
+    payload,
+    process.env.JWT_ACCESS_SECRET,
+    { expiresIn: process.env.JWT_ACCESS_EXPIRE || "15m" }
   );
 };
 
@@ -35,16 +42,17 @@ const generateAccessToken = (userId) => {
  * Generate refresh token (long-lived)
  */
 const generateRefreshToken = (userId) => {
+  if (!process.env.JWT_REFRESH_SECRET) {
+    throw new Error('JWT_REFRESH_SECRET is required');
+  }
   return jwt.sign(
     {
       id: userId,
       type: "refresh",
       jti: crypto.randomBytes(16).toString("hex"),
     },
-    process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET + "refresh",
-    {
-      expiresIn: process.env.JWT_REFRESH_EXPIRE || "7d",
-    },
+    process.env.JWT_REFRESH_SECRET,
+    { expiresIn: process.env.JWT_REFRESH_EXPIRE || "7d" }
   );
 };
 
@@ -94,7 +102,7 @@ const setTokenCookies = (res, accessToken, refreshToken) => {
   res.cookie("accessToken", accessToken, {
     httpOnly: true,
     secure: isProduction,
-    sameSite: isProduction ? "strict" : "lax",
+    sameSite: isProduction ? "none" : "lax",
     maxAge: 15 * 60 * 1000,
     path: "/",
     domain: isProduction ? process.env.COOKIE_DOMAIN : undefined,
@@ -103,7 +111,7 @@ const setTokenCookies = (res, accessToken, refreshToken) => {
   res.cookie("refreshToken", refreshToken, {
     httpOnly: true,
     secure: isProduction,
-    sameSite: isProduction ? "strict" : "lax",
+    sameSite: isProduction ? "none" : "lax",
     maxAge: 7 * 24 * 60 * 60 * 1000,
     path: "/api/auth",
     domain: isProduction ? process.env.COOKIE_DOMAIN : undefined,
@@ -113,7 +121,7 @@ const setTokenCookies = (res, accessToken, refreshToken) => {
   res.cookie("tokenExists", "true", {
     httpOnly: false,
     secure: isProduction,
-    sameSite: isProduction ? "strict" : "lax",
+    sameSite: isProduction ? "none" : "lax",
     maxAge: 15 * 60 * 1000,
     path: "/",
   });
@@ -128,21 +136,21 @@ const clearTokenCookies = (res) => {
   res.clearCookie("accessToken", {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     path: "/",
   });
 
   res.clearCookie("refreshToken", {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     path: "/api/auth",
   });
 
   res.clearCookie("tokenExists", {
     httpOnly: false,
     secure: process.env.NODE_ENV === "production",
-    sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     path: "/",
   });
 
@@ -158,7 +166,7 @@ const verifyRefreshToken = async (refreshToken) => {
 
     const decoded = jwt.verify(
       refreshToken,
-      process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET + "refresh",
+      process.env.JWT_REFRESH_SECRET,
     );
 
     if (decoded.type !== "refresh") {
@@ -257,14 +265,20 @@ const revokeAllUserTokens = async (userId) => {
 
 /**
  * Refresh tokens - token rotation
+ * Returns { tokens } on success, { error: 'invalid' } for bad tokens,
+ * or { error: 'transient' } for temporary failures (Redis/network).
  */
 const refreshTokens = async (refreshToken) => {
   try {
     const session = await verifyRefreshToken(refreshToken);
     if (!session) {
-      return null;
+      // Token is genuinely invalid / expired / revoked
+      return { error: 'invalid' };
     }
 
+    // Note: refreshTokens has no access to the original request, so
+    // the fingerprint won't be embedded during silent rotation.
+    // The authMiddleware.refreshToken handler passes req indirectly.
     const newAccessToken = generateAccessToken(session.userId);
     const newRefreshToken = generateRefreshToken(session.userId);
 
@@ -276,12 +290,15 @@ const refreshTokens = async (refreshToken) => {
     });
 
     return {
-      accessToken: newAccessToken,
-      refreshToken: newRefreshToken,
+      tokens: {
+        accessToken: newAccessToken,
+        refreshToken: newRefreshToken,
+      },
     };
   } catch (error) {
-    logger.error("❌ Error refreshing tokens:", error);
-    return null;
+    logger.error("❌ Error refreshing tokens (transient):", error);
+    // Transient error (Redis timeout, network blip) — don't treat as invalid
+    return { error: 'transient' };
   }
 };
 
@@ -290,7 +307,7 @@ const refreshTokens = async (refreshToken) => {
  */
 const sendTokenResponse = async (user, statusCode, res, message) => {
   try {
-    const accessToken = generateAccessToken(user._id);
+    const accessToken = generateAccessToken(user._id, res.req);
     const refreshToken = generateRefreshToken(user._id);
 
     await storeRefreshToken(user._id.toString(), refreshToken, res.req);
@@ -381,24 +398,62 @@ exports.login = async (req, res) => {
 
     const isPasswordMatch = await bcrypt.compare(password, user.password);
 
+    // Check account lockout BEFORE processing result
+    if (user.isLocked && user.isLocked()) {
+      // Log failed attempt even for locked accounts
+      if (user.addLoginHistory) {
+        await user.addLoginHistory({
+          ipAddress: req.ip,
+          userAgent: req.get("user-agent"),
+          loginType: "email",
+          success: false,
+          failureReason: "account_locked",
+        });
+      }
+      return res.status(423).json({
+        success: false,
+        message:
+          "Account is temporarily locked due to too many failed attempts. Please try again after 1 hour or reset your password.",
+        locked: true,
+        code: 'ACCOUNT_LOCKED',
+      });
+    }
+
     if (!isPasswordMatch) {
+      // Increment failed login attempts (locks after 5 failures)
+      if (user.incrementLoginAttempts) {
+        await user.incrementLoginAttempts();
+      }
+
+      // Log failed login attempt
+      if (user.addLoginHistory) {
+        await user.addLoginHistory({
+          ipAddress: req.ip,
+          userAgent: req.get("user-agent"),
+          loginType: "email",
+          success: false,
+          failureReason: "invalid_password",
+        });
+      }
+
+      // Log security event
+      if (user.addSecurityLog) {
+        await user.addSecurityLog(
+          "failed_login",
+          req.ip,
+          req.get("user-agent"),
+          { reason: "invalid_password", attempt: (user.loginAttempts || 0) + 1 }
+        );
+      }
+
       return res.status(401).json({
         success: false,
         message: "Invalid email or password",
       });
     }
 
-    if (user.isLocked && user.isLocked()) {
-      return res.status(423).json({
-        success: false,
-        message:
-          "Account is temporarily locked. Please try again later or reset your password.",
-        locked: true,
-      });
-    }
-
-    // Generate tokens
-    const accessToken = generateAccessToken(user._id);
+    // Generate tokens (pass req for fingerprint binding)
+    const accessToken = generateAccessToken(user._id, req);
     const refreshToken = generateRefreshToken(user._id);
     const decoded = jwt.decode(refreshToken);
 
@@ -452,6 +507,15 @@ exports.login = async (req, res) => {
         : null,
     };
 
+    // Check Redis image cache — if user logged out earlier, their image is here
+    let cachedImage = null;
+    try {
+      const cached = await RedisService.getCachedProfileImage(email);
+      if (cached?.url) {
+        cachedImage = cached;
+      }
+    } catch (_) { /* non-critical */ }
+
     logger.info(`✅ Login successful for: ${email}`, {
       device: deviceSession.deviceName,
       location: deviceSession.location,
@@ -461,6 +525,7 @@ exports.login = async (req, res) => {
       success: true,
       message: "Login successful",
       user: userResponse,
+      cachedImage, // { url, name, cachedAt } or null
     });
   } catch (error) {
     logger.error("❌ Login error:", error);
@@ -485,8 +550,8 @@ exports.googleTokenAuth = async (req, res) => {
 
     const { user, isNew } = await handleGoogleAuth(googleToken, req);
 
-    // Generate tokens
-    const accessToken = generateAccessToken(user._id);
+    // Generate tokens (pass req for fingerprint binding)
+    const accessToken = generateAccessToken(user._id, req);
     const refreshToken = generateRefreshToken(user._id);
     const decoded = jwt.decode(refreshToken);
 
@@ -535,6 +600,15 @@ exports.googleTokenAuth = async (req, res) => {
       currentDevice: deviceService.formatDeviceForDisplay(deviceSession),
     };
 
+    // Check Redis image cache — if user logged out earlier, their image is here
+    let cachedImage = null;
+    try {
+      const cached = await RedisService.getCachedProfileImage(user.email);
+      if (cached?.url) {
+        cachedImage = cached;
+      }
+    } catch (_) { /* non-critical */ }
+
     logger.info(`✅ Google login successful for: ${user.email}`, {
       device: deviceSession.deviceName,
       location: deviceSession.location,
@@ -545,6 +619,7 @@ exports.googleTokenAuth = async (req, res) => {
       success: true,
       message,
       user: userResponse,
+      cachedImage, // { url, name, cachedAt } or null
     });
   } catch (error) {
     logger.error("❌ Google Token Auth Error:", error);
@@ -555,7 +630,7 @@ exports.googleTokenAuth = async (req, res) => {
   }
 };
 
-// ==================== UPDATED: LOGOUT WITH DEVICE CLEANUP ====================
+// ==================== UPDATED: LOGOUT WITH DEVICE CLEANUP + IMAGE CACHING ====================
 exports.logout = async (req, res) => {
   try {
     const { refreshToken } = req.cookies;
@@ -563,11 +638,22 @@ exports.logout = async (req, res) => {
     if (refreshToken) {
       const decoded = jwt.decode(refreshToken);
 
-      // Deactivate session in user document
+      // Deactivate session & cache profile image before clearing
       if (decoded?.id) {
         const user = await User.findById(decoded.id);
         if (user) {
           await user.deactivateSession(decoded.jti);
+
+          // Cache the user's current profile image in Redis (survives logout)
+          const imageUrl = user.getProfileImage
+            ? user.getProfileImage()
+            : user.profileImage || user.googleProfileImage || user.avatar || null;
+          if (imageUrl && user.email) {
+            await RedisService.cacheProfileImage(user.email, {
+              url: imageUrl,
+              name: user.name,
+            });
+          }
         }
       }
 
@@ -681,6 +767,14 @@ exports.uploadProfileImage = async (req, res) => {
 
     const profileImageUrl = user.getProfileImage ? user.getProfileImage() : 
                            (user.profileImage || user.googleProfileImage || user.avatar || null);
+
+    // Update Redis image cache with the new S3 URL
+    try {
+      await RedisService.cacheProfileImage(user.email, {
+        url: uploadResult.imageUrl,
+        name: user.name,
+      });
+    } catch (_) { /* non-critical */ }
 
     res.status(200).json({
       success: true,
@@ -1151,20 +1245,33 @@ exports.refreshToken = async (req, res) => {
       return res.status(401).json({
         success: false,
         message: "No refresh token provided",
+        code: "NO_REFRESH_TOKEN",
       });
     }
 
-    const tokens = await refreshTokens(refreshToken);
+    const result = await refreshTokens(refreshToken);
 
-    if (!tokens) {
+    // Token is genuinely invalid / expired → clear cookies
+    if (result.error === 'invalid') {
       clearTokenCookies(res);
       return res.status(401).json({
         success: false,
         message: "Invalid or expired refresh token",
+        code: "INVALID_REFRESH_TOKEN",
       });
     }
 
-    setTokenCookies(res, tokens.accessToken, tokens.refreshToken);
+    // Transient failure (Redis/network blip) → DON'T clear cookies!
+    // The token is probably still valid. Let the client retry.
+    if (result.error === 'transient') {
+      return res.status(503).json({
+        success: false,
+        message: "Token service temporarily unavailable. Please retry.",
+        code: "SERVICE_UNAVAILABLE",
+      });
+    }
+
+    setTokenCookies(res, result.tokens.accessToken, result.tokens.refreshToken);
 
     res.status(200).json({
       success: true,
@@ -1172,9 +1279,11 @@ exports.refreshToken = async (req, res) => {
     });
   } catch (error) {
     logger.error("Refresh token error:", error);
+    // DON'T clear cookies on server errors — the session may still be valid
     res.status(500).json({
       success: false,
       message: "Server error during token refresh",
+      code: "SERVER_ERROR",
     });
   }
 };
@@ -1185,9 +1294,14 @@ exports.checkAuth = async (req, res) => {
     const { accessToken } = req.cookies;
 
     if (!accessToken) {
+      // The access token cookie may have expired (15 min maxAge) while
+      // the refresh token (7 days, path=/api/auth) is still valid.
+      // Return ACCESS_TOKEN_EXPIRED so the client keeps the persisted
+      // user state and triggers a refresh instead of logging out.
       return res.status(200).json({
         success: true,
         isAuthenticated: false,
+        code: 'ACCESS_TOKEN_EXPIRED',
       });
     }
 
@@ -1196,7 +1310,7 @@ exports.checkAuth = async (req, res) => {
     try {
       decoded = jwt.verify(
         accessToken,
-        process.env.JWT_ACCESS_SECRET || process.env.JWT_SECRET,
+        process.env.JWT_ACCESS_SECRET,
       );
     } catch (jwtError) {
       if (jwtError.name === "TokenExpiredError") {
@@ -1250,6 +1364,44 @@ exports.checkAuth = async (req, res) => {
       });
     }
 
+    // --- Step 3: verify active session exists in Upstash Redis ---
+    // NOTE: This is a soft check — JWT + MongoDB already verified the user.
+    // If Redis session data is stale or missing (e.g. after MongoDB reconnect,
+    // token rotation edge case), we still trust the valid access token.
+    // The session info is added to the response for client-side awareness.
+    let redisSessionValid = true;
+    try {
+      const redis = require("../config/redis");
+      const sessionTokenIds = await redis.smembers(`user_sessions:${decoded.id}`);
+
+      if (!sessionTokenIds || sessionTokenIds.length === 0) {
+        logger.info("checkAuth: No active sessions in Redis for user (soft check)", { userId: decoded.id });
+        redisSessionValid = false;
+      } else {
+        // Verify at least one session still has a valid refresh token in Redis
+        let hasValidSession = false;
+        for (const tokenId of sessionTokenIds) {
+          const tokenData = await redis.get(`refresh_token:${tokenId}`);
+          if (tokenData) {
+            hasValidSession = true;
+            break;
+          }
+        }
+
+        if (!hasValidSession) {
+          // Clean up stale session set entries (don't delete the whole set)
+          logger.info("checkAuth: All Redis sessions expired for user (soft check)", { userId: decoded.id });
+          redisSessionValid = false;
+        }
+      }
+    } catch (redisError) {
+      // Redis temporarily down — don't block authentication.
+      logger.warn("checkAuth: Redis check failed, proceeding with JWT+DB only", {
+        error: redisError.message,
+        userId: decoded.id,
+      });
+    }
+
     const passwordExpiration = user.passwordNeedsChange
       ? user.passwordNeedsChange()
       : null;
@@ -1261,6 +1413,7 @@ exports.checkAuth = async (req, res) => {
     return res.status(200).json({
       success: true,
       isAuthenticated: true,
+      redisSessionValid,
       user: {
         id: user._id,
         name: user.name,
@@ -1484,18 +1637,9 @@ exports.changePassword = async (req, res) => {
     // Use whichever confirm field is provided
     const finalConfirmPassword = confirmNewPassword || confirmPassword;
 
-    console.log("🔍 Change password request received:", {
-      currentPassword: currentPassword ? "****" : "missing",
-      newPassword: newPassword ? "****" : "missing",
-      confirmProvided: !!(confirmNewPassword || confirmPassword)
-    });
+    logger.debug("Change password request received", { userId: req.user.id });
 
     if (!currentPassword || !newPassword || !finalConfirmPassword) {
-      console.log("❌ Missing required fields:", {
-        currentPassword: !!currentPassword,
-        newPassword: !!newPassword,
-        confirmPassword: !!finalConfirmPassword
-      });
       return res.status(400).json({
         success: false,
         message: "Please provide current password, new password, and confirm password",
@@ -1503,7 +1647,6 @@ exports.changePassword = async (req, res) => {
     }
 
     if (newPassword !== finalConfirmPassword) {
-      console.log("❌ Password mismatch");
       return res.status(400).json({
         success: false,
         message: "New passwords do not match",
@@ -1516,7 +1659,6 @@ exports.changePassword = async (req, res) => {
     );
 
     if (!user) {
-      console.log("❌ User not found:", req.user.id);
       return res.status(404).json({
         success: false,
         message: "User not found",
@@ -1526,7 +1668,6 @@ exports.changePassword = async (req, res) => {
     // Verify current password
     const isMatch = await bcrypt.compare(currentPassword, user.password);
     if (!isMatch) {
-      console.log("❌ Current password is incorrect");
       return res.status(401).json({
         success: false,
         message: "Current password is incorrect",
@@ -1534,7 +1675,6 @@ exports.changePassword = async (req, res) => {
     }
 
     // Validate password strength
-    console.log("🔍 Validating new password strength");
     const passwordValidation = await passwordSecurity.validatePassword(
       newPassword,
       user._id.toString(),
@@ -1542,7 +1682,6 @@ exports.changePassword = async (req, res) => {
     );
 
     if (!passwordValidation.isValid) {
-      console.log("❌ Password validation failed:", passwordValidation.errors);
       return res.status(400).json({
         success: false,
         message: "Password does not meet security requirements",
@@ -1552,10 +1691,8 @@ exports.changePassword = async (req, res) => {
     }
 
     // Check password history
-    console.log("🔍 Checking password history");
     const historyCheck = await user.isPasswordInHistory(newPassword);
     if (historyCheck.inHistory) {
-      console.log("❌ Password already used recently");
       return res.status(400).json({
         success: false,
         message: historyCheck.message || "You have used this password recently. Please choose a different password.",
@@ -1563,7 +1700,6 @@ exports.changePassword = async (req, res) => {
     }
 
     // Add current password to history BEFORE changing it
-    console.log("📝 Adding current password to history");
     await user.addToPasswordHistory(currentPassword, {
       changedBy: "user",
       ipAddress: req.ip,
@@ -1571,7 +1707,6 @@ exports.changePassword = async (req, res) => {
     });
 
     // Hash new password
-    console.log("🔐 Hashing new password");
     const salt = await bcrypt.genSalt(12);
     const hashedPassword = await bcrypt.hash(newPassword, salt);
 
@@ -1589,21 +1724,20 @@ exports.changePassword = async (req, res) => {
         { method: "user_change" },
       );
     } catch (logErr) {
-      console.warn("Could not log password change activity:", logErr.message);
+      logger.warn("Could not log password change activity:", logErr.message);
     }
 
     // Revoke all sessions except current one
-    console.log("🔒 Revoking all other user sessions");
     await revokeAllUserTokens(user._id.toString());
 
-    console.log(`✅ Password changed successfully for user: ${user.email}`);
+    logger.info("Password changed successfully", { userId: user._id });
 
     res.status(200).json({
       success: true,
       message: "Password changed successfully. Please login again with your new password.",
     });
   } catch (error) {
-    console.error("❌ Change password error:", error);
+    logger.error("Change password error:", error);
     res.status(500).json({
       success: false,
       message: "Server error during password change",
@@ -1728,7 +1862,8 @@ exports.verifyForgotPasswordOTP = async (req, res) => {
   try {
     const { email, otp } = req.body;
 
-    console.log("🔍 verifyForgotPasswordOTP called with:", { email, otp });
+    // SECURITY: never log OTP values
+    logger.debug("verifyForgotPasswordOTP called", { email });
 
     if (!email || !otp) {
       return res.status(400).json({
@@ -1750,7 +1885,6 @@ exports.verifyForgotPasswordOTP = async (req, res) => {
 
     // Get pending password reset data
     const pendingData = await RedisService.getPendingPasswordReset(email);
-    console.log("📦 Pending data from Redis:", pendingData);
     
     if (!pendingData) {
       return res.status(400).json({
@@ -1761,11 +1895,9 @@ exports.verifyForgotPasswordOTP = async (req, res) => {
 
     // Verify OTP
     const otpVerification = await RedisService.verifyOTP(email, otp);
-    console.log("🔐 OTP verification result:", otpVerification);
     
     if (!otpVerification.valid) {
       const attemptResult = await RedisService.incrementOTPAttempts(email);
-      console.log("📊 Attempt result:", attemptResult);
 
       let errorMessage = otpVerification.reason || "Invalid OTP. Please try again.";
 
@@ -1802,13 +1934,9 @@ exports.verifyForgotPasswordOTP = async (req, res) => {
       email: pendingData.email || email,
       createdAt: new Date().toISOString()
     };
-    
-    console.log("🔐 Storing reset token data:", resetData);
 
     // Store in Redis with 10 minute expiry
-    // FIX: Always store as a proper JSON string
     const stringifiedData = JSON.stringify(resetData);
-    console.log("📦 Stringified data:", stringifiedData);
     
     await redis.setex(
       `reset:${resetToken}`,
@@ -1827,7 +1955,7 @@ exports.verifyForgotPasswordOTP = async (req, res) => {
     await RedisService.deleteOTP(email);
     await RedisService.deletePendingPasswordReset(email);
 
-    console.log(`✅ OTP verified for ${email}. Reset token: ${resetToken.substring(0, 8)}...`);
+    logger.info("OTP verified for password reset", { email });
 
     return res.status(200).json({
       success: true,
@@ -1835,7 +1963,7 @@ exports.verifyForgotPasswordOTP = async (req, res) => {
       resetToken,
     });
   } catch (error) {
-    console.error("❌ Verify forgot password OTP error:", error);
+    logger.error("Verify forgot password OTP error:", error);
     return res.status(500).json({ 
       success: false, 
       message: "Server error during OTP verification" 
@@ -1930,16 +2058,10 @@ exports.resetPasswordWithToken = async (req, res) => {
     const { resetToken } = req.params;
     const { email, password, confirmPassword } = req.body;
 
-    console.log("🔍 Reset password request received:", {
-      resetToken: resetToken ? resetToken.substring(0, 8) + "..." : 'missing',
-      email,
-      passwordLength: password ? password.length : 0,
-      confirmPasswordLength: confirmPassword ? confirmPassword.length : 0
-    });
+    logger.debug("Reset password request received", { email });
 
     // Basic validation
     if (!resetToken) {
-      console.log("❌ Missing reset token");
       return res.status(400).json({
         success: false,
         message: "Reset token is required",
@@ -1947,7 +2069,6 @@ exports.resetPasswordWithToken = async (req, res) => {
     }
 
     if (!email) {
-      console.log("❌ Missing email");
       return res.status(400).json({
         success: false,
         message: "Email is required",
@@ -1955,7 +2076,6 @@ exports.resetPasswordWithToken = async (req, res) => {
     }
 
     if (!password) {
-      console.log("❌ Missing password");
       return res.status(400).json({
         success: false,
         message: "Password is required",
@@ -1963,7 +2083,6 @@ exports.resetPasswordWithToken = async (req, res) => {
     }
 
     if (password !== confirmPassword) {
-      console.log("❌ Password mismatch");
       return res.status(400).json({
         success: false,
         message: "Passwords do not match",
@@ -1976,17 +2095,14 @@ exports.resetPasswordWithToken = async (req, res) => {
     // Check Redis connection
     try {
       await redis.ping();
-      console.log("✅ Redis connection OK");
     } catch (redisError) {
-      console.error("❌ Redis connection failed:", redisError);
+      logger.error("Redis connection failed during password reset:", redisError);
       return res.status(500).json({
         success: false,
         message: "Server configuration error",
       });
     }
 
-    console.log("🔍 Fetching data from Redis for token:", resetToken.substring(0, 8) + "...");
-    
     // Get data from Redis
     const resetKey = `reset:${resetToken}`;
     const resetEmailKey = `reset_email:${resetToken}`;
@@ -1994,49 +2110,28 @@ exports.resetPasswordWithToken = async (req, res) => {
     const stored = await redis.get(resetKey);
     const storedEmail = await redis.get(resetEmailKey);
 
-    console.log("📦 Redis data types:", {
-      storedType: typeof stored,
-      storedEmailType: typeof storedEmail,
-      storedIsNull: stored === null,
-      storedEmailIsNull: storedEmail === null
-    });
-
-    // FIX: Handle the case where stored might already be parsed
+    // Parse stored reset data
     let data;
     
     if (!stored) {
-      console.log("❌ No data found for reset token:", resetToken.substring(0, 8) + "...");
       return res.status(400).json({
         success: false,
         message: "Reset token is invalid or has expired.",
       });
     }
 
-    // FIX: Check if stored is already an object (some Redis clients auto-parse)
     if (typeof stored === 'object' && stored !== null) {
-      console.log("✅ Stored data is already an object");
       data = stored;
-    } 
-    // FIX: If stored is a string, try to parse it
-    else if (typeof stored === 'string') {
-      console.log("📦 Stored data is a string, attempting to parse");
+    } else if (typeof stored === 'string') {
       try {
-        // Check if it looks like JSON
         if (stored.trim().startsWith('{') || stored.trim().startsWith('[')) {
           data = JSON.parse(stored);
-          console.log("✅ Successfully parsed JSON string");
         } else {
-          // If it's not JSON, it might be just the token string
-          console.log("⚠️ Stored data is not JSON format, treating as plain string");
           data = { userId: stored };
         }
       } catch (parseError) {
-        console.error("❌ Failed to parse stored data:", parseError.message);
-        console.log("📦 Raw stored data:", stored);
-        
-        // Try to recover if it's just the userId as plain text
+        logger.error("Failed to parse reset data:", parseError.message);
         if (stored.match(/^[0-9a-fA-F]{24}$/)) {
-          console.log("✅ Stored data appears to be a MongoDB ID");
           data = { userId: stored };
         } else {
           return res.status(500).json({
@@ -2046,18 +2141,15 @@ exports.resetPasswordWithToken = async (req, res) => {
         }
       }
     } else {
-      console.error("❌ Unexpected stored data type:", typeof stored);
+      logger.error("Unexpected stored data type:", typeof stored);
       return res.status(500).json({
         success: false,
         message: "Invalid stored data format",
       });
     }
 
-    console.log("✅ Parsed reset data:", data);
-
     // Validate parsed data
     if (!data || typeof data !== 'object') {
-      console.error("❌ Parsed data is not an object:", data);
       return res.status(500).json({
         success: false,
         message: "Invalid reset data structure",
@@ -2067,7 +2159,7 @@ exports.resetPasswordWithToken = async (req, res) => {
     // Extract userId with fallbacks
     const userId = data.userId || data.id || data._id;
     if (!userId) {
-      console.error("❌ Missing userId in reset data:", data);
+      logger.error("Missing userId in reset data");
       return res.status(500).json({
         success: false,
         message: "Invalid reset data - missing user ID",
@@ -2077,7 +2169,6 @@ exports.resetPasswordWithToken = async (req, res) => {
     // Determine the email to validate against
     const emailToValidate = data.email || storedEmail;
     if (!emailToValidate) {
-      console.error("❌ No email found in reset data or mapping");
       return res.status(500).json({
         success: false,
         message: "Invalid reset data - email not found",
@@ -2086,10 +2177,7 @@ exports.resetPasswordWithToken = async (req, res) => {
 
     // Validate email
     if (emailToValidate.toLowerCase() !== email.toLowerCase()) {
-      console.error("❌ Email mismatch:", {
-        stored: emailToValidate,
-        provided: email
-      });
+      logger.warn("Email mismatch during password reset", { userId });
       return res.status(400).json({
         success: false,
         message: "Email does not match the reset token.",
@@ -2097,23 +2185,18 @@ exports.resetPasswordWithToken = async (req, res) => {
     }
 
     // Find the user
-    console.log("🔍 Finding user with ID:", userId);
     const user = await User.findById(userId).select(
       "+password +passwordHistory"
     );
 
     if (!user) {
-      console.error("❌ User not found:", userId);
       return res.status(404).json({
         success: false,
         message: "User not found.",
       });
     }
 
-    console.log("✅ User found:", user.email);
-
     // Validate password strength
-    console.log("🔍 Validating password strength");
     const passwordValidation = await passwordSecurity.validatePassword(
       password,
       user._id.toString(),
@@ -2121,7 +2204,6 @@ exports.resetPasswordWithToken = async (req, res) => {
     );
 
     if (!passwordValidation.isValid) {
-      console.log("❌ Password validation failed:", passwordValidation.errors);
       return res.status(400).json({
         success: false,
         message: passwordValidation.errors[0] || "Password does not meet security requirements",
@@ -2131,10 +2213,8 @@ exports.resetPasswordWithToken = async (req, res) => {
     }
 
     // Check password history
-    console.log("🔍 Checking password history");
     const historyCheck = await user.isPasswordInHistory(password);
     if (historyCheck.inHistory) {
-      console.log("❌ Password already used recently");
       return res.status(400).json({
         success: false,
         message: historyCheck.message,
@@ -2142,7 +2222,6 @@ exports.resetPasswordWithToken = async (req, res) => {
     }
 
     // Add current password to history
-    console.log("📝 Adding current password to history");
     await user.addToPasswordHistory(user.password, {
       changedBy: "reset",
       ipAddress: req.ip,
@@ -2150,23 +2229,18 @@ exports.resetPasswordWithToken = async (req, res) => {
     });
 
     // Hash new password
-    console.log("🔐 Hashing new password");
     const salt = await bcrypt.genSalt(12);
     user.password = await bcrypt.hash(password, salt);
     user.lastPasswordChange = new Date();
-
-    console.log("💾 Saving user with new password");
     await user.save();
 
     // Delete the reset token and email mapping from Redis
-    console.log("🗑️ Deleting reset token from Redis");
     await Promise.all([
       redis.del(resetKey),
       redis.del(resetEmailKey)
     ]);
 
     // Revoke all existing sessions
-    console.log("🔒 Revoking all user sessions");
     await revokeAllUserTokens(user._id.toString());
 
     // Log the activity
@@ -2178,24 +2252,24 @@ exports.resetPasswordWithToken = async (req, res) => {
         { method: "otp_reset" }
       );
     } catch (logErr) {
-      console.warn("Could not log password reset activity:", logErr.message);
+      logger.warn("Could not log password reset activity:", logErr.message);
     }
 
     // Send success email
     try {
       await EmailService.sendPasswordResetSuccessEmail(user.email, user.name);
     } catch (emailErr) {
-      console.warn("Could not send reset success email:", emailErr.message);
+      logger.warn("Could not send reset success email:", emailErr.message);
     }
 
-    console.log(`✅ Password reset successfully for: ${user.email}`);
+    logger.info("Password reset successfully", { userId: user._id });
 
     return res.status(200).json({
       success: true,
       message: "Password reset successfully. You can now login with your new password.",
     });
   } catch (error) {
-    console.error("❌ Reset password error:", error);
+    logger.error("Reset password error:", error);
     return res.status(500).json({
       success: false,
       message: "Server error during password reset",
@@ -2408,7 +2482,8 @@ exports.forgotPassword = async (req, res) => {
     await user.save({ validateBeforeSave: false });
 
     const resetUrl = `${process.env.CLIENT_URL}/reset-password/${resetToken}`;
-    logger.info(`Password reset URL (legacy): ${resetUrl}`);
+    // SECURITY: never log the full reset URL — it contains the secret token
+    logger.info('Password reset initiated (legacy)', { userId: user._id });
 
     return res.status(200).json({
       success: true,
@@ -2430,12 +2505,44 @@ exports.resetPassword = async (req, res) => {
     const user = await User.findOne({
       passwordResetToken: hashedToken,
       passwordResetExpires: { $gt: Date.now() },
-    }).select("+password");
+    }).select("+password +passwordHistory");
 
     if (!user) {
       return res.status(400).json({
         success: false,
         message: "Reset token is invalid or has expired.",
+      });
+    }
+
+    // SECURITY: validate password strength even on legacy route
+    const passwordValidation = await passwordSecurity.validatePassword(
+      req.body.password,
+      user._id.toString(),
+      true,
+    );
+    if (!passwordValidation.isValid) {
+      return res.status(400).json({
+        success: false,
+        message: "Password does not meet security requirements",
+        errors: passwordValidation.errors,
+      });
+    }
+
+    // SECURITY: check password history
+    const historyCheck = await user.isPasswordInHistory(req.body.password);
+    if (historyCheck && historyCheck.inHistory) {
+      return res.status(400).json({
+        success: false,
+        message: historyCheck.message || "You have used this password recently.",
+      });
+    }
+
+    // Add current password to history
+    if (user.password && user.addToPasswordHistory) {
+      await user.addToPasswordHistory(user.password, {
+        changedBy: "legacy_reset",
+        ipAddress: req.ip,
+        userAgent: req.get("user-agent"),
       });
     }
 
@@ -2445,6 +2552,9 @@ exports.resetPassword = async (req, res) => {
     user.passwordResetExpires = undefined;
     user.lastPasswordChange = new Date();
     await user.save();
+
+    // Revoke all sessions on password reset
+    await revokeAllUserTokens(user._id.toString());
 
     return res.status(200).json({
       success: true,
@@ -2522,7 +2632,13 @@ exports.register = async (req, res) => {
 };
 
 // ==================== LEGACY HELPERS ====================
+// DEPRECATED: Legacy token generation uses a single shared secret.
+// New code should use generateAccessToken/generateRefreshToken with
+// dedicated JWT_ACCESS_SECRET / JWT_REFRESH_SECRET.
 const generateToken = (id) => {
+  if (!process.env.JWT_SECRET) {
+    throw new Error('JWT_SECRET is required for legacy token generation');
+  }
   return jwt.sign({ id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRE || "7d",
   });

@@ -14,11 +14,13 @@ const connectDB = async () => {
       w: 'majority',
       
       // Connection pool settings
-      maxPoolSize: 10,
-      minPoolSize: 2,
+      maxPoolSize: 20,              // Increased from 10 for better concurrency
+      minPoolSize: 5,               // Increased from 2 to keep warm connections
       socketTimeoutMS: 45000,
       connectTimeoutMS: 30000,
       serverSelectionTimeoutMS: 30000,
+      heartbeatFrequencyMS: 10000,  // Check server health every 10s
+      maxIdleTimeMS: 60000,         // Close idle connections after 60s
       
       // Auto reconnect
       autoIndex: true,
@@ -35,11 +37,32 @@ const connectDB = async () => {
     
     // Handle connection events
     mongoose.connection.on('error', (err) => {
-      console.error('❌ MongoDB connection error:', err);
+      console.error('❌ MongoDB connection error:', err.message);
     });
 
     mongoose.connection.on('disconnected', () => {
-      console.log('⚠️ MongoDB disconnected');
+      console.log('⚠️ MongoDB disconnected — attempting auto-reconnect in 5s...');
+      setTimeout(async () => {
+        try {
+          if (mongoose.connection.readyState === 0) {
+            await mongoose.connect(process.env.MONGODB_URI, options);
+            console.log('✅ MongoDB auto-reconnected successfully');
+          }
+        } catch (reconnectErr) {
+          console.error('❌ MongoDB auto-reconnect failed:', reconnectErr.message);
+          // Retry again in 10 seconds
+          setTimeout(async () => {
+            try {
+              if (mongoose.connection.readyState === 0) {
+                await mongoose.connect(process.env.MONGODB_URI, options);
+                console.log('✅ MongoDB reconnected on second attempt');
+              }
+            } catch (err2) {
+              console.error('❌ MongoDB reconnect retry failed:', err2.message);
+            }
+          }, 10000);
+        }
+      }, 5000);
     });
 
     mongoose.connection.on('reconnected', () => {

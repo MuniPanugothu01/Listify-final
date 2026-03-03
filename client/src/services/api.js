@@ -1,9 +1,10 @@
 import axios from "axios";
 import { resetPersistedState } from "../redux/store";
 
-// Use absolute URL to avoid issues
-const API_URL = "http://localhost:5000/api/auth";
-const BASE_API_URL = "http://localhost:5000/api";
+// Use absolute URL in production, empty string (relative) in dev for Vite proxy
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "";
+const API_URL = `${BACKEND_URL}/api/auth`;
+const BASE_API_URL = `${BACKEND_URL}/api`;
 
 // Create axios instance
 const api = axios.create({
@@ -66,6 +67,14 @@ export const handle401 = async (error, axiosInstance) => {
     return Promise.reject(error);
   }
 
+  // If the server returned DB_UNAVAILABLE (503 mapped to 401 shouldn't
+  // happen after the server fix, but guard defensively), don't treat
+  // it as an auth failure — just reject so the UI can show a retry.
+  const errCode = error.response?.data?.code;
+  if (errCode === 'DB_UNAVAILABLE') {
+    return Promise.reject(error);
+  }
+
   // If already refreshing, queue this request
   if (isRefreshing) {
     return new Promise((resolve, reject) => {
@@ -88,7 +97,8 @@ export const handle401 = async (error, axiosInstance) => {
     processQueue(refreshError);
 
     // Only force-logout when the server explicitly says the refresh token
-    // is gone (expired / revoked).  Network blips should NOT log the user out.
+    // is gone (expired / revoked).  Network blips, 500s, 503s should
+    // NOT log the user out.
     const refreshStatus = refreshError.response?.status;
     const refreshCode = refreshError.response?.data?.code;
 
@@ -117,14 +127,56 @@ export const handle401 = async (error, axiosInstance) => {
 
 /**
  * Internal helper — makes the actual refresh POST request.
- * Shared between handle401 and doRefresh so there's only one code-path.
+ * Retries on transient errors (503, 500, network) with back-off.
  */
+<<<<<<< HEAD
 const _doRefreshRequest = () =>
   axios.post(
     `${API_URL}/refresh`,
     {},
     { withCredentials: true, timeout: 10000 },
   );
+=======
+const _doRefreshRequest = async () => {
+  const MAX_RETRIES = 2;
+
+  for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      return await axios.post(
+        `${API_URL}/refresh`,
+        {},
+        { withCredentials: true, timeout: 10000 }
+      );
+    } catch (error) {
+      const status = error.response?.status;
+      const isLast = attempt === MAX_RETRIES;
+
+      // 401 = genuinely invalid refresh token — don't retry
+      if (status === 401) throw error;
+
+      // Transient server errors — retry
+      if (status === 503 || status === 500) {
+        if (isLast) throw error;
+        const delay = 2000 * (attempt + 1);
+        console.warn(`🔄 Refresh got ${status}, retrying in ${delay / 1000}s...`);
+        await new Promise(r => setTimeout(r, delay));
+        continue;
+      }
+
+      // Network error (server completely down) — retry
+      if (!error.response) {
+        if (isLast) throw error;
+        const delay = 3000 * (attempt + 1);
+        console.warn(`🔄 Refresh network error, retrying in ${delay / 1000}s...`);
+        await new Promise(r => setTimeout(r, delay));
+        continue;
+      }
+
+      throw error;
+    }
+  }
+};
+>>>>>>> a61f37d73347f6712df2cc0da6eae19b122ddf19
 
 /**
  * Proactive refresh — call from useTokenRefresh or anywhere else.
@@ -170,6 +222,19 @@ const createResponseInterceptor = (axiosInstance, label = "API") => {
         url: originalRequest?.url,
       });
 
+      // 503 (DB_UNAVAILABLE / server temporarily down) — retry once
+      // after a short delay instead of surfacing the error immediately.
+      // This keeps the user logged in during brief MongoDB reconnects.
+      if (
+        error.response?.status === 503 &&
+        !originalRequest._503retry
+      ) {
+        originalRequest._503retry = true;
+        console.warn(`${label}: 503 — retrying in 3s...`);
+        await new Promise(r => setTimeout(r, 3000));
+        return axiosInstance(originalRequest);
+      }
+
       // 401 → delegate to the shared refresh handler
       if (error.response?.status === 401 && !originalRequest._retry) {
         return handle401(error, axiosInstance);
@@ -182,7 +247,11 @@ const createResponseInterceptor = (axiosInstance, label = "API") => {
         status: error.response?.status || 500,
       };
 
-      if (error.response?.data) {
+      // Network error — no response received at all
+      if (!error.response) {
+        errorResponse.message = "Network error. Please check if the server is running and try again.";
+        errorResponse.isNetworkError = true;
+      } else if (error.response?.data) {
         const d = error.response.data;
         if (typeof d === "string") errorResponse.message = d;
         else if (d.message) errorResponse.message = d.message;
@@ -463,6 +532,158 @@ export const listingsAPI = {
   },
 };
 
+// ==================== ELECTRONICS API (separate base URL) ====================
+const electronicsApi = axios.create({
+  baseURL: `${BASE_API_URL}/electronics`,
+  headers: {
+    "Content-Type": "application/json",
+  },
+  timeout: 30000,
+  withCredentials: true,
+});
+
+// Apply shared interceptors
+electronicsApi.interceptors.request.use(
+  (config) => {
+    console.log(`🚀 Electronics Request: ${config.method.toUpperCase()} ${config.url}`);
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+createResponseInterceptor(electronicsApi, "Electronics API");
+
+export const electronicsAPI = {
+  // Public: Get all electronics with optional filters
+  getAll: (params = {}) => {
+    return electronicsApi.get("/", { params });
+  },
+
+  // Public: Get single listing by ID
+  getById: (id) => {
+    return electronicsApi.get(`/${id}`);
+  },
+
+  // Private: Create new listing (requires auth)
+  create: (listingData) => {
+    return electronicsApi.post("/", listingData, { withCredentials: true });
+  },
+
+  // Private: Update listing
+  update: (id, listingData) => {
+    return electronicsApi.put(`/${id}`, listingData, { withCredentials: true });
+  },
+
+  // Private: Delete listing
+  delete: (id) => {
+    return electronicsApi.delete(`/${id}`, { withCredentials: true });
+  },
+
+  // Private: Get my listings
+  getMyListings: () => {
+    return electronicsApi.get("/my-listings", { withCredentials: true });
+  },
+
+  // Private: Upload images
+  uploadImages: (formData, onProgress) => {
+    return electronicsApi.post("/upload-images", formData, {
+      withCredentials: true,
+      headers: { "Content-Type": "multipart/form-data" },
+      onUploadProgress: (progressEvent) => {
+        if (onProgress && progressEvent.total) {
+          const pct = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+          onProgress(pct);
+        }
+      },
+    });
+  },
+
+  // Private: Toggle save
+  toggleSave: (id) => {
+    return electronicsApi.post(`/${id}/toggle-save`, {}, { withCredentials: true });
+  },
+
+  // Private: Get saved electronics
+  getSaved: () => {
+    return electronicsApi.get("/saved", { withCredentials: true });
+  },
+};
+
+// ==================== VEHICLES API (separate base URL) ====================
+const vehiclesApi = axios.create({
+  baseURL: `${BASE_API_URL}/vehicles`,
+  headers: {
+    "Content-Type": "application/json",
+  },
+  timeout: 30000,
+  withCredentials: true,
+});
+
+// Apply shared interceptors
+vehiclesApi.interceptors.request.use(
+  (config) => {
+    console.log(`🚀 Vehicles Request: ${config.method.toUpperCase()} ${config.url}`);
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+createResponseInterceptor(vehiclesApi, "Vehicles API");
+
+export const vehiclesAPI = {
+  // Public: Get all vehicles with optional filters
+  getAll: (params = {}) => {
+    return vehiclesApi.get("/", { params });
+  },
+
+  // Public: Get single listing by ID
+  getById: (id) => {
+    return vehiclesApi.get(`/${id}`);
+  },
+
+  // Private: Create new listing (requires auth)
+  create: (listingData) => {
+    return vehiclesApi.post("/", listingData, { withCredentials: true });
+  },
+
+  // Private: Update listing
+  update: (id, listingData) => {
+    return vehiclesApi.put(`/${id}`, listingData, { withCredentials: true });
+  },
+
+  // Private: Delete listing
+  delete: (id) => {
+    return vehiclesApi.delete(`/${id}`, { withCredentials: true });
+  },
+
+  // Private: Get my listings
+  getMyListings: () => {
+    return vehiclesApi.get("/my-listings", { withCredentials: true });
+  },
+
+  // Private: Upload images
+  uploadImages: (formData, onProgress) => {
+    return vehiclesApi.post("/upload-images", formData, {
+      withCredentials: true,
+      headers: { "Content-Type": "multipart/form-data" },
+      onUploadProgress: (progressEvent) => {
+        if (onProgress && progressEvent.total) {
+          const pct = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+          onProgress(pct);
+        }
+      },
+    });
+  },
+
+  // Private: Toggle save
+  toggleSave: (id) => {
+    return vehiclesApi.post(`/${id}/toggle-save`, {}, { withCredentials: true });
+  },
+
+  // Private: Get saved vehicles
+  getSaved: () => {
+    return vehiclesApi.get("/saved", { withCredentials: true });
+  },
+};
+
 // ==================== MESSAGES API ====================
 const messagesApi = axios.create({
   baseURL: `${BASE_API_URL}/messages`,
@@ -540,10 +761,92 @@ export const adminAPI = {
   },
 };
 
+// ==================== SEARCH API (Elasticsearch) ====================
+const searchApi = axios.create({
+  baseURL: `${BASE_API_URL}/search`,
+  headers: {
+    "Content-Type": "application/json",
+  },
+  timeout: 30000,
+  withCredentials: true,
+});
+
+searchApi.interceptors.request.use(
+  (config) => {
+    console.log(`🔍 Search Request: ${config.method.toUpperCase()} ${config.url}`);
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+createResponseInterceptor(searchApi, "Search API");
+
+export const searchAPI = {
+  // Full-text search across listings
+  search: (params) => {
+    return searchApi.get("/", { params });
+  },
+
+  // Autocomplete suggestions
+  suggest: (query, entity = 'electronics', limit = 5) => {
+    return searchApi.get("/suggest", { params: { q: query, entity, limit } });
+  },
+
+  // Reindex data into Elasticsearch
+  reindex: (entity = null) => {
+    return searchApi.post("/reindex", entity ? { entity } : {}, { withCredentials: true });
+  },
+
+  // Check Elasticsearch status
+  status: () => {
+    return searchApi.get("/status");
+  },
+};
+
+// ==================== CACHE API ====================
+const cacheApi = axios.create({
+  baseURL: `${BASE_API_URL}/cache`,
+  headers: {
+    "Content-Type": "application/json",
+  },
+  timeout: 30000,
+  withCredentials: true,
+});
+
+cacheApi.interceptors.request.use(
+  (config) => {
+    console.log(`📦 Cache Request: ${config.method.toUpperCase()} ${config.url}`);
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+export const cacheAPI = {
+  // Get cache statistics
+  getStats: () => {
+    return cacheApi.get("/stats");
+  },
+
+  // Get cached keys for an entity
+  getKeys: (entity) => {
+    return cacheApi.get(`/keys/${entity}`);
+  },
+
+  // Flush cache for an entity
+  flush: (entity) => {
+    return cacheApi.delete(`/${entity}`);
+  },
+};
+
 // Export all APIs
 export default {
   auth: authAPI,
   listings: listingsAPI,
   messages: messagesAPI,
   admin: adminAPI,
+<<<<<<< HEAD
 };
+=======
+  search: searchAPI,
+  cache: cacheAPI,
+};
+>>>>>>> a61f37d73347f6712df2cc0da6eae19b122ddf19

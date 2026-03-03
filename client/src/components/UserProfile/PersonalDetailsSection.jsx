@@ -116,8 +116,9 @@ export default function PersonalDetailsSection() {
     if (!profile) dispatch(fetchProfile());
   }, [dispatch, profile]);
 
-  // Sync profile image to auth when profile updates
+  // Sync profile data to auth when profile updates
   useEffect(() => {
+<<<<<<< HEAD
     if (
       profile?.profileImage ||
       profile?.profileImageUrl ||
@@ -136,6 +137,17 @@ export default function PersonalDetailsSection() {
           avatar: profile.avatar,
         }),
       );
+=======
+    if (profile) {
+      dispatch(updateUser({
+        name: profile.name,
+        email: profile.email,
+        profileImageUrl: profile.profileImage || profile.profileImageUrl || profile.googleProfileImage || profile.avatar,
+        profileImage: profile.profileImage,
+        googleProfileImage: profile.googleProfileImage,
+        avatar: profile.avatar,
+      }));
+>>>>>>> a61f37d73347f6712df2cc0da6eae19b122ddf19
     }
   }, [profile, dispatch]);
 

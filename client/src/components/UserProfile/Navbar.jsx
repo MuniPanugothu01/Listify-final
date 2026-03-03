@@ -10,18 +10,19 @@ import {
   FaBuilding,
   FaPlus,
   FaRegHeart,
-  FaBell,
+  FaRegBell,
   FaUserCircle,
   FaChevronRight,
   FaTools,
   FaSearch,
   FaMapMarkerAlt,
 } from "react-icons/fa";
+
 import NavSearchBar from "../../pages/Home/NavSearchBar.jsx";
 import { CgProfile } from "react-icons/cg";
 import { ScrollProgress } from "../../components/ui/scroll-progress";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks/useRedux";
-import { updateUser } from "../../redux/slices/authSlice";
+import { updateUser, checkAuth, logoutUser } from "../../redux/slices/authSlice";
 import { fetchProfile } from "../../redux/slices/profileSlice";
 import toast from "react-hot-toast";
 
@@ -60,7 +61,6 @@ const POPULAR_CITIES = [
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   const [showMoreDropdown, setShowMoreDropdown] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState("");
   const [showLocationSuggestions, setShowLocationSuggestions] = useState(false);
@@ -72,8 +72,9 @@ const Navbar = () => {
   const [notificationsLoading, setNotificationsLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [showMobileSearch, setShowMobileSearch] = useState(false);
+  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
+  const [sellLoading, setSellLoading] = useState(false);
 
-  const profileDropdownRef = useRef(null);
   const notificationDropdownRef = useRef(null);
   const locationInputRef = useRef(null);
   const navigate = useNavigate();
@@ -84,14 +85,10 @@ const Navbar = () => {
   const profileState = useAppSelector((state) => state.profile);
 
   const { user } = authState;
-  const { profile, loading: profileLoading } = profileState;
+  const { profile, loading: profileLoading, serverCachedImage } = profileState;
 
   // ✅ Compute isAuthenticated from user object
   const isAuthenticated = !!user;
-
-  const { unreadCount: messagesUnread } = useAppSelector(
-    (state) => state.messages || { unreadCount: 0 },
-  );
 
   // Fetch profile data if not available
   useEffect(() => {
@@ -105,6 +102,7 @@ const Navbar = () => {
     if (profile) {
       // Reset image error when profile updates (new image may have been uploaded)
       setImageError(false);
+<<<<<<< HEAD
       dispatch(
         updateUser({
           profileImage: profile.profileImage,
@@ -115,6 +113,18 @@ const Navbar = () => {
           isGoogle: profile.isGoogle,
         }),
       );
+=======
+      dispatch(updateUser({
+        name: profile.name,
+        email: profile.email,
+        profileImage: profile.profileImage,
+        profileImageUrl: profile.profileImage || profile.profileImageUrl,
+        avatar: profile.avatar,
+        googleProfileImage: profile.googleProfileImage,
+        provider: profile.provider,
+        isGoogle: profile.isGoogle,
+      }));
+>>>>>>> a61f37d73347f6712df2cc0da6eae19b122ddf19
     }
   }, [profile, dispatch]);
 
@@ -184,26 +194,6 @@ const Navbar = () => {
     { name: "Jobs", path: "/jobs" },
   ];
 
-  const profileMenuItems = [
-    { name: "Dashboard", path: "/dashboard", icon: CgProfile, count: null },
-    { name: "My Profile", path: "/profile", icon: FaUserFriends, count: null },
-    { name: "Saved Items", path: "/saved", icon: FaRegHeart, count: null },
-    {
-      name: "My Listings",
-      path: "/my-listings",
-      icon: FaBuilding,
-      count: null,
-    },
-    {
-      name: "Messages",
-      path: "/messages",
-      icon: FaBriefcase,
-      count: messagesUnread,
-    },
-    { name: "Settings", path: "/settings", icon: FaTools, count: null },
-    { name: "Sign Out", path: "/logout", icon: FaChevronRight, count: null },
-  ];
-
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
     if (showMobileSearch) setShowMobileSearch(false);
@@ -211,7 +201,8 @@ const Navbar = () => {
 
   const handleProfileClick = () => {
     if (isAuthenticated) {
-      setShowProfileDropdown(!showProfileDropdown);
+      navigate("/dashboard");
+      scrollToTop();
     } else {
       navigate("/signin");
     }
@@ -219,10 +210,6 @@ const Navbar = () => {
 
   const handleNotificationClick = () => {
     setShowNotificationDropdown(!showNotificationDropdown);
-  };
-
-  const closeProfileDropdown = () => {
-    setShowProfileDropdown(false);
   };
 
   const closeNotificationDropdown = () => {
@@ -255,20 +242,16 @@ const Navbar = () => {
   const handleProfileMenuItemClick = async (path) => {
     if (path === "/logout") {
       try {
-        closeProfileDropdown();
-        const { logout } = await import("../../redux/actions/authActions");
-        await dispatch(logout());
+        await dispatch(logoutUser()).unwrap();
         toast.success("Logged out successfully");
         navigate("/");
-      } catch (error) {
-        console.error("Logout error:", error);
+      } catch {
         toast.error("Logout failed. Please try again.");
       }
     } else {
       navigate(path);
     }
     scrollToTop();
-    closeProfileDropdown();
   };
 
   const markNotificationAsRead = (id) => {
@@ -354,9 +337,14 @@ const Navbar = () => {
       return avatar;
     }
 
+    // 5. Server-side Redis cache fallback (survives logout — instant on re-login)
+    if (serverCachedImage?.url) {
+      return serverCachedImage.url;
+    }
+
     // No image found
     return null;
-  }, [profile, user, imageError, isGoogleUser]);
+  }, [profile, user, imageError, isGoogleUser, serverCachedImage]);
 
   const handleImageError = useCallback(() => {
     setImageError(true);
@@ -383,16 +371,48 @@ const Navbar = () => {
     }
   };
 
+  const handleSellClick = async (e) => {
+    e.preventDefault();
+
+    // Quick client-side check first
+    if (!isAuthenticated) {
+      setShowLoginPrompt(true);
+      return;
+    }
+
+    // Verify session against server (Upstash Redis + MongoDB) via Redux thunk
+    setSellLoading(true);
+    try {
+      const result = await dispatch(checkAuth()).unwrap();
+
+      if (result.success && result.isAuthenticated) {
+        navigate('/post-add');
+      } else {
+        // Session invalid on server (expired in Redis/MongoDB)
+        setShowLoginPrompt(true);
+      }
+    } catch (error) {
+      // checkAuth thunk rejects on network/server errors (503, timeout, etc.)
+      // Since client-side auth already passed, allow through on transient errors
+      console.warn('checkAuth failed, allowing through:', error);
+      navigate('/post-add');
+    } finally {
+      setSellLoading(false);
+    }
+  };
+
+  const handleLoginRedirect = () => {
+    setShowLoginPrompt(false);
+    navigate('/signin', { state: { from: '/post-add' } });
+  };
+
+  const closeLoginPrompt = () => {
+    setShowLoginPrompt(false);
+  };
+
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (
-        profileDropdownRef.current &&
-        !profileDropdownRef.current.contains(event.target) &&
-        !event.target.closest(".profile-button")
-      ) {
-        closeProfileDropdown();
-      }
       if (
         notificationDropdownRef.current &&
         !notificationDropdownRef.current.contains(event.target) &&
@@ -409,7 +429,6 @@ const Navbar = () => {
     };
     const handleEscapeKey = (event) => {
       if (event.key === "Escape") {
-        closeProfileDropdown();
         closeNotificationDropdown();
         setShowMobileSearch(false);
         setShowLocationSuggestions(false);
@@ -442,409 +461,6 @@ const Navbar = () => {
     };
   }, []);
 
-  // Updated CSS with separate location and search inputs
-  const navbarStyles = `
-    @keyframes slideDown {
-      from { transform: translateY(-10px); opacity: 0; }
-      to { transform: translateY(0); opacity: 1; }
-    }
-    .profile-dropdown { animation: slideDown 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
-    .nav-link { position: relative; transition: color 0.3s ease; font-weight: 600; }
-    .nav-link:hover { color: #1FA987; }
-    .nav-link::after { content: ""; position: absolute; width: 0; height: 2px; bottom: -4px; left: 0; background-color: #1FA987; transition: width 0.3s ease; }
-    .nav-link:hover::after { width: 100%; }
-    .profile-dropdown-link { transition: all 0.2s ease; }
-    .profile-dropdown-link:hover { background-color: #f8f9fa; transform: translateX(4px); }
-    .navbar-transition { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
-    .navbar-scrolled { background-color: rgba(0, 0, 0, 0.95) !important; backdrop-filter: blur(20px) !important; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3); }
-    .navbar-scrolled .nav-link { color: #ffffff; }
-    .navbar-scrolled .nav-link:hover { color: #2d7a82; }
-    .navbar-scrolled .logo-text { color: #ffffff; }
-    
-    /* Search container styles - Only visible on lg screens and above */
-    .search-container {
-      flex: 1;
-      max-width: 700px;
-      margin: 0 20px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    
-    /* Separate location input styles */
-    .location-input-container {
-      flex: 0 0 140px;
-      position: relative;
-    }
-    
-    .location-input-wrapper {
-      display: flex;
-      align-items: center;
-      background-color: white;
-      border: 1.5px solid #e5e7eb;
-      border-radius: 9999px;
-      padding: 8px 12px;
-      transition: all 0.3s ease;
-    }
-    
-    .location-input-wrapper:focus-within {
-      border-color: #1FA987;
-      box-shadow: 0 0 0 3px rgba(31, 169, 135, 0.15);
-    }
-    
-    .location-icon {
-      color: #6b7280;
-      margin-right: 8px;
-      font-size: 14px;
-      flex-shrink: 0;
-    }
-    
-    .location-input {
-      border: none;
-      outline: none;
-      font-size: 14px;
-      font-weight: 500;
-      color: #1f2937;
-      width: 100%;
-      background: transparent;
-    }
-    
-    .location-input::placeholder {
-      color: #6b7280;
-      font-weight: 400;
-    }
-    
-    /* Separate search input styles */
-    .search-input-container {
-      flex: 1;
-      position: relative;
-    }
-    
-    .search-input-wrapper {
-      display: flex;
-      align-items: center;
-      background-color: white;
-      border: 1.5px solid #e5e7eb;
-      border-radius: 9999px;
-      padding: 8px 12px;
-      transition: all 0.3s ease;
-      cursor: pointer;
-    }
-    
-    .search-input-wrapper:focus-within {
-      border-color: #1FA987;
-      box-shadow: 0 0 0 3px rgba(31, 169, 135, 0.15);
-    }
-    
-    .search-icon {
-      color: #6b7280;
-      margin-right: 8px;
-      font-size: 14px;
-      flex-shrink: 0;
-    }
-    
-    .search-input {
-      border: none;
-      outline: none;
-      font-size: 14px;
-      font-weight: 500;
-      color: #1f2937;
-      width: 100%;
-      background: transparent;
-    }
-    
-    .search-input::placeholder {
-      color: #6b7280;
-      font-weight: 400;
-    }
-    
-    /* Scrolled state styles */
-    .navbar-scrolled .location-input-wrapper,
-    .navbar-scrolled .search-input-wrapper {
-      background-color: rgba(255, 255, 255, 0.1);
-      border-color: rgba(255, 255, 255, 0.2);
-    }
-    
-    .navbar-scrolled .location-icon,
-    .navbar-scrolled .search-icon {
-      color: rgba(255, 255, 255, 0.7);
-    }
-    
-    .navbar-scrolled .location-input,
-    .navbar-scrolled .search-input {
-      color: white;
-    }
-    
-    .navbar-scrolled .location-input::placeholder,
-    .navbar-scrolled .search-input::placeholder {
-      color: rgba(255, 255, 255, 0.7);
-    }
-    
-    /* Location suggestions dropdown */
-    .location-suggestions {
-      position: absolute;
-      top: calc(100% + 8px);
-      left: 0;
-      right: 0;
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-      z-index: 60;
-      max-height: 300px;
-      overflow-y: auto;
-      animation: slideDown 0.2s ease;
-    }
-    
-    .navbar-scrolled .location-suggestions {
-      background: #1f2937;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    
-    .location-suggestion-item {
-      padding: 12px 16px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 14px;
-      color: #1f2937;
-      transition: all 0.2s ease;
-    }
-    
-    .navbar-scrolled .location-suggestion-item {
-      color: white;
-    }
-    
-    .location-suggestion-item:hover {
-      background-color: #f3f4f6;
-    }
-    
-    .navbar-scrolled .location-suggestion-item:hover {
-      background-color: rgba(255, 255, 255, 0.1);
-    }
-    
-    .location-suggestion-item .suggestion-icon {
-      color: #6b7280;
-      font-size: 12px;
-    }
-    
-    .navbar-scrolled .location-suggestion-item .suggestion-icon {
-      color: rgba(255, 255, 255, 0.5);
-    }
-    
-    .navbar-scrolled .profile-button { border-color: rgba(255, 255, 255, 0.3); color: #ffffff; }
-    .navbar-scrolled .profile-button:hover { background-color: rgba(255, 255, 255, 0.1); }
-    .notification-badge { position: absolute; top: -5px; right: -5px; background-color: #EF4444; color: white; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold; }
-    .notification-item-unread { background-color: #F0F9FF; border-left: 3px solid #3B82F6; }
-    .user-profile-image { border-radius: 50%; object-fit: cover; border: 2px solid white; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); }
-    .user-icon-container { background: linear-gradient(135deg, #27bb97, #1fa987); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
-    .message-count-badge { background-color: #EF4444; color: white; border-radius: 9999px; padding: 3px 8px; font-size: 11px; margin-left: 6px; font-weight: 600; }
-    
-    /* Mobile search styles - Only visible below lg screens */
-    .mobile-search-button {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background: transparent;
-      border: none;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-    
-    .mobile-search-button:hover {
-      background-color: rgba(31, 169, 135, 0.1);
-    }
-    
-    .navbar-scrolled .mobile-search-button {
-      color: white;
-    }
-    
-    .mobile-search-overlay {
-      position: absolute;
-      top: 100%;
-      left: 0;
-      right: 0;
-      background: white;
-      padding: 16px 20px;
-      box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.15);
-      z-index: 40;
-      animation: slideDown 0.3s ease;
-    }
-    
-    .navbar-scrolled .mobile-search-overlay {
-      background: rgba(0, 0, 0, 0.95);
-      backdrop-filter: blur(20px);
-    }
-    
-    .mobile-search-form {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-    
-    .mobile-search-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    
-    .mobile-location-field,
-    .mobile-search-field {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      background: white;
-      border: 1.5px solid #e5e7eb;
-      border-radius: 9999px;
-      padding: 0 16px;
-    }
-    
-    .navbar-scrolled .mobile-location-field,
-    .navbar-scrolled .mobile-search-field {
-      background: rgba(255, 255, 255, 0.1);
-      border-color: rgba(255, 255, 255, 0.2);
-    }
-    
-    .mobile-location-field .location-icon,
-    .mobile-search-field .search-icon {
-      color: #6b7280;
-      margin-right: 8px;
-    }
-    
-    .navbar-scrolled .mobile-location-field .location-icon,
-    .navbar-scrolled .mobile-search-field .search-icon {
-      color: rgba(255, 255, 255, 0.7);
-    }
-    
-    .mobile-location-input,
-    .mobile-search-input {
-      width: 100%;
-      padding: 12px 0;
-      border: none;
-      outline: none;
-      font-size: 15px;
-      background: transparent;
-      color: #1f2937;
-    }
-    
-    .navbar-scrolled .mobile-location-input,
-    .navbar-scrolled .mobile-search-input {
-      color: white;
-    }
-    
-    .navbar-scrolled .mobile-location-input::placeholder,
-    .navbar-scrolled .mobile-search-input::placeholder {
-      color: rgba(255, 255, 255, 0.7);
-    }
-    
-    .mobile-search-close {
-      padding: 10px;
-      background: none;
-      border: none;
-      cursor: pointer;
-      color: #6b7280;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    
-    .navbar-scrolled .mobile-search-close {
-      color: white;
-    }
-    
-    .mobile-search-submit {
-      width: 100%;
-      padding: 12px;
-      background-color: #1FA987;
-      color: white;
-      border: none;
-      border-radius: 9999px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
-    
-    .mobile-search-submit:hover {
-      background-color: #1a9277;
-    }
-    
-    /* Mobile location suggestions */
-    .mobile-location-suggestions {
-      margin-top: 8px;
-      background: white;
-      border-radius: 12px;
-      border: 1px solid #e5e7eb;
-      max-height: 200px;
-      overflow-y: auto;
-    }
-    
-    .navbar-scrolled .mobile-location-suggestions {
-      background: #1f2937;
-      border-color: rgba(255, 255, 255, 0.1);
-    }
-    
-    /* Desktop menu items - increased font size */
-    .desktop-menu-item {
-      font-size: 15px !important;
-      padding: 8px 16px !important;
-    }
-    
-    /* Profile button text */
-    .profile-button-text {
-      font-size: 14px;
-      font-weight: 600;
-    }
-    
-    /* Logo size */
-    .logo-text {
-      font-size: 24px !important;
-      font-weight: 700;
-    }
-    
-    @media (min-width: 1024px) {
-      .logo-text {
-        font-size: 26px !important;
-      }
-    }
-    
-    /* Responsive adjustments */
-    @media (max-width: 1280px) {
-      .location-input-container {
-        flex: 0 0 120px;
-      }
-    }
-    
-    @media (max-width: 1150px) {
-      .desktop-menu-item {
-        padding: 8px 10px !important;
-        font-size: 14px !important;
-      }
-      
-      .location-input-container {
-        flex: 0 0 100px;
-      }
-    }
-    
-    /* Ensure mobile search button is only visible below lg */
-    @media (min-width: 1024px) {
-      .mobile-search-button {
-        display: none !important;
-      }
-      .mobile-search-overlay {
-        display: none !important;
-      }
-    }
-    
-    @media (max-width: 1023px) {
-      .search-container {
-        display: none !important;
-      }
-    }
-  `;
-
   const profileImage = getProfileImage();
   const userFirstName = getUserFirstName();
   const userFullName = getUserFullName();
@@ -853,12 +469,58 @@ const Navbar = () => {
 
   return (
     <>
-      <style>{navbarStyles}</style>
       <ScrollProgress />
 
+      {/* Login Required Modal */}
+      {showLoginPrompt && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm"
+          onClick={closeLoginPrompt}
+        >
+          <div
+            className="bg-white rounded-2xl shadow-2xl w-[90%] max-w-md mx-4 overflow-hidden animate-[slideDown_0.3s_ease]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="bg-gradient-to-r from-[#1FA987] to-[#27bb97] px-6 py-5 text-white text-center">
+              <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-3">
+                <FaUserCircle size={36} />
+              </div>
+              <h3 className="text-xl font-bold">Login Required</h3>
+              <p className="text-sm text-white/80 mt-1">Please sign in to post your listing</p>
+            </div>
+
+            {/* Body */}
+            <div className="px-6 py-5">
+              <p className="text-gray-600 text-center text-sm leading-relaxed">
+                You need to be logged in to create a listing. Sign in to your account or create a new one to get started.
+              </p>
+            </div>
+
+            {/* Actions */}
+            <div className="px-6 pb-6 flex gap-3">
+              <button
+                onClick={closeLoginPrompt}
+                className="flex-1 px-4 py-2.5 border border-gray-200 text-gray-600 rounded-xl font-semibold text-sm hover:bg-gray-50 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleLoginRedirect}
+                className="flex-1 px-4 py-2.5 bg-[#1FA987] text-white rounded-xl font-semibold text-sm hover:bg-[#1a9277] transition-colors"
+              >
+                Sign In
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <nav
-        className={`fixed top-0 left-0 right-0 z-50 navbar-transition ${
-          isScrolled ? "navbar-scrolled" : "bg-white shadow-sm"
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-400 ease-[cubic-bezier(0.4,0,0.2,1)] ${
+          isScrolled 
+            ? "bg-black/95 backdrop-blur-[20px] shadow-lg" 
+            : "bg-white shadow-sm"
         }`}
       >
         <div className="">
@@ -871,7 +533,7 @@ const Navbar = () => {
                 className="flex items-center gap-2 flex-shrink-0"
               >
                 <span
-                  className={`logo-text ${
+                  className={`text-2xl lg:text-[26px] font-bold ${
                     isScrolled ? "text-white" : "text-gray-900"
                   }`}
                 >
@@ -880,14 +542,20 @@ const Navbar = () => {
               </Link>
 
               {/* Desktop Search Bar with Separate Location - Only visible on lg screens and above */}
-              <div className="search-container">
+              <div className="hidden lg:flex flex-1 max-w-[700px] mx-5 items-center gap-2">
                 {/* Location Input - Separate Div */}
+<<<<<<< HEAD
                 <div
                   className="location-input-container"
                   ref={locationInputRef}
                 >
                   <div className="location-input-wrapper">
                     <FaMapMarkerAlt className="location-icon" size={14} />
+=======
+                <div className="flex-[0_0_140px] xl:flex-[0_0_140px] lg:flex-[0_0_120px] relative" ref={locationInputRef}>
+                  <div className="flex items-center bg-white border-[1.5px] border-gray-200 rounded-full px-3 py-2 transition-all duration-300 focus-within:border-[#1FA987] focus-within:shadow-[0_0_0_3px_rgba(31,169,135,0.15)]">
+                    <FaMapMarkerAlt className="text-gray-500 mr-2 text-sm flex-shrink-0" size={14} />
+>>>>>>> a61f37d73347f6712df2cc0da6eae19b122ddf19
                     <input
                       type="text"
                       placeholder="Location"
@@ -904,33 +572,42 @@ const Navbar = () => {
                         }
                       }}
                       onKeyPress={handleKeyPress}
-                      className="location-input"
+                      className="border-none outline-none text-sm font-medium text-gray-800 w-full bg-transparent placeholder:text-gray-500 placeholder:font-normal"
                     />
                   </div>
 
                   {/* Location Suggestions Dropdown */}
                   {showLocationSuggestions && (
-                    <div className="location-suggestions">
+                    <div className="absolute top-[calc(100%+8px)] left-0 right-0 bg-white rounded-xl shadow-lg z-[60] max-h-[300px] overflow-y-auto animate-[slideDown_0.2s_ease]">
                       {locationSuggestions.length > 0 ? (
                         locationSuggestions.map((city, index) => (
                           <div
                             key={index}
                             onClick={() => handleLocationSelect(city)}
-                            className="location-suggestion-item"
+                            className="px-4 py-3 cursor-pointer flex items-center gap-2.5 text-sm text-gray-800 hover:bg-gray-100 transition-all duration-200"
                           >
+<<<<<<< HEAD
                             <FaMapMarkerAlt
                               className="suggestion-icon"
                               size={12}
                             />
+=======
+                            <FaMapMarkerAlt className="text-gray-500 text-xs" size={12} />
+>>>>>>> a61f37d73347f6712df2cc0da6eae19b122ddf19
                             <span>{city}</span>
                           </div>
                         ))
                       ) : (
+<<<<<<< HEAD
                         <div className="location-suggestion-item">
                           <FaMapMarkerAlt
                             className="suggestion-icon"
                             size={12}
                           />
+=======
+                        <div className="px-4 py-3 flex items-center gap-2.5 text-sm text-gray-800">
+                          <FaMapMarkerAlt className="text-gray-500 text-xs" size={12} />
+>>>>>>> a61f37d73347f6712df2cc0da6eae19b122ddf19
                           <span>No locations found</span>
                         </div>
                       )}
@@ -939,31 +616,31 @@ const Navbar = () => {
                 </div>
 
                 {/* Search Input - Separate Div with Icon Inside */}
-                <div className="search-input-container">
-                  <div className="search-input-wrapper">
-                    <FaSearch className="search-icon" size={14} />
+                <div className="flex-1 relative">
+                  <div className="flex items-center bg-white border-[1.5px] border-gray-200 rounded-full px-3 py-2 transition-all duration-300 cursor-pointer focus-within:border-[#1FA987] focus-within:shadow-[0_0_0_3px_rgba(31,169,135,0.15)]">
+                    <FaSearch className="text-gray-500 mr-2 text-sm flex-shrink-0" size={14} />
                     <input
                       type="text"
                       placeholder="Search for products, brands and more..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       onKeyPress={handleKeyPress}
-                      className="search-input"
+                      className="border-none outline-none text-sm font-medium text-gray-800 w-full bg-transparent placeholder:text-gray-500 placeholder:font-normal"
                     />
                   </div>
                 </div>
               </div>
 
-              {/* Desktop Menu - Now visible on lg screens and above */}
-              <div className="hidden lg:flex items-center gap-1">
+              {/* Desktop Menu - Now visible on md screens and above */}
+              <div className="hidden md:flex items-center gap-1">
                 {mainMenuItems.map((item) => (
                   <Link
                     key={item.path}
                     to={item.path}
                     onClick={scrollToTop}
-                    className={`nav-link desktop-menu-item ${
+                    className={`relative font-semibold transition-colors duration-300 hover:text-[#1FA987] after:content-[''] after:absolute after:w-0 after:h-[2px] after:bottom-[-4px] after:left-0 after:bg-[#1FA987] after:transition-all after:duration-300 hover:after:w-full ${
                       isScrolled ? "text-white" : "text-gray-700"
-                    }`}
+                    } text-base lg:text-[15px] xl:text-base px-2 lg:px-3 py-2`}
                   >
                     {item.name}
                   </Link>
@@ -975,9 +652,9 @@ const Navbar = () => {
                   onMouseLeave={() => setShowMoreDropdown(false)}
                 >
                   <button
-                    className={`nav-link desktop-menu-item flex items-center gap-1 ${
+                    className={`relative font-semibold transition-colors duration-300 hover:text-[#1FA987] after:content-[''] after:absolute after:w-0 after:h-[2px] after:bottom-[-4px] after:left-0 after:bg-[#1FA987] after:transition-all after:duration-300 hover:after:w-full flex items-center gap-1 ${
                       isScrolled ? "text-white" : "text-gray-700"
-                    }`}
+                    } text-base lg:text-[15px] xl:text-base px-2 lg:px-3 py-2`}
                   >
                     More <FaChevronDown className="text-xs ml-1" />
                   </button>
@@ -1003,10 +680,30 @@ const Navbar = () => {
                 </div>
               </div>
 
-              {/* Right side actions - Visible on lg and above */}
-              <div className="hidden lg:flex items-center gap-2">
+              {/* Right side actions - Visible on md and above */}
+              <div className="hidden md:flex items-center gap-1 lg:gap-2">
+                {/* Location Icon Button - visible on md, hidden on lg+ (where inline search shows) */}
+                <button
+                  onClick={() => setShowMobileSearch(!showMobileSearch)}
+                  className={`lg:hidden flex items-center justify-center w-10 h-10 rounded-full transition-all duration-300 hover:bg-[rgba(31,169,135,0.1)] ${
+                    isScrolled ? "text-white" : "text-gray-600"
+                  }`}
+                >
+                  <FaMapMarkerAlt size={16} />
+                </button>
+
+                {/* Search Icon Button - visible on md, hidden on lg+ (where inline search shows) */}
+                <button
+                  onClick={() => setShowMobileSearch(!showMobileSearch)}
+                  className={`lg:hidden flex items-center justify-center w-10 h-10 rounded-full transition-all duration-300 hover:bg-[rgba(31,169,135,0.1)] ${
+                    isScrolled ? "text-white" : "text-gray-600"
+                  }`}
+                >
+                  <FaSearch size={18} />
+                </button>
+
                 {/* Heart Icon (Saved Items) */}
-                <Link to="/saved" onClick={scrollToTop}>
+                <Link to="/dashboard/saved" onClick={scrollToTop}>
                   <button
                     className={`p-2 rounded-full transition-colors ${
                       isScrolled
@@ -1029,9 +726,13 @@ const Navbar = () => {
                           : "text-gray-600 hover:bg-gray-100"
                       }`}
                     >
-                      <FaBell size={18} />
+                      <FaRegBell size={18} />
                       {unreadCount > 0 && (
+<<<<<<< HEAD
                         <span className="notification-badge">
+=======
+                        <span className="absolute -top-[5px] -right-[5px] bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-[11px] font-bold">
+>>>>>>> a61f37d73347f6712df2cc0da6eae19b122ddf19
                           {unreadCount}
                         </span>
                       )}
@@ -1041,7 +742,7 @@ const Navbar = () => {
                     {showNotificationDropdown && (
                       <div
                         ref={notificationDropdownRef}
-                        className="profile-dropdown absolute right-0 top-full mt-2 w-80 bg-white rounded-xl shadow-xl border border-gray-100 z-50 overflow-hidden"
+                        className="absolute right-0 top-full mt-2 w-80 bg-white rounded-xl shadow-xl border border-gray-100 z-50 overflow-hidden animate-[slideDown_0.3s_cubic-bezier(0.25,0.46,0.45,0.94)]"
                       >
                         {/* Notification Header */}
                         <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
@@ -1073,7 +774,7 @@ const Navbar = () => {
                                 }
                                 className={`px-4 py-3 cursor-pointer hover:bg-gray-50 ${
                                   !notification.read
-                                    ? "notification-item-unread"
+                                    ? "bg-blue-50 border-l-3 border-blue-500"
                                     : ""
                                 }`}
                               >
@@ -1095,7 +796,11 @@ const Navbar = () => {
                         {/* View All Link */}
                         <div className="border-t border-gray-100 px-4 py-2">
                           <Link
-                            to="/notifications"
+                            to="/dashboard/alerts"
+                            onClick={() => {
+                              setShowNotificationDropdown(false);
+                              scrollToTop();
+                            }}
                             className="text-sm text-blue-600 hover:underline"
                           >
                             View all notifications
@@ -1107,18 +812,29 @@ const Navbar = () => {
                 )}
 
                 {/* Create Listing Button */}
-                <Link to="/post-add">
-                  <button className="flex items-center gap-2 px-4 py-2 bg-[#1FA987] text-white rounded-lg text-sm font-semibold hover:bg-[#1a9277] transition-colors">
+                <button
+                  onClick={handleSellClick}
+                  disabled={sellLoading}
+                  className={`flex items-center gap-1 lg:gap-2 px-2.5 lg:px-4 py-2 bg-[#1FA987] text-white rounded-lg text-sm font-semibold hover:bg-[#1a9277] transition-colors ${
+                    sellLoading ? 'opacity-70 cursor-not-allowed' : ''
+                  }`}
+                >
+                  {sellLoading ? (
+                    <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                    </svg>
+                  ) : (
                     <FaPlus size={12} />
-                    Sell
-                  </button>
-                </Link>
+                  )}
+                  <span className="hidden lg:inline">Sell</span>
+                </button>
 
                 {/* Profile/Login Button */}
                 <div className="relative">
                   <button
                     onClick={handleProfileClick}
-                    className={`profile-button flex items-center gap-2 px-3 py-2 rounded-lg border transition-colors ${
+                    className={`profile-button flex items-center gap-1 lg:gap-2 px-2 lg:px-3 py-2 rounded-lg border transition-colors ${
                       isScrolled
                         ? "border-white/30 text-white hover:bg-white/10"
                         : "border-gray-200 text-gray-700 hover:bg-gray-50"
@@ -1134,7 +850,7 @@ const Navbar = () => {
                             width={30}
                             height={30}
                             onError={handleImageError}
-                            className="user-profile-image"
+                            className="rounded-full object-cover border-2 border-white shadow-sm"
                             style={{ width: 30, height: 30 }}
                           />
                         ) : /* Static image for email users, gradient icon for Google users with broken photo */
@@ -1144,31 +860,32 @@ const Navbar = () => {
                             alt={userFirstName}
                             width={30}
                             height={30}
-                            className="user-profile-image"
+                            className="rounded-full object-cover border-2 border-white shadow-sm"
                             style={{ width: 30, height: 30 }}
                           />
                         ) : (
                           <div
-                            className="user-icon-container"
+                            className="bg-gradient-to-br from-[#27bb97] to-[#1fa987] text-white rounded-full flex items-center justify-center"
                             style={{ width: 30, height: 30 }}
                           >
                             <FaUserCircle size={18} />
                           </div>
                         )}
                         {/* First name SECOND */}
-                        <span className="hidden sm:inline max-w-[100px] truncate profile-button-text">
+                        <span className="hidden lg:inline max-w-[100px] truncate text-sm font-semibold">
                           {userFirstName}
                         </span>
                       </>
                     ) : (
                       <>
                         <FaUserCircle size={18} />
-                        <span className="hidden sm:inline profile-button-text">
+                        <span className="hidden lg:inline text-sm font-semibold">
                           Sign In
                         </span>
                       </>
                     )}
                   </button>
+<<<<<<< HEAD
 
                   {/* Profile Dropdown Menu */}
                   {showProfileDropdown && isAuthenticated && (
@@ -1247,15 +964,27 @@ const Navbar = () => {
                       </div>
                     </div>
                   )}
+=======
+>>>>>>> a61f37d73347f6712df2cc0da6eae19b122ddf19
                 </div>
               </div>
 
-              {/* Mobile/Tablet menu button and icons - Visible below lg screens */}
-              <div className="flex lg:hidden items-center gap-2">
+              {/* Mobile/Tablet menu button and icons - Visible below md screens */}
+              <div className="flex md:hidden items-center gap-2">
+                {/* Mobile Location Button */}
+                <button
+                  onClick={() => setShowMobileSearch(!showMobileSearch)}
+                  className={`flex items-center justify-center w-10 h-10 rounded-full transition-all duration-300 ${
+                    isScrolled ? "text-white" : "text-gray-600"
+                  }`}
+                >
+                  <FaMapMarkerAlt size={16} />
+                </button>
+
                 {/* Mobile Search Button */}
                 <button
                   onClick={() => setShowMobileSearch(!showMobileSearch)}
-                  className={`mobile-search-button ${
+                  className={`flex items-center justify-center w-10 h-10 rounded-full transition-all duration-300 ${
                     isScrolled ? "text-white" : "text-gray-600"
                   }`}
                 >
@@ -1263,7 +992,7 @@ const Navbar = () => {
                 </button>
 
                 {/* Mobile Heart Icon */}
-                <Link to="/saved" onClick={scrollToTop}>
+                <Link to="/dashboard/saved" onClick={scrollToTop}>
                   <button
                     className={`p-2 rounded-full ${
                       isScrolled ? "text-white" : "text-gray-600"
@@ -1282,9 +1011,13 @@ const Navbar = () => {
                         isScrolled ? "text-white" : "text-gray-600"
                       }`}
                     >
-                      <FaBell size={18} />
+                      <FaRegBell size={18} />
                       {unreadCount > 0 && (
+<<<<<<< HEAD
                         <span className="notification-badge">
+=======
+                        <span className="absolute -top-[5px] -right-[5px] bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-[11px] font-bold">
+>>>>>>> a61f37d73347f6712df2cc0da6eae19b122ddf19
                           {unreadCount}
                         </span>
                       )}
@@ -1293,11 +1026,23 @@ const Navbar = () => {
                 )}
 
                 {/* Mobile Create Listing Button */}
-                <Link to="/post-add">
-                  <button className="flex items-center gap-1 px-3 py-1.5 bg-[#1FA987] text-white rounded-lg text-sm font-semibold">
-                    <FaPlus size={10} /> Post
-                  </button>
-                </Link>
+                <button
+                  onClick={handleSellClick}
+                  disabled={sellLoading}
+                  className={`flex items-center gap-1 px-3 py-1.5 bg-[#1FA987] text-white rounded-lg text-sm font-semibold ${
+                    sellLoading ? 'opacity-70 cursor-not-allowed' : ''
+                  }`}
+                >
+                  {sellLoading ? (
+                    <svg className="animate-spin h-3 w-3" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                    </svg>
+                  ) : (
+                    <FaPlus size={10} />
+                  )}
+                  Post
+                </button>
 
                 {/* Mobile Menu Toggle */}
                 <button
@@ -1317,11 +1062,11 @@ const Navbar = () => {
 
             {/* Mobile Search Overlay with Separate Location - Only visible below lg screens */}
             {showMobileSearch && (
-              <div className="mobile-search-overlay">
-                <form onSubmit={handleSearch} className="mobile-search-form">
+              <div className="absolute top-full left-0 right-0 bg-white p-4 shadow-lg z-40 animate-[slideDown_0.3s_ease]">
+                <form onSubmit={handleSearch} className="flex flex-col gap-3">
                   {/* Location Field - Separate */}
-                  <div className="mobile-location-field">
-                    <FaMapMarkerAlt className="location-icon" size={14} />
+                  <div className="flex items-center bg-white border-[1.5px] border-gray-200 rounded-full px-4">
+                    <FaMapMarkerAlt className="text-gray-500 mr-2" size={14} />
                     <input
                       type="text"
                       placeholder="Location"
@@ -1337,13 +1082,13 @@ const Navbar = () => {
                           setShowLocationSuggestions(true);
                         }
                       }}
-                      className="mobile-location-input"
+                      className="w-full py-3 border-none outline-none text-[15px] bg-transparent text-gray-800"
                     />
                   </div>
 
                   {/* Mobile Location Suggestions */}
                   {showLocationSuggestions && (
-                    <div className="mobile-location-suggestions">
+                    <div className="mt-2 bg-white rounded-xl border border-gray-200 max-h-[200px] overflow-y-auto">
                       {locationSuggestions.length > 0 ? (
                         locationSuggestions.map((city, index) => (
                           <div
@@ -1352,21 +1097,30 @@ const Navbar = () => {
                               handleLocationSelect(city);
                               setShowLocationSuggestions(false);
                             }}
-                            className="location-suggestion-item"
+                            className="px-4 py-3 cursor-pointer flex items-center gap-2.5 text-sm text-gray-800 hover:bg-gray-100"
                           >
+<<<<<<< HEAD
                             <FaMapMarkerAlt
                               className="suggestion-icon"
                               size={12}
                             />
+=======
+                            <FaMapMarkerAlt className="text-gray-500 text-xs" size={12} />
+>>>>>>> a61f37d73347f6712df2cc0da6eae19b122ddf19
                             <span>{city}</span>
                           </div>
                         ))
                       ) : (
+<<<<<<< HEAD
                         <div className="location-suggestion-item">
                           <FaMapMarkerAlt
                             className="suggestion-icon"
                             size={12}
                           />
+=======
+                        <div className="px-4 py-3 flex items-center gap-2.5 text-sm text-gray-800">
+                          <FaMapMarkerAlt className="text-gray-500 text-xs" size={12} />
+>>>>>>> a61f37d73347f6712df2cc0da6eae19b122ddf19
                           <span>No locations found</span>
                         </div>
                       )}
@@ -1374,26 +1128,32 @@ const Navbar = () => {
                   )}
 
                   {/* Search Field - Separate with Icon Inside */}
-                  <div className="mobile-search-field">
-                    <FaSearch className="search-icon" size={14} />
+                  <div className="flex items-center bg-white border-[1.5px] border-gray-200 rounded-full px-4">
+                    <FaSearch className="text-gray-500 mr-2" size={14} />
                     <input
                       type="text"
                       placeholder="Search for products, brands and more..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      className="mobile-search-input"
+                      className="w-full py-3 border-none outline-none text-[15px] bg-transparent text-gray-800"
                       autoFocus
                     />
                   </div>
+<<<<<<< HEAD
 
                   <div className="mobile-search-row">
                     <button type="submit" className="mobile-search-submit">
+=======
+                  
+                  <div className="flex items-center gap-2">
+                    <button type="submit" className="flex-1 py-3 bg-[#1FA987] text-white rounded-full font-semibold transition-colors hover:bg-[#1a9277]">
+>>>>>>> a61f37d73347f6712df2cc0da6eae19b122ddf19
                       Search
                     </button>
                     <button
                       type="button"
                       onClick={() => setShowMobileSearch(false)}
-                      className="mobile-search-close"
+                      className="p-3 bg-none border-none cursor-pointer text-gray-500 flex items-center justify-center"
                     >
                       <FaTimes size={18} />
                     </button>
@@ -1405,7 +1165,7 @@ const Navbar = () => {
 
           {/* Mobile Menu */}
           {isMobileMenuOpen && (
-            <div className="lg:hidden bg-white border-t border-gray-100 shadow-lg max-h-[calc(100vh-4rem)] overflow-y-auto">
+            <div className="md:hidden bg-white border-t border-gray-100 shadow-lg max-h-[calc(100vh-4rem)] overflow-y-auto">
               <div className="px-4 py-4 space-y-1">
                 {/* User Info in Mobile Menu */}
                 {isAuthenticated && (user || profile) && (
@@ -1418,7 +1178,7 @@ const Navbar = () => {
                         width={48}
                         height={48}
                         onError={handleImageError}
-                        className="user-profile-image flex-shrink-0"
+                        className="rounded-full object-cover border-2 border-white shadow-sm flex-shrink-0"
                         style={{ width: 48, height: 48 }}
                       />
                     ) : !googleUser ? (
@@ -1427,12 +1187,12 @@ const Navbar = () => {
                         alt={userFullName}
                         width={48}
                         height={48}
-                        className="user-profile-image flex-shrink-0"
+                        className="rounded-full object-cover border-2 border-white shadow-sm flex-shrink-0"
                         style={{ width: 48, height: 48 }}
                       />
                     ) : (
                       <div
-                        className="user-icon-container flex-shrink-0"
+                        className="bg-gradient-to-br from-[#27bb97] to-[#1fa987] text-white rounded-full flex items-center justify-center flex-shrink-0"
                         style={{ width: 48, height: 48 }}
                       >
                         <FaUserCircle size={30} />
@@ -1465,7 +1225,7 @@ const Navbar = () => {
                       setIsMobileMenuOpen(false);
                       scrollToTop();
                     }}
-                    className="nav-link block px-3 py-3 text-base font-semibold text-gray-700 hover:bg-gray-100 rounded"
+                    className="relative font-semibold text-gray-700 transition-colors duration-300 hover:text-[#1FA987] after:content-[''] after:absolute after:w-0 after:h-[2px] after:bottom-[-4px] after:left-0 after:bg-[#1FA987] after:transition-all after:duration-300 hover:after:w-full block px-3 py-3 text-base hover:bg-gray-100 rounded"
                   >
                     {item.name}
                   </Link>
@@ -1484,7 +1244,7 @@ const Navbar = () => {
                         setIsMobileMenuOpen(false);
                         scrollToTop();
                       }}
-                      className="nav-link block px-3 py-3 text-base font-semibold text-gray-700 hover:bg-gray-100 rounded"
+                      className="relative font-semibold text-gray-700 transition-colors duration-300 hover:text-[#1FA987] after:content-[''] after:absolute after:w-0 after:h-[2px] after:bottom-[-4px] after:left-0 after:bg-[#1FA987] after:transition-all after:duration-300 hover:after:w-full block px-3 py-3 text-base hover:bg-gray-100 rounded"
                     >
                       {item.name}
                     </Link>
@@ -1494,12 +1254,12 @@ const Navbar = () => {
                 {/* Mobile Saved Items Link */}
                 <div className="border-t border-gray-100 pt-2 mt-2">
                   <Link
-                    to="/saved"
+                    to="/dashboard/saved"
                     onClick={() => {
                       setIsMobileMenuOpen(false);
                       scrollToTop();
                     }}
-                    className="nav-link px-3 py-3 text-base font-semibold text-gray-700 hover:bg-gray-100 rounded flex items-center gap-3"
+                    className="relative font-semibold text-gray-700 transition-colors duration-300 hover:text-[#1FA987] after:content-[''] after:absolute after:w-0 after:h-[2px] after:bottom-[-4px] after:left-0 after:bg-[#1FA987] after:transition-all after:duration-300 hover:after:w-full px-3 py-3 text-base hover:bg-gray-100 rounded flex items-center gap-3"
                   >
                     <FaRegHeart size={16} />
                     Saved Items
@@ -1514,9 +1274,9 @@ const Navbar = () => {
                       setIsMobileMenuOpen(false);
                       scrollToTop();
                     }}
-                    className="nav-link px-3 py-3 text-base font-semibold text-gray-700 hover:bg-gray-100 rounded flex items-center gap-3"
+                    className="relative font-semibold text-gray-700 transition-colors duration-300 hover:text-[#1FA987] after:content-[''] after:absolute after:w-0 after:h-[2px] after:bottom-[-4px] after:left-0 after:bg-[#1FA987] after:transition-all after:duration-300 hover:after:w-full px-3 py-3 text-base hover:bg-gray-100 rounded flex items-center gap-3"
                   >
-                    <FaBell size={16} />
+                    <FaRegBell size={16} />
                     Notifications {unreadCount > 0 && `(${unreadCount})`}
                   </Link>
                 )}
@@ -1531,19 +1291,19 @@ const Navbar = () => {
                           setIsMobileMenuOpen(false);
                           scrollToTop();
                         }}
-                        className="nav-link px-3 py-3 text-base font-semibold text-gray-700 hover:bg-gray-100 rounded flex items-center gap-3"
+                        className="relative font-semibold text-gray-700 transition-colors duration-300 hover:text-[#1FA987] after:content-[''] after:absolute after:w-0 after:h-[2px] after:bottom-[-4px] after:left-0 after:bg-[#1FA987] after:transition-all after:duration-300 hover:after:w-full px-3 py-3 text-base hover:bg-gray-100 rounded flex items-center gap-3"
                       >
                         <CgProfile size={16} />
                         Dashboard
                       </Link>
 
                       <Link
-                        to="/profile"
+                        to="/dashboard/profile"
                         onClick={() => {
                           setIsMobileMenuOpen(false);
                           scrollToTop();
                         }}
-                        className="nav-link px-3 py-3 text-base font-semibold text-gray-700 hover:bg-gray-100 rounded flex items-center gap-3"
+                        className="relative font-semibold text-gray-700 transition-colors duration-300 hover:text-[#1FA987] after:content-[''] after:absolute after:w-0 after:h-[2px] after:bottom-[-4px] after:left-0 after:bg-[#1FA987] after:transition-all after:duration-300 hover:after:w-full px-3 py-3 text-base hover:bg-gray-100 rounded flex items-center gap-3"
                       >
                         <FaUserFriends size={16} />
                         My Profile
@@ -1554,7 +1314,7 @@ const Navbar = () => {
                           setIsMobileMenuOpen(false);
                           handleProfileMenuItemClick("/logout");
                         }}
-                        className="nav-link px-3 py-3 text-base font-semibold text-gray-700 hover:bg-gray-100 rounded flex items-center gap-3 w-full text-left"
+                        className="relative font-semibold text-gray-700 transition-colors duration-300 hover:text-[#1FA987] after:content-[''] after:absolute after:w-0 after:h-[2px] after:bottom-[-4px] after:left-0 after:bg-[#1FA987] after:transition-all after:duration-300 hover:after:w-full px-3 py-3 text-base hover:bg-gray-100 rounded flex items-center gap-3 w-full text-left"
                       >
                         <FaChevronRight size={16} />
                         Sign Out
@@ -1567,7 +1327,7 @@ const Navbar = () => {
                         setIsMobileMenuOpen(false);
                         scrollToTop();
                       }}
-                      className="nav-link px-3 py-3 text-base font-semibold text-gray-700 hover:bg-gray-100 rounded flex items-center gap-3"
+                      className="relative font-semibold text-gray-700 transition-colors duration-300 hover:text-[#1FA987] after:content-[''] after:absolute after:w-0 after:h-[2px] after:bottom-[-4px] after:left-0 after:bg-[#1FA987] after:transition-all after:duration-300 hover:after:w-full px-3 py-3 text-base hover:bg-gray-100 rounded flex items-center gap-3"
                     >
                       <FaUserCircle size={16} />
                       Sign In
@@ -1579,6 +1339,71 @@ const Navbar = () => {
           )}
         </div>
       </nav>
+
+      <style>{`
+        @keyframes slideDown {
+          from { transform: translateY(-10px); opacity: 0; }
+          to { transform: translateY(0); opacity: 1; }
+        }
+        .navbar-scrolled .location-input-wrapper,
+        .navbar-scrolled .search-input-wrapper {
+          background-color: rgba(255, 255, 255, 0.1);
+          border-color: rgba(255, 255, 255, 0.2);
+        }
+        .navbar-scrolled .location-icon,
+        .navbar-scrolled .search-icon {
+          color: rgba(255, 255, 255, 0.7);
+        }
+        .navbar-scrolled .location-input,
+        .navbar-scrolled .search-input {
+          color: white;
+        }
+        .navbar-scrolled .location-input::placeholder,
+        .navbar-scrolled .search-input::placeholder {
+          color: rgba(255, 255, 255, 0.7);
+        }
+        .navbar-scrolled .location-suggestions {
+          background: #1f2937;
+          border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .navbar-scrolled .location-suggestion-item {
+          color: white;
+        }
+        .navbar-scrolled .location-suggestion-item:hover {
+          background-color: rgba(255, 255, 255, 0.1);
+        }
+        .navbar-scrolled .location-suggestion-item .suggestion-icon {
+          color: rgba(255, 255, 255, 0.5);
+        }
+        .navbar-scrolled .mobile-search-overlay {
+          background: rgba(0, 0, 0, 0.95);
+          backdrop-filter: blur(20px);
+        }
+        .navbar-scrolled .mobile-location-field,
+        .navbar-scrolled .mobile-search-field {
+          background: rgba(255, 255, 255, 0.1);
+          border-color: rgba(255, 255, 255, 0.2);
+        }
+        .navbar-scrolled .mobile-location-field .location-icon,
+        .navbar-scrolled .mobile-search-field .search-icon {
+          color: rgba(255, 255, 255, 0.7);
+        }
+        .navbar-scrolled .mobile-location-input,
+        .navbar-scrolled .mobile-search-input {
+          color: white;
+        }
+        .navbar-scrolled .mobile-location-input::placeholder,
+        .navbar-scrolled .mobile-search-input::placeholder {
+          color: rgba(255, 255, 255, 0.7);
+        }
+        .navbar-scrolled .mobile-search-close {
+          color: white;
+        }
+        .navbar-scrolled .mobile-location-suggestions {
+          background: #1f2937;
+          border-color: rgba(255, 255, 255, 0.1);
+        }
+      `}</style>
     </>
   );
 };

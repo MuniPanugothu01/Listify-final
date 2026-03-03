@@ -1,0 +1,42 @@
+# ═══════════════════════════════════════════════════════════════════
+# Listify — Docker Compose DEVELOPMENT Override
+#
+# Layers on top of docker-compose.yml for local development:
+#   - Hot-reload via bind mounts
+#   - Exposed debug ports
+#   - Relaxed resource limits
+#
+# Usage:
+#   docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build
+# ═══════════════════════════════════════════════════════════════════
+
+services:
+  api:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    # Override CMD with nodemon for hot-reload
+    command: npx nodemon server.js
+    environment:
+      - NODE_ENV=development
+    volumes:
+      # Bind-mount source for live reload (overrides COPY in Dockerfile)
+      - ./server:/app
+      - /app/node_modules  # anonymous volume — keep container's node_modules
+    ports:
+      - "5000:5000"        # expose API directly for debugging
+      - "9229:9229"        # Node.js inspector port
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 1G
+
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    # In dev, run Vite dev server instead of nginx
+    # (requires a separate dev Dockerfile or override entrypoint)
+    ports:
+      - "5173:80"
