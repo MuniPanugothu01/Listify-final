@@ -2,6 +2,12 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { updateUser } from "../../redux/slices/authSlice";
+import {
+  selectAllSavedItems,
+} from "../../redux/selectors/forSaleSelectors";
+import {
+  unsaveItem,
+} from "../../redux/slices/forSaleSlice";
 import { 
   Bell, 
   X, 
@@ -52,7 +58,7 @@ export default function Profile() {
     bio: authUser?.bio || "",
     profilePic: authUser?.profileImage || authUser?.profileImageUrl || authUser?.googleProfileImage || authUser?.avatar,
   };
-  const [savedHouses, setSavedHouses] = useState([]);
+  const savedHouses = useSelector(selectAllSavedItems);
   const [myPosts, setMyPosts] = useState([
     { 
       id: 1, 
@@ -101,22 +107,7 @@ export default function Profile() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchVisible, setIsSearchVisible] = useState(false);
 
-  // Load saved items
-  useEffect(() => {
-    const loadSavedItems = () => {
-      try {
-        const savedItems = JSON.parse(localStorage.getItem("savedItems") || "[]");
-        setSavedHouses(savedItems);
-      } catch (error) {
-        console.error('Error loading saved items:', error);
-        setSavedHouses([]);
-      }
-    };
-
-    loadSavedItems();
-    window.addEventListener("savedItemsChanged", loadSavedItems);
-    return () => window.removeEventListener("savedItemsChanged", loadSavedItems);
-  }, []);
+  // Saved items are now read from Redux (forSale slice, persisted via redux-persist)
 
   useEffect(() => {
     setEditData({
@@ -167,10 +158,7 @@ export default function Profile() {
   };
 
   const toggleSave = (house) => {
-    const updatedSavedHouses = savedHouses.filter(h => h.id !== house.id);
-    setSavedHouses(updatedSavedHouses);
-    localStorage.setItem("savedItems", JSON.stringify(updatedSavedHouses));
-    window.dispatchEvent(new CustomEvent("savedItemsChanged"));
+    dispatch(unsaveItem(house.id));
   };
 
   const counts = {

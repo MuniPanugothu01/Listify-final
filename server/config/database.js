@@ -14,11 +14,13 @@ const connectDB = async () => {
       w: 'majority',
       
       // Connection pool settings
-      maxPoolSize: 10,
-      minPoolSize: 2,
+      maxPoolSize: 20,              // Increased from 10 for better concurrency
+      minPoolSize: 5,               // Increased from 2 to keep warm connections
       socketTimeoutMS: 45000,
       connectTimeoutMS: 30000,
       serverSelectionTimeoutMS: 30000,
+      heartbeatFrequencyMS: 10000,  // Check server health every 10s
+      maxIdleTimeMS: 60000,         // Close idle connections after 60s
       
       // Auto reconnect
       autoIndex: true,

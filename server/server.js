@@ -74,6 +74,14 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
+// ============== REQUEST ID FOR TRACING ==============
+app.use((req, res, next) => {
+  const crypto = require('crypto');
+  req.requestId = crypto.randomUUID();
+  res.setHeader('X-Request-Id', req.requestId);
+  next();
+});
+
 // Body parser — limit payload sizes to prevent DoS
 app.use(express.json({ limit: '1mb' }));
 app.use(express.urlencoded({ extended: true, limit: '1mb' }));
@@ -137,10 +145,18 @@ const otpLimiter = rateLimit({
 // Connect to database
 connectDB().catch(console.error);
 
+// Initialize Elasticsearch (optional — falls back to MongoDB $text search)
+const { initElasticsearch } = require('./config/elasticsearch');
+initElasticsearch().catch((err) => {
+  console.log('ℹ️  Elasticsearch init skipped:', err.message);
+});
+
 // Routes
 const authRoutes = require("./routes/authRoutes");
 const electronicsRoutes = require("./routes/electronicsRoutes");
 const vehiclesRoutes = require("./routes/vehiclesRoutes");
+const searchRoutes = require("./routes/searchRoutes");
+const cacheRoutes = require("./routes/cacheRoutes");
 
 // Apply strict rate limiter to auth routes
 app.use("/api/auth/login", authLimiter);
@@ -154,11 +170,18 @@ app.use("/api/auth/forgot-password/resend-otp", otpLimiter);
 app.use("/api/auth", authRoutes);
 app.use("/api/electronics", electronicsRoutes);
 app.use("/api/vehicles", vehiclesRoutes);
+app.use("/api/search", searchRoutes);
+app.use("/api/cache", cacheRoutes);
 
 // Health check
-app.get("/health", (req, res) => {
+app.get("/health", async (req, res) => {
   const dbStatus =
     mongoose.connection.readyState === 1 ? "connected" : "disconnected";
+
+  const { getIsConnected } = require('./config/elasticsearch');
+  const ListingCache = require('./services/listingCacheService');
+  let cacheStats = {};
+  try { cacheStats = await ListingCache.getStats(); } catch { /* ignore */ }
 
   res.status(200).json({
     status: "healthy",
@@ -167,6 +190,8 @@ app.get("/health", (req, res) => {
     environment: process.env.NODE_ENV,
     database: dbStatus,
     redis: "connected",
+    elasticsearch: getIsConnected() ? "connected" : "not configured (using MongoDB fallback)",
+    cache: cacheStats,
   });
 });
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense, lazy } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -9,12 +9,12 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import { useTokenRefresh } from "./hooks/useTokenRefresh";
 
 // Import Loading Spinner Component
-import LoadingSpinner from "./components/LoadingSpinner.jsx"; // Make sure path is correct
+import LoadingSpinner from "./components/LoadingSpinner.jsx";
 import PageTransitionLoader from "./components/common/PageTransitionLoader.jsx";
 
+// ── Critical path (always loaded) ──
 import Navbar from "./components/UserProfile/Navbar.jsx";
 import Hero from "./pages/Home/Hero.jsx";
-import Heading from "./pages/Home/Heading.jsx";
 import Category from "./pages/Home/Category.jsx";
 import WhyUs from "./pages/Home/WhyUs.jsx";
 import HowItWorks from "./pages/Home/HowItWorks.jsx";
@@ -22,72 +22,65 @@ import Questions from "./pages/Home/Questions.jsx";
 import Reviews from "./pages/Home/Reviews.jsx";
 import Footer from "./pages/Home/Footer.jsx";
 
-// signin page
-import SignUp from "./components/auth/SignUp.jsx";
-import Login from "./components/auth/Login.jsx";
-import ForgotPassword from "./components/auth/ForgotPassword.jsx";
-import ResetPassword from "./components/auth/ResetPassword.jsx";
-import ResetOtp from "./components/auth/ResetOtp.jsx";
+// ── Lazy-loaded routes (code-split for faster initial load) ──
+const SignUp = lazy(() => import("./components/auth/SignUp.jsx"));
+const Login = lazy(() => import("./components/auth/Login.jsx"));
+const ForgotPassword = lazy(() => import("./components/auth/ForgotPassword.jsx"));
+const ResetPassword = lazy(() => import("./components/auth/ResetPassword.jsx"));
+const ResetOtp = lazy(() => import("./components/auth/ResetOtp.jsx"));
 
-import ContactUs from "./pages/ContactPage/ContactUS.jsx";
-import AboutUs from "./pages/AboutPage/AboutUs.jsx";
-import OurServices from "./pages/OurServices/OurServices.jsx";
+const ContactUs = lazy(() => import("./pages/ContactPage/ContactUS.jsx"));
+const AboutUs = lazy(() => import("./pages/AboutPage/AboutUs.jsx"));
+const OurServices = lazy(() => import("./pages/OurServices/OurServices.jsx"));
 
-import Postadd from "./pages/Postadd/Postadd.jsx";
-import EditListing from "./pages/Postadd/EditListing.jsx";
+const Postadd = lazy(() => import("./pages/Postadd/Postadd.jsx"));
+const EditListing = lazy(() => import("./pages/Postadd/EditListing.jsx"));
 
+const TakeCare = lazy(() => import("./pages/TakeCare/TakeCare.jsx"));
+const TakeCareDetail = lazy(() => import("./components/TakeCare/TakeCareDetail.jsx"));
 
-import TakeCare from "./pages/TakeCare/TakeCare.jsx";
-import TakeCareDetail from "./components/TakeCare/TakeCareDetail.jsx";
+const Electronics = lazy(() => import("./pages/Electronics/Electronics.jsx"));
+const ElectronicsDetail = lazy(() => import("./components/Electronics/ElectronicsDetail.jsx"));
 
+const ForSale = lazy(() => import("./components/ForSale/ForSale.jsx"));
+const ForSaleDetail = lazy(() => import("./components/ForSale/ForSaleDetail.jsx"));
 
-// Electronics
-import Electronics from "./pages/Electronics/Electronics.jsx";
-import ElectronicsDetail from "./components/Electronics/ElectronicsDetail.jsx";
+const Roommates = lazy(() => import("./pages/Roommates/Roommates.jsx"));
+const RoomMateDetails = lazy(() => import("./components/Roommates/RoomMateDetails.jsx"));
+const DetailsPage = lazy(() => import("./components/Roommates/DetailsPage.jsx"));
 
+const Events = lazy(() => import("./pages/Events/Events.jsx"));
+const EventsDetail = lazy(() => import("./components/Events/EventsDetail.jsx"));
 
-// For Sale
-import ForSale from "./components/ForSale/ForSale.jsx";
-import ForSaleDetail from "./components/ForSale/ForSaleDetail.jsx";
+const Rentals = lazy(() => import("./pages/Rentals/Rentals.jsx"));
+const RentalsListings = lazy(() => import("./components/Rentals/RentalsListings.jsx"));
+const RentalDetailsPage = lazy(() => import("./components/Rentals/RentalDetailsPage.jsx"));
 
-// Roommates
-import Roommates from "./pages/Roommates/Roommates.jsx";
-import RoomMateDetails from "./components/Roommates/RoomMateDetails.jsx";
-import DetailsPage from "./components/Roommates/DetailsPage.jsx";
+const Jobs = lazy(() => import("./pages/Jobs/Jobs.jsx"));
+const JobSearchPortal = lazy(() => import("./components/Jobs/JobSearchPortal.jsx"));
+const JobDetailsPage = lazy(() => import("./components/Jobs/JobDetailsPage.jsx"));
+const JobSeekerInterface = lazy(() => import("./components/Jobs/JobSeekerInterface.jsx"));
+const JobSeekerResume = lazy(() => import("./components/Jobs/JobSeekerResume.jsx"));
+const JobSeekerResumesDetail = lazy(() => import("./components/Jobs/JobSeekerResumesDetail.jsx"));
 
-// Events
-import Events from "./pages/Events/Events.jsx";
-import EventsDetail from "./components/Events/EventsDetail.jsx";
+const Services = lazy(() => import("./pages/Services/Services.jsx"));
 
+const Vehicles = lazy(() => import("./pages/Vehicles/Vehicles.jsx"));
+const VehicleDetail = lazy(() => import("./components/Vehicles/VehicleDetail.jsx"));
 
-// Rentals
-import Rentals from "./pages/Rentals/Rentals.jsx";
-import RentalsListings from "./components/Rentals/RentalsListings.jsx";
-import RentalDetailsPage from "./components/Rentals/RentalDetailsPage.jsx";
+const Profile = lazy(() => import("./pages/Home/Profile.jsx"));
 
-// Jobs
-import Jobs from "./pages/Jobs/Jobs.jsx";
-import JobSearchPortal from "./components/Jobs/JobSearchPortal.jsx";
-import JobDetailsPage from "./components/Jobs/JobDetailsPage.jsx";
-import JobSeekerInterface from "./components/Jobs/JobSeekerInterface.jsx";
-import JobSeekerResume from "./components/Jobs/JobSeekerResume.jsx";
-import JobSeekerResumesDetail from "./components/Jobs/JobSeekerResumesDetail.jsx";
-
-// Services
-import Services from "./pages/Services/Services.jsx";
-
-// Cars categories
-import Vehicles from "./pages/Vehicles/Vehicles.jsx";
-import VehicleDetail from "./components/Vehicles/VehicleDetail.jsx";
-
-
-// Profile
-import Profile from "./pages/Home/Profile.jsx";
-
-// ChatBot
+// ── Always loaded ──
 import ChatBot from "./components/ChatBot.jsx";
 import { ScrollProgress } from "./components/ui/scroll-progress.jsx";
 import { Toaster, ToastBar } from "react-hot-toast";
+
+// Suspense fallback for lazy routes
+const RouteFallback = () => (
+  <div className="min-h-[60vh] flex items-center justify-center">
+    <LoadingSpinner text="Loading..." />
+  </div>
+);
 
 // Get Google Client ID from environment
 const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
@@ -236,6 +229,7 @@ const AppContent = () => {
           )}
         </Toaster>
         <PageTransitionLoader>
+        <Suspense fallback={<RouteFallback />}>
         <Routes>
           {/* Home */}
           <Route
@@ -322,7 +316,6 @@ const AppContent = () => {
 
           {/* Placeholder Pages */}
           <Route path="/marketplace" element={<div>Marketplace Page</div>} />
-          <Route path="/takecare" element={<div>TakeCare Page</div>} />
           <Route path="/cares" element={<div>Cares Page</div>} />
           <Route path="/blogs" element={<div>Blogs Page</div>} />
           <Route path="/forums" element={<div>Forums Page</div>} />
@@ -334,7 +327,21 @@ const AppContent = () => {
             element={<div>Notifications Page</div>}
           />
           <Route path="/settings" element={<div>Settings Page</div>} />
+
+          {/* 404 Catch-all */}
+          <Route path="*" element={
+            <div className="min-h-screen flex items-center justify-center">
+              <div className="text-center">
+                <h1 className="text-6xl font-bold text-gray-300 mb-4">404</h1>
+                <p className="text-gray-600 mb-6">Page not found</p>
+                <a href="/" className="px-6 py-3 bg-[#27bb97] text-white rounded-lg hover:bg-[#1fa987] transition-colors">
+                  Go Home
+                </a>
+              </div>
+            </div>
+          } />
         </Routes>
+        </Suspense>
         </PageTransitionLoader>
       </main>
 

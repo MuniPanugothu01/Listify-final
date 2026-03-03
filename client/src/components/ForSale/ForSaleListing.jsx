@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { setSelectedProduct, setAllProducts } from '../../redux/slices/forSaleSlice';
 
 const ForSaleListing = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [searchQuery, setSearchQuery] = useState('');
 
 
@@ -783,8 +786,11 @@ const products = [
 ];
 
 
-  // Store all products in localStorage for similar items
-  localStorage.setItem('allProducts', JSON.stringify(products));
+  // Store all products in Redux for similar items (ForSaleDetail reads from here)
+  useEffect(() => {
+    dispatch(setAllProducts(products));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch]);
 
   // Filter products based on search query
   const filteredProducts = products.filter(product => 
@@ -797,8 +803,8 @@ const products = [
   // Product Card Component
   const ProductCard = ({ image, title, price, location, promoted, product }) => {
     const handleCardClick = () => {
-      // Store the product data in localStorage
-      localStorage.setItem('selectedProduct', JSON.stringify(product));
+      // Store the product data in Redux
+      dispatch(setSelectedProduct(product));
       
       // Navigate to the forsale details page with id
       navigate(`/forsale/${product.id}`);

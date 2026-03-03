@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -18,10 +18,10 @@ import {
   toggleSaveElectronics,
 } from '../../redux/slices/electronicsSlice';
 import { ProductGridSkeleton, ButtonSpinner } from '../common/Skeleton';
+import OptimisedImage from '../common/OptimisedImage';
 
-// Product Card Component
-const ProductCard = ({ product, onClick, onToggleSave, isSaved, isLoggedIn }) => {
-  const [imgLoaded, setImgLoaded] = React.useState(false);
+// Product Card Component — memoised to prevent re-renders
+const ProductCard = React.memo(({ product, onClick, onToggleSave, isSaved, isLoggedIn }) => {
   const [saving, setSaving] = React.useState(false);
 
   // Support both API data (product.images[]) and legacy data (product.image)
@@ -45,14 +45,11 @@ const ProductCard = ({ product, onClick, onToggleSave, isSaved, isLoggedIn }) =>
       className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer group border border-gray-200 animate-fade-in-up"
     >
       <div className="relative h-40 sm:h-48 overflow-hidden bg-gray-100">
-        {!imgLoaded && (
-          <div className="absolute inset-0 bg-gray-200 skeleton-shimmer" />
-        )}
-        <img
+        <OptimisedImage
           src={image}
           alt={product.title}
-          className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 ${!imgLoaded ? 'opacity-0' : 'opacity-100'} transition-opacity`}
-          onLoad={() => setImgLoaded(true)}
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          wrapperClassName="w-full h-full"
         />
         {product.condition && (
           <span className="absolute top-2 left-2 bg-white/90 backdrop-blur-sm text-xs font-medium px-2 py-1 rounded-full text-gray-700">
@@ -96,7 +93,7 @@ const ProductCard = ({ product, onClick, onToggleSave, isSaved, isLoggedIn }) =>
       </div>
     </div>
   );
-};
+});
 
 const ElectronicsListing = () => {
   const navigate = useNavigate();
@@ -117,66 +114,77 @@ const ElectronicsListing = () => {
     dispatch(fetchAllElectronics());
   }, [dispatch]);
 
-  // Get unique subcategories and conditions from API data
-  const categories = [...new Set(listings.map(p => p.subcategory).filter(Boolean))];
-  const conditions = [...new Set(listings.map(p => p.condition).filter(Boolean))];
+  // Memoised unique filter options from API data
+  const categories = useMemo(
+    () => [...new Set(listings.map(p => p.subcategory).filter(Boolean))],
+    [listings]
+  );
+  const conditions = useMemo(
+    () => [...new Set(listings.map(p => p.condition).filter(Boolean))],
+    [listings]
+  );
 
-  // Client-side filtering for real-time search/filter experience
-  const filteredProducts = listings.filter((product) => {
-    if (searchQuery && !product.title.toLowerCase().includes(searchQuery.toLowerCase())) {
-      return false;
-    }
-    if (priceMin && product.price < parseFloat(priceMin)) {
-      return false;
-    }
-    if (priceMax && product.price > parseFloat(priceMax)) {
-      return false;
-    }
-    if (selectedCategories.length > 0 && !selectedCategories.includes(product.subcategory)) {
-      return false;
-    }
-    if (selectedConditions.length > 0 && !selectedConditions.includes(product.condition)) {
-      return false;
-    }
-    return true;
-  });
+  // Memoised client-side filtering for real-time search/filter experience
+  const filteredProducts = useMemo(() =>
+    listings.filter((product) => {
+      if (searchQuery && !product.title.toLowerCase().includes(searchQuery.toLowerCase())) {
+        return false;
+      }
+      if (priceMin && product.price < parseFloat(priceMin)) {
+        return false;
+      }
+      if (priceMax && product.price > parseFloat(priceMax)) {
+        return false;
+      }
+      if (selectedCategories.length > 0 && !selectedCategories.includes(product.subcategory)) {
+        return false;
+      }
+      if (selectedConditions.length > 0 && !selectedConditions.includes(product.condition)) {
+        return false;
+      }
+      return true;
+    }),
+    [listings, searchQuery, priceMin, priceMax, selectedCategories, selectedConditions]
+  );
 
-  // Sort
-  const sortedProducts = [...filteredProducts].sort((a, b) => {
-    if (sortBy === "price_asc") return a.price - b.price;
-    if (sortBy === "price_desc") return b.price - a.price;
-    // default: newest first
-    return new Date(b.createdAt) - new Date(a.createdAt);
-  });
+  // Memoised sort
+  const sortedProducts = useMemo(() =>
+    [...filteredProducts].sort((a, b) => {
+      if (sortBy === "price_asc") return a.price - b.price;
+      if (sortBy === "price_desc") return b.price - a.price;
+      // default: newest first
+      return new Date(b.createdAt) - new Date(a.createdAt);
+    }),
+    [filteredProducts, sortBy]
+  );
 
-  const handleProductClick = (product) => {
-    // Navigate using the API id (_id)
+  const handleProductClick = useCallback((product) => {
     navigate(`/electronics/${product._id || product.id}`);
-  };
+  }, [navigate]);
 
-  const handleCategoryChange = (category) => {
+  const handleCategoryChange = useCallback((category) => {
     setSelectedCategories(prev =>
       prev.includes(category)
         ? prev.filter(c => c !== category)
         : [...prev, category]
     );
-  };
+  }, []);
 
-  const handleConditionChange = (condition) => {
+  const handleConditionChange = useCallback((condition) => {
     setSelectedConditions(prev =>
       prev.includes(condition)
         ? prev.filter(c => c !== condition)
         : [...prev, condition]
     );
-  };
+  }, []);
 
-  const handleToggleSave = (id) => {
+  const handleToggleSave = useCallback((id) => {
     if (!user) {
-      navigate('/login');
+      navigate('/signin');
       return;
     }
     dispatch(toggleSaveElectronics(id));
-  };
+  }, [user, navigate, dispatch]);
 
   return (
     <div className="min-h-screen">

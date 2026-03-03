@@ -17,4 +17,24 @@ export default defineConfig({
       },
     },
   },
+  build: {
+    // ── Performance optimisations ──
+    target: 'es2020',
+    minify: 'esbuild',
+    cssMinify: true,
+    sourcemap: false,
+    // Code splitting: vendor chunks for better caching
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+          'vendor-redux': ['@reduxjs/toolkit', 'react-redux', 'redux-persist'],
+          'vendor-ui': ['framer-motion', 'lucide-react', 'react-hot-toast'],
+          'vendor-axios': ['axios'],
+        },
+      },
+    },
+    // Chunk size warning at 500KB
+    chunkSizeWarningLimit: 500,
+  },
 })

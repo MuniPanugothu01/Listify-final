@@ -224,33 +224,47 @@ class S3Service {
   }
 
   /**
-   * Upload listing image to S3 (electronics, forsale, etc.)
-   * @param {Buffer} fileBuffer - Image buffer
-   * @param {string} userId - User ID
-   * @param {string} mimeType - MIME type
+   * Upload listing image to S3 organised by category folder
+   *
+   * S3 folder structure:
+   *   electronics/{userId}/{uuid}.webp
+   *   vehicles/{userId}/{uuid}.webp
+   *   listings/{userId}/{uuid}.webp   (fallback when no category given)
+   *
+   * @param {Buffer}  fileBuffer - Image buffer
+   * @param {string}  userId     - User ID
+   * @param {string}  mimeType   - MIME type
+   * @param {string}  category   - Category folder name (e.g. 'electronics', 'vehicles')
    * @returns {Promise<Object>} Upload result
    */
-  async uploadListingImage(fileBuffer, userId, mimeType) {
+  async uploadListingImage(fileBuffer, userId, mimeType, category = 'listings') {
     try {
-      // Optimize: larger max size for listing images
+      // Sanitise category to a safe folder name
+      const folder = category
+        .toLowerCase()
+        .replace(/[^a-z0-9_-]/g, '')
+        || 'listings';
+
+      // Optimize: larger max size for listing images, output WebP for smaller size
       const optimized = await sharp(fileBuffer)
         .resize(1200, 1200, {
           fit: 'inside',
           withoutEnlargement: true,
         })
-        .jpeg({ quality: 85 })
+        .webp({ quality: 82 })
         .toBuffer();
 
-      const fileName = `listings/${userId}/${uuidv4()}.jpeg`;
+      const fileName = `${folder}/${userId}/${uuidv4()}.webp`;
 
       const command = new PutObjectCommand({
         Bucket: this.bucketName,
         Key: fileName,
         Body: optimized,
-        ContentType: 'image/jpeg',
-        CacheControl: 'max-age=31536000',
+        ContentType: 'image/webp',
+        CacheControl: 'max-age=31536000, public',
         Metadata: {
           userId: userId,
+          category: folder,
           uploadedAt: new Date().toISOString(),
           type: 'listing',
         },

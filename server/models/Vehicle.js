@@ -172,6 +172,7 @@ vehicleSchema.index({ status: 1, createdAt: -1 });
 vehicleSchema.index({ category: 1, status: 1 });
 vehicleSchema.index({ seller: 1, status: 1 });
 vehicleSchema.index({ price: 1 });
+vehicleSchema.index({ savedBy: 1 });
 vehicleSchema.index({ title: "text", description: "text" });
 
 module.exports = mongoose.model("Vehicle", vehicleSchema);
