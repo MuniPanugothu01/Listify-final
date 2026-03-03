@@ -312,7 +312,7 @@ export default function Profile() {
       <div className="pt-4 container mx-auto px-1 py-6 mt-20">
         <div className="lg:flex gap-6">
           {/* Sidebar */}
-          <div className="lg:w-64 xl:w-72 flex-shrink-0">
+          <div className="lg:w-64 xl:w-72 flex-shrink-0 lg:self-start lg:sticky lg:top-24">
             <Sidebar 
               activeSection={activeSection}
               setActiveSection={handleSetActiveSection}

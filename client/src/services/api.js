@@ -450,6 +450,10 @@ export const authAPI = {
   toggleFollow: (userId) => {
     return api.post(`/follow/${userId}`, {}, { withCredentials: true });
   },
+
+  getMyFollowers: (type = "followers") => {
+    return api.get(`/followers?type=${type}`, { withCredentials: true });
+  },
 };
 
 // ==================== LISTINGS API (separate base URL) ====================
