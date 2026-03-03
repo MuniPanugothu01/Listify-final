@@ -91,6 +91,33 @@ const vehicleSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
+    // Bike-specific
+    engineCC: {
+      type: String,
+      trim: true,
+    },
+    // Cycle-specific
+    cycleType: {
+      type: String,
+      trim: true,
+    },
+    gearCount: {
+      type: String,
+      trim: true,
+    },
+    frameSize: {
+      type: String,
+      trim: true,
+    },
+    // Spare Parts-specific
+    compatibleVehicle: {
+      type: String,
+      trim: true,
+    },
+    partCategory: {
+      type: String,
+      trim: true,
+    },
     // Seller information - linked to User model
     seller: {
       type: mongoose.Schema.Types.ObjectId,

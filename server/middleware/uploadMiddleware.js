@@ -4,12 +4,15 @@ const multer = require('multer');
 const storage = multer.memoryStorage();
 
 const fileFilter = (req, file, cb) => {
-  const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
-  
+  const allowedTypes = [
+    'image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp',
+    'image/avif', 'image/heic', 'image/heif', 'image/bmp', 'image/tiff',
+  ];
+
   if (allowedTypes.includes(file.mimetype)) {
     cb(null, true);
   } else {
-    cb(new Error('Invalid file type. Only JPEG, PNG, GIF, and WebP are allowed.'), false);
+    cb(new Error('Invalid file type. Only JPEG, PNG, GIF, WebP, HEIC, AVIF, BMP, and TIFF are allowed.'), false);
   }
 };
 
