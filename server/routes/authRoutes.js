@@ -152,6 +152,9 @@ router.get("/seller/:userId", authController.getSellerProfile);
 // ==================== Follow / Unfollow ====================
 router.post("/follow/:userId", protect, authController.toggleFollow);
 
+// ==================== Get my followers / following list ====================
+router.get("/followers", protect, authController.getMyFollowers);
+
 // ==================== Protected routes ====================
 router.get("/profile", protect, authController.getProfile);
 router.put(
