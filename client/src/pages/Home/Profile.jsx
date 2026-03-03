@@ -67,15 +67,21 @@ export default function Profile() {
   const { savedItems: savedElectronics, savedLoading, myListings, myListingsLoading } = useSelector((state) => state.electronics);
   const { savedItems: savedVehicles, savedLoading: savedVehiclesLoading, myListings: myVehicleListings, myListingsLoading: myVehiclesLoading } = useSelector((state) => state.vehicles);
 
-  // Combine electronics + vehicles
+  // Combine electronics + vehicles — normalise _id (lean() returns _id, toJSON may add id)
+  const normaliseListing = (item, listingType) => ({
+    ...item,
+    _id: item._id || item.id,
+    _listingType: listingType,
+  });
+
   const allMyListings = [
-    ...(myListings || []).map(item => ({ ...item, _listingType: 'electronics' })),
-    ...(myVehicleListings || []).map(item => ({ ...item, _listingType: 'vehicles' })),
+    ...(myListings || []).map(item => normaliseListing(item, 'electronics')),
+    ...(myVehicleListings || []).map(item => normaliseListing(item, 'vehicles')),
   ].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
   const allSavedItems = [
-    ...(savedElectronics || []).map(item => ({ ...item, _listingType: 'electronics' })),
-    ...(savedVehicles || []).map(item => ({ ...item, _listingType: 'vehicles' })),
+    ...(savedElectronics || []).map(item => normaliseListing(item, 'electronics')),
+    ...(savedVehicles || []).map(item => normaliseListing(item, 'vehicles')),
   ].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
   const allMyListingsLoading = myListingsLoading || myVehiclesLoading;
@@ -468,11 +474,13 @@ export default function Profile() {
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-                    {allMyListings.map((item) => (
+                    {allMyListings.map((item) => {
+                      const lid = item._id || item.id;
+                      return (
                       <div
-                        key={`${item._listingType}-${item._id}`}
+                        key={`${item._listingType}-${lid}`}
                         className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition-all duration-300 cursor-pointer group"
-                        onClick={() => navigate(`/${item._listingType}/${item._id}`)}
+                        onClick={() => lid && item._listingType && navigate(`/${item._listingType}/${lid}`)}
                       >
                         <div className="relative h-44 sm:h-48 overflow-hidden bg-gray-100">
                           <img
@@ -511,15 +519,21 @@ export default function Profile() {
                           </div>
                           <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
                             <button
-                              onClick={() => navigate(`/${item._listingType}/${item._id}`)}
+                              onClick={() => {
+                                const lid = item._id || item.id;
+                                if (!lid || !item._listingType) { toast.error('Listing data incomplete — cannot open'); return; }
+                                navigate(`/${item._listingType}/${lid}`);
+                              }}
                               className="flex-1 py-2 text-xs font-medium bg-emerald-50 text-emerald-700 rounded-lg hover:bg-emerald-100 transition-colors"
                             >
                               View
                             </button>
                             <button
-                              onClick={() =>
-                                navigate(`/edit-listing/${item._listingType}/${item._id}`)
-                              }
+                              onClick={() => {
+                                const lid = item._id || item.id;
+                                if (!lid || !item._listingType) { toast.error('Listing data incomplete — cannot edit'); return; }
+                                navigate(`/edit-listing/${item._listingType}/${lid}`);
+                              }}
                               className="flex-1 py-2 text-xs font-medium bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors"
                             >
                               Edit
@@ -535,7 +549,7 @@ export default function Profile() {
                                         onClick={() => {
                                           toast.dismiss(t.id);
                                           const deleteAction = item._listingType === 'vehicles' ? deleteVehicleListing : deleteElectronicsListing;
-                                          dispatch(deleteAction(item._id))
+                                          dispatch(deleteAction(lid))
                                             .unwrap()
                                             .then(() => toast.success('Listing deleted successfully'))
                                             .catch((err) => toast.error(err || 'Failed to delete listing'));
@@ -561,7 +575,7 @@ export default function Profile() {
                           </div>
                         </div>
                       </div>
-                    ))}
+                    );})}
                   </div>
                 )}
               </div>
