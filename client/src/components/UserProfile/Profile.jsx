@@ -8,26 +8,20 @@ import {
 import {
   unsaveItem,
 } from "../../redux/slices/forSaleSlice";
-import { 
+import {
   Bell, 
   X, 
   Menu,
   FileText,
   Heart,
   MapPin,
-  User,
-  Star,
-  Search,
   Home,
   MessageCircle,
-  Settings,
-  Calendar
 } from "lucide-react";
 import toast from "react-hot-toast";
 
 // Import components
 import Sidebar from "../../components/UserProfile/Sidebar";
-import ProfileOverview from "../../components/UserProfile/ProfileOverview"; // Changed from RightProfileSection
 import HomeSection from "../../components/UserProfile/HomeSection";
 import MessagesSection from "../../components/UserProfile/MessagesSection";
 import PersonalDetailsSection from "../../components/UserProfile/PersonalDetailsSection";
@@ -62,53 +56,15 @@ export default function Profile() {
     profilePic: authUser?.profileImage || authUser?.profileImageUrl || authUser?.googleProfileImage || authUser?.avatar,
   };
   const savedHouses = useSelector(selectAllSavedItems);
-  const [myPosts, setMyPosts] = useState([
-    { 
-      id: 1, 
-      title: "Cozy Apartment in Downtown", 
-      description: "A beautiful and cozy apartment located in the heart of the city.", 
-      type: "rent", 
-      price: 2500, 
-      location: "San Francisco, CA", 
-      images: ["https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2070&auto=format&fit=crop"], 
-      category: "apartments",
-      bedrooms: 2,
-      bathrooms: 1,
-      sqft: 850,
-      posted: "2 days ago",
-      views: 245,
-      featured: true
-    },
-    { 
-      id: 2, 
-      title: "Spacious Suburban House", 
-      description: "A spacious house perfect for families, located in a quiet suburb.", 
-      type: "sale", 
-      price: 550000, 
-      location: "San Jose, CA", 
-      images: ["https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?q=80&w=2070&auto=format&fit=crop"], 
-      category: "houses",
-      bedrooms: 4,
-      bathrooms: 3,
-      sqft: 2200,
-      posted: "1 week ago",
-      views: 189,
-      featured: false
-    }
-  ]);
-  const [myAlerts, setMyAlerts] = useState([1, 2, 3]);
-  const [messages, setMessages] = useState([
-    { name: "Alice Brown", preview: "Interested in the downtown apartment...", time: "11:01", unread: true, avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=40&h=40&fit=crop&crop=face" },
-    { name: "Bob Smith", preview: "Thanks for the update on villa...", time: "09:38", unread: false, avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face" },
-    { name: "Carol Johnson", preview: "Scheduling a viewing...", time: "09:38", unread: false, avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=face" }
-  ]);
+  const [myPosts, setMyPosts] = useState([]);
+  const [myAlerts, setMyAlerts] = useState([]);
+  const [messages, setMessages] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
   const [editData, setEditData] = useState({});
   const [profilePicPreview, setProfilePicPreview] = useState(
     authUser?.profileImage || authUser?.profileImageUrl || authUser?.googleProfileImage || authUser?.avatar || null
   );
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isSearchVisible, setIsSearchVisible] = useState(false);
 
   // Saved items are now read from Redux (forSale slice, persisted via redux-persist)
 
@@ -122,7 +78,7 @@ export default function Profile() {
       email: user.email || '',
       phone: user.phone || '',
       address: user.address || '',
-      bio: user.bio || "Professional real estate agent with 8+ years experience"
+      bio: user.bio || ""
     });
   }, [user.name, user.email, user.phone, user.address, user.bio]);
 
@@ -160,7 +116,7 @@ export default function Profile() {
       email: user.email,
       phone: user.phone,
       address: user.address,
-      bio: user.bio || "Professional real estate agent with 8+ years experience"
+      bio: user.bio || ""
     });
   };
 
@@ -174,32 +130,11 @@ export default function Profile() {
     alerts: myAlerts.length
   };
 
-  const agendaEvents = {
-    2: [ // Wednesday
-      { title: "Group Viewing Tour", time: "12:30-1:30", group: true, avatars: ["https://images.unsplash.com/photo-1494790108755-2616b612b786?w=20&h=20", "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=20&h=20", "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=20&h=20"] },
-      { title: "Viewing with T. Morgan", time: "1:40-1:45", client: "T. Morgan", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=24&h=24&fit=crop&crop=face" }
-    ],
-    3: [ // Thursday
-      { title: "Viewing with S. Green", time: "1:30-1:45", client: "S. Green", avatar: "https://images.unsplash.com/photo-1524504388940-b8e918bb7c5c?w=24&h=24&fit=crop&crop=face" }
-    ]
-  };
-
-  const getPriceDisplay = (item) => {
-    if (!item.price) return "Price not specified";
-    const price = typeof item.price === "number" ? item.price : parseFloat(item.price.replace(/[^\d.]/g, ""));
-    if (isNaN(price)) return "Price not specified";
-    return item.type === "rent" ? `$${price}/mo` : `$${price.toLocaleString()}`;
-  };
-
-  const getLocationDisplay = (item) => item.location ? item.location.split(",")[0] : "N/A";
-
-  // Mobile navigation items - updated to include Profile Overview
   const mobileNavItems = [
     { id: "home", label: "Home", icon: Home },
     { id: "posts", label: "Listings", icon: FileText },
     { id: "saved", label: "Saved", icon: Heart },
     { id: "messages", label: "Messages", icon: MessageCircle },
-    { id: "profile-overview", label: "Overview", icon: Calendar } // Added Profile Overview
   ];
 
   return (
@@ -224,7 +159,7 @@ export default function Profile() {
             
             {/* Desktop Navigation */}
             <div className="hidden lg:flex items-center gap-1 ml-6">
-              {['home', 'posts', 'saved', 'messages', 'profile-overview'].map((section) => (
+              {['home', 'posts', 'saved', 'messages'].map((section) => (
                 <button
                   key={section}
                   onClick={() => setActiveSection(section)}
@@ -234,7 +169,7 @@ export default function Profile() {
                       : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
                   }`}
                 >
-                  {section === 'profile-overview' ? 'Overview' : section.charAt(0).toUpperCase() + section.slice(1)}
+                  {section.charAt(0).toUpperCase() + section.slice(1)}
                 </button>
               ))}
             </div>
@@ -242,45 +177,6 @@ export default function Profile() {
 
           {/* Right Section */}
           <div className="flex items-center gap-2 md:gap-4">
-            {/* Search */}
-            {isSearchVisible ? (
-              <div className="absolute top-full left-0 right-0 bg-white p-4 border-b border-gray-200 shadow-lg lg:hidden">
-                <div className="flex items-center gap-2">
-                  <div className="relative flex-1">
-                    <input
-                      type="text"
-                      placeholder="Search properties, messages..."
-                      className="w-full px-4 py-3 pl-10 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-300 focus:border-emerald-500 transition-all"
-                    />
-                    <Search className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" />
-                  </div>
-                  <button 
-                    onClick={() => setIsSearchVisible(false)}
-                    className="px-4 py-3 text-gray-600 hover:text-gray-900"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <button 
-                onClick={() => setIsSearchVisible(true)}
-                className="lg:hidden p-2 text-gray-600 hover:text-gray-900"
-              >
-                <Search className="w-5 h-5" />
-              </button>
-            )}
-
-            {/* Desktop Search */}
-            <div className="hidden lg:block relative w-64">
-              <input
-                type="text"
-                placeholder="Search properties, messages..."
-                className="w-full px-4 py-2 pl-10 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-300 focus:border-emerald-500 transition-all text-sm"
-              />
-              <Search className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" />
-            </div>
-
             <button 
               onClick={() => setActiveSection('alerts')}
               className="relative p-2 rounded-xl hover:bg-gray-50 transition-colors"
@@ -295,16 +191,22 @@ export default function Profile() {
             
             {/* Profile Dropdown Trigger */}
             <div className="flex items-center gap-2">
-              <img 
-                src={profilePicPreview} 
-                alt="Profile" 
-                className="w-8 h-8 md:w-10 md:h-10 rounded-xl object-cover border-2 border-white shadow-xs" 
-              />
+              {profilePicPreview ? (
+                <img 
+                  src={profilePicPreview} 
+                  alt="Profile" 
+                  className="w-8 h-8 md:w-10 md:h-10 rounded-xl object-cover border-2 border-white shadow-xs" 
+                />
+              ) : (
+                <div className="w-8 h-8 md:w-10 md:h-10 rounded-xl bg-emerald-500 flex items-center justify-center text-white font-bold text-sm border-2 border-white shadow-xs">
+                  {(user.name || "U").charAt(0).toUpperCase()}
+                </div>
+              )}
               <div className="hidden md:block">
-                <p className="text-sm font-medium text-gray-900">{user.name}</p>
+                <p className="text-sm font-medium text-gray-900">{user.name || "User"}</p>
                 <p className="text-xs text-emerald-600 font-medium flex items-center gap-1">
                   <span className="w-2 h-2 bg-emerald-500 rounded-full"></span>
-                  Available
+                  Online
                 </p>
               </div>
             </div>
@@ -334,7 +236,6 @@ export default function Profile() {
                 myPosts={myPosts}
                 myAlerts={myAlerts}
                 messages={messages}
-                agendaEvents={agendaEvents}
                 onViewAll={setActiveSection}
                 user={user}
               />
@@ -357,19 +258,6 @@ export default function Profile() {
                 handleCancel={handleCancel}
               />
             )} 
-
-            {activeSection === "profile-overview" && (
-              <div>
-                <div className="mb-6">
-                  <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Profile Overview</h2>
-                  <p className="text-gray-500 text-sm mt-1">Your profile details</p>
-                </div>
-                <ProfileOverview
-                  user={user} 
-                  profilePic={profilePicPreview} 
-                />
-              </div>
-            )}
 
             {activeSection === "saved" && (
               <div>
@@ -504,26 +392,12 @@ export default function Profile() {
                   <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Account Activity</h2>
                   <p className="text-gray-500 text-sm mt-1">Recent account activities and history</p>
                 </div>
-                <div className="bg-white rounded-2xl border border-gray-200 p-6">
-                  <div className="space-y-4">
-                    {[
-                      { action: "Logged in", time: "Just now", icon: "👤" },
-                      { action: "Viewed property listing", time: "2 hours ago", icon: "👁️" },
-                      { action: "Saved a property", time: "4 hours ago", icon: "❤️" },
-                      { action: "Posted new listing", time: "Yesterday", icon: "📝" },
-                      { action: "Updated profile", time: "2 days ago", icon: "⚙️" }
-                    ].map((activity, index) => (
-                      <div key={index} className="flex items-center gap-4 p-3 hover:bg-gray-50 rounded-xl transition-colors">
-                        <div className="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center text-lg">
-                          {activity.icon}
-                        </div>
-                        <div className="flex-1">
-                          <p className="font-medium text-gray-900">{activity.action}</p>
-                          <p className="text-sm text-gray-500">{activity.time}</p>
-                        </div>
-                      </div>
-                    ))}
+                <div className="bg-white rounded-2xl border border-gray-200 p-8 md:p-12 text-center">
+                  <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Bell className="w-8 h-8 text-gray-400" />
                   </div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">No activity yet</h3>
+                  <p className="text-gray-500 text-sm">Your account activity will appear here</p>
                 </div>
               </div>
             )} 
@@ -553,20 +427,12 @@ export default function Profile() {
               </div>
             )} 
           </main>
-
-          {/* Right Profile Section - Hidden on mobile, visible on large screens */}
-          <div className={`hidden xl:block w-80 flex-shrink-0 ${activeSection === "profile-overview" ? "xl:hidden" : ""}`}>
-            <ProfileOverview 
-              user={user} 
-              profilePic={profilePicPreview} 
-            />
-          </div>
         </div>
       </div>
 
       {/* Mobile Bottom Navigation */}
       <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-40 p-2 shadow-lg">
-        <div className="grid grid-cols-5 gap-1">
+        <div className="grid grid-cols-4 gap-1">
           {mobileNavItems.map((item) => (
             <button
               key={item.id}
