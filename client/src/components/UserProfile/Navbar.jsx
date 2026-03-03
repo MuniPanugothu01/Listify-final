@@ -24,6 +24,7 @@ import { ScrollProgress } from "../../components/ui/scroll-progress";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks/useRedux";
 import { updateUser, checkAuth, logoutUser } from "../../redux/slices/authSlice";
 import { fetchProfile } from "../../redux/slices/profileSlice";
+import { notificationsAPI } from "../../services/api";
 import toast from "react-hot-toast";
 
 const STATIC_PROFILE_IMAGE =
@@ -115,47 +116,57 @@ const Navbar = () => {
     }
   }, [profile, dispatch]);
 
-  // Fetch notifications
-  useEffect(() => {
-    if (isAuthenticated) {
+  // Fetch notifications from real API
+  const fetchNotifications = useCallback(async () => {
+    if (!isAuthenticated) return;
+    try {
       setNotificationsLoading(true);
-      setTimeout(() => {
-        setNotifications([
-          {
-            id: 1,
-            text: "Someone viewed your iPhone listing",
-            time: "2 mins ago",
-            read: false,
-            type: "view",
-          },
-          {
-            id: 2,
-            text: "Your MacBook Pro has 3 new offers",
-            time: "1 hour ago",
-            read: false,
-            type: "offer",
-          },
-          {
-            id: 3,
-            text: "New message from buyer",
-            time: "3 hours ago",
-            read: true,
-            type: "message",
-          },
-          {
-            id: 4,
-            text: "Your listing was featured",
-            time: "1 day ago",
-            read: true,
-            type: "featured",
-          },
-        ]);
-        setNotificationsLoading(false);
-      }, 1000);
+      const res = await notificationsAPI.getAll(1, 10);
+      setNotifications(res.data?.notifications || []);
+    } catch (err) {
+      console.error("Failed to fetch notifications:", err);
+    } finally {
+      setNotificationsLoading(false);
     }
   }, [isAuthenticated]);
 
+  useEffect(() => {
+    fetchNotifications();
+  }, [fetchNotifications]);
+
+  // Poll unread count every 30s
+  useEffect(() => {
+    if (!isAuthenticated) return;
+    const interval = setInterval(async () => {
+      try {
+        const res = await notificationsAPI.getUnreadCount();
+        const count = res.data?.unreadCount || 0;
+        // If count changed, refresh the full list
+        if (count !== unreadCountRef.current) {
+          unreadCountRef.current = count;
+          fetchNotifications();
+        }
+      } catch (_) {}
+    }, 30000);
+    return () => clearInterval(interval);
+  }, [isAuthenticated, fetchNotifications]);
+
+  const unreadCountRef = useRef(0);
   const unreadCount = notifications.filter((n) => !n.read).length;
+  useEffect(() => { unreadCountRef.current = unreadCount; }, [unreadCount]);
+
+  const formatNotifTime = (dateStr) => {
+    if (!dateStr) return "";
+    const diff = Date.now() - new Date(dateStr).getTime();
+    const mins = Math.floor(diff / 60000);
+    if (mins < 1) return "Just now";
+    if (mins < 60) return `${mins}m ago`;
+    const hrs = Math.floor(mins / 60);
+    if (hrs < 24) return `${hrs}h ago`;
+    const days = Math.floor(hrs / 24);
+    if (days < 7) return `${days}d ago`;
+    return new Date(dateStr).toLocaleDateString();
+  };
 
   // Reset image error when user/profile changes
   useEffect(() => {
@@ -241,16 +252,22 @@ const Navbar = () => {
     scrollToTop();
   };
 
-  const markNotificationAsRead = (id) => {
-    setNotifications(
-      notifications.map((notif) =>
-        notif.id === id ? { ...notif, read: true } : notif,
-      ),
-    );
+  const markNotificationAsRead = async (id) => {
+    try {
+      await notificationsAPI.markAsRead(id);
+      setNotifications(
+        notifications.map((notif) =>
+          notif._id === id ? { ...notif, read: true } : notif,
+        ),
+      );
+    } catch (_) {}
   };
 
-  const markAllAsRead = () => {
-    setNotifications(notifications.map((notif) => ({ ...notif, read: true })));
+  const markAllAsRead = async () => {
+    try {
+      await notificationsAPI.markAllAsRead();
+      setNotifications(notifications.map((notif) => ({ ...notif, read: true })));
+    } catch (_) {}
   };
 
   const getUserFirstName = useCallback(() => {
@@ -729,9 +746,9 @@ const Navbar = () => {
                           ) : notifications.length > 0 ? (
                             notifications.map((notification) => (
                               <div
-                                key={notification.id}
+                                key={notification._id}
                                 onClick={() =>
-                                  markNotificationAsRead(notification.id)
+                                  !notification.read && markNotificationAsRead(notification._id)
                                 }
                                 className={`px-4 py-3 cursor-pointer hover:bg-gray-50 ${
                                   !notification.read
@@ -739,12 +756,31 @@ const Navbar = () => {
                                     : ""
                                 }`}
                               >
-                                <p className="text-sm text-gray-800 font-medium">
-                                  {notification.text}
-                                </p>
-                                <p className="text-xs text-gray-400 mt-1">
-                                  {notification.time}
-                                </p>
+                                <div className="flex items-start gap-2.5">
+                                  {notification.sender?.profileImageUrl ? (
+                                    <img
+                                      src={notification.sender.profileImageUrl}
+                                      alt=""
+                                      className="w-8 h-8 rounded-full object-cover flex-shrink-0 mt-0.5"
+                                      onError={(e) => { e.target.style.display = 'none'; }}
+                                    />
+                                  ) : (
+                                    <div className="w-8 h-8 rounded-full bg-emerald-500 flex items-center justify-center text-white text-xs font-bold flex-shrink-0 mt-0.5">
+                                      {notification.sender?.name?.charAt(0)?.toUpperCase() || "?"}
+                                    </div>
+                                  )}
+                                  <div className="flex-1 min-w-0">
+                                    <p className="text-sm text-gray-800 font-medium">
+                                      {notification.message}
+                                    </p>
+                                    <p className="text-xs text-gray-400 mt-1">
+                                      {formatNotifTime(notification.createdAt)}
+                                    </p>
+                                  </div>
+                                  {!notification.read && (
+                                    <span className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0 mt-2"></span>
+                                  )}
+                                </div>
                               </div>
                             ))
                           ) : (

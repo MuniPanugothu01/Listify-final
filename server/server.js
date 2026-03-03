@@ -157,6 +157,7 @@ const electronicsRoutes = require("./routes/electronicsRoutes");
 const vehiclesRoutes = require("./routes/vehiclesRoutes");
 const searchRoutes = require("./routes/searchRoutes");
 const cacheRoutes = require("./routes/cacheRoutes");
+const notificationRoutes = require("./routes/notificationRoutes");
 
 // Apply strict rate limiter to auth routes
 app.use("/api/auth/login", authLimiter);
@@ -172,6 +173,7 @@ app.use("/api/electronics", electronicsRoutes);
 app.use("/api/vehicles", vehiclesRoutes);
 app.use("/api/search", searchRoutes);
 app.use("/api/cache", cacheRoutes);
+app.use("/api/notifications", notificationRoutes);
 
 // Health check
 app.get("/health", async (req, res) => {

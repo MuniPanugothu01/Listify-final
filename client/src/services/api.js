@@ -456,6 +456,32 @@ export const authAPI = {
   },
 };
 
+// ==================== NOTIFICATIONS API ====================
+const notificationsApi = axios.create({
+  baseURL: `${BASE_API_URL}/notifications`,
+  headers: { "Content-Type": "application/json" },
+  timeout: 30000,
+  withCredentials: true,
+});
+
+// Apply shared interceptors
+notificationsApi.interceptors.request.use(
+  (config) => {
+    console.log(`🚀 Notifications Request: ${config.method.toUpperCase()} ${config.url}`);
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+createResponseInterceptor(notificationsApi, "Notifications");
+
+export const notificationsAPI = {
+  getAll: (page = 1, limit = 20) => notificationsApi.get(`/?page=${page}&limit=${limit}`),
+  getUnreadCount: () => notificationsApi.get("/unread-count"),
+  markAsRead: (id) => notificationsApi.put(`/${id}/read`),
+  markAllAsRead: () => notificationsApi.put("/read-all"),
+  deleteNotification: (id) => notificationsApi.delete(`/${id}`),
+};
+
 // ==================== LISTINGS API (separate base URL) ====================
 const listingsApi = axios.create({
   baseURL: `${BASE_API_URL}/listings`,

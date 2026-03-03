@@ -114,7 +114,7 @@ const HomeSection = ({ savedHouses, myPosts, myAlerts, messages, onViewAll, user
           onClick={() => openFollowModal("followers")}
         />
         <StatsCard
-          title="Active Alerts"
+          title="Notifications"
           value={myAlerts?.length || 0}
           icon={Bell}
           color="amber"
