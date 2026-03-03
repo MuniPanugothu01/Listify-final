@@ -9,6 +9,7 @@ import {
   Search,
   Sparkles,
   MessageCircle,
+  Users,
 } from "lucide-react";
 
 const HomeSection = ({ savedHouses, myPosts, myAlerts, messages, onViewAll, user }) => {
@@ -74,7 +75,7 @@ const HomeSection = ({ savedHouses, myPosts, myAlerts, messages, onViewAll, user
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-5">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-5">
         <StatsCard
           title="Saved Properties"
           value={savedHouses?.length || 0}
@@ -86,6 +87,12 @@ const HomeSection = ({ savedHouses, myPosts, myAlerts, messages, onViewAll, user
           value={myPosts?.length || 0}
           icon={FileText}
           color="blue"
+        />
+        <StatsCard
+          title="Followers"
+          value={user?.followersCount || 0}
+          icon={Users}
+          color="purple"
         />
         <StatsCard
           title="Active Alerts"
