@@ -244,6 +244,16 @@ const userSchema = new mongoose.Schema({
     default: "active",
   },
 
+  // ==================== FOLLOW SYSTEM ====================
+  followers: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+  }],
+  following: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+  }],
+
   // Security Audit Trail
   lastPasswordChange: Date,
   lastEmailChange: Date,

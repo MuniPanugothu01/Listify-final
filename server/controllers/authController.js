@@ -1466,6 +1466,8 @@ exports.getProfile = async (req, res) => {
       dateOfBirth: user.dateOfBirth || null,
       gender: user.gender || null,
       profileImageUrl: profileImageUrl,
+      followersCount: user.followers?.length || 0,
+      followingCount: user.following?.length || 0,
       passwordExpiration: user.passwordNeedsChange
         ? user.passwordNeedsChange()
         : null,
@@ -2674,3 +2676,95 @@ const legacySendTokenResponse = (user, statusCode, res, message) => {
 
 exports.generateToken = generateToken;
 exports.sendTokenResponse = legacySendTokenResponse;
+
+// ==================== FOLLOW / UNFOLLOW ====================
+exports.toggleFollow = async (req, res) => {
+  try {
+    const targetUserId = req.params.userId;
+    const currentUserId = req.user._id;
+
+    if (targetUserId === currentUserId.toString()) {
+      return res.status(400).json({ success: false, message: "You cannot follow yourself" });
+    }
+
+    const targetUser = await User.findById(targetUserId);
+    if (!targetUser) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    const isFollowing = targetUser.followers.some(
+      (id) => id.toString() === currentUserId.toString()
+    );
+
+    if (isFollowing) {
+      // Unfollow
+      await User.findByIdAndUpdate(targetUserId, { $pull: { followers: currentUserId } });
+      await User.findByIdAndUpdate(currentUserId, { $pull: { following: targetUserId } });
+    } else {
+      // Follow
+      await User.findByIdAndUpdate(targetUserId, { $addToSet: { followers: currentUserId } });
+      await User.findByIdAndUpdate(currentUserId, { $addToSet: { following: targetUserId } });
+    }
+
+    const updatedTarget = await User.findById(targetUserId).select("followers");
+
+    res.status(200).json({
+      success: true,
+      isFollowing: !isFollowing,
+      followersCount: updatedTarget.followers.length,
+    });
+  } catch (error) {
+    logger.error("Toggle follow error:", error);
+    res.status(500).json({ success: false, message: "Failed to toggle follow" });
+  }
+};
+
+// ==================== PUBLIC SELLER PROFILE ====================
+exports.getSellerProfile = async (req, res) => {
+  try {
+    const sellerId = req.params.userId;
+    const mongoose = require("mongoose");
+
+    if (!mongoose.Types.ObjectId.isValid(sellerId)) {
+      return res.status(400).json({ success: false, message: "Invalid user ID" });
+    }
+
+    const seller = await User.findById(sellerId).select(
+      "name email profileImage googleProfileImage avatar provider createdAt followers following"
+    );
+
+    if (!seller) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    // Count seller's listings across all categories
+    const Electronics = require("../models/Electronics");
+    const Vehicle = require("../models/Vehicle");
+    const [electronicsCount, vehiclesCount] = await Promise.all([
+      Electronics.countDocuments({ seller: sellerId, status: "active" }),
+      Vehicle.countDocuments({ seller: sellerId, status: "active" }),
+    ]);
+
+    const profileImageUrl = seller.getProfileImage ? seller.getProfileImage() : 
+      (seller.profileImage || seller.googleProfileImage || seller.avatar || null);
+
+    res.status(200).json({
+      success: true,
+      seller: {
+        id: seller._id,
+        name: seller.name,
+        email: seller.email,
+        provider: seller.provider,
+        profileImageUrl,
+        createdAt: seller.createdAt,
+        followersCount: seller.followers?.length || 0,
+        followingCount: seller.following?.length || 0,
+        followers: seller.followers || [],
+        listingsCount: electronicsCount + vehiclesCount,
+      },
+    });
+  } catch (error) {
+    logger.error("Get seller profile error:", error);
+    res.status(500).json({ success: false, message: "Failed to fetch seller profile" });
+  }
+};
