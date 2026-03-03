@@ -355,10 +355,20 @@ const EditListing = () => {
     };
 
     const fetchByType = async (targetType) => {
-      const action =
-        targetType === "vehicles" ? fetchVehicleById(id) : fetchElectronicsById(id);
-      const listing = await dispatch(action).unwrap();
-      return { listing, targetType };
+      const api = targetType === "vehicles" ? vehiclesAPI : electronicsAPI;
+      try {
+        // Try Redux thunk first (updates Redux store)
+        const action =
+          targetType === "vehicles" ? fetchVehicleById(id) : fetchElectronicsById(id);
+        const listing = await dispatch(action).unwrap();
+        return { listing, targetType };
+      } catch (thunkErr) {
+        // Fallback: direct API call (bypasses Redux middleware/interceptor issues)
+        console.warn(`EditListing: ${targetType} thunk failed, trying direct API`, thunkErr);
+        const res = await api.getById(id);
+        if (res.data?.listing) return { listing: res.data.listing, targetType };
+        throw thunkErr;
+      }
     };
 
     const fetchListing = async () => {
@@ -491,13 +501,20 @@ const EditListing = () => {
     setLoading(true);
 
     try {
+      // Determine the effective listing type — use multiple fallbacks so
+      // the correct API is always used even if state didn't propagate.
+      const effectiveType =
+        listingType ||
+        normalizedRouteType ||
+        (selectedCategory === "Vehicles" ? "vehicles" : "electronics");
+
       // Upload new images if any
       let newImageUrls = [];
       if (newImageFiles.length > 0) {
         try {
           const formData = new FormData();
           newImageFiles.forEach((img) => formData.append("images", img));
-          const uploadAPI = listingType === "vehicles" ? vehiclesAPI : electronicsAPI;
+          const uploadAPI = effectiveType === "vehicles" ? vehiclesAPI : electronicsAPI;
           const uploadRes = await uploadAPI.uploadImages(formData);
           newImageUrls = uploadRes.data.imageUrls;
         } catch (uploadErr) {
@@ -537,7 +554,7 @@ const EditListing = () => {
       };
 
       const updateAction =
-        listingType === "vehicles"
+        effectiveType === "vehicles"
           ? updateVehicleListing({ id, listingData })
           : updateElectronicsListing({ id, listingData });
 

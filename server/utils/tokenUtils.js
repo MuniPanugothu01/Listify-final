@@ -20,11 +20,26 @@ const generateAccessToken = (userId, req = null) => {
     jti: crypto.randomBytes(16).toString('hex'),
   };
 
-  // Token fingerprint: bind the token to the client's User-Agent.
-  // If someone steals the token, it won't work from a different browser/device.
+  // Token fingerprint: bind the token to the client's browser family + platform.
+  // Uses a stable hash (browser + OS only, not version) so minor browser
+  // updates don't invalidate existing sessions.
   if (req) {
     const ua = req.get('user-agent') || '';
-    payload.fgp = crypto.createHash('sha256').update(ua).digest('hex').substring(0, 16);
+    // Extract browser family
+    let browser = 'unknown';
+    if (/Edg\//i.test(ua))          browser = 'Edge';
+    else if (/OPR\//i.test(ua))     browser = 'Opera';
+    else if (/Chrome\//i.test(ua))  browser = 'Chrome';
+    else if (/Firefox\//i.test(ua)) browser = 'Firefox';
+    else if (/Safari\//i.test(ua))  browser = 'Safari';
+    // Extract platform family
+    let platform = 'unknown';
+    if (/Windows/i.test(ua))        platform = 'Windows';
+    else if (/Macintosh/i.test(ua)) platform = 'Mac';
+    else if (/Linux/i.test(ua))     platform = 'Linux';
+    else if (/Android/i.test(ua))   platform = 'Android';
+    else if (/iPhone|iPad/i.test(ua)) platform = 'iOS';
+    payload.fgp = crypto.createHash('sha256').update(`${browser}|${platform}`).digest('hex').substring(0, 16);
   }
 
   return jwt.sign(
