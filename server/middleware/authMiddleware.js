@@ -9,6 +9,32 @@ const {
 const { logger } = require('../utils/logger');
 
 // ─────────────────────────────────────────────────────────────────────────────
+// HELPER: extract a stable fingerprint from User-Agent
+// Hashes only the browser family + platform (e.g. "Chrome|Windows") so that
+// minor version bumps (Chrome/120 → Chrome/121) don't invalidate the token.
+// ─────────────────────────────────────────────────────────────────────────────
+const extractStableFgp = (ua) => {
+  const crypto = require('crypto');
+  // Extract browser family (Chrome, Firefox, Safari, Edg, Opera, etc.)
+  let browser = 'unknown';
+  if (/Edg\//i.test(ua))          browser = 'Edge';
+  else if (/OPR\//i.test(ua))     browser = 'Opera';
+  else if (/Chrome\//i.test(ua))  browser = 'Chrome';
+  else if (/Firefox\//i.test(ua)) browser = 'Firefox';
+  else if (/Safari\//i.test(ua))  browser = 'Safari';
+
+  // Extract platform family
+  let platform = 'unknown';
+  if (/Windows/i.test(ua))        platform = 'Windows';
+  else if (/Macintosh/i.test(ua)) platform = 'Mac';
+  else if (/Linux/i.test(ua))     platform = 'Linux';
+  else if (/Android/i.test(ua))   platform = 'Android';
+  else if (/iPhone|iPad/i.test(ua)) platform = 'iOS';
+
+  return crypto.createHash('sha256').update(`${browser}|${platform}`).digest('hex').substring(0, 16);
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
 // HELPER: extract access token from request
 // Priority: HttpOnly cookie "accessToken"  →  Authorization: Bearer header
 // ─────────────────────────────────────────────────────────────────────────────
@@ -53,22 +79,24 @@ exports.protect = async (req, res, next) => {
       }
 
       // Validate token fingerprint — if the token was bound to a
-      // User-Agent at creation time, reject it when used from a
-      // different browser/device.  This mitigates stolen-token replay.
+      // browser family at creation time, log a warning when used from
+      // a different browser.  Uses a stable browser-family hash instead
+      // of the full User-Agent to avoid false mismatches from browser
+      // version updates (Chrome/120 → Chrome/121 etc.).
       if (decoded.fgp) {
         const crypto = require('crypto');
         const ua = req.get('user-agent') || '';
-        const currentFgp = crypto.createHash('sha256').update(ua).digest('hex').substring(0, 16);
+        const currentFgp = extractStableFgp(ua);
         if (decoded.fgp !== currentFgp) {
-          logger.warn('protect: token fingerprint mismatch — possible stolen token', {
+          // Log but do NOT block — the token is still crypto-signed
+          // and served via HttpOnly secure cookies.  The fingerprint
+          // is defence-in-depth; blocking causes excessive logouts
+          // when the UA string changes (browser updates, extensions).
+          logger.warn('protect: token fingerprint mismatch (non-blocking)', {
             userId: decoded.id,
             expectedFgp: decoded.fgp,
             actualFgp: currentFgp,
-          });
-          return res.status(401).json({
-            success: false,
-            message: 'Token binding mismatch. Please login again.',
-            code: 'TOKEN_FINGERPRINT_MISMATCH',
+            userAgent: ua.substring(0, 80),
           });
         }
       }

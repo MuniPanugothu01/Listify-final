@@ -29,7 +29,7 @@ const SUBCATEGORIES = {
     "Hard Disks, Printers & Monitors",
     "Cameras & Lenses",
   ],
-  Vehicles: ["Cars", "Motorcycles", "Scooters", "Bicycles", "Spare Parts"],
+  Vehicles: ["Cars", "Bikes", "Cycle", "Spare Parts"],
   Mobiles: ["Mobile Phones", "Accessories", "Tablets"],
   Furniture: [
     "Sofas & Dining",
@@ -60,16 +60,48 @@ const INPUT_CLS =
   "w-full px-4 py-3 border border-slate-200 rounded-lg focus:border-[#27BB97] focus:ring-2 focus:ring-[#27BB97]/20 outline-none transition";
 const SELECT_CLS = `${INPUT_CLS} bg-white`;
 
-const VEHICLE_BRANDS = [
+/* ── Per-subcategory brand lists ── */
+
+const CAR_BRANDS = [
   "Maruti Suzuki", "Hyundai", "Tata", "Honda", "Toyota", "Mahindra", "Kia",
   "MG", "Volkswagen", "Skoda", "Renault", "Nissan", "Ford", "Chevrolet",
   "BMW", "Mercedes-Benz", "Audi", "Jeep", "Citroën", "Other",
 ];
 
+const BIKE_BRANDS = [
+  "Hero", "Honda", "Bajaj", "TVS", "Royal Enfield", "Yamaha", "Suzuki",
+  "KTM", "Kawasaki", "BMW", "Ducati", "Harley-Davidson", "Jawa",
+  "Benelli", "Aprilia", "Husqvarna", "Triumph", "Other",
+];
+
+const CYCLE_BRANDS = [
+  "Hero", "Firefox", "Trek", "Giant", "Scott", "Btwin", "Hercules",
+  "Atlas", "Montra", "Cannondale", "Specialized", "Merida", "Other",
+];
+
+/* ── Vehicle option lists ── */
+
 const FUEL_TYPES = ["Petrol", "Diesel", "CNG", "Electric", "Hybrid", "LPG"];
+const BIKE_FUEL_TYPES = ["Petrol", "Electric"];
 const TRANSMISSIONS = ["Manual", "Automatic"];
 const OWNERSHIPS = ["1st Owner", "2nd Owner", "3rd Owner", "4th+ Owner"];
 const CONDITIONS = ["New", "Like New", "Good", "Fair", "Used"];
+
+const BIKE_ENGINE_CC = [
+  "100cc", "110cc", "125cc", "150cc", "160cc", "180cc", "200cc",
+  "250cc", "300cc", "350cc", "400cc", "500cc", "600cc", "650cc+",
+];
+
+const CYCLE_TYPES = [
+  "Mountain", "Road", "Hybrid", "BMX", "Kids", "Folding", "Electric", "Cruiser",
+];
+
+const SPARE_PART_CATEGORIES = [
+  "Engine Parts", "Body Parts", "Electrical", "Suspension", "Brakes",
+  "Tyres & Wheels", "Interior", "Exterior", "Exhaust", "Filters", "Other",
+];
+
+const COMPATIBLE_VEHICLES = ["Car", "Bike", "Cycle", "Universal"];
 
 const YEAR_OPTIONS = Array.from(
   { length: 30 },
@@ -84,7 +116,7 @@ const DEFAULT_FORM = {
   location: "",
   phone: "",
   images: [],
-  // Vehicle-specific
+  // Vehicle — shared
   brand: "",
   model: "",
   variant: "",
@@ -93,40 +125,77 @@ const DEFAULT_FORM = {
   fuelType: "",
   transmission: "",
   ownership: "",
+  // Bike-specific
+  engineCC: "",
+  // Cycle-specific
+  cycleType: "",
+  gearCount: "",
+  frameSize: "",
+  // Spare Parts-specific
+  compatibleVehicle: "",
+  partCategory: "",
 };
 
 /* ─────────────────────────────────────────────
    Per-category configuration
    ───────────────────────────────────────────── */
 
-/** Extra form fields to add per category (merged into initial form state). */
-const CATEGORY_EXTRA_FIELDS = {
-  Vehicles: {
-    brand: "", model: "", variant: "", year: "",
-    kmDriven: "", fuelType: "", transmission: "", ownership: "",
-  },
-};
-
-/** Per-category validation — returns an errors object fragment. */
+/** Per-category / subcategory validation — returns an errors object fragment. */
 const CATEGORY_VALIDATORS = {
-  Vehicles: (form) => {
+  Vehicles: (form, subcategory) => {
     const errs = {};
-    if (!form.brand) errs.brand = "Brand is required";
-    if (!form.model) errs.model = "Model is required";
-    if (!form.year) errs.year = "Year of manufacture is required";
-    if (!form.fuelType) errs.fuelType = "Fuel type is required";
-    if (!form.transmission) errs.transmission = "Transmission is required";
-    if (!form.ownership) errs.ownership = "Ownership is required";
+    switch (subcategory) {
+      case "Cars":
+        if (!form.brand) errs.brand = "Brand is required";
+        if (!form.model) errs.model = "Model is required";
+        if (!form.year) errs.year = "Year is required";
+        if (!form.fuelType) errs.fuelType = "Fuel type is required";
+        if (!form.transmission) errs.transmission = "Transmission is required";
+        if (!form.ownership) errs.ownership = "Ownership is required";
+        break;
+      case "Bikes":
+        if (!form.brand) errs.brand = "Brand is required";
+        if (!form.model) errs.model = "Model is required";
+        if (!form.year) errs.year = "Year is required";
+        if (!form.fuelType) errs.fuelType = "Fuel type is required";
+        if (!form.ownership) errs.ownership = "Ownership is required";
+        break;
+      case "Cycle":
+        if (!form.brand) errs.brand = "Brand is required";
+        if (!form.cycleType) errs.cycleType = "Cycle type is required";
+        break;
+      case "Spare Parts":
+        if (!form.compatibleVehicle) errs.compatibleVehicle = "Compatible vehicle is required";
+        if (!form.partCategory) errs.partCategory = "Part category is required";
+        break;
+    }
     return errs;
   },
 };
 
-/** Per-category form overrides (title label, title placeholder, price label). */
+/** Per-category / subcategory form overrides. */
 const CATEGORY_FORM_CONFIG = {
   Vehicles: {
-    titleLabel: "Car Title *",
-    titlePlaceholder: "e.g., 2019 Hyundai i20 Sportz – Excellent Condition",
-    priceLabel: "Expected Price (₹) *",
+    Cars: {
+      titleLabel: "Car Title *",
+      titlePlaceholder: "e.g., 2019 Hyundai i20 Sportz – Excellent Condition",
+      priceLabel: "Expected Price (₹) *",
+    },
+    Bikes: {
+      titleLabel: "Bike Title *",
+      titlePlaceholder: "e.g., 2021 Royal Enfield Classic 350 – Low KM",
+      priceLabel: "Expected Price (₹) *",
+    },
+    Cycle: {
+      titleLabel: "Cycle Title *",
+      titlePlaceholder: "e.g., Firefox Road Runner Pro 21-speed",
+      priceLabel: "Expected Price (₹) *",
+    },
+    "Spare Parts": {
+      titleLabel: "Part Title *",
+      titlePlaceholder: "e.g., Alloy Wheels for Hyundai i20 – Set of 4",
+      priceLabel: "Price (₹) *",
+    },
   },
 };
 
@@ -201,88 +270,131 @@ const BackArrow = ({ onClick }) => (
    Category-specific field components
    ───────────────────────────────────────────── */
 
-const VehicleFields = ({ form, setField, errors }) => (
+const CarFields = ({ form, setField, errors }) => (
   <>
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-      <SelectField
-        label="Brand *"
-        error={errors.brand}
-        value={form.brand}
-        onChange={setField("brand")}
-        placeholder="Select Brand"
-        options={VEHICLE_BRANDS}
-      />
+      <SelectField label="Brand *" error={errors.brand} value={form.brand}
+        onChange={setField("brand")} placeholder="Select Brand" options={CAR_BRANDS} />
       <Field label="Model *" error={errors.model}>
-        <input
-          type="text"
-          value={form.model}
-          onChange={setField("model")}
-          placeholder="e.g., i20, Swift, Nexon"
-          className={INPUT_CLS}
-        />
+        <input type="text" value={form.model} onChange={setField("model")}
+          placeholder="e.g., i20, Swift, Nexon" className={INPUT_CLS} />
       </Field>
     </div>
-
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
       <Field label="Variant">
-        <input
-          type="text"
-          value={form.variant}
-          onChange={setField("variant")}
-          placeholder="e.g., Sportz, VXi, XZ+"
-          className={INPUT_CLS}
-        />
+        <input type="text" value={form.variant} onChange={setField("variant")}
+          placeholder="e.g., Sportz, VXi, XZ+" className={INPUT_CLS} />
       </Field>
-      <SelectField
-        label="Year of Manufacture *"
-        error={errors.year}
-        value={form.year}
-        onChange={setField("year")}
-        placeholder="Select Year"
-        options={YEAR_OPTIONS}
-      />
+      <SelectField label="Year of Manufacture *" error={errors.year} value={form.year}
+        onChange={setField("year")} placeholder="Select Year" options={YEAR_OPTIONS} />
     </div>
-
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
       <Field label="Kilometers Driven">
-        <input
-          type="text"
-          value={form.kmDriven}
-          onChange={setField("kmDriven")}
-          placeholder="e.g., 25,000"
-          className={INPUT_CLS}
-        />
+        <input type="text" value={form.kmDriven} onChange={setField("kmDriven")}
+          placeholder="e.g., 25,000" className={INPUT_CLS} />
       </Field>
-      <SelectField
-        label="Fuel Type *"
-        error={errors.fuelType}
-        value={form.fuelType}
-        onChange={setField("fuelType")}
-        placeholder="Select Fuel Type"
-        options={FUEL_TYPES}
-      />
+      <SelectField label="Fuel Type *" error={errors.fuelType} value={form.fuelType}
+        onChange={setField("fuelType")} placeholder="Select Fuel Type" options={FUEL_TYPES} />
     </div>
-
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-      <SelectField
-        label="Transmission *"
-        error={errors.transmission}
-        value={form.transmission}
-        onChange={setField("transmission")}
-        placeholder="Select Transmission"
-        options={TRANSMISSIONS}
-      />
-      <SelectField
-        label="Ownership *"
-        error={errors.ownership}
-        value={form.ownership}
-        onChange={setField("ownership")}
-        placeholder="Select Ownership"
-        options={OWNERSHIPS}
-      />
+      <SelectField label="Transmission *" error={errors.transmission} value={form.transmission}
+        onChange={setField("transmission")} placeholder="Select Transmission" options={TRANSMISSIONS} />
+      <SelectField label="Ownership *" error={errors.ownership} value={form.ownership}
+        onChange={setField("ownership")} placeholder="Select Ownership" options={OWNERSHIPS} />
     </div>
   </>
 );
+
+const BikeFields = ({ form, setField, errors }) => (
+  <>
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <SelectField label="Brand *" error={errors.brand} value={form.brand}
+        onChange={setField("brand")} placeholder="Select Brand" options={BIKE_BRANDS} />
+      <Field label="Model *" error={errors.model}>
+        <input type="text" value={form.model} onChange={setField("model")}
+          placeholder="e.g., Classic 350, Pulsar NS200" className={INPUT_CLS} />
+      </Field>
+    </div>
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <SelectField label="Year of Manufacture *" error={errors.year} value={form.year}
+        onChange={setField("year")} placeholder="Select Year" options={YEAR_OPTIONS} />
+      <SelectField label="Engine (CC)" value={form.engineCC}
+        onChange={setField("engineCC")} placeholder="Select CC" options={BIKE_ENGINE_CC} />
+    </div>
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <Field label="Kilometers Driven">
+        <input type="text" value={form.kmDriven} onChange={setField("kmDriven")}
+          placeholder="e.g., 15,000" className={INPUT_CLS} />
+      </Field>
+      <SelectField label="Fuel Type *" error={errors.fuelType} value={form.fuelType}
+        onChange={setField("fuelType")} placeholder="Select Fuel Type" options={BIKE_FUEL_TYPES} />
+    </div>
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <SelectField label="Ownership *" error={errors.ownership} value={form.ownership}
+        onChange={setField("ownership")} placeholder="Select Ownership" options={OWNERSHIPS} />
+    </div>
+  </>
+);
+
+const CycleFields = ({ form, setField, errors }) => (
+  <>
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <SelectField label="Brand *" error={errors.brand} value={form.brand}
+        onChange={setField("brand")} placeholder="Select Brand" options={CYCLE_BRANDS} />
+      <Field label="Model">
+        <input type="text" value={form.model} onChange={setField("model")}
+          placeholder="e.g., Road Runner, Hybrid 700c" className={INPUT_CLS} />
+      </Field>
+    </div>
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <SelectField label="Cycle Type *" error={errors.cycleType} value={form.cycleType}
+        onChange={setField("cycleType")} placeholder="Select Type" options={CYCLE_TYPES} />
+      <Field label="Number of Gears">
+        <input type="text" value={form.gearCount} onChange={setField("gearCount")}
+          placeholder="e.g., 21" className={INPUT_CLS} />
+      </Field>
+    </div>
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <Field label="Frame Size">
+        <input type="text" value={form.frameSize} onChange={setField("frameSize")}
+          placeholder="e.g., 26 inch, Medium" className={INPUT_CLS} />
+      </Field>
+    </div>
+  </>
+);
+
+const SparePartsFields = ({ form, setField, errors }) => (
+  <>
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <SelectField label="Compatible Vehicle *" error={errors.compatibleVehicle}
+        value={form.compatibleVehicle} onChange={setField("compatibleVehicle")}
+        placeholder="Select Vehicle Type" options={COMPATIBLE_VEHICLES} />
+      <SelectField label="Part Category *" error={errors.partCategory}
+        value={form.partCategory} onChange={setField("partCategory")}
+        placeholder="Select Category" options={SPARE_PART_CATEGORIES} />
+    </div>
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <Field label="Brand / Manufacturer">
+        <input type="text" value={form.brand} onChange={setField("brand")}
+          placeholder="e.g., Bosch, Brembo, OEM" className={INPUT_CLS} />
+      </Field>
+      <Field label="Compatible Models">
+        <input type="text" value={form.model} onChange={setField("model")}
+          placeholder="e.g., Swift, i20, Pulsar" className={INPUT_CLS} />
+      </Field>
+    </div>
+  </>
+);
+
+const VehicleFields = ({ form, setField, errors, subcategory }) => {
+  switch (subcategory) {
+    case "Cars": return <CarFields form={form} setField={setField} errors={errors} />;
+    case "Bikes": return <BikeFields form={form} setField={setField} errors={errors} />;
+    case "Cycle": return <CycleFields form={form} setField={setField} errors={errors} />;
+    case "Spare Parts": return <SparePartsFields form={form} setField={setField} errors={errors} />;
+    default: return null;
+  }
+};
 
 const ElectronicsFields = ({ form, setField }) => (
   <SelectField
@@ -512,7 +624,7 @@ const PostAdPage = () => {
     // Category-specific validation (dynamic)
     const categoryValidator = CATEGORY_VALIDATORS[selectedCategory];
     if (categoryValidator) {
-      Object.assign(errs, categoryValidator(form));
+      Object.assign(errs, categoryValidator(form, selectedSubcategory));
     }
 
     setForm((f) => ({ ...f, ...trimmed }));
@@ -589,7 +701,9 @@ const PostAdPage = () => {
 
   /* ── render: ad form ── */
 
-  const categoryConfig = CATEGORY_FORM_CONFIG[selectedCategory] || {};
+  const categoryConfig = selectedCategory === "Vehicles"
+    ? (CATEGORY_FORM_CONFIG.Vehicles?.[selectedSubcategory] || {})
+    : (CATEGORY_FORM_CONFIG[selectedCategory] || {});
   const titleLabel = categoryConfig.titleLabel || "Ad Title *";
   const titlePlaceholder = categoryConfig.titlePlaceholder || "e.g., iPhone 14 Pro Max 256GB";
   const priceLabel = categoryConfig.priceLabel || "Price (₹) *";
@@ -641,7 +755,7 @@ const PostAdPage = () => {
 
             {/* Category-specific fields (dynamic) */}
             {CategoryFields && (
-              <CategoryFields form={form} setField={setField} errors={errors} />
+              <CategoryFields form={form} setField={setField} errors={errors} subcategory={selectedSubcategory} />
             )}
 
             {/* Price */}

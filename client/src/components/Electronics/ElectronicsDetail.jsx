@@ -43,6 +43,7 @@ import {
   toggleSaveElectronics,
 } from '../../redux/slices/electronicsSlice';
 import { authAPI } from '../../services/api';
+import { vehiclesAPI } from '../../services/api';
 import { DetailPageSkeleton, ButtonSpinner } from '../common/Skeleton';
 
 // Location Map Component
@@ -192,7 +193,21 @@ const ElectronicsDetail = () => {
 
   useEffect(() => {
     // Fetch the product from API
-    dispatch(fetchElectronicsById(id));
+    dispatch(fetchElectronicsById(id))
+      .unwrap()
+      .catch(async () => {
+        // Listing not found in electronics — check if it’s a vehicle
+        try {
+          const res = await vehiclesAPI.getById(id);
+          if (res.data?.listing) {
+            // Found in vehicles collection — redirect
+            navigate(`/vehicles/${id}`, { replace: true });
+            return;
+          }
+        } catch {
+          // Not in vehicles either — keep showing "not found"
+        }
+      });
     // Also fetch all listings for similar items section
     if (listings.length === 0) {
       dispatch(fetchAllElectronics());
@@ -200,7 +215,7 @@ const ElectronicsDetail = () => {
     return () => {
       dispatch(clearCurrentListing());
     };
-  }, [id, dispatch]);
+  }, [id, dispatch, navigate]);
 
   const productImages = product?.images?.length > 0
     ? product.images
