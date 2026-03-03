@@ -8,6 +8,7 @@ const { logger } = require("../utils/logger");
 const { handleGoogleAuth } = require("../services/googleAuth.OAuth");
 const tokenController = require("./tokenController");
 const passwordSecurity = require("../utils/passwordSecurity");
+const { createNotification } = require("./notificationController");
 const deviceService = require("../services/deviceService");
 const s3Service = require("../services/s3Service");
 const crypto = require("crypto");
@@ -2716,6 +2717,15 @@ exports.toggleFollow = async (req, res) => {
       // Follow
       await User.findByIdAndUpdate(targetUserId, { $addToSet: { followers: currentUserId } });
       await User.findByIdAndUpdate(currentUserId, { $addToSet: { following: targetUserId } });
+
+      // Send notification to the target user
+      const currentUser = await User.findById(currentUserId).select("name");
+      await createNotification({
+        recipient: targetUserId,
+        sender: currentUserId,
+        type: "follow",
+        message: `${currentUser?.name || "Someone"} started following you`,
+      });
     }
 
     const updatedTarget = await User.findById(targetUserId).select("followers");

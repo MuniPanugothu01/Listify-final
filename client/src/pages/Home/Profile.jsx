@@ -12,6 +12,7 @@ import {
   MapPin,
 } from "lucide-react";
 import toast from "react-hot-toast";
+import { notificationsAPI } from "../../services/api";
 
 // Import Redux actions
 import { fetchProfile, updateProfile, setProfilePicPreview, uploadProfileImage, fetchDevices, fetchLoginHistory } from "../../redux/slices/profileSlice";
@@ -26,6 +27,21 @@ import PersonalDetailsSection from "../../components/UserProfile/PersonalDetails
 import PropertyCard from "../../components/UserProfile/PropertyCard";
 import DevicesSection from "../../components/UserProfile/DevicesSection";
 import ActivitySection from "../../components/UserProfile/ActivitySection";
+
+// Relative time helper
+const formatTimeAgo = (dateStr) => {
+  const now = new Date();
+  const date = new Date(dateStr);
+  const seconds = Math.floor((now - date) / 1000);
+  if (seconds < 60) return "Just now";
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return `${minutes}m ago`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.floor(hours / 24);
+  if (days < 7) return `${days}d ago`;
+  return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+};
 
 export default function Profile() {
   const navigate = useNavigate();
@@ -102,8 +118,12 @@ export default function Profile() {
   });
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   
+  // Notification state
+  const [notifications, setNotifications] = useState([]);
+  const [notifUnreadCount, setNotifUnreadCount] = useState(0);
+  const [notifLoading, setNotifLoading] = useState(false);
+
   // Placeholder state (connect to real API when available)
-  const [myAlerts] = useState([]);
   const [conversations] = useState([]);
   const [unreadCount] = useState(0);
 
@@ -178,6 +198,77 @@ export default function Profile() {
     }
   };
 
+  // Fetch notifications on mount and when alerts tab is active
+  const fetchNotifications = async () => {
+    try {
+      setNotifLoading(true);
+      const [notifRes, countRes] = await Promise.all([
+        notificationsAPI.getAll(1, 50),
+        notificationsAPI.getUnreadCount(),
+      ]);
+      setNotifications(notifRes.data?.notifications || []);
+      setNotifUnreadCount(countRes.data?.unreadCount || 0);
+    } catch (err) {
+      console.error("Failed to fetch notifications:", err);
+    } finally {
+      setNotifLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchNotifications();
+  }, []);
+
+  // Refresh notifications when switching to alerts tab
+  useEffect(() => {
+    if (activeSection === "alerts") {
+      fetchNotifications();
+    }
+  }, [activeSection]);
+
+  // Poll unread count every 30 seconds
+  useEffect(() => {
+    const interval = setInterval(async () => {
+      try {
+        const res = await notificationsAPI.getUnreadCount();
+        setNotifUnreadCount(res.data?.unreadCount || 0);
+      } catch (_) {}
+    }, 30000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleMarkAllRead = async () => {
+    try {
+      await notificationsAPI.markAllAsRead();
+      setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+      setNotifUnreadCount(0);
+      toast.success("All notifications marked as read");
+    } catch (_) {
+      toast.error("Failed to mark notifications as read");
+    }
+  };
+
+  const handleMarkOneRead = async (id) => {
+    try {
+      await notificationsAPI.markAsRead(id);
+      setNotifications((prev) =>
+        prev.map((n) => (n._id === id ? { ...n, read: true } : n))
+      );
+      setNotifUnreadCount((prev) => Math.max(0, prev - 1));
+    } catch (_) {}
+  };
+
+  const handleDeleteNotification = async (id) => {
+    try {
+      const notif = notifications.find((n) => n._id === id);
+      await notificationsAPI.deleteNotification(id);
+      setNotifications((prev) => prev.filter((n) => n._id !== id));
+      if (notif && !notif.read) setNotifUnreadCount((prev) => Math.max(0, prev - 1));
+    } catch (_) {
+      toast.error("Failed to delete notification");
+    }
+  };
+
   const handleProfilePicChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -219,7 +310,7 @@ export default function Profile() {
   const counts = {
     posts: allMyListings?.length || 0,
     saved: allSavedItems?.length || 0,
-    alerts: myAlerts?.length || 0,
+    alerts: notifUnreadCount || 0,
     messages: unreadCount || 0,
     devices: devices?.length || 0,
   };
@@ -277,9 +368,9 @@ export default function Profile() {
               className="relative p-2 rounded-xl hover:bg-gray-50 transition-colors"
             >
               <Bell className="w-5 h-5 text-gray-600" />
-              {counts.alerts > 0 && (
-                <span className="absolute -top-1 -right-1 bg-emerald-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-medium">
-                  {counts.alerts}
+              {notifUnreadCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-medium animate-pulse">
+                  {notifUnreadCount > 9 ? "9+" : notifUnreadCount}
                 </span>
               )}
             </button>
@@ -328,7 +419,7 @@ export default function Profile() {
               <HomeSection
                 savedHouses={allSavedItems || []}
                 myPosts={allMyListings || []}
-                myAlerts={myAlerts || []}
+                myAlerts={notifications || []}
                 messages={conversations || []}
                 onViewAll={handleSetActiveSection}
                 user={profile || authUser}
@@ -640,13 +731,102 @@ export default function Profile() {
             )}
 
             {activeSection === "alerts" && (
-              <div className="bg-white rounded-2xl border border-gray-200 p-8 md:p-12 text-center">
-                <Bell className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">No alerts yet</h3>
-                <p className="text-gray-600 mb-6">Set up alerts for new listings that match your criteria!</p>
-                <button className="px-6 py-3 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-colors font-medium">
-                  Set Up Alert
-                </button>
+              <div>
+                <div className="mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                  <div>
+                    <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Notifications</h2>
+                    <p className="text-gray-500 text-sm mt-1">
+                      {notifUnreadCount > 0 ? `${notifUnreadCount} unread` : "All caught up!"}
+                    </p>
+                  </div>
+                  {notifications.length > 0 && notifUnreadCount > 0 && (
+                    <button
+                      onClick={handleMarkAllRead}
+                      className="px-4 py-2 text-sm font-medium text-emerald-600 border border-emerald-300 rounded-xl hover:bg-emerald-50 transition-colors"
+                    >
+                      Mark all as read
+                    </button>
+                  )}
+                </div>
+
+                {notifLoading ? (
+                  <div className="flex items-center justify-center py-16">
+                    <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-emerald-500"></div>
+                  </div>
+                ) : notifications.length === 0 ? (
+                  <div className="bg-white rounded-2xl border border-gray-200 p-8 md:p-12 text-center">
+                    <Bell className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                    <h3 className="text-xl font-semibold text-gray-900 mb-2">No notifications yet</h3>
+                    <p className="text-gray-600">When someone follows you or sends a message, you'll see it here.</p>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {notifications.map((notif) => (
+                      <div
+                        key={notif._id}
+                        className={`bg-white rounded-xl border p-4 flex items-start gap-4 transition-all ${
+                          notif.read ? "border-gray-200" : "border-emerald-300 bg-emerald-50/30 shadow-sm"
+                        }`}
+                      >
+                        {/* Sender avatar */}
+                        <div className="flex-shrink-0">
+                          {notif.sender?.profileImageUrl ? (
+                            <img
+                              src={notif.sender.profileImageUrl}
+                              alt={notif.sender.name}
+                              className="w-10 h-10 rounded-full object-cover border border-gray-200"
+                              onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }}
+                            />
+                          ) : null}
+                          <div
+                            className={`w-10 h-10 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 items-center justify-center text-white font-bold text-sm ${
+                              notif.sender?.profileImageUrl ? 'hidden' : 'flex'
+                            }`}
+                          >
+                            {notif.sender?.name?.charAt(0)?.toUpperCase() || "?"}
+                          </div>
+                        </div>
+
+                        {/* Content */}
+                        <div className="flex-1 min-w-0">
+                          <p className={`text-sm ${notif.read ? 'text-gray-700' : 'text-gray-900 font-medium'}`}>
+                            {notif.message}
+                          </p>
+                          <div className="flex items-center gap-2 mt-1">
+                            <span className="text-xs text-gray-400">
+                              {formatTimeAgo(notif.createdAt)}
+                            </span>
+                            {!notif.read && (
+                              <span className="w-2 h-2 bg-emerald-500 rounded-full"></span>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Actions */}
+                        <div className="flex items-center gap-1 flex-shrink-0">
+                          {!notif.read && (
+                            <button
+                              onClick={() => handleMarkOneRead(notif._id)}
+                              className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors text-gray-400 hover:text-emerald-600"
+                              title="Mark as read"
+                            >
+                              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                              </svg>
+                            </button>
+                          )}
+                          <button
+                            onClick={() => handleDeleteNotification(notif._id)}
+                            className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors text-gray-400 hover:text-red-500"
+                            title="Delete"
+                          >
+                            <X className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
 
