@@ -441,6 +441,15 @@ export const authAPI = {
   checkAuth: () => {
     return api.get("/check", { withCredentials: true });
   },
+
+  // ==================== FOLLOW & SELLER PROFILE APIS ====================
+  getSellerProfile: (userId) => {
+    return api.get(`/seller/${userId}`, { withCredentials: true });
+  },
+
+  toggleFollow: (userId) => {
+    return api.post(`/follow/${userId}`, {}, { withCredentials: true });
+  },
 };
 
 // ==================== LISTINGS API (separate base URL) ====================

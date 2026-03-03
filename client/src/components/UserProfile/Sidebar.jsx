@@ -142,6 +142,14 @@ const Sidebar = ({
               <p className="text-lg font-bold text-gray-900">{counts.saved}</p>
               <p className="text-xs text-gray-500 mt-1">Saved</p>
             </div>
+            <div className="text-center p-3 bg-gray-50 rounded-xl">
+              <p className="text-lg font-bold text-gray-900">{profile?.followersCount || 0}</p>
+              <p className="text-xs text-gray-500 mt-1">Followers</p>
+            </div>
+            <div className="text-center p-3 bg-gray-50 rounded-xl">
+              <p className="text-lg font-bold text-gray-900">{profile?.followingCount || 0}</p>
+              <p className="text-xs text-gray-500 mt-1">Following</p>
+            </div>
           </div>
         </div>
 

@@ -146,6 +146,12 @@ router.post(
 // ==================== Check authentication status ====================
 router.get("/check", authController.checkAuth);
 
+// ==================== Public seller profile ====================
+router.get("/seller/:userId", authController.getSellerProfile);
+
+// ==================== Follow / Unfollow ====================
+router.post("/follow/:userId", protect, authController.toggleFollow);
+
 // ==================== Protected routes ====================
 router.get("/profile", protect, authController.getProfile);
 router.put(
