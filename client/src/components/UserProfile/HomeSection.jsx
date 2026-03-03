@@ -117,4 +117,5 @@ const HomeSection = ({ savedHouses, myPosts, myAlerts, messages, onViewAll, user
   );
 };
 
+
 export default HomeSection;
