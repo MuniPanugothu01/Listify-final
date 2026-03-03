@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { updateUser } from "../../redux/slices/authSlice";
+import { updateUser, getUserProfile } from "../../redux/slices/authSlice";
 import {
   selectAllSavedItems,
 } from "../../redux/selectors/forSaleSelectors";
@@ -32,13 +32,13 @@ import HomeSection from "../../components/UserProfile/HomeSection";
 import MessagesSection from "../../components/UserProfile/MessagesSection";
 import PersonalDetailsSection from "../../components/UserProfile/PersonalDetailsSection";
 import PropertyCard from "../../components/UserProfile/PropertyCard";
-import ProfileMain from "./ProfileMin";
 
 export default function Profile() {
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
   const authUser = useSelector((state) => state.auth.user);
+  const devices = useSelector((state) => state.profile?.devices || []);
   
   const [activeSection, setActiveSection] = useState(
     location.state?.activeSection || "home"
@@ -46,16 +46,19 @@ export default function Profile() {
 
   // Merge Redux auth user with sensible defaults
   const user = {
-    name: authUser?.name || "User",
+    name: authUser?.name || "",
     email: authUser?.email || "",
     phone: authUser?.phone || "",
     address: authUser?.address || "",
     isLoggedIn: !!authUser,
-    status: "Available",
-    memberSince: authUser?.createdAt ? new Date(authUser.createdAt).getFullYear().toString() : "2024",
+    status: authUser?.status || "",
+    createdAt: authUser?.createdAt || null,
+    memberSince: authUser?.createdAt ? new Date(authUser.createdAt).getFullYear().toString() : "",
     verified: authUser?.isVerified || false,
-    rating: authUser?.rating || 4.8,
+    rating: authUser?.rating || null,
     bio: authUser?.bio || "",
+    provider: authUser?.provider || "",
+    isVerified: !!authUser?.isVerified,
     profilePic: authUser?.profileImage || authUser?.profileImageUrl || authUser?.googleProfileImage || authUser?.avatar,
   };
   const savedHouses = useSelector(selectAllSavedItems);
@@ -102,12 +105,16 @@ export default function Profile() {
   const [isEditing, setIsEditing] = useState(false);
   const [editData, setEditData] = useState({});
   const [profilePicPreview, setProfilePicPreview] = useState(
-    authUser?.profileImage || authUser?.profileImageUrl || authUser?.googleProfileImage || authUser?.avatar || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop"
+    authUser?.profileImage || authUser?.profileImageUrl || authUser?.googleProfileImage || authUser?.avatar || null
   );
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchVisible, setIsSearchVisible] = useState(false);
 
   // Saved items are now read from Redux (forSale slice, persisted via redux-persist)
+
+  useEffect(() => {
+    dispatch(getUserProfile());
+  }, [dispatch]);
 
   useEffect(() => {
     setEditData({
@@ -117,7 +124,7 @@ export default function Profile() {
       address: user.address || '',
       bio: user.bio || "Professional real estate agent with 8+ years experience"
     });
-  }, [user]);
+  }, [user.name, user.email, user.phone, user.address, user.bio]);
 
   useEffect(() => {
     if (location.state?.activeSection) {
@@ -196,7 +203,7 @@ export default function Profile() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 pb-20 lg:pb-0">
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-white shadow-sm border-b border-gray-200 px-4 md:px-6 py-3 md:py-4">
         <div className="flex items-center justify-between max-w-7xl mx-auto">
@@ -306,8 +313,8 @@ export default function Profile() {
       </header>
 
       {/* Main Content */}
-      <div className="pt-16 max-w-7xl mx-auto px-4 md:px-6 py-4 md:py-6">
-        <div className="lg:flex gap-6">
+      <div className="pt-16 max-w-7xl mx-auto px-4 md:px-6 py-4 md:py-6 pb-24 lg:pb-6">
+        <div className="flex flex-col lg:flex-row gap-4 lg:gap-6">
           {/* Sidebar */}
           <div className="lg:w-64 xl:w-72 flex-shrink-0">
             <Sidebar 
@@ -320,7 +327,7 @@ export default function Profile() {
           </div>
           
           {/* Main Content Area */}
-          <main className="flex-1 lg:mr-6 space-y-6 w-full min-w-0">
+          <main className="flex-1 space-y-6 w-full min-w-0">
             {activeSection === "home" && (
               <HomeSection
                 savedHouses={savedHouses}
@@ -355,12 +362,11 @@ export default function Profile() {
               <div>
                 <div className="mb-6">
                   <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Profile Overview</h2>
-                  <p className="text-gray-500 text-sm mt-1">Your complete profile statistics and performance metrics</p>
+                  <p className="text-gray-500 text-sm mt-1">Your profile details</p>
                 </div>
-                <ProfileMain
+                <ProfileOverview
                   user={user} 
                   profilePic={profilePicPreview} 
-                  myPosts={myPosts} 
                 />
               </div>
             )}
@@ -445,7 +451,7 @@ export default function Profile() {
                   <p className="text-gray-500 text-sm mt-1">Manage your account preferences</p>
                 </div>
                 <div className="bg-white rounded-2xl border border-gray-200 p-6 space-y-4">
-                  <div className="flex items-center justify-between p-4 border border-gray-100 rounded-xl">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-4 border border-gray-100 rounded-xl">
                     <div>
                       <p className="font-medium text-gray-900">Email Notifications</p>
                       <p className="text-sm text-gray-500">Receive updates about new listings</p>
@@ -455,7 +461,7 @@ export default function Profile() {
                       <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-emerald-300/50 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500"></div>
                     </label>
                   </div>
-                  <div className="flex items-center justify-between p-4 border border-gray-100 rounded-xl">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-4 border border-gray-100 rounded-xl">
                     <div>
                       <p className="font-medium text-gray-900">SMS Notifications</p>
                       <p className="text-sm text-gray-500">Receive text message updates</p>
@@ -465,7 +471,7 @@ export default function Profile() {
                       <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-emerald-300/50 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500"></div>
                     </label>
                   </div>
-                  <div className="flex items-center justify-between p-4 border border-gray-100 rounded-xl">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-4 border border-gray-100 rounded-xl">
                     <div>
                       <p className="font-medium text-gray-900">Push Notifications</p>
                       <p className="text-sm text-gray-500">Receive browser notifications</p>
@@ -549,11 +555,10 @@ export default function Profile() {
           </main>
 
           {/* Right Profile Section - Hidden on mobile, visible on large screens */}
-          <div className="hidden xl:block w-80 flex-shrink-0">
+          <div className={`hidden xl:block w-80 flex-shrink-0 ${activeSection === "profile-overview" ? "xl:hidden" : ""}`}>
             <ProfileOverview 
               user={user} 
               profilePic={profilePicPreview} 
-              myPosts={myPosts} 
             />
           </div>
         </div>
@@ -576,7 +581,7 @@ export default function Profile() {
               }`}
             >
               <item.icon className="w-5 h-5" />
-              <span className="text-xs mt-1">{item.label}</span>
+              <span className="text-[10px] mt-1 w-full truncate text-center px-1">{item.label}</span>
             </button>
           ))}
         </div>
