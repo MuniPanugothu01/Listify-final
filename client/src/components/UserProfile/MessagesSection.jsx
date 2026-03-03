@@ -44,7 +44,7 @@ const MessagesSection = ({ messages }) => {
   // Mobile chat view
   if (isMobile && isChatOpen && selectedConversation) {
     return (
-      <div className="flex flex-col h-[calc(100vh-140px)] bg-white rounded-2xl">
+      <div className="flex flex-col h-[calc(100vh-220px)] md:h-[calc(100vh-180px)] bg-white rounded-2xl">
         {/* Mobile Chat Header */}
         <div className="p-4 border-b border-gray-100 bg-white sticky top-0 z-10">
           <div className="flex items-center gap-3">
@@ -134,7 +134,7 @@ const MessagesSection = ({ messages }) => {
         </div>
       </div>
 
-      <div className="flex flex-col md:flex-row h-[calc(100vh-200px)] bg-white rounded-2xl border border-gray-200 overflow-hidden">
+      <div className="flex flex-col md:flex-row h-[calc(100vh-240px)] md:h-[calc(100vh-220px)] lg:h-[calc(100vh-200px)] min-h-[520px] bg-white rounded-2xl border border-gray-200 overflow-hidden">
         {/* Conversations Sidebar */}
         <div className={`w-full md:w-96 border-r border-gray-100 flex flex-col h-full ${isMobile && isChatOpen ? "hidden" : "flex"}`}>
           {/* Search */}

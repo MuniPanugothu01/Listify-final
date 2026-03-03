@@ -26,7 +26,6 @@ import HomeSection from "../../components/UserProfile/HomeSection";
 import MessagesSection from "../../components/UserProfile/MessagesSection";
 import PersonalDetailsSection from "../../components/UserProfile/PersonalDetailsSection";
 import PropertyCard from "../../components/UserProfile/PropertyCard";
-import ProfileMain from "../../components/UserProfile/ProfileMin";
 import DevicesSection from "../../components/UserProfile/DevicesSection";
 import ActivitySection from "../../components/UserProfile/ActivitySection";
 
@@ -105,6 +104,9 @@ export default function Profile() {
   const [myAlerts, setMyAlerts] = useState([]);
   const [conversations, setConversations] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
+
+  const shouldShowRightProfileOverview =
+    location.pathname !== "/dashboard" && activeSection !== "profile-overview";
 
   // Load user data on mount
   useEffect(() => {
@@ -393,12 +395,11 @@ export default function Profile() {
               <div>
                 <div className="mb-6">
                   <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Profile Overview</h2>
-                  <p className="text-gray-500 text-sm mt-1">Your complete profile statistics and performance metrics</p>
+                  <p className="text-gray-500 text-sm mt-1">Your profile details</p>
                 </div>
-                <ProfileMain
+                <ProfileOverview
                   user={profile || authUser} 
                   profilePic={getProfileImagePreview()} 
-                  myPosts={allMyListings || []} 
                 />
               </div>
             )}
@@ -649,12 +650,11 @@ export default function Profile() {
           </main>
 
           {/* Right Profile Section */}
-          {activeSection === "profile-overview" && (
+          {shouldShowRightProfileOverview && (
             <div className="hidden xl:block w-80 flex-shrink-0">
               <ProfileOverview 
                 user={profile || authUser} 
                 profilePic={getProfileImagePreview()} 
-                myPosts={myListings || []} 
               />
             </div>
           )}
