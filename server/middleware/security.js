@@ -16,22 +16,50 @@ const securityMiddleware = (req, res, next) => {
   // 5. Set Referrer-Policy — controls referrer header leakage
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
   
-  // 6. Set Permissions-Policy — restrict browser features
-  res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=()');
+  // 6. Set Permissions-Policy — restrict browser features (expanded)
+  res.setHeader(
+    'Permissions-Policy',
+    'camera=(), microphone=(), geolocation=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=()'
+  );
+
+  // 7. Cross-Origin headers for resource isolation
+  res.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
+  res.setHeader('Cross-Origin-Resource-Policy', 'same-origin');
   
-  // 7. Strict-Transport-Security (HSTS) — force HTTPS in production
+  // 8. Strict-Transport-Security (HSTS) — force HTTPS in production
   if (process.env.NODE_ENV === 'production') {
     res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
   }
 
-  // 8. Cache-Control for auth endpoints — prevent caching of sensitive data
-  if (req.path.startsWith('/api/auth')) {
+  // 9. Cache-Control for auth & private endpoints — prevent caching of sensitive data
+  if (req.path.startsWith('/api/auth') || req.path.includes('/my-listings') || req.path.includes('/saved')) {
     res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, private');
     res.setHeader('Pragma', 'no-cache');
     res.setHeader('Expires', '0');
   }
+
+  // 10. Request size guard — reject extremely large payloads early
+  const contentLength = parseInt(req.headers['content-length'], 10);
+  if (contentLength > 10 * 1024 * 1024) { // 10 MB max
+    logger.warn('Oversized request blocked', { ip: req.ip, path: req.path, contentLength });
+    return res.status(413).json({ success: false, message: 'Request entity too large' });
+  }
+
+  // 11. Block suspicious user-agents (basic bot filtering)
+  const ua = (req.headers['user-agent'] || '').toLowerCase();
+  const blockedPatterns = ['sqlmap', 'nikto', 'dirbuster', 'nessus', 'openvas', 'masscan'];
+  if (blockedPatterns.some((p) => ua.includes(p))) {
+    logger.warn('Blocked suspicious user-agent', { ua, ip: req.ip, path: req.path });
+    return res.status(403).json({ success: false, message: 'Forbidden' });
+  }
+
+  // 12. Block path traversal attempts
+  if (req.path.includes('..') || req.path.includes('%2e%2e')) {
+    logger.warn('Path traversal attempt blocked', { path: req.path, ip: req.ip });
+    return res.status(400).json({ success: false, message: 'Invalid path' });
+  }
   
-  // 9. Log security-related headers (dev only)
+  // 13. Log security-related headers (dev only)
   if (process.env.NODE_ENV === 'development') {
     logger.debug('Security headers set for request', {
       path: req.path,
@@ -39,10 +67,7 @@ const securityMiddleware = (req, res, next) => {
     });
   }
   
-  // 10. CSRF origin validation for state-changing requests
-  // Ensures POST/PUT/PATCH/DELETE requests come from the expected
-  // origin, preventing cross-site request forgery even if cookies
-  // are sent (sameSite=none in cross-origin production setups).
+  // 14. CSRF origin validation for state-changing requests
   if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method)) {
     const allowedOrigins = (process.env.CLIENT_URL || 'http://localhost:5173')
       .split(',')
@@ -51,9 +76,6 @@ const securityMiddleware = (req, res, next) => {
     const origin = req.headers.origin;
     const referer = req.headers.referer;
 
-    // Skip for server-to-server (no origin at all — e.g. curl, Postman, mobile SDKs).
-    // Browsers ALWAYS send Origin on cross-origin and same-origin POST, so
-    // if Origin is present it MUST match. If absent, check Referer.
     if (origin) {
       if (!allowedOrigins.includes(origin)) {
         logger.warn('CSRF: blocked mutation from unexpected origin', {

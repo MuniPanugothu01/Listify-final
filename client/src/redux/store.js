@@ -18,6 +18,8 @@ import listingsReducer from "./slices/listingsSlice";
 import messagesReducer from "./slices/messagesSlice";
 import electronicsReducer from "./slices/electronicsSlice";
 import vehiclesReducer from "./slices/vehiclesSlice";
+import draftListingsReducer from "./slices/draftListingsSlice";
+import forSaleReducer from "./slices/forSaleSlice";
 
 // Middleware
 import { errorMiddleware, actionLoggerMiddleware } from "./middleware";
@@ -32,13 +34,15 @@ const rootReducer = combineReducers({
   messages: messagesReducer,
   electronics: electronicsReducer,
   vehicles: vehiclesReducer,
+  draftListings: draftListingsReducer,
+  forSale: forSaleReducer,
 });
 
 // ── Persist config ─────────────────────────────────────────────────
 const persistConfig = {
   key: "root",
   storage,
-  whitelist: ["auth", "profile"],
+  whitelist: ["auth", "profile", "draftListings", "forSale"],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

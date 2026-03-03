@@ -1,5 +1,8 @@
 const Electronics = require("../models/Electronics");
 const { logger } = require("../utils/logger");
+const redis = require("../config/redis");
+const ListingCache = require("../services/listingCacheService");
+const SearchService = require("../services/searchService");
 
 // @desc    Create a new electronics listing
 // @route   POST /api/electronics
@@ -41,6 +44,13 @@ exports.createElectronics = async (req, res) => {
       "firstName lastName email profileImage"
     );
 
+    // Cache the new listing in Redis (visible in Upstash dashboard)
+    await ListingCache.cacheListing('electronics', populated.toObject ? populated.toObject() : populated);
+    // Invalidate list caches
+    await ListingCache.invalidateListingCache('electronics');
+    // Index in Elasticsearch
+    await SearchService.indexListing('electronics', populated.toObject ? populated.toObject() : populated);
+
     res.status(201).json({
       success: true,
       message: "Electronics listing created successfully",
@@ -70,6 +80,30 @@ exports.getAllElectronics = async (req, res) => {
       page = 1,
       limit = 50,
     } = req.query;
+
+    // Build a cache key from the query params
+    const queryKey = [
+      search || '',
+      category || '',
+      condition || '',
+      minPrice || '',
+      maxPrice || '',
+      sort || 'newest',
+      page,
+      limit,
+    ].join('|');
+
+    // Check listing cache first
+    const cached = await ListingCache.getCachedListingList('electronics', queryKey);
+    if (cached) {
+      res.setHeader('X-Cache', 'HIT');
+      res.setHeader('X-Cache-Source', 'listing-cache');
+      return res.status(200).json({
+        success: true,
+        listings: cached.listings,
+        pagination: cached.pagination,
+      });
+    }
 
     // Build filter
     const filter = { status: "active" };
@@ -108,19 +142,35 @@ exports.getAllElectronics = async (req, res) => {
         .sort(sortOption)
         .skip(skip)
         .limit(Number(limit))
-        .populate("seller", "firstName lastName email profileImage"),
+        .populate("seller", "firstName lastName email profileImage")
+        .lean(),
       Electronics.countDocuments(filter),
     ]);
 
+    const pagination = {
+      total,
+      page: Number(page),
+      pages: Math.ceil(total / Number(limit)),
+      limit: Number(limit),
+    };
+
+    // Store in listing cache (visible in Upstash Redis dashboard)
+    await ListingCache.cacheListingList('electronics', queryKey, listings, pagination);
+
+    // Prefetch every listing + its images into individual cache keys
+    // so clicking any listing afterwards is instant from cache
+    await ListingCache.prefetchCategoryListings('electronics', listings);
+
+    // If this was a search query, also cache under search namespace
+    if (search) {
+      await ListingCache.cacheSearchResults('electronics', search, listings, pagination);
+    }
+
+    res.setHeader('X-Cache', 'MISS');
     res.status(200).json({
       success: true,
       listings,
-      pagination: {
-        total,
-        page: Number(page),
-        pages: Math.ceil(total / Number(limit)),
-        limit: Number(limit),
-      },
+      pagination,
     });
   } catch (error) {
     logger.error("Get all electronics error:", error);
@@ -136,7 +186,27 @@ exports.getAllElectronics = async (req, res) => {
 // @access  Public
 exports.getElectronicsById = async (req, res) => {
   try {
-    const listing = await Electronics.findById(req.params.id).populate(
+    const listingId = req.params.id;
+
+    // Check listing cache first
+    const cached = await ListingCache.getCachedListing('electronics', listingId);
+    if (cached) {
+      // Still increment views via Redis
+      try {
+        const viewKey = `views:electronics:${listingId}`;
+        const views = await redis.incr(viewKey);
+        if (views === 1) await redis.expire(viewKey, 86400);
+        cached.views = (cached.views || 0) + views;
+      } catch (viewErr) {
+        logger.debug('View count Redis error:', viewErr.message);
+      }
+
+      res.setHeader('X-Cache', 'HIT');
+      res.setHeader('X-Cache-Source', 'listing-cache');
+      return res.status(200).json({ success: true, listing: cached });
+    }
+
+    const listing = await Electronics.findById(listingId).populate(
       "seller",
       "firstName lastName email profileImage createdAt"
     );
@@ -148,10 +218,28 @@ exports.getElectronicsById = async (req, res) => {
       });
     }
 
-    // Increment views
-    listing.views += 1;
-    await listing.save();
+    // Increment views via Redis (batched to DB every 50 views)
+    try {
+      const viewKey = `views:electronics:${listingId}`;
+      const views = await redis.incr(viewKey);
+      if (views === 1) await redis.expire(viewKey, 86400);
+      listing._doc.views = (listing.views || 0) + views;
+      if (views % 50 === 0) {
+        await Electronics.updateOne(
+          { _id: listingId },
+          { $inc: { views: views } }
+        );
+        await redis.set(viewKey, 0);
+      }
+    } catch (viewErr) {
+      logger.debug('View count Redis error:', viewErr.message);
+    }
 
+    // Cache this listing in Redis (visible in Upstash dashboard)
+    const listingObj = listing.toObject ? listing.toObject() : listing;
+    await ListingCache.cacheListing('electronics', listingObj);
+
+    res.setHeader('X-Cache', 'MISS');
     res.status(200).json({
       success: true,
       listing,
@@ -214,6 +302,13 @@ exports.updateElectronics = async (req, res) => {
       "firstName lastName email profileImage"
     );
 
+    // Update cache with new data
+    const updatedObj = updated.toObject ? updated.toObject() : updated;
+    await ListingCache.cacheListing('electronics', updatedObj);
+    await ListingCache.invalidateListingCache('electronics');
+    // Re-index in Elasticsearch
+    await SearchService.indexListing('electronics', updatedObj);
+
     res.status(200).json({
       success: true,
       message: "Electronics listing updated successfully",
@@ -252,6 +347,11 @@ exports.deleteElectronics = async (req, res) => {
 
     await Electronics.findByIdAndDelete(req.params.id);
 
+    // Invalidate cache for this listing and all lists
+    await ListingCache.invalidateListingCache('electronics', req.params.id);
+    // Remove from Elasticsearch index
+    await SearchService.removeListing('electronics', req.params.id);
+
     res.status(200).json({
       success: true,
       message: "Electronics listing deleted successfully",
@@ -272,7 +372,8 @@ exports.getMyElectronics = async (req, res) => {
   try {
     const listings = await Electronics.find({ seller: req.user._id })
       .sort({ createdAt: -1 })
-      .populate("seller", "firstName lastName email profileImage");
+      .populate("seller", "firstName lastName email profileImage")
+      .lean();
 
     res.status(200).json({
       success: true,
@@ -302,14 +403,19 @@ exports.uploadImages = async (req, res) => {
     const S3Service = require("../services/s3Service");
     const imageUrls = [];
 
+    // Upload images to S3 under the 'electronics' folder
     for (const file of req.files) {
       const result = await S3Service.uploadListingImage(
         file.buffer,
         req.user._id.toString(),
-        file.mimetype
+        file.mimetype,
+        'electronics'  // → S3 key: electronics/{userId}/{uuid}.webp
       );
       imageUrls.push(result.imageUrl);
     }
+
+    // Cache the uploaded image URLs in Redis (visible in Upstash dashboard)
+    await ListingCache.cacheUploadedImages('electronics', req.user._id.toString(), imageUrls);
 
     res.status(200).json({
       success: true,
@@ -332,13 +438,56 @@ exports.uploadImages = async (req, res) => {
 // @access  Private
 exports.getSavedElectronics = async (req, res) => {
   try {
+    const userId = req.user._id;
+
+    // Check Redis cache first (visible in Upstash dashboard)
+    try {
+      const savedKey = `user:${userId}:saved:electronics`;
+      const cached = await redis.get(savedKey);
+      if (cached) {
+        const parsed = typeof cached === 'string' ? JSON.parse(cached) : cached;
+        res.setHeader('X-Cache', 'HIT');
+        return res.status(200).json({
+          success: true,
+          listings: parsed.listings || [],
+        });
+      }
+    } catch (cacheErr) {
+      logger.debug('Saved electronics cache miss:', cacheErr.message);
+    }
+
     const listings = await Electronics.find({
-      savedBy: req.user._id,
+      savedBy: userId,
       status: "active",
     })
       .sort({ createdAt: -1 })
-      .populate("seller", "firstName lastName email profileImage");
+      .populate("seller", "firstName lastName email profileImage")
+      .lean();
 
+    // Store in Redis cache for next time
+    try {
+      const savedKey = `user:${userId}:saved:electronics`;
+      await redis.setex(savedKey, 600, JSON.stringify({
+        userId: userId.toString(),
+        entity: 'electronics',
+        count: listings.length,
+        listings: listings.map(l => ({
+          _id: l._id,
+          title: l.title,
+          price: l.price,
+          location: l.location,
+          condition: l.condition,
+          thumbnail: l.images?.[0] || null,
+          images: l.images || [],
+          sellerName: l.sellerName,
+        })),
+        updatedAt: new Date().toISOString(),
+      }));
+    } catch (cacheErr) {
+      logger.error('[Cache] Error caching saved electronics:', cacheErr.message);
+    }
+
+    res.setHeader('X-Cache', 'MISS');
     res.status(200).json({
       success: true,
       listings,
@@ -357,7 +506,8 @@ exports.getSavedElectronics = async (req, res) => {
 // @access  Private
 exports.toggleSave = async (req, res) => {
   try {
-    const listing = await Electronics.findById(req.params.id);
+    const listing = await Electronics.findById(req.params.id)
+      .populate("seller", "firstName lastName email profileImage");
 
     if (!listing) {
       return res.status(404).json({
@@ -378,6 +528,40 @@ exports.toggleSave = async (req, res) => {
     }
 
     await listing.save();
+
+    // ── Cache saved status in Redis (visible in Upstash dashboard) ──
+    try {
+      const savedKey = `user:${userId}:saved:electronics`;
+      const savedListings = await Electronics.find({
+        savedBy: userId,
+        status: 'active',
+      }).sort({ createdAt: -1 }).populate('seller', 'firstName lastName email profileImage').lean();
+
+      await redis.setex(savedKey, 600, JSON.stringify({
+        userId: userId.toString(),
+        entity: 'electronics',
+        count: savedListings.length,
+        listings: savedListings.map(l => ({
+          _id: l._id,
+          title: l.title,
+          price: l.price,
+          location: l.location,
+          condition: l.condition,
+          thumbnail: l.images?.[0] || null,
+          images: l.images || [],
+          sellerName: l.sellerName,
+        })),
+        updatedAt: new Date().toISOString(),
+      }));
+
+      // Also update the listing cache with the new savedBy array
+      const listingObj = listing.toObject ? listing.toObject() : listing;
+      await ListingCache.cacheListing('electronics', listingObj);
+
+      logger.info(`[Cache] Updated saved electronics for user ${userId} (${savedListings.length} items)`);
+    } catch (cacheErr) {
+      logger.error('[Cache] Error caching saved electronics:', cacheErr.message);
+    }
 
     res.status(200).json({
       success: true,

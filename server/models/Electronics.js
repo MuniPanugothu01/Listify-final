@@ -135,6 +135,7 @@ electronicsSchema.index({ status: 1, createdAt: -1 });
 electronicsSchema.index({ category: 1, status: 1 });
 electronicsSchema.index({ seller: 1, status: 1 });
 electronicsSchema.index({ price: 1 });
+electronicsSchema.index({ savedBy: 1 });
 electronicsSchema.index({ title: "text", description: "text" });
 
 module.exports = mongoose.model("Electronics", electronicsSchema);

@@ -718,10 +718,88 @@ export const adminAPI = {
   },
 };
 
+// ==================== SEARCH API (Elasticsearch) ====================
+const searchApi = axios.create({
+  baseURL: `${BASE_API_URL}/search`,
+  headers: {
+    "Content-Type": "application/json",
+  },
+  timeout: 30000,
+  withCredentials: true,
+});
+
+searchApi.interceptors.request.use(
+  (config) => {
+    console.log(`🔍 Search Request: ${config.method.toUpperCase()} ${config.url}`);
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+createResponseInterceptor(searchApi, "Search API");
+
+export const searchAPI = {
+  // Full-text search across listings
+  search: (params) => {
+    return searchApi.get("/", { params });
+  },
+
+  // Autocomplete suggestions
+  suggest: (query, entity = 'electronics', limit = 5) => {
+    return searchApi.get("/suggest", { params: { q: query, entity, limit } });
+  },
+
+  // Reindex data into Elasticsearch
+  reindex: (entity = null) => {
+    return searchApi.post("/reindex", entity ? { entity } : {}, { withCredentials: true });
+  },
+
+  // Check Elasticsearch status
+  status: () => {
+    return searchApi.get("/status");
+  },
+};
+
+// ==================== CACHE API ====================
+const cacheApi = axios.create({
+  baseURL: `${BASE_API_URL}/cache`,
+  headers: {
+    "Content-Type": "application/json",
+  },
+  timeout: 30000,
+  withCredentials: true,
+});
+
+cacheApi.interceptors.request.use(
+  (config) => {
+    console.log(`📦 Cache Request: ${config.method.toUpperCase()} ${config.url}`);
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+export const cacheAPI = {
+  // Get cache statistics
+  getStats: () => {
+    return cacheApi.get("/stats");
+  },
+
+  // Get cached keys for an entity
+  getKeys: (entity) => {
+    return cacheApi.get(`/keys/${entity}`);
+  },
+
+  // Flush cache for an entity
+  flush: (entity) => {
+    return cacheApi.delete(`/${entity}`);
+  },
+};
+
 // Export all APIs
 export default {
   auth: authAPI,
   listings: listingsAPI,
   messages: messagesAPI,
   admin: adminAPI,
+  search: searchAPI,
+  cache: cacheAPI,
 };

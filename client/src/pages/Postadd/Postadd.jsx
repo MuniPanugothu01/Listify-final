@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
-import { useSelector } from "react-redux";
-import { electronicsAPI, vehiclesAPI } from "../../services/api";
+import { useSelector, useDispatch } from "react-redux";
+import { submitPostAd } from "../../redux/thunks/listingsThunks";
 
 /* ─────────────────────────────────────────────
    Constants
@@ -130,77 +130,7 @@ const CATEGORY_FORM_CONFIG = {
   },
 };
 
-/**
- * Per-category submit handler.
- * Each returns { imageUrls, listingData, api, successMsg }.
- */
-const CATEGORY_SUBMIT_HANDLERS = {
-  Electronics: async (form, selectedCategory, selectedSubcategory) => {
-    let imageUrls = [];
-    if (form.images.length > 0) {
-      try {
-        const fd = new FormData();
-        form.images.forEach((img) => fd.append("images", img));
-        const res = await electronicsAPI.uploadImages(fd);
-        imageUrls = res.data.imageUrls;
-      } catch {
-        imageUrls = ["https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&q=80"];
-      }
-    }
-    const listingData = {
-      title: form.title,
-      price: Number(form.price),
-      description: form.description,
-      category: selectedCategory,
-      subcategory: selectedSubcategory,
-      condition: form.condition || "Good",
-      location: form.location,
-      phone: form.phone,
-      images: imageUrls.length > 0
-        ? imageUrls
-        : ["https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&q=80"],
-    };
-    await electronicsAPI.create(listingData);
-    return "Electronics listing posted successfully!";
-  },
-
-  Vehicles: async (form, selectedCategory, selectedSubcategory) => {
-    let imageUrls = [];
-    if (form.images.length > 0) {
-      try {
-        const fd = new FormData();
-        form.images.forEach((img) => fd.append("images", img));
-        const res = await vehiclesAPI.uploadImages(fd);
-        imageUrls = res.data.imageUrls;
-      } catch {
-        imageUrls = ["https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=800&q=80"];
-      }
-    }
-    const listingData = {
-      title: form.title,
-      price: Number(form.price),
-      description: form.description,
-      category: selectedCategory,
-      subcategory: selectedSubcategory,
-      condition: form.condition || "Good",
-      location: form.location,
-      phone: form.phone,
-      brand: form.brand,
-      model: form.model,
-      variant: form.variant,
-      year: form.year,
-      kmDriven: form.kmDriven,
-      fuelType: form.fuelType,
-      transmission: form.transmission,
-      ownership: form.ownership,
-      images: imageUrls.length > 0
-        ? imageUrls
-        : ["https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=800&q=80"],
-    };
-    await vehiclesAPI.create(listingData);
-    return "Vehicle listing posted successfully!";
-  },
-};
+/* Submit routing is handled by the submitPostAd Redux thunk. */
 
 /* ─────────────────────────────────────────────
    Shared tiny components
@@ -502,6 +432,7 @@ const CategorySelectionScreen = ({
 
 const PostAdPage = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
 
   const [selectedCategory, setSelectedCategory] = useState(null);
@@ -591,12 +522,6 @@ const PostAdPage = () => {
 
   /* ── submission ── */
 
-  const saveLocalProduct = (product) => {
-    const existing = JSON.parse(localStorage.getItem("localProducts") || "[]");
-    existing.push(product);
-    localStorage.setItem("localProducts", JSON.stringify(existing));
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validate()) {
@@ -607,44 +532,25 @@ const PostAdPage = () => {
     setLoading(true);
 
     try {
-      const categoryHandler = CATEGORY_SUBMIT_HANDLERS[selectedCategory];
-
-      if (categoryHandler) {
-        // Use the registered per-category handler
-        const successMsg = await categoryHandler(form, selectedCategory, selectedSubcategory);
-        setLoading(false);
-        setSubmitted(true);
-        toast.success(successMsg);
-      } else {
-        // Fallback: save locally for categories without a backend API
-        const newProduct = {
-          id: `local-${Date.now()}`,
-          title: form.title,
-          price: Number(form.price),
+      const result = await dispatch(
+        submitPostAd({
+          form,
           category: selectedCategory,
           subcategory: selectedSubcategory,
-          description: form.description,
-          location: form.location,
-          seller: { name: user?.firstName || "User", rating: 5.0, since: "2026" },
-          images:
-            form.images.length > 0
-              ? form.images.map((img) => URL.createObjectURL(img))
-              : ["https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&q=80"],
-          postedAt: new Date().toISOString().split("T")[0],
-          featured: false,
-        };
-        saveLocalProduct(newProduct);
-        setLoading(false);
-        setSubmitted(true);
-        toast.success("Listing posted successfully!");
-      }
+          user,
+        }),
+      ).unwrap();
+
+      setLoading(false);
+      setSubmitted(true);
+      toast.success(result.message);
     } catch (error) {
       setLoading(false);
       console.error("Post ad error:", error);
       toast.error(
-        error.message ||
-          error.response?.data?.message ||
-          "Failed to post listing. Please try again."
+        typeof error === "string"
+          ? error
+          : error?.message || "Failed to post listing. Please try again.",
       );
     }
   };
