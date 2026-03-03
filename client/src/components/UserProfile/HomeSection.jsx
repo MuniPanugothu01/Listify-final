@@ -27,8 +27,7 @@ const HomeSection = ({ savedHouses, myPosts, myAlerts, messages, onViewAll, user
 
   // Quick action items
   const quickActions = [
-    { label: "Post New Ad", icon: Plus, color: "bg-emerald-500 hover:bg-emerald-600 text-white", onClick: () => onViewAll("posts") },
-    { label: "Browse Listings", icon: Search, color: "bg-blue-500 hover:bg-blue-600 text-white", onClick: () => {} },
+    { label: "View Listings", icon: Plus, color: "bg-emerald-500 hover:bg-emerald-600 text-white", onClick: () => onViewAll("posts") },
     { label: "View Saved", icon: Heart, color: "bg-pink-500 hover:bg-pink-600 text-white", onClick: () => onViewAll("saved") },
     { label: "Messages", icon: MessageCircle, color: "bg-amber-500 hover:bg-amber-600 text-white", onClick: () => onViewAll("messages") },
   ];
@@ -80,21 +79,18 @@ const HomeSection = ({ savedHouses, myPosts, myAlerts, messages, onViewAll, user
           title="Saved Properties"
           value={savedHouses?.length || 0}
           icon={Heart}
-          trend="+12%"
           color="emerald"
         />
         <StatsCard
           title="Active Listings"
           value={myPosts?.length || 0}
           icon={FileText}
-          trend="+5%"
           color="blue"
         />
         <StatsCard
           title="Active Alerts"
           value={myAlerts?.length || 0}
           icon={Bell}
-          trend="+3"
           color="amber"
         />
       </div>
@@ -120,5 +116,6 @@ const HomeSection = ({ savedHouses, myPosts, myAlerts, messages, onViewAll, user
     </div>
   );
 };
+
 
 export default HomeSection;

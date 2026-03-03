@@ -14,17 +14,12 @@ const MessagesSection = ({ messages }) => {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  const sampleChatHistory = [
-    { text: "Hey John, interested in the downtown apartment! It looks amazing.", sender: "other", time: "10:30 AM" },
-    { text: "What up? When can we schedule a viewing?", sender: "other", time: "10:32 AM" },
-    { text: "Sounds good! How about tomorrow at 2 PM?", sender: "me", time: "10:35 AM" },
-    { text: "Perfect, I'll book it for you. Any specific questions?", sender: "me", time: "10:36 AM" },
-    { text: "Just the parking situation. Is there street parking available?", sender: "other", time: "10:38 AM" },
-  ];
+  // Placeholder chat — will be replaced by real message history from API
+  const chatHistory = [];
 
   const filteredMessages = messages.filter(msg =>
-    msg.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    msg.preview.toLowerCase().includes(searchQuery.toLowerCase())
+    msg.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    msg.preview?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const selectedConversation = messages.find((conv) => conv.name === selectedChat);
@@ -76,7 +71,7 @@ const MessagesSection = ({ messages }) => {
 
         {/* Messages */}
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
-          {sampleChatHistory.map((msg, index) => (
+          {chatHistory.length > 0 ? chatHistory.map((msg, index) => (
             <div
               key={index}
               className={`flex ${msg.sender === "me" ? "justify-end" : "justify-start"}`}
@@ -96,7 +91,12 @@ const MessagesSection = ({ messages }) => {
                 </div>
               </div>
             </div>
-          ))}
+          )) : (
+            <div className="flex-1 flex flex-col items-center justify-center py-12 text-center">
+              <MessageCircle className="w-10 h-10 text-gray-300 mb-3" />
+              <p className="text-sm text-gray-500">No messages yet. Start a conversation!</p>
+            </div>
+          )}
         </div>
 
         {/* Input */}
@@ -153,7 +153,7 @@ const MessagesSection = ({ messages }) => {
 
           {/* Conversations List */}
           <div className="flex-1 overflow-y-auto">
-            {filteredMessages.map((conv) => (
+            {filteredMessages.length > 0 ? filteredMessages.map((conv) => (
               <div
                 key={conv.name}
                 onClick={() => handleChatSelect(conv.name)}
@@ -163,11 +163,17 @@ const MessagesSection = ({ messages }) => {
               >
                 <div className="flex items-center gap-3">
                   <div className="relative">
-                    <img
-                      src={conv.avatar}
-                      alt={conv.name}
-                      className="w-12 h-12 rounded-full object-cover border-2 border-white shadow-xs"
-                    />
+                    {conv.avatar ? (
+                      <img
+                        src={conv.avatar}
+                        alt={conv.name}
+                        className="w-12 h-12 rounded-full object-cover border-2 border-white shadow-xs"
+                      />
+                    ) : (
+                      <div className="w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 font-bold border-2 border-white shadow-xs">
+                        {conv.name?.charAt(0)?.toUpperCase() || "?"}
+                      </div>
+                    )}
                     {conv.unread && (
                       <div className="absolute -top-1 -right-1 w-4 h-4 bg-emerald-500 rounded-full border-2 border-white"></div>
                     )}
@@ -187,7 +193,15 @@ const MessagesSection = ({ messages }) => {
                   </div>
                 </div>
               </div>
-            ))}
+            )) : (
+              <div className="flex flex-col items-center justify-center py-16 text-center px-4">
+                <div className="w-14 h-14 bg-gray-100 rounded-full flex items-center justify-center mb-3">
+                  <MessageCircle className="w-7 h-7 text-gray-400" />
+                </div>
+                <p className="text-sm font-medium text-gray-900 mb-1">No conversations</p>
+                <p className="text-xs text-gray-500">Start messaging sellers or buyers to see chats here</p>
+              </div>
+            )}
           </div>
         </div>
 
@@ -220,7 +234,7 @@ const MessagesSection = ({ messages }) => {
               </div>
 
               <div className="flex-1 overflow-y-auto p-6 space-y-4">
-                {sampleChatHistory.map((msg, index) => (
+                {chatHistory.length > 0 ? chatHistory.map((msg, index) => (
                   <div
                     key={index}
                     className={`flex ${msg.sender === "me" ? "justify-end" : "justify-start"}`}
@@ -242,7 +256,12 @@ const MessagesSection = ({ messages }) => {
                       </div>
                     </div>
                   </div>
-                ))}
+                )) : (
+                  <div className="flex-1 flex flex-col items-center justify-center py-16 text-center">
+                    <MessageCircle className="w-10 h-10 text-gray-300 mb-3" />
+                    <p className="text-sm text-gray-500">No messages in this conversation yet</p>
+                  </div>
+                )}
               </div>
 
               <div className="p-4 border-t border-gray-100 bg-white">

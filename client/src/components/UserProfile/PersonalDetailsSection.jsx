@@ -33,8 +33,7 @@ import { updateUser } from "../../redux/slices/authSlice";
 // ─────────────────────────────────────────────────────────────────────────────
 // Constants
 // ─────────────────────────────────────────────────────────────────────────────
-const FALLBACK_AVATAR =
-  "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop";
+const FALLBACK_AVATAR = null; // No external fallback — component renders initials when null
 
 const GENDER_OPTIONS = [
   { label: "Select gender", value: "" },
@@ -338,15 +337,21 @@ export default function PersonalDetailsSection() {
         </h3>
         <div className="flex items-center gap-6">
           <div className="relative flex-shrink-0">
-            <img
-              src={avatarSrc}
-              alt={displayName}
-              className="w-24 h-24 rounded-2xl object-cover border-4
-                         border-white shadow-lg"
-              onError={(e) => {
-                e.target.src = FALLBACK_AVATAR;
-              }}
-            />
+            {avatarSrc ? (
+              <img
+                src={avatarSrc}
+                alt={displayName}
+                className="w-24 h-24 rounded-2xl object-cover border-4
+                           border-white shadow-lg"
+                onError={(e) => {
+                  e.target.style.display = 'none';
+                  e.target.parentElement.querySelector('.initials-fallback')?.classList.remove('hidden');
+                }}
+              />
+            ) : null}
+            <div className={`initials-fallback w-24 h-24 rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-600 border-4 border-white shadow-lg flex items-center justify-center text-white font-bold text-2xl ${avatarSrc ? 'hidden' : ''}`}>
+              {displayName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) || 'U'}
+            </div>
 
             {/* Upload progress overlay */}
             {imageUploading && (
