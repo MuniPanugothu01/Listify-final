@@ -30,6 +30,12 @@ exports.createVehicle = async (req, res) => {
       transmission,
       ownership,
       color,
+      engineCC,
+      cycleType,
+      gearCount,
+      frameSize,
+      compatibleVehicle,
+      partCategory,
     } = req.body;
 
     const listing = await Vehicle.create({
@@ -52,6 +58,12 @@ exports.createVehicle = async (req, res) => {
       transmission,
       ownership,
       color,
+      engineCC,
+      cycleType,
+      gearCount,
+      frameSize,
+      compatibleVehicle,
+      partCategory,
       seller: req.user._id,
       sellerName: req.user.firstName
         ? `${req.user.firstName} ${req.user.lastName || ""}`.trim()
@@ -334,6 +346,12 @@ exports.updateVehicle = async (req, res) => {
       "transmission",
       "ownership",
       "color",
+      "engineCC",
+      "cycleType",
+      "gearCount",
+      "frameSize",
+      "compatibleVehicle",
+      "partCategory",
     ];
 
     allowedUpdates.forEach((field) => {

@@ -121,6 +121,12 @@ export const submitPostAd = createAsyncThunk(
           fuelType: form.fuelType,
           transmission: form.transmission,
           ownership: form.ownership,
+          engineCC: form.engineCC,
+          cycleType: form.cycleType,
+          gearCount: form.gearCount,
+          frameSize: form.frameSize,
+          compatibleVehicle: form.compatibleVehicle,
+          partCategory: form.partCategory,
         };
         // Dispatch through the vehicles slice thunk so Redux state
         // (listings + myListings) is updated immediately
