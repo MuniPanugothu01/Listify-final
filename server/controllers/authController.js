@@ -26,10 +26,22 @@ const generateAccessToken = (userId, req = null) => {
     type: "access",
     jti: crypto.randomBytes(16).toString("hex"),
   };
-  // Token fingerprint: bind to User-Agent
+  // Token fingerprint: bind to browser family + platform (stable across version updates)
   if (req) {
     const ua = req.get('user-agent') || '';
-    payload.fgp = crypto.createHash('sha256').update(ua).digest('hex').substring(0, 16);
+    let browser = 'unknown';
+    if (/Edg\//i.test(ua))          browser = 'Edge';
+    else if (/OPR\//i.test(ua))     browser = 'Opera';
+    else if (/Chrome\//i.test(ua))  browser = 'Chrome';
+    else if (/Firefox\//i.test(ua)) browser = 'Firefox';
+    else if (/Safari\//i.test(ua))  browser = 'Safari';
+    let platform = 'unknown';
+    if (/Windows/i.test(ua))        platform = 'Windows';
+    else if (/Macintosh/i.test(ua)) platform = 'Mac';
+    else if (/Linux/i.test(ua))     platform = 'Linux';
+    else if (/Android/i.test(ua))   platform = 'Android';
+    else if (/iPhone|iPad/i.test(ua)) platform = 'iOS';
+    payload.fgp = crypto.createHash('sha256').update(`${browser}|${platform}`).digest('hex').substring(0, 16);
   }
   return jwt.sign(
     payload,
