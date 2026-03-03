@@ -46,7 +46,6 @@ const Sidebar = ({
     { id: "messages", label: "Messages", icon: MessageCircle, count: counts.messages },
     { id: "devices", label: "Devices", icon: Smartphone, count: devices?.length },
     { id: "activity", label: "Activity", icon: History },
-    { id: "profile-overview", label: "Profile Overview", icon: Calendar },
     { id: "alerts", label: "Alerts", icon: Bell, count: counts.alerts },
     { id: "settings", label: "Settings", icon: Settings },
     { id: "security", label: "Security", icon: Shield },

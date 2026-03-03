@@ -1,158 +1,182 @@
 import React from "react";
 import {
-  TrendingUp,
-  Award,
   BadgeCheck,
-  Users,
-  Eye,
-  MessageSquare,
-  Star,
-  Smartphone,
+  User,
+  Mail,
+  Phone,
   MapPin,
-  Clock
+  Calendar,
+  Shield,
+  FileText,
 } from "lucide-react";
 
-const ProfileOverview = ({ user, profilePic, myPosts, devices }) => {
-  // Get current device
-  const currentDevice = devices?.find(d => d.isCurrentDevice);
+const ProfileOverview = ({ user, profilePic }) => {
+  const formatDate = (date) => {
+    if (!date) return null;
+    const parsed = new Date(date);
+    if (Number.isNaN(parsed.getTime())) return null;
+    return parsed.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  };
 
-  // Calculate statistics
-  const totalViews = myPosts?.reduce((sum, post) => sum + (post.views || 0), 0) || 0;
+  const formatGender = (value) => {
+    if (!value) return null;
+    return value
+      .toString()
+      .replace(/-/g, " ")
+      .replace(/\b\w/g, (char) => char.toUpperCase());
+  };
+
+  const formatPreferences = (value) => {
+    if (!value) return null;
+    if (Array.isArray(value)) {
+      const cleaned = value.filter(Boolean);
+      return cleaned.length ? cleaned.join(", ") : null;
+    }
+    if (typeof value === "object") {
+      const cleaned = Object.entries(value)
+        .filter(([, enabled]) => Boolean(enabled))
+        .map(([key]) => key.replace(/([A-Z])/g, " $1").trim());
+      return cleaned.length ? cleaned.join(", ") : null;
+    }
+    return String(value);
+  };
+
+  const structuredLocation = [
+    user?.city,
+    user?.state,
+    user?.country,
+    user?.postalCode || user?.zipCode,
+  ]
+    .filter(Boolean)
+    .join(", ");
+
+  const profileFields = [
+    {
+      label: "Full Name",
+      value: user?.name,
+      icon: User,
+    },
+    {
+      label: "Email",
+      value: user?.email,
+      icon: Mail,
+    },
+    {
+      label: "Phone",
+      value: user?.phone,
+      icon: Phone,
+    },
+    {
+      label: "Address",
+      value: user?.address,
+      icon: MapPin,
+    },
+    {
+      label: "Location",
+      value: structuredLocation,
+      icon: MapPin,
+    },
+    {
+      label: "Member Since",
+      value: formatDate(user?.createdAt),
+      icon: Calendar,
+    },
+    {
+      label: "Date of Birth",
+      value: formatDate(user?.dateOfBirth),
+      icon: Calendar,
+    },
+    {
+      label: "Gender",
+      value: formatGender(user?.gender),
+      icon: User,
+    },
+    {
+      label: "Verification",
+      value: user?.isVerified ? "Verified" : null,
+      icon: Shield,
+    },
+    {
+      label: "Status",
+      value: user?.status,
+      icon: Shield,
+    },
+    {
+      label: "Preferences",
+      value: formatPreferences(user?.preferences),
+      icon: FileText,
+    },
+    {
+      label: "Last Updated",
+      value: formatDate(user?.updatedAt),
+      icon: Calendar,
+    },
+  ].filter((field) => Boolean(field.value));
 
   return (
-    <div className="space-y-6">
-      {/* Profile Summary Card */}
+    <div className="space-y-6 w-full">
       <div className="bg-white rounded-2xl border border-gray-200 p-6">
-        <div className="flex items-center gap-4 pb-6 border-b border-gray-100">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-4 pb-6 border-b border-gray-100">
           <div className="relative">
-            <img
-              src={profilePic}
-              alt="Profile"
-              className="w-20 h-20 rounded-2xl object-cover border-4 border-white shadow-lg"
-            />
-            <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-emerald-500 rounded-full border-4 border-white flex items-center justify-center">
-              <BadgeCheck className="w-4 h-4 text-white" />
-            </div>
+            {profilePic ? (
+              <img
+                src={profilePic}
+                alt="Profile"
+                className="w-20 h-20 rounded-2xl object-cover border-4 border-white shadow-lg"
+              />
+            ) : (
+              <div className="w-20 h-20 rounded-2xl bg-gray-100 border-4 border-white shadow-lg flex items-center justify-center">
+                <User className="w-8 h-8 text-gray-400" />
+              </div>
+            )}
+            {user?.isVerified && (
+              <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-emerald-500 rounded-full border-4 border-white flex items-center justify-center">
+                <BadgeCheck className="w-4 h-4 text-white" />
+              </div>
+            )}
           </div>
           <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-1">
-              <h3 className="font-bold text-gray-900 truncate">{user?.name}</h3>
-              <span className="px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded-full text-xs font-semibold">
-                PRO
-              </span>
+            <div className="flex flex-wrap items-center gap-2 mb-1">
+              {user?.name && <h3 className="font-bold text-gray-900 truncate">{user.name}</h3>}
+              {user?.provider && (
+                <span className="px-2 py-0.5 bg-gray-100 text-gray-700 rounded-full text-xs font-semibold">
+                  {user.provider === "google" ? "Google Account" : "Account"}
+                </span>
+              )}
             </div>
-            <p className="text-sm text-gray-500 truncate">{user?.email}</p>
-            <div className="flex items-center gap-1 mt-2">
-              <Star className="w-4 h-4 text-amber-500 fill-amber-500" />
-              <span className="text-sm font-semibold text-gray-900">
-                {user?.rating || "4.8"}
-              </span>
-              <span className="text-xs text-gray-500">(124 reviews)</span>
-            </div>
+            {user?.email && <p className="text-sm text-gray-500 truncate">{user.email}</p>}
           </div>
         </div>
 
-        {/* Quick Stats */}
-        <div className="grid grid-cols-2 gap-4 py-6">
-          <div className="text-center p-3 bg-gray-50 rounded-xl">
-            <p className="text-2xl font-bold text-gray-900">{myPosts?.length || 0}</p>
-            <p className="text-xs text-gray-500 mt-1">Active Listings</p>
-          </div>
-          <div className="text-center p-3 bg-gray-50 rounded-xl">
-            <p className="text-2xl font-bold text-gray-900">{totalViews}</p>
-            <p className="text-xs text-gray-500 mt-1">Total Views</p>
-          </div>
-          <div className="text-center p-3 bg-gray-50 rounded-xl">
-            <p className="text-2xl font-bold text-gray-900">95%</p>
-            <p className="text-xs text-gray-500 mt-1">Response Rate</p>
-          </div>
-          <div className="text-center p-3 bg-gray-50 rounded-xl">
-            <p className="text-2xl font-bold text-gray-900">42</p>
-            <p className="text-xs text-gray-500 mt-1">Inquiries</p>
-          </div>
-        </div>
-
-        {/* Badges */}
-        <div className="pt-6 border-t border-gray-100">
-          <div className="flex items-center justify-between mb-4">
-            <h4 className="text-sm font-semibold text-gray-900">Achievements</h4>
-            <Award className="w-5 h-5 text-amber-500" />
-          </div>
-          <div className="flex flex-wrap gap-2">
-            <span className="px-3 py-1.5 bg-emerald-100 text-emerald-800 rounded-lg text-xs font-semibold">
-              Top Seller
-            </span>
-            <span className="px-3 py-1.5 bg-blue-100 text-blue-800 rounded-lg text-xs font-semibold">
-              Quick Responder
-            </span>
-            <span className="px-3 py-1.5 bg-purple-100 text-purple-800 rounded-lg text-xs font-semibold">
-              Verified Agent
-            </span>
-            <span className="px-3 py-1.5 bg-amber-100 text-amber-800 rounded-lg text-xs font-semibold">
-              5-Star Rated
-            </span>
-          </div>
-        </div>
-      </div>
-
-      {/* Current Session */}
-      {currentDevice && (
-        <div className="bg-white rounded-2xl border border-gray-200 p-6">
-          <h3 className="font-semibold text-gray-900 mb-4">Current Session</h3>
-          <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
-            <div className="w-10 h-10 bg-emerald-100 rounded-xl flex items-center justify-center">
-              <Smartphone className="w-5 h-5 text-emerald-600" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="font-medium text-gray-900 truncate">{currentDevice.deviceName}</p>
-              <div className="flex items-center gap-2 text-xs text-gray-500 mt-1">
-                <MapPin className="w-3 h-3 flex-shrink-0" />
-                <span className="truncate">{currentDevice.location}</span>
+        {profileFields.length > 0 && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-6">
+            {profileFields.map((field) => (
+              <div key={field.label} className="bg-gray-50 rounded-xl p-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <field.icon className="w-4 h-4 text-emerald-600" />
+                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{field.label}</p>
+                </div>
+                <p className="text-sm font-medium text-gray-900 break-words">{field.value}</p>
               </div>
-              <p className="text-xs text-gray-400 mt-1">{currentDevice.lastActiveText}</p>
-            </div>
+            ))}
           </div>
-        </div>
-      )}
+        )}
 
-      {/* Performance Metrics */}
-      <div className="bg-emerald-500 rounded-2xl p-6 text-white">
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h3 className="font-bold text-lg">Performance</h3>
-            <p className="text-emerald-100 text-sm mt-1">Last 30 days</p>
-          </div>
-          <TrendingUp className="w-6 h-6" />
-        </div>
-        <div className="space-y-4">
-          <div>
-            <div className="flex items-center justify-between text-sm mb-2">
-              <span>Listing Views</span>
-              <span className="font-bold">+24%</span>
-            </div>
-            <div className="w-full bg-emerald-400/30 rounded-full h-2">
-              <div className="bg-white w-3/4 h-2 rounded-full"></div>
+        {user?.bio && (
+          <div className="pt-6 border-t border-gray-100 mt-6">
+            <div className="flex items-start gap-2">
+              <FileText className="w-4 h-4 text-emerald-600 mt-0.5" />
+              <div>
+                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Bio</p>
+                <p className="text-sm text-gray-900 mt-1 break-words">{user.bio}</p>
+              </div>
             </div>
           </div>
-          <div>
-            <div className="flex items-center justify-between text-sm mb-2">
-              <span>Inquiries</span>
-              <span className="font-bold">+18%</span>
-            </div>
-            <div className="w-full bg-emerald-400/30 rounded-full h-2">
-              <div className="bg-white w-2/3 h-2 rounded-full"></div>
-            </div>
-          </div>
-          <div>
-            <div className="flex items-center justify-between text-sm mb-2">
-              <span>Closing Rate</span>
-              <span className="font-bold">95%</span>
-            </div>
-            <div className="w-full bg-emerald-400/30 rounded-full h-2">
-              <div className="bg-white w-19/20 h-2 rounded-full"></div>
-            </div>
-          </div>
-        </div>
+        )}
       </div>
     </div>
   );
