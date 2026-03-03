@@ -15,36 +15,28 @@
  */
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { electronicsAPI, vehiclesAPI } from "../../services/api";
+import { createElectronicsListing } from "../slices/electronicsSlice";
+import { createVehicleListing } from "../slices/vehiclesSlice";
 import { addDraftListing } from "../slices/draftListingsSlice";
 import { compressImagesToDataUrls } from "../../utils/imageUtils";
-
-// ── Fallback placeholder images per category ───────────────────────
-const FALLBACK_IMAGE = {
-  Electronics:
-    "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&q=80",
-  Vehicles:
-    "https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=800&q=80",
-  default:
-    "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&q=80",
-};
 
 // ── Helpers ────────────────────────────────────────────────────────
 
 /**
  * Upload image files via a category-specific API and return the URL array.
- * Returns the fallback image on failure so the listing can still be created.
+ * Throws on failure so the caller can inform the user instead of silently
+ * replacing their images with a generic placeholder.
  */
-const uploadImages = async (files, api, fallback) => {
-  if (!files || files.length === 0) return [fallback];
-  try {
-    const fd = new FormData();
-    files.forEach((img) => fd.append("images", img));
-    const res = await api.uploadImages(fd);
-    const urls = res.data.imageUrls;
-    return urls?.length ? urls : [fallback];
-  } catch {
-    return [fallback];
+const uploadImages = async (files, api) => {
+  if (!files || files.length === 0) return [];
+  const fd = new FormData();
+  files.forEach((img) => fd.append("images", img));
+  const res = await api.uploadImages(fd);
+  const urls = res.data?.imageUrls;
+  if (!urls || urls.length === 0) {
+    throw new Error("Server returned no image URLs. Please try uploading again.");
   }
+  return urls;
 };
 
 /**
@@ -81,24 +73,44 @@ export const submitPostAd = createAsyncThunk(
   "listings/submitPostAd",
   async ({ form, category, subcategory, user }, { dispatch, rejectWithValue }) => {
     try {
-      const fallback = FALLBACK_IMAGE[category] || FALLBACK_IMAGE.default;
-
       // ─── Electronics ─────────────────────────────────────────
       if (category === "Electronics") {
-        const imageUrls = await uploadImages(form.images, electronicsAPI, fallback);
+        let imageUrls = [];
+        try {
+          imageUrls = await uploadImages(form.images, electronicsAPI);
+        } catch (uploadErr) {
+          console.error("Electronics image upload failed:", uploadErr);
+          return rejectWithValue(
+            "Image upload failed: " +
+              (uploadErr.response?.data?.message || uploadErr.message ||
+                "Could not upload images. Please check your connection and try again."),
+          );
+        }
         const listingData = buildBaseListingData(form, category, subcategory, imageUrls);
-        const response = await electronicsAPI.create(listingData);
+        // Dispatch through the electronics slice thunk so Redux state
+        // (listings + myListings) is updated immediately
+        const listing = await dispatch(createElectronicsListing(listingData)).unwrap();
         return {
           type: "api",
           entity: "electronics",
-          listing: response.data.listing,
+          listing,
           message: "Electronics listing posted successfully!",
         };
       }
 
       // ─── Vehicles ────────────────────────────────────────────
       if (category === "Vehicles") {
-        const imageUrls = await uploadImages(form.images, vehiclesAPI, fallback);
+        let imageUrls = [];
+        try {
+          imageUrls = await uploadImages(form.images, vehiclesAPI);
+        } catch (uploadErr) {
+          console.error("Vehicle image upload failed:", uploadErr);
+          return rejectWithValue(
+            "Image upload failed: " +
+              (uploadErr.response?.data?.message || uploadErr.message ||
+                "Could not upload images. Please check your connection and try again."),
+          );
+        }
         const listingData = {
           ...buildBaseListingData(form, category, subcategory, imageUrls),
           brand: form.brand,
@@ -110,11 +122,13 @@ export const submitPostAd = createAsyncThunk(
           transmission: form.transmission,
           ownership: form.ownership,
         };
-        const response = await vehiclesAPI.create(listingData);
+        // Dispatch through the vehicles slice thunk so Redux state
+        // (listings + myListings) is updated immediately
+        const listing = await dispatch(createVehicleListing(listingData)).unwrap();
         return {
           type: "api",
           entity: "vehicles",
-          listing: response.data.listing,
+          listing,
           message: "Vehicle listing posted successfully!",
         };
       }
@@ -126,7 +140,7 @@ export const submitPostAd = createAsyncThunk(
         try {
           imageDataUrls = await compressImagesToDataUrls(form.images);
         } catch {
-          imageDataUrls = [fallback];
+          imageDataUrls = [];
         }
       }
 
@@ -144,7 +158,7 @@ export const submitPostAd = createAsyncThunk(
           rating: 5.0,
           since: new Date().getFullYear().toString(),
         },
-        images: imageDataUrls.length > 0 ? imageDataUrls : [fallback],
+        images: imageDataUrls.length > 0 ? imageDataUrls : [],
         featured: false,
       };
 

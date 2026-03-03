@@ -6,13 +6,21 @@
  * clearly visible in the Upstash Redis dashboard.
  *
  * Key namespaces:
- *   listing:{entity}:{id}         → full listing JSON
- *   listing:{entity}:{id}:images  → JSON array of image URLs
- *   listing:{entity}:{id}:meta    → lightweight metadata (title, price, location, thumb)
- *   listing:{entity}:recent       → JSON array of the latest 20 listing summaries
- *   listing:{entity}:count        → total active listing count
- *   listing:{entity}:popular      → most-viewed listings
- *   cache:stats                   → cache hit/miss counters
+ *   listing:{entity}:{id}                    → full listing JSON
+ *   listing:{entity}:{id}:images             → JSON array of image URLs
+ *   listing:{entity}:{id}:meta               → lightweight metadata
+ *   listing:{entity}:recent                  → latest 20 listing summaries
+ *   listing:{entity}:count                   → total active listing count
+ *   listing:{entity}:popular                 → most-viewed listings
+ *   listing:{entity}:gallery                 → all images in one key
+ *
+ *   ▼ Human-readable activity keys (visible by product title in Upstash) ▼
+ *   posted:{entity}:{product_title}          → new post data + S3 image links
+ *   edited:{entity}:{product_title}          → edited product data + changes
+ *   saved:{entity}:{product_title}:by:{user} → saved product by user
+ *   deleted:{entity}:{product_title}         → deletion record
+ *
+ *   cache:stats                              → cache hit/miss counters
  */
 
 const redis = require('../config/redis');
@@ -28,9 +36,22 @@ const TTL = {
   COUNT: 180,             // 3 min  — total count
   SEARCH_RESULTS: 120,    // 2 min  — search result sets
   CATEGORY_PAGE: 180,     // 3 min  — full category page (default / first load)
+  ACTIVITY_LOG: 86400,    // 24 hrs — human-readable activity entries
 };
 
 class ListingCacheService {
+
+  // ══════════════════════════════════════════════════════════
+  //  Helper: create a human-readable slug from product title
+  // ══════════════════════════════════════════════════════════
+  static _slugify(title) {
+    if (!title) return 'untitled';
+    return title
+      .toLowerCase()
+      .replace(/[^a-z0-9\s-]/g, '')
+      .replace(/\s+/g, '-')
+      .substring(0, 60);
+  }
 
   // ══════════════════════════════════════════════════════════
   //  Store a full listing in cache
@@ -368,6 +389,43 @@ class ListingCacheService {
   }
 
   // ══════════════════════════════════════════════════════════
+  //  Invalidate only LIST / aggregate caches for an entity
+  //  Use this after create/update so the individual listing
+  //  cache survives but stale list pages are refreshed.
+  // ══════════════════════════════════════════════════════════
+  static async invalidateListCaches(entity) {
+    try {
+      // Only delete aggregate keys — NOT individual listing keys
+      const indexKey = `listing:${entity}:index`;
+      const keys = await redis.smembers(indexKey);
+      if (keys && keys.length > 0) {
+        // Only remove list:* keys, search:* keys, gallery, count, recent, popular
+        const listKeys = keys.filter(k =>
+          k.includes(':list:') ||
+          k.includes(':gallery') ||
+          k.startsWith('search:')
+        );
+        for (const key of listKeys) {
+          await redis.del(key);
+          await redis.srem(indexKey, key);
+        }
+      }
+
+      // Clear aggregate keys
+      await Promise.all([
+        redis.del(`listing:${entity}:count`),
+        redis.del(`listing:${entity}:recent`),
+        redis.del(`listing:${entity}:popular`),
+        redis.del(`listing:${entity}:gallery`),
+      ]);
+
+      logger.info(`[Cache] Invalidated list caches for entity: ${entity}`);
+    } catch (err) {
+      logger.error(`[Cache] List invalidation error for ${entity}:`, err.message);
+    }
+  }
+
+  // ══════════════════════════════════════════════════════════
   //  Invalidate all caches for an entity (or a specific listing)
   // ══════════════════════════════════════════════════════════
   static async invalidateListingCache(entity, id = null) {
@@ -403,6 +461,184 @@ class ListingCacheService {
       logger.info(`[Cache] Full cache invalidation for entity: ${entity}`);
     } catch (err) {
       logger.error(`[Cache] Invalidation error for ${entity}:`, err.message);
+    }
+  }
+
+  // ══════════════════════════════════════════════════════════
+  //  LOG: New product posted
+  //  Key pattern → posted:{entity}:{product-title-slug}
+  //  Visible in Upstash with the product name!
+  // ══════════════════════════════════════════════════════════
+  static async logProductPosted(entity, listing) {
+    if (!listing) return;
+    const id = (listing._id || listing.id)?.toString();
+    const slug = this._slugify(listing.title);
+    const key = `posted:${entity}:${slug}`;
+
+    try {
+      const payload = {
+        action: 'POSTED',
+        entity,
+        listingId: id,
+        title: listing.title,
+        price: listing.price,
+        condition: listing.condition || 'Good',
+        category: listing.category,
+        subcategory: listing.subcategory,
+        location: listing.location,
+        sellerName: listing.sellerName,
+        phone: listing.phone,
+        imageCount: listing.images?.length || 0,
+        s3ImageUrls: listing.images || [],
+        mongoDbId: id,
+        storedIn: {
+          mongoDB: true,
+          awsS3: listing.images?.length > 0,
+          upstashRedis: true,
+        },
+        postedAt: listing.createdAt || new Date().toISOString(),
+        cachedAt: new Date().toISOString(),
+      };
+
+      // Vehicle-specific fields
+      if (entity === 'vehicles') {
+        payload.brand = listing.brand;
+        payload.model = listing.model;
+        payload.year = listing.year;
+        payload.fuelType = listing.fuelType;
+        payload.transmission = listing.transmission;
+        payload.kmDriven = listing.kmDriven;
+        payload.ownership = listing.ownership;
+      }
+
+      await redis.setex(key, TTL.ACTIVITY_LOG, JSON.stringify(payload));
+      logger.info(`[Cache] 📝 Activity logged — POSTED ${entity}: "${listing.title}" (key: ${key})`);
+    } catch (err) {
+      logger.error(`[Cache] Error logging post activity:`, err.message);
+    }
+  }
+
+  // ══════════════════════════════════════════════════════════
+  //  LOG: Product edited / updated
+  //  Key pattern → edited:{entity}:{product-title-slug}
+  // ══════════════════════════════════════════════════════════
+  static async logProductEdited(entity, oldListing, updatedListing) {
+    if (!updatedListing) return;
+    const id = (updatedListing._id || updatedListing.id)?.toString();
+    const slug = this._slugify(updatedListing.title);
+    const key = `edited:${entity}:${slug}`;
+
+    try {
+      // Detect which fields actually changed
+      const changes = {};
+      const trackFields = [
+        'title', 'price', 'description', 'condition', 'location',
+        'phone', 'category', 'subcategory', 'brand', 'model',
+        'year', 'fuelType', 'transmission', 'kmDriven', 'ownership',
+      ];
+
+      for (const field of trackFields) {
+        const oldVal = oldListing?.[field];
+        const newVal = updatedListing[field];
+        if (oldVal !== undefined && newVal !== undefined && String(oldVal) !== String(newVal)) {
+          changes[field] = { from: oldVal, to: newVal };
+        }
+      }
+
+      // Detect image changes
+      const oldImages = oldListing?.images || [];
+      const newImages = updatedListing.images || [];
+      const imagesChanged = JSON.stringify(oldImages) !== JSON.stringify(newImages);
+
+      const payload = {
+        action: 'EDITED',
+        entity,
+        listingId: id,
+        title: updatedListing.title,
+        price: updatedListing.price,
+        fieldsChanged: Object.keys(changes),
+        changes,
+        imagesUpdated: imagesChanged,
+        oldImageCount: oldImages.length,
+        newImageCount: newImages.length,
+        s3ImageUrls: newImages,
+        mongoDbId: id,
+        storedIn: {
+          mongoDB: 'updated',
+          awsS3: imagesChanged ? 'updated' : 'unchanged',
+          upstashRedis: 'updated',
+        },
+        editedAt: new Date().toISOString(),
+      };
+
+      await redis.setex(key, TTL.ACTIVITY_LOG, JSON.stringify(payload));
+      logger.info(`[Cache] ✏️  Activity logged — EDITED ${entity}: "${updatedListing.title}" (${Object.keys(changes).length} fields changed)`);
+    } catch (err) {
+      logger.error(`[Cache] Error logging edit activity:`, err.message);
+    }
+  }
+
+  // ══════════════════════════════════════════════════════════
+  //  LOG: Product saved by user
+  //  Key pattern → saved:{entity}:{product-title-slug}:by:{userId}
+  // ══════════════════════════════════════════════════════════
+  static async logProductSaved(entity, listing, userId, saved) {
+    if (!listing) return;
+    const slug = this._slugify(listing.title);
+    const action = saved ? 'SAVED' : 'UNSAVED';
+    const prefix = saved ? 'saved' : 'unsaved';
+    const key = `${prefix}:${entity}:${slug}:by:${userId}`;
+
+    try {
+      const payload = {
+        action,
+        entity,
+        listingId: (listing._id || listing.id)?.toString(),
+        title: listing.title,
+        price: listing.price,
+        userId: userId.toString(),
+        thumbnail: listing.images?.[0] || null,
+        timestamp: new Date().toISOString(),
+      };
+
+      if (saved) {
+        await redis.setex(key, TTL.ACTIVITY_LOG, JSON.stringify(payload));
+      } else {
+        // Remove saved key if unsaved
+        await redis.del(`saved:${entity}:${slug}:by:${userId}`);
+        await redis.setex(key, TTL.ACTIVITY_LOG, JSON.stringify(payload));
+      }
+
+      logger.info(`[Cache] ${saved ? '❤️' : '💔'} Activity logged — ${action} ${entity}: "${listing.title}" by user ${userId}`);
+    } catch (err) {
+      logger.error(`[Cache] Error logging save activity:`, err.message);
+    }
+  }
+
+  // ══════════════════════════════════════════════════════════
+  //  LOG: Product deleted
+  //  Key pattern → deleted:{entity}:{product-title-slug}
+  // ══════════════════════════════════════════════════════════
+  static async logProductDeleted(entity, listing) {
+    if (!listing) return;
+    const slug = this._slugify(listing.title);
+    const key = `deleted:${entity}:${slug}`;
+
+    try {
+      await redis.setex(key, TTL.ACTIVITY_LOG, JSON.stringify({
+        action: 'DELETED',
+        entity,
+        listingId: (listing._id || listing.id)?.toString(),
+        title: listing.title,
+        price: listing.price,
+        sellerName: listing.sellerName,
+        hadImages: (listing.images?.length || 0) > 0,
+        imageCount: listing.images?.length || 0,
+        deletedAt: new Date().toISOString(),
+      }));
+      logger.info(`[Cache] 🗑️  Activity logged — DELETED ${entity}: "${listing.title}"`);
+    } catch (err) {
+      logger.error(`[Cache] Error logging delete activity:`, err.message);
     }
   }
 

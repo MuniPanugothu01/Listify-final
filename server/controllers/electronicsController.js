@@ -1,4 +1,5 @@
 const Electronics = require("../models/Electronics");
+const mongoose = require("mongoose");
 const { logger } = require("../utils/logger");
 const redis = require("../config/redis");
 const ListingCache = require("../services/listingCacheService");
@@ -45,11 +46,14 @@ exports.createElectronics = async (req, res) => {
     );
 
     // Cache the new listing in Redis (visible in Upstash dashboard)
-    await ListingCache.cacheListing('electronics', populated.toObject ? populated.toObject() : populated);
-    // Invalidate list caches
-    await ListingCache.invalidateListingCache('electronics');
+    const listingObj = populated.toObject ? populated.toObject() : populated;
+    await ListingCache.cacheListing('electronics', listingObj);
+    // Log activity — visible in Upstash as: posted:electronics:{product-title}
+    await ListingCache.logProductPosted('electronics', listingObj);
+    // Only invalidate list/aggregate caches (keeps individual listing cache alive)
+    await ListingCache.invalidateListCaches('electronics');
     // Index in Elasticsearch
-    await SearchService.indexListing('electronics', populated.toObject ? populated.toObject() : populated);
+    await SearchService.indexListing('electronics', listingObj);
 
     res.status(201).json({
       success: true,
@@ -188,6 +192,14 @@ exports.getElectronicsById = async (req, res) => {
   try {
     const listingId = req.params.id;
 
+    // Validate ObjectId format
+    if (!mongoose.Types.ObjectId.isValid(listingId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid listing ID format",
+      });
+    }
+
     // Check listing cache first
     const cached = await ListingCache.getCachedListing('electronics', listingId);
     if (cached) {
@@ -258,6 +270,14 @@ exports.getElectronicsById = async (req, res) => {
 // @access  Private (owner only)
 exports.updateElectronics = async (req, res) => {
   try {
+    // Validate ObjectId format
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid listing ID format",
+      });
+    }
+
     const listing = await Electronics.findById(req.params.id);
 
     if (!listing) {
@@ -274,6 +294,9 @@ exports.updateElectronics = async (req, res) => {
         message: "Not authorized to update this listing",
       });
     }
+
+    // Update cache with new data
+    const oldListingObj = listing.toObject ? listing.toObject() : { ...listing._doc };
 
     const allowedUpdates = [
       "title",
@@ -305,7 +328,10 @@ exports.updateElectronics = async (req, res) => {
     // Update cache with new data
     const updatedObj = updated.toObject ? updated.toObject() : updated;
     await ListingCache.cacheListing('electronics', updatedObj);
-    await ListingCache.invalidateListingCache('electronics');
+    // Log activity — visible in Upstash as: edited:electronics:{product-title}
+    await ListingCache.logProductEdited('electronics', oldListingObj, updatedObj);
+    // Only invalidate list caches (keeps individual listing cache alive)
+    await ListingCache.invalidateListCaches('electronics');
     // Re-index in Elasticsearch
     await SearchService.indexListing('electronics', updatedObj);
 
@@ -347,6 +373,8 @@ exports.deleteElectronics = async (req, res) => {
 
     await Electronics.findByIdAndDelete(req.params.id);
 
+    // Log deletion activity — visible in Upstash as: deleted:electronics:{product-title}
+    await ListingCache.logProductDeleted('electronics', listing);
     // Invalidate cache for this listing and all lists
     await ListingCache.invalidateListingCache('electronics', req.params.id);
     // Remove from Elasticsearch index
@@ -557,6 +585,8 @@ exports.toggleSave = async (req, res) => {
       // Also update the listing cache with the new savedBy array
       const listingObj = listing.toObject ? listing.toObject() : listing;
       await ListingCache.cacheListing('electronics', listingObj);
+      // Log save/unsave activity — visible in Upstash as: saved/unsaved:electronics:{title}
+      await ListingCache.logProductSaved('electronics', listingObj, userId, !isSaved);
 
       logger.info(`[Cache] Updated saved electronics for user ${userId} (${savedListings.length} items)`);
     } catch (cacheErr) {
