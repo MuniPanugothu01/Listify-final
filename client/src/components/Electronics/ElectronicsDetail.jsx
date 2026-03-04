@@ -42,7 +42,7 @@ import {
   clearCurrentListing,
   toggleSaveElectronics,
 } from '../../redux/slices/electronicsSlice';
-import { authAPI } from '../../services/api';
+import { authAPI, chatAPI } from '../../services/api';
 import { vehiclesAPI } from '../../services/api';
 import { DetailPageSkeleton, ButtonSpinner } from '../common/Skeleton';
 
@@ -106,6 +106,7 @@ const ElectronicsDetail = () => {
   const [showSellerProfile, setShowSellerProfile] = useState(false);
   const [showOfferModal, setShowOfferModal] = useState(false);
   const [offerAmount, setOfferAmount] = useState('');
+  const [sendingOffer, setSendingOffer] = useState(false);
   const [savingItem, setSavingItem] = useState(false);
   const [contactingLoading, setContactingLoading] = useState(false);
   const [mainImgLoaded, setMainImgLoaded] = useState(false);
@@ -553,25 +554,28 @@ const ElectronicsDetail = () => {
                 <div className="space-y-3 mt-2">
                   <button
                     onClick={() => {
-                      setContactingLoading(true);
-                      setTimeout(() => {
-                        navigate('/dashboard/messages');
-                      }, 600);
+                      if (!user) {
+                        toast.error('Please login to message the seller');
+                        return;
+                      }
+                      if (isSelfListing) {
+                        toast.error("You can't message yourself");
+                        return;
+                      }
+                      const sellerId = product?.seller?._id || product?.seller;
+                      const params = new URLSearchParams({
+                        recipientId: sellerId,
+                        listingId: product._id,
+                        listingType: 'electronics',
+                        listingTitle: product.title || '',
+                      });
+                      navigate(`/dashboard/messages?${params.toString()}`);
                     }}
                     disabled={contactingLoading}
                     className="w-full py-4 bg-[#27bb97] hover:bg-[#1fa987] text-white rounded-lg font-semibold transition-all shadow-md hover:shadow-lg text-base uppercase disabled:opacity-90 disabled:cursor-not-allowed"
                   >
-                    {contactingLoading ? (
-                      <>
-                        <ButtonSpinner size="sm" className="inline mr-2 text-white" />
-                        Connecting...
-                      </>
-                    ) : (
-                      <>
-                        <MessageCircle className="w-5 h-5 inline mr-2" />
-                        Contact Seller
-                      </>
-                    )}
+                    <MessageCircle className="w-5 h-5 inline mr-2" />
+                    Message Seller
                   </button>
                   
                   <div className="grid grid-cols-2 gap-3">
@@ -728,21 +732,58 @@ const ElectronicsDetail = () => {
                 Cancel
               </button>
               <button
-                onClick={() => {
+                onClick={async () => {
                   if (!offerAmount || Number(offerAmount) <= 0) {
                     toast.error('Please enter a valid offer amount');
                     return;
                   }
-                  setShowOfferModal(false);
-                  toast.success(
-                    `Offer of ₹${Number(offerAmount).toLocaleString()} sent to ${product.sellerName || 'seller'} successfully!`,
-                    { duration: 4000 }
-                  );
+                  setSendingOffer(true);
+                  try {
+                    const sellerId = product?.seller?._id || product?.seller;
+                    // 1. Create / get conversation linked to this listing
+                    const convoRes = await chatAPI.getOrCreateConversation(sellerId, {
+                      listingId: product._id,
+                      listingType: 'electronics',
+                      listingTitle: product.title || 'Listing',
+                    });
+                    const conversationId = convoRes.data?.conversation?._id;
+                    if (!conversationId) throw new Error('Failed to create conversation');
+
+                    // 2. Send a formatted offer message
+                    const offerPrice = Number(offerAmount).toLocaleString('en-IN');
+                    const listingPrice = typeof product.price === 'number'
+                      ? product.price.toLocaleString('en-IN')
+                      : product.price;
+                    const message = `📋 **Offer for: ${product.title || 'Listing'}**\n\n💰 Listed Price: ₹${listingPrice}\n🏷️ My Offer: ₹${offerPrice}\n\nHi, I'm interested in this item and would like to offer ₹${offerPrice}. Please let me know if this works for you!`;
+
+                    await chatAPI.sendMessage(conversationId, message);
+
+                    setShowOfferModal(false);
+                    toast.success(
+                      `Offer of ₹${offerPrice} sent to ${product.sellerName || 'seller'}!`,
+                      { duration: 4000 }
+                    );
+                  } catch (err) {
+                    console.error('Send offer error:', err);
+                    toast.error('Failed to send offer. Please try again.');
+                  } finally {
+                    setSendingOffer(false);
+                  }
                 }}
-                className="flex-[1.5] py-3 bg-[#27bb97] hover:bg-[#1fa987] text-white rounded-xl font-semibold transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2"
+                disabled={sendingOffer}
+                className="flex-[1.5] py-3 bg-[#27bb97] hover:bg-[#1fa987] text-white rounded-xl font-semibold transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
               >
-                <Send className="w-4 h-4" />
-                Send Offer
+                {sendingOffer ? (
+                  <>
+                    <ButtonSpinner size="sm" className="inline text-white" />
+                    Sending...
+                  </>
+                ) : (
+                  <>
+                    <Send className="w-4 h-4" />
+                    Send Offer
+                  </>
+                )}
               </button>
             </div>
           </div>

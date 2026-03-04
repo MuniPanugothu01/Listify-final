@@ -24,7 +24,7 @@ import { ScrollProgress } from "../../components/ui/scroll-progress";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks/useRedux";
 import { updateUser, checkAuth, logoutUser } from "../../redux/slices/authSlice";
 import { fetchProfile } from "../../redux/slices/profileSlice";
-import { notificationsAPI } from "../../services/api";
+import { notificationsAPI, chatAPI } from "../../services/api";
 import toast from "react-hot-toast";
 
 const STATIC_PROFILE_IMAGE =
@@ -75,6 +75,7 @@ const Navbar = () => {
   const [showMobileSearch, setShowMobileSearch] = useState(false);
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
   const [sellLoading, setSellLoading] = useState(false);
+  const [chatUnreadCount, setChatUnreadCount] = useState(0);
 
   const notificationDropdownRef = useRef(null);
   const locationInputRef = useRef(null);
@@ -134,7 +135,7 @@ const Navbar = () => {
     fetchNotifications();
   }, [fetchNotifications]);
 
-  // Poll unread count every 30s
+  // Poll unread count every 60s
   useEffect(() => {
     if (!isAuthenticated) return;
     const interval = setInterval(async () => {
@@ -147,13 +148,27 @@ const Navbar = () => {
           fetchNotifications();
         }
       } catch (_) {}
-    }, 30000);
+    }, 60000);
     return () => clearInterval(interval);
   }, [isAuthenticated, fetchNotifications]);
 
   const unreadCountRef = useRef(0);
   const unreadCount = notifications.filter((n) => !n.read).length;
   useEffect(() => { unreadCountRef.current = unreadCount; }, [unreadCount]);
+
+  // Poll chat unread count
+  useEffect(() => {
+    if (!isAuthenticated) return;
+    const fetchChatUnread = async () => {
+      try {
+        const res = await chatAPI.getUnreadCount();
+        setChatUnreadCount(res.data?.unreadCount || 0);
+      } catch (_) {}
+    };
+    fetchChatUnread();
+    const interval = setInterval(fetchChatUnread, 60000);
+    return () => clearInterval(interval);
+  }, [isAuthenticated]);
 
   const formatNotifTime = (dateStr) => {
     if (!dateStr) return "";
@@ -697,6 +712,28 @@ const Navbar = () => {
                   </button>
                 </Link>
 
+                {/* Messages Icon */}
+                {isAuthenticated && (
+                  <Link to="/dashboard/messages">
+                    <button
+                      className={`relative p-2 rounded-full transition-colors ${
+                        isScrolled
+                          ? "text-white hover:bg-white/10"
+                          : "text-gray-600 hover:bg-gray-100"
+                      }`}
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-[18px] h-[18px]">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                      </svg>
+                      {chatUnreadCount > 0 && (
+                        <span className="absolute -top-[5px] -right-[5px] bg-emerald-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-[11px] font-bold">
+                          {chatUnreadCount > 9 ? "9+" : chatUnreadCount}
+                        </span>
+                      )}
+                    </button>
+                  </Link>
+                )}
+
                 {/* Notification Icon */}
                 {isAuthenticated && (
                   <div className="relative">
@@ -917,6 +954,26 @@ const Navbar = () => {
                     <FaRegHeart size={18} />
                   </button>
                 </Link>
+
+                {/* Mobile Messages Icon */}
+                {isAuthenticated && (
+                  <Link to="/dashboard/messages">
+                    <button
+                      className={`relative p-2 rounded-full ${
+                        isScrolled ? "text-white" : "text-gray-600"
+                      }`}
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-[18px] h-[18px]">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                      </svg>
+                      {chatUnreadCount > 0 && (
+                        <span className="absolute -top-[5px] -right-[5px] bg-emerald-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-[10px] font-bold">
+                          {chatUnreadCount > 9 ? "9+" : chatUnreadCount}
+                        </span>
+                      )}
+                    </button>
+                  </Link>
+                )}
 
                 {/* Mobile Notification Icon */}
                 {isAuthenticated && (
@@ -1156,6 +1213,22 @@ const Navbar = () => {
                 </div>
 
                 {/* Mobile Notifications Link */}
+                {isAuthenticated && (
+                  <Link
+                    to="/dashboard/messages"
+                    onClick={() => {
+                      setIsMobileMenuOpen(false);
+                      scrollToTop();
+                    }}
+                    className="relative font-semibold text-gray-700 transition-colors duration-300 hover:text-[#1FA987] after:content-[''] after:absolute after:w-0 after:h-[2px] after:bottom-[-4px] after:left-0 after:bg-[#1FA987] after:transition-all after:duration-300 hover:after:w-full px-3 py-3 text-base hover:bg-gray-100 rounded flex items-center gap-3"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
+                      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                    </svg>
+                    Messages {chatUnreadCount > 0 && `(${chatUnreadCount})`}
+                  </Link>
+                )}
+
                 {isAuthenticated && (
                   <Link
                     to="/notifications"
