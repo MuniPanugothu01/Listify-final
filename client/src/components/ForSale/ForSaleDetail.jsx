@@ -3,6 +3,7 @@ import toast from 'react-hot-toast';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { setSelectedProduct, addOffer } from '../../redux/slices/forSaleSlice';
+import { fetchForSaleItemById } from '../../redux/slices/forSaleItemsSlice';
 import {
   Heart,
   Share2,
@@ -27,8 +28,10 @@ import {
   DollarSign,
   User,
   Send,
+  Loader2,
 } from 'lucide-react';
 import { FaMinus, FaPlus } from 'react-icons/fa';
+import OptimisedImage from '../common/OptimisedImage';
 
 // Location Map Component (unchanged)
 const LocationMap = ({ location }) => {
@@ -346,6 +349,7 @@ const ForSaleDetail = () => {
   // Read product data from Redux store (set by ForSaleListing on click)
   const storedProduct = useSelector((state) => state.forSale.selectedProduct);
   const allReduxProducts = useSelector((state) => state.forSale.allProducts);
+  const { currentListing: apiProduct, detailLoading } = useSelector((state) => state.forSaleItems);
 
   const [product, setProduct] = useState(null);
   const [allProducts, setAllProducts] = useState([]);
@@ -355,30 +359,53 @@ const ForSaleDetail = () => {
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Get product data from Redux store (passed from listing page)
-    if (storedProduct) {
-      // Verify that the ID matches (in case user navigates directly to a different URL)
-      if (storedProduct.id === parseInt(id)) {
-        setProduct(storedProduct);
-      }
+    // 1. Try stored product (clicked from listing page)
+    if (storedProduct && (storedProduct._id === id || storedProduct.id === id || String(storedProduct.id) === id)) {
+      setProduct(storedProduct);
+      setLoading(false);
+    } else {
+      // 2. Fetch from ForSale API by ID
+      dispatch(fetchForSaleItemById(id));
     }
 
     // Get all products for similar items
     if (allReduxProducts && allReduxProducts.length > 0) {
       setAllProducts(allReduxProducts);
     }
-  }, [id, storedProduct, allReduxProducts]);
+  }, [id, storedProduct, allReduxProducts, dispatch]);
 
-  const productImages = [
-    product?.image,
-    'https://images.unsplash.com/photo-1579586337278-3f576cfc5113?w=500&q=80',
-    'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=500&q=80',
-    'https://images.unsplash.com/photo-1546054451-aa224c0e8c23?w=500&q=80',
-    'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=500&q=80',
-    'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=500&q=80',
-  ].filter(Boolean);
+  // When API response arrives
+  useEffect(() => {
+    if (apiProduct && (apiProduct._id === id)) {
+      setProduct(apiProduct);
+      setLoading(false);
+    }
+  }, [apiProduct, id]);
+
+  // Stop loading if fetch is done but no product
+  useEffect(() => {
+    if (!detailLoading && !product && !storedProduct) {
+      setLoading(false);
+    }
+  }, [detailLoading, product, storedProduct]);
+
+  // Build real images array from product data
+  const productImages = React.useMemo(() => {
+    if (!product) return [];
+    const imgs = [];
+    if (Array.isArray(product.images) && product.images.length > 0) {
+      imgs.push(...product.images);
+    } else if (product.image) {
+      imgs.push(product.image);
+    }
+    if (imgs.length === 0) {
+      imgs.push('https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&q=80');
+    }
+    return imgs;
+  }, [product]);
 
   const handleThumbnailClick = (index) => setSelectedImageIndex(index);
   const handlePrevImage = () =>
@@ -417,8 +444,19 @@ const ForSaleDetail = () => {
 
   // Get similar products (excluding current product)
   const similarProducts = allProducts
-    .filter(p => p.id !== product?.id)
+    .filter(p => (p._id || p.id) !== (product?._id || product?.id))
     .slice(0, 4);
+
+  if (loading || detailLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="w-10 h-10 text-[#27bb97] animate-spin" />
+          <p className="text-gray-500 text-sm">Loading product details...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!product) {
     return (
@@ -428,7 +466,7 @@ const ForSaleDetail = () => {
             <Package className="w-10 h-10 sm:w-12 sm:h-12 text-gray-400" />
           </div>
           <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">Product not found</h2>
-          <p className="text-gray-600 mb-6">Please select a product from the listing page.</p>
+          <p className="text-gray-600 mb-6">This listing may have been removed or is no longer available.</p>
           <button
             onClick={() => navigate('/forsale')}
             className="px-6 py-3 bg-[#27BB97] text-white rounded-lg hover:bg-[#1E9E7E] transition-colors font-medium text-base sm:text-lg"
@@ -440,60 +478,54 @@ const ForSaleDetail = () => {
     );
   }
 
-  // Generate specs based on product type (unchanged)
+  // Generate specs from real product fields
   const getProductSpecs = () => {
-    const title = product.title.toLowerCase();
-    
-    if (title.includes('harley') || title.includes('motorcycle') || title.includes('honda') || title.includes('yamaha')) {
-      return [
-        { icon: <Battery className="text-[#27bb97] text-xl" />, label: 'Engine', value: title.includes('harley') ? 'V-Twin' : 'Inline-4' },
-        { icon: <Wifi className="text-[#27bb97] text-xl" />, label: 'Mileage', value: 'Varies' },
-        { icon: <Shield className="text-[#27bb97] text-xl" />, label: 'Year', value: product.title.split(' ')[0] },
-        { icon: <Package className="text-[#27bb97] text-xl" />, label: 'Condition', value: product.condition },
-      ];
-    } else if (title.includes('bmw') || title.includes('mercedes') || title.includes('audi') || title.includes('ford') || title.includes('toyota') || title.includes('ram')) {
-      return [
-        { icon: <Battery className="text-[#27bb97] text-xl" />, label: 'Engine', value: title.includes('hybrid') ? 'Hybrid' : 'V6/V8' },
-        { icon: <Wifi className="text-[#27bb97] text-xl" />, label: 'Mileage', value: 'Varies' },
-        { icon: <Shield className="text-[#27bb97] text-xl" />, label: 'Year', value: product.title.split(' ')[0] },
-        { icon: <Package className="text-[#27bb97] text-xl" />, label: 'Condition', value: product.condition },
-      ];
-    } else if (title.includes('tv') || title.includes('samsung') || title.includes('sony') || title.includes('lg')) {
-      return [
-        { icon: <Battery className="text-[#27bb97] text-xl" />, label: 'Screen Size', value: title.includes('65') ? '65"' : 'Various' },
-        { icon: <Wifi className="text-[#27bb97] text-xl" />, label: 'Resolution', value: '4K' },
-        { icon: <Shield className="text-[#27bb97] text-xl" />, label: 'Smart TV', value: 'Yes' },
-        { icon: <Package className="text-[#27bb97] text-xl" />, label: 'Condition', value: product.condition },
-      ];
-    } else if (title.includes('macbook') || title.includes('laptop') || title.includes('computer')) {
-      return [
-        { icon: <Battery className="text-[#27bb97] text-xl" />, label: 'Processor', value: title.includes('m1') ? 'M1 Chip' : 'Intel i7' },
-        { icon: <Wifi className="text-[#27bb97] text-xl" />, label: 'RAM', value: '16GB' },
-        { icon: <Shield className="text-[#27bb97] text-xl" />, label: 'Storage', value: '512GB' },
-        { icon: <Package className="text-[#27bb97] text-xl" />, label: 'Condition', value: product.condition },
-      ];
-    } else if (title.includes('camera') || title.includes('canon') || title.includes('nikon')) {
-      return [
-        { icon: <Camera className="text-[#27bb97] text-xl" />, label: 'Megapixels', value: '20MP+' },
-        { icon: <Wifi className="text-[#27bb97] text-xl" />, label: 'Video', value: '4K' },
-        { icon: <Shield className="text-[#27bb97] text-xl" />, label: 'Stabilization', value: 'Yes' },
-        { icon: <Package className="text-[#27bb97] text-xl" />, label: 'Condition', value: product.condition },
-      ];
-    } else if (title.includes('playstation') || title.includes('xbox') || title.includes('nintendo')) {
-      return [
-        { icon: <Battery className="text-[#27bb97] text-xl" />, label: 'Storage', value: '1TB' },
-        { icon: <Wifi className="text-[#27bb97] text-xl" />, label: 'Resolution', value: '4K' },
-        { icon: <Shield className="text-[#27bb97] text-xl" />, label: 'Controllers', value: '1 included' },
-        { icon: <Package className="text-[#27bb97] text-xl" />, label: 'Condition', value: product.condition },
-      ];
-    } else {
-      return [
-        { icon: <Package className="text-[#27bb97] text-xl" />, label: 'Condition', value: product.condition },
-        { icon: <Shield className="text-[#27bb97] text-xl" />, label: 'Returns', value: 'Not accepted' },
-        { icon: <Truck className="text-[#27bb97] text-xl" />, label: 'Shipping', value: 'Local pickup' },
-        { icon: <Clock className="text-[#27bb97] text-xl" />, label: 'Listed', value: 'Recently' },
-      ];
+    const specs = [];
+    const cat = product.category;
+
+    // Always show condition
+    if (product.condition) {
+      specs.push({ icon: <Shield className="text-[#27bb97] text-xl" />, label: 'Condition', value: product.condition });
     }
+
+    if (cat === 'Mobiles') {
+      if (product.brand) specs.push({ icon: <Smartphone className="text-[#27bb97] text-xl" />, label: 'Brand', value: product.brand });
+      if (product.model) specs.push({ icon: <Package className="text-[#27bb97] text-xl" />, label: 'Model', value: product.model });
+      if (product.storage) specs.push({ icon: <Battery className="text-[#27bb97] text-xl" />, label: 'Storage', value: product.storage });
+      if (product.ram) specs.push({ icon: <Wifi className="text-[#27bb97] text-xl" />, label: 'RAM', value: product.ram });
+      if (product.screenSize) specs.push({ icon: <Camera className="text-[#27bb97] text-xl" />, label: 'Screen', value: product.screenSize });
+      if (product.batteryHealth) specs.push({ icon: <Battery className="text-[#27bb97] text-xl" />, label: 'Battery', value: product.batteryHealth });
+      if (product.warranty) specs.push({ icon: <Shield className="text-[#27bb97] text-xl" />, label: 'Warranty', value: product.warranty });
+      if (product.color) specs.push({ icon: <Package className="text-[#27bb97] text-xl" />, label: 'Color', value: product.color });
+    } else if (cat === 'Furniture') {
+      if (product.material) specs.push({ icon: <Package className="text-[#27bb97] text-xl" />, label: 'Material', value: product.material });
+      if (product.dimensions) specs.push({ icon: <Truck className="text-[#27bb97] text-xl" />, label: 'Dimensions', value: product.dimensions });
+      if (product.weight) specs.push({ icon: <Package className="text-[#27bb97] text-xl" />, label: 'Weight', value: product.weight });
+      if (product.numberOfPieces) specs.push({ icon: <Package className="text-[#27bb97] text-xl" />, label: 'Pieces', value: product.numberOfPieces });
+      if (product.assemblyRequired) specs.push({ icon: <Shield className="text-[#27bb97] text-xl" />, label: 'Assembly', value: product.assemblyRequired });
+      if (product.color) specs.push({ icon: <Package className="text-[#27bb97] text-xl" />, label: 'Color', value: product.color });
+    } else if (cat === 'Fashion') {
+      if (product.brand) specs.push({ icon: <Package className="text-[#27bb97] text-xl" />, label: 'Brand', value: product.brand });
+      if (product.size) specs.push({ icon: <Package className="text-[#27bb97] text-xl" />, label: 'Size', value: product.size });
+      if (product.gender) specs.push({ icon: <User className="text-[#27bb97] text-xl" />, label: 'Gender', value: product.gender });
+      if (product.fabricType) specs.push({ icon: <Package className="text-[#27bb97] text-xl" />, label: 'Fabric', value: product.fabricType });
+      if (product.color) specs.push({ icon: <Package className="text-[#27bb97] text-xl" />, label: 'Color', value: product.color });
+    } else if (cat === 'Books, Sports') {
+      if (product.author) specs.push({ icon: <Package className="text-[#27bb97] text-xl" />, label: 'Author', value: product.author });
+      if (product.publisher) specs.push({ icon: <Package className="text-[#27bb97] text-xl" />, label: 'Publisher', value: product.publisher });
+      if (product.edition) specs.push({ icon: <Package className="text-[#27bb97] text-xl" />, label: 'Edition', value: product.edition });
+      if (product.isbn) specs.push({ icon: <Package className="text-[#27bb97] text-xl" />, label: 'ISBN', value: product.isbn });
+      if (product.sportType) specs.push({ icon: <Shield className="text-[#27bb97] text-xl" />, label: 'Sport', value: product.sportType });
+      if (product.brand) specs.push({ icon: <Package className="text-[#27bb97] text-xl" />, label: 'Brand', value: product.brand });
+    }
+
+    // Fallback for vehicles / electronics / unknown
+    if (specs.length <= 1) {
+      specs.push({ icon: <Truck className="text-[#27bb97] text-xl" />, label: 'Shipping', value: 'Local pickup' });
+      specs.push({ icon: <Clock className="text-[#27bb97] text-xl" />, label: 'Listed', value: product.postedTime || 'Recently' });
+    }
+
+    return specs;
   };
 
   return (
@@ -510,10 +542,10 @@ const ForSaleDetail = () => {
         isOpen={isProfileModalOpen}
         onClose={() => setIsProfileModalOpen(false)}
         seller={{
-          name: product.seller,
-          rating: product.sellerRating,
-          reviews: product.sellerReviews,
-          joined: product.sellerJoined,
+          name: product.sellerName || product.seller || 'Seller',
+          rating: product.sellerRating || 0,
+          reviews: product.sellerReviews || 0,
+          joined: product.sellerJoined || 'Recently',
         }}
       />
 
@@ -618,12 +650,15 @@ const ForSaleDetail = () => {
               <div className="mt-6 pt-6 border-t border-gray-100">
                 <h4 className="text-lg font-semibold mb-3">Key Features</h4>
                 <ul className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  {product.features.map((feature, index) => (
+                  {(product.features || []).map((feature, index) => (
                     <li key={index} className="flex items-center">
                       <Check className="w-5 h-5 text-[#27bb97] mr-3 flex-shrink-0" />
                       <span className="text-gray-700">{feature}</span>
                     </li>
                   ))}
+                  {(!product.features || product.features.length === 0) && (
+                    <li className="text-gray-400 text-sm col-span-2">No additional features listed</li>
+                  )}
                 </ul>
               </div>
             </div>
@@ -643,7 +678,7 @@ const ForSaleDetail = () => {
                     ASKING PRICE
                   </div>
                   <div className="text-4xl lg:text-4xl font-bold text-[#27bb97]">
-                    ${product.price.toLocaleString()}
+                    ${Number(product.price || 0).toLocaleString()}
                   </div>
                 </div>
 
@@ -726,25 +761,25 @@ const ForSaleDetail = () => {
                 
                 <div className="flex items-center gap-4">
                   <div className="w-16 h-16 bg-gradient-to-br from-[#27bb97] to-[#1E9E7E] rounded-full flex items-center justify-center text-white text-2xl font-bold">
-                    {product.seller[0]}
+                    {(product.sellerName || product.seller || 'S')[0]}
                   </div>
                   <div>
                     <h4 className="font-bold text-gray-900 flex items-center">
-                      {product.seller}
+                      {product.sellerName || product.seller || 'Seller'}
                       <Shield className="w-4 h-4 text-blue-500 ml-2" />
                     </h4>
                     <div className="flex items-center mt-1">
                       {[...Array(5)].map((_, i) => (
                         <Star
                           key={i}
-                          className={`w-4 h-4 ${i < Math.floor(product.sellerRating) ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
+                          className={`w-4 h-4 ${i < Math.floor(product.sellerRating || 0) ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
                         />
                       ))}
-                      <span className="ml-2 text-sm text-gray-600">({product.sellerReviews})</span>
+                      <span className="ml-2 text-sm text-gray-600">({product.sellerReviews || 0})</span>
                     </div>
                     <div className="flex items-center text-gray-500 text-sm mt-1">
                       <Clock className="w-4 h-4 mr-1" />
-                      <span>Joined {product.sellerJoined}</span>
+                      <span>Joined {product.sellerJoined || 'Recently'}</span>
                     </div>
                   </div>
                 </div>
@@ -788,18 +823,19 @@ const ForSaleDetail = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {similarProducts.map((item) => (
                 <div
-                  key={item.id}
+                  key={item._id || item.id}
                   onClick={() => {
                     dispatch(setSelectedProduct(item));
-                    navigate(`/forsale/${item.id}`);
+                    navigate(`/forsale/${item._id || item.id}`);
                   }}
                   className="group bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer border border-gray-100 overflow-hidden"
                 >
                   <div className="aspect-[4/3] bg-gray-100 overflow-hidden">
-                    <img
-                      src={item.image}
+                    <OptimisedImage
+                      src={item.images?.[0] || item.image || 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&q=80'}
                       alt={item.title}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      wrapperClassName="w-full h-full"
                     />
                   </div>
                   <div className="p-5">
@@ -807,15 +843,17 @@ const ForSaleDetail = () => {
                       {item.title}
                     </h3>
                     <p className="text-gray-600 text-sm mb-3 line-clamp-2">
-                      {item.description?.substring(0, 80)}...
+                      {(item.description || '').substring(0, 80)}{item.description?.length > 80 ? '...' : ''}
                     </p>
                     <div className="flex items-center justify-between">
                       <span className="text-2xl font-bold text-[#27bb97]">
-                        ${item.price.toLocaleString()}
+                        ${Number(item.price || 0).toLocaleString()}
                       </span>
-                      <span className="text-xs font-medium text-gray-500 px-3 py-1.5 bg-gray-100 rounded-full">
-                        {item.condition}
-                      </span>
+                      {item.condition && (
+                        <span className="text-xs font-medium text-gray-500 px-3 py-1.5 bg-gray-100 rounded-full">
+                          {item.condition}
+                        </span>
+                      )}
                     </div>
                   </div>
                 </div>

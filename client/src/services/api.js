@@ -696,6 +696,82 @@ export const vehiclesAPI = {
   },
 };
 
+// ==================== FOR SALE API (Mobiles, Furniture, Fashion, Books/Sports) ====================
+const forSaleApi = axios.create({
+  baseURL: `${BASE_API_URL}/forsale`,
+  headers: {
+    "Content-Type": "application/json",
+  },
+  timeout: 30000,
+  withCredentials: true,
+});
+
+// Apply shared interceptors
+forSaleApi.interceptors.request.use(
+  (config) => {
+    console.log(`🚀 ForSale Request: ${config.method.toUpperCase()} ${config.url}`);
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+createResponseInterceptor(forSaleApi, "ForSale API");
+
+export const forSaleAPI = {
+  // Public: Get all for-sale listings with optional filters
+  getAll: (params = {}) => {
+    return forSaleApi.get("/", { params });
+  },
+
+  // Public: Get single listing by ID
+  getById: (id) => {
+    return forSaleApi.get(`/${id}`);
+  },
+
+  // Private: Create new listing (requires auth)
+  create: (listingData) => {
+    return forSaleApi.post("/", listingData, { withCredentials: true });
+  },
+
+  // Private: Update listing
+  update: (id, listingData) => {
+    return forSaleApi.put(`/${id}`, listingData, { withCredentials: true });
+  },
+
+  // Private: Delete listing
+  delete: (id) => {
+    return forSaleApi.delete(`/${id}`, { withCredentials: true });
+  },
+
+  // Private: Get my listings
+  getMyListings: () => {
+    return forSaleApi.get("/my-listings", { withCredentials: true });
+  },
+
+  // Private: Upload images
+  uploadImages: (formData, onProgress) => {
+    return forSaleApi.post("/upload-images", formData, {
+      withCredentials: true,
+      headers: { "Content-Type": "multipart/form-data" },
+      onUploadProgress: (progressEvent) => {
+        if (onProgress && progressEvent.total) {
+          const pct = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+          onProgress(pct);
+        }
+      },
+    });
+  },
+
+  // Private: Toggle save
+  toggleSave: (id) => {
+    return forSaleApi.post(`/${id}/toggle-save`, {}, { withCredentials: true });
+  },
+
+  // Private: Get saved for-sale items
+  getSaved: () => {
+    return forSaleApi.get("/saved", { withCredentials: true });
+  },
+};
+
 // ==================== MESSAGES API ====================
 const messagesApi = axios.create({
   baseURL: `${BASE_API_URL}/messages`,

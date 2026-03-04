@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { MapPin, Loader2 } from 'lucide-react';
+import { MapPin, Loader2, RefreshCw } from 'lucide-react';
 import { setSelectedProduct, setAllProducts } from '../../redux/slices/forSaleSlice';
 import { fetchAllElectronics } from '../../redux/slices/electronicsSlice';
 import { fetchAllVehicles } from '../../redux/slices/vehiclesSlice';
+import { fetchAllForSaleItems } from '../../redux/slices/forSaleItemsSlice';
 import OptimisedImage from '../common/OptimisedImage';
 
 // ── Number of items per "page" (≈ 7 rows × 5 cols) ──────────────
@@ -31,7 +32,7 @@ const ProductCard = React.memo(({ product, onClick }) => {
   const displayPrice = product.price;
   const location = product.location || 'Unknown';
   const condition = product.condition || '';
-  const sourceCategory = product._source === 'vehicle' ? 'Vehicle' : product._source === 'electronics' ? 'Electronics' : (product.category || '');
+  const sourceCategory = product._source === 'vehicle' ? 'Vehicle' : product._source === 'electronics' ? 'Electronics' : (product.category || 'For Sale');
 
   return (
     <div
@@ -76,35 +77,70 @@ const ForSaleListing = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [searchQuery, setSearchQuery] = useState('');
+  const [activeFilter, setActiveFilter] = useState('All');
   const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
   const [loadingMore, setLoadingMore] = useState(false);
   const sentinelRef = useRef(null);
 
   // ── Redux state ────────────────────────────────────────────────
-  const { listings: electronicsListings, loading: electronicsLoading } = useSelector((s) => s.electronics);
-  const { listings: vehiclesListings, loading: vehiclesLoading } = useSelector((s) => s.vehicles);
+  const { listings: electronicsListings, loading: electronicsLoading, error: electronicsError } = useSelector((s) => s.electronics);
+  const { listings: vehiclesListings, loading: vehiclesLoading, error: vehiclesError } = useSelector((s) => s.vehicles);
+  const { listings: forSaleListings, loading: forSaleLoading, error: forSaleError } = useSelector((s) => s.forSaleItems);
 
-  const initialLoading = electronicsLoading || vehiclesLoading;
+  // Show spinner only when ALL sources are still loading and NONE have data yet
+  const allLoading = electronicsLoading && vehiclesLoading && forSaleLoading;
+  const hasAnyData = (electronicsListings?.length > 0) || (vehiclesListings?.length > 0) || (forSaleListings?.length > 0);
+  const initialLoading = allLoading || (!hasAnyData && (electronicsLoading || vehiclesLoading || forSaleLoading));
 
-  // Fetch both data sources on mount
+  // Track which sources failed
+  const allErrors = [
+    electronicsError && 'Electronics',
+    vehiclesError && 'Vehicles',
+    forSaleError && 'For Sale',
+  ].filter(Boolean);
+  const allFailed = allErrors.length === 3;
+
+  // Fetch all data sources on mount
   useEffect(() => {
     dispatch(fetchAllElectronics());
     dispatch(fetchAllVehicles());
+    dispatch(fetchAllForSaleItems());
   }, [dispatch]);
 
-  // ── Combine electronics + vehicles into one list ───────────────
+  // Retry handler
+  const handleRetryAll = useCallback(() => {
+    if (electronicsError) dispatch(fetchAllElectronics());
+    if (vehiclesError) dispatch(fetchAllVehicles());
+    if (forSaleError) dispatch(fetchAllForSaleItems());
+  }, [dispatch, electronicsError, vehiclesError, forSaleError]);
+
+  // ── Combine electronics + vehicles + forsale into one list ─────
   const allProducts = useMemo(() => {
     const elec = (electronicsListings || []).map((p) => ({ ...p, _source: 'electronics' }));
     const vehi = (vehiclesListings || []).map((p) => ({ ...p, _source: 'vehicle' }));
-    // Interleave so the grid looks mixed — alternating batches of 2
+    const forsale = (forSaleListings || []).map((p) => ({ ...p, _source: 'forsale' }));
+    // Interleave so the grid looks mixed — round-robin across sources
     const merged = [];
-    const maxLen = Math.max(elec.length, vehi.length);
+    const sources = [elec, vehi, forsale].filter((arr) => arr.length > 0);
+    const maxLen = Math.max(...sources.map((s) => s.length), 0);
     for (let i = 0; i < maxLen; i++) {
-      if (i < elec.length) merged.push(elec[i]);
-      if (i < vehi.length) merged.push(vehi[i]);
+      for (const source of sources) {
+        if (i < source.length) merged.push(source[i]);
+      }
     }
     return merged;
-  }, [electronicsListings, vehiclesListings]);
+  }, [electronicsListings, vehiclesListings, forSaleListings]);
+
+  // Category counts for filter tabs
+  const categoryCounts = useMemo(() => ({
+    All: allProducts.length,
+    Electronics: (electronicsListings || []).length,
+    Vehicles: (vehiclesListings || []).length,
+    Mobiles: (forSaleListings || []).filter((p) => p.category === 'Mobiles').length,
+    Furniture: (forSaleListings || []).filter((p) => p.category === 'Furniture').length,
+    Fashion: (forSaleListings || []).filter((p) => p.category === 'Fashion').length,
+    'Books & Sports': (forSaleListings || []).filter((p) => p.category === 'Books, Sports').length,
+  }), [allProducts, electronicsListings, vehiclesListings, forSaleListings]);
 
   // Push combined data to ForSale Redux slice (for detail page)
   useEffect(() => {
@@ -113,19 +149,27 @@ const ForSaleListing = () => {
     }
   }, [allProducts, dispatch]);
 
-  // ── Filter by search query ─────────────────────────────────────
+  // ── Filter by category tab + search query ──────────────────────
   const filteredProducts = useMemo(() => {
-    if (!searchQuery.trim()) return allProducts;
-    const q = searchQuery.toLowerCase();
-    return allProducts.filter(
-      (p) =>
-        p.title?.toLowerCase().includes(q) ||
-        p.location?.toLowerCase().includes(q) ||
-        p.category?.toLowerCase().includes(q) ||
-        p.subcategory?.toLowerCase().includes(q) ||
-        p._source?.toLowerCase().includes(q)
-    );
-  }, [allProducts, searchQuery]);
+    let result = allProducts;
+
+
+    // Search query
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      result = result.filter(
+        (p) =>
+          p.title?.toLowerCase().includes(q) ||
+          p.location?.toLowerCase().includes(q) ||
+          p.category?.toLowerCase().includes(q) ||
+          p.subcategory?.toLowerCase().includes(q) ||
+          p.brand?.toLowerCase().includes(q) ||
+          p._source?.toLowerCase().includes(q)
+      );
+    }
+
+    return result;
+  }, [allProducts, activeFilter, searchQuery]);
 
   // Items currently visible
   const visibleProducts = useMemo(
@@ -182,17 +226,22 @@ const ForSaleListing = () => {
     [dispatch, navigate]
   );
 
+
   return (
     <div className="min-h-screen">
-      {/* Products Grid */}
       <div className="px-4 py-4 sm:px-8 md:px-8 lg:px-12 xl:px-12">
         {/* Header with title and search bar */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-4">
           <div>
             <h1 className="text-3xl font-bold text-gray-900">For Sale</h1>
             {!initialLoading && (
               <p className="text-sm text-gray-500 mt-1">
                 {filteredProducts.length} items available
+                {(electronicsLoading || vehiclesLoading || forSaleLoading) && (
+                  <span className="inline-flex items-center ml-2 text-[#27bb97]">
+                    <Loader2 className="w-3 h-3 animate-spin mr-1" /> loading more…
+                  </span>
+                )}
               </p>
             )}
           </div>
@@ -202,7 +251,7 @@ const ForSaleListing = () => {
             <div className="relative">
               <input
                 type="text"
-                placeholder="Search Cars, Electronics..."
+                placeholder="Search Cars, Electronics, Mobiles..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full px-4 py-2 pl-10 pr-4 text-gray-900 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#27bb97] focus:border-transparent"
@@ -223,21 +272,57 @@ const ForSaleListing = () => {
           </div>
         </div>
 
+  
+
+        {/* ── Error Banner (partial failure) ─────────────────────── */}
+        {allErrors.length > 0 && !allFailed && !initialLoading && (
+          <div className="flex items-center justify-between bg-amber-50 border border-amber-200 rounded-lg px-4 py-3 mb-4">
+            <p className="text-sm text-amber-700">
+              Could not load: <strong>{allErrors.join(', ')}</strong>. Showing available results.
+            </p>
+            <button
+              onClick={handleRetryAll}
+              className="flex items-center gap-1.5 text-sm font-medium text-amber-700 hover:text-amber-900 transition-colors"
+            >
+              <RefreshCw className="w-4 h-4" /> Retry
+            </button>
+          </div>
+        )}
+
         {/* ── Initial loading — full-page spinner ────────────────── */}
-        {initialLoading && (
+        {initialLoading && !allFailed && (
           <div className="flex flex-col items-center justify-center py-24 gap-4">
             <Loader2 className="w-10 h-10 text-[#27bb97] animate-spin" />
             <p className="text-gray-500 text-sm">Loading listings...</p>
           </div>
         )}
 
+        {/* ── All sources failed ─────────────────────────────────── */}
+        {allFailed && (
+          <div className="flex flex-col items-center justify-center py-24 gap-4">
+            <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center">
+              <svg className="w-8 h-8 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+              </svg>
+            </div>
+            <p className="text-gray-600 text-lg font-medium">Failed to load listings</p>
+            <p className="text-gray-400 text-sm">Please check your connection and try again.</p>
+            <button
+              onClick={handleRetryAll}
+              className="mt-2 flex items-center gap-2 px-5 py-2.5 bg-[#27bb97] hover:bg-[#1fa987] text-white rounded-lg font-medium transition-colors"
+            >
+              <RefreshCw className="w-4 h-4" /> Retry All
+            </button>
+          </div>
+        )}
+
         {/* ── Products Grid ──────────────────────────────────────── */}
-        {!initialLoading && (
+        {!initialLoading && !allFailed && (
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
               {visibleProducts.map((product) => (
                 <ProductCard
-                  key={product._id || product.id}
+                  key={`${product._source}-${product._id || product.id}`}
                   product={product}
                   onClick={() => handleProductClick(product)}
                 />
@@ -268,15 +353,33 @@ const ForSaleListing = () => {
             {/* No results */}
             {filteredProducts.length === 0 && (
               <div className="text-center py-12">
-                <p className="text-gray-500 text-lg">
-                  No products found matching &ldquo;{searchQuery}&rdquo;
-                </p>
-                <button
-                  onClick={() => setSearchQuery('')}
-                  className="mt-4 text-[#27bb97] hover:text-[#1fa987] font-medium"
-                >
-                  Clear search
-                </button>
+                {searchQuery ? (
+                  <>
+                    <p className="text-gray-500 text-lg">
+                      No products found matching &ldquo;{searchQuery}&rdquo;
+                    </p>
+                    <button
+                      onClick={() => setSearchQuery('')}
+                      className="mt-4 text-[#27bb97] hover:text-[#1fa987] font-medium"
+                    >
+                      Clear search
+                    </button>
+                  </>
+                ) : activeFilter !== 'All' ? (
+                  <>
+                    <p className="text-gray-500 text-lg">
+                      No {activeFilter} listings available yet
+                    </p>
+                    <button
+                      onClick={() => setActiveFilter('All')}
+                      className="mt-4 text-[#27bb97] hover:text-[#1fa987] font-medium"
+                    >
+                      View all listings
+                    </button>
+                  </>
+                ) : (
+                  <p className="text-gray-500 text-lg">No products available yet</p>
+                )}
               </div>
             )}
           </>
