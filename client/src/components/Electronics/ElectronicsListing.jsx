@@ -74,13 +74,18 @@ const ProductCard = React.memo(({ product, onClick, onToggleSave, isSaved, isLog
       </div>
 
       <div className="p-3">
-        <h3 className="font-medium text-gray-900 text-sm mb-2 line-clamp-2 min-h-[36px] leading-tight">
+        <h3 className="font-medium text-gray-900 text-sm mb-1 line-clamp-2 min-h-[36px] leading-tight">
           {product.title}
         </h3>
+        {product.brand && (
+          <span className="text-[10px] font-semibold text-purple-600 bg-purple-50 px-1.5 py-0.5 rounded mb-1 inline-block">
+            {product.brand}
+          </span>
+        )}
 
         <div className="flex items-center justify-between mb-2">
           <span className="text-base sm:text-lg font-bold text-gray-900">
-            ${displayPrice}
+            ₹{displayPrice?.toLocaleString('en-IN')}
           </span>
         </div>
 

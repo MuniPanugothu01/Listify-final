@@ -34,6 +34,20 @@ exports.createElectronics = async (req, res) => {
       phone,
       features,
       images,
+      // Product-specific fields
+      brand,
+      model,
+      warranty,
+      purchaseYear,
+      screenSize,
+      displayType,
+      processor,
+      ram,
+      storage,
+      capacity,
+      energyRating,
+      megapixels,
+      lensType,
     } = req.body;
 
     // ── Server-side category enforcement ─────────────────────
@@ -66,6 +80,20 @@ exports.createElectronics = async (req, res) => {
       phone,
       features: features || [],
       images: images || [],
+      // Product-specific (stored only when provided)
+      ...(brand && { brand }),
+      ...(model && { model }),
+      ...(warranty && { warranty }),
+      ...(purchaseYear && { purchaseYear: Number(purchaseYear) }),
+      ...(screenSize && { screenSize }),
+      ...(displayType && { displayType }),
+      ...(processor && { processor }),
+      ...(ram && { ram }),
+      ...(storage && { storage }),
+      ...(capacity && { capacity }),
+      ...(energyRating && { energyRating }),
+      ...(megapixels && { megapixels }),
+      ...(lensType && { lensType }),
       seller: req.user._id,
       sellerName: req.user.firstName
         ? `${req.user.firstName} ${req.user.lastName || ""}`.trim()

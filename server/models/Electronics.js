@@ -52,6 +52,81 @@ const electronicsSchema = new mongoose.Schema(
       enum: ["New", "Like New", "Good", "Fair", "Used"],
       default: "Good",
     },
+    // ── Product-specific fields ──────────────────────────────
+    brand: {
+      type: String,
+      trim: true,
+      maxlength: [100, "Brand cannot exceed 100 characters"],
+    },
+    model: {
+      type: String,
+      trim: true,
+      maxlength: [100, "Model cannot exceed 100 characters"],
+    },
+    warranty: {
+      type: String,
+      trim: true,
+      enum: {
+        values: ["Under Warranty", "Expired", "No Warranty", ""],
+        message: "Invalid warranty status",
+      },
+    },
+    purchaseYear: {
+      type: Number,
+      min: [2000, "Purchase year cannot be before 2000"],
+    },
+    // TV / Audio
+    screenSize: {
+      type: String,
+      trim: true,
+      maxlength: [50, "Screen size cannot exceed 50 characters"],
+    },
+    displayType: {
+      type: String,
+      trim: true,
+      maxlength: [50, "Display type cannot exceed 50 characters"],
+    },
+    // Computers & Laptops
+    processor: {
+      type: String,
+      trim: true,
+      maxlength: [100, "Processor cannot exceed 100 characters"],
+    },
+    ram: {
+      type: String,
+      trim: true,
+      maxlength: [30, "RAM cannot exceed 30 characters"],
+    },
+    storage: {
+      type: String,
+      trim: true,
+      maxlength: [50, "Storage cannot exceed 50 characters"],
+    },
+    // Fridges / Washing Machines / ACs
+    capacity: {
+      type: String,
+      trim: true,
+      maxlength: [50, "Capacity cannot exceed 50 characters"],
+    },
+    energyRating: {
+      type: String,
+      trim: true,
+      enum: {
+        values: ["1 Star", "2 Star", "3 Star", "4 Star", "5 Star", ""],
+        message: "Invalid energy rating",
+      },
+    },
+    // Cameras
+    megapixels: {
+      type: String,
+      trim: true,
+      maxlength: [30, "Megapixels cannot exceed 30 characters"],
+    },
+    lensType: {
+      type: String,
+      trim: true,
+      maxlength: [100, "Lens type cannot exceed 100 characters"],
+    },
     location: {
       type: String,
       required: [true, "Location is required"],
@@ -150,11 +225,12 @@ electronicsSchema.virtual("postedTime").get(function () {
 
 // Indexes for efficient queries
 electronicsSchema.index({ status: 1, createdAt: -1 });
-electronicsSchema.index({ category: 1, status: 1 });
+electronicsSchema.index({ category: 1, subcategory: 1, status: 1 });
 electronicsSchema.index({ seller: 1, status: 1 });
 electronicsSchema.index({ price: 1 });
 electronicsSchema.index({ savedBy: 1 });
-electronicsSchema.index({ title: "text", description: "text" });
+electronicsSchema.index({ brand: 1, subcategory: 1 });
+electronicsSchema.index({ title: "text", description: "text", brand: "text", model: "text" });
 
 module.exports = mongoose.model("Electronics", electronicsSchema);
   

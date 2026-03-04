@@ -13,6 +13,7 @@ const vehicleSchema = new mongoose.Schema(
       required: [true, "Description is required"],
       trim: true,
       minlength: [20, "Description must be at least 20 characters"],
+      maxlength: [5000, "Description cannot exceed 5000 characters"],
     },
     price: {
       type: Number,
@@ -66,65 +67,109 @@ const vehicleSchema = new mongoose.Schema(
     brand: {
       type: String,
       trim: true,
+      maxlength: [100, "Brand cannot exceed 100 characters"],
     },
     model: {
       type: String,
       trim: true,
+      maxlength: [100, "Model cannot exceed 100 characters"],
     },
     variant: {
       type: String,
       trim: true,
+      maxlength: [100, "Variant cannot exceed 100 characters"],
     },
     year: {
       type: String,
       trim: true,
+      validate: {
+        validator: function (v) {
+          if (!v) return true;
+          const n = Number(v);
+          return !isNaN(n) && n >= 1900 && n <= new Date().getFullYear() + 1;
+        },
+        message: "Year must be between 1900 and next year",
+      },
     },
     kmDriven: {
       type: String,
       trim: true,
+      maxlength: [30, "KM driven cannot exceed 30 characters"],
     },
     fuelType: {
       type: String,
       trim: true,
+      enum: {
+        values: ["Petrol", "Diesel", "CNG", "Electric", "Hybrid", "LPG", ""],
+        message: "Invalid fuel type",
+      },
     },
     transmission: {
       type: String,
       trim: true,
+      enum: {
+        values: ["Manual", "Automatic", ""],
+        message: "Transmission must be Manual or Automatic",
+      },
     },
     ownership: {
       type: String,
       trim: true,
+      enum: {
+        values: ["1st Owner", "2nd Owner", "3rd Owner", "4th+ Owner", ""],
+        message: "Invalid ownership value",
+      },
     },
     color: {
       type: String,
       trim: true,
+      maxlength: [50, "Color cannot exceed 50 characters"],
     },
     // Bike-specific
     engineCC: {
       type: String,
       trim: true,
+      maxlength: [20, "Engine CC cannot exceed 20 characters"],
     },
     // Cycle-specific
     cycleType: {
       type: String,
       trim: true,
+      enum: {
+        values: ["Mountain", "Road", "Hybrid", "BMX", "Kids", "Folding", "Electric", "Cruiser", ""],
+        message: "Invalid cycle type",
+      },
     },
     gearCount: {
       type: String,
       trim: true,
+      maxlength: [10, "Gear count cannot exceed 10 characters"],
     },
     frameSize: {
       type: String,
       trim: true,
+      maxlength: [20, "Frame size cannot exceed 20 characters"],
     },
     // Spare Parts-specific
     compatibleVehicle: {
       type: String,
       trim: true,
+      enum: {
+        values: ["Car", "Bike", "Cycle", "Universal", ""],
+        message: "Invalid compatible vehicle type",
+      },
     },
     partCategory: {
       type: String,
       trim: true,
+      maxlength: [100, "Part category cannot exceed 100 characters"],
+      enum: {
+        values: [
+          "Engine Parts", "Body Parts", "Electrical", "Suspension", "Brakes",
+          "Tyres & Wheels", "Interior", "Exterior", "Exhaust", "Filters", "Other", ""
+        ],
+        message: "Invalid part category",
+      },
     },
     // Seller information - linked to User model
     seller: {

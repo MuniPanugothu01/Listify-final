@@ -24,9 +24,13 @@ import {
   X,
   Mail,
   Phone,
-  DollarSign,
+  IndianRupee,
   Send,
   User as UserIcon,
+  Bike,
+  Wrench,
+  Palette,
+  Package,
 } from 'lucide-react';
 import {
   fetchVehicleById,
@@ -69,7 +73,7 @@ const LocationMap = ({ location }) => {
         <div className="flex items-center justify-between">
           <div className="flex items-center text-sm text-gray-600">
             <Globe className="w-4 h-4 mr-2" />
-            <span>Test drive available</span>
+            <span>Local pickup available</span>
           </div>
           <a
             href={mapsDirectionsUrl}
@@ -252,7 +256,7 @@ const VehicleDetail = () => {
     );
   }
 
-  // Vehicle details for the sidebar
+  // Build vehicle details dynamically based on all available fields
   const vehicleDetails = [
     product.brand && { icon: <Car className="text-[#27bb97] text-xl" />, label: 'Brand', value: product.brand },
     product.model && { icon: <Car className="text-[#27bb97] text-xl" />, label: 'Model', value: product.model },
@@ -262,8 +266,16 @@ const VehicleDetail = () => {
     product.fuelType && { icon: <Fuel className="text-[#27bb97] text-xl" />, label: 'Fuel Type', value: product.fuelType },
     product.transmission && { icon: <Cog className="text-[#27bb97] text-xl" />, label: 'Transmission', value: product.transmission },
     product.ownership && { icon: <Shield className="text-[#27bb97] text-xl" />, label: 'Ownership', value: product.ownership },
-    product.color && { icon: <Car className="text-[#27bb97] text-xl" />, label: 'Color', value: product.color },
+    product.color && { icon: <Palette className="text-[#27bb97] text-xl" />, label: 'Color', value: product.color },
+    product.engineCC && { icon: <Gauge className="text-[#27bb97] text-xl" />, label: 'Engine (CC)', value: product.engineCC },
+    product.cycleType && { icon: <Bike className="text-[#27bb97] text-xl" />, label: 'Cycle Type', value: product.cycleType },
+    product.gearCount && { icon: <Cog className="text-[#27bb97] text-xl" />, label: 'Gears', value: product.gearCount },
+    product.frameSize && { icon: <Package className="text-[#27bb97] text-xl" />, label: 'Frame Size', value: product.frameSize },
+    product.compatibleVehicle && { icon: <Wrench className="text-[#27bb97] text-xl" />, label: 'Compatible Vehicle', value: product.compatibleVehicle },
+    product.partCategory && { icon: <Wrench className="text-[#27bb97] text-xl" />, label: 'Part Category', value: product.partCategory },
     { icon: <Shield className="text-[#27bb97] text-xl" />, label: 'Condition', value: product.condition },
+    product.subcategory && { icon: <Car className="text-[#27bb97] text-xl" />, label: 'Type', value: product.subcategory },
+    product.createdAt && { icon: <Clock className="text-[#27bb97] text-xl" />, label: 'Listed', value: new Date(product.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) },
   ].filter(Boolean);
 
   return (
@@ -420,6 +432,36 @@ const VehicleDetail = () => {
                 </div>
 
                 {/* Condition & Location */}
+                <div className="flex flex-wrap gap-2 mb-5">
+                  {product.condition && (
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-700 text-xs font-semibold rounded-full">
+                      <Check className="w-3.5 h-3.5" />
+                      {product.condition}
+                    </span>
+                  )}
+                  {product.brand && (
+                    <span className="inline-flex items-center px-3 py-1.5 bg-purple-50 text-purple-700 text-xs font-semibold rounded-full">
+                      {product.brand}
+                    </span>
+                  )}
+                  {product.year && (
+                    <span className="inline-flex items-center px-3 py-1.5 bg-gray-100 text-gray-700 text-xs font-semibold rounded-full">
+                      {product.year}
+                    </span>
+                  )}
+                  {product.fuelType && (
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-green-50 text-green-700 text-xs font-semibold rounded-full">
+                      <Fuel className="w-3.5 h-3.5" />
+                      {product.fuelType}
+                    </span>
+                  )}
+                  {product.ownership && (
+                    <span className="inline-flex items-center px-3 py-1.5 bg-orange-50 text-orange-700 text-xs font-semibold rounded-full">
+                      {product.ownership}
+                    </span>
+                  )}
+                </div>
+
                 <div className="flex items-center gap-4 text-gray-600 mb-6">
                   <div className="flex items-center">
                     <MapPin className="w-4 h-4 mr-1.5" />
@@ -431,13 +473,13 @@ const VehicleDetail = () => {
                 {vehicleDetails.length > 0 && (
                   <div className="grid grid-cols-2 gap-4 mb-6 pt-4 border-t border-gray-100">
                     {vehicleDetails.map((detail, index) => (
-                      <div key={index} className="flex items-center text-gray-600">
-                        <div className="w-8 h-8 flex items-center justify-center mr-3">
+                      <div key={index} className="flex items-center text-gray-600 p-2.5 bg-gray-50 rounded-lg">
+                        <div className="w-9 h-9 flex items-center justify-center bg-white rounded-lg shadow-sm mr-3">
                           {detail.icon}
                         </div>
                         <div>
-                          <div className="text-xs text-gray-500">{detail.label}</div>
-                          <div className="font-medium text-sm">{detail.value}</div>
+                          <div className="text-[11px] text-gray-500 uppercase tracking-wider">{detail.label}</div>
+                          <div className="font-semibold text-sm text-gray-800">{detail.value}</div>
                         </div>
                       </div>
                     ))}
@@ -610,7 +652,7 @@ const VehicleDetail = () => {
                     )}
                   </div>
                   <div className="p-5">
-                    {(item.year || item.mileage) && (
+                    {(item.year || item.kmDriven) && (
                       <div className="flex items-center text-xs text-gray-500 mb-2">
                         {item.year && (
                           <>
@@ -618,11 +660,11 @@ const VehicleDetail = () => {
                             <span>{item.year}</span>
                           </>
                         )}
-                        {item.year && item.mileage && <span className="mx-1">•</span>}
-                        {item.mileage && (
+                        {item.year && item.kmDriven && <span className="mx-1">•</span>}
+                        {item.kmDriven && (
                           <>
                             <Gauge className="w-3 h-3 mr-1" />
-                            <span>{item.mileage} mi</span>
+                            <span>{item.kmDriven} km</span>
                           </>
                         )}
                       </div>
@@ -670,7 +712,7 @@ const VehicleDetail = () => {
 
             <div className="text-center mb-6">
               <div className="w-14 h-14 bg-[#27bb97]/10 rounded-full flex items-center justify-center mx-auto mb-3">
-                <DollarSign className="w-7 h-7 text-[#27bb97]" />
+                <IndianRupee className="w-7 h-7 text-[#27bb97]" />
               </div>
               <h3 className="text-xl font-bold text-gray-900">Make an Offer</h3>
               <p className="text-sm text-gray-500 mt-1">

@@ -193,6 +193,13 @@ const REQUIRED_FIELDS_BY_SUBCATEGORY = {
   Tablets: ['brand'],
   // Books, Sports
   Books: ['author'],
+  // Electronics
+  'TVs, Video - Audio': ['brand'],
+  'Computers & Laptops': ['brand'],
+  'Fridges': ['brand'],
+  'Washing Machines': ['brand'],
+  'ACs': ['brand'],
+  'Cameras & Lenses': ['brand'],
 };
 
 /**
@@ -207,6 +214,12 @@ const FIELD_ENUMS = {
   gender: ['Men', 'Women', 'Kids', 'Unisex', ''],
   cycleType: ['Mountain', 'Road', 'Hybrid', 'BMX', 'Kids', 'Folding', 'Electric', 'Cruiser'],
   compatibleVehicle: ['Car', 'Bike', 'Cycle', 'Universal'],
+  partCategory: [
+    'Engine Parts', 'Body Parts', 'Electrical', 'Suspension', 'Brakes',
+    'Tyres & Wheels', 'Interior', 'Exterior', 'Exhaust', 'Filters', 'Other', ''
+  ],
+  warranty: ['Under Warranty', 'Expired', 'No Warranty', ''],
+  energyRating: ['1 Star', '2 Star', '3 Star', '4 Star', '5 Star', ''],
 };
 
 /**
@@ -237,6 +250,9 @@ exports.validateListingInput = (req, res, next) => {
     'material', 'dimensions', 'weight', 'assemblyRequired', 'numberOfPieces',
     'size', 'gender', 'fabricType',
     'author', 'isbn', 'publisher', 'edition', 'sportType',
+    // Electronics-specific
+    'displayType', 'processor', 'capacity', 'energyRating',
+    'megapixels', 'lensType', 'purchaseYear',
   ];
   STRING_FIELDS.forEach((f) => {
     if (body[f] !== undefined && body[f] !== null) body[f] = stripTags(String(body[f]));
@@ -319,6 +335,15 @@ exports.validateListingInput = (req, res, next) => {
   if (body.compatibleVehicle && !FIELD_ENUMS.compatibleVehicle.includes(body.compatibleVehicle)) {
     errors.compatibleVehicle = `Compatible vehicle must be one of: ${FIELD_ENUMS.compatibleVehicle.join(', ')}`;
   }
+  if (body.partCategory && !FIELD_ENUMS.partCategory.includes(body.partCategory)) {
+    errors.partCategory = `Part category must be one of: ${FIELD_ENUMS.partCategory.filter(Boolean).join(', ')}`;
+  }
+  if (body.warranty && !FIELD_ENUMS.warranty.includes(body.warranty)) {
+    errors.warranty = `Warranty must be one of: ${FIELD_ENUMS.warranty.filter(Boolean).join(', ')}`;
+  }
+  if (body.energyRating && !FIELD_ENUMS.energyRating.includes(body.energyRating)) {
+    errors.energyRating = `Energy rating must be one of: ${FIELD_ENUMS.energyRating.filter(Boolean).join(', ')}`;
+  }
 
   // ── 7. Year validation (if provided) ────────────────────────
   if (body.year) {
@@ -326,6 +351,13 @@ exports.validateListingInput = (req, res, next) => {
     const currentYear = new Date().getFullYear();
     if (isNaN(yearNum) || yearNum < 1900 || yearNum > currentYear + 1) {
       errors.year = `Year must be between 1900 and ${currentYear + 1}`;
+    }
+  }
+  if (body.purchaseYear) {
+    const pyNum = Number(body.purchaseYear);
+    const currentYear = new Date().getFullYear();
+    if (isNaN(pyNum) || pyNum < 2000 || pyNum > currentYear + 1) {
+      errors.purchaseYear = `Purchase year must be between 2000 and ${currentYear}`;
     }
   }
 
@@ -337,6 +369,9 @@ exports.validateListingInput = (req, res, next) => {
     weight: 50, numberOfPieces: 20, size: 50, fabricType: 100,
     author: 200, isbn: 20, publisher: 200, edition: 50, sportType: 100,
     kmDriven: 30, partCategory: 100, compatibleVehicle: 100,
+    // Electronics-specific
+    displayType: 50, processor: 100, capacity: 50, energyRating: 20,
+    megapixels: 30, lensType: 100,
   };
   Object.entries(OPTIONAL_STRING_LIMITS).forEach(([field, maxLen]) => {
     if (body[field] && typeof body[field] === 'string' && body[field].length > maxLen) {
