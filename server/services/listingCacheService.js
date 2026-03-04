@@ -63,24 +63,29 @@ class ListingCacheService {
     const key = `listing:${entity}:${id}`;
 
     try {
+      const now = new Date().toISOString();
+      const ops = [];
+      const indexKeys = [key];
+
       // 1. Store the full listing
-      await redis.setex(key, TTL.LISTING_DETAIL, JSON.stringify(listing));
+      ops.push(redis.setex(key, TTL.LISTING_DETAIL, JSON.stringify(listing)));
 
       // 2. Store images separately (easy to find in Upstash dashboard)
       if (listing.images && listing.images.length > 0) {
-        const imgKey = `listing:${entity}:${id}:images`;
-        await redis.setex(imgKey, TTL.LISTING_IMAGES, JSON.stringify({
+        const imgKey = `${key}:images`;
+        ops.push(redis.setex(imgKey, TTL.LISTING_IMAGES, JSON.stringify({
           listingId: id,
           title: listing.title,
           imageCount: listing.images.length,
           imageUrls: listing.images,
-          cachedAt: new Date().toISOString(),
-        }));
+          cachedAt: now,
+        })));
+        indexKeys.push(imgKey);
       }
 
       // 3. Store lightweight meta (for quick list views)
-      const metaKey = `listing:${entity}:${id}:meta`;
-      const meta = {
+      const metaKey = `${key}:meta`;
+      ops.push(redis.setex(metaKey, TTL.LISTING_META, JSON.stringify({
         _id: id,
         title: listing.title,
         price: listing.price,
@@ -91,15 +96,17 @@ class ListingCacheService {
         sellerName: listing.sellerName,
         views: listing.views || 0,
         createdAt: listing.createdAt,
-        cachedAt: new Date().toISOString(),
-      };
-      await redis.setex(metaKey, TTL.LISTING_META, JSON.stringify(meta));
+        cachedAt: now,
+      })));
+      indexKeys.push(metaKey);
 
-      // Track this key in the entity index for bulk invalidation
-      await redis.sadd(`listing:${entity}:index`, key, `${key}:images`, metaKey);
+      // Track keys + execute all writes in parallel
+      ops.push(redis.sadd(`listing:${entity}:index`, ...indexKeys));
+
+      await Promise.all(ops);
 
       logger.info(`[Cache] Stored listing ${entity}:${id} (+ images + meta)`);
-      await this._incrementStat('cache:writes');
+      this._incrementStat('cache:writes').catch(() => {});
     } catch (err) {
       logger.error(`[Cache] Error caching listing ${entity}:${id}:`, err.message);
     }
@@ -300,31 +307,38 @@ class ListingCacheService {
     if (!listings || listings.length === 0) return;
 
     try {
-      // Cache each individual listing + its images in parallel
-      const cacheOps = listings.map(async (listing) => {
+      const now = new Date().toISOString();
+      const indexKeys = [];
+
+      // Fire ALL Redis writes in a single Promise.all — no sequential awaits
+      const cacheOps = [];
+
+      for (const listing of listings) {
         const id = (listing._id || listing.id)?.toString();
-        if (!id) return;
+        if (!id) continue;
 
         // Full listing
         const key = `listing:${entity}:${id}`;
-        await redis.setex(key, TTL.LISTING_DETAIL, JSON.stringify(listing));
+        cacheOps.push(redis.setex(key, TTL.LISTING_DETAIL, JSON.stringify(listing)));
+        indexKeys.push(key);
 
         // Images separately (for fast image-only lookups)
         if (listing.images && listing.images.length > 0) {
-          const imgKey = `listing:${entity}:${id}:images`;
-          await redis.setex(imgKey, TTL.LISTING_IMAGES, JSON.stringify({
+          const imgKey = `${key}:images`;
+          cacheOps.push(redis.setex(imgKey, TTL.LISTING_IMAGES, JSON.stringify({
             listingId: id,
             title: listing.title,
             imageCount: listing.images.length,
             imageUrls: listing.images,
             s3Folder: entity,
-            cachedAt: new Date().toISOString(),
-          }));
+            cachedAt: now,
+          })));
+          indexKeys.push(imgKey);
         }
 
         // Lightweight meta
-        const metaKey = `listing:${entity}:${id}:meta`;
-        await redis.setex(metaKey, TTL.LISTING_META, JSON.stringify({
+        const metaKey = `${key}:meta`;
+        cacheOps.push(redis.setex(metaKey, TTL.LISTING_META, JSON.stringify({
           _id: id,
           title: listing.title,
           price: listing.price,
@@ -335,16 +349,12 @@ class ListingCacheService {
           sellerName: listing.sellerName,
           views: listing.views || 0,
           createdAt: listing.createdAt,
-          cachedAt: new Date().toISOString(),
-        }));
+          cachedAt: now,
+        })));
+        indexKeys.push(metaKey);
+      }
 
-        // Track all keys in the entity index
-        await redis.sadd(`listing:${entity}:index`, key, `${key}:images`, metaKey);
-      });
-
-      await Promise.all(cacheOps);
-
-      // Also store an image gallery key — all images across the category in one place
+      // Gallery key
       const galleryKey = `listing:${entity}:gallery`;
       const gallery = listings
         .filter((l) => l.images && l.images.length > 0)
@@ -353,16 +363,24 @@ class ListingCacheService {
           title: l.title,
           images: l.images,
         }));
-      await redis.setex(galleryKey, TTL.CATEGORY_PAGE, JSON.stringify({
+      cacheOps.push(redis.setex(galleryKey, TTL.CATEGORY_PAGE, JSON.stringify({
         entity,
         totalListings: listings.length,
         totalImages: gallery.reduce((sum, g) => sum + g.images.length, 0),
         gallery,
-        cachedAt: new Date().toISOString(),
-      }));
-      await redis.sadd(`listing:${entity}:index`, galleryKey);
+        cachedAt: now,
+      })));
+      indexKeys.push(galleryKey);
 
-      logger.info(`[Cache] Prefetched ${listings.length} ${entity} listings (+ images + meta + gallery)`);
+      // Track all keys in one call
+      if (indexKeys.length > 0) {
+        cacheOps.push(redis.sadd(`listing:${entity}:index`, ...indexKeys));
+      }
+
+      // Execute ALL Redis writes in parallel
+      await Promise.all(cacheOps);
+
+      logger.info(`[Cache] Prefetched ${listings.length} ${entity} listings (${cacheOps.length} ops)`);
       await this._incrementStat('cache:writes');
     } catch (err) {
       logger.error(`[Cache] Prefetch error for ${entity}:`, err.message);
