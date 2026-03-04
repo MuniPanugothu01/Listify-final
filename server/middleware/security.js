@@ -31,8 +31,14 @@ const securityMiddleware = (req, res, next) => {
     res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
   }
 
-  // 9. Cache-Control for auth & private endpoints — prevent caching of sensitive data
-  if (req.path.startsWith('/api/auth') || req.path.includes('/my-listings') || req.path.includes('/saved')) {
+  // 9. Cache-Control for auth, chat, notification & private endpoints — prevent caching of sensitive data
+  if (
+    req.path.startsWith('/api/auth') ||
+    req.path.startsWith('/api/chat') ||
+    req.path.startsWith('/api/notifications') ||
+    req.path.includes('/my-listings') ||
+    req.path.includes('/saved')
+  ) {
     res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, private');
     res.setHeader('Pragma', 'no-cache');
     res.setHeader('Expires', '0');

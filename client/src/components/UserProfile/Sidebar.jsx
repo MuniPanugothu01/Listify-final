@@ -17,6 +17,7 @@ import {
   History,
 } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { logoutUser } from "../../redux/slices/authSlice";
 import toast from "react-hot-toast";
 
@@ -28,6 +29,7 @@ const Sidebar = ({
   setIsMobileMenuOpen,
 }) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
   const { devices, profile } = useSelector((state) => state.profile);
 

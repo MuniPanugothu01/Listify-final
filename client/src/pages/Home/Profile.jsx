@@ -23,6 +23,7 @@ import { fetchSavedVehicles, toggleSaveVehicle, fetchMyVehicles, deleteVehicleLi
 import Sidebar from "../../components/UserProfile/Sidebar";
 import HomeSection from "../../components/UserProfile/HomeSection";
 import MessagesSection from "../../components/UserProfile/MessagesSection";
+import ChatPage from "./ChatPage";
 import PersonalDetailsSection from "../../components/UserProfile/PersonalDetailsSection";
 import PropertyCard from "../../components/UserProfile/PropertyCard";
 import DevicesSection from "../../components/UserProfile/DevicesSection";
@@ -427,7 +428,7 @@ export default function Profile() {
             )}
 
             {activeSection === "messages" && (
-              <MessagesSection messages={conversations || []} />
+              <ChatPage embedded />
             )}
 
             {activeSection === "personal" && (

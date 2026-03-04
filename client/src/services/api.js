@@ -696,9 +696,9 @@ export const vehiclesAPI = {
   },
 };
 
-// ==================== MESSAGES API ====================
-const messagesApi = axios.create({
-  baseURL: `${BASE_API_URL}/messages`,
+// ==================== CHAT / MESSAGES API ====================
+const chatApi = axios.create({
+  baseURL: `${BASE_API_URL}/chat`,
   headers: {
     "Content-Type": "application/json",
   },
@@ -707,44 +707,49 @@ const messagesApi = axios.create({
 });
 
 // Apply shared interceptors
-messagesApi.interceptors.request.use(
+chatApi.interceptors.request.use(
   (config) => {
-    console.log(`🚀 Messages Request: ${config.method.toUpperCase()} ${config.url}`);
+    console.log(`💬 Chat Request: ${config.method.toUpperCase()} ${config.url}`);
     return config;
   },
   (error) => Promise.reject(error)
 );
-createResponseInterceptor(messagesApi, "Messages API");
+createResponseInterceptor(chatApi, "Chat API");
 
-export const messagesAPI = {
+export const chatAPI = {
+  // Get or create a conversation with a user (optionally linked to a listing)
+  getOrCreateConversation: (recipientId, listing = {}) => {
+    return chatApi.post("/conversations", { recipientId, ...listing });
+  },
+
+  // Get all conversations for the logged-in user
   getConversations: () => {
-    return messagesApi.get("/conversations", { withCredentials: true });
+    return chatApi.get("/conversations");
   },
 
-  getMessages: (conversationId) => {
-    return messagesApi.get(`/${conversationId}`, { withCredentials: true });
+  // Get messages in a conversation (paginated)
+  getMessages: (conversationId, page = 1, limit = 50) => {
+    return chatApi.get(`/conversations/${conversationId}/messages?page=${page}&limit=${limit}`);
   },
 
+  // Send a message in a conversation
   sendMessage: (conversationId, content) => {
-    return messagesApi.post(`/${conversationId}`, { content }, { withCredentials: true });
+    return chatApi.post(`/conversations/${conversationId}/messages`, { content });
   },
 
+  // Mark all messages in a conversation as read
   markAsRead: (conversationId) => {
-    return messagesApi.put(`/${conversationId}/read`, {}, { withCredentials: true });
+    return chatApi.put(`/conversations/${conversationId}/read`);
   },
 
-  createConversation: (recipientId, initialMessage) => {
-    return messagesApi.post("/conversations", { recipientId, message: initialMessage }, { withCredentials: true });
-  },
-
-  deleteConversation: (conversationId) => {
-    return messagesApi.delete(`/${conversationId}`, { withCredentials: true });
-  },
-
-  getConversationById: (conversationId) => {
-    return messagesApi.get(`/conversations/${conversationId}`, { withCredentials: true });
+  // Get total unread count across all conversations
+  getUnreadCount: () => {
+    return chatApi.get("/unread-count");
   },
 };
+
+// Keep legacy export alias
+export const messagesAPI = chatAPI;
 
 // ==================== ADMIN APIS ====================
 export const adminAPI = {
@@ -838,6 +843,7 @@ export default {
   auth: authAPI,
   listings: listingsAPI,
   messages: messagesAPI,
+  chat: chatAPI,
   admin: adminAPI,
   search: searchAPI,
   cache: cacheAPI,
