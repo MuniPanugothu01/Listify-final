@@ -38,8 +38,14 @@ export const createElectronicsListing = createAsyncThunk(
       const response = await electronicsAPI.create(listingData);
       return response.data.listing;
     } catch (error) {
+      // Build a user-friendly message that includes specific field errors
+      const data = error.response?.data;
+      if (data?.errors && typeof data.errors === 'object') {
+        const fieldErrors = Object.values(data.errors).join('. ');
+        return rejectWithValue(fieldErrors);
+      }
       return rejectWithValue(
-        error.response?.data?.message || error.message || "Failed to create listing"
+        data?.message || error.message || "Failed to create listing"
       );
     }
   }
