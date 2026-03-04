@@ -6,8 +6,8 @@ const {
 } = require('@aws-sdk/client-s3');
 const { getSignedUrl } = require('@aws-sdk/s3-request-presigner');
 const { s3Client } = require('../config/aws');
-const { v4: uuidv4 } = require('uuid');
 const { logger } = require('../utils/logger');
+let uuidv4;
 const sharp = require('sharp'); // For image optimization (install: npm install sharp)
 
 class S3Service {
@@ -40,6 +40,10 @@ class S3Service {
    * @returns {Promise<Object>} Upload result
    */
   async uploadProfileImage(fileBuffer, userId, mimeType) {
+    if (!uuidv4) {
+      const uuid = await import('uuid');
+      uuidv4 = uuid.v4;
+    }
     try {
       // Optimize image (always outputs JPEG)
       const { buffer: optimizedImage, contentType: optimizedType, extension: optimizedExt } = await this.optimizeImage(fileBuffer, mimeType);
@@ -194,6 +198,10 @@ class S3Service {
    * @returns {Promise<Object>} Upload URL and fields
    */
   async generateUploadUrl(userId, fileType) {
+    if (!uuidv4) {
+      const uuid = await import('uuid');
+      uuidv4 = uuid.v4;
+    }
     try {
       const fileName = `profiles/${userId}/${uuidv4()}.${fileType.split('/')[1]}`;
       
@@ -238,6 +246,10 @@ class S3Service {
    * @returns {Promise<Object>} Upload result
    */
   async uploadListingImage(fileBuffer, userId, mimeType, category = 'listings') {
+    if (!uuidv4) {
+      const uuid = await import('uuid');
+      uuidv4 = uuid.v4;
+    }
     try {
       // Sanitise category to a safe folder name
       const folder = category
