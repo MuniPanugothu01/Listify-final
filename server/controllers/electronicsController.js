@@ -5,6 +5,19 @@ const redis = require("../config/redis");
 const ListingCache = require("../services/listingCacheService");
 const SearchService = require("../services/searchService");
 
+// ── Valid subcategories (server-side enforcement) ─────────────────
+const VALID_SUBCATEGORIES = [
+  'TVs, Video - Audio',
+  'Kitchen & Other Appliances',
+  'Fridges',
+  'Washing Machines',
+  'ACs',
+  'Computers & Laptops',
+  'Computer Accessories',
+  'Hard Disks, Printers & Monitors',
+  'Cameras & Lenses',
+];
+
 // @desc    Create a new electronics listing
 // @route   POST /api/electronics
 // @access  Private
@@ -22,6 +35,25 @@ exports.createElectronics = async (req, res) => {
       features,
       images,
     } = req.body;
+
+    // ── Server-side category enforcement ─────────────────────
+    if (category !== 'Electronics') {
+      logger.warn('[SECURITY] Wrong category on /api/electronics', {
+        category,
+        userId: req.user?._id,
+        ip: req.ip,
+      });
+      return res.status(400).json({
+        success: false,
+        message: `This endpoint only accepts category "Electronics". Received "${category}".`,
+      });
+    }
+    if (!VALID_SUBCATEGORIES.includes(subcategory)) {
+      return res.status(400).json({
+        success: false,
+        message: `Invalid subcategory "${subcategory}" for Electronics. Allowed: ${VALID_SUBCATEGORIES.join(', ')}`,
+      });
+    }
 
     const listing = await Electronics.create({
       title,
@@ -52,6 +84,24 @@ exports.createElectronics = async (req, res) => {
       success: true,
       message: "Electronics listing created successfully",
       listing: populated,
+    });
+
+    // ── Product posting log (detailed) ──────────────────────
+    logger.info('[PRODUCT_POSTED] Electronics listing created', {
+      listingId: listing._id,
+      title,
+      category,
+      subcategory,
+      price,
+      condition: condition || 'Good',
+      location,
+      imageCount: (images || []).length,
+      sellerId: req.user._id,
+      sellerName: listingObj.sellerName,
+      sellerEmail: req.user.email,
+      ip: req.ip,
+      userAgent: req.get('user-agent'),
+      timestamp: new Date().toISOString(),
     });
 
     // Background: cache + log + invalidate + index (non-blocking)
@@ -333,6 +383,11 @@ exports.updateElectronics = async (req, res) => {
       listing: updated,
     });
 
+    // ── Product update log ──────────────────────────────────
+    logger.productLog('updated', 'electronics', updatedObj, req, {
+      changes: allowedUpdates.filter(f => req.body[f] !== undefined),
+    });
+
     // Background: cache + log + invalidate + re-index (non-blocking)
     Promise.all([
       ListingCache.cacheListing('electronics', updatedObj),
@@ -377,6 +432,9 @@ exports.deleteElectronics = async (req, res) => {
       success: true,
       message: "Electronics listing deleted successfully",
     });
+
+    // ── Product deletion log ────────────────────────────────
+    logger.productLog('deleted', 'electronics', listing, req);
 
     // Background: log + invalidate + remove from search (non-blocking)
     Promise.all([

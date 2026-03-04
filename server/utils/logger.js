@@ -48,6 +48,28 @@ const logger = winston.createLogger({
       maxsize: 5242880, // 5MB
       maxFiles: 5,
     }),
+    // Write product-related activity to a dedicated file
+    new winston.transports.File({
+      filename: path.join(logDir, 'products.log'),
+      maxsize: 10485760, // 10MB — products log is high-value for auditing
+      maxFiles: 10,
+      // Only capture product-related log entries
+      format: winston.format.combine(
+        winston.format((info) => {
+          if (
+            typeof info.message === 'string' &&
+            (info.message.includes('[PRODUCT_POSTED]') ||
+             info.message.includes('[PRODUCT_UPDATED]') ||
+             info.message.includes('[PRODUCT_DELETED]') ||
+             info.message.includes('[VALIDATION_FAILED]'))
+          ) {
+            return info;
+          }
+          return false;
+        })(),
+        logFormat,
+      ),
+    }),
   ],
 });
 
@@ -112,6 +134,39 @@ logger.emailLog = (action, recipient, status, error = null) => {
   } else {
     logger.info('Email operation completed', logData);
   }
+};
+
+/**
+ * Log product lifecycle events — posted, updated, deleted.
+ * These entries are written to both combined.log and the dedicated products.log.
+ *
+ * @param {'posted'|'updated'|'deleted'} action
+ * @param {string} entity - e.g. 'electronics', 'vehicles', 'forsale'
+ * @param {Object} listing - listing document / data
+ * @param {Object} req - Express request (for IP, user, user-agent)
+ * @param {Object} [extra] - additional metadata (e.g. changes object)
+ */
+logger.productLog = (action, entity, listing, req, extra = {}) => {
+  const tag = `[PRODUCT_${action.toUpperCase()}]`;
+  const logData = {
+    entity,
+    listingId: listing._id || listing.id,
+    title: listing.title,
+    category: listing.category,
+    subcategory: listing.subcategory,
+    price: listing.price,
+    condition: listing.condition,
+    location: listing.location,
+    imageCount: (listing.images || []).length,
+    sellerId: req.user?._id || req.user?.id || 'unknown',
+    sellerEmail: req.user?.email || 'unknown',
+    ip: req.ip,
+    userAgent: req.get ? req.get('user-agent') : 'unknown',
+    timestamp: new Date().toISOString(),
+    ...extra,
+  };
+
+  logger.info(`${tag} ${entity} listing ${action}`, logData);
 };
 
 module.exports = { logger };

@@ -32,6 +32,15 @@ const forSaleSchema = new mongoose.Schema(
       type: String,
       required: [true, "Subcategory is required"],
       trim: true,
+      enum: {
+        values: [
+          "Mobile Phones", "Accessories", "Tablets",
+          "Sofas & Dining", "Beds & Wardrobes", "Tables & Chairs", "Home Decor", "Office Furniture",
+          "Men's Clothing", "Women's Clothing", "Kids Clothing", "Footwear", "Watches",
+          "Books", "Gym & Fitness", "Sports Equipment", "Musical Instruments", "Hobbies", "Cycling",
+        ],
+        message: "Invalid subcategory for this category",
+      },
     },
     condition: {
       type: String,

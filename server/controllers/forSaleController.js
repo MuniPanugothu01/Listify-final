@@ -152,6 +152,26 @@ exports.createForSale = async (req, res) => {
       listing: populated,
     });
 
+    // ── Product posting log (detailed) ──────────────────────
+    logger.info('[PRODUCT_POSTED] ForSale listing created', {
+      listingId: listing._id,
+      title,
+      category,
+      subcategory,
+      price,
+      condition: condition || 'Good',
+      location,
+      brand: brand || undefined,
+      model: model || undefined,
+      imageCount: (images || []).length,
+      sellerId: req.user._id,
+      sellerName: listingObj.sellerName,
+      sellerEmail: req.user.email,
+      ip: req.ip,
+      userAgent: req.get('user-agent'),
+      timestamp: new Date().toISOString(),
+    });
+
     // Background: cache + log + invalidate + index (non-blocking)
     Promise.all([
       ListingCache.cacheListing("forsale", listingObj),
@@ -473,6 +493,11 @@ exports.updateForSale = async (req, res) => {
       listing: updated,
     });
 
+    // ── Product update log ──────────────────────────────────
+    logger.productLog('updated', 'forsale', updatedObj, req, {
+      changes: allowedUpdates.filter(f => req.body[f] !== undefined),
+    });
+
     // Background: cache + log + invalidate + re-index (non-blocking)
     Promise.all([
       ListingCache.cacheListing("forsale", updatedObj),
@@ -519,6 +544,9 @@ exports.deleteForSale = async (req, res) => {
       success: true,
       message: "Listing deleted successfully",
     });
+
+    // ── Product deletion log ────────────────────────────────
+    logger.productLog('deleted', 'forsale', listing, req);
 
     // Background: log + invalidate + remove from search (non-blocking)
     Promise.all([

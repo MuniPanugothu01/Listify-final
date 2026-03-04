@@ -5,6 +5,9 @@ const redis = require("../config/redis");
 const ListingCache = require("../services/listingCacheService");
 const SearchService = require("../services/searchService");
 
+// ── Valid subcategories (server-side enforcement) ─────────────────
+const VALID_SUBCATEGORIES = ['Cars', 'Bikes', 'Cycle', 'Spare Parts'];
+
 // @desc    Create a new vehicle listing
 // @route   POST /api/vehicles
 // @access  Private
@@ -37,6 +40,25 @@ exports.createVehicle = async (req, res) => {
       compatibleVehicle,
       partCategory,
     } = req.body;
+
+    // ── Server-side category enforcement ─────────────────────
+    if (category !== 'Vehicles') {
+      logger.warn('[SECURITY] Wrong category on /api/vehicles', {
+        category,
+        userId: req.user?._id,
+        ip: req.ip,
+      });
+      return res.status(400).json({
+        success: false,
+        message: `This endpoint only accepts category "Vehicles". Received "${category}".`,
+      });
+    }
+    if (!VALID_SUBCATEGORIES.includes(subcategory)) {
+      return res.status(400).json({
+        success: false,
+        message: `Invalid subcategory "${subcategory}" for Vehicles. Allowed: ${VALID_SUBCATEGORIES.join(', ')}`,
+      });
+    }
 
     const listing = await Vehicle.create({
       title,
@@ -82,6 +104,30 @@ exports.createVehicle = async (req, res) => {
       success: true,
       message: "Vehicle listing created successfully",
       listing: populated,
+    });
+
+    // ── Product posting log (detailed) ──────────────────────
+    logger.info('[PRODUCT_POSTED] Vehicle listing created', {
+      listingId: listing._id,
+      title,
+      category,
+      subcategory,
+      price,
+      condition: condition || 'Good',
+      location,
+      brand,
+      model,
+      year,
+      fuelType,
+      transmission,
+      ownership,
+      imageCount: (images || []).length,
+      sellerId: req.user._id,
+      sellerName: listingObj.sellerName,
+      sellerEmail: req.user.email,
+      ip: req.ip,
+      userAgent: req.get('user-agent'),
+      timestamp: new Date().toISOString(),
     });
 
     // Background: cache + log + invalidate + index (non-blocking)
@@ -376,6 +422,11 @@ exports.updateVehicle = async (req, res) => {
       listing: updated,
     });
 
+    // ── Product update log ──────────────────────────────────
+    logger.productLog('updated', 'vehicles', updatedObj, req, {
+      changes: allowedUpdates.filter(f => req.body[f] !== undefined),
+    });
+
     // Background: cache + log + invalidate + re-index (non-blocking)
     Promise.all([
       ListingCache.cacheListing('vehicles', updatedObj),
@@ -420,6 +471,9 @@ exports.deleteVehicle = async (req, res) => {
       success: true,
       message: "Vehicle listing deleted successfully",
     });
+
+    // ── Product deletion log ────────────────────────────────
+    logger.productLog('deleted', 'vehicles', listing, req);
 
     // Background: log + invalidate + remove from search (non-blocking)
     Promise.all([

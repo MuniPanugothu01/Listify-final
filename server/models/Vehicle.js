@@ -23,11 +23,19 @@ const vehicleSchema = new mongoose.Schema(
       type: String,
       required: [true, "Category is required"],
       trim: true,
+      enum: {
+        values: ["Vehicles"],
+        message: "Category must be Vehicles for this model",
+      },
     },
     subcategory: {
       type: String,
       required: [true, "Subcategory is required"],
       trim: true,
+      enum: {
+        values: ["Cars", "Bikes", "Cycle", "Spare Parts"],
+        message: "Subcategory must be one of: Cars, Bikes, Cycle, Spare Parts",
+      },
     },
     condition: {
       type: String,
