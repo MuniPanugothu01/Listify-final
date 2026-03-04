@@ -169,6 +169,7 @@ initElasticsearch().catch((err) => {
 const authRoutes = require("./routes/authRoutes");
 const electronicsRoutes = require("./routes/electronicsRoutes");
 const vehiclesRoutes = require("./routes/vehiclesRoutes");
+const forSaleRoutes = require("./routes/forSaleRoutes");
 const searchRoutes = require("./routes/searchRoutes");
 const cacheRoutes = require("./routes/cacheRoutes");
 const notificationRoutes = require("./routes/notificationRoutes");
@@ -186,6 +187,7 @@ app.use("/api/auth/forgot-password/resend-otp", otpLimiter);
 app.use("/api/auth", authRoutes);
 app.use("/api/electronics", electronicsRoutes);
 app.use("/api/vehicles", vehiclesRoutes);
+app.use("/api/forsale", forSaleRoutes);
 app.use("/api/search", searchRoutes);
 app.use("/api/cache", cacheRoutes);
 app.use("/api/notifications", notificationRoutes);

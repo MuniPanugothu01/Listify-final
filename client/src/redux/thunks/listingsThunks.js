@@ -8,15 +8,16 @@
  *   │  Component   │─────▶│  submitPostAd thunk  │
  *   └─────────────┘      └──────┬───────────────┘
  *                               │
- *              ┌────────────────┼────────────────┐
- *              ▼                ▼                ▼
- *        Electronics        Vehicles          Draft
- *        (S3 + API)        (S3 + API)     (Redux only)
+ *         ┌─────────────┬───────┼───────────┐
+ *         ▼             ▼       ▼           ▼
+ *    Electronics    Vehicles  ForSale     Draft
+ *    (S3 + API)   (S3 + API) (S3 + API) (Redux)
  */
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { electronicsAPI, vehiclesAPI } from "../../services/api";
+import { electronicsAPI, vehiclesAPI, forSaleAPI } from "../../services/api";
 import { createElectronicsListing } from "../slices/electronicsSlice";
 import { createVehicleListing } from "../slices/vehiclesSlice";
+import { createForSaleListing } from "../slices/forSaleItemsSlice";
 import { addDraftListing } from "../slices/draftListingsSlice";
 import { compressImagesToDataUrls } from "../../utils/imageUtils";
 
@@ -139,8 +140,58 @@ export const submitPostAd = createAsyncThunk(
         };
       }
 
-      // ─── Draft listing (no backend API yet) ──────────────────
-      // Compress images to data-URLs so they survive redux-persist.
+      // ─── ForSale categories (Mobiles, Furniture, Fashion, Books/Sports) ──
+      const FORSALE_CATEGORIES = ["Mobiles", "Furniture", "Fashion", "Books, Sports"];
+      if (FORSALE_CATEGORIES.includes(category)) {
+        let imageUrls = [];
+        try {
+          imageUrls = await uploadImages(form.images, forSaleAPI);
+        } catch (uploadErr) {
+          console.error("ForSale image upload failed:", uploadErr);
+          return rejectWithValue(
+            "Image upload failed: " +
+              (uploadErr.response?.data?.message || uploadErr.message ||
+                "Could not upload images. Please check your connection and try again."),
+          );
+        }
+        const listingData = {
+          ...buildBaseListingData(form, category, subcategory, imageUrls),
+          // Mobiles
+          brand: form.brand,
+          model: form.model,
+          storage: form.storage,
+          ram: form.ram,
+          screenSize: form.screenSize,
+          batteryHealth: form.batteryHealth,
+          warranty: form.warranty,
+          color: form.color,
+          // Furniture
+          material: form.material,
+          dimensions: form.dimensions,
+          weight: form.weight,
+          assemblyRequired: form.assemblyRequired,
+          numberOfPieces: form.numberOfPieces,
+          // Fashion
+          size: form.size,
+          gender: form.gender,
+          fabricType: form.fabricType,
+          // Books, Sports
+          author: form.author,
+          isbn: form.isbn,
+          publisher: form.publisher,
+          edition: form.edition,
+          sportType: form.sportType,
+        };
+        const listing = await dispatch(createForSaleListing(listingData)).unwrap();
+        return {
+          type: "api",
+          entity: "forsale",
+          listing,
+          message: `${category} listing posted successfully!`,
+        };
+      }
+
+      // ─── Draft listing (fallback for future categories) ──────
       let imageDataUrls = [];
       if (form.images?.length > 0) {
         try {

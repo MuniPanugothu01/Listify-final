@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const vehicleSchema = new mongoose.Schema(
+const forSaleSchema = new mongoose.Schema(
   {
     title: {
       type: String,
@@ -24,8 +24,8 @@ const vehicleSchema = new mongoose.Schema(
       required: [true, "Category is required"],
       trim: true,
       enum: {
-        values: ["Vehicles"],
-        message: "Category must be Vehicles for this model",
+        values: ["Mobiles", "Furniture", "Fashion", "Books, Sports"],
+        message: "Category must be one of: Mobiles, Furniture, Fashion, Books, Sports",
       },
     },
     subcategory: {
@@ -33,8 +33,13 @@ const vehicleSchema = new mongoose.Schema(
       required: [true, "Subcategory is required"],
       trim: true,
       enum: {
-        values: ["Cars", "Bikes", "Cycle", "Spare Parts"],
-        message: "Subcategory must be one of: Cars, Bikes, Cycle, Spare Parts",
+        values: [
+          "Mobile Phones", "Accessories", "Tablets",
+          "Sofas & Dining", "Beds & Wardrobes", "Tables & Chairs", "Home Decor", "Office Furniture",
+          "Men's Clothing", "Women's Clothing", "Kids Clothing", "Footwear", "Watches",
+          "Books", "Gym & Fitness", "Sports Equipment", "Musical Instruments", "Hobbies", "Cycling",
+        ],
+        message: "Invalid subcategory for this category",
       },
     },
     condition: {
@@ -49,7 +54,7 @@ const vehicleSchema = new mongoose.Schema(
     },
     images: [
       {
-        type: String,
+        type: String, // S3 URLs
       },
     ],
     features: [
@@ -62,7 +67,8 @@ const vehicleSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
-    // Vehicle-specific fields
+
+    // ── Mobiles-specific fields ──────────────────────────────
     brand: {
       type: String,
       trim: true,
@@ -71,27 +77,23 @@ const vehicleSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
-    variant: {
+    storage: {
       type: String,
       trim: true,
     },
-    year: {
+    ram: {
       type: String,
       trim: true,
     },
-    kmDriven: {
+    screenSize: {
       type: String,
       trim: true,
     },
-    fuelType: {
+    batteryHealth: {
       type: String,
       trim: true,
     },
-    transmission: {
-      type: String,
-      trim: true,
-    },
-    ownership: {
+    warranty: {
       type: String,
       trim: true,
     },
@@ -99,34 +101,68 @@ const vehicleSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
-    // Bike-specific
-    engineCC: {
+
+    // ── Furniture-specific fields ────────────────────────────
+    material: {
       type: String,
       trim: true,
     },
-    // Cycle-specific
-    cycleType: {
+    dimensions: {
       type: String,
       trim: true,
     },
-    gearCount: {
+    weight: {
       type: String,
       trim: true,
     },
-    frameSize: {
+    assemblyRequired: {
+      type: String,
+      enum: ["Yes", "No", ""],
+      default: "",
+    },
+    numberOfPieces: {
       type: String,
       trim: true,
     },
-    // Spare Parts-specific
-    compatibleVehicle: {
+
+    // ── Fashion-specific fields ──────────────────────────────
+    size: {
       type: String,
       trim: true,
     },
-    partCategory: {
+    gender: {
+      type: String,
+      enum: ["Men", "Women", "Kids", "Unisex", ""],
+      default: "",
+    },
+    fabricType: {
       type: String,
       trim: true,
     },
-    // Seller information - linked to User model
+
+    // ── Books, Sports-specific fields ────────────────────────
+    author: {
+      type: String,
+      trim: true,
+    },
+    isbn: {
+      type: String,
+      trim: true,
+    },
+    publisher: {
+      type: String,
+      trim: true,
+    },
+    edition: {
+      type: String,
+      trim: true,
+    },
+    sportType: {
+      type: String,
+      trim: true,
+    },
+
+    // ── Seller information ───────────────────────────────────
     seller: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
@@ -153,7 +189,8 @@ const vehicleSchema = new mongoose.Schema(
         return `${date.toLocaleString("default", { month: "short" })} ${date.getFullYear()}`;
       },
     },
-    // Status
+
+    // ── Status & metadata ────────────────────────────────────
     status: {
       type: String,
       enum: ["active", "sold", "expired", "removed"],
@@ -189,7 +226,7 @@ const vehicleSchema = new mongoose.Schema(
 );
 
 // Virtual for time since posting
-vehicleSchema.virtual("postedTime").get(function () {
+forSaleSchema.virtual("postedTime").get(function () {
   const now = new Date();
   const diff = now - this.createdAt;
   const minutes = Math.floor(diff / 60000);
@@ -203,11 +240,12 @@ vehicleSchema.virtual("postedTime").get(function () {
 });
 
 // Indexes for efficient queries
-vehicleSchema.index({ status: 1, createdAt: -1 });
-vehicleSchema.index({ category: 1, status: 1 });
-vehicleSchema.index({ seller: 1, status: 1 });
-vehicleSchema.index({ price: 1 });
-vehicleSchema.index({ savedBy: 1 });
-vehicleSchema.index({ title: "text", description: "text" });
+forSaleSchema.index({ status: 1, createdAt: -1 });
+forSaleSchema.index({ category: 1, status: 1 });
+forSaleSchema.index({ category: 1, subcategory: 1, status: 1 });
+forSaleSchema.index({ seller: 1, status: 1 });
+forSaleSchema.index({ price: 1 });
+forSaleSchema.index({ savedBy: 1 });
+forSaleSchema.index({ title: "text", description: "text" });
 
-module.exports = mongoose.model("Vehicle", vehicleSchema);
+module.exports = mongoose.model("ForSale", forSaleSchema);

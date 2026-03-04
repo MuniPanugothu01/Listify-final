@@ -134,6 +134,29 @@ const DEFAULT_FORM = {
   // Spare Parts-specific
   compatibleVehicle: "",
   partCategory: "",
+  // Mobiles
+  storage: "",
+  ram: "",
+  screenSize: "",
+  batteryHealth: "",
+  warranty: "",
+  color: "",
+  // Furniture
+  material: "",
+  dimensions: "",
+  weight: "",
+  assemblyRequired: "",
+  numberOfPieces: "",
+  // Fashion
+  size: "",
+  gender: "",
+  fabricType: "",
+  // Books, Sports
+  author: "",
+  isbn: "",
+  publisher: "",
+  edition: "",
+  sportType: "",
 };
 
 /* ─────────────────────────────────────────────
@@ -171,6 +194,22 @@ const CATEGORY_VALIDATORS = {
     }
     return errs;
   },
+  Mobiles: (form, subcategory) => {
+    const errs = {};
+    if (subcategory === "Mobile Phones" || subcategory === "Tablets") {
+      if (!form.brand) errs.brand = "Brand is required";
+    }
+    return errs;
+  },
+  Furniture: () => ({}),
+  Fashion: () => ({}),
+  "Books, Sports": (form, subcategory) => {
+    const errs = {};
+    if (subcategory === "Books") {
+      if (!form.author) errs.author = "Author is required";
+    }
+    return errs;
+  },
 };
 
 /** Per-category / subcategory form overrides. */
@@ -195,6 +234,97 @@ const CATEGORY_FORM_CONFIG = {
       titleLabel: "Part Title *",
       titlePlaceholder: "e.g., Alloy Wheels for Hyundai i20 – Set of 4",
       priceLabel: "Price (₹) *",
+    },
+  },
+  Mobiles: {
+    "Mobile Phones": {
+      titleLabel: "Phone Title *",
+      titlePlaceholder: "e.g., iPhone 14 Pro Max 256GB – Like New",
+      priceLabel: "Selling Price (₹) *",
+    },
+    Accessories: {
+      titleLabel: "Accessory Title *",
+      titlePlaceholder: "e.g., AirPods Pro 2nd Gen – Sealed Box",
+      priceLabel: "Price (₹) *",
+    },
+    Tablets: {
+      titleLabel: "Tablet Title *",
+      titlePlaceholder: "e.g., iPad Air M1 64GB Wi-Fi – Mint Condition",
+      priceLabel: "Selling Price (₹) *",
+    },
+  },
+  Furniture: {
+    "Sofas & Dining": {
+      titleLabel: "Furniture Title *",
+      titlePlaceholder: "e.g., 3-Seater L-Shape Sofa – Barely Used",
+    },
+    "Beds & Wardrobes": {
+      titleLabel: "Furniture Title *",
+      titlePlaceholder: "e.g., Queen Size Wooden Bed with Storage",
+    },
+    "Tables & Chairs": {
+      titleLabel: "Furniture Title *",
+      titlePlaceholder: "e.g., 6 Seater Dining Table – Solid Wood",
+    },
+    "Home Decor": {
+      titleLabel: "Item Title *",
+      titlePlaceholder: "e.g., Decorative Wall Mirror – Antique Finish",
+    },
+    "Office Furniture": {
+      titleLabel: "Furniture Title *",
+      titlePlaceholder: "e.g., Ergonomic Office Chair – Adjustable Height",
+    },
+  },
+  Fashion: {
+    "Men's Clothing": {
+      titleLabel: "Item Title *",
+      titlePlaceholder: "e.g., Levi's 501 Jeans – Size 32, Brand New",
+    },
+    "Women's Clothing": {
+      titleLabel: "Item Title *",
+      titlePlaceholder: "e.g., Zara Cocktail Dress – Size S, Never Worn",
+    },
+    "Kids Clothing": {
+      titleLabel: "Item Title *",
+      titlePlaceholder: "e.g., Kids Winter Jacket – Age 4-5, Excellent",
+    },
+    Footwear: {
+      titleLabel: "Item Title *",
+      titlePlaceholder: "e.g., Nike Air Max 90 – Size 10, Barely Worn",
+    },
+    Watches: {
+      titleLabel: "Watch Title *",
+      titlePlaceholder: "e.g., Fossil Gen 6 Smartwatch – Like New",
+    },
+    Accessories: {
+      titleLabel: "Item Title *",
+      titlePlaceholder: "e.g., Ray-Ban Aviator Sunglasses – Original",
+    },
+  },
+  "Books, Sports": {
+    Books: {
+      titleLabel: "Book Title *",
+      titlePlaceholder: "e.g., Atomic Habits by James Clear – Paperback",
+    },
+    "Gym & Fitness": {
+      titleLabel: "Item Title *",
+      titlePlaceholder: "e.g., 20 kg Adjustable Dumbbell Set – Like New",
+    },
+    "Sports Equipment": {
+      titleLabel: "Item Title *",
+      titlePlaceholder: "e.g., Yonex Badminton Racket – Professional",
+    },
+    "Musical Instruments": {
+      titleLabel: "Instrument Title *",
+      titlePlaceholder: "e.g., Yamaha FG800 Acoustic Guitar – Mint",
+    },
+    Hobbies: {
+      titleLabel: "Item Title *",
+      titlePlaceholder: "e.g., DJI Mini 3 Pro Drone – With Extra Battery",
+    },
+    Cycling: {
+      titleLabel: "Item Title *",
+      titlePlaceholder: "e.g., Indoor Cycling Trainer – Quiet Ride",
     },
   },
 };
@@ -406,6 +536,230 @@ const ElectronicsFields = ({ form, setField }) => (
   />
 );
 
+/* ── Mobiles fields ── */
+
+const MOBILE_BRANDS = [
+  "Apple", "Samsung", "OnePlus", "Xiaomi", "Realme", "Oppo", "Vivo",
+  "Google", "Nothing", "Motorola", "Nokia", "iQOO", "Poco", "Asus",
+  "Sony", "LG", "Huawei", "Honor", "Lenovo", "Other",
+];
+const STORAGE_OPTIONS = ["16GB", "32GB", "64GB", "128GB", "256GB", "512GB", "1TB"];
+const RAM_OPTIONS = ["2GB", "3GB", "4GB", "6GB", "8GB", "12GB", "16GB"];
+
+const MobilePhoneFields = ({ form, setField, errors }) => (
+  <>
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <SelectField label="Brand *" error={errors.brand} value={form.brand}
+        onChange={setField("brand")} placeholder="Select Brand" options={MOBILE_BRANDS} />
+      <Field label="Model">
+        <input type="text" value={form.model} onChange={setField("model")}
+          placeholder="e.g., iPhone 14 Pro, Galaxy S24" className={INPUT_CLS} />
+      </Field>
+    </div>
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <SelectField label="Storage" value={form.storage}
+        onChange={setField("storage")} placeholder="Select Storage" options={STORAGE_OPTIONS} />
+      <SelectField label="RAM" value={form.ram}
+        onChange={setField("ram")} placeholder="Select RAM" options={RAM_OPTIONS} />
+    </div>
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <Field label="Screen Size">
+        <input type="text" value={form.screenSize} onChange={setField("screenSize")}
+          placeholder="e.g., 6.7 inches" className={INPUT_CLS} />
+      </Field>
+      <Field label="Battery Health">
+        <input type="text" value={form.batteryHealth} onChange={setField("batteryHealth")}
+          placeholder="e.g., 92%" className={INPUT_CLS} />
+      </Field>
+    </div>
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <Field label="Color">
+        <input type="text" value={form.color} onChange={setField("color")}
+          placeholder="e.g., Space Black" className={INPUT_CLS} />
+      </Field>
+      <SelectField label="Warranty" value={form.warranty}
+        onChange={setField("warranty")} placeholder="Warranty Status"
+        options={["Under Warranty", "Expired", "No Warranty"]} />
+    </div>
+    <SelectField label="Condition *" value={form.condition}
+      onChange={setField("condition")} placeholder="Select Condition" options={CONDITIONS} />
+  </>
+);
+
+const MobileAccessoriesFields = ({ form, setField }) => (
+  <>
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <Field label="Brand">
+        <input type="text" value={form.brand} onChange={setField("brand")}
+          placeholder="e.g., Apple, Samsung, Anker" className={INPUT_CLS} />
+      </Field>
+      <Field label="Compatible Model">
+        <input type="text" value={form.model} onChange={setField("model")}
+          placeholder="e.g., iPhone 15 Series" className={INPUT_CLS} />
+      </Field>
+    </div>
+    <Field label="Color">
+      <input type="text" value={form.color} onChange={setField("color")}
+        placeholder="e.g., Black, White" className={INPUT_CLS} />
+    </Field>
+    <SelectField label="Condition *" value={form.condition}
+      onChange={setField("condition")} placeholder="Select Condition" options={CONDITIONS} />
+  </>
+);
+
+const MobilesFields = ({ form, setField, errors, subcategory }) => {
+  switch (subcategory) {
+    case "Mobile Phones":
+    case "Tablets":
+      return <MobilePhoneFields form={form} setField={setField} errors={errors} />;
+    case "Accessories":
+      return <MobileAccessoriesFields form={form} setField={setField} />;
+    default:
+      return (
+        <SelectField label="Condition *" value={form.condition}
+          onChange={setField("condition")} placeholder="Select Condition" options={CONDITIONS} />
+      );
+  }
+};
+
+/* ── Furniture fields ── */
+
+const MATERIAL_OPTIONS = [
+  "Solid Wood", "Engineered Wood", "Metal", "Plastic", "Glass",
+  "Leather", "Fabric", "Rattan", "Bamboo", "Other",
+];
+
+const FurnitureFields = ({ form, setField }) => (
+  <>
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <SelectField label="Material" value={form.material}
+        onChange={setField("material")} placeholder="Select Material" options={MATERIAL_OPTIONS} />
+      <Field label="Dimensions">
+        <input type="text" value={form.dimensions} onChange={setField("dimensions")}
+          placeholder="e.g., 200 × 150 × 75 cm" className={INPUT_CLS} />
+      </Field>
+    </div>
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <Field label="Weight">
+        <input type="text" value={form.weight} onChange={setField("weight")}
+          placeholder="e.g., 25 kg" className={INPUT_CLS} />
+      </Field>
+      <SelectField label="Assembly Required" value={form.assemblyRequired}
+        onChange={setField("assemblyRequired")} placeholder="Select" options={["Yes", "No"]} />
+    </div>
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <Field label="Number of Pieces">
+        <input type="text" value={form.numberOfPieces} onChange={setField("numberOfPieces")}
+          placeholder="e.g., 1, 4 (set of chairs)" className={INPUT_CLS} />
+      </Field>
+      <Field label="Color">
+        <input type="text" value={form.color} onChange={setField("color")}
+          placeholder="e.g., Walnut Brown" className={INPUT_CLS} />
+      </Field>
+    </div>
+    <SelectField label="Condition *" value={form.condition}
+      onChange={setField("condition")} placeholder="Select Condition" options={CONDITIONS} />
+  </>
+);
+
+/* ── Fashion fields ── */
+
+const SIZE_OPTIONS = ["XXS", "XS", "S", "M", "L", "XL", "XXL", "XXXL", "Free Size"];
+const SHOE_SIZES = ["5", "6", "7", "8", "9", "10", "11", "12", "13"];
+const GENDER_OPTIONS = ["Men", "Women", "Kids", "Unisex"];
+
+const FashionFields = ({ form, setField, subcategory }) => (
+  <>
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <Field label="Brand">
+        <input type="text" value={form.brand} onChange={setField("brand")}
+          placeholder="e.g., Nike, Zara, H&M" className={INPUT_CLS} />
+      </Field>
+      <SelectField label="Gender" value={form.gender}
+        onChange={setField("gender")} placeholder="Select Gender" options={GENDER_OPTIONS} />
+    </div>
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <SelectField
+        label={subcategory === "Footwear" ? "Shoe Size" : "Size"}
+        value={form.size}
+        onChange={setField("size")}
+        placeholder="Select Size"
+        options={subcategory === "Footwear" ? SHOE_SIZES : SIZE_OPTIONS}
+      />
+      <Field label="Fabric / Material">
+        <input type="text" value={form.fabricType} onChange={setField("fabricType")}
+          placeholder="e.g., Cotton, Leather, Polyester" className={INPUT_CLS} />
+      </Field>
+    </div>
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <Field label="Color">
+        <input type="text" value={form.color} onChange={setField("color")}
+          placeholder="e.g., Navy Blue" className={INPUT_CLS} />
+      </Field>
+      <SelectField label="Condition *" value={form.condition}
+        onChange={setField("condition")} placeholder="Select Condition" options={CONDITIONS} />
+    </div>
+  </>
+);
+
+/* ── Books, Sports fields ── */
+
+const SPORT_TYPES = [
+  "Cricket", "Football", "Badminton", "Tennis", "Basketball", "Swimming",
+  "Running", "Yoga", "Boxing", "Hockey", "Table Tennis", "Other",
+];
+
+const BooksFields = ({ form, setField, errors }) => (
+  <>
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <Field label="Author *" error={errors.author}>
+        <input type="text" value={form.author} onChange={setField("author")}
+          placeholder="e.g., James Clear" className={INPUT_CLS} />
+      </Field>
+      <Field label="Publisher">
+        <input type="text" value={form.publisher} onChange={setField("publisher")}
+          placeholder="e.g., Penguin Books" className={INPUT_CLS} />
+      </Field>
+    </div>
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <Field label="Edition">
+        <input type="text" value={form.edition} onChange={setField("edition")}
+          placeholder="e.g., 1st Edition, Revised" className={INPUT_CLS} />
+      </Field>
+      <Field label="ISBN">
+        <input type="text" value={form.isbn} onChange={setField("isbn")}
+          placeholder="e.g., 978-0735211292" className={INPUT_CLS} />
+      </Field>
+    </div>
+    <SelectField label="Condition *" value={form.condition}
+      onChange={setField("condition")} placeholder="Select Condition" options={CONDITIONS} />
+  </>
+);
+
+const SportsFields = ({ form, setField, subcategory }) => (
+  <>
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <Field label="Brand">
+        <input type="text" value={form.brand} onChange={setField("brand")}
+          placeholder="e.g., Yonex, Nike, Decathlon" className={INPUT_CLS} />
+      </Field>
+      {(subcategory === "Sports Equipment" || subcategory === "Gym & Fitness") && (
+        <SelectField label="Sport Type" value={form.sportType}
+          onChange={setField("sportType")} placeholder="Select Sport" options={SPORT_TYPES} />
+      )}
+    </div>
+    <SelectField label="Condition *" value={form.condition}
+      onChange={setField("condition")} placeholder="Select Condition" options={CONDITIONS} />
+  </>
+);
+
+const BooksSportsFields = ({ form, setField, errors, subcategory }) => {
+  if (subcategory === "Books") {
+    return <BooksFields form={form} setField={setField} errors={errors} />;
+  }
+  return <SportsFields form={form} setField={setField} subcategory={subcategory} />;
+};
+
 /* ─────────────────────────────────────────────
    Dynamic category → component mapping
    ───────────────────────────────────────────── */
@@ -413,6 +767,10 @@ const ElectronicsFields = ({ form, setField }) => (
 const CATEGORY_COMPONENTS = {
   Vehicles: VehicleFields,
   Electronics: ElectronicsFields,
+  Mobiles: MobilesFields,
+  Furniture: FurnitureFields,
+  Fashion: FashionFields,
+  "Books, Sports": BooksSportsFields,
 };
 
 /* ─────────────────────────────────────────────

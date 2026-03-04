@@ -18,6 +18,7 @@ import listingsReducer from "./slices/listingsSlice";
 import messagesReducer from "./slices/messagesSlice";
 import electronicsReducer from "./slices/electronicsSlice";
 import vehiclesReducer from "./slices/vehiclesSlice";
+import forSaleItemsReducer from "./slices/forSaleItemsSlice";
 import draftListingsReducer from "./slices/draftListingsSlice";
 import forSaleReducer from "./slices/forSaleSlice";
 
@@ -34,6 +35,7 @@ const rootReducer = combineReducers({
   messages: messagesReducer,
   electronics: electronicsReducer,
   vehicles: vehiclesReducer,
+  forSaleItems: forSaleItemsReducer,
   draftListings: draftListingsReducer,
   forSale: forSaleReducer,
 });

@@ -23,11 +23,29 @@ const electronicsSchema = new mongoose.Schema(
       type: String,
       required: [true, "Category is required"],
       trim: true,
+      enum: {
+        values: ["Electronics"],
+        message: "Category must be Electronics for this model",
+      },
     },
     subcategory: {
       type: String,
       required: [true, "Subcategory is required"],
       trim: true,
+      enum: {
+        values: [
+          "TVs, Video - Audio",
+          "Kitchen & Other Appliances",
+          "Fridges",
+          "Washing Machines",
+          "ACs",
+          "Computers & Laptops",
+          "Computer Accessories",
+          "Hard Disks, Printers & Monitors",
+          "Cameras & Lenses",
+        ],
+        message: "Invalid subcategory for Electronics",
+      },
     },
     condition: {
       type: String,
@@ -139,3 +157,4 @@ electronicsSchema.index({ savedBy: 1 });
 electronicsSchema.index({ title: "text", description: "text" });
 
 module.exports = mongoose.model("Electronics", electronicsSchema);
+  
