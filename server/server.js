@@ -31,7 +31,7 @@ app.use(helmet({
       scriptSrc: ["'self'"],
       styleSrc: ["'self'", "'unsafe-inline'"], // inline styles needed for some UI
       imgSrc: ["'self'", "data:", "blob:", "*.amazonaws.com", "*.googleusercontent.com"],
-      connectSrc: ["'self'", process.env.CLIENT_URL || "http://localhost:5173"],
+      connectSrc: ["'self'", "wss:", "ws:", process.env.CLIENT_URL || "http://localhost:5173"],
       fontSrc: ["'self'"],
       objectSrc: ["'none'"],
       frameSrc: ["'none'"],
@@ -102,10 +102,11 @@ app.use(hpp());
 
 // ============== RATE LIMITING ==============
 
-// Global rate limiter — 200 requests per 15 min per IP
+// Global rate limiter — 600 requests per 15 min per IP
+// (increased to accommodate real-time polling for notifications + chat)
 const globalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 200,
+  max: 600,
   message: {
     success: false,
     message: 'Too many requests from this IP, please try again after 15 minutes.',
@@ -142,6 +143,19 @@ const otpLimiter = rateLimit({
   legacyHeaders: false,
 });
 
+// Chat rate limiter — 60 messages per minute (prevents spam)
+const chatMessageLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 60,
+  message: {
+    success: false,
+    message: 'Too many messages. Please slow down.',
+    code: 'RATE_LIMITED',
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
 // Connect to database
 connectDB().catch(console.error);
 
@@ -159,6 +173,7 @@ const forSaleRoutes = require("./routes/forSaleRoutes");
 const searchRoutes = require("./routes/searchRoutes");
 const cacheRoutes = require("./routes/cacheRoutes");
 const notificationRoutes = require("./routes/notificationRoutes");
+const chatRoutes = require("./routes/chatRoutes");
 
 // Apply strict rate limiter to auth routes
 app.use("/api/auth/login", authLimiter);
@@ -176,6 +191,10 @@ app.use("/api/forsale", forSaleRoutes);
 app.use("/api/search", searchRoutes);
 app.use("/api/cache", cacheRoutes);
 app.use("/api/notifications", notificationRoutes);
+
+// Chat routes — with message-send rate limiter
+app.use("/api/chat/conversations/:conversationId/messages", chatMessageLimiter);
+app.use("/api/chat", chatRoutes);
 
 // Health check
 app.get("/health", async (req, res) => {
@@ -249,12 +268,21 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Start server
+// Start server with Socket.IO
+const http = require("http");
+const { initSocket } = require("./config/socket");
 const PORT = process.env.PORT || 5000;
-const server = app.listen(PORT, () => {
+const httpServer = http.createServer(app);
+const io = initSocket(httpServer, corsOptions);
+
+// Make io accessible from req (for controllers)
+app.set("io", io);
+
+const server = httpServer.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
   console.log(`🌐 Environment: ${process.env.NODE_ENV}`);
   console.log(`🍪 Cookie parser enabled`);
+  console.log(`🔌 Socket.IO ready`);
 });
 
 // ============== PRODUCTION GRACEFUL SHUTDOWN ==============
