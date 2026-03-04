@@ -148,14 +148,14 @@ const ForSaleListing = () => {
       ([entry]) => {
         if (entry.isIntersecting && !loadingMore) {
           setLoadingMore(true);
-          // Show skeleton for 1.5 seconds then reveal next batch
+          // Brief skeleton flash (400ms) then reveal next batch
           setTimeout(() => {
             setVisibleCount((prev) => prev + ITEMS_PER_PAGE);
             setLoadingMore(false);
-          }, 1500);
+          }, 400);
         }
       },
-      { rootMargin: '200px 0px', threshold: 0.1 }
+      { rootMargin: '300px 0px', threshold: 0.1 }
     );
 
     const el = sentinelRef.current;

@@ -47,19 +47,20 @@ exports.createElectronics = async (req, res) => {
 
     // Cache the new listing in Redis (visible in Upstash dashboard)
     const listingObj = populated.toObject ? populated.toObject() : populated;
-    await ListingCache.cacheListing('electronics', listingObj);
-    // Log activity — visible in Upstash as: posted:electronics:{product-title}
-    await ListingCache.logProductPosted('electronics', listingObj);
-    // Only invalidate list/aggregate caches (keeps individual listing cache alive)
-    await ListingCache.invalidateListCaches('electronics');
-    // Index in Elasticsearch
-    await SearchService.indexListing('electronics', listingObj);
 
     res.status(201).json({
       success: true,
       message: "Electronics listing created successfully",
       listing: populated,
     });
+
+    // Background: cache + log + invalidate + index (non-blocking)
+    Promise.all([
+      ListingCache.cacheListing('electronics', listingObj),
+      ListingCache.logProductPosted('electronics', listingObj),
+      ListingCache.invalidateListCaches('electronics'),
+      SearchService.indexListing('electronics', listingObj),
+    ]).catch((err) => logger.error('[Background] Post-create error:', err.message));
   } catch (error) {
     logger.error("Create electronics error:", error);
     res.status(500).json({
@@ -158,24 +159,20 @@ exports.getAllElectronics = async (req, res) => {
       limit: Number(limit),
     };
 
-    // Store in listing cache (visible in Upstash Redis dashboard)
-    await ListingCache.cacheListingList('electronics', queryKey, listings, pagination);
-
-    // Prefetch every listing + its images into individual cache keys
-    // so clicking any listing afterwards is instant from cache
-    await ListingCache.prefetchCategoryListings('electronics', listings);
-
-    // If this was a search query, also cache under search namespace
-    if (search) {
-      await ListingCache.cacheSearchResults('electronics', search, listings, pagination);
-    }
-
+    // Send response FIRST, then cache in background (non-blocking)
     res.setHeader('X-Cache', 'MISS');
     res.status(200).json({
       success: true,
       listings,
       pagination,
     });
+
+    // ── Background cache writes (don't block response) ──────────
+    Promise.all([
+      ListingCache.cacheListingList('electronics', queryKey, listings, pagination),
+      ListingCache.prefetchCategoryListings('electronics', listings),
+      search ? ListingCache.cacheSearchResults('electronics', search, listings, pagination) : null,
+    ]).catch((err) => logger.error('[Cache] Background cache write error:', err.message));
   } catch (error) {
     logger.error("Get all electronics error:", error);
     res.status(500).json({
@@ -247,15 +244,17 @@ exports.getElectronicsById = async (req, res) => {
       logger.debug('View count Redis error:', viewErr.message);
     }
 
-    // Cache this listing in Redis (visible in Upstash dashboard)
-    const listingObj = listing.toObject ? listing.toObject() : listing;
-    await ListingCache.cacheListing('electronics', listingObj);
-
+    // Send response FIRST, cache in background
     res.setHeader('X-Cache', 'MISS');
     res.status(200).json({
       success: true,
       listing,
     });
+
+    // Cache in background (non-blocking)
+    const listingObj = listing.toObject ? listing.toObject() : listing;
+    ListingCache.cacheListing('electronics', listingObj)
+      .catch((err) => logger.error('[Cache] Background cache error:', err.message));
   } catch (error) {
     logger.error("Get electronics by ID error:", error);
     res.status(500).json({
@@ -327,19 +326,20 @@ exports.updateElectronics = async (req, res) => {
 
     // Update cache with new data
     const updatedObj = updated.toObject ? updated.toObject() : updated;
-    await ListingCache.cacheListing('electronics', updatedObj);
-    // Log activity — visible in Upstash as: edited:electronics:{product-title}
-    await ListingCache.logProductEdited('electronics', oldListingObj, updatedObj);
-    // Only invalidate list caches (keeps individual listing cache alive)
-    await ListingCache.invalidateListCaches('electronics');
-    // Re-index in Elasticsearch
-    await SearchService.indexListing('electronics', updatedObj);
 
     res.status(200).json({
       success: true,
       message: "Electronics listing updated successfully",
       listing: updated,
     });
+
+    // Background: cache + log + invalidate + re-index (non-blocking)
+    Promise.all([
+      ListingCache.cacheListing('electronics', updatedObj),
+      ListingCache.logProductEdited('electronics', oldListingObj, updatedObj),
+      ListingCache.invalidateListCaches('electronics'),
+      SearchService.indexListing('electronics', updatedObj),
+    ]).catch((err) => logger.error('[Background] Post-update error:', err.message));
   } catch (error) {
     logger.error("Update electronics error:", error);
     res.status(500).json({
@@ -373,17 +373,17 @@ exports.deleteElectronics = async (req, res) => {
 
     await Electronics.findByIdAndDelete(req.params.id);
 
-    // Log deletion activity — visible in Upstash as: deleted:electronics:{product-title}
-    await ListingCache.logProductDeleted('electronics', listing);
-    // Invalidate cache for this listing and all lists
-    await ListingCache.invalidateListingCache('electronics', req.params.id);
-    // Remove from Elasticsearch index
-    await SearchService.removeListing('electronics', req.params.id);
-
     res.status(200).json({
       success: true,
       message: "Electronics listing deleted successfully",
     });
+
+    // Background: log + invalidate + remove from search (non-blocking)
+    Promise.all([
+      ListingCache.logProductDeleted('electronics', listing),
+      ListingCache.invalidateListingCache('electronics', req.params.id),
+      SearchService.removeListing('electronics', req.params.id),
+    ]).catch((err) => logger.error('[Background] Post-delete error:', err.message));
   } catch (error) {
     logger.error("Delete electronics error:", error);
     res.status(500).json({

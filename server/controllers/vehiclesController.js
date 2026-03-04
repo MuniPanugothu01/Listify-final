@@ -77,19 +77,20 @@ exports.createVehicle = async (req, res) => {
 
     // Cache the new listing in Redis (visible in Upstash dashboard)
     const listingObj = populated.toObject ? populated.toObject() : populated;
-    await ListingCache.cacheListing('vehicles', listingObj);
-    // Log activity — visible in Upstash as: posted:vehicles:{product-title}
-    await ListingCache.logProductPosted('vehicles', listingObj);
-    // Only invalidate list caches (keeps individual listing cache alive)
-    await ListingCache.invalidateListCaches('vehicles');
-    // Index in Elasticsearch
-    await SearchService.indexListing('vehicles', listingObj);
 
     res.status(201).json({
       success: true,
       message: "Vehicle listing created successfully",
       listing: populated,
     });
+
+    // Background: cache + log + invalidate + index (non-blocking)
+    Promise.all([
+      ListingCache.cacheListing('vehicles', listingObj),
+      ListingCache.logProductPosted('vehicles', listingObj),
+      ListingCache.invalidateListCaches('vehicles'),
+      SearchService.indexListing('vehicles', listingObj),
+    ]).catch((err) => logger.error('[Background] Post-create error:', err.message));
   } catch (error) {
     logger.error("Create vehicle error:", error);
     res.status(500).json({
@@ -187,23 +188,20 @@ exports.getAllVehicles = async (req, res) => {
       limit: Number(limit),
     };
 
-    // Store in listing cache (visible in Upstash Redis dashboard)
-    await ListingCache.cacheListingList('vehicles', queryKey, listings, pagination);
-
-    // Prefetch every listing + its images into individual cache keys
-    // so clicking any listing afterwards is instant from cache
-    await ListingCache.prefetchCategoryListings('vehicles', listings);
-
-    if (search) {
-      await ListingCache.cacheSearchResults('vehicles', search, listings, pagination);
-    }
-
+    // Send response FIRST, then cache in background (non-blocking)
     res.setHeader('X-Cache', 'MISS');
     res.status(200).json({
       success: true,
       listings,
       pagination,
     });
+
+    // ── Background cache writes (don't block response) ──────────
+    Promise.all([
+      ListingCache.cacheListingList('vehicles', queryKey, listings, pagination),
+      ListingCache.prefetchCategoryListings('vehicles', listings),
+      search ? ListingCache.cacheSearchResults('vehicles', search, listings, pagination) : null,
+    ]).catch((err) => logger.error('[Cache] Background cache write error:', err.message));
   } catch (error) {
     logger.error("Get all vehicles error:", error);
     res.status(500).json({
@@ -274,15 +272,17 @@ exports.getVehicleById = async (req, res) => {
       logger.debug('View count Redis error:', viewErr.message);
     }
 
-    // Cache this listing in Redis (visible in Upstash dashboard)
-    const listingObj = listing.toObject ? listing.toObject() : listing;
-    await ListingCache.cacheListing('vehicles', listingObj);
-
+    // Send response FIRST, cache in background
     res.setHeader('X-Cache', 'MISS');
     res.status(200).json({
       success: true,
       listing,
     });
+
+    // Cache in background (non-blocking)
+    const listingObj = listing.toObject ? listing.toObject() : listing;
+    ListingCache.cacheListing('vehicles', listingObj)
+      .catch((err) => logger.error('[Cache] Background cache error:', err.message));
   } catch (error) {
     logger.error("Get vehicle by ID error:", error);
     res.status(500).json({
@@ -369,19 +369,20 @@ exports.updateVehicle = async (req, res) => {
 
     // Update cache with new data
     const updatedObj = updated.toObject ? updated.toObject() : updated;
-    await ListingCache.cacheListing('vehicles', updatedObj);
-    // Log activity — visible in Upstash as: edited:vehicles:{product-title}
-    await ListingCache.logProductEdited('vehicles', oldListingObj, updatedObj);
-    // Only invalidate list caches (keeps individual listing cache alive)
-    await ListingCache.invalidateListCaches('vehicles');
-    // Re-index in Elasticsearch
-    await SearchService.indexListing('vehicles', updatedObj);
 
     res.status(200).json({
       success: true,
       message: "Vehicle listing updated successfully",
       listing: updated,
     });
+
+    // Background: cache + log + invalidate + re-index (non-blocking)
+    Promise.all([
+      ListingCache.cacheListing('vehicles', updatedObj),
+      ListingCache.logProductEdited('vehicles', oldListingObj, updatedObj),
+      ListingCache.invalidateListCaches('vehicles'),
+      SearchService.indexListing('vehicles', updatedObj),
+    ]).catch((err) => logger.error('[Background] Post-update error:', err.message));
   } catch (error) {
     logger.error("Update vehicle error:", error);
     res.status(500).json({
@@ -413,20 +414,19 @@ exports.deleteVehicle = async (req, res) => {
       });
     }
 
-    // Log activity before deletion — visible in Upstash as: deleted:vehicles:{product-title}
-    await ListingCache.logProductDeleted('vehicles', listing);
-
     await Vehicle.findByIdAndDelete(req.params.id);
-
-    // Invalidate cache for this listing and all lists
-    await ListingCache.invalidateListingCache('vehicles', req.params.id);
-    // Remove from Elasticsearch index
-    await SearchService.removeListing('vehicles', req.params.id);
 
     res.status(200).json({
       success: true,
       message: "Vehicle listing deleted successfully",
     });
+
+    // Background: log + invalidate + remove from search (non-blocking)
+    Promise.all([
+      ListingCache.logProductDeleted('vehicles', listing),
+      ListingCache.invalidateListingCache('vehicles', req.params.id),
+      SearchService.removeListing('vehicles', req.params.id),
+    ]).catch((err) => logger.error('[Background] Post-delete error:', err.message));
   } catch (error) {
     logger.error("Delete vehicle error:", error);
     res.status(500).json({
