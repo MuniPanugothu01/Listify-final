@@ -772,9 +772,6 @@ export const forSaleAPI = {
   },
 };
 
-// ==================== MESSAGES API ====================
-const messagesApi = axios.create({
-  baseURL: `${BASE_API_URL}/messages`,
 // ==================== CHAT / MESSAGES API ====================
 const chatApi = axios.create({
   baseURL: `${BASE_API_URL}/chat`,
