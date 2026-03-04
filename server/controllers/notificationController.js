@@ -1,5 +1,13 @@
 const Notification = require("../models/Notification");
 const { logger } = require("../utils/logger");
+const { encrypt, decrypt, isEncryptionEnabled } = require("../services/encryptionService");
+
+// Helper: set no-cache headers on sensitive responses
+const setNoCacheHeaders = (res) => {
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
+};
 
 // ==================== GET NOTIFICATIONS ====================
 exports.getNotifications = async (req, res) => {
@@ -20,7 +28,7 @@ exports.getNotifications = async (req, res) => {
       Notification.countDocuments({ recipient: userId, read: false }),
     ]);
 
-    // Attach sender profile image URL
+    // Attach sender profile image URL and decrypt message
     const formatted = notifications.map((n) => {
       const s = n.sender;
       const profileImageUrl = s
@@ -28,6 +36,7 @@ exports.getNotifications = async (req, res) => {
         : null;
       return {
         ...n,
+        message: decrypt(n.message),
         sender: s
           ? {
               id: s._id,
@@ -39,9 +48,11 @@ exports.getNotifications = async (req, res) => {
       };
     });
 
+    setNoCacheHeaders(res);
     res.status(200).json({
       success: true,
       notifications: formatted,
+      encrypted: isEncryptionEnabled(),
       unreadCount,
       total,
       page,
@@ -60,6 +71,7 @@ exports.getUnreadCount = async (req, res) => {
       recipient: req.user.id,
       read: false,
     });
+    setNoCacheHeaders(res);
     res.status(200).json({ success: true, unreadCount: count });
   } catch (error) {
     logger.error("Get unread count error:", error);
@@ -127,11 +139,14 @@ exports.createNotification = async ({ recipient, sender, type, message, metadata
     // Don't notify yourself
     if (recipient.toString() === sender.toString()) return null;
 
+    // Encrypt notification message before storing
+    const encryptedMessage = encrypt(message);
+
     const notification = await Notification.create({
       recipient,
       sender,
       type,
-      message,
+      message: encryptedMessage,
       metadata,
     });
 

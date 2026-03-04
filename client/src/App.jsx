@@ -73,6 +73,7 @@ const Profile = lazy(() => import("./pages/Home/Profile.jsx"));
 // ── Always loaded ──
 import ChatBot from "./components/ChatBot.jsx";
 import { ScrollProgress } from "./components/ui/scroll-progress.jsx";
+import { SocketProvider } from "./hooks/useSocket.jsx";
 import { Toaster, ToastBar } from "react-hot-toast";
 
 // Suspense fallback for lazy routes
@@ -321,7 +322,7 @@ const AppContent = () => {
           <Route path="/forums" element={<div>Forums Page</div>} />
           <Route path="/community" element={<div>Community Page</div>} />
           <Route path="/my-listings" element={<div>My Listings Page</div>} />
-          <Route path="/messages" element={<div>Messages Page</div>} />
+
           <Route
             path="/notifications"
             element={<div>Notifications Page</div>}
@@ -369,8 +370,10 @@ const App = () => {
   return (
     <GoogleOAuthProvider clientId={googleClientId || ""}>
       <Router>
-        <ScrollToTop />
-        <AppContent />
+        <SocketProvider>
+          <ScrollToTop />
+          <AppContent />
+        </SocketProvider>
       </Router>
     </GoogleOAuthProvider>
   );
