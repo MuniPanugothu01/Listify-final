@@ -136,6 +136,9 @@ exports.deleteNotification = async (req, res) => {
 // ==================== CREATE NOTIFICATION (internal helper) ====================
 exports.createNotification = async ({ recipient, sender, type, message, metadata = {} }) => {
   try {
+    // Guard against missing recipient/sender
+    if (!recipient || !sender) return null;
+
     // Don't notify yourself
     if (recipient.toString() === sender.toString()) return null;
 

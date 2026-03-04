@@ -700,6 +700,7 @@ const Navbar = () => {
                 </button>
 
                 {/* Heart Icon (Saved Items) */}
+                {isAuthenticated && (
                 <Link to="/dashboard/saved" onClick={scrollToTop}>
                   <button
                     className={`p-2 rounded-full transition-colors ${
@@ -711,6 +712,7 @@ const Navbar = () => {
                     <FaRegHeart size={18} />
                   </button>
                 </Link>
+                )}
 
                 {/* Messages Icon */}
                 {isAuthenticated && (
@@ -945,6 +947,7 @@ const Navbar = () => {
                 </button>
 
                 {/* Mobile Heart Icon */}
+                {isAuthenticated && (
                 <Link to="/dashboard/saved" onClick={scrollToTop}>
                   <button
                     className={`p-2 rounded-full ${
@@ -954,6 +957,7 @@ const Navbar = () => {
                     <FaRegHeart size={18} />
                   </button>
                 </Link>
+                )}
 
                 {/* Mobile Messages Icon */}
                 {isAuthenticated && (
@@ -1198,6 +1202,7 @@ const Navbar = () => {
                 </div>
 
                 {/* Mobile Saved Items Link */}
+                {isAuthenticated && (
                 <div className="border-t border-gray-100 pt-2 mt-2">
                   <Link
                     to="/dashboard/saved"
@@ -1211,6 +1216,7 @@ const Navbar = () => {
                     Saved Items
                   </Link>
                 </div>
+                )}
 
                 {/* Mobile Notifications Link */}
                 {isAuthenticated && (
