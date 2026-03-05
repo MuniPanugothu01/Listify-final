@@ -38,8 +38,13 @@ export const createVehicleListing = createAsyncThunk(
       const response = await vehiclesAPI.create(listingData);
       return response.data.listing;
     } catch (error) {
+      const data = error.response?.data;
+      if (data?.errors && typeof data.errors === 'object') {
+        const fieldErrors = Object.values(data.errors).join('. ');
+        return rejectWithValue(fieldErrors);
+      }
       return rejectWithValue(
-        error.response?.data?.message || error.message || "Failed to create listing"
+        data?.message || error.message || "Failed to create listing"
       );
     }
   }

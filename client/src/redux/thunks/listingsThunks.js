@@ -87,7 +87,22 @@ export const submitPostAd = createAsyncThunk(
                 "Could not upload images. Please check your connection and try again."),
           );
         }
-        const listingData = buildBaseListingData(form, category, subcategory, imageUrls);
+        const listingData = {
+          ...buildBaseListingData(form, category, subcategory, imageUrls),
+          brand: form.brand,
+          model: form.model,
+          warranty: form.warranty,
+          purchaseYear: form.purchaseYear,
+          screenSize: form.screenSize,
+          displayType: form.displayType,
+          processor: form.processor,
+          ram: form.ram,
+          storage: form.storage,
+          capacity: form.capacity,
+          energyRating: form.energyRating,
+          megapixels: form.megapixels,
+          lensType: form.lensType,
+        };
         // Dispatch through the electronics slice thunk so Redux state
         // (listings + myListings) is updated immediately
         const listing = await dispatch(createElectronicsListing(listingData)).unwrap();
@@ -128,6 +143,7 @@ export const submitPostAd = createAsyncThunk(
           frameSize: form.frameSize,
           compatibleVehicle: form.compatibleVehicle,
           partCategory: form.partCategory,
+          color: form.color,
         };
         // Dispatch through the vehicles slice thunk so Redux state
         // (listings + myListings) is updated immediately
@@ -223,6 +239,11 @@ export const submitPostAd = createAsyncThunk(
       return { type: "draft", message: "Listing posted successfully!" };
 
     } catch (error) {
+      // If error is a string (from an inner thunk's rejectWithValue via .unwrap()),
+      // forward it directly instead of trying to access .response/.message on it.
+      if (typeof error === 'string') {
+        return rejectWithValue(error);
+      }
       return rejectWithValue(
         error.response?.data?.message ||
           error.message ||

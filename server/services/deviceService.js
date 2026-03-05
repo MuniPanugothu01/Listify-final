@@ -1,7 +1,7 @@
 const UAParser = require('ua-parser-js');
 const geoip = require('geoip-lite');
-const { v4: uuidv4 } = require('uuid');
 const { logger } = require('../utils/logger');
+let uuidv4;
 
 class DeviceService {
   /**
@@ -113,7 +113,11 @@ class DeviceService {
    * @param {string} tokenId - JWT token ID
    * @returns {Object} Device session
    */
-  createDeviceSession(req, tokenId) {
+  async createDeviceSession(req, tokenId) {
+    if (!uuidv4) {
+      const uuid = await import('uuid');
+      uuidv4 = uuid.v4;
+    }
     const userAgent = req.get('user-agent') || 'Unknown';
     const ip = req.ip || req.connection.remoteAddress;
     

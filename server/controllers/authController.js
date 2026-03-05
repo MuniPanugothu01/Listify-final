@@ -580,7 +580,7 @@ exports.googleTokenAuth = async (req, res) => {
     const decoded = jwt.decode(refreshToken);
 
     // Create device session
-    const deviceSession = deviceService.createDeviceSession(req, decoded.jti);
+    const deviceSession = await deviceService.createDeviceSession(req, decoded.jti);
 
     // Update user devices
     await user.updateDeviceSession(deviceSession, decoded.jti);

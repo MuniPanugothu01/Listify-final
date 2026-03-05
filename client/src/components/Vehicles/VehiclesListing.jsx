@@ -12,9 +12,7 @@ import {
   Fuel,
   Gauge,
   Calendar,
-  Users,
   Cog,
-  Shield,
   Loader2,
 } from "lucide-react";
 import { fetchAllVehicles, toggleSaveVehicle } from "../../redux/slices/vehiclesSlice";
@@ -25,17 +23,9 @@ const VehicleCard = ({ vehicle, onClick, onToggleSave, isSaved, user }) => {
   const [imgLoaded, setImgLoaded] = React.useState(false);
   const [saving, setSaving] = React.useState(false);
   const categoryIcons = {
-    'Sedan': <Car className="w-4 h-4" />,
-    'SUV': <Users className="w-4 h-4" />,
-    'Electric': <Car className="w-4 h-4" />,
-    'Truck': <Car className="w-4 h-4" />,
-    'Luxury': <Shield className="w-4 h-4" />,
-    'Wagon': <Car className="w-4 h-4" />,
-    'Hybrid': <Fuel className="w-4 h-4" />,
     'Cars': <Car className="w-4 h-4" />,
-    'Motorcycles': <Car className="w-4 h-4" />,
-    'Scooters': <Car className="w-4 h-4" />,
-    'Bicycles': <Car className="w-4 h-4" />,
+    'Bikes': <Car className="w-4 h-4" />,
+    'Cycle': <Car className="w-4 h-4" />,
     'Spare Parts': <Cog className="w-4 h-4" />,
   };
 
@@ -102,9 +92,14 @@ const VehicleCard = ({ vehicle, onClick, onToggleSave, isSaved, user }) => {
           </div>
         )}
 
-        <h3 className="font-medium text-gray-900 text-sm mb-2 line-clamp-2 min-h-[36px] leading-tight">
+        <h3 className="font-medium text-gray-900 text-sm mb-1 line-clamp-2 min-h-[36px] leading-tight">
           {vehicle.title}
         </h3>
+        {vehicle.brand && (
+          <span className="text-[10px] font-semibold text-purple-600 bg-purple-50 px-1.5 py-0.5 rounded mb-1 inline-block">
+            {vehicle.brand}
+          </span>
+        )}
 
         <div className="flex items-center justify-between mb-2">
           <span className="text-base sm:text-lg font-bold text-gray-900">
@@ -262,7 +257,7 @@ const VehiclesListing = () => {
             {/* Price Range */}
             <div className="mb-6">
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Price range ($)
+                Price range (₹)
               </label>
               <div className="flex items-center gap-2">
                 <input

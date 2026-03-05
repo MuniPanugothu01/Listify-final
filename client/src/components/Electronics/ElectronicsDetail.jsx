@@ -12,19 +12,13 @@ import {
   Check,
   Clock,
   Shield,
-  Truck,
   Package,
   Battery,
   Camera,
-  Wifi,
   Smartphone,
   ChevronLeft,
   ChevronRight as ChevronRightIcon,
-  Navigation,
   Globe,
-  Headphones,
-  Watch,
-  Gamepad,
   Laptop,
   Loader2,
   X,
@@ -264,62 +258,30 @@ const ElectronicsDetail = () => {
     );
   }
 
-  // Generate specs based on product category
+  // Build real specifications from product data
   const getProductSpecs = () => {
-    const category = product.category?.toLowerCase() || '';
-    const title = product.title.toLowerCase();
-    
-    if (category.includes('wearables') || title.includes('watch') || title.includes('fitbit')) {
-      return [
-        { icon: <Watch className="text-[#27bb97] text-xl" />, label: 'Battery Life', value: '24+ hours' },
-        { icon: <Wifi className="text-[#27bb97] text-xl" />, label: 'Connectivity', value: 'Bluetooth 5.2' },
-        { icon: <Shield className="text-[#27bb97] text-xl" />, label: 'Water Resistance', value: 'IP68' },
-        { icon: <Smartphone className="text-[#27bb97] text-xl" />, label: 'Display', value: '1.93" AMOLED' },
-      ];
-    } else if (category.includes('headphones') || title.includes('headphone') || title.includes('airpod') || title.includes('earbud')) {
-      return [
-        { icon: <Headphones className="text-[#27bb97] text-xl" />, label: 'Battery Life', value: '30 hours' },
-        { icon: <Wifi className="text-[#27bb97] text-xl" />, label: 'Connectivity', value: 'Bluetooth 5.0' },
-        { icon: <Shield className="text-[#27bb97] text-xl" />, label: 'Noise Cancelling', value: 'Active' },
-        { icon: <Battery className="text-[#27bb97] text-xl" />, label: 'Charging', value: 'USB-C' },
-      ];
-    } else if (category.includes('camera') || title.includes('camera') || title.includes('dji') || title.includes('canon')) {
-      return [
-        { icon: <Camera className="text-[#27bb97] text-xl" />, label: 'Megapixels', value: '24MP+' },
-        { icon: <Wifi className="text-[#27bb97] text-xl" />, label: 'Video', value: '4K' },
-        { icon: <Shield className="text-[#27bb97] text-xl" />, label: 'Stabilization', value: 'Yes' },
-        { icon: <Package className="text-[#27bb97] text-xl" />, label: 'Storage', value: 'SD Card' },
-      ];
-    } else if (category.includes('video games') || title.includes('ps4') || title.includes('xbox') || title.includes('game')) {
-      return [
-        { icon: <Gamepad className="text-[#27bb97] text-xl" />, label: 'Platform', value: title.includes('ps4') ? 'PS4' : 'Xbox' },
-        { icon: <Package className="text-[#27bb97] text-xl" />, label: 'Condition', value: product.condition },
-        { icon: <Shield className="text-[#27bb97] text-xl" />, label: 'Region', value: 'US' },
-        { icon: <Check className="text-[#27bb97] text-xl" />, label: 'Case', value: 'Included' },
-      ];
-    } else if (category.includes('cell phones') || title.includes('iphone') || title.includes('phone') || title.includes('mobile')) {
-      return [
-        { icon: <Smartphone className="text-[#27bb97] text-xl" />, label: 'Storage', value: '128GB' },
-        { icon: <Battery className="text-[#27bb97] text-xl" />, label: 'Battery Health', value: '90%+' },
-        { icon: <Camera className="text-[#27bb97] text-xl" />, label: 'Camera', value: '48MP' },
-        { icon: <Shield className="text-[#27bb97] text-xl" />, label: 'Face ID', value: 'Yes' },
-      ];
-    } else if (category.includes('audio') || title.includes('speaker') || title.includes('microphone')) {
-      return [
-        { icon: <Headphones className="text-[#27bb97] text-xl" />, label: 'Sound', value: 'Stereo' },
-        { icon: <Wifi className="text-[#27bb97] text-xl" />, label: 'Connectivity', value: 'Bluetooth' },
-        { icon: <Battery className="text-[#27bb97] text-xl" />, label: 'Battery', value: '10+ hours' },
-        { icon: <Shield className="text-[#27bb97] text-xl" />, label: 'Waterproof', value: 'IPX7' },
-      ];
-    } else {
-      return [
-        { icon: <Package className="text-[#27bb97] text-xl" />, label: 'Condition', value: product.condition },
-        { icon: <Shield className="text-[#27bb97] text-xl" />, label: 'Warranty', value: 'Not included' },
-        { icon: <Truck className="text-[#27bb97] text-xl" />, label: 'Shipping', value: 'Local pickup' },
-        { icon: <Clock className="text-[#27bb97] text-xl" />, label: 'Listed', value: product.postedTime },
-      ];
-    }
+    const specs = [];
+    if (product.brand) specs.push({ icon: <Package className="text-[#27bb97] text-xl" />, label: 'Brand', value: product.brand });
+    if (product.model) specs.push({ icon: <Smartphone className="text-[#27bb97] text-xl" />, label: 'Model', value: product.model });
+    if (product.condition) specs.push({ icon: <Check className="text-[#27bb97] text-xl" />, label: 'Condition', value: product.condition });
+    if (product.warranty) specs.push({ icon: <Shield className="text-[#27bb97] text-xl" />, label: 'Warranty', value: product.warranty });
+    if (product.purchaseYear) specs.push({ icon: <Calendar className="text-[#27bb97] text-xl" />, label: 'Purchase Year', value: String(product.purchaseYear) });
+    if (product.screenSize) specs.push({ icon: <Laptop className="text-[#27bb97] text-xl" />, label: 'Screen Size', value: product.screenSize });
+    if (product.displayType) specs.push({ icon: <Laptop className="text-[#27bb97] text-xl" />, label: 'Display Type', value: product.displayType });
+    if (product.processor) specs.push({ icon: <Laptop className="text-[#27bb97] text-xl" />, label: 'Processor', value: product.processor });
+    if (product.ram) specs.push({ icon: <Battery className="text-[#27bb97] text-xl" />, label: 'RAM', value: product.ram });
+    if (product.storage) specs.push({ icon: <Package className="text-[#27bb97] text-xl" />, label: 'Storage', value: product.storage });
+    if (product.capacity) specs.push({ icon: <Package className="text-[#27bb97] text-xl" />, label: 'Capacity', value: product.capacity });
+    if (product.energyRating) specs.push({ icon: <Star className="text-[#27bb97] text-xl" />, label: 'Energy Rating', value: product.energyRating });
+    if (product.megapixels) specs.push({ icon: <Camera className="text-[#27bb97] text-xl" />, label: 'Megapixels', value: product.megapixels });
+    if (product.lensType) specs.push({ icon: <Camera className="text-[#27bb97] text-xl" />, label: 'Lens Type', value: product.lensType });
+    // Always show subcategory and listed date
+    if (product.subcategory) specs.push({ icon: <Package className="text-[#27bb97] text-xl" />, label: 'Category', value: product.subcategory });
+    if (product.createdAt) specs.push({ icon: <Clock className="text-[#27bb97] text-xl" />, label: 'Listed', value: new Date(product.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) });
+    return specs;
   };
+
+  const productSpecs = getProductSpecs();
 
   return (
     <div className="min-h-screen bg-gray-50 animate-fade-in-up">
@@ -431,28 +393,44 @@ const ElectronicsDetail = () => {
                 {product.description}
               </p>
 
-                  {/* Specifications */}
-              {/* <div className="bg-white rounded-lg shadow-sm p-6">
-                <h3 className="text-lg font-bold mb-4 tracking-wider text-gray-700">
-                  SPECIFICATIONS
+              {/* Features */}
+              {product.features && product.features.length > 0 && (
+                <div className="mt-6">
+                  <h4 className="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-3">Key Features</h4>
+                  <div className="flex flex-wrap gap-2">
+                    {product.features.map((feature, i) => (
+                      <span key={i} className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#27bb97]/10 text-[#27bb97] text-sm font-medium rounded-full">
+                        <Check className="w-3.5 h-3.5" />
+                        {feature}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Specifications Section */}
+            {productSpecs.length > 0 && (
+              <div className="mt-8 bg-white rounded-lg shadow-sm p-6">
+                <h3 className="text-xl font-bold mb-5 text-gray-900 flex items-center">
+                  <Package className="w-5 h-5 mr-2 text-[#27bb97]" />
+                  Specifications
                 </h3>
-                <div className="grid grid-cols-2 gap-y-4">
-                  {getProductSpecs().map((spec, index) => (
-                    <div key={index} className="flex items-center gap-3">
-                      <div className="w-10 h-10 flex items-center justify-center bg-gray-50 rounded-lg">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {productSpecs.map((spec, index) => (
+                    <div key={index} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                      <div className="w-10 h-10 flex items-center justify-center bg-white rounded-lg shadow-sm">
                         {spec.icon}
                       </div>
                       <div>
-                        <div className="text-xs text-gray-500">{spec.label}</div>
-                        <div className="text-sm font-medium text-gray-700">{spec.value}</div>
+                        <div className="text-xs text-gray-500 uppercase tracking-wider">{spec.label}</div>
+                        <div className="text-sm font-semibold text-gray-800">{spec.value}</div>
                       </div>
                     </div>
                   ))}
                 </div>
-              </div> */}
-              
-
-            </div>
+              </div>
+            )}
           </div>
 
           {/* Right Column - Details - Takes 40% (4 columns) */}
@@ -469,11 +447,42 @@ const ElectronicsDetail = () => {
                     ASKING PRICE
                   </div>
                   <div className="text-4xl lg:text-4xl font-bold text-[#27bb97]">
-                    ${product.price}
+                    ₹{product.price?.toLocaleString('en-IN')}
                   </div>
                 </div>
 
-                {/* Condition & Location */}
+                {/* Quick Info Badges */}
+                <div className="flex flex-wrap gap-2 mb-5">
+                  {product.condition && (
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-700 text-xs font-semibold rounded-full">
+                      <Check className="w-3.5 h-3.5" />
+                      {product.condition}
+                    </span>
+                  )}
+                  {product.brand && (
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-purple-50 text-purple-700 text-xs font-semibold rounded-full">
+                      {product.brand}
+                    </span>
+                  )}
+                  {product.model && (
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 text-gray-700 text-xs font-semibold rounded-full">
+                      {product.model}
+                    </span>
+                  )}
+                  {product.warranty && product.warranty !== 'No Warranty' && (
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-green-50 text-green-700 text-xs font-semibold rounded-full">
+                      <Shield className="w-3.5 h-3.5" />
+                      {product.warranty}
+                    </span>
+                  )}
+                  {product.subcategory && (
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-orange-50 text-orange-700 text-xs font-semibold rounded-full">
+                      {product.subcategory}
+                    </span>
+                  )}
+                </div>
+
+                {/* Location */}
                 <div className="flex items-center gap-4 text-gray-600 mb-6">
                   <div className="flex items-center">
                     <MapPin className="w-4 h-4 mr-1.5" />
@@ -654,7 +663,7 @@ const ElectronicsDetail = () => {
                     </p>
                     <div className="flex items-center justify-between">
                       <span className="text-2xl font-bold text-[#27bb97]">
-                        ${item.price}
+                        ₹{item.price?.toLocaleString('en-IN')}
                       </span>
                       {item.condition && (
                         <span className="text-xs font-medium text-gray-500 px-3 py-1.5 bg-gray-100 rounded-full">
@@ -693,7 +702,7 @@ const ElectronicsDetail = () => {
               </div>
               <h3 className="text-xl font-bold text-gray-900">Make an Offer</h3>
               <p className="text-sm text-gray-500 mt-1">
-                Listing price: <span className="font-semibold text-[#27bb97]">${product.price}</span>
+                Listing price: <span className="font-semibold text-[#27bb97]">₹{product.price?.toLocaleString('en-IN')}</span>
               </p>
             </div>
 

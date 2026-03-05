@@ -103,6 +103,45 @@ const SPARE_PART_CATEGORIES = [
 
 const COMPATIBLE_VEHICLES = ["Car", "Bike", "Cycle", "Universal"];
 
+const VEHICLE_COLORS = [
+  "White", "Black", "Silver", "Grey", "Red", "Blue", "Brown",
+  "Green", "Yellow", "Orange", "Gold", "Beige", "Maroon", "Other",
+];
+
+/* ── Electronics option lists ── */
+
+const TV_BRANDS = [
+  "Samsung", "LG", "Sony", "Mi (Xiaomi)", "OnePlus", "TCL", "Hisense",
+  "Panasonic", "Philips", "VU", "Toshiba", "Realme", "Motorola", "Other",
+];
+const APPLIANCE_BRANDS = [
+  "Samsung", "LG", "Whirlpool", "Bosch", "IFB", "Godrej", "Haier",
+  "Panasonic", "Voltas", "Daikin", "Blue Star", "Carrier", "Hitachi",
+  "Bajaj", "Philips", "Prestige", "Crompton", "Havells", "Other",
+];
+const COMPUTER_BRANDS = [
+  "Apple", "Dell", "HP", "Lenovo", "Asus", "Acer", "MSI", "Samsung",
+  "Microsoft", "Gigabyte", "Razer", "LG", "Other",
+];
+const CAMERA_BRANDS = [
+  "Canon", "Nikon", "Sony", "Fujifilm", "Panasonic (Lumix)", "Olympus",
+  "GoPro", "DJI", "Sigma", "Leica", "Other",
+];
+const ACCESSORY_BRANDS = [
+  "Logitech", "Corsair", "Razer", "HP", "Dell", "Samsung", "Seagate",
+  "Western Digital", "SanDisk", "Kingston", "Asus", "TP-Link", "Other",
+];
+
+const DISPLAY_TYPES = ["LED", "OLED", "QLED", "AMOLED", "LCD", "Plasma", "Mini-LED"];
+const SCREEN_SIZES_TV = ["24\"", "32\"", "40\"", "43\"", "50\"", "55\"", "65\"", "75\"", "85\"+"];
+const RAM_OPTIONS_COMP = ["4GB", "8GB", "16GB", "32GB", "64GB"];
+const STORAGE_OPTIONS_COMP = ["128GB SSD", "256GB SSD", "512GB SSD", "1TB SSD", "1TB HDD", "2TB HDD"];
+const ENERGY_RATINGS = ["1 Star", "2 Star", "3 Star", "4 Star", "5 Star"];
+const CAPACITY_OPTIONS = ["5 kg", "6 kg", "7 kg", "8 kg", "9 kg", "10 kg", "12 kg"];
+const AC_CAPACITY = ["0.8 Ton", "1 Ton", "1.5 Ton", "2 Ton"];
+const FRIDGE_CAPACITY = ["150L", "190L", "250L", "300L", "350L", "400L", "500L+"];
+const WARRANTY_OPTIONS = ["Under Warranty", "Expired", "No Warranty"];
+
 const YEAR_OPTIONS = Array.from(
   { length: 30 },
   (_, i) => new Date().getFullYear() - i
@@ -134,6 +173,14 @@ const DEFAULT_FORM = {
   // Spare Parts-specific
   compatibleVehicle: "",
   partCategory: "",
+  // Electronics-specific
+  displayType: "",
+  processor: "",
+  capacity: "",
+  energyRating: "",
+  megapixels: "",
+  lensType: "",
+  purchaseYear: "",
   // Mobiles
   storage: "",
   ram: "",
@@ -165,6 +212,16 @@ const DEFAULT_FORM = {
 
 /** Per-category / subcategory validation — returns an errors object fragment. */
 const CATEGORY_VALIDATORS = {
+  Electronics: (form, subcategory) => {
+    const errs = {};
+    const BRAND_REQUIRED = [
+      "TVs, Video - Audio", "Fridges", "Washing Machines", "ACs",
+      "Computers & Laptops", "Cameras & Lenses",
+    ];
+    if (BRAND_REQUIRED.includes(subcategory) && !form.brand)
+      errs.brand = "Brand is required";
+    return errs;
+  },
   Vehicles: (form, subcategory) => {
     const errs = {};
     switch (subcategory) {
@@ -214,6 +271,53 @@ const CATEGORY_VALIDATORS = {
 
 /** Per-category / subcategory form overrides. */
 const CATEGORY_FORM_CONFIG = {
+  Electronics: {
+    "TVs, Video - Audio": {
+      titleLabel: "Listing Title *",
+      titlePlaceholder: "e.g., Samsung 55\" Crystal 4K UHD Smart TV – Like New",
+      priceLabel: "Selling Price (₹) *",
+    },
+    "Kitchen & Other Appliances": {
+      titleLabel: "Appliance Title *",
+      titlePlaceholder: "e.g., Philips Air Fryer HD9252 – Barely Used",
+      priceLabel: "Selling Price (₹) *",
+    },
+    Fridges: {
+      titleLabel: "Fridge Title *",
+      titlePlaceholder: "e.g., Samsung 253L Double Door Frost Free – 2 Years Old",
+      priceLabel: "Selling Price (₹) *",
+    },
+    "Washing Machines": {
+      titleLabel: "Washing Machine Title *",
+      titlePlaceholder: "e.g., IFB 7 kg Front Load – Excellent Condition",
+      priceLabel: "Selling Price (₹) *",
+    },
+    ACs: {
+      titleLabel: "AC Title *",
+      titlePlaceholder: "e.g., Daikin 1.5 Ton 5 Star Split Inverter AC",
+      priceLabel: "Selling Price (₹) *",
+    },
+    "Computers & Laptops": {
+      titleLabel: "Computer / Laptop Title *",
+      titlePlaceholder: "e.g., MacBook Air M2 8GB/256GB – Under Warranty",
+      priceLabel: "Selling Price (₹) *",
+    },
+    "Computer Accessories": {
+      titleLabel: "Accessory Title *",
+      titlePlaceholder: "e.g., Logitech MX Master 3S Wireless Mouse – New",
+      priceLabel: "Price (₹) *",
+    },
+    "Hard Disks, Printers & Monitors": {
+      titleLabel: "Item Title *",
+      titlePlaceholder: "e.g., Dell 27\" 4K Monitor – Barely Used",
+      priceLabel: "Price (₹) *",
+    },
+    "Cameras & Lenses": {
+      titleLabel: "Camera / Lens Title *",
+      titlePlaceholder: "e.g., Sony Alpha A7 III with 28-70mm Kit Lens",
+      priceLabel: "Selling Price (₹) *",
+    },
+  },
   Vehicles: {
     Cars: {
       titleLabel: "Car Title *",
@@ -432,6 +536,8 @@ const CarFields = ({ form, setField, errors }) => (
       <SelectField label="Ownership *" error={errors.ownership} value={form.ownership}
         onChange={setField("ownership")} placeholder="Select Ownership" options={OWNERSHIPS} />
     </div>
+    <SelectField label="Color" value={form.color}
+      onChange={setField("color")} placeholder="Select Color" options={VEHICLE_COLORS} />
   </>
 );
 
@@ -462,6 +568,8 @@ const BikeFields = ({ form, setField, errors }) => (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
       <SelectField label="Ownership *" error={errors.ownership} value={form.ownership}
         onChange={setField("ownership")} placeholder="Select Ownership" options={OWNERSHIPS} />
+      <SelectField label="Color" value={form.color}
+        onChange={setField("color")} placeholder="Select Color" options={VEHICLE_COLORS} />
     </div>
   </>
 );
@@ -526,15 +634,237 @@ const VehicleFields = ({ form, setField, errors, subcategory }) => {
   }
 };
 
-const ElectronicsFields = ({ form, setField }) => (
-  <SelectField
-    label="Condition *"
-    value={form.condition}
-    onChange={setField("condition")}
-    placeholder="Select Condition"
-    options={CONDITIONS}
-  />
-);
+const ElectronicsFields = ({ form, setField, errors, subcategory }) => {
+  switch (subcategory) {
+    case "TVs, Video - Audio":
+      return (
+        <>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <SelectField label="Brand *" error={errors.brand} value={form.brand}
+              onChange={setField("brand")} placeholder="Select Brand" options={TV_BRANDS} />
+            <Field label="Model">
+              <input type="text" value={form.model} onChange={setField("model")}
+                placeholder="e.g., Crystal Vision 4K, OLED C3" className={INPUT_CLS} maxLength={100} />
+            </Field>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <SelectField label="Screen Size" value={form.screenSize}
+              onChange={setField("screenSize")} placeholder="Select Size" options={SCREEN_SIZES_TV} />
+            <SelectField label="Display Type" value={form.displayType}
+              onChange={setField("displayType")} placeholder="Select Display" options={DISPLAY_TYPES} />
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <SelectField label="Purchase Year" value={form.purchaseYear}
+              onChange={setField("purchaseYear")} placeholder="Select Year" options={YEAR_OPTIONS.slice(0, 10)} />
+            <SelectField label="Warranty" value={form.warranty}
+              onChange={setField("warranty")} placeholder="Warranty Status" options={WARRANTY_OPTIONS} />
+          </div>
+          <SelectField label="Condition *" value={form.condition}
+            onChange={setField("condition")} placeholder="Select Condition" options={CONDITIONS} />
+        </>
+      );
+
+    case "Fridges":
+      return (
+        <>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <SelectField label="Brand *" error={errors.brand} value={form.brand}
+              onChange={setField("brand")} placeholder="Select Brand" options={APPLIANCE_BRANDS} />
+            <Field label="Model">
+              <input type="text" value={form.model} onChange={setField("model")}
+                placeholder="e.g., 260L Frost Free Double Door" className={INPUT_CLS} maxLength={100} />
+            </Field>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <SelectField label="Capacity" value={form.capacity}
+              onChange={setField("capacity")} placeholder="Select Capacity" options={FRIDGE_CAPACITY} />
+            <SelectField label="Energy Rating" value={form.energyRating}
+              onChange={setField("energyRating")} placeholder="Select Rating" options={ENERGY_RATINGS} />
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <SelectField label="Purchase Year" value={form.purchaseYear}
+              onChange={setField("purchaseYear")} placeholder="Select Year" options={YEAR_OPTIONS.slice(0, 10)} />
+            <SelectField label="Warranty" value={form.warranty}
+              onChange={setField("warranty")} placeholder="Warranty Status" options={WARRANTY_OPTIONS} />
+          </div>
+          <SelectField label="Condition *" value={form.condition}
+            onChange={setField("condition")} placeholder="Select Condition" options={CONDITIONS} />
+        </>
+      );
+
+    case "Washing Machines":
+      return (
+        <>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <SelectField label="Brand *" error={errors.brand} value={form.brand}
+              onChange={setField("brand")} placeholder="Select Brand" options={APPLIANCE_BRANDS} />
+            <Field label="Model">
+              <input type="text" value={form.model} onChange={setField("model")}
+                placeholder="e.g., 7 kg Fully Automatic Front Load" className={INPUT_CLS} maxLength={100} />
+            </Field>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <SelectField label="Capacity" value={form.capacity}
+              onChange={setField("capacity")} placeholder="Select Capacity" options={CAPACITY_OPTIONS} />
+            <SelectField label="Energy Rating" value={form.energyRating}
+              onChange={setField("energyRating")} placeholder="Select Rating" options={ENERGY_RATINGS} />
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <SelectField label="Purchase Year" value={form.purchaseYear}
+              onChange={setField("purchaseYear")} placeholder="Select Year" options={YEAR_OPTIONS.slice(0, 10)} />
+            <SelectField label="Warranty" value={form.warranty}
+              onChange={setField("warranty")} placeholder="Warranty Status" options={WARRANTY_OPTIONS} />
+          </div>
+          <SelectField label="Condition *" value={form.condition}
+            onChange={setField("condition")} placeholder="Select Condition" options={CONDITIONS} />
+        </>
+      );
+
+    case "ACs":
+      return (
+        <>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <SelectField label="Brand *" error={errors.brand} value={form.brand}
+              onChange={setField("brand")} placeholder="Select Brand" options={APPLIANCE_BRANDS} />
+            <Field label="Model">
+              <input type="text" value={form.model} onChange={setField("model")}
+                placeholder="e.g., 1.5 Ton Split Inverter AC" className={INPUT_CLS} maxLength={100} />
+            </Field>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <SelectField label="Capacity (Tonnage)" value={form.capacity}
+              onChange={setField("capacity")} placeholder="Select Capacity" options={AC_CAPACITY} />
+            <SelectField label="Energy Rating" value={form.energyRating}
+              onChange={setField("energyRating")} placeholder="Select Rating" options={ENERGY_RATINGS} />
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <SelectField label="Purchase Year" value={form.purchaseYear}
+              onChange={setField("purchaseYear")} placeholder="Select Year" options={YEAR_OPTIONS.slice(0, 10)} />
+            <SelectField label="Warranty" value={form.warranty}
+              onChange={setField("warranty")} placeholder="Warranty Status" options={WARRANTY_OPTIONS} />
+          </div>
+          <SelectField label="Condition *" value={form.condition}
+            onChange={setField("condition")} placeholder="Select Condition" options={CONDITIONS} />
+        </>
+      );
+
+    case "Computers & Laptops":
+      return (
+        <>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <SelectField label="Brand *" error={errors.brand} value={form.brand}
+              onChange={setField("brand")} placeholder="Select Brand" options={COMPUTER_BRANDS} />
+            <Field label="Model">
+              <input type="text" value={form.model} onChange={setField("model")}
+                placeholder="e.g., MacBook Air M2, Inspiron 15" className={INPUT_CLS} maxLength={100} />
+            </Field>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <Field label="Processor">
+              <input type="text" value={form.processor} onChange={setField("processor")}
+                placeholder="e.g., Apple M2, Intel i7-13700H" className={INPUT_CLS} maxLength={100} />
+            </Field>
+            <SelectField label="RAM" value={form.ram}
+              onChange={setField("ram")} placeholder="Select RAM" options={RAM_OPTIONS_COMP} />
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <SelectField label="Storage" value={form.storage}
+              onChange={setField("storage")} placeholder="Select Storage" options={STORAGE_OPTIONS_COMP} />
+            <Field label="Screen Size">
+              <input type="text" value={form.screenSize} onChange={setField("screenSize")}
+                placeholder="e.g., 14 inches, 15.6 inches" className={INPUT_CLS} maxLength={50} />
+            </Field>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <SelectField label="Purchase Year" value={form.purchaseYear}
+              onChange={setField("purchaseYear")} placeholder="Select Year" options={YEAR_OPTIONS.slice(0, 10)} />
+            <SelectField label="Warranty" value={form.warranty}
+              onChange={setField("warranty")} placeholder="Warranty Status" options={WARRANTY_OPTIONS} />
+          </div>
+          <SelectField label="Condition *" value={form.condition}
+            onChange={setField("condition")} placeholder="Select Condition" options={CONDITIONS} />
+        </>
+      );
+
+    case "Cameras & Lenses":
+      return (
+        <>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <SelectField label="Brand *" error={errors.brand} value={form.brand}
+              onChange={setField("brand")} placeholder="Select Brand" options={CAMERA_BRANDS} />
+            <Field label="Model">
+              <input type="text" value={form.model} onChange={setField("model")}
+                placeholder="e.g., EOS R6, Alpha A7 III" className={INPUT_CLS} maxLength={100} />
+            </Field>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <Field label="Megapixels">
+              <input type="text" value={form.megapixels} onChange={setField("megapixels")}
+                placeholder="e.g., 24.2 MP" className={INPUT_CLS} maxLength={30} />
+            </Field>
+            <Field label="Lens Type">
+              <input type="text" value={form.lensType} onChange={setField("lensType")}
+                placeholder="e.g., 18-55mm Kit Lens, 50mm f/1.8" className={INPUT_CLS} maxLength={100} />
+            </Field>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <SelectField label="Purchase Year" value={form.purchaseYear}
+              onChange={setField("purchaseYear")} placeholder="Select Year" options={YEAR_OPTIONS.slice(0, 10)} />
+            <SelectField label="Warranty" value={form.warranty}
+              onChange={setField("warranty")} placeholder="Warranty Status" options={WARRANTY_OPTIONS} />
+          </div>
+          <SelectField label="Condition *" value={form.condition}
+            onChange={setField("condition")} placeholder="Select Condition" options={CONDITIONS} />
+        </>
+      );
+
+    case "Computer Accessories":
+    case "Hard Disks, Printers & Monitors":
+      return (
+        <>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <SelectField label="Brand" value={form.brand}
+              onChange={setField("brand")} placeholder="Select Brand" options={ACCESSORY_BRANDS} />
+            <Field label="Model">
+              <input type="text" value={form.model} onChange={setField("model")}
+                placeholder="e.g., MX Master 3S, WD My Passport 2TB" className={INPUT_CLS} maxLength={100} />
+            </Field>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <SelectField label="Purchase Year" value={form.purchaseYear}
+              onChange={setField("purchaseYear")} placeholder="Select Year" options={YEAR_OPTIONS.slice(0, 10)} />
+            <SelectField label="Warranty" value={form.warranty}
+              onChange={setField("warranty")} placeholder="Warranty Status" options={WARRANTY_OPTIONS} />
+          </div>
+          <SelectField label="Condition *" value={form.condition}
+            onChange={setField("condition")} placeholder="Select Condition" options={CONDITIONS} />
+        </>
+      );
+
+    case "Kitchen & Other Appliances":
+    default:
+      return (
+        <>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <SelectField label="Brand" value={form.brand}
+              onChange={setField("brand")} placeholder="Select Brand" options={APPLIANCE_BRANDS} />
+            <Field label="Model">
+              <input type="text" value={form.model} onChange={setField("model")}
+                placeholder="e.g., Mixer Grinder 750W, Air Fryer 4.5L" className={INPUT_CLS} maxLength={100} />
+            </Field>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <SelectField label="Purchase Year" value={form.purchaseYear}
+              onChange={setField("purchaseYear")} placeholder="Select Year" options={YEAR_OPTIONS.slice(0, 10)} />
+            <SelectField label="Warranty" value={form.warranty}
+              onChange={setField("warranty")} placeholder="Warranty Status" options={WARRANTY_OPTIONS} />
+          </div>
+          <SelectField label="Condition *" value={form.condition}
+            onChange={setField("condition")} placeholder="Select Condition" options={CONDITIONS} />
+        </>
+      );
+  }
+};
 
 /* ── Mobiles fields ── */
 
@@ -967,13 +1297,22 @@ const PostAdPage = () => {
     };
 
     if (!trimmed.title) errs.title = "Title is required";
+    else if (trimmed.title.length < 3) errs.title = "Title must be at least 3 characters";
+    else if (trimmed.title.length > 200) errs.title = "Title cannot exceed 200 characters";
     if (!selectedCategory) errs.category = "Please select a category";
     if (!selectedSubcategory) errs.subcategory = "Please select a subcategory";
     if (!form.price || isNaN(form.price) || Number(form.price) <= 0)
       errs.price = "Enter a valid price";
-    if (trimmed.description.length < 20)
+    else if (Number(form.price) > 999999999)
+      errs.price = "Price cannot exceed ₹99,99,99,999";
+    if (!trimmed.description)
+      errs.description = "Description is required";
+    else if (trimmed.description.length < 20)
       errs.description = "Description must be at least 20 characters";
+    else if (trimmed.description.length > 5000)
+      errs.description = "Description cannot exceed 5000 characters";
     if (!trimmed.location) errs.location = "Location is required";
+    else if (trimmed.location.length < 2) errs.location = "Location must be at least 2 characters";
     if (!trimmed.phone || !/^\d{10}$/.test(trimmed.phone))
       errs.phone = "Enter a valid 10-digit phone number";
     if (!form.images || form.images.length === 0)
@@ -1059,11 +1398,9 @@ const PostAdPage = () => {
 
   /* ── render: ad form ── */
 
-  const categoryConfig = selectedCategory === "Vehicles"
-    ? (CATEGORY_FORM_CONFIG.Vehicles?.[selectedSubcategory] || {})
-    : (CATEGORY_FORM_CONFIG[selectedCategory] || {});
+  const categoryConfig = CATEGORY_FORM_CONFIG[selectedCategory]?.[selectedSubcategory] || {};
   const titleLabel = categoryConfig.titleLabel || "Ad Title *";
-  const titlePlaceholder = categoryConfig.titlePlaceholder || "e.g., iPhone 14 Pro Max 256GB";
+  const titlePlaceholder = categoryConfig.titlePlaceholder || "Describe your item briefly";
   const priceLabel = categoryConfig.priceLabel || "Price (₹) *";
 
   const CategoryFields = CATEGORY_COMPONENTS[selectedCategory];
@@ -1141,7 +1478,7 @@ const PostAdPage = () => {
                 className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:border-[#27BB97] focus:ring-2 focus:ring-[#27BB97]/20 outline-none transition resize-none"
               />
               <p className="text-xs text-slate-400 mt-1">
-                {form.description.length} / 20 minimum characters
+                {form.description.length} / 5000 characters (min 20)
               </p>
             </Field>
 
