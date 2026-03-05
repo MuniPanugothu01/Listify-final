@@ -123,7 +123,7 @@ router.get('/', searchLimiter, async (req, res) => {
         .sort(sortOption)
         .skip(skip)
         .limit(Number(limit))
-        .populate('seller', 'firstName lastName email profileImage')
+        .populate('seller', 'firstName lastName profileImage')
         .lean(),
       Model.countDocuments(filter),
     ]);

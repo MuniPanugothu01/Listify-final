@@ -43,10 +43,12 @@ exports.createVehicle = async (req, res) => {
 
     // ── Server-side category enforcement ─────────────────────
     if (category !== 'Vehicles') {
-      logger.warn('[SECURITY] Wrong category on /api/vehicles', {
-        category,
-        userId: req.user?._id,
+      logger.securityLog('wrong_category', {
         ip: req.ip,
+        path: '/api/vehicles',
+        method: req.method,
+        reason: `expected Vehicles, received ${category}`,
+        userId: req.user?._id,
       });
       return res.status(400).json({
         success: false,
@@ -107,27 +109,8 @@ exports.createVehicle = async (req, res) => {
     });
 
     // ── Product posting log (detailed) ──────────────────────
-    logger.info('[PRODUCT_POSTED] Vehicle listing created', {
-      listingId: listing._id,
-      title,
-      category,
-      subcategory,
-      price,
-      condition: condition || 'Good',
-      location,
-      brand,
-      model,
-      year,
-      fuelType,
-      transmission,
-      ownership,
-      imageCount: (images || []).length,
-      sellerId: req.user._id,
-      sellerName: listingObj.sellerName,
-      sellerEmail: req.user.email,
-      ip: req.ip,
-      userAgent: req.get('user-agent'),
-      timestamp: new Date().toISOString(),
+    logger.productLog('posted', 'vehicles', listingObj, req, {
+      brand, model, year, fuelType, transmission, ownership,
     });
 
     // Background: cache + log + invalidate + index (non-blocking)
@@ -141,7 +124,7 @@ exports.createVehicle = async (req, res) => {
     logger.error("Create vehicle error:", error);
     res.status(500).json({
       success: false,
-      message: error.message || "Failed to create vehicle listing",
+      message: "Failed to create vehicle listing",
     });
   }
 };
@@ -222,7 +205,7 @@ exports.getAllVehicles = async (req, res) => {
         .sort(sortOption)
         .skip(skip)
         .limit(Number(limit))
-        .populate("seller", "firstName lastName email profileImage")
+        .populate("seller", "firstName lastName profileImage")
         .lean(),
       Vehicle.countDocuments(filter),
     ]);
@@ -448,6 +431,10 @@ exports.updateVehicle = async (req, res) => {
 // @access  Private (owner only)
 exports.deleteVehicle = async (req, res) => {
   try {
+    if (!require('mongoose').Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ success: false, message: "Invalid listing ID" });
+    }
+
     const listing = await Vehicle.findById(req.params.id);
 
     if (!listing) {
@@ -497,7 +484,7 @@ exports.getMyVehicles = async (req, res) => {
   try {
     const listings = await Vehicle.find({ seller: req.user._id })
       .sort({ createdAt: -1 })
-      .populate("seller", "firstName lastName email profileImage")
+      .populate("seller", "firstName lastName profileImage")
       .lean();
 
     res.status(200).json({
@@ -583,7 +570,7 @@ exports.getSavedVehicles = async (req, res) => {
       status: "active",
     })
       .sort({ createdAt: -1 })
-      .populate("seller", "firstName lastName email profileImage")
+      .populate("seller", "firstName lastName profileImage")
       .lean();
 
     // Store in Redis cache for next time
@@ -632,7 +619,7 @@ exports.getSavedVehicles = async (req, res) => {
 exports.toggleSave = async (req, res) => {
   try {
     const listing = await Vehicle.findById(req.params.id)
-      .populate("seller", "firstName lastName email profileImage");
+      .populate("seller", "firstName lastName profileImage");
 
     if (!listing) {
       return res.status(404).json({
@@ -660,7 +647,7 @@ exports.toggleSave = async (req, res) => {
       const savedListings = await Vehicle.find({
         savedBy: userId,
         status: 'active',
-      }).sort({ createdAt: -1 }).populate('seller', 'firstName lastName email profileImage').lean();
+      }).sort({ createdAt: -1 }).populate('seller', 'firstName lastName profileImage').lean();
 
       await redis.setex(savedKey, 600, JSON.stringify({
         userId: userId.toString(),

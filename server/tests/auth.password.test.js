@@ -26,7 +26,13 @@ const mockRedis = new RedisMock();
 
 jest.mock('../config/redis', () => mockRedis);
 jest.mock('../utils/logger', () => ({
-  logger: { info: jest.fn(), warn: jest.fn(), error: jest.fn(), debug: jest.fn() },
+  logger: {
+    info: jest.fn(), warn: jest.fn(), error: jest.fn(), debug: jest.fn(),
+    userLog: jest.fn(), securityLog: jest.fn(), productLog: jest.fn(),
+    requestLog: jest.fn(), dbLog: jest.fn(), emailLog: jest.fn(),
+    stream: { write: jest.fn() },
+  },
+  flushLogs: jest.fn().mockResolvedValue(),
 }));
 jest.mock('../services/emailService', () => ({
   sendOTPEmail: jest.fn().mockResolvedValue(true),

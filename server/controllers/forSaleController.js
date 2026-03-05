@@ -153,23 +153,9 @@ exports.createForSale = async (req, res) => {
     });
 
     // ── Product posting log (detailed) ──────────────────────
-    logger.info('[PRODUCT_POSTED] ForSale listing created', {
-      listingId: listing._id,
-      title,
-      category,
-      subcategory,
-      price,
-      condition: condition || 'Good',
-      location,
+    logger.productLog('posted', 'forsale', listingObj, req, {
       brand: brand || undefined,
       model: model || undefined,
-      imageCount: (images || []).length,
-      sellerId: req.user._id,
-      sellerName: listingObj.sellerName,
-      sellerEmail: req.user.email,
-      ip: req.ip,
-      userAgent: req.get('user-agent'),
-      timestamp: new Date().toISOString(),
     });
 
     // Background: cache + log + invalidate + index (non-blocking)
@@ -185,7 +171,7 @@ exports.createForSale = async (req, res) => {
     logger.error("Create forsale error:", error);
     res.status(500).json({
       success: false,
-      message: error.message || "Failed to create listing",
+      message: "Failed to create listing",
     });
   }
 };
@@ -273,7 +259,7 @@ exports.getAllForSale = async (req, res) => {
         .sort(sortOption)
         .skip(skip)
         .limit(Number(limit))
-        .populate("seller", "firstName lastName email profileImage")
+        .populate("seller", "firstName lastName profileImage")
         .lean(),
       ForSale.countDocuments(filter),
     ]);
@@ -521,6 +507,10 @@ exports.updateForSale = async (req, res) => {
 // @access  Private (owner only)
 exports.deleteForSale = async (req, res) => {
   try {
+    if (!require('mongoose').Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ success: false, message: "Invalid listing ID" });
+    }
+
     const listing = await ForSale.findById(req.params.id);
 
     if (!listing) {
@@ -572,7 +562,7 @@ exports.getMyForSale = async (req, res) => {
   try {
     const listings = await ForSale.find({ seller: req.user._id })
       .sort({ createdAt: -1 })
-      .populate("seller", "firstName lastName email profileImage")
+      .populate("seller", "firstName lastName profileImage")
       .lean();
 
     res.status(200).json({
@@ -661,7 +651,7 @@ exports.getSavedForSale = async (req, res) => {
       status: "active",
     })
       .sort({ createdAt: -1 })
-      .populate("seller", "firstName lastName email profileImage")
+      .populate("seller", "firstName lastName profileImage")
       .lean();
 
     // Store in Redis cache
@@ -745,7 +735,7 @@ exports.toggleSave = async (req, res) => {
         status: "active",
       })
         .sort({ createdAt: -1 })
-        .populate("seller", "firstName lastName email profileImage")
+        .populate("seller", "firstName lastName profileImage")
         .lean();
 
       await redis.setex(

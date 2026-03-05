@@ -281,7 +281,7 @@ const revokeAllUserTokens = async (userId) => {
  * Returns { tokens } on success, { error: 'invalid' } for bad tokens,
  * or { error: 'transient' } for temporary failures (Redis/network).
  */
-const refreshTokens = async (refreshToken) => {
+const refreshTokens = async (refreshToken, req = null) => {
   try {
     const session = await verifyRefreshToken(refreshToken);
     if (!session) {
@@ -289,10 +289,8 @@ const refreshTokens = async (refreshToken) => {
       return { error: 'invalid' };
     }
 
-    // Note: refreshTokens has no access to the original request, so
-    // the fingerprint won't be embedded during silent rotation.
-    // The authMiddleware.refreshToken handler passes req indirectly.
-    const newAccessToken = generateAccessToken(session.userId);
+    // Embed browser fingerprint when req is available
+    const newAccessToken = generateAccessToken(session.userId, req);
     const newRefreshToken = generateRefreshToken(session.userId);
 
     await revokeRefreshToken(refreshToken);
@@ -385,6 +383,7 @@ exports.login = async (req, res) => {
     );
 
     if (!user) {
+      logger.userLog('login', { email, ip: req.ip, userAgent: req.get('user-agent'), success: false, reason: 'user_not_found' });
       return res.status(401).json({
         success: false,
         message: "Invalid email or password",
@@ -459,6 +458,7 @@ exports.login = async (req, res) => {
         );
       }
 
+      logger.userLog('login', { email, ip: req.ip, userAgent: req.get('user-agent'), success: false, reason: 'invalid_password' });
       return res.status(401).json({
         success: false,
         message: "Invalid email or password",
@@ -532,6 +532,17 @@ exports.login = async (req, res) => {
     logger.info(`✅ Login successful for: ${email}`, {
       device: deviceSession.deviceName,
       location: deviceSession.location,
+    });
+
+    // ── CloudWatch: structured user login log ────────────────────
+    logger.userLog('login', {
+      userId: user._id.toString(),
+      email,
+      ip: req.ip,
+      userAgent: req.get('user-agent'),
+      provider: 'local',
+      success: true,
+      extra: { device: deviceSession.deviceName, location: deviceSession.location },
     });
 
     res.status(200).json({
@@ -628,6 +639,17 @@ exports.googleTokenAuth = async (req, res) => {
       isNew,
     });
 
+    // ── CloudWatch: structured Google login log ──────────────────
+    logger.userLog('login', {
+      userId: user._id.toString(),
+      email: user.email,
+      ip: req.ip,
+      userAgent: req.get('user-agent'),
+      provider: 'google',
+      success: true,
+      extra: { device: deviceSession.deviceName, location: deviceSession.location, isNew },
+    });
+
     res.status(statusCode).json({
       success: true,
       message,
@@ -679,6 +701,14 @@ exports.logout = async (req, res) => {
     res.status(200).json({
       success: true,
       message: "Logged out successfully",
+    });
+
+    // ── CloudWatch: structured logout log ────────────────────────
+    logger.userLog('logout', {
+      userId: req.user?._id?.toString() || 'unknown',
+      ip: req.ip,
+      userAgent: req.get('user-agent'),
+      success: true,
     });
   } catch (error) {
     logger.error("Logout error:", error);
@@ -1075,7 +1105,7 @@ exports.initiateRegister = async (req, res) => {
     }
 
     const otp = OTPGenerator.generateOTP();
-    logger.info(`✅ Generated OTP for ${email}: ${otp}`);
+    logger.info(`✅ Generated OTP for ${email}`);
 
     const salt = await bcrypt.genSalt(12);
     const hashedPassword = await bcrypt.hash(password, salt);
@@ -1120,7 +1150,7 @@ exports.initiateRegister = async (req, res) => {
 
       return res.status(500).json({
         success: false,
-        message: "Failed to send OTP email. " + emailError.message,
+        message: "Failed to send OTP email. Please try again later.",
       });
     }
 
@@ -1232,6 +1262,16 @@ exports.verifyOTPAndRegister = async (req, res) => {
 
     logger.info(`✅ User created in database: ${email}`);
 
+    // ── CloudWatch: structured user registration log ─────────────
+    logger.userLog('register', {
+      userId: user._id.toString(),
+      email,
+      ip: req.ip,
+      userAgent: req.get('user-agent'),
+      provider: 'local',
+      success: true,
+    });
+
     await RedisService.deletePendingRegistration(email);
 
     return await sendTokenResponse(
@@ -1262,7 +1302,7 @@ exports.refreshToken = async (req, res) => {
       });
     }
 
-    const result = await refreshTokens(refreshToken);
+    const result = await refreshTokens(refreshToken, req);
 
     // Token is genuinely invalid / expired → clear cookies
     if (result.error === 'invalid') {
@@ -1853,7 +1893,7 @@ exports.initiateForgotPassword = async (req, res) => {
 
       return res.status(500).json({
         success: false,
-        message: "Failed to send password reset OTP. " + emailError.message,
+        message: "Failed to send password reset OTP. Please try again later.",
       });
     }
 
@@ -2051,7 +2091,7 @@ exports.resendForgotPasswordOTP = async (req, res) => {
       );
       return res.status(500).json({
         success: false,
-        message: "Failed to resend OTP. " + emailError.message,
+        message: "Failed to resend OTP. Please try again later.",
       });
     }
 
@@ -2355,7 +2395,7 @@ exports.resendOTP = async (req, res) => {
       logger.error("❌ Failed to resend email:", emailError.message);
       return res.status(500).json({
         success: false,
-        message: "Failed to resend OTP. " + emailError.message,
+        message: "Failed to resend OTP. Please try again later.",
       });
     }
 

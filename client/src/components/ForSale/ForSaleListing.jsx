@@ -153,9 +153,15 @@ const ForSaleListing = () => {
   const filteredProducts = useMemo(() => {
     let result = allProducts;
 
-  // ── Redux state ────────────────────────────────────────────────
-  const { listings: electronicsListings, loading: electronicsLoading } = useSelector((s) => s.electronics);
-  const { listings: vehiclesListings, loading: vehiclesLoading } = useSelector((s) => s.vehicles);
+    // Category tab filter
+    if (activeFilter !== 'All') {
+      if (activeFilter === 'Electronics') result = result.filter((p) => p._source === 'electronics');
+      else if (activeFilter === 'Vehicles') result = result.filter((p) => p._source === 'vehicle');
+      else if (activeFilter === 'Mobiles') result = result.filter((p) => p._source === 'forsale' && p.category === 'Mobiles');
+      else if (activeFilter === 'Furniture') result = result.filter((p) => p._source === 'forsale' && p.category === 'Furniture');
+      else if (activeFilter === 'Fashion') result = result.filter((p) => p._source === 'forsale' && p.category === 'Fashion');
+      else if (activeFilter === 'Books & Sports') result = result.filter((p) => p._source === 'forsale' && p.category === 'Books, Sports');
+    }
 
     // Search query
     if (searchQuery.trim()) {

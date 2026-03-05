@@ -1,6 +1,12 @@
 import axios from "axios";
 import { resetPersistedState } from "../redux/store";
 
+// ── Dev-only logging (stripped in production builds) ──────────────
+const isDev = import.meta.env.DEV;
+const devLog = (...args) => isDev && console.log(...args);
+const devWarn = (...args) => isDev && console.warn(...args);
+const devError = (...args) => isDev && console.error(...args);
+
 // Use absolute URL in production, empty string (relative) in dev for Vite proxy
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "";
 const API_URL = `${BACKEND_URL}/api/auth`;
@@ -19,11 +25,11 @@ const api = axios.create({
 // Request interceptor - NO MANUAL TOKEN ADDITION
 api.interceptors.request.use(
   (config) => {
-    console.log(`🚀 Request: ${config.method.toUpperCase()} ${config.url}`);
+    devLog(`🚀 Request: ${config.method.toUpperCase()} ${config.url}`);
     return config;
   },
   (error) => {
-    console.error("Request interceptor error:", error);
+    devError("Request interceptor error:", error);
     return Promise.reject(error);
   },
 );
@@ -88,11 +94,11 @@ export const handle401 = async (error, axiosInstance) => {
 
   try {
     await _doRefreshRequest();
-    console.log("✅ Token refreshed successfully, retrying queued requests");
+    devLog("✅ Token refreshed successfully, retrying queued requests");
     processQueue(null);
     return axiosInstance(originalRequest);
   } catch (refreshError) {
-    console.error("❌ Token refresh failed:", refreshError.message);
+    devError("❌ Token refresh failed:", refreshError.message);
     processQueue(refreshError);
 
     // Only force-logout when the server explicitly says the refresh token
@@ -148,7 +154,7 @@ const _doRefreshRequest = async () => {
       if (status === 503 || status === 500) {
         if (isLast) throw error;
         const delay = 2000 * (attempt + 1);
-        console.warn(`🔄 Refresh got ${status}, retrying in ${delay / 1000}s...`);
+        devWarn(`🔄 Refresh got ${status}, retrying in ${delay / 1000}s...`);
         await new Promise(r => setTimeout(r, delay));
         continue;
       }
@@ -157,7 +163,7 @@ const _doRefreshRequest = async () => {
       if (!error.response) {
         if (isLast) throw error;
         const delay = 3000 * (attempt + 1);
-        console.warn(`🔄 Refresh network error, retrying in ${delay / 1000}s...`);
+        devWarn(`🔄 Refresh network error, retrying in ${delay / 1000}s...`);
         await new Promise(r => setTimeout(r, delay));
         continue;
       }
@@ -205,7 +211,7 @@ const createResponseInterceptor = (axiosInstance, label = "API") => {
     async (error) => {
       const originalRequest = error.config;
 
-      console.error(`${label} Error:`, {
+      devError(`${label} Error:`, {
         status: error.response?.status,
         data: error.response?.data,
         url: originalRequest?.url,
@@ -219,7 +225,7 @@ const createResponseInterceptor = (axiosInstance, label = "API") => {
         !originalRequest._503retry
       ) {
         originalRequest._503retry = true;
-        console.warn(`${label}: 503 — retrying in 3s...`);
+        devWarn(`${label}: 503 — retrying in 3s...`);
         await new Promise(r => setTimeout(r, 3000));
         return axiosInstance(originalRequest);
       }
@@ -279,9 +285,6 @@ export const authAPI = {
   login: (credentials) => {
     return api.post("/login", credentials, {
       withCredentials: true,
-      validateStatus: function (status) {
-        return status >= 200 && status < 600;
-      },
     });
   },
 
@@ -467,7 +470,7 @@ const notificationsApi = axios.create({
 // Apply shared interceptors
 notificationsApi.interceptors.request.use(
   (config) => {
-    console.log(`🚀 Notifications Request: ${config.method.toUpperCase()} ${config.url}`);
+    devLog(`🚀 Notifications Request: ${config.method.toUpperCase()} ${config.url}`);
     return config;
   },
   (error) => Promise.reject(error)
@@ -495,7 +498,7 @@ const listingsApi = axios.create({
 // Apply shared interceptors
 listingsApi.interceptors.request.use(
   (config) => {
-    console.log(`🚀 Listings Request: ${config.method.toUpperCase()} ${config.url}`);
+    devLog(`🚀 Listings Request: ${config.method.toUpperCase()} ${config.url}`);
     return config;
   },
   (error) => Promise.reject(error)
@@ -557,7 +560,7 @@ const electronicsApi = axios.create({
 // Apply shared interceptors
 electronicsApi.interceptors.request.use(
   (config) => {
-    console.log(`🚀 Electronics Request: ${config.method.toUpperCase()} ${config.url}`);
+    devLog(`🚀 Electronics Request: ${config.method.toUpperCase()} ${config.url}`);
     return config;
   },
   (error) => Promise.reject(error)
@@ -633,7 +636,7 @@ const vehiclesApi = axios.create({
 // Apply shared interceptors
 vehiclesApi.interceptors.request.use(
   (config) => {
-    console.log(`🚀 Vehicles Request: ${config.method.toUpperCase()} ${config.url}`);
+    devLog(`🚀 Vehicles Request: ${config.method.toUpperCase()} ${config.url}`);
     return config;
   },
   (error) => Promise.reject(error)
@@ -709,7 +712,7 @@ const chatApi = axios.create({
 // Apply shared interceptors
 chatApi.interceptors.request.use(
   (config) => {
-    console.log(`💬 Chat Request: ${config.method.toUpperCase()} ${config.url}`);
+    devLog(`💬 Chat Request: ${config.method.toUpperCase()} ${config.url}`);
     return config;
   },
   (error) => Promise.reject(error)
@@ -774,7 +777,7 @@ const searchApi = axios.create({
 
 searchApi.interceptors.request.use(
   (config) => {
-    console.log(`🔍 Search Request: ${config.method.toUpperCase()} ${config.url}`);
+    devLog(`🔍 Search Request: ${config.method.toUpperCase()} ${config.url}`);
     return config;
   },
   (error) => Promise.reject(error)
@@ -815,7 +818,7 @@ const cacheApi = axios.create({
 
 cacheApi.interceptors.request.use(
   (config) => {
-    console.log(`📦 Cache Request: ${config.method.toUpperCase()} ${config.url}`);
+    devLog(`📦 Cache Request: ${config.method.toUpperCase()} ${config.url}`);
     return config;
   },
   (error) => Promise.reject(error)
@@ -850,7 +853,7 @@ const forSaleApi = axios.create({
 
 forSaleApi.interceptors.request.use(
   (config) => {
-    console.log(`🚀 ForSale Request: ${config.method.toUpperCase()} ${config.url}`);
+    devLog(`🚀 ForSale Request: ${config.method.toUpperCase()} ${config.url}`);
     return config;
   },
   (error) => Promise.reject(error)

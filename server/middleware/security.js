@@ -47,7 +47,7 @@ const securityMiddleware = (req, res, next) => {
   // 10. Request size guard — reject extremely large payloads early
   const contentLength = parseInt(req.headers['content-length'], 10);
   if (contentLength > 10 * 1024 * 1024) { // 10 MB max
-    logger.warn('Oversized request blocked', { ip: req.ip, path: req.path, contentLength });
+    logger.securityLog('oversized_request', { ip: req.ip, path: req.path, reason: `content-length: ${contentLength}` });
     return res.status(413).json({ success: false, message: 'Request entity too large' });
   }
 
@@ -55,13 +55,13 @@ const securityMiddleware = (req, res, next) => {
   const ua = (req.headers['user-agent'] || '').toLowerCase();
   const blockedPatterns = ['sqlmap', 'nikto', 'dirbuster', 'nessus', 'openvas', 'masscan'];
   if (blockedPatterns.some((p) => ua.includes(p))) {
-    logger.warn('Blocked suspicious user-agent', { ua, ip: req.ip, path: req.path });
+    logger.securityLog('bot_blocked', { ip: req.ip, path: req.path, userAgent: ua, reason: 'suspicious_user_agent' });
     return res.status(403).json({ success: false, message: 'Forbidden' });
   }
 
   // 12. Block path traversal attempts
   if (req.path.includes('..') || req.path.includes('%2e%2e')) {
-    logger.warn('Path traversal attempt blocked', { path: req.path, ip: req.ip });
+    logger.securityLog('path_traversal', { ip: req.ip, path: req.path, reason: 'directory_traversal_attempt' });
     return res.status(400).json({ success: false, message: 'Invalid path' });
   }
   
@@ -84,11 +84,7 @@ const securityMiddleware = (req, res, next) => {
 
     if (origin) {
       if (!allowedOrigins.includes(origin)) {
-        logger.warn('CSRF: blocked mutation from unexpected origin', {
-          origin,
-          ip: req.ip,
-          path: req.path,
-        });
+        logger.securityLog('csrf_blocked', { ip: req.ip, path: req.path, method: req.method, reason: `unexpected_origin: ${origin}` });
         return res.status(403).json({
           success: false,
           message: 'Origin not allowed',
@@ -98,21 +94,29 @@ const securityMiddleware = (req, res, next) => {
       try {
         const refererOrigin = new URL(referer).origin;
         if (!allowedOrigins.includes(refererOrigin)) {
-          logger.warn('CSRF: blocked mutation from unexpected referer', {
-            refererOrigin,
-            ip: req.ip,
-            path: req.path,
-          });
+          logger.securityLog('csrf_blocked', { ip: req.ip, path: req.path, method: req.method, reason: `unexpected_referer: ${refererOrigin}` });
           return res.status(403).json({
             success: false,
             message: 'Origin not allowed',
           });
         }
       } catch (_) {
-        // Malformed referer — allow (could be a proxy stripping it)
+        // Malformed referer — block on mutation routes (potential CSRF bypass)
+        logger.securityLog('csrf_blocked', { ip: req.ip, path: req.path, method: req.method, reason: 'malformed_referer' });
+        return res.status(403).json({
+          success: false,
+          message: 'Origin not allowed',
+        });
       }
+    } else {
+      // No Origin AND no Referer on a mutation request — reject.
+      // Legitimate browsers always send at least one of these headers.
+      logger.securityLog('csrf_blocked', { ip: req.ip, path: req.path, method: req.method, reason: 'no_origin_no_referer' });
+      return res.status(403).json({
+        success: false,
+        message: 'Origin not allowed',
+      });
     }
-    // No Origin, no Referer: server-to-server or privacy extension — allow.
   }
   
   next();

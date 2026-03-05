@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Auth Slice
  *
  * State shape + synchronous reducers + extraReducers for all auth thunks.
@@ -55,12 +55,11 @@ export {
   refreshToken,
 };
 
-// ── Initial State ─────────────────────────────────────────────────
+// â”€â”€ Initial State â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const initialState = {
-  // ⚠️ NO TOKEN IN STATE — token lives in HTTP-only cookie
-  token: null,
+  // Token lives in HTTP-only cookie â€” NOT in Redux state
   user: null, // Rehydrated by redux-persist
-  // Granular loading states — avoids UI flicker when concurrent ops run
+  // Granular loading states â€” avoids UI flicker when concurrent ops run
   loading: false,
   loginLoading: false,
   registerLoading: false,
@@ -84,7 +83,6 @@ const authSlice = createSlice({
   reducers: {
     // Manual logout action (for when API call fails)
     manualLogout: (state) => {
-      state.token = null;
       state.user = null;
       state.success = false;
     },
@@ -128,7 +126,7 @@ const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // ── Google Client ID ──────────────────────────────────────────
+      // â”€â”€ Google Client ID â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       .addCase(getGoogleClientId.pending, (state) => {
         state.isGoogleLoading = true;
         state.error = null;
@@ -142,7 +140,7 @@ const authSlice = createSlice({
         state.error = action.payload;
       })
 
-      // ── Google Login ──────────────────────────────────────────────
+      // â”€â”€ Google Login â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       .addCase(googleLogin.pending, (state) => {
         state.loading = true;
         state.googleLoading = true;
@@ -154,7 +152,7 @@ const authSlice = createSlice({
         state.googleLoading = false;
         state.success = true;
         state.error = null;
-        state.token = null;
+
         state.user = action.payload.user;
       })
       .addCase(googleLogin.rejected, (state, action) => {
@@ -164,7 +162,7 @@ const authSlice = createSlice({
         state.success = false;
       })
 
-      // ── Login ─────────────────────────────────────────────────────
+      // â”€â”€ Login â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       .addCase(loginUser.pending, (state) => {
         state.loading = true;
         state.loginLoading = true;
@@ -175,7 +173,7 @@ const authSlice = createSlice({
         state.loading = false;
         state.loginLoading = false;
         state.success = true;
-        state.token = null;
+
         state.user = action.payload.user;
       })
       .addCase(loginUser.rejected, (state, action) => {
@@ -185,7 +183,7 @@ const authSlice = createSlice({
         state.success = false;
       })
 
-      // ── Initiate Register ────────────────────────────────────────
+      // â”€â”€ Initiate Register â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       .addCase(initiateRegister.pending, (state) => {
         state.loading = true;
         state.registerLoading = true;
@@ -206,7 +204,7 @@ const authSlice = createSlice({
         state.success = false;
       })
 
-      // ── Verify OTP ───────────────────────────────────────────────
+      // â”€â”€ Verify OTP â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       .addCase(verifyOTP.pending, (state) => {
         state.loading = true;
         state.registerLoading = true;
@@ -217,7 +215,7 @@ const authSlice = createSlice({
         state.loading = false;
         state.registerLoading = false;
         state.success = true;
-        state.token = null;
+
         state.user = action.payload.user;
         state.otpSent = false;
         state.registrationEmail = "";
@@ -230,7 +228,7 @@ const authSlice = createSlice({
         // Keep otpSent true so OTP screen stays open
       })
 
-      // ── Resend OTP ───────────────────────────────────────────────
+      // â”€â”€ Resend OTP â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       .addCase(resendOTP.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -244,7 +242,7 @@ const authSlice = createSlice({
         state.error = action.payload;
       })
 
-      // ── Initiate Forgot Password ────────────────────────────────
+      // â”€â”€ Initiate Forgot Password â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       .addCase(initiateForgotPassword.pending, (state) => {
         state.loading = true;
         state.passwordLoading = true;
@@ -264,7 +262,7 @@ const authSlice = createSlice({
         state.success = false;
       })
 
-      // ── Verify Forgot Password OTP ──────────────────────────────
+      // â”€â”€ Verify Forgot Password OTP â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       .addCase(verifyForgotPasswordOTP.pending, (state) => {
         state.loading = true;
         state.passwordLoading = true;
@@ -284,7 +282,7 @@ const authSlice = createSlice({
         state.success = false;
       })
 
-      // ── Resend Forgot Password OTP ──────────────────────────────
+      // â”€â”€ Resend Forgot Password OTP â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       .addCase(resendForgotPasswordOTP.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -298,7 +296,7 @@ const authSlice = createSlice({
         state.error = action.payload;
       })
 
-      // ── Reset Password With Token ───────────────────────────────
+      // â”€â”€ Reset Password With Token â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       .addCase(resetPasswordWithToken.pending, (state) => {
         state.loading = true;
         state.passwordLoading = true;
@@ -319,7 +317,7 @@ const authSlice = createSlice({
         state.success = false;
       })
 
-      // ── Get User Profile ────────────────────────────────────────
+      // â”€â”€ Get User Profile â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       .addCase(getUserProfile.pending, (state) => {
         state.profileLoading = true;
         state.error = null;
@@ -333,7 +331,7 @@ const authSlice = createSlice({
         state.error = action.payload;
       })
 
-      // ── Update Profile ──────────────────────────────────────────
+      // â”€â”€ Update Profile â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       .addCase(updateProfile.pending, (state) => {
         state.profileLoading = true;
         state.error = null;
@@ -350,7 +348,7 @@ const authSlice = createSlice({
         state.success = false;
       })
 
-      // ── Change Password ─────────────────────────────────────────
+      // â”€â”€ Change Password â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       .addCase(changePassword.pending, (state) => {
         state.passwordLoading = true;
         state.error = null;
@@ -366,14 +364,14 @@ const authSlice = createSlice({
         state.success = false;
       })
 
-      // ── Logout User ─────────────────────────────────────────────
+      // â”€â”€ Logout User â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       .addCase(logoutUser.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
       .addCase(logoutUser.fulfilled, (state) => {
         state.loading = false;
-        state.token = null;
+
         state.user = null;
         state.success = false;
       })
@@ -381,38 +379,38 @@ const authSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
         // Still clear user data even if API fails
-        state.token = null;
+
         state.user = null;
       })
 
-      // ── Logout All ──────────────────────────────────────────────
+      // â”€â”€ Logout All â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       .addCase(logoutAll.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
       .addCase(logoutAll.fulfilled, (state) => {
         state.loading = false;
-        state.token = null;
+
         state.user = null;
         state.success = false;
       })
       .addCase(logoutAll.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
-        state.token = null;
+
         state.user = null;
       })
 
-      // ── Check Auth ──────────────────────────────────────────────
+      // â”€â”€ Check Auth â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       .addCase(checkAuth.pending, (state) => {
-        // Don't set loading=true — runs in background
+        // Don't set loading=true â€” runs in background
         state.error = null;
       })
       .addCase(checkAuth.fulfilled, (state, action) => {
         if (action.payload.isAuthenticated) {
           state.user = action.payload.user;
         }
-        // ACCESS_TOKEN_EXPIRED: token needs refresh — keep user
+        // ACCESS_TOKEN_EXPIRED: token needs refresh â€” keep user
         if (
           !action.payload.isAuthenticated &&
           action.payload.code !== "ACCESS_TOKEN_EXPIRED" &&
@@ -420,13 +418,13 @@ const authSlice = createSlice({
         ) {
           state.user = null;
         }
-        state.token = null;
+
       })
       .addCase(checkAuth.rejected, () => {
-        // DON'T clear user on network errors — keep current session
+        // DON'T clear user on network errors â€” keep current session
       })
 
-      // ── Get Sessions ────────────────────────────────────────────
+      // â”€â”€ Get Sessions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       .addCase(getSessions.pending, (state) => {
         state.sessionLoading = true;
         state.error = null;
@@ -440,7 +438,7 @@ const authSlice = createSlice({
         state.error = action.payload;
       })
 
-      // ── Revoke Session ──────────────────────────────────────────
+      // â”€â”€ Revoke Session â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       .addCase(revokeSession.pending, (state) => {
         state.sessionLoading = true;
         state.error = null;
@@ -454,16 +452,16 @@ const authSlice = createSlice({
         state.error = action.payload;
       })
 
-      // ── Refresh Token ───────────────────────────────────────────
+      // â”€â”€ Refresh Token â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       .addCase(refreshToken.pending, (state) => {
         // Don't set loading for background refresh
         state.error = null;
       })
       .addCase(refreshToken.fulfilled, () => {
-        // Token refreshed — new token is in HTTP-only cookie
+        // Token refreshed â€” new token is in HTTP-only cookie
       })
       .addCase(refreshToken.rejected, () => {
-        // Don't clear user — may be transient network error
+        // Don't clear user â€” may be transient network error
       });
   },
 });

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { useSelector, useDispatch } from "react-redux";
-import { electronicsAPI, vehiclesAPI } from "../../services/api";
+import { electronicsAPI, vehiclesAPI, forSaleAPI } from "../../services/api";
 import {
   fetchElectronicsById,
   updateElectronicsListing,
@@ -11,6 +11,10 @@ import {
   fetchVehicleById,
   updateVehicleListing,
 } from "../../redux/slices/vehiclesSlice";
+import {
+  fetchForSaleItemById,
+  updateForSaleListing,
+} from "../../redux/slices/forSaleItemsSlice";
 
 const CATEGORIES = [
   "Electronics",
@@ -97,6 +101,33 @@ const SPARE_PART_CATEGORIES = [
 ];
 const COMPATIBLE_VEHICLES = ["Car", "Bike", "Cycle", "Universal"];
 const YEAR_OPTIONS = Array.from({ length: 30 }, (_, i) => new Date().getFullYear() - i);
+const CONDITIONS = ["New", "Like New", "Good", "Fair", "Used"];
+
+/* ── Mobiles option lists ── */
+const MOBILE_BRANDS = [
+  "Apple", "Samsung", "OnePlus", "Xiaomi", "Realme", "Oppo", "Vivo",
+  "Google", "Nothing", "Motorola", "Nokia", "iQOO", "Poco", "Asus",
+  "Sony", "LG", "Huawei", "Honor", "Lenovo", "Other",
+];
+const STORAGE_OPTIONS = ["16GB", "32GB", "64GB", "128GB", "256GB", "512GB", "1TB"];
+const RAM_OPTIONS = ["2GB", "3GB", "4GB", "6GB", "8GB", "12GB", "16GB"];
+
+/* ── Furniture option lists ── */
+const MATERIAL_OPTIONS = [
+  "Solid Wood", "Engineered Wood", "Metal", "Plastic", "Glass",
+  "Leather", "Fabric", "Rattan", "Bamboo", "Other",
+];
+
+/* ── Fashion option lists ── */
+const SIZE_OPTIONS = ["XXS", "XS", "S", "M", "L", "XL", "XXL", "XXXL", "Free Size"];
+const SHOE_SIZES = ["5", "6", "7", "8", "9", "10", "11", "12", "13"];
+const GENDER_OPTIONS = ["Men", "Women", "Kids", "Unisex"];
+
+/* ── Books, Sports option lists ── */
+const SPORT_TYPES = [
+  "Cricket", "Football", "Badminton", "Tennis", "Basketball", "Swimming",
+  "Running", "Yoga", "Boxing", "Hockey", "Table Tennis", "Other",
+];
 
 const Field = ({ label, error, children }) => (
   <div>
@@ -247,6 +278,204 @@ const VehicleEditFields = ({ form, setField, errors, subcategory }) => {
   }
 };
 
+/* ── ForSale category-specific field components ─────────────── */
+
+const MobilePhoneEditFields = ({ form, setField, errors }) => (
+  <>
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <SelectField label="Brand *" error={errors.brand} value={form.brand}
+        onChange={setField("brand")} placeholder="Select Brand" options={MOBILE_BRANDS} />
+      <Field label="Model">
+        <input type="text" value={form.model} onChange={setField("model")}
+          placeholder="e.g., iPhone 14 Pro, Galaxy S24" className={INPUT_CLS} />
+      </Field>
+    </div>
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <SelectField label="Storage" value={form.storage}
+        onChange={setField("storage")} placeholder="Select Storage" options={STORAGE_OPTIONS} />
+      <SelectField label="RAM" value={form.ram}
+        onChange={setField("ram")} placeholder="Select RAM" options={RAM_OPTIONS} />
+    </div>
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <Field label="Screen Size">
+        <input type="text" value={form.screenSize} onChange={setField("screenSize")}
+          placeholder="e.g., 6.7 inches" className={INPUT_CLS} />
+      </Field>
+      <Field label="Battery Health">
+        <input type="text" value={form.batteryHealth} onChange={setField("batteryHealth")}
+          placeholder="e.g., 92%" className={INPUT_CLS} />
+      </Field>
+    </div>
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <Field label="Color">
+        <input type="text" value={form.color} onChange={setField("color")}
+          placeholder="e.g., Space Black" className={INPUT_CLS} />
+      </Field>
+      <SelectField label="Warranty" value={form.warranty}
+        onChange={setField("warranty")} placeholder="Warranty Status"
+        options={["Under Warranty", "Expired", "No Warranty"]} />
+    </div>
+  </>
+);
+
+const MobileAccessoriesEditFields = ({ form, setField }) => (
+  <>
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <Field label="Brand">
+        <input type="text" value={form.brand} onChange={setField("brand")}
+          placeholder="e.g., Apple, Samsung, Anker" className={INPUT_CLS} />
+      </Field>
+      <Field label="Compatible Model">
+        <input type="text" value={form.model} onChange={setField("model")}
+          placeholder="e.g., iPhone 15 Series" className={INPUT_CLS} />
+      </Field>
+    </div>
+    <Field label="Color">
+      <input type="text" value={form.color} onChange={setField("color")}
+        placeholder="e.g., Black, White" className={INPUT_CLS} />
+    </Field>
+  </>
+);
+
+const MobilesEditFields = ({ form, setField, errors, subcategory }) => {
+  switch (subcategory) {
+    case "Mobile Phones":
+    case "Tablets":
+      return <MobilePhoneEditFields form={form} setField={setField} errors={errors} />;
+    case "Accessories":
+      return <MobileAccessoriesEditFields form={form} setField={setField} />;
+    default:
+      return null;
+  }
+};
+
+const FurnitureEditFields = ({ form, setField }) => (
+  <>
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <SelectField label="Material" value={form.material}
+        onChange={setField("material")} placeholder="Select Material" options={MATERIAL_OPTIONS} />
+      <Field label="Dimensions">
+        <input type="text" value={form.dimensions} onChange={setField("dimensions")}
+          placeholder="e.g., 200 × 150 × 75 cm" className={INPUT_CLS} />
+      </Field>
+    </div>
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <Field label="Weight">
+        <input type="text" value={form.weight} onChange={setField("weight")}
+          placeholder="e.g., 25 kg" className={INPUT_CLS} />
+      </Field>
+      <SelectField label="Assembly Required" value={form.assemblyRequired}
+        onChange={setField("assemblyRequired")} placeholder="Select" options={["Yes", "No"]} />
+    </div>
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <Field label="Number of Pieces">
+        <input type="text" value={form.numberOfPieces} onChange={setField("numberOfPieces")}
+          placeholder="e.g., 1, 4 (set of chairs)" className={INPUT_CLS} />
+      </Field>
+      <Field label="Color">
+        <input type="text" value={form.color} onChange={setField("color")}
+          placeholder="e.g., Walnut Brown" className={INPUT_CLS} />
+      </Field>
+    </div>
+  </>
+);
+
+const FashionEditFields = ({ form, setField, subcategory }) => (
+  <>
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <Field label="Brand">
+        <input type="text" value={form.brand} onChange={setField("brand")}
+          placeholder="e.g., Nike, Zara, H&M" className={INPUT_CLS} />
+      </Field>
+      <SelectField label="Gender" value={form.gender}
+        onChange={setField("gender")} placeholder="Select Gender" options={GENDER_OPTIONS} />
+    </div>
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <SelectField
+        label={subcategory === "Footwear" ? "Shoe Size" : "Size"}
+        value={form.size}
+        onChange={setField("size")}
+        placeholder="Select Size"
+        options={subcategory === "Footwear" ? SHOE_SIZES : SIZE_OPTIONS}
+      />
+      <Field label="Fabric / Material">
+        <input type="text" value={form.fabricType} onChange={setField("fabricType")}
+          placeholder="e.g., Cotton, Leather, Polyester" className={INPUT_CLS} />
+      </Field>
+    </div>
+    <Field label="Color">
+      <input type="text" value={form.color} onChange={setField("color")}
+        placeholder="e.g., Navy Blue" className={INPUT_CLS} />
+    </Field>
+  </>
+);
+
+const BooksEditFields = ({ form, setField, errors }) => (
+  <>
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <Field label="Author *" error={errors.author}>
+        <input type="text" value={form.author} onChange={setField("author")}
+          placeholder="e.g., James Clear" className={INPUT_CLS} />
+      </Field>
+      <Field label="Publisher">
+        <input type="text" value={form.publisher} onChange={setField("publisher")}
+          placeholder="e.g., Penguin Books" className={INPUT_CLS} />
+      </Field>
+    </div>
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <Field label="Edition">
+        <input type="text" value={form.edition} onChange={setField("edition")}
+          placeholder="e.g., 1st Edition, Revised" className={INPUT_CLS} />
+      </Field>
+      <Field label="ISBN">
+        <input type="text" value={form.isbn} onChange={setField("isbn")}
+          placeholder="e.g., 978-0735211292" className={INPUT_CLS} />
+      </Field>
+    </div>
+  </>
+);
+
+const SportsEditFields = ({ form, setField, subcategory }) => (
+  <>
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <Field label="Brand">
+        <input type="text" value={form.brand} onChange={setField("brand")}
+          placeholder="e.g., Yonex, Nike, Decathlon" className={INPUT_CLS} />
+      </Field>
+      {(subcategory === "Sports Equipment" || subcategory === "Gym & Fitness") && (
+        <SelectField label="Sport Type" value={form.sportType}
+          onChange={setField("sportType")} placeholder="Select Sport" options={SPORT_TYPES} />
+      )}
+    </div>
+  </>
+);
+
+const BooksSportsEditFields = ({ form, setField, errors, subcategory }) => {
+  if (subcategory === "Books") {
+    return <BooksEditFields form={form} setField={setField} errors={errors} />;
+  }
+  return <SportsEditFields form={form} setField={setField} subcategory={subcategory} />;
+};
+
+/** Maps category → edit field component */
+const CATEGORY_EDIT_COMPONENTS = {
+  Vehicles: VehicleEditFields,
+  Mobiles: MobilesEditFields,
+  Furniture: FurnitureEditFields,
+  Fashion: FashionEditFields,
+  "Books, Sports": BooksSportsEditFields,
+};
+
+/** Determines which API entity a category belongs to */
+const CATEGORY_TO_ENTITY = {
+  Electronics: "electronics",
+  Vehicles: "vehicles",
+  Mobiles: "forsale",
+  Furniture: "forsale",
+  Fashion: "forsale",
+  "Books, Sports": "forsale",
+};
+
 const EditListing = () => {
   const { id, type } = useParams();
   const location = useLocation();
@@ -282,6 +511,29 @@ const EditListing = () => {
     frameSize: "",
     compatibleVehicle: "",
     partCategory: "",
+    // Mobiles fields
+    storage: "",
+    ram: "",
+    screenSize: "",
+    batteryHealth: "",
+    warranty: "",
+    color: "",
+    // Furniture fields
+    material: "",
+    dimensions: "",
+    weight: "",
+    assemblyRequired: "",
+    numberOfPieces: "",
+    // Fashion fields
+    size: "",
+    gender: "",
+    fabricType: "",
+    // Books, Sports fields
+    author: "",
+    isbn: "",
+    publisher: "",
+    edition: "",
+    sportType: "",
   });
 
   // Existing image URLs from the listing
@@ -301,6 +553,7 @@ const EditListing = () => {
 
     if (routeType === "vehicles" || routeType === "vehicle") return "vehicles";
     if (routeType === "electronics" || routeType === "electronic") return "electronics";
+    if (routeType === "forsale" || routeType === "for-sale" || routeType === "for_sale") return "forsale";
     return null;
   })();
 
@@ -345,22 +598,49 @@ const EditListing = () => {
         frameSize: listing.frameSize || "",
         compatibleVehicle: listing.compatibleVehicle || "",
         partCategory: listing.partCategory || "",
+        // Mobiles fields
+        storage: listing.storage || "",
+        ram: listing.ram || "",
+        screenSize: listing.screenSize || "",
+        batteryHealth: listing.batteryHealth || "",
+        warranty: listing.warranty || "",
+        color: listing.color || "",
+        // Furniture fields
+        material: listing.material || "",
+        dimensions: listing.dimensions || "",
+        weight: listing.weight || "",
+        assemblyRequired: listing.assemblyRequired || "",
+        numberOfPieces: listing.numberOfPieces || "",
+        // Fashion fields
+        size: listing.size || "",
+        gender: listing.gender || "",
+        fabricType: listing.fabricType || "",
+        // Books, Sports fields
+        author: listing.author || "",
+        isbn: listing.isbn || "",
+        publisher: listing.publisher || "",
+        edition: listing.edition || "",
+        sportType: listing.sportType || "",
       });
-      setSelectedCategory(
-        listing.category || (detectedType === "vehicles" ? "Vehicles" : "Electronics"),
-      );
+
+      // Detect category from listing or fall back from entity type
+      const detectedCategory = listing.category ||
+        (detectedType === "vehicles" ? "Vehicles" :
+         detectedType === "electronics" ? "Electronics" : null);
+      setSelectedCategory(detectedCategory);
       setSelectedSubcategory(listing.subcategory || null);
       setExistingImages(listing.images || []);
       setFetchLoading(false);
     };
 
     const fetchByType = async (targetType) => {
-      const api = targetType === "vehicles" ? vehiclesAPI : electronicsAPI;
+      const apiMap = { vehicles: vehiclesAPI, electronics: electronicsAPI, forsale: forSaleAPI };
+      const thunkMap = { vehicles: fetchVehicleById, electronics: fetchElectronicsById, forsale: fetchForSaleItemById };
+      const api = apiMap[targetType];
+      const thunkCreator = thunkMap[targetType];
       try {
         // Try Redux thunk first (updates Redux store)
-        const action =
-          targetType === "vehicles" ? fetchVehicleById(id) : fetchElectronicsById(id);
-        const listing = await dispatch(action).unwrap();
+        const listing = await dispatch(thunkCreator(id)).unwrap();
         return { listing, targetType };
       } catch (thunkErr) {
         // Fallback: direct API call (bypasses Redux middleware/interceptor issues)
@@ -388,14 +668,25 @@ const EditListing = () => {
 
       try {
         if (normalizedRouteType) {
-          // Type specified in URL — try it first, then fall back to the other
+          // Type specified in URL — try it first, then fall back to others
           const { listing, targetType } = await tryBothTypes(normalizedRouteType);
           applyListing(listing, targetType);
           return;
         }
 
-        // No type in URL — try vehicles first, then electronics
-        const { listing, targetType } = await tryBothTypes("vehicles");
+        // No type in URL — try all three entity types
+        const tryAll = async () => {
+          const types = ["vehicles", "electronics", "forsale"];
+          for (const t of types) {
+            try {
+              return await fetchByType(t);
+            } catch {
+              continue;
+            }
+          }
+          throw new Error("Listing not found in any collection");
+        };
+        const { listing, targetType } = await tryAll();
         applyListing(listing, targetType);
       } catch (err) {
         if (!mounted) return;
@@ -457,7 +748,7 @@ const EditListing = () => {
     if (!trimmed.phone || !/^\d{10}$/.test(trimmed.phone))
       errs.phone = "Enter a valid 10-digit phone number";
 
-    // Subcategory-specific validation for Vehicles
+    // ── Subcategory-specific validation (all categories) ──────
     if (selectedCategory === "Vehicles") {
       switch (selectedSubcategory) {
         case "Cars":
@@ -486,6 +777,26 @@ const EditListing = () => {
       }
     }
 
+    if (selectedCategory === "Mobiles") {
+      if (selectedSubcategory === "Mobile Phones" || selectedSubcategory === "Tablets") {
+        if (!form.brand) errs.brand = "Brand is required";
+      }
+    }
+
+    if (selectedCategory === "Books, Sports") {
+      if (selectedSubcategory === "Books") {
+        if (!form.author) errs.author = "Author is required";
+      }
+    }
+
+    // Validate category/subcategory combination
+    if (selectedCategory && selectedSubcategory) {
+      const validSubs = SUBCATEGORIES[selectedCategory];
+      if (validSubs && !validSubs.includes(selectedSubcategory)) {
+        errs.subcategory = `Invalid subcategory "${selectedSubcategory}" for "${selectedCategory}"`;
+      }
+    }
+
     setForm((f) => ({ ...f, ...trimmed }));
     setErrors(errs);
     return Object.keys(errs).length === 0;
@@ -506,7 +817,8 @@ const EditListing = () => {
       const effectiveType =
         listingType ||
         normalizedRouteType ||
-        (selectedCategory === "Vehicles" ? "vehicles" : "electronics");
+        CATEGORY_TO_ENTITY[selectedCategory] ||
+        "electronics";
 
       // Upload new images if any
       let newImageUrls = [];
@@ -514,7 +826,8 @@ const EditListing = () => {
         try {
           const formData = new FormData();
           newImageFiles.forEach((img) => formData.append("images", img));
-          const uploadAPI = effectiveType === "vehicles" ? vehiclesAPI : electronicsAPI;
+          const uploadAPIMap = { vehicles: vehiclesAPI, electronics: electronicsAPI, forsale: forSaleAPI };
+          const uploadAPI = uploadAPIMap[effectiveType] || electronicsAPI;
           const uploadRes = await uploadAPI.uploadImages(formData);
           newImageUrls = uploadRes.data.imageUrls;
         } catch (uploadErr) {
@@ -536,7 +849,7 @@ const EditListing = () => {
         location: form.location,
         phone: form.phone,
         images: allImages,
-        // Vehicle-specific (only sent for vehicles — server ignores unknown keys)
+        // Vehicle-specific
         brand: form.brand,
         model: form.model,
         variant: form.variant,
@@ -551,12 +864,37 @@ const EditListing = () => {
         frameSize: form.frameSize,
         compatibleVehicle: form.compatibleVehicle,
         partCategory: form.partCategory,
+        // Mobiles-specific
+        storage: form.storage,
+        ram: form.ram,
+        screenSize: form.screenSize,
+        batteryHealth: form.batteryHealth,
+        warranty: form.warranty,
+        color: form.color,
+        // Furniture-specific
+        material: form.material,
+        dimensions: form.dimensions,
+        weight: form.weight,
+        assemblyRequired: form.assemblyRequired,
+        numberOfPieces: form.numberOfPieces,
+        // Fashion-specific
+        size: form.size,
+        gender: form.gender,
+        fabricType: form.fabricType,
+        // Books, Sports-specific
+        author: form.author,
+        isbn: form.isbn,
+        publisher: form.publisher,
+        edition: form.edition,
+        sportType: form.sportType,
       };
 
-      const updateAction =
-        effectiveType === "vehicles"
-          ? updateVehicleListing({ id, listingData })
-          : updateElectronicsListing({ id, listingData });
+      const updateActionMap = {
+        vehicles: updateVehicleListing({ id, listingData }),
+        electronics: updateElectronicsListing({ id, listingData }),
+        forsale: updateForSaleListing({ id, listingData }),
+      };
+      const updateAction = updateActionMap[effectiveType] || updateElectronicsListing({ id, listingData });
 
       await dispatch(updateAction).unwrap();
       setLoading(false);
@@ -737,9 +1075,12 @@ const EditListing = () => {
               />
             </Field>
 
-            {/* Vehicle subcategory-specific fields */}
-            {selectedCategory === "Vehicles" && selectedSubcategory && (
-              <VehicleEditFields form={form} setField={setField} errors={errors} subcategory={selectedSubcategory} />
+            {/* Category-specific fields (Vehicles, Mobiles, Furniture, Fashion, Books & Sports) */}
+            {selectedCategory && selectedSubcategory && CATEGORY_EDIT_COMPONENTS[selectedCategory] && (
+              (() => {
+                const CategoryFields = CATEGORY_EDIT_COMPONENTS[selectedCategory];
+                return <CategoryFields form={form} setField={setField} errors={errors} subcategory={selectedSubcategory} />;
+              })()
             )}
 
             <Field label="Price (₹) *" error={errors.price}>

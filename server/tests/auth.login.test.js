@@ -36,7 +36,15 @@ jest.mock('../utils/logger', () => ({
     warn: jest.fn(),
     error: jest.fn(),
     debug: jest.fn(),
+    userLog: jest.fn(),
+    securityLog: jest.fn(),
+    productLog: jest.fn(),
+    requestLog: jest.fn(),
+    dbLog: jest.fn(),
+    emailLog: jest.fn(),
+    stream: { write: jest.fn() },
   },
+  flushLogs: jest.fn().mockResolvedValue(),
 }));
 
 // Mock email service

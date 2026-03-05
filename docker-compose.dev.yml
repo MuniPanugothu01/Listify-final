@@ -4,6 +4,7 @@
 # Layers on top of docker-compose.yml for local development:
 #   - Hot-reload via bind mounts
 #   - Exposed debug ports
+#   - HTTP only (no SSL, no Certbot)
 #   - Relaxed resource limits
 #
 # Usage:
@@ -36,7 +37,15 @@ services:
     build:
       context: ./client
       dockerfile: Dockerfile
-    # In dev, run Vite dev server instead of nginx
-    # (requires a separate dev Dockerfile or override entrypoint)
+    environment:
+      # In development, DOMAIN=localhost → no HTTPS redirect
+      - DOMAIN=localhost
     ports:
       - "5173:80"
+    # No SSL volumes needed in dev
+    volumes: []
+
+  # Disable Certbot in development — no SSL needed locally
+  certbot:
+    profiles:
+      - production-only

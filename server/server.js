@@ -304,6 +304,15 @@ const shutdown = async (signal) => {
       console.log("✅ MongoDB connection closed");
     }
 
+    // 3. Flush pending CloudWatch log batches
+    try {
+      const { flushLogs } = require('./utils/logger');
+      await flushLogs();
+      console.log("✅ CloudWatch logs flushed");
+    } catch (logErr) {
+      console.error("⚠️ Log flush error (non-fatal):", logErr.message);
+    }
+
     console.log("✅ Graceful shutdown completed");
   } catch (error) {
     console.error("❌ Error during shutdown:", error);

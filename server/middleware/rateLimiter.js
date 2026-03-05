@@ -40,12 +40,11 @@ const createRateLimiter = ({ keyPrefix, windowSec, maxHits, message, keyFn }) =>
       res.setHeader('X-RateLimit-Reset', Math.ceil(Date.now() / 1000) + (ttl > 0 ? ttl : windowSec));
 
       if (current > maxHits) {
-        logger.warn(`Rate limit exceeded: ${keyPrefix}`, {
-          identifier,
-          current,
-          maxHits,
+        logger.securityLog('rate_limit_exceeded', {
           ip: req.ip,
           path: req.path,
+          method: req.method,
+          reason: `${keyPrefix} — ${current}/${maxHits} hits`,
         });
 
         return res.status(429).json({

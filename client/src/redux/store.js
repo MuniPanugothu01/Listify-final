@@ -8,6 +8,7 @@ import {
   PERSIST,
   PURGE,
   REGISTER,
+  createTransform,
 } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 
@@ -40,11 +41,31 @@ const rootReducer = combineReducers({
   forSale: forSaleReducer,
 });
 
+// ── Persist transforms ────────────────────────────────────────────
+// Strip sensitive/ephemeral fields from auth before writing to localStorage
+const authSanitizeTransform = createTransform(
+  // inbound: state going INTO storage
+  (inboundState) => {
+    const { resetToken: _RT, resetEmail: _RE, registrationEmail: _REM, token: _T, ...safe } = inboundState;
+    return safe;
+  },
+  // outbound: state coming OUT of storage (rehydrate)
+  (outboundState) => ({
+    ...outboundState,
+    resetToken: "",
+    resetEmail: "",
+    registrationEmail: "",
+    token: null,
+  }),
+  { whitelist: ["auth"] },
+);
+
 // ── Persist config ─────────────────────────────────────────────────
 const persistConfig = {
   key: "root",
   storage,
-  whitelist: ["auth", "profile", "draftListings", "forSale"],
+  whitelist: ["auth", "profile", "draftListings"],
+  transforms: [authSanitizeTransform],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

@@ -4,7 +4,14 @@ const validateEmail=(email)=>{
 }
 
 const validatePassword = (password) => {
-  return password && password.length >= 6;
+  if (!password || password.length < 8) return false;
+  if (password.length > 128) return false;
+  // Must contain: uppercase, lowercase, number, special char
+  const hasUpperCase = /[A-Z]/.test(password);
+  const hasLowerCase = /[a-z]/.test(password);
+  const hasNumber = /[0-9]/.test(password);
+  const hasSpecial = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password);
+  return hasUpperCase && hasLowerCase && hasNumber && hasSpecial;
 };
 
 const validateName = (name) => {
@@ -27,15 +34,15 @@ const validateRegisterInput = (data) => {
   
   // Password validation
   if (!validatePassword(data.password)) {
-    errors.password = 'Password must be at least 6 characters long';
+    errors.password = 'Password must be at least 8 characters with uppercase, lowercase, number, and special character';
   }
   
   // Confirm password validation
-  // if (!data.confirmPassword) {
-  //   errors.confirmPassword = 'Please confirm your password';
-  // } else if (data.password !== data.confirmPassword) {
-  //   errors.confirmPassword = 'Passwords do not match';
-  // }
+  if (!data.confirmPassword) {
+    errors.confirmPassword = 'Please confirm your password';
+  } else if (data.password !== data.confirmPassword) {
+    errors.confirmPassword = 'Passwords do not match';
+  }
   
   return {
     errors,
@@ -90,7 +97,7 @@ const validateChangePasswordInput = (data) => {
   }
   
   if (!data.newPassword || !validatePassword(data.newPassword)) {
-    errors.newPassword = 'New password must be at least 6 characters';
+    errors.newPassword = 'New password must be at least 8 characters with uppercase, lowercase, number, and special character';
   }
   
   if (data.newPassword === data.currentPassword) {
@@ -122,7 +129,7 @@ const validateResetPasswordInput = (data) => {
   const errors = {};
   
   if (!data.password || !validatePassword(data.password)) {
-    errors.password = 'Password must be at least 6 characters long';
+    errors.password = 'Password must be at least 8 characters with uppercase, lowercase, number, and special character';
   }
   
   return {
