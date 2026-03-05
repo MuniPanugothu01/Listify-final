@@ -30,39 +30,21 @@ FROM nginx:1.27-alpine AS runner
 LABEL maintainer="Listify <dev@listify.app>"
 LABEL description="Listify React client production image"
 
-# Install envsubst for template variable substitution + openssl for DH params
-RUN apk add --no-cache openssl
-
 # Remove default nginx website
 RUN rm -rf /usr/share/nginx/html/*
 
 # Copy built assets
 COPY --from=builder /app/dist /usr/share/nginx/html
 
-# Copy custom nginx config (uses ${DOMAIN} variable — substituted at runtime)
-COPY nginx.conf /etc/nginx/templates/default.conf.template
-
-# Copy reusable Nginx snippets
-COPY nginx/snippets/ /etc/nginx/snippets/
-
-# Copy custom entrypoint (handles conditional HTTPS)
-COPY nginx/docker-entrypoint.sh /docker-entrypoint.sh
-RUN chmod +x /docker-entrypoint.sh
-
-# Generate DH parameters for stronger TLS key exchange (2048-bit)
-# Takes ~10s at build time but only runs once per image build
-RUN mkdir -p /etc/nginx/ssl && \
-    openssl dhparam -out /etc/nginx/ssl/dhparam.pem 2048
-
-# Create directories for Certbot and Let's Encrypt
-RUN mkdir -p /var/www/certbot /etc/letsencrypt
+# Copy custom nginx config
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Security: nginx master runs as root, workers as nginx user (default).
 # We ensure no writable state outside /tmp.
 RUN chown -R nginx:nginx /usr/share/nginx/html && \
     chmod -R 755 /usr/share/nginx/html
 
-EXPOSE 80 443
+EXPOSE 80
 
 # Health check — nginx returns the index.html on /
 HEALTHCHECK --interval=30s --timeout=5s --retries=3 \
@@ -70,4 +52,4 @@ HEALTHCHECK --interval=30s --timeout=5s --retries=3 \
 
 STOPSIGNAL SIGQUIT
 
-ENTRYPOINT ["/docker-entrypoint.sh"]
+CMD ["nginx", "-g", "daemon off;"]
